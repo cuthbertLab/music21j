@@ -24,9 +24,9 @@ declare interface Constructable<T> {
  * @memberof music21.prebase
  * @property {Array<string>} classes - An Array of strings of classes
  * that the object belongs to (default ['ProtoM21Object'])
- * @property {Boolean} isProtoM21Object - Does this object descend
+ * @property {boolean} isProtoM21Object - Does this object descend
  * from {@link music21.prebase.ProtoM21Object}: obviously true.
- * @property {Boolean} isMusic21Object - Does this object descend
+ * @property {boolean} isMusic21Object - Does this object descend
  * from Music21Object; default false.
  */
 export class ProtoM21Object {
@@ -92,9 +92,9 @@ export class ProtoM21Object {
      * Works similarly to Python's copy.deepcopy().
      *
      * Every ProtoM21Object has a `._cloneCallbacks` object which maps
-     * `{attribute: callbackFunction}`
+     * `{attribute: callbackFunction|boolean}`
      * to handle custom clone cases.  See, for instance, Music21Object which
-     * uses a custom callback to NOT clone the `.activeSite` attribute.
+     * uses a custom callback to NOT clone the `.derivation` attribute directly.
      *
      * @example
      * var n1 = new music21.note.Note("C#");
@@ -103,21 +103,15 @@ export class ProtoM21Object {
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    clone(deep=true, memo=undefined) {
-        if (!deep) {
-            return Object.assign(
-                Object.create(Object.getPrototypeOf(this)),
-                this
-            );
-        }
-
+    clone(deep=true, memo=undefined): this {
+        // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
         const classConstructor = <Constructable<ProtoM21Object>> this.constructor;
         const ret = <Record<string, any>> new classConstructor();
         if (memo === undefined) {
             memo = new WeakMap();
         }
 
-        // todo: do Arrays work?
+        // TODO(msc): test if Arrays work?
         for (const key in this) {
             // not that we ONLY copy the keys in Ret -- it's easier that way.
             if ({}.hasOwnProperty.call(this, key) === false) {
@@ -130,7 +124,7 @@ export class ProtoM21Object {
                     ret[key] = undefined;
                 } else {
                     // call the cloneCallbacks function
-                    this._cloneCallbacks[key](key, ret, this);
+                    this._cloneCallbacks[key](key, ret, this, deep, memo);
                 }
             } else if (
                 Object.getOwnPropertyDescriptor(this, key).get !== undefined
@@ -140,7 +134,8 @@ export class ProtoM21Object {
             } else if (typeof this[key] === 'function') {
                 // do nothing -- events might not be copied.
             } else if (
-                typeof this[key] === 'object'
+                deep
+                && typeof this[key] === 'object'
                 && this[key] !== null
                 && (<ProtoM21Object><unknown> this[key]).isProtoM21Object
             ) {
@@ -155,8 +150,9 @@ export class ProtoM21Object {
                 ret[key] = clonedVersion;
             } else {
                 try {
+                    // for deep this should be:
+                    // music21.common.merge(ret[key], this[key]);
                     ret[key] = this[key];
-                    // music21.common.merge(ret[key], this[key]); // not really necessary?
                 } catch (e) {
                     if (e instanceof TypeError) {
                         console.log('typeError:', e, key);
@@ -167,14 +163,14 @@ export class ProtoM21Object {
                 }
             }
         }
-        return ret;
+        return ret as this;
     }
 
     /**
      * Check to see if an object is of this class or subclass.
      *
      * @param {string|string[]} testClass - a class or Array of classes to test
-     * @returns {Boolean}
+     * @returns {boolean}
      * @example
      * var n = new music21.note.Note();
      * n.isClassOrSubclass('Note'); // true
@@ -183,7 +179,7 @@ export class ProtoM21Object {
      * n.isClassOrSubclass(['Note', 'Rest']); // true
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
-    isClassOrSubclass(testClass) {
+    isClassOrSubclass(testClass: string|string[]): boolean {
         if (!(testClass instanceof Array)) {
             testClass = [testClass];
         }

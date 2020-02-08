@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.9.35",
+  "version": "0.9.39",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "src/music21_modules.js",
   "files": [
@@ -40,6 +40,7 @@
     "ajv": "^6.10.2",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
+    "cache-loader": "^4.1.0",
     "core-js": "^3.4.1",
     "css-loader": "^3.2.0",
     "eslint": "^5.16.0",

@@ -26,20 +26,47 @@ export default function tests() {
         }
     });
     test('music21.stream.Stream clone', assert => {
+        const clickCallback = e => console.log('hi');
+
         const [s, n] = get_stream_and_note();
+        s.renderOptions.left = 20;
+        s.renderOptions.scaleFactor.x = 2.0;
+        s.renderOptions.events.click = clickCallback;
+
         s.insert(5.0, n);
         const t = s.clone(true);
-        assert.equal(t.length, s.length);
+        assert.ok(t instanceof music21.stream.Stream);
+        assert.equal(t.length, 3);
+        assert.equal(t.length, s.length, 't.length should equal s.length');
+        const t0 = t.get(0);
+        assert.equal(t0.pitch.name, 'C#');
         for (let i = 0; i < t.length; i++) {
             const tEl = t.get(i);
             const sEl = s.get(i);
             assert.equal(tEl.offset, sEl.offset);
             assert.equal(tEl.pitch.name, sEl.pitch.name);
         }
+        assert.notStrictEqual(
+            s.renderOptions,
+            t.renderOptions,
+            'after cloning renderOptions should not be shared'
+        );
+        assert.equal(t.renderOptions.left, 20);
+        s.renderOptions.left = 10;
+        s.renderOptions.scaleFactor.x = 1.5;
+        s.renderOptions.events.click = 'play';
+        assert.equal(t.renderOptions.left, 20);
+        assert.notStrictEqual(
+            s.renderOptions.scaleFactor,
+            t.renderOptions.scaleFactor,
+            'after cloning renderOptions.scaleFactor should not be shared'
+        );
+        assert.equal(t.renderOptions.scaleFactor.x, 2.0);
+        assert.equal(t.renderOptions.events.click, clickCallback);
     });
 
 
-    QUnit.test('music21.stream.Stream iterate and forEach', assert => {
+    test('music21.stream.Stream iterate and forEach', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
         s.append(new music21.note.Note('D#5'));
@@ -56,7 +83,7 @@ export default function tests() {
         assert.deepEqual(lengths, [2, 2]);
     });
 
-    QUnit.test('music21.stream.Stream remove, index, replace, set', assert => {
+    test('music21.stream.Stream remove, index, replace, set', assert => {
         const s = new music21.stream.Stream();
         const cs = new music21.note.Note('C#5');
         s.append(cs);
@@ -94,7 +121,7 @@ export default function tests() {
         assert.throws(() => { cs.getOffsetBySite(s); }, /not stored/, 'cs is no longer in s');
     });
 
-    QUnit.test('music21.stream.Stream.elements from stream', assert => {
+    test('music21.stream.Stream.elements from stream', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
         const d = new music21.note.Note('D#5');
@@ -105,11 +132,13 @@ export default function tests() {
         assert.equal(t.get(1).offset, 10, 'd offset retained');
     });
 
-    QUnit.test('music21.stream.Stream.duration', assert => {
+    test('music21.stream.Stream.duration', assert => {
         const s = new music21.stream.Stream();
         assert.equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
 
-        s.append(new music21.note.Note('C#5'));
+        const n0 = new music21.note.Note('C#5');
+        s.append(n0);
+        assert.equal(n0.duration.quarterLength, 1.0, 'sanity that note duration works');
         assert.equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
 
         const n = new music21.note.Note('F5');
@@ -169,7 +198,7 @@ export default function tests() {
         );
     });
 
-    QUnit.test('music21.stream.Stream.append', assert => {
+    test('music21.stream.Stream.append', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C4'));
         assert.equal(s.length, 1);
@@ -185,7 +214,7 @@ export default function tests() {
         assert.equal(s2.duration.quarterLength, 4.0);
     });
 
-    QUnit.test('music21.stream.Stream.insert and offsets', assert => {
+    test('music21.stream.Stream.insert and offsets', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
         const n3 = new music21.note.Note('E5');
@@ -240,9 +269,16 @@ export default function tests() {
             4.0,
             '.flat.flat does not change offset'
         );
+
+        const semiFlatP = p.semiFlat;
+        assert.equal(
+            semiFlatP.length,
+            pf.length + 2,
+            'SemiFlat is same as flat + 2'
+        );
     });
 
-    QUnit.test('music21.stream.Stream insertAndShift', assert => {
+    test('music21.stream.Stream insertAndShift', assert => {
         const s = new music21.stream.Stream();
         s.insert(0, new music21.note.Note('C4'));
         s.insert(1, new music21.note.Note('E4'));
@@ -264,7 +300,7 @@ export default function tests() {
         assert.equal(outListOffsets[3], 3.0);
     });
 
-    QUnit.test('music21.stream.Stream.DOM', assert => {
+    test('music21.stream.Stream.DOM', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
         s.append(new music21.note.Note('D#5'));
@@ -276,7 +312,7 @@ export default function tests() {
         assert.equal(c.attr('height'), 50, 'stored height matches');
     });
 
-    QUnit.test('music21.stream.Stream.getElementsByClass', assert => {
+    test('music21.stream.Stream.getElementsByClass', assert => {
         const s = new music21.stream.Stream();
         const n1 = new music21.note.Note('C#5');
         const n2 = new music21.note.Note('D#5');
@@ -297,7 +333,7 @@ export default function tests() {
         c = s.getElementsByClass('GeneralNote');
         assert.equal(c.length, 3, 'got multiple subclasses');
     });
-    QUnit.test('music21.stream.offsetMap', assert => {
+    test('music21.stream.offsetMap', assert => {
         const n = new music21.note.Note('G3');
         const o = new music21.note.Note('A3');
         const s = new music21.stream.Measure();
@@ -319,7 +355,7 @@ export default function tests() {
         assert.equal(omo.offset, 0.5, 'omo offset should be 0.5');
         assert.equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
     });
-    QUnit.test('music21.stream.Stream appendNewDOM ', assert => {
+    test('music21.stream.Stream appendNewDOM ', assert => {
         const n = new music21.note.Note('G3');
         const s = new music21.stream.Measure();
         s.append(n);
@@ -337,7 +373,7 @@ export default function tests() {
         const div1 = s1.editableAccidentalDOM();
         window.$(document.body).append(div1);
     });
-    QUnit.test('music21.stream.Stream makeAccidentals ', assert => {
+    test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');
         const n2 = new music21.note.Note('G#3');
         const n3 = new music21.note.Note('C#4');
@@ -355,5 +391,18 @@ export default function tests() {
         assert.ok(c._notes[1].pitch.accidental.displayStatus);
         assert.ok(c._notes[2].pitch.accidental.displayStatus);
         assert.notOk(c._notes[3].pitch.accidental); // perhaps should exist?
+    });
+
+    test('music21.stream.Stream.flat', assert => {
+        const p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
+        const p2 = music21.tinyNotation.TinyNotation('4/4 A1    C#1   E#1');
+        const s = new music21.stream.Score();
+        s.insert(0, p1);
+        s.insert(0, p2);
+        const sf = s.flat.notes;
+        const sf_names = Array.from(sf).map(n => n.name);
+        assert.deepEqual(sf_names, ['C', 'A', 'D', 'E', 'C#', 'F', 'G', 'E#']);
+        const sf_offsets = Array.from(sf).map(n => n.offset);
+        assert.deepEqual(sf_offsets, [0, 0, 2, 4, 4, 6, 8, 8]);
     });
 }

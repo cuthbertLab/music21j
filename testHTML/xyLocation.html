@@ -1,24 +1,24 @@
-<html>
-    <head>
-        <title>XY Location!</title>
-        <!-- for MSIE 10 on Windows 8 -->
-        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<style>
-#svg { background-color: #ffffaa }
-</style>
+<html lang="en">
+<head>
+    <title>XY Location!</title>
+    <!-- for MSIE 10 on Windows 8 -->
+    <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <style>
+        #svg { background-color: #ffffaa }
+    </style>
 </head>
 <body>
-<div id='svg'></div>
-<div>
-X: <input type="text" name="xLoc" id="xLoc" value="0"/>
-Y: <input type="text" name="yLoc" id="yLoc" value="0"/>
-X-left: <input type="text" name="xOff" id="xOff" value="0"/>
-Y-top: <input type="text" name="yOff" id="yOff" value="0"/>
+    <div id='svg'></div>
+    <div>
+        <label for="xLoc">X:</label><input type="text" name="xLoc" id="xLoc" value="0">
+        <label for="yLoc">Y:</label><input type="text" name="yLoc" id="yLoc" value="0">
+        <label for="xOff">X-left:</label><input type="text" name="xOff" id="xOff" value="0">
+        <label for="yOff">Y-top:</label><input type="text" name="yOff" id="yOff" value="0">
 
-</div>
-        <script src="../build/music21.debug.js"></script>
-        <script>
+    </div>
+    <script src="../build/music21.debug.js"></script>
+    <script>
     var s1 = music21.tinyNotation.TinyNotation(
         "4/4 c2 d#4 e8 f g4 r8 B c4~ c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1"
     );
@@ -68,6 +68,6 @@ Y-top: <input type="text" name="yOff" id="yOff" value="0"/>
             }
         });
     });
-</script>
+    </script>
 </body>
 </html>

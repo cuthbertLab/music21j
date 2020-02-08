@@ -30,6 +30,7 @@
       <w>castel</w>
       <w>charang</w>
       <w>chiff</w>
+      <w>classid</w>
       <w>clavinet</w>
       <w>contrabass</w>
       <w>corejs</w>
@@ -49,6 +50,7 @@
       <w>foffset</w>
       <w>fretless</w>
       <w>gerstner</w>
+      <w>goog</w>
       <w>gright</w>
       <w>guidon</w>
       <w>hacky</w>
@@ -59,12 +61,14 @@
       <w>hexachord</w>
       <w>hexamirror</w>
       <w>hideable</w>
+      <w>highpass</w>
       <w>hirajoshi</w>
       <w>honkytonk</w>
       <w>inexpressable</w>
       <w>intv</w>
       <w>iwato</w>
       <w>jianpu</w>
+      <w>jordi</w>
       <w>jsonpickle</w>
       <w>kalimba</w>
       <w>kanakangi</w>
@@ -90,6 +94,7 @@
       <w>megharanji</w>
       <w>memberof</w>
       <w>meth</w>
+      <w>microtone</w>
       <w>microtones</w>
       <w>midicube</w>
       <w>midijs</w>
@@ -119,21 +124,26 @@
       <w>octamirror</w>
       <w>octatonic</w>
       <w>octaveless</w>
+      <w>oninputempty</w>
+      <w>oninputsuccess</w>
       <w>ottava</w>
       <w>overdriven</w>
       <w>pantuvarali</w>
+      <w>partlike</w>
       <w>partwise</w>
       <w>pelog</w>
       <w>pentachord</w>
       <w>pentacluster</w>
       <w>pentamirror</w>
       <w>perc</w>
+      <w>perfectable</w>
       <w>petrushka</w>
       <w>phrygian</w>
       <w>polysynth</w>
       <w>pppp</w>
       <w>prebase</w>
       <w>prestissimo</w>
+      <w>priv</w>
       <w>quantizes</w>
       <w>quartal</w>
       <w>ramkali</w>
@@ -166,6 +176,7 @@
       <w>soundfonts</w>
       <w>spiccato</w>
       <w>staccatissimo</w>
+      <w>stafflines</w>
       <w>staves</w>
       <w>struct</w>
       <w>subdominant</w>

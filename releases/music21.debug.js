@@ -1,6 +1,6 @@
 /**
- * music21j 0.9.32 built on 2019-11-04.
- * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
+ * music21j 0.9.38 built on 2020-01-31.
+ * Copyright (c) 2013-2020 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
  * http://github.com/cuthbertLab/music21j
@@ -177,7 +177,7 @@ module.exports = function (it) {
 
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
 var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js/internals/object-create.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
 var UNSCOPABLES = wellKnownSymbol('unscopables');
 var ArrayPrototype = Array.prototype;
@@ -185,7 +185,7 @@ var ArrayPrototype = Array.prototype;
 // Array.prototype[@@unscopables]
 // https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
 if (ArrayPrototype[UNSCOPABLES] == undefined) {
-  hide(ArrayPrototype, UNSCOPABLES, create(null));
+  createNonEnumerableProperty(ArrayPrototype, UNSCOPABLES, create(null));
 }
 
 // add a key to Array.prototype[@@unscopables]
@@ -264,7 +264,7 @@ var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core
 var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var classof = __webpack_require__(/*! ../internals/classof */ "./node_modules/core-js/internals/classof.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
 var defineProperty = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js").f;
 var getPrototypeOf = __webpack_require__(/*! ../internals/object-get-prototype-of */ "./node_modules/core-js/internals/object-get-prototype-of.js");
@@ -400,7 +400,7 @@ if (DESCRIPTORS && !has(TypedArrayPrototype, TO_STRING_TAG)) {
     return isObject(this) ? this[TYPED_ARRAY_TAG] : undefined;
   } });
   for (NAME in TypedArrayConstructorsList) if (global[NAME]) {
-    hide(global[NAME], TYPED_ARRAY_TAG, NAME);
+    createNonEnumerableProperty(global[NAME], TYPED_ARRAY_TAG, NAME);
   }
 }
 
@@ -438,7 +438,7 @@ module.exports = {
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
 var NATIVE_ARRAY_BUFFER = __webpack_require__(/*! ../internals/array-buffer-view-core */ "./node_modules/core-js/internals/array-buffer-view-core.js").NATIVE_ARRAY_BUFFER;
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var redefineAll = __webpack_require__(/*! ../internals/redefine-all */ "./node_modules/core-js/internals/redefine-all.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
 var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js/internals/an-instance.js");
@@ -704,7 +704,9 @@ if (!NATIVE_ARRAY_BUFFER) {
     };
     var ArrayBufferPrototype = $ArrayBuffer[PROTOTYPE] = NativeArrayBuffer[PROTOTYPE];
     for (var keys = getOwnPropertyNames(NativeArrayBuffer), j = 0, key; keys.length > j;) {
-      if (!((key = keys[j++]) in $ArrayBuffer)) hide($ArrayBuffer, key, NativeArrayBuffer[key]);
+      if (!((key = keys[j++]) in $ArrayBuffer)) {
+        createNonEnumerableProperty($ArrayBuffer, key, NativeArrayBuffer[key]);
+      }
     }
     ArrayBufferPrototype.constructor = $ArrayBuffer;
   }
@@ -725,8 +727,11 @@ if (!NATIVE_ARRAY_BUFFER) {
 
 setToStringTag($ArrayBuffer, ARRAY_BUFFER);
 setToStringTag($DataView, DATA_VIEW);
-exports[ARRAY_BUFFER] = $ArrayBuffer;
-exports[DATA_VIEW] = $DataView;
+
+module.exports = {
+  ArrayBuffer: $ArrayBuffer,
+  DataView: $DataView
+};
 
 
 /***/ }),
@@ -808,13 +813,14 @@ module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undef
   var mapping = mapfn !== undefined;
   var index = 0;
   var iteratorMethod = getIteratorMethod(O);
-  var length, result, step, iterator;
+  var length, result, step, iterator, next;
   if (mapping) mapfn = bind(mapfn, argumentsLength > 2 ? arguments[2] : undefined, 2);
   // if the target is not iterable or it's an array with the default iterator - use a simple case
   if (iteratorMethod != undefined && !(C == Array && isArrayIteratorMethod(iteratorMethod))) {
     iterator = iteratorMethod.call(O);
+    next = iterator.next;
     result = new C();
-    for (;!(step = iterator.next()).done; index++) {
+    for (;!(step = next.call(iterator)).done; index++) {
       createProperty(result, index, mapping
         ? callWithSafeIterationClosing(iterator, mapfn, [step.value, index], true)
         : step.value
@@ -998,11 +1004,15 @@ module.exports = (NEGATIVE_ZERO || SLOPPY_METHOD) ? function lastIndexOf(searchE
 
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
+var V8_VERSION = __webpack_require__(/*! ../internals/v8-version */ "./node_modules/core-js/internals/v8-version.js");
 
 var SPECIES = wellKnownSymbol('species');
 
 module.exports = function (METHOD_NAME) {
-  return !fails(function () {
+  // We can't use this feature detection in V8 since it causes
+  // deoptimization and serious performance degradation
+  // https://github.com/zloirock/core-js/issues/677
+  return V8_VERSION >= 51 || !fails(function () {
     var array = [];
     var constructor = array.constructor = {};
     constructor[SPECIES] = function () {
@@ -1743,6 +1753,27 @@ module.exports = function (IteratorConstructor, NAME, next) {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/create-non-enumerable-property.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/core-js/internals/create-non-enumerable-property.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
+var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
+var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
+
+module.exports = DESCRIPTORS ? function (object, key, value) {
+  return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/create-property-descriptor.js":
 /*!**********************************************************************!*\
   !*** ./node_modules/core-js/internals/create-property-descriptor.js ***!
@@ -1798,7 +1829,7 @@ var createIteratorConstructor = __webpack_require__(/*! ../internals/create-iter
 var getPrototypeOf = __webpack_require__(/*! ../internals/object-get-prototype-of */ "./node_modules/core-js/internals/object-get-prototype-of.js");
 var setPrototypeOf = __webpack_require__(/*! ../internals/object-set-prototype-of */ "./node_modules/core-js/internals/object-set-prototype-of.js");
 var setToStringTag = __webpack_require__(/*! ../internals/set-to-string-tag */ "./node_modules/core-js/internals/set-to-string-tag.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
 var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "./node_modules/core-js/internals/is-pure.js");
@@ -1845,7 +1876,7 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
         if (setPrototypeOf) {
           setPrototypeOf(CurrentIteratorPrototype, IteratorPrototype);
         } else if (typeof CurrentIteratorPrototype[ITERATOR] != 'function') {
-          hide(CurrentIteratorPrototype, ITERATOR, returnThis);
+          createNonEnumerableProperty(CurrentIteratorPrototype, ITERATOR, returnThis);
         }
       }
       // Set @@toStringTag to native iterators
@@ -1862,7 +1893,7 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 
   // define iterator
   if ((!IS_PURE || FORCED) && IterablePrototype[ITERATOR] !== defaultIterator) {
-    hide(IterablePrototype, ITERATOR, defaultIterator);
+    createNonEnumerableProperty(IterablePrototype, ITERATOR, defaultIterator);
   }
   Iterators[NAME] = defaultIterator;
 
@@ -2000,7 +2031,7 @@ module.exports = [
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var getOwnPropertyDescriptor = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js/internals/object-get-own-property-descriptor.js").f;
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
 var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
 var copyConstructorProperties = __webpack_require__(/*! ../internals/copy-constructor-properties */ "./node_modules/core-js/internals/copy-constructor-properties.js");
@@ -2046,7 +2077,7 @@ module.exports = function (options, source) {
     }
     // add a flag to not completely full polyfills
     if (options.sham || (targetProperty && targetProperty.sham)) {
-      hide(sourceProperty, 'sham', true);
+      createNonEnumerableProperty(sourceProperty, 'sham', true);
     }
     // extend global
     redefine(target, key, sourceProperty, options);
@@ -2083,7 +2114,7 @@ module.exports = function (exec) {
 
 "use strict";
 
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
@@ -2128,14 +2159,21 @@ module.exports = function (KEY, length, exec, sham) {
     // Symbol-named RegExp methods call .exec
     var execCalled = false;
     var re = /a/;
-    re.exec = function () { execCalled = true; return null; };
 
     if (KEY === 'split') {
+      // We can't use real regex here since it causes deoptimization
+      // and serious performance degradation in V8
+      // https://github.com/zloirock/core-js/issues/306
+      re = {};
       // RegExp[@@split] doesn't call the regex's exec method, but first creates
       // a new one. We need to return the patched regex when creating the new one.
       re.constructor = {};
       re.constructor[SPECIES] = function () { return re; };
+      re.flags = '';
+      re[SYMBOL] = /./[SYMBOL];
     }
+
+    re.exec = function () { execCalled = true; return null; };
 
     re[SYMBOL]('');
     return !execCalled;
@@ -2172,7 +2210,7 @@ module.exports = function (KEY, length, exec, sham) {
       // 21.2.5.9 RegExp.prototype[@@search](string)
       : function (string) { return regexMethod.call(string, this); }
     );
-    if (sham) hide(RegExp.prototype[SYMBOL], 'sham', true);
+    if (sham) createNonEnumerableProperty(RegExp.prototype[SYMBOL], 'sham', true);
   }
 };
 
@@ -2347,18 +2385,17 @@ module.exports = function (it) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var O = 'object';
-var check = function (it) {
+/* WEBPACK VAR INJECTION */(function(global) {var check = function (it) {
   return it && it.Math == Math && it;
 };
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports =
   // eslint-disable-next-line no-undef
-  check(typeof globalThis == O && globalThis) ||
-  check(typeof window == O && window) ||
-  check(typeof self == O && self) ||
-  check(typeof global == O && global) ||
+  check(typeof globalThis == 'object' && globalThis) ||
+  check(typeof window == 'object' && window) ||
+  check(typeof self == 'object' && self) ||
+  check(typeof global == 'object' && global) ||
   // eslint-disable-next-line no-new-func
   Function('return this')();
 
@@ -2390,27 +2427,6 @@ module.exports = function (it, key) {
 /***/ (function(module, exports) {
 
 module.exports = {};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/hide.js":
-/*!************************************************!*\
-  !*** ./node_modules/core-js/internals/hide.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
-var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
-
-module.exports = DESCRIPTORS ? function (object, key, value) {
-  return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
-};
 
 
 /***/ }),
@@ -2584,7 +2600,7 @@ hiddenKeys[METADATA] = true;
 var NATIVE_WEAK_MAP = __webpack_require__(/*! ../internals/native-weak-map */ "./node_modules/core-js/internals/native-weak-map.js");
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var objectHas = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var sharedKey = __webpack_require__(/*! ../internals/shared-key */ "./node_modules/core-js/internals/shared-key.js");
 var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js/internals/hidden-keys.js");
@@ -2624,7 +2640,7 @@ if (NATIVE_WEAK_MAP) {
   var STATE = sharedKey('state');
   hiddenKeys[STATE] = true;
   set = function (it, metadata) {
-    hide(it, STATE, metadata);
+    createNonEnumerableProperty(it, STATE, metadata);
     return metadata;
   };
   get = function (it) {
@@ -2787,7 +2803,7 @@ var Result = function (stopped, result) {
 
 var iterate = module.exports = function (iterable, fn, that, AS_ENTRIES, IS_ITERATOR) {
   var boundFunction = bind(fn, that, AS_ENTRIES ? 2 : 1);
-  var iterator, iterFn, index, length, result, step;
+  var iterator, iterFn, index, length, result, next, step;
 
   if (IS_ITERATOR) {
     iterator = iterable;
@@ -2806,9 +2822,10 @@ var iterate = module.exports = function (iterable, fn, that, AS_ENTRIES, IS_ITER
     iterator = iterFn.call(iterable);
   }
 
-  while (!(step = iterator.next()).done) {
+  next = iterator.next;
+  while (!(step = next.call(iterator)).done) {
     result = callWithSafeIterationClosing(iterator, boundFunction, step.value, AS_ENTRIES);
-    if (result && result instanceof Result) return result;
+    if (typeof result == 'object' && result && result instanceof Result) return result;
   } return new Result(false);
 };
 
@@ -2829,7 +2846,7 @@ iterate.stop = function (result) {
 "use strict";
 
 var getPrototypeOf = __webpack_require__(/*! ../internals/object-get-prototype-of */ "./node_modules/core-js/internals/object-get-prototype-of.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
 var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "./node_modules/core-js/internals/is-pure.js");
@@ -2856,7 +2873,9 @@ if ([].keys) {
 if (IteratorPrototype == undefined) IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-if (!IS_PURE && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
+if (!IS_PURE && !has(IteratorPrototype, ITERATOR)) {
+  createNonEnumerableProperty(IteratorPrototype, ITERATOR, returnThis);
+}
 
 module.exports = {
   IteratorPrototype: IteratorPrototype,
@@ -2910,13 +2929,18 @@ var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "./node_modules/co
 var ITERATOR = wellKnownSymbol('iterator');
 
 module.exports = !fails(function () {
-  var url = new URL('b?e=1', 'http://a');
+  var url = new URL('b?a=1&b=2&c=3', 'http://a');
   var searchParams = url.searchParams;
+  var result = '';
   url.pathname = 'c%20d';
+  searchParams.forEach(function (value, key) {
+    searchParams['delete']('b');
+    result += key + value;
+  });
   return (IS_PURE && !url.toJSON)
     || !searchParams.sort
-    || url.href !== 'http://a/c%20d?e=1'
-    || searchParams.get('e') !== '1'
+    || url.href !== 'http://a/c%20d?a=1&c=3'
+    || searchParams.get('c') !== '3'
     || String(new URLSearchParams('?a=1')) !== 'a=1'
     || !searchParams[ITERATOR]
     // throws in Edge
@@ -2925,7 +2949,11 @@ module.exports = !fails(function () {
     // not punycoded in Edge
     || new URL('http://тест').host !== 'xn--e1aybc'
     // not escaped in Chrome 62-
-    || new URL('http://a#б').hash !== '#%D0%B1';
+    || new URL('http://a#б').hash !== '#%D0%B1'
+    // fails in Chrome 66-
+    || result !== 'a1c3'
+    // throws in Safari
+    || new URL('http://x', undefined).host !== 'x';
 });
 
 
@@ -3619,7 +3647,7 @@ module.exports = function (target, src, options) {
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var shared = __webpack_require__(/*! ../internals/shared */ "./node_modules/core-js/internals/shared.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
 var nativeFunctionToString = __webpack_require__(/*! ../internals/function-to-string */ "./node_modules/core-js/internals/function-to-string.js");
@@ -3638,7 +3666,7 @@ shared('inspectSource', function (it) {
   var simple = options ? !!options.enumerable : false;
   var noTargetGet = options ? !!options.noTargetGet : false;
   if (typeof value == 'function') {
-    if (typeof key == 'string' && !has(value, 'name')) hide(value, 'name', key);
+    if (typeof key == 'string' && !has(value, 'name')) createNonEnumerableProperty(value, 'name', key);
     enforceInternalState(value).source = TEMPLATE.join(typeof key == 'string' ? key : '');
   }
   if (O === global) {
@@ -3651,7 +3679,7 @@ shared('inspectSource', function (it) {
     simple = true;
   }
   if (simple) O[key] = value;
-  else hide(O, key, value);
+  else createNonEnumerableProperty(O, key, value);
 // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 })(Function.prototype, 'toString', function toString() {
   return typeof this == 'function' && getInternalState(this).source || nativeFunctionToString.call(this);
@@ -3829,11 +3857,11 @@ module.exports = Object.is || function is(x, y) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
 module.exports = function (key, value) {
   try {
-    hide(global, key, value);
+    createNonEnumerableProperty(global, key, value);
   } catch (error) {
     global[key] = value;
   } return value;
@@ -3914,6 +3942,24 @@ module.exports = function (key) {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/shared-store.js":
+/*!********************************************************!*\
+  !*** ./node_modules/core-js/internals/shared-store.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
+
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || setGlobal(SHARED, {});
+
+module.exports = store;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/shared.js":
 /*!**************************************************!*\
   !*** ./node_modules/core-js/internals/shared.js ***!
@@ -3921,17 +3967,13 @@ module.exports = function (key) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
 var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "./node_modules/core-js/internals/is-pure.js");
-
-var SHARED = '__core-js_shared__';
-var store = global[SHARED] || setGlobal(SHARED, {});
+var store = __webpack_require__(/*! ../internals/shared-store */ "./node_modules/core-js/internals/shared-store.js");
 
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.2.1',
+  version: '3.4.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
 });
@@ -4190,12 +4232,30 @@ module.exports = function (argument) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(/*! ../internals/to-integer */ "./node_modules/core-js/internals/to-integer.js");
+var toPositiveInteger = __webpack_require__(/*! ../internals/to-positive-integer */ "./node_modules/core-js/internals/to-positive-integer.js");
 
 module.exports = function (it, BYTES) {
-  var offset = toInteger(it);
-  if (offset < 0 || offset % BYTES) throw RangeError('Wrong offset');
+  var offset = toPositiveInteger(it);
+  if (offset % BYTES) throw RangeError('Wrong offset');
   return offset;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/internals/to-positive-integer.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/core-js/internals/to-positive-integer.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(/*! ../internals/to-integer */ "./node_modules/core-js/internals/to-integer.js");
+
+module.exports = function (it) {
+  var result = toInteger(it);
+  if (result < 0) throw RangeError("The argument can't be less than 0");
+  return result;
 };
 
 
@@ -4243,7 +4303,7 @@ var ArrayBufferViewCore = __webpack_require__(/*! ../internals/array-buffer-view
 var ArrayBufferModule = __webpack_require__(/*! ../internals/array-buffer */ "./node_modules/core-js/internals/array-buffer.js");
 var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js/internals/an-instance.js");
 var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var toLength = __webpack_require__(/*! ../internals/to-length */ "./node_modules/core-js/internals/to-length.js");
 var toIndex = __webpack_require__(/*! ../internals/to-index */ "./node_modules/core-js/internals/to-index.js");
 var toOffset = __webpack_require__(/*! ../internals/to-offset */ "./node_modules/core-js/internals/to-offset.js");
@@ -4260,6 +4320,7 @@ var setSpecies = __webpack_require__(/*! ../internals/set-species */ "./node_mod
 var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
 var getOwnPropertyDescriptorModule = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js/internals/object-get-own-property-descriptor.js");
 var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js/internals/internal-state.js");
+var inheritIfRequired = __webpack_require__(/*! ../internals/inherit-if-required */ "./node_modules/core-js/internals/inherit-if-required.js");
 
 var getInternalState = InternalStateModule.get;
 var setInternalState = InternalStateModule.set;
@@ -4341,7 +4402,6 @@ if (DESCRIPTORS) {
     defineProperty: wrappedDefineProperty
   });
 
-  // eslint-disable-next-line max-statements
   module.exports = function (TYPE, BYTES, wrapper, CLAMPED) {
     var CONSTRUCTOR_NAME = TYPE + (CLAMPED ? 'Clamped' : '') + 'Array';
     var GETTER = 'get' + TYPE;
@@ -4417,28 +4477,34 @@ if (DESCRIPTORS) {
     } else if (TYPED_ARRAYS_CONSTRUCTORS_REQUIRES_WRAPPERS) {
       TypedArrayConstructor = wrapper(function (dummy, data, typedArrayOffset, $length) {
         anInstance(dummy, TypedArrayConstructor, CONSTRUCTOR_NAME);
-        if (!isObject(data)) return new NativeTypedArrayConstructor(toIndex(data));
-        if (isArrayBuffer(data)) return $length !== undefined
-          ? new NativeTypedArrayConstructor(data, toOffset(typedArrayOffset, BYTES), $length)
-          : typedArrayOffset !== undefined
-            ? new NativeTypedArrayConstructor(data, toOffset(typedArrayOffset, BYTES))
-            : new NativeTypedArrayConstructor(data);
-        if (isTypedArray(data)) return fromList(TypedArrayConstructor, data);
-        return typedArrayFrom.call(TypedArrayConstructor, data);
+        return inheritIfRequired(function () {
+          if (!isObject(data)) return new NativeTypedArrayConstructor(toIndex(data));
+          if (isArrayBuffer(data)) return $length !== undefined
+            ? new NativeTypedArrayConstructor(data, toOffset(typedArrayOffset, BYTES), $length)
+            : typedArrayOffset !== undefined
+              ? new NativeTypedArrayConstructor(data, toOffset(typedArrayOffset, BYTES))
+              : new NativeTypedArrayConstructor(data);
+          if (isTypedArray(data)) return fromList(TypedArrayConstructor, data);
+          return typedArrayFrom.call(TypedArrayConstructor, data);
+        }(), dummy, TypedArrayConstructor);
       });
 
       if (setPrototypeOf) setPrototypeOf(TypedArrayConstructor, TypedArray);
       forEach(getOwnPropertyNames(NativeTypedArrayConstructor), function (key) {
-        if (!(key in TypedArrayConstructor)) hide(TypedArrayConstructor, key, NativeTypedArrayConstructor[key]);
+        if (!(key in TypedArrayConstructor)) {
+          createNonEnumerableProperty(TypedArrayConstructor, key, NativeTypedArrayConstructor[key]);
+        }
       });
       TypedArrayConstructor.prototype = TypedArrayConstructorPrototype;
     }
 
     if (TypedArrayConstructorPrototype.constructor !== TypedArrayConstructor) {
-      hide(TypedArrayConstructorPrototype, 'constructor', TypedArrayConstructor);
+      createNonEnumerableProperty(TypedArrayConstructorPrototype, 'constructor', TypedArrayConstructor);
     }
 
-    if (TYPED_ARRAY_TAG) hide(TypedArrayConstructorPrototype, TYPED_ARRAY_TAG, CONSTRUCTOR_NAME);
+    if (TYPED_ARRAY_TAG) {
+      createNonEnumerableProperty(TypedArrayConstructorPrototype, TYPED_ARRAY_TAG, CONSTRUCTOR_NAME);
+    }
 
     exported[CONSTRUCTOR_NAME] = TypedArrayConstructor;
 
@@ -4447,11 +4513,11 @@ if (DESCRIPTORS) {
     }, exported);
 
     if (!(BYTES_PER_ELEMENT in TypedArrayConstructor)) {
-      hide(TypedArrayConstructor, BYTES_PER_ELEMENT, BYTES);
+      createNonEnumerableProperty(TypedArrayConstructor, BYTES_PER_ELEMENT, BYTES);
     }
 
     if (!(BYTES_PER_ELEMENT in TypedArrayConstructorPrototype)) {
-      hide(TypedArrayConstructorPrototype, BYTES_PER_ELEMENT, BYTES);
+      createNonEnumerableProperty(TypedArrayConstructorPrototype, BYTES_PER_ELEMENT, BYTES);
     }
 
     setSpecies(CONSTRUCTOR_NAME);
@@ -4481,11 +4547,12 @@ module.exports = function from(source /* , mapfn, thisArg */) {
   var mapfn = argumentsLength > 1 ? arguments[1] : undefined;
   var mapping = mapfn !== undefined;
   var iteratorMethod = getIteratorMethod(O);
-  var i, length, result, step, iterator;
+  var i, length, result, step, iterator, next;
   if (iteratorMethod != undefined && !isArrayIteratorMethod(iteratorMethod)) {
     iterator = iteratorMethod.call(O);
+    next = iterator.next;
     O = [];
-    while (!(step = iterator.next()).done) {
+    while (!(step = next.call(iterator)).done) {
       O.push(step.value);
     }
   }
@@ -4529,7 +4596,7 @@ module.exports = !NATIVE_ARRAY_BUFFER_VIEWS || !fails(function () {
   new Int8Array(1.5);
   new Int8Array(iterable);
 }, true) || fails(function () {
-  // Safari 11 bug
+  // Safari (11+) bug - a reason why even Safari 13 should load a typed array polyfill
   return new Int8Array(new ArrayBuffer(2), 1, undefined).length !== 1;
 });
 
@@ -4549,6 +4616,51 @@ var postfix = Math.random();
 module.exports = function (key) {
   return 'Symbol(' + String(key === undefined ? '' : key) + ')_' + (++id + postfix).toString(36);
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/internals/user-agent.js":
+/*!******************************************************!*\
+  !*** ./node_modules/core-js/internals/user-agent.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js/internals/get-built-in.js");
+
+module.exports = getBuiltIn('navigator', 'userAgent') || '';
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/internals/v8-version.js":
+/*!******************************************************!*\
+  !*** ./node_modules/core-js/internals/v8-version.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+var userAgent = __webpack_require__(/*! ../internals/user-agent */ "./node_modules/core-js/internals/user-agent.js");
+
+var process = global.process;
+var versions = process && process.versions;
+var v8 = versions && versions.v8;
+var match, version;
+
+if (v8) {
+  match = v8.split('.');
+  version = match[0] + match[1];
+} else if (userAgent) {
+  match = userAgent.match(/Edge\/(\d+)/);
+  if (!match || match[1] >= 74) {
+    match = userAgent.match(/Chrome\/(\d+)/);
+    if (match) version = match[1];
+  }
+}
+
+module.exports = version && +version;
 
 
 /***/ }),
@@ -4657,12 +4769,16 @@ var createProperty = __webpack_require__(/*! ../internals/create-property */ "./
 var arraySpeciesCreate = __webpack_require__(/*! ../internals/array-species-create */ "./node_modules/core-js/internals/array-species-create.js");
 var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "./node_modules/core-js/internals/array-method-has-species-support.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
+var V8_VERSION = __webpack_require__(/*! ../internals/v8-version */ "./node_modules/core-js/internals/v8-version.js");
 
 var IS_CONCAT_SPREADABLE = wellKnownSymbol('isConcatSpreadable');
 var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
 var MAXIMUM_ALLOWED_INDEX_EXCEEDED = 'Maximum allowed index exceeded';
 
-var IS_CONCAT_SPREADABLE_SUPPORT = !fails(function () {
+// We can't use this feature detection in V8 since it causes
+// deoptimization and serious performance degradation
+// https://github.com/zloirock/core-js/issues/679
+var IS_CONCAT_SPREADABLE_SUPPORT = V8_VERSION >= 51 || !fails(function () {
   var array = [];
   array[IS_CONCAT_SPREADABLE] = false;
   return array.concat()[0] !== array;
@@ -4700,31 +4816,6 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
     }
     A.length = n;
     return A;
-  }
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/modules/es.array.filter.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/modules/es.array.filter.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
-var $filter = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").filter;
-var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "./node_modules/core-js/internals/array-method-has-species-support.js");
-
-// `Array.prototype.filter` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.filter
-// with adding support of @@species
-$({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('filter') }, {
-  filter: function filter(callbackfn /* , thisArg */) {
-    return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
 
@@ -4955,6 +5046,36 @@ $({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('map') }
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.array.reverse.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.array.reverse.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var isArray = __webpack_require__(/*! ../internals/is-array */ "./node_modules/core-js/internals/is-array.js");
+
+var nativeReverse = [].reverse;
+var test = [1, 2];
+
+// `Array.prototype.reverse` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.reverse
+// fix for Safari 12.0 bug
+// https://bugs.webkit.org/show_bug.cgi?id=188794
+$({ target: 'Array', proto: true, forced: String(test) === String(test.reverse()) }, {
+  reverse: function reverse() {
+    // eslint-disable-next-line no-self-assign
+    if (isArray(this)) this.length = this.length;
+    return nativeReverse.call(this);
+  }
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.array.slice.js":
 /*!********************************************************!*\
   !*** ./node_modules/core-js/modules/es.array.slice.js ***!
@@ -5027,8 +5148,8 @@ var toObject = __webpack_require__(/*! ../internals/to-object */ "./node_modules
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
 var sloppyArrayMethod = __webpack_require__(/*! ../internals/sloppy-array-method */ "./node_modules/core-js/internals/sloppy-array-method.js");
 
-var nativeSort = [].sort;
-var test = [1, 2, 3];
+var test = [];
+var nativeSort = test.sort;
 
 // IE8-
 var FAILS_ON_UNDEFINED = fails(function () {
@@ -5186,41 +5307,6 @@ var $entries = __webpack_require__(/*! ../internals/object-to-array */ "./node_m
 $({ target: 'Object', stat: true }, {
   entries: function entries(O) {
     return $entries(O);
-  }
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/modules/es.object.get-own-property-descriptors.js":
-/*!********************************************************************************!*\
-  !*** ./node_modules/core-js/modules/es.object.get-own-property-descriptors.js ***!
-  \********************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var ownKeys = __webpack_require__(/*! ../internals/own-keys */ "./node_modules/core-js/internals/own-keys.js");
-var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js/internals/to-indexed-object.js");
-var getOwnPropertyDescriptorModule = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js/internals/object-get-own-property-descriptor.js");
-var createProperty = __webpack_require__(/*! ../internals/create-property */ "./node_modules/core-js/internals/create-property.js");
-
-// `Object.getOwnPropertyDescriptors` method
-// https://tc39.github.io/ecma262/#sec-object.getownpropertydescriptors
-$({ target: 'Object', stat: true, sham: !DESCRIPTORS }, {
-  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object) {
-    var O = toIndexedObject(object);
-    var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
-    var keys = ownKeys(O);
-    var result = {};
-    var index = 0;
-    var key, descriptor;
-    while (keys.length > index) {
-      descriptor = getOwnPropertyDescriptor(O, key = keys[index++]);
-      if (descriptor !== undefined) createProperty(result, key, descriptor);
-    }
-    return result;
   }
 });
 
@@ -6165,14 +6251,14 @@ if (NATIVE_WEAK_MAP && IS_IE11) {
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var DOMIterables = __webpack_require__(/*! ../internals/dom-iterables */ "./node_modules/core-js/internals/dom-iterables.js");
 var forEach = __webpack_require__(/*! ../internals/array-for-each */ "./node_modules/core-js/internals/array-for-each.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
 for (var COLLECTION_NAME in DOMIterables) {
   var Collection = global[COLLECTION_NAME];
   var CollectionPrototype = Collection && Collection.prototype;
   // some Chrome versions have non-configurable methods on DOMTokenList
   if (CollectionPrototype && CollectionPrototype.forEach !== forEach) try {
-    hide(CollectionPrototype, 'forEach', forEach);
+    createNonEnumerableProperty(CollectionPrototype, 'forEach', forEach);
   } catch (error) {
     CollectionPrototype.forEach = forEach;
   }
@@ -6191,7 +6277,7 @@ for (var COLLECTION_NAME in DOMIterables) {
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var DOMIterables = __webpack_require__(/*! ../internals/dom-iterables */ "./node_modules/core-js/internals/dom-iterables.js");
 var ArrayIteratorMethods = __webpack_require__(/*! ../modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
 
 var ITERATOR = wellKnownSymbol('iterator');
@@ -6204,15 +6290,17 @@ for (var COLLECTION_NAME in DOMIterables) {
   if (CollectionPrototype) {
     // some Chrome versions have non-configurable methods on DOMTokenList
     if (CollectionPrototype[ITERATOR] !== ArrayValues) try {
-      hide(CollectionPrototype, ITERATOR, ArrayValues);
+      createNonEnumerableProperty(CollectionPrototype, ITERATOR, ArrayValues);
     } catch (error) {
       CollectionPrototype[ITERATOR] = ArrayValues;
     }
-    if (!CollectionPrototype[TO_STRING_TAG]) hide(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
+    if (!CollectionPrototype[TO_STRING_TAG]) {
+      createNonEnumerableProperty(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
+    }
     if (DOMIterables[COLLECTION_NAME]) for (var METHOD_NAME in ArrayIteratorMethods) {
       // some Chrome versions have non-configurable methods on DOMTokenList
       if (CollectionPrototype[METHOD_NAME] !== ArrayIteratorMethods[METHOD_NAME]) try {
-        hide(CollectionPrototype, METHOD_NAME, ArrayIteratorMethods[METHOD_NAME]);
+        createNonEnumerableProperty(CollectionPrototype, METHOD_NAME, ArrayIteratorMethods[METHOD_NAME]);
       } catch (error) {
         CollectionPrototype[METHOD_NAME] = ArrayIteratorMethods[METHOD_NAME];
       }
@@ -6235,6 +6323,7 @@ for (var COLLECTION_NAME in DOMIterables) {
 // TODO: in core-js@4, move /modules/ dependencies to public entries for better optimization by tools like `preset-env`
 __webpack_require__(/*! ../modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
 var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js/internals/get-built-in.js");
 var USE_NATIVE_URL = __webpack_require__(/*! ../internals/native-url */ "./node_modules/core-js/internals/native-url.js");
 var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
 var redefineAll = __webpack_require__(/*! ../internals/redefine-all */ "./node_modules/core-js/internals/redefine-all.js");
@@ -6244,12 +6333,17 @@ var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */
 var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js/internals/an-instance.js");
 var hasOwn = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var bind = __webpack_require__(/*! ../internals/bind-context */ "./node_modules/core-js/internals/bind-context.js");
+var classof = __webpack_require__(/*! ../internals/classof */ "./node_modules/core-js/internals/classof.js");
 var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
+var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js/internals/object-create.js");
+var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
 var getIterator = __webpack_require__(/*! ../internals/get-iterator */ "./node_modules/core-js/internals/get-iterator.js");
 var getIteratorMethod = __webpack_require__(/*! ../internals/get-iterator-method */ "./node_modules/core-js/internals/get-iterator-method.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
 
+var $fetch = getBuiltIn('fetch');
+var Headers = getBuiltIn('Headers');
 var ITERATOR = wellKnownSymbol('iterator');
 var URL_SEARCH_PARAMS = 'URLSearchParams';
 var URL_SEARCH_PARAMS_ITERATOR = URL_SEARCH_PARAMS + 'Iterator';
@@ -6354,7 +6448,7 @@ var URLSearchParamsConstructor = function URLSearchParams(/* init */) {
   var init = arguments.length > 0 ? arguments[0] : undefined;
   var that = this;
   var entries = [];
-  var iteratorMethod, iterator, step, entryIterator, first, second, key;
+  var iteratorMethod, iterator, next, step, entryIterator, entryNext, first, second, key;
 
   setInternalState(that, {
     type: URL_SEARCH_PARAMS,
@@ -6368,12 +6462,14 @@ var URLSearchParamsConstructor = function URLSearchParams(/* init */) {
       iteratorMethod = getIteratorMethod(init);
       if (typeof iteratorMethod === 'function') {
         iterator = iteratorMethod.call(init);
-        while (!(step = iterator.next()).done) {
+        next = iterator.next;
+        while (!(step = next.call(iterator)).done) {
           entryIterator = getIterator(anObject(step.value));
+          entryNext = entryIterator.next;
           if (
-            (first = entryIterator.next()).done ||
-            (second = entryIterator.next()).done ||
-            !entryIterator.next().done
+            (first = entryNext.call(entryIterator)).done ||
+            (second = entryNext.call(entryIterator)).done ||
+            !entryNext.call(entryIterator).done
           ) throw TypeError('Expected sequence with length 2');
           entries.push({ key: first.value + '', value: second.value + '' });
         }
@@ -6537,6 +6633,34 @@ setToStringTag(URLSearchParamsConstructor, URL_SEARCH_PARAMS);
 $({ global: true, forced: !USE_NATIVE_URL }, {
   URLSearchParams: URLSearchParamsConstructor
 });
+
+// Wrap `fetch` for correct work with polyfilled `URLSearchParams`
+// https://github.com/zloirock/core-js/issues/674
+if (!USE_NATIVE_URL && typeof $fetch == 'function' && typeof Headers == 'function') {
+  $({ global: true, enumerable: true, forced: true }, {
+    fetch: function fetch(input /* , init */) {
+      var args = [input];
+      var init, body, headers;
+      if (arguments.length > 1) {
+        init = arguments[1];
+        if (isObject(init)) {
+          body = init.body;
+          if (classof(body) === URL_SEARCH_PARAMS) {
+            headers = init.headers ? new Headers(init.headers) : new Headers();
+            if (!headers.has('content-type')) {
+              headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            }
+            init = create(init, {
+              body: createPropertyDescriptor(0, String(body)),
+              headers: createPropertyDescriptor(0, headers)
+            });
+          }
+        }
+        args.push(init);
+      } return $fetch.apply(this, args);
+    }
+  });
+}
 
 module.exports = {
   URLSearchParams: URLSearchParamsConstructor,
@@ -6816,7 +6940,6 @@ var percentEncode = function (char, set) {
 var specialSchemes = {
   ftp: 21,
   file: null,
-  gopher: 70,
   http: 80,
   https: 443,
   ws: 80,
@@ -37035,10 +37158,33 @@ return jQuery;
 
 /*!
  * 
- * midicube 0.6.0 built on 2019-08-31.
+ * midicube 0.6.1 built on 2019-11-24.
  * 
  */
-!function(t,e){ true?module.exports=e():undefined}(window,function(){return function(t){var e={};function r(n){if(e[n])return e[n].exports;var o=e[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=t,r.c=e,r.d=function(t,e,n){r.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:n})},r.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},r.t=function(t,e){if(1&e&&(t=r(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)r.d(n,o,function(e){return t[e]}.bind(null,o));return n},r.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return r.d(e,"a",e),e},r.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},r.p="",r(r.s=164)}([function(t,e,r){"use strict";var n,o=r(5),i=r(1),a=r(11),u=r(8),c=r(51),s=r(9),f=r(13),l=r(7).f,p=r(50),d=r(37),h=r(4),v=r(44),y=i.DataView,g=y&&y.prototype,_=i.Int8Array,m=_&&_.prototype,b=i.Uint8ClampedArray,A=b&&b.prototype,E=_&&p(_),w=m&&p(m),x=Object.prototype,S=x.isPrototypeOf,T=h("toStringTag"),O=v("TYPED_ARRAY_TAG"),I=!(!i.ArrayBuffer||!y),k=I&&!!d&&"Opera"!==c(i.opera),M=!1,C={Int8Array:1,Uint8Array:1,Uint8ClampedArray:1,Int16Array:2,Uint16Array:2,Int32Array:4,Uint32Array:4,Float32Array:4,Float64Array:8},q=function(t){return a(t)&&u(C,c(t))};for(n in C)i[n]||(k=!1);if((!k||"function"!=typeof E||E===Function.prototype)&&(E=function(){throw TypeError("Incorrect invocation")},k))for(n in C)i[n]&&d(i[n],E);if((!k||!w||w===x)&&(w=E.prototype,k))for(n in C)i[n]&&d(i[n].prototype,w);if(k&&p(A)!==w&&d(A,w),o&&!u(w,T))for(n in M=!0,l(w,T,{get:function(){return a(this)?this[O]:void 0}}),C)i[n]&&s(i[n],O,n);I&&d&&p(g)!==x&&d(g,x),t.exports={NATIVE_ARRAY_BUFFER:I,NATIVE_ARRAY_BUFFER_VIEWS:k,TYPED_ARRAY_TAG:M&&O,aTypedArray:function(t){if(q(t))return t;throw TypeError("Target is not a typed array")},aTypedArrayConstructor:function(t){if(d){if(S.call(E,t))return t}else for(var e in C)if(u(C,n)){var r=i[e];if(r&&(t===r||S.call(r,t)))return t}throw TypeError("Target is not a typed array constructor")},exportProto:function(t,e,r){if(o){if(r)for(var n in C){var a=i[n];a&&u(a.prototype,t)&&delete a.prototype[t]}w[t]&&!r||f(w,t,r?e:k&&m[t]||e)}},exportStatic:function(t,e,r){var n,a;if(o){if(d){if(r)for(n in C)(a=i[n])&&u(a,t)&&delete a[t];if(E[t]&&!r)return;try{return f(E,t,r?e:k&&_[t]||e)}catch(t){}}for(n in C)!(a=i[n])||a[t]&&!r||f(a,t,e)}},isView:function(t){var e=c(t);return"DataView"===e||u(C,e)},isTypedArray:q,TypedArray:E,TypedArrayPrototype:w}},function(t,e,r){(function(e){var r="object",n=function(t){return t&&t.Math==Math&&t};t.exports=n(typeof globalThis==r&&globalThis)||n(typeof window==r&&window)||n(typeof self==r&&self)||n(typeof e==r&&e)||Function("return this")()}).call(this,r(100))},function(t,e,r){var n=r(1),o=r(33).f,i=r(9),a=r(13),u=r(55),c=r(71),s=r(75);t.exports=function(t,e){var r,f,l,p,d,h=t.target,v=t.global,y=t.stat;if(r=v?n:y?n[h]||u(h,{}):(n[h]||{}).prototype)for(f in e){if(p=e[f],l=t.noTargetGet?(d=o(r,f))&&d.value:r[f],!s(v?f:h+(y?".":"#")+f,t.forced)&&void 0!==l){if(typeof p==typeof l)continue;c(p,l)}(t.sham||l&&l.sham)&&i(p,"sham",!0),a(r,f,p,t)}}},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e,r){var n=r(1),o=r(34),i=r(44),a=r(76),u=n.Symbol,c=o("wks");t.exports=function(t){return c[t]||(c[t]=a&&u[t]||(a?u:i)("Symbol."+t))}},function(t,e,r){var n=r(3);t.exports=!n(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e,r){var n=r(17),o=Math.min;t.exports=function(t){return t>0?o(n(t),9007199254740991):0}},function(t,e,r){var n=r(5),o=r(68),i=r(10),a=r(24),u=Object.defineProperty;e.f=n?u:function(t,e,r){if(i(t),e=a(e,!0),i(r),o)try{return u(t,e,r)}catch(t){}if("get"in r||"set"in r)throw TypeError("Accessors not supported");return"value"in r&&(t[e]=r.value),t}},function(t,e){var r={}.hasOwnProperty;t.exports=function(t,e){return r.call(t,e)}},function(t,e,r){var n=r(5),o=r(7),i=r(21);t.exports=n?function(t,e,r){return o.f(t,e,i(1,r))}:function(t,e,r){return t[e]=r,t}},function(t,e,r){var n=r(11);t.exports=function(t){if(!n(t))throw TypeError(String(t)+" is not an object");return t}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,r){var n=r(23);t.exports=function(t){return Object(n(t))}},function(t,e,r){var n=r(1),o=r(34),i=r(9),a=r(8),u=r(55),c=r(70),s=r(25),f=s.get,l=s.enforce,p=String(c).split("toString");o("inspectSource",function(t){return c.call(t)}),(t.exports=function(t,e,r,o){var c=!!o&&!!o.unsafe,s=!!o&&!!o.enumerable,f=!!o&&!!o.noTargetGet;"function"==typeof r&&("string"!=typeof e||a(r,"name")||i(r,"name",e),l(r).source=p.join("string"==typeof e?e:"")),t!==n?(c?!f&&t[e]&&(s=!0):delete t[e],s?t[e]=r:i(t,e,r)):s?t[e]=r:u(e,r)})(Function.prototype,"toString",function(){return"function"==typeof this&&f(this).source||c.call(this)})},function(t,e,r){var n=r(41),o=r(23);t.exports=function(t){return n(o(t))}},function(t,e,r){var n=r(58),o=r(41),i=r(12),a=r(6),u=r(106),c=[].push,s=function(t){var e=1==t,r=2==t,s=3==t,f=4==t,l=6==t,p=5==t||l;return function(d,h,v,y){for(var g,_,m=i(d),b=o(m),A=n(h,v,3),E=a(b.length),w=0,x=y||u,S=e?x(d,E):r?x(d,0):void 0;E>w;w++)if((p||w in b)&&(_=A(g=b[w],w,m),t))if(e)S[w]=_;else if(_)switch(t){case 3:return!0;case 5:return g;case 6:return w;case 2:c.call(S,g)}else if(f)return!1;return l?-1:s||f?f:S}};t.exports={forEach:s(0),map:s(1),filter:s(2),some:s(3),every:s(4),find:s(5),findIndex:s(6)}},function(t,e,r){"use strict";var n=r(14),o=r(107),i=r(36),a=r(25),u=r(79),c=a.set,s=a.getterFor("Array Iterator");t.exports=u(Array,"Array",function(t,e){c(this,{type:"Array Iterator",target:n(t),index:0,kind:e})},function(){var t=s(this),e=t.target,r=t.kind,n=t.index++;return!e||n>=e.length?(t.target=void 0,{value:void 0,done:!0}):"keys"==r?{value:n,done:!1}:"values"==r?{value:e[n],done:!1}:{value:[n,e[n]],done:!1}},"values"),i.Arguments=i.Array,o("keys"),o("values"),o("entries")},function(t,e){var r=Math.ceil,n=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?n:r)(t)}},function(t,e,r){var n=r(13),o=r(113),i=Object.prototype;o!==i.toString&&n(i,"toString",o,{unsafe:!0})},function(t,e,r){"use strict";var n=r(82).charAt,o=r(25),i=r(79),a=o.set,u=o.getterFor("String Iterator");i(String,"String",function(t){a(this,{type:"String Iterator",string:String(t),index:0})},function(){var t,e=u(this),r=e.string,o=e.index;return o>=r.length?{value:void 0,done:!0}:(t=n(r,o),e.index+=t.length,{value:t,done:!1})})},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(42),a=r(5),u=r(76),c=r(3),s=r(8),f=r(57),l=r(11),p=r(10),d=r(12),h=r(14),v=r(24),y=r(21),g=r(27),_=r(48),m=r(26),b=r(105),A=r(74),E=r(33),w=r(7),x=r(54),S=r(9),T=r(13),O=r(34),I=r(43),k=r(45),M=r(44),C=r(4),q=r(77),B=r(78),P=r(49),F=r(25),R=r(15).forEach,D=I("hidden"),L=C("toPrimitive"),j=F.set,U=F.getterFor("Symbol"),W=Object.prototype,K=o.Symbol,N=o.JSON,G=N&&N.stringify,V=E.f,Y=w.f,H=b.f,J=x.f,Z=O("symbols"),X=O("op-symbols"),Q=O("string-to-symbol-registry"),z=O("symbol-to-string-registry"),$=O("wks"),tt=o.QObject,et=!tt||!tt.prototype||!tt.prototype.findChild,rt=a&&c(function(){return 7!=g(Y({},"a",{get:function(){return Y(this,"a",{value:7}).a}})).a})?function(t,e,r){var n=V(W,e);n&&delete W[e],Y(t,e,r),n&&t!==W&&Y(W,e,n)}:Y,nt=function(t,e){var r=Z[t]=g(K.prototype);return j(r,{type:"Symbol",tag:t,description:e}),a||(r.description=e),r},ot=u&&"symbol"==typeof K.iterator?function(t){return"symbol"==typeof t}:function(t){return Object(t)instanceof K},it=function(t,e,r){t===W&&it(X,e,r),p(t);var n=v(e,!0);return p(r),s(Z,n)?(r.enumerable?(s(t,D)&&t[D][n]&&(t[D][n]=!1),r=g(r,{enumerable:y(0,!1)})):(s(t,D)||Y(t,D,y(1,{})),t[D][n]=!0),rt(t,n,r)):Y(t,n,r)},at=function(t,e){p(t);var r=h(e),n=_(r).concat(ft(r));return R(n,function(e){a&&!ut.call(r,e)||it(t,e,r[e])}),t},ut=function(t){var e=v(t,!0),r=J.call(this,e);return!(this===W&&s(Z,e)&&!s(X,e))&&(!(r||!s(this,e)||!s(Z,e)||s(this,D)&&this[D][e])||r)},ct=function(t,e){var r=h(t),n=v(e,!0);if(r!==W||!s(Z,n)||s(X,n)){var o=V(r,n);return!o||!s(Z,n)||s(r,D)&&r[D][n]||(o.enumerable=!0),o}},st=function(t){var e=H(h(t)),r=[];return R(e,function(t){s(Z,t)||s(k,t)||r.push(t)}),r},ft=function(t){var e=t===W,r=H(e?X:h(t)),n=[];return R(r,function(t){!s(Z,t)||e&&!s(W,t)||n.push(Z[t])}),n};u||(T((K=function(){if(this instanceof K)throw TypeError("Symbol is not a constructor");var t=arguments.length&&void 0!==arguments[0]?String(arguments[0]):void 0,e=M(t),r=function(t){this===W&&r.call(X,t),s(this,D)&&s(this[D],e)&&(this[D][e]=!1),rt(this,e,y(1,t))};return a&&et&&rt(W,e,{configurable:!0,set:r}),nt(e,t)}).prototype,"toString",function(){return U(this).tag}),x.f=ut,w.f=it,E.f=ct,m.f=b.f=st,A.f=ft,a&&(Y(K.prototype,"description",{configurable:!0,get:function(){return U(this).description}}),i||T(W,"propertyIsEnumerable",ut,{unsafe:!0})),q.f=function(t){return nt(C(t),t)}),n({global:!0,wrap:!0,forced:!u,sham:!u},{Symbol:K}),R(_($),function(t){B(t)}),n({target:"Symbol",stat:!0,forced:!u},{for:function(t){var e=String(t);if(s(Q,e))return Q[e];var r=K(e);return Q[e]=r,z[r]=e,r},keyFor:function(t){if(!ot(t))throw TypeError(t+" is not a symbol");if(s(z,t))return z[t]},useSetter:function(){et=!0},useSimple:function(){et=!1}}),n({target:"Object",stat:!0,forced:!u,sham:!a},{create:function(t,e){return void 0===e?g(t):at(g(t),e)},defineProperty:it,defineProperties:at,getOwnPropertyDescriptor:ct}),n({target:"Object",stat:!0,forced:!u},{getOwnPropertyNames:st,getOwnPropertySymbols:ft}),n({target:"Object",stat:!0,forced:c(function(){A.f(1)})},{getOwnPropertySymbols:function(t){return A.f(d(t))}}),N&&n({target:"JSON",stat:!0,forced:!u||c(function(){var t=K();return"[null]"!=G([t])||"{}"!=G({a:t})||"{}"!=G(Object(t))})},{stringify:function(t){for(var e,r,n=[t],o=1;arguments.length>o;)n.push(arguments[o++]);if(r=e=n[1],(l(e)||void 0!==t)&&!ot(t))return f(e)||(e=function(t,e){if("function"==typeof r&&(e=r.call(this,t,e)),!ot(e))return e}),n[1]=e,G.apply(N,n)}}),K.prototype[L]||S(K.prototype,L,K.prototype.valueOf),P(K,"Symbol"),k[D]=!0},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e){var r={}.toString;t.exports=function(t){return r.call(t).slice(8,-1)}},function(t,e){t.exports=function(t){if(null==t)throw TypeError("Can't call method on "+t);return t}},function(t,e,r){var n=r(11);t.exports=function(t,e){if(!n(t))return t;var r,o;if(e&&"function"==typeof(r=t.toString)&&!n(o=r.call(t)))return o;if("function"==typeof(r=t.valueOf)&&!n(o=r.call(t)))return o;if(!e&&"function"==typeof(r=t.toString)&&!n(o=r.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,e,r){var n,o,i,a=r(101),u=r(1),c=r(11),s=r(9),f=r(8),l=r(43),p=r(45),d=u.WeakMap;if(a){var h=new d,v=h.get,y=h.has,g=h.set;n=function(t,e){return g.call(h,t,e),e},o=function(t){return v.call(h,t)||{}},i=function(t){return y.call(h,t)}}else{var _=l("state");p[_]=!0,n=function(t,e){return s(t,_,e),e},o=function(t){return f(t,_)?t[_]:{}},i=function(t){return f(t,_)}}t.exports={set:n,get:o,has:i,enforce:function(t){return i(t)?o(t):n(t,{})},getterFor:function(t){return function(e){var r;if(!c(e)||(r=o(e)).type!==t)throw TypeError("Incompatible receiver, "+t+" required");return r}}}},function(t,e,r){var n=r(73),o=r(56).concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return n(t,o)}},function(t,e,r){var n=r(10),o=r(103),i=r(56),a=r(45),u=r(104),c=r(69),s=r(43)("IE_PROTO"),f=function(){},l=function(){var t,e=c("iframe"),r=i.length;for(e.style.display="none",u.appendChild(e),e.src=String("javascript:"),(t=e.contentWindow.document).open(),t.write("<script>document.F=Object<\/script>"),t.close(),l=t.F;r--;)delete l.prototype[i[r]];return l()};t.exports=Object.create||function(t,e){var r;return null!==t?(f.prototype=n(t),r=new f,f.prototype=null,r[s]=t):r=l(),void 0===e?r:o(r,e)},a[s]=!0},function(t,e,r){"use strict";var n=r(2),o=r(5),i=r(1),a=r(8),u=r(11),c=r(7).f,s=r(71),f=i.Symbol;if(o&&"function"==typeof f&&(!("description"in f.prototype)||void 0!==f().description)){var l={},p=function(){var t=arguments.length<1||void 0===arguments[0]?void 0:String(arguments[0]),e=this instanceof p?new f(t):void 0===t?f():f(t);return""===t&&(l[e]=!0),e};s(p,f);var d=p.prototype=f.prototype;d.constructor=p;var h=d.toString,v="Symbol(test)"==String(f("test")),y=/^Symbol\((.*)\)[^)]+$/;c(d,"description",{configurable:!0,get:function(){var t=u(this)?this.valueOf():this,e=h.call(t);if(a(l,t))return"";var r=v?e.slice(7,-1):e.replace(y,"$1");return""===r?void 0:r}}),n({global:!0,forced:!0},{Symbol:p})}},function(t,e,r){r(78)("iterator")},function(t,e,r){var n=r(1),o=r(114),i=r(16),a=r(9),u=r(4),c=u("iterator"),s=u("toStringTag"),f=i.values;for(var l in o){var p=n[l],d=p&&p.prototype;if(d){if(d[c]!==f)try{a(d,c,f)}catch(t){d[c]=f}if(d[s]||a(d,s,l),o[l])for(var h in i)if(d[h]!==i[h])try{a(d,h,i[h])}catch(t){d[h]=i[h]}}}},function(t,e,r){"use strict";var n=r(2),o=r(52);n({target:"RegExp",proto:!0,forced:/./.exec!==o},{exec:o})},function(t,e,r){var n=r(10),o=r(59),i=r(4)("species");t.exports=function(t,e){var r,a=n(t).constructor;return void 0===a||null==(r=n(a)[i])?e:o(r)}},function(t,e,r){var n=r(5),o=r(54),i=r(21),a=r(14),u=r(24),c=r(8),s=r(68),f=Object.getOwnPropertyDescriptor;e.f=n?f:function(t,e){if(t=a(t),e=u(e,!0),s)try{return f(t,e)}catch(t){}if(c(t,e))return i(!o.f.call(t,e),t[e])}},function(t,e,r){var n=r(1),o=r(55),i=r(42),a=n["__core-js_shared__"]||o("__core-js_shared__",{});(t.exports=function(t,e){return a[t]||(a[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.2.1",mode:i?"pure":"global",copyright:"© 2019 Denis Pushkarev (zloirock.ru)"})},function(t,e,r){var n=r(17),o=Math.max,i=Math.min;t.exports=function(t,e){var r=n(t);return r<0?o(r+e,0):i(r,e)}},function(t,e){t.exports={}},function(t,e,r){var n=r(10),o=r(109);t.exports=Object.setPrototypeOf||("__proto__"in{}?function(){var t,e=!1,r={};try{(t=Object.getOwnPropertyDescriptor(Object.prototype,"__proto__").set).call(r,[]),e=r instanceof Array}catch(t){}return function(r,i){return n(r),o(i),e?t.call(r,i):r.__proto__=i,r}}():void 0)},function(t,e,r){var n=r(2),o=r(5);n({target:"Object",stat:!0,forced:!o,sham:!o},{defineProperty:r(7).f})},function(t,e,r){"use strict";var n=r(2),o=r(47).indexOf,i=r(60),a=[].indexOf,u=!!a&&1/[1].indexOf(1,-0)<0,c=i("indexOf");n({target:"Array",proto:!0,forced:u||c},{indexOf:function(t){return u?a.apply(this,arguments)||0:o(this,t,arguments.length>1?arguments[1]:void 0)}})},function(t,e,r){var n=r(2),o=r(1),i=r(122),a=[].slice,u=function(t){return function(e,r){var n=arguments.length>2,o=n?a.call(arguments,2):void 0;return t(n?function(){("function"==typeof e?e:Function(e)).apply(this,o)}:e,r)}};n({global:!0,bind:!0,forced:/MSIE .\./.test(i)},{setTimeout:u(o.setTimeout),setInterval:u(o.setInterval)})},function(t,e,r){var n=r(3),o=r(22),i="".split;t.exports=n(function(){return!Object("z").propertyIsEnumerable(0)})?function(t){return"String"==o(t)?i.call(t,""):Object(t)}:Object},function(t,e){t.exports=!1},function(t,e,r){var n=r(34),o=r(44),i=n("keys");t.exports=function(t){return i[t]||(i[t]=o(t))}},function(t,e){var r=0,n=Math.random();t.exports=function(t){return"Symbol("+String(void 0===t?"":t)+")_"+(++r+n).toString(36)}},function(t,e){t.exports={}},function(t,e,r){var n=r(72),o=r(1),i=function(t){return"function"==typeof t?t:void 0};t.exports=function(t,e){return arguments.length<2?i(n[t])||i(o[t]):n[t]&&n[t][e]||o[t]&&o[t][e]}},function(t,e,r){var n=r(14),o=r(6),i=r(35),a=function(t){return function(e,r,a){var u,c=n(e),s=o(c.length),f=i(a,s);if(t&&r!=r){for(;s>f;)if((u=c[f++])!=u)return!0}else for(;s>f;f++)if((t||f in c)&&c[f]===r)return t||f||0;return!t&&-1}};t.exports={includes:a(!0),indexOf:a(!1)}},function(t,e,r){var n=r(73),o=r(56);t.exports=Object.keys||function(t){return n(t,o)}},function(t,e,r){var n=r(7).f,o=r(8),i=r(4)("toStringTag");t.exports=function(t,e,r){t&&!o(t=r?t:t.prototype,i)&&n(t,i,{configurable:!0,value:e})}},function(t,e,r){var n=r(8),o=r(12),i=r(43),a=r(81),u=i("IE_PROTO"),c=Object.prototype;t.exports=a?Object.getPrototypeOf:function(t){return t=o(t),n(t,u)?t[u]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?c:null}},function(t,e,r){var n=r(22),o=r(4)("toStringTag"),i="Arguments"==n(function(){return arguments}());t.exports=function(t){var e,r,a;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(r=function(t,e){try{return t[e]}catch(t){}}(e=Object(t),o))?r:i?n(e):"Object"==(a=n(e))&&"function"==typeof e.callee?"Arguments":a}},function(t,e,r){"use strict";var n,o,i=r(86),a=RegExp.prototype.exec,u=String.prototype.replace,c=a,s=(n=/a/,o=/b*/g,a.call(n,"a"),a.call(o,"a"),0!==n.lastIndex||0!==o.lastIndex),f=void 0!==/()??/.exec("")[1];(s||f)&&(c=function(t){var e,r,n,o,c=this;return f&&(r=new RegExp("^"+c.source+"$(?!\\s)",i.call(c))),s&&(e=c.lastIndex),n=a.call(c,t),s&&n&&(c.lastIndex=c.global?n.index+n[0].length:e),f&&n&&n.length>1&&u.call(n[0],r,function(){for(o=1;o<arguments.length-2;o++)void 0===arguments[o]&&(n[o]=void 0)}),n}),t.exports=c},function(t,e,r){"use strict";var n=r(88),o=r(121),i=r(10),a=r(23),u=r(32),c=r(89),s=r(6),f=r(90),l=r(52),p=r(3),d=[].push,h=Math.min,v=!p(function(){return!RegExp(4294967295,"y")});n("split",2,function(t,e,r){var n;return n="c"=="abbc".split(/(b)*/)[1]||4!="test".split(/(?:)/,-1).length||2!="ab".split(/(?:ab)*/).length||4!=".".split(/(.?)(.?)/).length||".".split(/()()/).length>1||"".split(/.?/).length?function(t,r){var n=String(a(this)),i=void 0===r?4294967295:r>>>0;if(0===i)return[];if(void 0===t)return[n];if(!o(t))return e.call(n,t,i);for(var u,c,s,f=[],p=(t.ignoreCase?"i":"")+(t.multiline?"m":"")+(t.unicode?"u":"")+(t.sticky?"y":""),h=0,v=new RegExp(t.source,p+"g");(u=l.call(v,n))&&!((c=v.lastIndex)>h&&(f.push(n.slice(h,u.index)),u.length>1&&u.index<n.length&&d.apply(f,u.slice(1)),s=u[0].length,h=c,f.length>=i));)v.lastIndex===u.index&&v.lastIndex++;return h===n.length?!s&&v.test("")||f.push(""):f.push(n.slice(h)),f.length>i?f.slice(0,i):f}:"0".split(void 0,0).length?function(t,r){return void 0===t&&0===r?[]:e.call(this,t,r)}:e,[function(e,r){var o=a(this),i=null==e?void 0:e[t];return void 0!==i?i.call(e,o,r):n.call(String(o),e,r)},function(t,o){var a=r(n,t,this,o,n!==e);if(a.done)return a.value;var l=i(t),p=String(this),d=u(l,RegExp),y=l.unicode,g=(l.ignoreCase?"i":"")+(l.multiline?"m":"")+(l.unicode?"u":"")+(v?"y":"g"),_=new d(v?l:"^(?:"+l.source+")",g),m=void 0===o?4294967295:o>>>0;if(0===m)return[];if(0===p.length)return null===f(_,p)?[p]:[];for(var b=0,A=0,E=[];A<p.length;){_.lastIndex=v?A:0;var w,x=f(_,v?p:p.slice(A));if(null===x||(w=h(s(_.lastIndex+(v?0:A)),p.length))===b)A=c(p,A,y);else{if(E.push(p.slice(b,A)),E.length===m)return E;for(var S=1;S<=x.length-1;S++)if(E.push(x[S]),E.length===m)return E;A=b=w}}return E.push(p.slice(b)),E}]},!v)},function(t,e,r){"use strict";var n={}.propertyIsEnumerable,o=Object.getOwnPropertyDescriptor,i=o&&!n.call({1:2},1);e.f=i?function(t){var e=o(this,t);return!!e&&e.enumerable}:n},function(t,e,r){var n=r(1),o=r(9);t.exports=function(t,e){try{o(n,t,e)}catch(r){n[t]=e}return e}},function(t,e){t.exports=["constructor","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","valueOf"]},function(t,e,r){var n=r(22);t.exports=Array.isArray||function(t){return"Array"==n(t)}},function(t,e,r){var n=r(59);t.exports=function(t,e,r){if(n(t),void 0===e)return t;switch(r){case 0:return function(){return t.call(e)};case 1:return function(r){return t.call(e,r)};case 2:return function(r,n){return t.call(e,r,n)};case 3:return function(r,n,o){return t.call(e,r,n,o)}}return function(){return t.apply(e,arguments)}}},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(String(t)+" is not a function");return t}},function(t,e,r){"use strict";var n=r(3);t.exports=function(t,e){var r=[][t];return!r||!n(function(){r.call(null,e||function(){throw 1},1)})}},function(t,e,r){var n=r(13),o=Date.prototype,i=o.toString,a=o.getTime;new Date(NaN)+""!="Invalid Date"&&n(o,"toString",function(){var t=a.call(this);return t==t?i.call(this):"Invalid Date"})},function(t,e,r){var n=r(2),o=r(12),i=r(48);n({target:"Object",stat:!0,forced:r(3)(function(){i(1)})},{keys:function(t){return i(o(t))}})},function(t,e,r){var n=r(2),o=r(124);n({global:!0,forced:parseInt!=o},{parseInt:o})},function(t,e,r){var n=r(23),o="["+r(65)+"]",i=RegExp("^"+o+o+"*"),a=RegExp(o+o+"*$"),u=function(t){return function(e){var r=String(n(e));return 1&t&&(r=r.replace(i,"")),2&t&&(r=r.replace(a,"")),r}};t.exports={start:u(1),end:u(2),trim:u(3)}},function(t,e){t.exports="\t\n\v\f\r                　\u2028\u2029\ufeff"},function(t,e,r){"use strict";var n=r(1),o=r(5),i=r(0).NATIVE_ARRAY_BUFFER,a=r(9),u=r(126),c=r(3),s=r(94),f=r(17),l=r(6),p=r(95),d=r(26).f,h=r(7).f,v=r(96),y=r(49),g=r(25),_=g.get,m=g.set,b=n.ArrayBuffer,A=b,E=n.DataView,w=n.Math,x=n.RangeError,S=w.abs,T=w.pow,O=w.floor,I=w.log,k=w.LN2,M=function(t,e,r){var n,o,i,a=new Array(r),u=8*r-e-1,c=(1<<u)-1,s=c>>1,f=23===e?T(2,-24)-T(2,-77):0,l=t<0||0===t&&1/t<0?1:0,p=0;for((t=S(t))!=t||t===1/0?(o=t!=t?1:0,n=c):(n=O(I(t)/k),t*(i=T(2,-n))<1&&(n--,i*=2),(t+=n+s>=1?f/i:f*T(2,1-s))*i>=2&&(n++,i/=2),n+s>=c?(o=0,n=c):n+s>=1?(o=(t*i-1)*T(2,e),n+=s):(o=t*T(2,s-1)*T(2,e),n=0));e>=8;a[p++]=255&o,o/=256,e-=8);for(n=n<<e|o,u+=e;u>0;a[p++]=255&n,n/=256,u-=8);return a[--p]|=128*l,a},C=function(t,e){var r,n=t.length,o=8*n-e-1,i=(1<<o)-1,a=i>>1,u=o-7,c=n-1,s=t[c--],f=127&s;for(s>>=7;u>0;f=256*f+t[c],c--,u-=8);for(r=f&(1<<-u)-1,f>>=-u,u+=e;u>0;r=256*r+t[c],c--,u-=8);if(0===f)f=1-a;else{if(f===i)return r?NaN:s?-1/0:1/0;r+=T(2,e),f-=a}return(s?-1:1)*r*T(2,f-e)},q=function(t){return t[3]<<24|t[2]<<16|t[1]<<8|t[0]},B=function(t){return[255&t]},P=function(t){return[255&t,t>>8&255]},F=function(t){return[255&t,t>>8&255,t>>16&255,t>>24&255]},R=function(t){return M(t,23,4)},D=function(t){return M(t,52,8)},L=function(t,e){h(t.prototype,e,{get:function(){return _(this)[e]}})},j=function(t,e,r,n){var o=p(+r),i=_(t);if(o+e>i.byteLength)throw x("Wrong index");var a=_(i.buffer).bytes,u=o+i.byteOffset,c=a.slice(u,u+e);return n?c:c.reverse()},U=function(t,e,r,n,o,i){var a=p(+r),u=_(t);if(a+e>u.byteLength)throw x("Wrong index");for(var c=_(u.buffer).bytes,s=a+u.byteOffset,f=n(+o),l=0;l<e;l++)c[s+l]=f[i?l:e-l-1]};if(i){if(!c(function(){b(1)})||!c(function(){new b(-1)})||c(function(){return new b,new b(1.5),new b(NaN),"ArrayBuffer"!=b.name})){for(var W,K=(A=function(t){return s(this,A),new b(p(t))}).prototype=b.prototype,N=d(b),G=0;N.length>G;)(W=N[G++])in A||a(A,W,b[W]);K.constructor=A}var V=new E(new A(2)),Y=E.prototype.setInt8;V.setInt8(0,2147483648),V.setInt8(1,2147483649),!V.getInt8(0)&&V.getInt8(1)||u(E.prototype,{setInt8:function(t,e){Y.call(this,t,e<<24>>24)},setUint8:function(t,e){Y.call(this,t,e<<24>>24)}},{unsafe:!0})}else A=function(t){s(this,A,"ArrayBuffer");var e=p(t);m(this,{bytes:v.call(new Array(e),0),byteLength:e}),o||(this.byteLength=e)},E=function(t,e,r){s(this,E,"DataView"),s(t,A,"DataView");var n=_(t).byteLength,i=f(e);if(i<0||i>n)throw x("Wrong offset");if(i+(r=void 0===r?n-i:l(r))>n)throw x("Wrong length");m(this,{buffer:t,byteLength:r,byteOffset:i}),o||(this.buffer=t,this.byteLength=r,this.byteOffset=i)},o&&(L(A,"byteLength"),L(E,"buffer"),L(E,"byteLength"),L(E,"byteOffset")),u(E.prototype,{getInt8:function(t){return j(this,1,t)[0]<<24>>24},getUint8:function(t){return j(this,1,t)[0]},getInt16:function(t){var e=j(this,2,t,arguments.length>1?arguments[1]:void 0);return(e[1]<<8|e[0])<<16>>16},getUint16:function(t){var e=j(this,2,t,arguments.length>1?arguments[1]:void 0);return e[1]<<8|e[0]},getInt32:function(t){return q(j(this,4,t,arguments.length>1?arguments[1]:void 0))},getUint32:function(t){return q(j(this,4,t,arguments.length>1?arguments[1]:void 0))>>>0},getFloat32:function(t){return C(j(this,4,t,arguments.length>1?arguments[1]:void 0),23)},getFloat64:function(t){return C(j(this,8,t,arguments.length>1?arguments[1]:void 0),52)},setInt8:function(t,e){U(this,1,t,B,e)},setUint8:function(t,e){U(this,1,t,B,e)},setInt16:function(t,e){U(this,2,t,P,e,arguments.length>2?arguments[2]:void 0)},setUint16:function(t,e){U(this,2,t,P,e,arguments.length>2?arguments[2]:void 0)},setInt32:function(t,e){U(this,4,t,F,e,arguments.length>2?arguments[2]:void 0)},setUint32:function(t,e){U(this,4,t,F,e,arguments.length>2?arguments[2]:void 0)},setFloat32:function(t,e){U(this,4,t,R,e,arguments.length>2?arguments[2]:void 0)},setFloat64:function(t,e){U(this,8,t,D,e,arguments.length>2?arguments[2]:void 0)}});y(A,"ArrayBuffer"),y(E,"DataView"),e.ArrayBuffer=A,e.DataView=E},function(module,__webpack_exports__,__webpack_require__){"use strict";__webpack_require__.d(__webpack_exports__,"a",function(){return Color});var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__=__webpack_require__(20),core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default=__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__),core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__=__webpack_require__(28),core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default=__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__),core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__=__webpack_require__(29),core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default=__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__),core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__=__webpack_require__(39),core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default=__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__),core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__=__webpack_require__(16),core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default=__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__),core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__=__webpack_require__(61),core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5___default=__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__),core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__=__webpack_require__(18),core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6___default=__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__),core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7__=__webpack_require__(162),core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7___default=__webpack_require__.n(core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7__),core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8__=__webpack_require__(63),core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8___default=__webpack_require__.n(core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8__),core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9__=__webpack_require__(31),core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9___default=__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9__),core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__=__webpack_require__(87),core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10___default=__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__),core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__=__webpack_require__(19),core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11___default=__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__),core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__=__webpack_require__(53),core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12___default=__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__),core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__=__webpack_require__(30),core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default=__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);function _typeof(t){return(_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}var Color={Space:{}};!function(){var useEval=!1,functions={},shortcuts={"HEX24>HSL":"HEX24>RGB>HSL","HEX32>HSLA":"HEX32>RGBA>HSLA","HEX24>CMYK":"HEX24>RGB>CMY>CMYK","RGB>CMYK":"RGB>CMY>CMYK"},root=Color.Space=function(color,route){shortcuts[route]&&(route=shortcuts[route]);var r=route.split(">");if("object"===_typeof(color)&&color[0]>=0){for(var type=r[0],tmp={},i=0;i<type.length;i++){var str=type.substr(i,1);tmp[str]=color[i]}color=tmp}if(functions[route])return functions[route](color);for(var f="color",pos=1,key=r[0];pos<r.length;pos++)pos>1&&(key=key.substr(key.indexOf("_")+1)),key+=(0===pos?"":"_")+r[pos],color=root[key](color),useEval&&(f="Color.Space."+key+"("+f+")");return useEval&&(functions[route]=eval("(function(color) { return "+f+" })")),color};root.RGB_W3=function(t){return"rgb("+(t.R>>0)+","+(t.G>>0)+","+(t.B>>0)+")"},root.RGBA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"rgba("+(t.R>>0)+","+(t.G>>0)+","+(t.B>>0)+","+e+")"},root.W3_RGB=function(t){t=t.substr(4,t.length-5).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2])}},root.W3_RGBA=function(t){t=t.substr(5,t.length-6).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2]),A:255*parseFloat(t[3])}},root.HSL_W3=function(t){return"hsl("+(t.H+.5>>0)+","+(t.S+.5>>0)+"%,"+(t.L+.5>>0)+"%)"},root.HSLA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"hsla("+(t.H+.5>>0)+","+(t.S+.5>>0)+"%,"+(t.L+.5>>0)+"%,"+e+")"},root.W3_HSL=function(t){t=t.substr(4,t.length-5).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2])}},root.W3_HSLA=function(t){t=t.substr(5,t.length-6).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2]),A:255*parseFloat(t[3])}},root.W3_HEX=root.W3_HEX24=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),3===t.length&&(t=t[0]+t[0]+t[1]+t[1]+t[2]+t[2]),parseInt("0x"+t)},root.W3_HEX32=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),6===t.length?parseInt("0xFF"+t):parseInt("0x"+t)},root.HEX_W3=root.HEX24_W3=function(t,e){e||(e=6),t||(t=0);for(var r=t.toString(16),n=r.length;n<e;)r="0"+r,n++;for(n=r.length;n>e;)r=r.substr(1),n--;return"#"+r},root.HEX32_W3=function(t){return root.HEX_W3(t,8)},root.HEX_RGB=root.HEX24_RGB=function(t){return{R:t>>16,G:t>>8&255,B:255&t}},root.HEX32_RGBA=function(t){return{R:t>>>16&255,G:t>>>8&255,B:255&t,A:t>>>24}},root.RGBA_HEX32=function(t){return(t.A<<24|t.R<<16|t.G<<8|t.B)>>>0},root.RGB_HEX24=root.RGB_HEX=function(t){return t.R<0&&(t.R=0),t.G<0&&(t.G=0),t.B<0&&(t.B=0),t.R>255&&(t.R=255),t.G>255&&(t.G=255),t.B>255&&(t.B=255),t.R<<16|t.G<<8|t.B},root.RGB_CMY=function(t){return{C:1-t.R/255,M:1-t.G/255,Y:1-t.B/255}},root.RGBA_HSLA=root.RGB_HSL=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a,s=(u+a)/2;if(0===c)e=0,r=0;else{r=s<.5?c/(u+a):c/(2-u-a);var f=((u-n)/6+c/2)/c,l=((u-o)/6+c/2)/c,p=((u-i)/6+c/2)/c;n===u?e=p-l:o===u?e=1/3+f-p:i===u&&(e=2/3+l-f),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,L:100*s,A:t.A}},root.RGBA_HSVA=root.RGB_HSV=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a;if(0===c)e=0,r=0;else{r=c/u;var s=((u-n)/6+c/2)/c,f=((u-o)/6+c/2)/c,l=((u-i)/6+c/2)/c;n===u?e=l-f:o===u?e=1/3+s-l:i===u&&(e=2/3+f-s),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,V:100*u,A:t.A}},root.CMY_RGB=function(t){return{R:Math.max(0,255*(1-t.C)),G:Math.max(0,255*(1-t.M)),B:Math.max(0,255*(1-t.Y))}},root.CMY_CMYK=function(t){var e=t.C,r=t.M,n=t.Y,o=Math.min(n,Math.min(r,Math.min(e,1)));return{C:e=Math.round((e-o)/(1-o)*100),M:r=Math.round((r-o)/(1-o)*100),Y:n=Math.round((n-o)/(1-o)*100),K:o=Math.round(100*o)}},root.CMYK_CMY=function(t){return{C:t.C*(1-t.K)+t.K,M:t.M*(1-t.K)+t.K,Y:t.Y*(1-t.K)+t.K}},root.HSLA_RGBA=root.HSL_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.L/100;return 0===c?e=r=n=s:(o=2*s-(i=s<.5?s*(1+c):s+c-c*s),(a=u+1/3)<0&&(a+=1),a>1&&(a-=1),e=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u)<0&&(a+=1),a>1&&(a-=1),r=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u-1/3)<0&&(a+=1),a>1&&(a-=1),n=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o),{R:255*e,G:255*r,B:255*n,A:t.A}},root.HSVA_RGBA=root.HSV_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.V/100;if(0===c)e=r=n=Math.round(255*s);else switch(u>=1&&(u=0),o=(u*=6)-Math.floor(u),i=Math.round(255*s*(1-c)),n=Math.round(255*s*(1-c*o)),a=Math.round(255*s*(1-c*(1-o))),s=Math.round(255*s),Math.floor(u)){case 0:e=s,r=a,n=i;break;case 1:e=n,r=s,n=i;break;case 2:e=i,r=s,n=a;break;case 3:e=i,r=n,n=s;break;case 4:e=a,r=i,n=s;break;case 5:e=s,r=i,n=n}return{R:e,G:r,B:n,A:t.A}}}()},function(t,e,r){var n=r(5),o=r(3),i=r(69);t.exports=!n&&!o(function(){return 7!=Object.defineProperty(i("div"),"a",{get:function(){return 7}}).a})},function(t,e,r){var n=r(1),o=r(11),i=n.document,a=o(i)&&o(i.createElement);t.exports=function(t){return a?i.createElement(t):{}}},function(t,e,r){var n=r(34);t.exports=n("native-function-to-string",Function.toString)},function(t,e,r){var n=r(8),o=r(102),i=r(33),a=r(7);t.exports=function(t,e){for(var r=o(e),u=a.f,c=i.f,s=0;s<r.length;s++){var f=r[s];n(t,f)||u(t,f,c(e,f))}}},function(t,e,r){t.exports=r(1)},function(t,e,r){var n=r(8),o=r(14),i=r(47).indexOf,a=r(45);t.exports=function(t,e){var r,u=o(t),c=0,s=[];for(r in u)!n(a,r)&&n(u,r)&&s.push(r);for(;e.length>c;)n(u,r=e[c++])&&(~i(s,r)||s.push(r));return s}},function(t,e){e.f=Object.getOwnPropertySymbols},function(t,e,r){var n=r(3),o=/#|\.prototype\./,i=function(t,e){var r=u[a(t)];return r==s||r!=c&&("function"==typeof e?n(e):!!e)},a=i.normalize=function(t){return String(t).replace(o,".").toLowerCase()},u=i.data={},c=i.NATIVE="N",s=i.POLYFILL="P";t.exports=i},function(t,e,r){var n=r(3);t.exports=!!Object.getOwnPropertySymbols&&!n(function(){return!String(Symbol())})},function(t,e,r){e.f=r(4)},function(t,e,r){var n=r(72),o=r(8),i=r(77),a=r(7).f;t.exports=function(t){var e=n.Symbol||(n.Symbol={});o(e,t)||a(e,t,{value:i.f(t)})}},function(t,e,r){"use strict";var n=r(2),o=r(108),i=r(50),a=r(37),u=r(49),c=r(9),s=r(13),f=r(4),l=r(42),p=r(36),d=r(80),h=d.IteratorPrototype,v=d.BUGGY_SAFARI_ITERATORS,y=f("iterator"),g=function(){return this};t.exports=function(t,e,r,f,d,_,m){o(r,e,f);var b,A,E,w=function(t){if(t===d&&I)return I;if(!v&&t in T)return T[t];switch(t){case"keys":case"values":case"entries":return function(){return new r(this,t)}}return function(){return new r(this)}},x=e+" Iterator",S=!1,T=t.prototype,O=T[y]||T["@@iterator"]||d&&T[d],I=!v&&O||w(d),k="Array"==e&&T.entries||O;if(k&&(b=i(k.call(new t)),h!==Object.prototype&&b.next&&(l||i(b)===h||(a?a(b,h):"function"!=typeof b[y]&&c(b,y,g)),u(b,x,!0,!0),l&&(p[x]=g))),"values"==d&&O&&"values"!==O.name&&(S=!0,I=function(){return O.call(this)}),l&&!m||T[y]===I||c(T,y,I),p[e]=I,d)if(A={values:w("values"),keys:_?I:w("keys"),entries:w("entries")},m)for(E in A)!v&&!S&&E in T||s(T,E,A[E]);else n({target:e,proto:!0,forced:v||S},A);return A}},function(t,e,r){"use strict";var n,o,i,a=r(50),u=r(9),c=r(8),s=r(4),f=r(42),l=s("iterator"),p=!1;[].keys&&("next"in(i=[].keys())?(o=a(a(i)))!==Object.prototype&&(n=o):p=!0),null==n&&(n={}),f||c(n,l)||u(n,l,function(){return this}),t.exports={IteratorPrototype:n,BUGGY_SAFARI_ITERATORS:p}},function(t,e,r){var n=r(3);t.exports=!n(function(){function t(){}return t.prototype.constructor=null,Object.getPrototypeOf(new t)!==t.prototype})},function(t,e,r){var n=r(17),o=r(23),i=function(t){return function(e,r){var i,a,u=String(o(e)),c=n(r),s=u.length;return c<0||c>=s?t?"":void 0:(i=u.charCodeAt(c))<55296||i>56319||c+1===s||(a=u.charCodeAt(c+1))<56320||a>57343?t?u.charAt(c):i:t?u.slice(c,c+2):a-56320+(i-55296<<10)+65536}};t.exports={codeAt:i(!1),charAt:i(!0)}},function(t,e,r){var n=r(4),o=r(36),i=n("iterator"),a=Array.prototype;t.exports=function(t){return void 0!==t&&(o.Array===t||a[i]===t)}},function(t,e,r){var n=r(51),o=r(36),i=r(4)("iterator");t.exports=function(t){if(null!=t)return t[i]||t["@@iterator"]||o[n(t)]}},function(t,e,r){var n=r(4)("iterator"),o=!1;try{var i=0,a={next:function(){return{done:!!i++}},return:function(){o=!0}};a[n]=function(){return this},Array.from(a,function(){throw 2})}catch(t){}t.exports=function(t,e){if(!e&&!o)return!1;var r=!1;try{var i={};i[n]=function(){return{next:function(){return{done:r=!0}}}},t(i)}catch(t){}return r}},function(t,e,r){"use strict";var n=r(10);t.exports=function(){var t=n(this),e="";return t.global&&(e+="g"),t.ignoreCase&&(e+="i"),t.multiline&&(e+="m"),t.dotAll&&(e+="s"),t.unicode&&(e+="u"),t.sticky&&(e+="y"),e}},function(t,e,r){"use strict";var n=r(13),o=r(10),i=r(3),a=r(86),u=RegExp.prototype,c=u.toString,s=i(function(){return"/a/b"!=c.call({source:"a",flags:"b"})}),f="toString"!=c.name;(s||f)&&n(RegExp.prototype,"toString",function(){var t=o(this),e=String(t.source),r=t.flags;return"/"+e+"/"+String(void 0===r&&t instanceof RegExp&&!("flags"in u)?a.call(t):r)},{unsafe:!0})},function(t,e,r){"use strict";var n=r(9),o=r(13),i=r(3),a=r(4),u=r(52),c=a("species"),s=!i(function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")}),f=!i(function(){var t=/(?:)/,e=t.exec;t.exec=function(){return e.apply(this,arguments)};var r="ab".split(t);return 2!==r.length||"a"!==r[0]||"b"!==r[1]});t.exports=function(t,e,r,l){var p=a(t),d=!i(function(){var e={};return e[p]=function(){return 7},7!=""[t](e)}),h=d&&!i(function(){var e=!1,r=/a/;return r.exec=function(){return e=!0,null},"split"===t&&(r.constructor={},r.constructor[c]=function(){return r}),r[p](""),!e});if(!d||!h||"replace"===t&&!s||"split"===t&&!f){var v=/./[p],y=r(p,""[t],function(t,e,r,n,o){return e.exec===u?d&&!o?{done:!0,value:v.call(e,r,n)}:{done:!0,value:t.call(r,e,n)}:{done:!1}}),g=y[0],_=y[1];o(String.prototype,t,g),o(RegExp.prototype,p,2==e?function(t,e){return _.call(t,this,e)}:function(t){return _.call(t,this)}),l&&n(RegExp.prototype[p],"sham",!0)}}},function(t,e,r){"use strict";var n=r(82).charAt;t.exports=function(t,e,r){return e+(r?n(t,e).length:1)}},function(t,e,r){var n=r(22),o=r(52);t.exports=function(t,e){var r=t.exec;if("function"==typeof r){var i=r.call(t,e);if("object"!=typeof i)throw TypeError("RegExp exec method returned something other than an Object or null");return i}if("RegExp"!==n(t))throw TypeError("RegExp#exec called on incompatible receiver");return o.call(t,e)}},function(t,e,r){r(2)({target:"Array",stat:!0},{isArray:r(57)})},function(t,e,r){var n=r(2),o=r(123).entries;n({target:"Object",stat:!0},{entries:function(t){return o(t)}})},function(t,e,r){"use strict";var n=r(88),o=r(10),i=r(12),a=r(6),u=r(17),c=r(23),s=r(89),f=r(90),l=Math.max,p=Math.min,d=Math.floor,h=/\$([$&'`]|\d\d?|<[^>]*>)/g,v=/\$([$&'`]|\d\d?)/g;n("replace",2,function(t,e,r){return[function(r,n){var o=c(this),i=null==r?void 0:r[t];return void 0!==i?i.call(r,o,n):e.call(String(o),r,n)},function(t,i){var c=r(e,t,this,i);if(c.done)return c.value;var d=o(t),h=String(this),v="function"==typeof i;v||(i=String(i));var y=d.global;if(y){var g=d.unicode;d.lastIndex=0}for(var _=[];;){var m=f(d,h);if(null===m)break;if(_.push(m),!y)break;""===String(m[0])&&(d.lastIndex=s(h,a(d.lastIndex),g))}for(var b,A="",E=0,w=0;w<_.length;w++){m=_[w];for(var x=String(m[0]),S=l(p(u(m.index),h.length),0),T=[],O=1;O<m.length;O++)T.push(void 0===(b=m[O])?b:String(b));var I=m.groups;if(v){var k=[x].concat(T,S,h);void 0!==I&&k.push(I);var M=String(i.apply(void 0,k))}else M=n(x,h,S,T,I,i);S>=E&&(A+=h.slice(E,S)+M,E=S+x.length)}return A+h.slice(E)}];function n(t,r,n,o,a,u){var c=n+t.length,s=o.length,f=v;return void 0!==a&&(a=i(a),f=h),e.call(u,f,function(e,i){var u;switch(i.charAt(0)){case"$":return"$";case"&":return t;case"`":return r.slice(0,n);case"'":return r.slice(c);case"<":u=a[i.slice(1,-1)];break;default:var f=+i;if(0===f)return e;if(f>s){var l=d(f/10);return 0===l?e:l<=s?void 0===o[l-1]?i.charAt(1):o[l-1]+i.charAt(1):e}u=o[f-1]}return void 0===u?"":u})}})},function(t,e){t.exports=function(t,e,r){if(!(t instanceof e))throw TypeError("Incorrect "+(r?r+" ":"")+"invocation");return t}},function(t,e,r){var n=r(17),o=r(6);t.exports=function(t){if(void 0===t)return 0;var e=n(t),r=o(e);if(e!==r)throw RangeError("Wrong length or index");return r}},function(t,e,r){"use strict";var n=r(12),o=r(35),i=r(6);t.exports=function(t){for(var e=n(this),r=i(e.length),a=arguments.length,u=o(a>1?arguments[1]:void 0,r),c=a>2?arguments[2]:void 0,s=void 0===c?r:o(c,r);s>u;)e[u++]=t;return e}},function(t,e,r){"use strict";var n=r(46),o=r(7),i=r(4),a=r(5),u=i("species");t.exports=function(t){var e=n(t),r=o.f;a&&e&&!e[u]&&r(e,u,{configurable:!0,get:function(){return this}})}},function(t,e,r){var n=r(17);t.exports=function(t,e){var r=n(t);if(r<0||r%e)throw RangeError("Wrong offset");return r}},function(t,e,r){var n=r(59),o=r(12),i=r(41),a=r(6),u=function(t){return function(e,r,u,c){n(r);var s=o(e),f=i(s),l=a(s.length),p=t?l-1:0,d=t?-1:1;if(u<2)for(;;){if(p in f){c=f[p],p+=d;break}if(p+=d,t?p<0:l<=p)throw TypeError("Reduce of empty array with no initial value")}for(;t?p>=0:l>p;p+=d)p in f&&(c=r(c,f[p],p,s));return c}};t.exports={left:u(!1),right:u(!0)}},function(t,e){var r;r=function(){return this}();try{r=r||new Function("return this")()}catch(t){"object"==typeof window&&(r=window)}t.exports=r},function(t,e,r){var n=r(1),o=r(70),i=n.WeakMap;t.exports="function"==typeof i&&/native code/.test(o.call(i))},function(t,e,r){var n=r(46),o=r(26),i=r(74),a=r(10);t.exports=n("Reflect","ownKeys")||function(t){var e=o.f(a(t)),r=i.f;return r?e.concat(r(t)):e}},function(t,e,r){var n=r(5),o=r(7),i=r(10),a=r(48);t.exports=n?Object.defineProperties:function(t,e){i(t);for(var r,n=a(e),u=n.length,c=0;u>c;)o.f(t,r=n[c++],e[r]);return t}},function(t,e,r){var n=r(46);t.exports=n("document","documentElement")},function(t,e,r){var n=r(14),o=r(26).f,i={}.toString,a="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[];t.exports.f=function(t){return a&&"[object Window]"==i.call(t)?function(t){try{return o(t)}catch(t){return a.slice()}}(t):o(n(t))}},function(t,e,r){var n=r(11),o=r(57),i=r(4)("species");t.exports=function(t,e){var r;return o(t)&&("function"!=typeof(r=t.constructor)||r!==Array&&!o(r.prototype)?n(r)&&null===(r=r[i])&&(r=void 0):r=void 0),new(void 0===r?Array:r)(0===e?0:e)}},function(t,e,r){var n=r(4),o=r(27),i=r(9),a=n("unscopables"),u=Array.prototype;null==u[a]&&i(u,a,o(null)),t.exports=function(t){u[a][t]=!0}},function(t,e,r){"use strict";var n=r(80).IteratorPrototype,o=r(27),i=r(21),a=r(49),u=r(36),c=function(){return this};t.exports=function(t,e,r){var s=e+" Iterator";return t.prototype=o(n,{next:i(1,r)}),a(t,s,!1,!0),u[s]=c,t}},function(t,e,r){var n=r(11);t.exports=function(t){if(!n(t)&&null!==t)throw TypeError("Can't set "+String(t)+" as a prototype");return t}},function(t,e,r){r(2)({target:"Object",stat:!0,sham:!r(5)},{create:r(27)})},function(t,e,r){var n=r(2),o=r(3),i=r(12),a=r(50),u=r(81);n({target:"Object",stat:!0,forced:o(function(){a(1)}),sham:!u},{getPrototypeOf:function(t){return a(i(t))}})},function(t,e,r){r(2)({target:"Object",stat:!0},{setPrototypeOf:r(37)})},function(t,e,r){"use strict";var n=r(51),o={};o[r(4)("toStringTag")]="z",t.exports="[object z]"!==String(o)?function(){return"[object "+n(this)+"]"}:o.toString},function(t,e){t.exports={CSSRuleList:0,CSSStyleDeclaration:0,CSSValueList:0,ClientRectList:0,DOMRectList:0,DOMStringList:0,DOMTokenList:1,DataTransferItemList:0,FileList:0,HTMLAllCollection:0,HTMLCollection:0,HTMLFormElement:0,HTMLSelectElement:0,MediaList:0,MimeTypeArray:0,NamedNodeMap:0,NodeList:1,PaintRequestList:0,Plugin:0,PluginArray:0,SVGLengthList:0,SVGNumberList:0,SVGPathSegList:0,SVGPointList:0,SVGStringList:0,SVGTransformList:0,SourceBufferList:0,StyleSheetList:0,TextTrackCueList:0,TextTrackList:0,TouchList:0}},function(t,e,r){var n=function(t){"use strict";var e,r=Object.prototype,n=r.hasOwnProperty,o="function"==typeof Symbol?Symbol:{},i=o.iterator||"@@iterator",a=o.asyncIterator||"@@asyncIterator",u=o.toStringTag||"@@toStringTag";function c(t,e,r,n){var o=e&&e.prototype instanceof v?e:v,i=Object.create(o.prototype),a=new O(n||[]);return i._invoke=function(t,e,r){var n=f;return function(o,i){if(n===p)throw new Error("Generator is already running");if(n===d){if("throw"===o)throw i;return k()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var u=x(a,r);if(u){if(u===h)continue;return u}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if(n===f)throw n=d,r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n=p;var c=s(t,e,r);if("normal"===c.type){if(n=r.done?d:l,c.arg===h)continue;return{value:c.arg,done:r.done}}"throw"===c.type&&(n=d,r.method="throw",r.arg=c.arg)}}}(t,r,a),i}function s(t,e,r){try{return{type:"normal",arg:t.call(e,r)}}catch(t){return{type:"throw",arg:t}}}t.wrap=c;var f="suspendedStart",l="suspendedYield",p="executing",d="completed",h={};function v(){}function y(){}function g(){}var _={};_[i]=function(){return this};var m=Object.getPrototypeOf,b=m&&m(m(I([])));b&&b!==r&&n.call(b,i)&&(_=b);var A=g.prototype=v.prototype=Object.create(_);function E(t){["next","throw","return"].forEach(function(e){t[e]=function(t){return this._invoke(e,t)}})}function w(t){var e;this._invoke=function(r,o){function i(){return new Promise(function(e,i){!function e(r,o,i,a){var u=s(t[r],t,o);if("throw"!==u.type){var c=u.arg,f=c.value;return f&&"object"==typeof f&&n.call(f,"__await")?Promise.resolve(f.__await).then(function(t){e("next",t,i,a)},function(t){e("throw",t,i,a)}):Promise.resolve(f).then(function(t){c.value=t,i(c)},function(t){return e("throw",t,i,a)})}a(u.arg)}(r,o,e,i)})}return e=e?e.then(i,i):i()}}function x(t,r){var n=t.iterator[r.method];if(n===e){if(r.delegate=null,"throw"===r.method){if(t.iterator.return&&(r.method="return",r.arg=e,x(t,r),"throw"===r.method))return h;r.method="throw",r.arg=new TypeError("The iterator does not provide a 'throw' method")}return h}var o=s(n,t.iterator,r.arg);if("throw"===o.type)return r.method="throw",r.arg=o.arg,r.delegate=null,h;var i=o.arg;return i?i.done?(r[t.resultName]=i.value,r.next=t.nextLoc,"return"!==r.method&&(r.method="next",r.arg=e),r.delegate=null,h):i:(r.method="throw",r.arg=new TypeError("iterator result is not an object"),r.delegate=null,h)}function S(t){var e={tryLoc:t[0]};1 in t&&(e.catchLoc=t[1]),2 in t&&(e.finallyLoc=t[2],e.afterLoc=t[3]),this.tryEntries.push(e)}function T(t){var e=t.completion||{};e.type="normal",delete e.arg,t.completion=e}function O(t){this.tryEntries=[{tryLoc:"root"}],t.forEach(S,this),this.reset(!0)}function I(t){if(t){var r=t[i];if(r)return r.call(t);if("function"==typeof t.next)return t;if(!isNaN(t.length)){var o=-1,a=function r(){for(;++o<t.length;)if(n.call(t,o))return r.value=t[o],r.done=!1,r;return r.value=e,r.done=!0,r};return a.next=a}}return{next:k}}function k(){return{value:e,done:!0}}return y.prototype=A.constructor=g,g.constructor=y,g[u]=y.displayName="GeneratorFunction",t.isGeneratorFunction=function(t){var e="function"==typeof t&&t.constructor;return!!e&&(e===y||"GeneratorFunction"===(e.displayName||e.name))},t.mark=function(t){return Object.setPrototypeOf?Object.setPrototypeOf(t,g):(t.__proto__=g,u in t||(t[u]="GeneratorFunction")),t.prototype=Object.create(A),t},t.awrap=function(t){return{__await:t}},E(w.prototype),w.prototype[a]=function(){return this},t.AsyncIterator=w,t.async=function(e,r,n,o){var i=new w(c(e,r,n,o));return t.isGeneratorFunction(r)?i:i.next().then(function(t){return t.done?t.value:i.next()})},E(A),A[u]="Generator",A[i]=function(){return this},A.toString=function(){return"[object Generator]"},t.keys=function(t){var e=[];for(var r in t)e.push(r);return e.reverse(),function r(){for(;e.length;){var n=e.pop();if(n in t)return r.value=n,r.done=!1,r}return r.done=!0,r}},t.values=I,O.prototype={constructor:O,reset:function(t){if(this.prev=0,this.next=0,this.sent=this._sent=e,this.done=!1,this.delegate=null,this.method="next",this.arg=e,this.tryEntries.forEach(T),!t)for(var r in this)"t"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=e)},stop:function(){this.done=!0;var t=this.tryEntries[0].completion;if("throw"===t.type)throw t.arg;return this.rval},dispatchException:function(t){if(this.done)throw t;var r=this;function o(n,o){return u.type="throw",u.arg=t,r.next=n,o&&(r.method="next",r.arg=e),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var a=this.tryEntries[i],u=a.completion;if("root"===a.tryLoc)return o("end");if(a.tryLoc<=this.prev){var c=n.call(a,"catchLoc"),s=n.call(a,"finallyLoc");if(c&&s){if(this.prev<a.catchLoc)return o(a.catchLoc,!0);if(this.prev<a.finallyLoc)return o(a.finallyLoc)}else if(c){if(this.prev<a.catchLoc)return o(a.catchLoc,!0)}else{if(!s)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return o(a.finallyLoc)}}}},abrupt:function(t,e){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===t||"continue"===t)&&i.tryLoc<=e&&e<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=t,a.arg=e,i?(this.method="next",this.next=i.finallyLoc,h):this.complete(a)},complete:function(t,e){if("throw"===t.type)throw t.arg;return"break"===t.type||"continue"===t.type?this.next=t.arg:"return"===t.type?(this.rval=this.arg=t.arg,this.method="return",this.next="end"):"normal"===t.type&&e&&(this.next=e),h},finish:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.finallyLoc===t)return this.complete(r.completion,r.afterLoc),T(r),h}},catch:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.tryLoc===t){var n=r.completion;if("throw"===n.type){var o=n.arg;T(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(t,r,n){return this.delegate={iterator:I(t),resultName:r,nextLoc:n},"next"===this.method&&(this.arg=e),h}},t}(t.exports);try{regeneratorRuntime=n}catch(t){Function("r","regeneratorRuntime = r")(n)}},function(t,e,r){var n=r(2),o=r(117);n({target:"Array",stat:!0,forced:!r(85)(function(t){Array.from(t)})},{from:o})},function(t,e,r){"use strict";var n=r(58),o=r(12),i=r(118),a=r(83),u=r(6),c=r(119),s=r(84);t.exports=function(t){var e,r,f,l,p=o(t),d="function"==typeof this?this:Array,h=arguments.length,v=h>1?arguments[1]:void 0,y=void 0!==v,g=0,_=s(p);if(y&&(v=n(v,h>2?arguments[2]:void 0,2)),null==_||d==Array&&a(_))for(r=new d(e=u(p.length));e>g;g++)c(r,g,y?v(p[g],g):p[g]);else for(l=_.call(p),r=new d;!(f=l.next()).done;g++)c(r,g,y?i(l,v,[f.value,g],!0):f.value);return r.length=g,r}},function(t,e,r){var n=r(10);t.exports=function(t,e,r,o){try{return o?e(n(r)[0],r[1]):e(r)}catch(e){var i=t.return;throw void 0!==i&&n(i.call(t)),e}}},function(t,e,r){"use strict";var n=r(24),o=r(7),i=r(21);t.exports=function(t,e,r){var a=n(e);a in t?o.f(t,a,i(0,r)):t[a]=r}},function(t,e,r){var n=r(5),o=r(7).f,i=Function.prototype,a=i.toString,u=/^\s*function ([^ (]*)/;!n||"name"in i||o(i,"name",{configurable:!0,get:function(){try{return a.call(this).match(u)[1]}catch(t){return""}}})},function(t,e,r){var n=r(11),o=r(22),i=r(4)("match");t.exports=function(t){var e;return n(t)&&(void 0!==(e=t[i])?!!e:"RegExp"==o(t))}},function(t,e,r){var n=r(46);t.exports=n("navigator","userAgent")||""},function(t,e,r){var n=r(5),o=r(48),i=r(14),a=r(54).f,u=function(t){return function(e){for(var r,u=i(e),c=o(u),s=c.length,f=0,l=[];s>f;)r=c[f++],n&&!a.call(u,r)||l.push(t?[r,u[r]]:u[r]);return l}};t.exports={entries:u(!0),values:u(!1)}},function(t,e,r){var n=r(1),o=r(64).trim,i=r(65),a=n.parseInt,u=/^[+-]?0[Xx]/,c=8!==a(i+"08")||22!==a(i+"0x16");t.exports=c?function(t,e){var r=o(String(t));return a(r,e>>>0||(u.test(r)?16:10))}:a},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(66),a=r(97),u=i.ArrayBuffer;n({global:!0,forced:o.ArrayBuffer!==u},{ArrayBuffer:u}),a("ArrayBuffer")},function(t,e,r){var n=r(13);t.exports=function(t,e,r){for(var o in e)n(t,o,e[o],r);return t}},function(t,e,r){"use strict";var n=r(2),o=r(3),i=r(66),a=r(10),u=r(35),c=r(6),s=r(32),f=i.ArrayBuffer,l=i.DataView,p=f.prototype.slice;n({target:"ArrayBuffer",proto:!0,unsafe:!0,forced:o(function(){return!new f(2).slice(1,void 0).byteLength})},{slice:function(t,e){if(void 0!==p&&void 0===e)return p.call(a(this),t);for(var r=a(this).byteLength,n=u(t,r),o=u(void 0===e?r:e,r),i=new(s(this,f))(c(o-n)),d=new l(this),h=new l(i),v=0;n<o;)h.setUint8(v++,d.getUint8(n++));return i}})},function(t,e,r){r(129)("Uint8",1,function(t){return function(e,r,n){return t(this,e,r,n)}})},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(5),a=r(130),u=r(0),c=r(66),s=r(94),f=r(21),l=r(9),p=r(6),d=r(95),h=r(98),v=r(24),y=r(8),g=r(51),_=r(11),m=r(27),b=r(37),A=r(26).f,E=r(131),w=r(15).forEach,x=r(97),S=r(7),T=r(33),O=r(25),I=O.get,k=O.set,M=S.f,C=T.f,q=Math.round,B=o.RangeError,P=c.ArrayBuffer,F=c.DataView,R=u.NATIVE_ARRAY_BUFFER_VIEWS,D=u.TYPED_ARRAY_TAG,L=u.TypedArray,j=u.TypedArrayPrototype,U=u.aTypedArrayConstructor,W=u.isTypedArray,K=function(t,e){for(var r=0,n=e.length,o=new(U(t))(n);n>r;)o[r]=e[r++];return o},N=function(t,e){M(t,e,{get:function(){return I(this)[e]}})},G=function(t){var e;return t instanceof P||"ArrayBuffer"==(e=g(t))||"SharedArrayBuffer"==e},V=function(t,e){return W(t)&&"symbol"!=typeof e&&e in t&&String(+e)==String(e)},Y=function(t,e){return V(t,e=v(e,!0))?f(2,t[e]):C(t,e)},H=function(t,e,r){return!(V(t,e=v(e,!0))&&_(r)&&y(r,"value"))||y(r,"get")||y(r,"set")||r.configurable||y(r,"writable")&&!r.writable||y(r,"enumerable")&&!r.enumerable?M(t,e,r):(t[e]=r.value,t)};i?(R||(T.f=Y,S.f=H,N(j,"buffer"),N(j,"byteOffset"),N(j,"byteLength"),N(j,"length")),n({target:"Object",stat:!0,forced:!R},{getOwnPropertyDescriptor:Y,defineProperty:H}),t.exports=function(t,e,r,i){var u=t+(i?"Clamped":"")+"Array",c="get"+t,f="set"+t,v=o[u],y=v,g=y&&y.prototype,S={},T=function(t,r){M(t,r,{get:function(){return function(t,r){var n=I(t);return n.view[c](r*e+n.byteOffset,!0)}(this,r)},set:function(t){return function(t,r,n){var o=I(t);i&&(n=(n=q(n))<0?0:n>255?255:255&n),o.view[f](r*e+o.byteOffset,n,!0)}(this,r,t)},enumerable:!0})};R?a&&(y=r(function(t,r,n,o){return s(t,y,u),_(r)?G(r)?void 0!==o?new v(r,h(n,e),o):void 0!==n?new v(r,h(n,e)):new v(r):W(r)?K(y,r):E.call(y,r):new v(d(r))}),b&&b(y,L),w(A(v),function(t){t in y||l(y,t,v[t])}),y.prototype=g):(y=r(function(t,r,n,o){s(t,y,u);var i,a,c,f=0,l=0;if(_(r)){if(!G(r))return W(r)?K(y,r):E.call(y,r);i=r,l=h(n,e);var v=r.byteLength;if(void 0===o){if(v%e)throw B("Wrong length");if((a=v-l)<0)throw B("Wrong length")}else if((a=p(o)*e)+l>v)throw B("Wrong length");c=a/e}else c=d(r),i=new P(a=c*e);for(k(t,{buffer:i,byteOffset:l,byteLength:a,length:c,view:new F(i)});f<c;)T(t,f++)}),b&&b(y,L),g=y.prototype=m(j)),g.constructor!==y&&l(g,"constructor",y),D&&l(g,D,u),S[u]=y,n({global:!0,forced:y!=v,sham:!R},S),"BYTES_PER_ELEMENT"in y||l(y,"BYTES_PER_ELEMENT",e),"BYTES_PER_ELEMENT"in g||l(g,"BYTES_PER_ELEMENT",e),x(u)}):t.exports=function(){}},function(t,e,r){var n=r(1),o=r(3),i=r(85),a=r(0).NATIVE_ARRAY_BUFFER_VIEWS,u=n.ArrayBuffer,c=n.Int8Array;t.exports=!a||!o(function(){c(1)})||!o(function(){new c(-1)})||!i(function(t){new c,new c(null),new c(1.5),new c(t)},!0)||o(function(){return 1!==new c(new u(2),1,void 0).length})},function(t,e,r){var n=r(12),o=r(6),i=r(84),a=r(83),u=r(58),c=r(0).aTypedArrayConstructor;t.exports=function(t){var e,r,s,f,l,p=n(t),d=arguments.length,h=d>1?arguments[1]:void 0,v=void 0!==h,y=i(p);if(null!=y&&!a(y))for(l=y.call(p),p=[];!(f=l.next()).done;)p.push(f.value);for(v&&d>2&&(h=u(h,arguments[2],2)),r=o(p.length),s=new(c(this))(r),e=0;r>e;e++)s[e]=v?h(p[e],e):p[e];return s}},function(t,e,r){"use strict";var n=r(0),o=r(133),i=n.aTypedArray;n.exportProto("copyWithin",function(t,e){return o.call(i(this),t,e,arguments.length>2?arguments[2]:void 0)})},function(t,e,r){"use strict";var n=r(12),o=r(35),i=r(6),a=Math.min;t.exports=[].copyWithin||function(t,e){var r=n(this),u=i(r.length),c=o(t,u),s=o(e,u),f=arguments.length>2?arguments[2]:void 0,l=a((void 0===f?u:o(f,u))-s,u-c),p=1;for(s<c&&c<s+l&&(p=-1,s+=l-1,c+=l-1);l-- >0;)s in r?r[c]=r[s]:delete r[c],c+=p,s+=p;return r}},function(t,e,r){"use strict";var n=r(0),o=r(15).every,i=n.aTypedArray;n.exportProto("every",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(96),i=n.aTypedArray;n.exportProto("fill",function(t){return o.apply(i(this),arguments)})},function(t,e,r){"use strict";var n=r(0),o=r(15).filter,i=r(32),a=n.aTypedArray,u=n.aTypedArrayConstructor;n.exportProto("filter",function(t){for(var e=o(a(this),t,arguments.length>1?arguments[1]:void 0),r=i(this,this.constructor),n=0,c=e.length,s=new(u(r))(c);c>n;)s[n]=e[n++];return s})},function(t,e,r){"use strict";var n=r(0),o=r(15).find,i=n.aTypedArray;n.exportProto("find",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(15).findIndex,i=n.aTypedArray;n.exportProto("findIndex",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(15).forEach,i=n.aTypedArray;n.exportProto("forEach",function(t){o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(47).includes,i=n.aTypedArray;n.exportProto("includes",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(47).indexOf,i=n.aTypedArray;n.exportProto("indexOf",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(16),a=r(4)("iterator"),u=n.Uint8Array,c=i.values,s=i.keys,f=i.entries,l=o.aTypedArray,p=o.exportProto,d=u&&u.prototype[a],h=!!d&&("values"==d.name||null==d.name),v=function(){return c.call(l(this))};p("entries",function(){return f.call(l(this))}),p("keys",function(){return s.call(l(this))}),p("values",v,!h),p(a,v,!h)},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=[].join;n.exportProto("join",function(t){return i.apply(o(this),arguments)})},function(t,e,r){"use strict";var n=r(0),o=r(145),i=n.aTypedArray;n.exportProto("lastIndexOf",function(t){return o.apply(i(this),arguments)})},function(t,e,r){"use strict";var n=r(14),o=r(17),i=r(6),a=r(60),u=Math.min,c=[].lastIndexOf,s=!!c&&1/[1].lastIndexOf(1,-0)<0,f=a("lastIndexOf");t.exports=s||f?function(t){if(s)return c.apply(this,arguments)||0;var e=n(this),r=i(e.length),a=r-1;for(arguments.length>1&&(a=u(a,o(arguments[1]))),a<0&&(a=r+a);a>=0;a--)if(a in e&&e[a]===t)return a||0;return-1}:c},function(t,e,r){"use strict";var n=r(0),o=r(15).map,i=r(32),a=n.aTypedArray,u=n.aTypedArrayConstructor;n.exportProto("map",function(t){return o(a(this),t,arguments.length>1?arguments[1]:void 0,function(t,e){return new(u(i(t,t.constructor)))(e)})})},function(t,e,r){"use strict";var n=r(0),o=r(99).left,i=n.aTypedArray;n.exportProto("reduce",function(t){return o(i(this),t,arguments.length,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(99).right,i=n.aTypedArray;n.exportProto("reduceRight",function(t){return o(i(this),t,arguments.length,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=Math.floor;n.exportProto("reverse",function(){for(var t,e=o(this).length,r=i(e/2),n=0;n<r;)t=this[n],this[n++]=this[--e],this[e]=t;return this})},function(t,e,r){"use strict";var n=r(0),o=r(6),i=r(98),a=r(12),u=r(3),c=n.aTypedArray,s=u(function(){new Int8Array(1).set({})});n.exportProto("set",function(t){c(this);var e=i(arguments.length>1?arguments[1]:void 0,1),r=this.length,n=a(t),u=o(n.length),s=0;if(u+e>r)throw RangeError("Wrong length");for(;s<u;)this[e+s]=n[s++]},s)},function(t,e,r){"use strict";var n=r(0),o=r(32),i=r(3),a=n.aTypedArray,u=n.aTypedArrayConstructor,c=[].slice,s=i(function(){new Int8Array(1).slice()});n.exportProto("slice",function(t,e){for(var r=c.call(a(this),t,e),n=o(this,this.constructor),i=0,s=r.length,f=new(u(n))(s);s>i;)f[i]=r[i++];return f},s)},function(t,e,r){"use strict";var n=r(0),o=r(15).some,i=n.aTypedArray;n.exportProto("some",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=[].sort;n.exportProto("sort",function(t){return i.call(o(this),t)})},function(t,e,r){"use strict";var n=r(0),o=r(6),i=r(35),a=r(32),u=n.aTypedArray;n.exportProto("subarray",function(t,e){var r=u(this),n=r.length,c=i(t,n);return new(a(r,r.constructor))(r.buffer,r.byteOffset+c*r.BYTES_PER_ELEMENT,o((void 0===e?n:i(e,n))-c))})},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(3),a=n.Int8Array,u=o.aTypedArray,c=[].toLocaleString,s=[].slice,f=!!a&&i(function(){c.call(new a(1))}),l=i(function(){return[1,2].toLocaleString()!=new a([1,2]).toLocaleString()})||!i(function(){a.prototype.toLocaleString.call([1,2])});o.exportProto("toLocaleString",function(){return c.apply(f?s.call(u(this)):u(this),arguments)},l)},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(3),a=n.Uint8Array,u=a&&a.prototype,c=[].toString,s=[].join;i(function(){c.call({})})&&(c=function(){return s.call(this)}),o.exportProto("toString",c,(u||{}).toString!=c)},function(t,e,r){"use strict";var n=r(2),o=r(41),i=r(14),a=r(60),u=[].join,c=o!=Object,s=a("join",",");n({target:"Array",proto:!0,forced:c||s},{join:function(t){return u.call(i(this),void 0===t?",":t)}})},function(t,e,r){r(2)({target:"Date",stat:!0},{now:function(){return(new Date).getTime()}})},function(t,e,r){"use strict";var n=r(5),o=r(1),i=r(75),a=r(13),u=r(8),c=r(22),s=r(160),f=r(24),l=r(3),p=r(27),d=r(26).f,h=r(33).f,v=r(7).f,y=r(64).trim,g=o.Number,_=g.prototype,m="Number"==c(p(_)),b=function(t){var e,r,n,o,i,a,u,c,s=f(t,!1);if("string"==typeof s&&s.length>2)if(43===(e=(s=y(s)).charCodeAt(0))||45===e){if(88===(r=s.charCodeAt(2))||120===r)return NaN}else if(48===e){switch(s.charCodeAt(1)){case 66:case 98:n=2,o=49;break;case 79:case 111:n=8,o=55;break;default:return+s}for(a=(i=s.slice(2)).length,u=0;u<a;u++)if((c=i.charCodeAt(u))<48||c>o)return NaN;return parseInt(i,n)}return+s};if(i("Number",!g(" 0o1")||!g("0b1")||g("+0x1"))){for(var A,E=function(t){var e=arguments.length<1?0:t,r=this;return r instanceof E&&(m?l(function(){_.valueOf.call(r)}):"Number"!=c(r))?s(new g(b(e)),r,E):b(e)},w=n?d(g):"MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger".split(","),x=0;w.length>x;x++)u(g,A=w[x])&&!u(E,A)&&v(E,A,h(g,A));E.prototype=_,_.constructor=E,a(o,"Number",E)}},function(t,e,r){var n=r(11),o=r(37);t.exports=function(t,e,r){var i,a;return o&&"function"==typeof(i=e.constructor)&&i!==r&&n(a=i.prototype)&&a!==r.prototype&&o(t,a),t}},function(t,e,r){r(2)({target:"Number",stat:!0},{isNaN:function(t){return t!=t}})},function(t,e,r){var n=r(2),o=r(163);n({global:!0,forced:parseFloat!=o},{parseFloat:o})},function(t,e,r){var n=r(1),o=r(64).trim,i=r(65),a=n.parseFloat,u=1/a(i+"-0")!=-1/0;t.exports=u?function(t){var e=o(String(t)),r=a(e);return 0===r&&"-"==e.charAt(0)?-0:r}:a},function(t,e,r){"use strict";r.r(e);var n={};r.r(n),r.d(n,"api",function(){return v}),r.d(n,"shared_root_info",function(){return y}),r.d(n,"connect",function(){return x}),r.d(n,"send",function(){return S}),r.d(n,"setController",function(){return T}),r.d(n,"pitchBend",function(){return O}),r.d(n,"setEffects",function(){return I}),r.d(n,"getContext",function(){return k}),r.d(n,"setContext",function(){return M}),r.d(n,"playChannel",function(){return C}),r.d(n,"stopChannel",function(){return q}),r.d(n,"setVolume",function(){return B}),r.d(n,"programChange",function(){return P}),r.d(n,"noteOn",function(){return F}),r.d(n,"noteOff",function(){return R}),r.d(n,"chordOn",function(){return D}),r.d(n,"chordOff",function(){return L}),r.d(n,"stopAllNotes",function(){return j});var o={};r.r(o),r.d(o,"api",function(){return G}),r.d(o,"shared_root_info",function(){return V}),r.d(o,"connect",function(){return X}),r.d(o,"playChannel",function(){return Q}),r.d(o,"stopChannel",function(){return z}),r.d(o,"send",function(){return $}),r.d(o,"setController",function(){return tt}),r.d(o,"setVolume",function(){return et}),r.d(o,"programChange",function(){return rt}),r.d(o,"pitchBend",function(){return nt}),r.d(o,"noteOn",function(){return ot}),r.d(o,"noteOff",function(){return it}),r.d(o,"chordOn",function(){return at}),r.d(o,"chordOff",function(){return ut}),r.d(o,"stopAllNotes",function(){return ct}),r.d(o,"setEffects",function(){return st}),r.d(o,"getContext",function(){return ft}),r.d(o,"setContext",function(){return lt}),r.d(o,"loadAudio",function(){return pt}),r.d(o,"createAudioContext",function(){return dt});var i={};r.r(i),r.d(i,"api",function(){return ht}),r.d(i,"shared_root_info",function(){return vt}),r.d(i,"connect",function(){return gt}),r.d(i,"playChannel",function(){return _t}),r.d(i,"stopChannel",function(){return mt}),r.d(i,"setEffects",function(){return bt}),r.d(i,"getContext",function(){return At}),r.d(i,"setContext",function(){return Et}),r.d(i,"send",function(){return wt}),r.d(i,"setController",function(){return xt}),r.d(i,"setVolume",function(){return St}),r.d(i,"programChange",function(){return Tt}),r.d(i,"pitchBend",function(){return Ot}),r.d(i,"noteOn",function(){return It}),r.d(i,"noteOff",function(){return kt}),r.d(i,"chordOn",function(){return Mt}),r.d(i,"chordOff",function(){return Ct}),r.d(i,"stopAllNotes",function(){return qt});var a={};r.r(a),r.d(a,"data",function(){return Nt}),r.d(a,"map",function(){return Gt});r(20),r(28),r(29),r(16),r(110),r(38),r(111),r(112),r(18),r(19),r(30),r(115),r(116),r(39),r(61),r(120),r(31),r(87),r(53),r(40);var u={},c=0,s=function(t){c+=1;var e=document.body,r=new Audio,n=t.split(";")[0];r.id="audio",r.setAttribute("preload","auto"),r.setAttribute("audiobuffer","true"),r.addEventListener("error",function(){e.removeChild(r),u[n]=!1,c-=1},!1),r.addEventListener("canplaythrough",function(){e.removeChild(r),u[n]=!0,c-=1},!1),r.src="data:"+t,e.appendChild(r)};r(62),r(91),r(92),r(63),r(93);function f(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=[],n=!0,o=!1,i=void 0;try{for(var a,u=t[Symbol.iterator]();!(n=(a=u.next()).done)&&(r.push(a.value),!e||r.length!==e);n=!0);}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}return r}(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}var l=function(t){for(var e=function(t){return t.replace(/[^a-z0-9 ]/gi,"").replace(/[ ]/g,"_").toLowerCase()},r={byName:{},byId:{},byCategory:{}},n=0,o=Object.entries(t);n<o.length;n++){var i=f(o[n],2),a=i[0],u=i[1],c=!0,s=!1,l=void 0;try{for(var p,d=u[Symbol.iterator]();!(c=(p=d.next()).done);c=!0){var h=p.value;if(h){var v=parseInt(h.substr(0,h.indexOf(" ")),10),y=v-1,g=h.replace(v+" ",""),_=e(g),m=e(a),b={id:_,name:g,program:y,category:a};r.byId[y]=b,r.byName[_]=b,r.byCategory[m]=r.byCategory[m]||[],r.byCategory[m].push(b)}}}catch(t){s=!0,l=t}finally{try{c||null==d.return||d.return()}finally{if(s)throw l}}}return r}({Piano:["1 Acoustic Grand Piano","2 Bright Acoustic Piano","3 Electric Grand Piano","4 Honky-tonk Piano","5 Electric Piano 1","6 Electric Piano 2","7 Harpsichord","8 Clavinet"],"Chromatic Percussion":["9 Celesta","10 Glockenspiel","11 Music Box","12 Vibraphone","13 Marimba","14 Xylophone","15 Tubular Bells","16 Dulcimer"],Organ:["17 Drawbar Organ","18 Percussive Organ","19 Rock Organ","20 Church Organ","21 Reed Organ","22 Accordion","23 Harmonica","24 Tango Accordion"],Guitar:["25 Acoustic Guitar (nylon)","26 Acoustic Guitar (steel)","27 Electric Guitar (jazz)","28 Electric Guitar (clean)","29 Electric Guitar (muted)","30 Overdriven Guitar","31 Distortion Guitar","32 Guitar Harmonics"],Bass:["33 Acoustic Bass","34 Electric Bass (finger)","35 Electric Bass (pick)","36 Fretless Bass","37 Slap Bass 1","38 Slap Bass 2","39 Synth Bass 1","40 Synth Bass 2"],Strings:["41 Violin","42 Viola","43 Cello","44 Contrabass","45 Tremolo Strings","46 Pizzicato Strings","47 Orchestral Harp","48 Timpani"],Ensemble:["49 String Ensemble 1","50 String Ensemble 2","51 Synth Strings 1","52 Synth Strings 2","53 Choir Aahs","54 Voice Oohs","55 Synth Choir","56 Orchestra Hit"],Brass:["57 Trumpet","58 Trombone","59 Tuba","60 Muted Trumpet","61 French Horn","62 Brass Section","63 Synth Brass 1","64 Synth Brass 2"],Reed:["65 Soprano Sax","66 Alto Sax","67 Tenor Sax","68 Baritone Sax","69 Oboe","70 English Horn","71 Bassoon","72 Clarinet"],Pipe:["73 Piccolo","74 Flute","75 Recorder","76 Pan Flute","77 Blown Bottle","78 Shakuhachi","79 Whistle","80 Ocarina"],"Synth Lead":["81 Lead 1 (square)","82 Lead 2 (sawtooth)","83 Lead 3 (calliope)","84 Lead 4 (chiff)","85 Lead 5 (charang)","86 Lead 6 (voice)","87 Lead 7 (fifths)","88 Lead 8 (bass + lead)"],"Synth Pad":["89 Pad 1 (new age)","90 Pad 2 (warm)","91 Pad 3 (polysynth)","92 Pad 4 (choir)","93 Pad 5 (bowed)","94 Pad 6 (metallic)","95 Pad 7 (halo)","96 Pad 8 (sweep)"],"Synth Effects":["97 FX 1 (rain)","98 FX 2 (soundtrack)","99 FX 3 (crystal)","100 FX 4 (atmosphere)","101 FX 5 (brightness)","102 FX 6 (goblins)","103 FX 7 (echoes)","104 FX 8 (sci-fi)"],Ethnic:["105 Sitar","106 Banjo","107 Shamisen","108 Koto","109 Kalimba","110 Bagpipe","111 Fiddle","112 Shanai"],Percussive:["113 Tinkle Bell","114 Agogo","115 Steel Drums","116 Woodblock","117 Taiko Drum","118 Melodic Tom","119 Synth Drum"],"Sound effects":["120 Reverse Cymbal","121 Guitar Fret Noise","122 Breath Noise","123 Seashore","124 Bird Tweet","125 Telephone Ring","126 Helicopter","127 Applause","128 Gunshot"]}),p=function(){for(var t={},e=0;e<16;e++)t[e]={program:e,pitchBend:0,mute:!1,mono:!1,omni:!1,solo:!1};return t}(),d={},h={};!function(){for(var t=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],e=21;e<=108;e++){var r=Math.floor((e-12)/12),n=t[e%12]+r;d[n]=e,h[e]=n}}();for(var v="audiotag",y={},g=[],_=0;_<16;_++)g[_]=127;for(var m=-1,b=[],A={},E=[],w=0;w<12;w++)E[w]=new Audio;var x=function(t){for(var e=0,r=Object.keys(d);e<r.length;e++){var n=r[e];A[n]={id:n}}t.onsuccess&&t.onsuccess()},S=function(t,e){},T=function(t,e,r,n){},O=function(t,e,r){},I=function(){},k=function(){},M=function(){},C=function(t,e){if(p[t]){var r=p[t].program,n=l.byId[r].id,o=A[e];if(o){var i=n+""+o.id,a=(m+1)%E.length,u=E[a];if(b[a]=i,!y.Soundfont[n])return void 0;u.src=y.Soundfont[n][o.id],u.volume=g[t]/127,u.play(),m=a}}},q=function(t,e){if(p[t]){var r=p[t].program,n=l.byId[r].id,o=A[e];if(o)for(var i=n+""+o.id,a=0,u=E.length;a<u;a++){var c=(a+m+1)%u,s=b[c];if(s&&s===i)return E[c].pause(),void(b[c]=null)}}},B=function(t,e){g[t]=e},P=function(t,e){p[t].instrument=e},F=function(t,e,r,n){var o=h[e];return!!A[o]&&(n?setTimeout(function(){g[t]=r,C(t,o)},1e3*n):(g[t]=r,C(t,o),!0))},R=function(t,e,r){},D=function(t,e,r,n){for(var o=function(r){var o=e[r],i=h[o];if(!A[i])return"continue";n?setTimeout(function(){C(t,i)},1e3*n):C(t,i)},i=0;i<e.length;i++)o(i)},L=function(t,e,r){for(var n=function(n){var o=e[n],i=h[o];if(!A[i])return"continue";r?setTimeout(function(){q(t,i)},1e3*r):q(t,i)},o=0;o<e.length;o++)n(o)},j=function(){for(var t=0,e=E.length;t<e;t++)E[t].pause()},U=(r(125),r(127),r(128),r(132),r(134),r(135),r(136),r(137),r(138),r(139),r(140),r(141),r(142),r(143),r(144),r(146),r(147),r(148),r(149),r(150),r(151),r(152),r(153),r(154),r(155),r(156),"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=");function W(t){var e=Math.ceil(3*t.length/4),r=new ArrayBuffer(e);return function(t,e){var r,n,o,i,a,u,c,s,f=U.indexOf(t.charAt(t.length-1)),l=U.indexOf(t.charAt(t.length-1)),p=Math.ceil(3*t.length/4);64===f&&p--;64===l&&p--;var d=0;r=e?new Uint8Array(e):new Uint8Array(p);t=t.replace(/[^A-Za-z0-9+\/=]/g,"");for(var h=0;h<p;h+=3)a=U.indexOf(t.charAt(d++)),u=U.indexOf(t.charAt(d++)),c=U.indexOf(t.charAt(d++)),s=U.indexOf(t.charAt(d++)),n=a<<2|u>>4,o=(15&u)<<4|c>>2,i=(3&c)<<6|s,r[h]=n,64!==c&&(r[h+1]=o),64!==s&&(r[h+2]=i)}(t,r),r}function K(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=[],n=!0,o=!1,i=void 0;try{for(var a,u=t[Symbol.iterator]();!(n=(a=u.next()).done)&&(r.push(a.value),!e||r.length!==e);n=!0);}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}return r}(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}var N,G="webaudio",V={},Y={},H={},J=127,Z={},X=function(t){lt(N||dt(),t.onsuccess)},Q=function(){},z=function(){},$=function(t,e){},tt=function(t,e,r,n){},et=function(t,e,r){r?setTimeout(function(){J=e},1e3*r):J=e},rt=function(t,e,r){var n=p[t];n&&(n.program=e)},nt=function(t,e,r){var n=p[t];n&&(r?setTimeout(function(){n.pitchBend=e},r):n.pitchBend=e)},ot=function(t,e,r){var n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:0,o=p[t],i=o.program,a=i+"x"+e,u=Z[a];if(u&&N){var c;if(n<N.currentTime&&(n+=N.currentTime),(c=N.createBufferSource()).buffer=u,H)for(var s=c,f=0,l=Object.keys(H);f<l.length;f++){var d=l[f];s.connect(H[d].input),s=H[d]}var h=r/127*(J/127)*2-1;return c.connect(N.destination),c.playbackRate.value=1,c.gainNode=N.createGain(),c.gainNode.connect(N.destination),c.gainNode.gain.value=Math.min(1,Math.max(-1,h)),c.connect(c.gainNode),c.start(n||0),Y[t+"x"+e]=c,c}},it=function(t,e){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,n=p[t],o=n.program,i=o+"x"+e,a=Z[i];if(N&&a){r<N.currentTime&&(r+=N.currentTime);var u=Y[t+"x"+e];if(u){if(u.gainNode){var c=u.gainNode.gain;c.linearRampToValueAtTime(c.value,r),c.linearRampToValueAtTime(-1,r+.3)}return u.noteOff?u.noteOff(r+.5):u.stop(r+.5),delete Y[t+"x"+e],u}}},at=function(t,e,r,n){var o={},i=!0,a=!1,u=void 0;try{for(var c,s=e[Symbol.iterator]();!(i=(c=s.next()).done);i=!0){var f=c.value;o[f]=ot(t,f,r,n)}}catch(t){a=!0,u=t}finally{try{i||null==s.return||s.return()}finally{if(a)throw u}}return o},ut=function(t,e,r){var n={},o=!0,i=!1,a=void 0;try{for(var u,c=e[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;n[s]=it(t,s,r)}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}return n},ct=function(){if(N)for(var t=0,e=Object.keys(Y);t<e.length;t++){var r=e[t],n=0;n<N.currentTime&&(n+=N.currentTime);var o=Y[r];o.gain.linearRampToValueAtTime(1,n),o.gain.linearRampToValueAtTime(0,n+.3),o.noteOff?o.noteOff(n+.3):o.stop(n+.3),delete Y[r]}},st=function(t){if(N&&N.tunajs){var e=!0,r=!1,n=void 0;try{for(var o,i=t[Symbol.iterator]();!(e=(o=i.next()).done);e=!0){var a=o.value,u=new N.tunajs[a.type](a);u.connect(N.destination),H[a.type]=u}}catch(t){r=!0,n=t}finally{try{e||null==i.return||i.return()}finally{if(r)throw n}}}else console.log("Effects module not installed.")},ft=function(){return N},lt=function(t,e,r,n){N=t,"undefined"==typeof Tuna||N.tunajs instanceof Tuna||(N.tunajs=new Tuna(N));for(var o=[],i=0,a=Object.keys(d);i<a.length;i++){var u=a[i];o.push(u)}for(var c=function(t){for(var r=0,n=Object.keys(f);r<n.length;r++){var o=n[r];if(f[o])return}e&&(e(),e=null)},s=function(t,e,r,n){var o=t[n];o&&(f[e]+=1,pt(o,function(r){r.id=n;var o=d[n];if(Z[e+"x"+o]=r,f[e]-=1,0===f[e]){0,t.isLoaded=!0,c()}},function(t){console.log(t)}))},f={},p=0,h=Object.entries(V.Soundfont);p<h.length;p++){var v=K(h[p],2),y=v[0],g=v[1];if(!g.isLoaded){var _=l.byName[y];if(_){var m=_.program;f[m]=0;for(var b=0;b<o.length;b++){s(g,m,0,o[b])}}}}setTimeout(c,1)},pt=function(t,e,r){if(0===t.indexOf("data:audio")){var n=W(t.split(",")[1]);return N.decodeAudioData(n,e,r)}var o=new XMLHttpRequest;return o.open("GET",t,!0),o.responseType="arraybuffer",o.onsuccess=function(){return N.decodeAudioData(o.response,e,r)},void o.send()},dt=function(){return new(window.AudioContext||window.webkitAudioContext)},ht="webmidi",vt={},yt=null,gt=function(t){var e=function(e){console.error("Could not connect to web midi! Falling back to WebAudio:",e),vt.webaudio_backup_connect&&(vt.config.api="webaudio",vt.webaudio_backup_connect(t))};navigator.requestMIDIAccess().then(function(r){var n=r.outputs;return void 0===(yt="function"==typeof n?n()[0]:n[0])?e("No outputs defined"):t.onsuccess&&t.onsuccess()},e)},_t=function(){},mt=function(){},bt=function(){},At=function(){},Et=function(){},wt=function(t,e){yt.send(t,1e3*e)},xt=function(t,e,r,n){yt.send([t,e,r],1e3*n)},St=function(t,e,r){yt.send([176+t,7,e],1e3*r)},Tt=function(t,e,r){yt.send([192+t,e],1e3*r)},Ot=function(t,e,r){yt.send([224+t,e],1e3*r)},It=function(t,e,r,n){yt.send([144+t,e,r],1e3*n)},kt=function(t,e,r){yt.send([128+t,e,0],1e3*r)},Mt=function(t,e,r,n){var o=!0,i=!1,a=void 0;try{for(var u,c=e[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;yt.send([144+t,s,r],1e3*n)}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}},Ct=function(t,e,r){var n=!0,o=!1,i=void 0;try{for(var a,u=e[Symbol.iterator]();!(n=(a=u.next()).done);n=!0){var c=a.value;yt.send([128+t,c,0],1e3*r)}}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}},qt=function(){yt.cancel();for(var t=0;t<16;t++)yt.send([176+t,123,0])};r(157),r(158),r(159),r(161);function Bt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Pt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.str=e,this.position=0}var e,r,n;return e=t,(r=[{key:"read",value:function(t){var e=this.str.substr(this.position,t);return this.position+=t,e}},{key:"readInt32",value:function(){var t=(this.str.charCodeAt(this.position)<<24)+(this.str.charCodeAt(this.position+1)<<16)+(this.str.charCodeAt(this.position+2)<<8)+this.str.charCodeAt(this.position+3);return this.position+=4,t}},{key:"readInt16",value:function(){var t=(this.str.charCodeAt(this.position)<<8)+this.str.charCodeAt(this.position+1);return this.position+=2,t}},{key:"readInt8",value:function(t){var e=this.str.charCodeAt(this.position);return t&&e>127&&(e-=256),this.position+=1,e}},{key:"eof",value:function(){return this.position>=this.str.length}},{key:"readVarInt",value:function(){for(var t=0;;){var e=this.readInt8();if(!(128&e))return t+e;t+=127&e,t<<=7}}}])&&Bt(e.prototype,r),n&&Bt(e,n),t}();function Ft(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Rt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.data=e,this.stream=new Pt(e),this.lastEventTypeByte=void 0}var e,r,n;return e=t,(r=[{key:"readChunk",value:function(t){var e=t.read(4),r=t.readInt32();return{id:e,length:r,data:t.read(r)}}},{key:"readEvent",value:function(t){var e={};e.deltaTime=t.readVarInt();var r=t.readInt8();if(240==(240&r)){if(255!==r){if(240===r){e.type="sysEx";var n=t.readVarInt();return e.data=t.read(n),e}if(247===r){e.type="dividedSysEx";var o=t.readVarInt();return e.data=t.read(o),e}throw"Unrecognised MIDI event type byte: "+r}e.type="meta";var i=t.readInt8(),a=t.readVarInt();switch(i){case 0:if(e.subtype="sequenceNumber",2!==a)throw"Expected length for sequenceNumber event is 2, got "+a;return e.number=t.readInt16(),e;case 1:return e.subtype="text",e.text=t.read(a),e;case 2:return e.subtype="copyrightNotice",e.text=t.read(a),e;case 3:return e.subtype="trackName",e.text=t.read(a),e;case 4:return e.subtype="instrumentName",e.text=t.read(a),e;case 5:return e.subtype="lyrics",e.text=t.read(a),e;case 6:return e.subtype="marker",e.text=t.read(a),e;case 7:return e.subtype="cuePoint",e.text=t.read(a),e;case 32:if(e.subtype="midiChannelPrefix",1!==a)throw"Expected length for midiChannelPrefix event is 1, got "+a;return e.channel=t.readInt8(),e;case 47:if(e.subtype="endOfTrack",0!==a)throw"Expected length for endOfTrack event is 0, got "+a;return e;case 81:if(e.subtype="setTempo",3!==a)throw"Expected length for setTempo event is 3, got "+a;return e.microsecondsPerBeat=(t.readInt8()<<16)+(t.readInt8()<<8)+t.readInt8(),e;case 84:if(e.subtype="smpteOffset",5!==a)throw"Expected length for smpteOffset event is 5, got "+a;var u=t.readInt8();return e.frameRate={0:24,32:25,64:29,96:30}[96&u],e.hour=31&u,e.min=t.readInt8(),e.sec=t.readInt8(),e.frame=t.readInt8(),e.subframe=t.readInt8(),e;case 88:if(e.subtype="timeSignature",4!==a)throw"Expected length for timeSignature event is 4, got "+a;return e.numerator=t.readInt8(),e.denominator=Math.pow(2,t.readInt8()),e.metronome=t.readInt8(),e.thirtyseconds=t.readInt8(),e;case 89:if(e.subtype="keySignature",2!==a)throw"Expected length for keySignature event is 2, got "+a;return e.key=t.readInt8(!0),e.scale=t.readInt8(),e;case 127:return e.subtype="sequencerSpecific",e.data=t.read(a),e;default:return e.subtype="unknown",e.data=t.read(a),e}}else{var c;0==(128&r)?(c=r,r=this.lastEventTypeByte):(c=t.readInt8(),this.lastEventTypeByte=r);var s=r>>4;switch(e.channel=15&r,e.type="channel",s){case 8:return e.subtype="noteOff",e.noteNumber=c,e.velocity=t.readInt8(),e;case 9:return e.noteNumber=c,e.velocity=t.readInt8(),0===e.velocity?e.subtype="noteOff":e.subtype="noteOn",e;case 10:return e.subtype="noteAftertouch",e.noteNumber=c,e.amount=t.readInt8(),e;case 11:return e.subtype="controller",e.controllerType=c,e.value=t.readInt8(),e;case 12:return e.subtype="programChange",e.programNumber=c,e;case 13:return e.subtype="channelAftertouch",e.amount=c,e;case 14:return e.subtype="pitchBend",e.value=c+(t.readInt8()<<7),e;default:throw"Unrecognised MIDI event type: "+s}}}},{key:"parseAndReturn",value:function(){var t=this.stream,e=this.readChunk(t);if("MThd"!==e.id||6!==e.length)throw"Bad .mid file - header not found";var r=new Pt(e.data),n=r.readInt16(),o=r.readInt16(),i=r.readInt16();if(32768&i)throw"Expressing time division in SMTPE frames is not supported yet";for(var a={formatType:n,trackCount:o,ticksPerBeat:i},u=[],c=0;c<a.trackCount;c++){u[c]=[];var s=this.readChunk(t);if("MTrk"!==s.id)throw"Unexpected chunk - expected MTrk, got "+s.id;for(var f=new Pt(s.data);!f.eof();){var l=this.readEvent(f);u[c].push(l)}}return{header:a,tracks:u}}}])&&Ft(e.prototype,r),n&&Ft(e,n),t}();function Dt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function Lt(t){return(Lt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}var jt=function(){function t(e,r,n,o){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.midiFile=e,this.timeWarp=r,this.eventProcessor=n,this.trackStates=[],this.beatsPerMinute=o||120,this.bpmOverride=!!o,this.ticksPerBeat=e.header.ticksPerBeat;for(var i=0;i<e.tracks.length;i++)this.trackStates[i]={nextEventIndex:0,ticksToNextEvent:e.tracks[i].length?e.tracks[i][0].deltaTime:null};this.temporal=[],this.processEvents()}var e,r,n;return e=t,(r=[{key:"getNextEvent",value:function(){for(var t=null,e=null,r=null,n=0;n<this.trackStates.length;n++)null!=this.trackStates[n].ticksToNextEvent&&(null==t||this.trackStates[n].ticksToNextEvent<t)&&(t=this.trackStates[n].ticksToNextEvent,e=n,r=this.trackStates[n].nextEventIndex);if(null!=e){var o=this.midiFile.tracks[e][r];this.midiFile.tracks[e][r+1]?this.trackStates[e].ticksToNextEvent+=this.midiFile.tracks[e][r+1].deltaTime:this.trackStates[e].ticksToNextEvent=null,this.trackStates[e].nextEventIndex+=1;for(var i=0;i<this.trackStates.length;i++)null!=this.trackStates[i].ticksToNextEvent&&(this.trackStates[i].ticksToNextEvent-=t);return{ticksToEvent:t,event:o,track:e}}return null}},{key:"processEvents",value:function(){for(var t=this.getNextEvent();t;){this.bpmOverride||"meta"!==t.event.type||"setTempo"!==t.event.subtype||(this.beatsPerMinute=6e7/t.event.microsecondsPerBeat);var e=0;t.ticksToEvent>0&&(e=t.ticksToEvent/this.ticksPerBeat/(this.beatsPerMinute/60));var r=1e3*e*this.timeWarp||0;this.temporal.push([t,r]),t=this.getNextEvent()}}},{key:"getData",value:function(){return function t(e){if("object"!=Lt(e))return e;if(null==e)return e;var r="number"==typeof e.length?[]:{};for(var n in e)r[n]=t(e[n]);return r}(this.temporal)}}])&&Dt(e.prototype,r),n&&Dt(e,n),t}();function Ut(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Wt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.plugin=e,this.currentTime=0,this.endTime=0,this.restart=0,this.playing=!1,this.timeWarp=1,this.startDelay=0,this.BPM=120,this.data=[],this.eventQueue=[],this.queuedTime=0,this.startTime=0,this.noteRegistrar={},this.onMidiEvent=void 0,this.MIDIOffset=0,this.frame=void 0,this.__now=void 0}var e,r,n;return e=t,(r=[{key:"start",value:function(t){this.currentTime<-1&&(this.currentTime=-1),this.startAudio(this.currentTime,null,t)}},{key:"resume",value:function(t){return this.start(t)}},{key:"pause",value:function(){var t=this.restart;this.stopAudio(),this.restart=t}},{key:"stop",value:function(){this.stopAudio(),this.restart=0,this.currentTime=0}},{key:"addListener",value:function(t){this.onMidiEvent=t}},{key:"removeListener",value:function(){this.onMidiEvent=void 0}},{key:"clearAnimation",value:function(){this.animationFrameId&&cancelAnimationFrame(this.animationFrameId)}},{key:"setAnimation",value:function(t){var e=this,r=0,n=0,o=0;this.clearAnimation(),this.frame=function(){if(e.animationFrameId=requestAnimationFrame(e.frame),0!==e.endTime){e.playing?(r=o===e.currentTime?n-Date.now():0,r=0===e.currentTime?0:e.currentTime-r,o!==e.currentTime&&(n=Date.now(),o=e.currentTime)):r=e.currentTime;var i=e.endTime,a=r/1e3,u=a/60,c=60*u+(a-60*u),s=i/1e3;s-c<-1||t({now:c,end:s,events:e.noteRegistrar})}},requestAnimationFrame(this.frame)}},{key:"loadMidiFile",value:function(t,e,r){try{this.replayer=new jt((n=this.currentData,new Rt(n).parseAndReturn()),this.timeWarp,null,this.BPM),this.data=this.replayer.getData(),this.endTime=this.getLength(),this.loadPlugin({onsuccess:t,onprogress:e,onerror:r})}catch(t){r&&r(t)}var n}},{key:"loadPlugin",value:function(){}},{key:"loadFile",value:function(t,e,r,n){var o=this;if(this.stop(),-1!==t.indexOf("base64,"))this.currentData=atob(t.split(",")[1]),this.loadMidiFile(e,r,n);else{var i=new XMLHttpRequest;i.open("GET",t),i.overrideMimeType("text/plain; charset=x-user-defined"),i.onreadystatechange=function(){if(4===i.readyState)if(200===i.status){for(var t=i.responseText||"",a=[],u=t.length,c=String.fromCharCode,s=0;s<u;s++)a[s]=c(255&t.charCodeAt(s));o.currentData=a.join(""),o.loadMidiFile(e,r,n)}else n&&n("Unable to load MIDI file")},i.send()}}},{key:"getFileInstruments",value:function(){for(var t={},e={},r=0;r<this.data.length;r++){var n=this.data[r][0].event;if("channel"===n.type){var o=n.channel;switch(n.subtype){case"controller":break;case"programChange":e[o]=n.programNumber;break;case"noteOn":var i=e[o],a=Number.isNaN(parseInt(i))?o:i;t[l.byId[a].id]=!0}}}for(var u=[],c=0,s=Object.keys(t);c<s.length;c++){var f=s[c];u.push(f)}return u}},{key:"scheduleTracking",value:function(t,e,r,n,o,i,a){var u=this;return setTimeout(function(){var n={channel:t,note:e,now:r,end:u.endTime,message:o,velocity:i};128===o?delete u.noteRegistrar[e]:u.noteRegistrar[e]=n,u.onMidiEvent&&u.onMidiEvent(n),u.currentTime=r,u.eventQueue.shift(),u.eventQueue.length<1e3?u.startAudio(u.queuedTime,!0):u.currentTime===u.queuedTime&&u.queuedTime<u.endTime&&u.startAudio(u.queuedTime,!0)},r-n)}},{key:"getContext",value:function(){return"webaudio"===this.plugin.api?this.plugin.getContext():(this.ctx={currentTime:0},this.ctx)}},{key:"getLength",value:function(){for(var t=this.data,e=t.length,r=.5,n=0;n<e;n++)r+=t[n][1];return r}},{key:"getNow",value:function(){return window.performance&&window.performance.now?window.performance.now():Date.now()}},{key:"startAudio",value:function(t,e,r){if(this.replayer){var n;e||(void 0===t&&(t=this.restart),this.playing&&this.stopAudio(),this.playing=!0,this.data=this.replayer.getData(),this.endTime=this.getLength());var o=0,i=0,a=this.data,u=this.getContext(),c=a.length;this.queuedTime=.5;var s=t-this.currentTime;if("webaudio"!==this.plugin.api){var f=this.getNow();this.__now=this.__now||f,u.currentTime=(f-this.__now)/1e3}this.startTime=u.currentTime;for(var l=0;l<c&&i<100;l++){var d=a[l];if(this.queuedTime+=d[1],this.queuedTime<=t)o=this.queuedTime;else{t=this.queuedTime-o;var h=d[0].event;if("channel"===h.type){var v=h.channel,y=p[v],g=u.currentTime+(t+s+this.startDelay)/1e3,_=this.queuedTime-o+this.startDelay;switch(h.subtype){case"controller":this.plugin.setController(v,h.controllerType,h.value,g);break;case"programChange":this.plugin.programChange(v,h.programNumber,g);break;case"pitchBend":this.plugin.pitchBend(v,h.value,g);break;case"noteOn":if(y.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:_,source:this.plugin.noteOn(v,h.noteNumber,h.velocity,g),interval:this.scheduleTracking(v,n,this.queuedTime+this.startDelay,o-s,144,h.velocity)}),i+=1;break;case"noteOff":if(y.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:_,source:this.plugin.noteOff(v,h.noteNumber,g),interval:this.scheduleTracking(v,n,this.queuedTime,o-s,128,0)})}}}}r&&r(this.eventQueue)}}},{key:"stopAudio",value:function(){var t=this.getContext();for(this.playing=!1,this.restart+=1e3*(t.currentTime-this.startTime);this.eventQueue.length;){var e=this.eventQueue.pop();window.clearInterval(e.interval),e.source&&("number"==typeof e.source?window.clearTimeout(e.source):e.source.disconnect(0))}for(var r=0,n=Object.keys(this.noteRegistrar);r<n.length;r++){var o=n[r],i=this.noteRegistrar[o];144===this.noteRegistrar[o].message&&this.onMidiEvent&&this.onMidiEvent({channel:i.channel,note:i.note,now:i.now,end:i.end,message:128,velocity:i.velocity})}this.noteRegistrar={}}}])&&Ut(e.prototype,r),n&&Ut(e,n),t}(),Kt=r(67),Nt={"Isaac Newton (1704)":{format:"HSL",ref:"Gerstner, p.167",english:["red",null,"orange",null,"yellow","green",null,"blue",null,"indigo",null,"violet"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[135,76,32],6:[0,0,0],7:[248,82,28],8:[0,0,0],9:[302,88,26],10:[0,0,0],11:[325,84,46]},"Louis Bertrand Castel (1734)":{format:"HSL",ref:"Peacock, p.400",english:["blue","blue-green","green","olive green","yellow","yellow-orange","orange","red","crimson","violet","agate","indigo"],0:[248,82,28],1:[172,68,34],2:[135,76,32],3:[79,59,36],4:[60,90,60],5:[49,90,60],6:[29,94,52],7:[360,96,51],8:[1,89,33],9:[325,84,46],10:[273,80,27],11:[302,88,26]},"George Field (1816)":{format:"HSL",ref:"Klein, p.69",english:["blue",null,"purple",null,"red","orange",null,"yellow",null,"yellow green",null,"green"],0:[248,82,28],1:[0,0,0],2:[302,88,26],3:[0,0,0],4:[360,96,51],5:[29,94,52],6:[0,0,0],7:[60,90,60],8:[0,0,0],9:[79,59,36],10:[0,0,0],11:[135,76,32]},"D. D. Jameson (1844)":{format:"HSL",ref:"Jameson, p.12",english:["red","red-orange","orange","orange-yellow","yellow","green","green-blue","blue","blue-purple","purple","purple-violet","violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[273,80,27],9:[302,88,26],10:[313,78,37],11:[325,84,46]},"Theodor Seemann (1881)":{format:"HSL",ref:"Klein, p.86",english:["carmine","scarlet","orange","yellow-orange","yellow","green","green blue","blue","indigo","violet","brown","black"],0:[0,58,26],1:[360,96,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[302,88,26],9:[325,84,46],10:[0,58,26],11:[0,0,3]},"A. Wallace Rimington (1893)":{format:"HSL",ref:"Peacock, p.402",english:["deep red","crimson","orange-crimson","orange","yellow","yellow-green","green","blueish green","blue-green","indigo","deep blue","violet"],0:[360,96,51],1:[1,89,33],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[79,59,36],6:[135,76,32],7:[163,62,40],8:[172,68,34],9:[302,88,26],10:[248,82,28],11:[325,84,46]},"Bainbridge Bishop (1893)":{format:"HSL",ref:"Bishop, p.11",english:["red","orange-red or scarlet","orange","gold or yellow-orange","yellow or green-gold","yellow-green","green","greenish-blue or aquamarine","blue","indigo or violet-blue","violet","violet-red","red"],0:[360,96,51],1:[1,89,33],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[163,62,40],8:[302,88,26],9:[325,84,46],10:[343,79,47],11:[360,96,51]},"H. von Helmholtz (1910)":{format:"HSL",ref:"Helmholtz, p.22",english:["yellow","green","greenish blue","cyan-blue","indigo blue","violet","end of red","red","red","red","red orange","orange"],0:[60,90,60],1:[135,76,32],2:[172,68,34],3:[211,70,37],4:[302,88,26],5:[325,84,46],6:[330,84,34],7:[360,96,51],8:[10,91,43],9:[10,91,43],10:[8,93,51],11:[28,89,50]},"Alexander Scriabin (1911)":{format:"HSL",ref:"Jones, p.104",english:["red","violet","yellow","steely with the glint of metal","pearly blue the shimmer of moonshine","dark red","bright blue","rosy orange","purple","green","steely with a glint of metal","pearly blue the shimmer of moonshine"],0:[360,96,51],1:[325,84,46],2:[60,90,60],3:[245,21,43],4:[211,70,37],5:[1,89,33],6:[248,82,28],7:[29,94,52],8:[302,88,26],9:[135,76,32],10:[245,21,43],11:[211,70,37]},"Adrian Bernard Klein (1930)":{format:"HSL",ref:"Klein, p.209",english:["dark red","red","red orange","orange","yellow","yellow green","green","blue-green","blue","blue violet","violet","dark violet"],0:[0,91,40],1:[360,96,51],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[292,70,31],10:[325,84,46],11:[330,84,34]},"August Aeppli (1940)":{format:"HSL",ref:"Gerstner, p.169",english:["red",null,"orange",null,"yellow",null,"green","blue-green",null,"ultramarine blue","violet","purple"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[0,0,0],6:[135,76,32],7:[172,68,34],8:[0,0,0],9:[211,70,37],10:[273,80,27],11:[302,88,26]},"I. J. Belmont (1944)":{ref:"Belmont, p.226",english:["red","red-orange","orange","yellow-orange","yellow","yellow-green","green","blue-green","blue","blue-violet","violet","red-violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[313,78,37],10:[325,84,46],11:[338,85,37]},"Steve Zieverink (2004)":{format:"HSL",ref:"Cincinnati Contemporary Art Center",english:["yellow-green","green","blue-green","blue","indigo","violet","ultra violet","infra red","red","orange","yellow-white","yellow"],0:[73,73,55],1:[135,76,32],2:[172,68,34],3:[248,82,28],4:[302,88,26],5:[325,84,46],6:[326,79,24],7:[1,89,33],8:[360,96,51],9:[29,94,52],10:[62,78,74],11:[60,90,60]},"Circle of Fifths (Johnston 2003)":{format:"RGB",ref:"Joseph Johnston",english:["yellow","blue","orange","teal","red","green","purple","light orange","light blue","dark orange","dark green","violet"],0:[255,255,0],1:[50,0,255],2:[255,150,0],3:[0,210,180],4:[255,0,0],5:[130,255,0],6:[150,0,200],7:[255,195,0],8:[30,130,255],9:[255,100,0],10:[0,200,0],11:[225,0,225]},"Circle of Fifths (Wheatman 2002)":{format:"HEX",ref:"Stuart Wheatman",english:[],data:["#122400","#2E002E","#002914","#470000","#002142","#2E2E00","#290052","#003D00","#520029","#003D3D","#522900","#000080","#244700","#570057","#004D26","#7A0000","#003B75","#4C4D00","#47008F","#006100","#850042","#005C5C","#804000","#0000C7","#366B00","#80007F","#00753B","#B80000","#0057AD","#6B6B00","#6600CC","#008A00","#B8005C","#007F80","#B35900","#2424FF","#478F00","#AD00AD","#00994D","#F00000","#0073E6","#8F8F00","#8A14FF","#00AD00","#EB0075","#00A3A3","#E07000","#6B6BFF","#5CB800","#DB00DB","#00C261","#FF5757","#3399FF","#ADAD00","#B56BFF","#00D600","#FF57AB","#00C7C7","#FF9124","#9999FF","#6EDB00","#FF29FF","#00E070","#FF9999","#7ABDFF","#D1D100","#D1A3FF","#00FA00","#FFA3D1","#00E5E6","#FFC285","#C2C2FF","#80FF00","#FFA8FF","#00E070","#FFCCCC","#C2E0FF","#F0F000","#EBD6FF","#ADFFAD","#FFD6EB","#8AFFFF","#FFEBD6","#EBEBFF","#E0FFC2","#FFEBFF","#E5FFF2","#FFF5F5"]}},Gt=function(t){for(var e,r,n,o,i,a={},u=Nt,c=u[t]||u["D. D. Jameson (1844)"],s=c[3],f=0;f<=88;f++)if(c.data)a[f]={hsl:c.data[f],hex:c.data[f]};else{var l=c[(f+9)%12];"RGB"===c.format?(l=Kt.a.Space(l,"RGB>HSL"),e=Math.floor(l.H),r=Math.floor(l.S),n=Math.floor(l.L)):(e=l[0],r=l[1],n=l[2]),e===r&&r===n&&(o=s,i=c[(f+10)%12],l=[Math.floor(.5*o[0]+.5*i[0]+.5),Math.floor(.5*o[1]+.5*i[1]+.5),Math.floor(.5*o[2]+.5*i[2]+.5)]),a[f]={hsl:"hsla("+e+","+r+"%,"+n+"%, 1)",hex:Kt.a.Space({H:e,S:r,L:n},"HSL>RGB>HEX>W3")},s=l}return a};function Vt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function Yt(t,e){return!e||"object"!==Zt(e)&&"function"!=typeof e?function(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}(t):e}function Ht(t){return(Ht=Object.setPrototypeOf?Object.getPrototypeOf:function(t){return t.__proto__||Object.getPrototypeOf(t)})(t)}function Jt(t,e){return(Jt=Object.setPrototypeOf||function(t,e){return t.__proto__=e,t})(t,e)}function Zt(t){return(Zt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}r.d(e,"Soundfont",function(){return Xt}),r.d(e,"audio_contexts",function(){return Qt}),r.d(e,"config",function(){return zt}),r.d(e,"loadPlugin",function(){return $t}),r.d(e,"loadProgram",function(){return te}),r.d(e,"requestQueue",function(){return ne}),r.d(e,"sendRequest",function(){return oe}),r.d(e,"playChannel",function(){return ie}),r.d(e,"stopChannel",function(){return ae}),r.d(e,"send",function(){return ue}),r.d(e,"setController",function(){return ce}),r.d(e,"setVolume",function(){return se}),r.d(e,"programChange",function(){return fe}),r.d(e,"pitchBend",function(){return le}),r.d(e,"noteOn",function(){return pe}),r.d(e,"noteOff",function(){return de}),r.d(e,"chordOn",function(){return he}),r.d(e,"chordOff",function(){return ve}),r.d(e,"stopAllNotes",function(){return ye}),r.d(e,"setEffects",function(){return ge}),r.d(e,"getContext",function(){return _e}),r.d(e,"setContext",function(){return me}),r.d(e,"Player",function(){return be}),r.d(e,"GM",function(){return l}),r.d(e,"noteToKey",function(){return h}),r.d(e,"keyToNote",function(){return d}),r.d(e,"channels",function(){return p}),r.d(e,"AudioTag",function(){return n}),r.d(e,"WebAudio",function(){return o}),r.d(e,"WebMIDI",function(){return i}),r.d(e,"Synesthesia",function(){return a});var Xt={},Qt={AudioTag:n,WebAudio:o,WebMIDI:i},zt={soundfontUrl:"./soundfont/",api:"",audioFormat:"",supports:{},connected_plugin:o,is_connected:!1},$t=function(t){"function"==typeof t&&(t={onsuccess:t}),t.onprogress=t.onprogress||void 0,t.api=t.api||"",t.targetFormat=t.targetFormat||"",t.instrument=t.instrument||"acoustic_grand_piano",t.instruments=t.instruments||void 0,t.apiPrecedence=t.apiPrecedence||["webaudio","webmidi","audiotag"],zt.soundfontUrl=t.soundfontUrl||zt.soundfontUrl,function(t){if("undefined"!=typeof navigator&&navigator.requestMIDIAccess)if(Function.prototype.toString.call(navigator.requestMIDIAccess).indexOf("[native code]"))u.webmidi=!0;else if("undefined"!=typeof navigator&&void 0!==navigator.plugins)for(var e=0,r=Array.from(navigator.plugins);e<r.length;e++)r[e].name.indexOf("Jazz-Plugin")>=0&&(u.webmidi=!0);if("undefined"==typeof Audio)return t({});u.audiotag=!0;var n=window.AudioContext||window.webkitAudioContext;n&&n.prototype.createGain&&(u.webaudio=!0);var o=new Audio;if(void 0===o.canPlayType)return t(u);var i=o.canPlayType('audio/ogg; codecs="vorbis"'),a="probably"===i||"maybe"===i,f=o.canPlayType("audio/mpeg"),l="probably"===f||"maybe"===f;if(u.ogg_mp3_precedence="probably"===i?"ogg":"probably"===f?"mp3":"ogg",!a&&!l)return t(u);a&&s("audio/ogg;base64,T2dnUwACAAAAAAAAAADqnjMlAAAAAOyyzPIBHgF2b3JiaXMAAAAAAUAfAABAHwAAQB8AAEAfAACZAU9nZ1MAAAAAAAAAAAAA6p4zJQEAAAANJGeqCj3//////////5ADdm9yYmlzLQAAAFhpcGguT3JnIGxpYlZvcmJpcyBJIDIwMTAxMTAxIChTY2hhdWZlbnVnZ2V0KQAAAAABBXZvcmJpcw9CQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBACAAAAYRqF1TCqDEEPKQ4QUY9AzoxBDDEzGHGNONKQMMogzxZAyiFssLqgQBKEhKwKAKAAAwBjEGGIMOeekZFIi55iUTkoDnaPUUcoolRRLjBmlEluJMYLOUeooZZRCjKXFjFKJscRUAABAgAMAQICFUGjIigAgCgCAMAYphZRCjCnmFHOIMeUcgwwxxiBkzinoGJNOSuWck85JiRhjzjEHlXNOSuekctBJyaQTAAAQ4AAAEGAhFBqyIgCIEwAwSJKmWZomipamiaJniqrqiaKqWp5nmp5pqqpnmqpqqqrrmqrqypbnmaZnmqrqmaaqiqbquqaquq6nqrZsuqoum65q267s+rZru77uqapsm6or66bqyrrqyrbuurbtS56nqqKquq5nqq6ruq5uq65r25pqyq6purJtuq4tu7Js664s67pmqq5suqotm64s667s2rYqy7ovuq5uq7Ks+6os+75s67ru2rrwi65r66os674qy74x27bwy7ouHJMnqqqnqq7rmarrqq5r26rr2rqmmq5suq4tm6or26os67Yry7aumaosm64r26bryrIqy77vyrJui67r66Ys67oqy8Lu6roxzLat+6Lr6roqy7qvyrKuu7ru+7JuC7umqrpuyrKvm7Ks+7auC8us27oxuq7vq7It/KosC7+u+8Iy6z5jdF1fV21ZGFbZ9n3d95Vj1nVhWW1b+V1bZ7y+bgy7bvzKrQvLstq2scy6rSyvrxvDLux8W/iVmqratum6um7Ksq/Lui60dd1XRtf1fdW2fV+VZd+3hV9pG8OwjK6r+6os68Jry8ov67qw7MIvLKttK7+r68ow27qw3L6wLL/uC8uq277v6rrStXVluX2fsSu38QsAABhwAAAIMKEMFBqyIgCIEwBAEHIOKQahYgpCCKGkEEIqFWNSMuakZM5JKaWUFEpJrWJMSuaclMwxKaGUlkopqYRSWiqlxBRKaS2l1mJKqcVQSmulpNZKSa2llGJMrcUYMSYlc05K5pyUklJrJZXWMucoZQ5K6iCklEoqraTUYuacpA46Kx2E1EoqMZWUYgupxFZKaq2kFGMrMdXUWo4hpRhLSrGVlFptMdXWWqs1YkxK5pyUzDkqJaXWSiqtZc5J6iC01DkoqaTUYiopxco5SR2ElDLIqJSUWiupxBJSia20FGMpqcXUYq4pxRZDSS2WlFosqcTWYoy1tVRTJ6XFklKMJZUYW6y5ttZqDKXEVkqLsaSUW2sx1xZjjqGkFksrsZWUWmy15dhayzW1VGNKrdYWY40x5ZRrrT2n1mJNMdXaWqy51ZZbzLXnTkprpZQWS0oxttZijTHmHEppraQUWykpxtZara3FXEMpsZXSWiypxNhirLXFVmNqrcYWW62ltVprrb3GVlsurdXcYqw9tZRrrLXmWFNtBQAADDgAAASYUAYKDVkJAEQBAADGMMYYhEYpx5yT0ijlnHNSKucghJBS5hyEEFLKnINQSkuZcxBKSSmUklJqrYVSUmqttQIAAAocAAACbNCUWByg0JCVAEAqAIDBcTRNFFXVdX1fsSxRVFXXlW3jVyxNFFVVdm1b+DVRVFXXtW3bFn5NFFVVdmXZtoWiqrqybduybgvDqKqua9uybeuorqvbuq3bui9UXVmWbVu3dR3XtnXd9nVd+Bmzbeu2buu+8CMMR9/4IeTj+3RCCAAAT3AAACqwYXWEk6KxwEJDVgIAGQAAgDFKGYUYM0gxphhjTDHGmAAAgAEHAIAAE8pAoSErAoAoAADAOeecc84555xzzjnnnHPOOeecc44xxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY0wAwE6EA8BOhIVQaMhKACAcAABACCEpKaWUUkoRU85BSSmllFKqFIOMSkoppZRSpBR1lFJKKaWUIqWgpJJSSimllElJKaWUUkoppYw6SimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaVUSimllFJKKaWUUkoppRQAYPLgAACVYOMMK0lnhaPBhYasBAByAwAAhRiDEEJpraRUUkolVc5BKCWUlEpKKZWUUqqYgxBKKqmlklJKKbXSQSihlFBKKSWUUkooJYQQSgmhlFRCK6mEUkoHoYQSQimhhFRKKSWUzkEoIYUOQkmllNRCSB10VFIpIZVSSiklpZQ6CKGUklJLLZVSWkqpdBJSKamV1FJqqbWSUgmhpFZKSSWl0lpJJbUSSkklpZRSSymFVFJJJYSSUioltZZaSqm11lJIqZWUUkqppdRSSiWlkEpKqZSSUmollZRSaiGVlEpJKaTUSimlpFRCSamlUlpKLbWUSkmptFRSSaWUlEpJKaVSSksppRJKSqmllFpJKYWSUkoplZJSSyW1VEoKJaWUUkmptJRSSymVklIBAEAHDgAAAUZUWoidZlx5BI4oZJiAAgAAQABAgAkgMEBQMApBgDACAQAAAADAAAAfAABHARAR0ZzBAUKCwgJDg8MDAAAAAAAAAAAAAACAT2dnUwAEAAAAAAAAAADqnjMlAgAAADzQPmcBAQA="),l&&s("audio/mpeg;base64,/+MYxAAAAANIAUAAAASEEB/jwOFM/0MM/90b/+RhST//w4NFwOjf///PZu////9lns5GFDv//l9GlUIEEIAAAgIg8Ir/JGq3/+MYxDsLIj5QMYcoAP0dv9HIjUcH//yYSg+CIbkGP//8w0bLVjUP///3Z0x5QCAv/yLjwtGKTEFNRTMuOTeqqqqqqqqqqqqq/+MYxEkNmdJkUYc4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");var p=(new Date).getTime(),d=window.setInterval(function(){var e=(new Date).getTime();c&&!(e-p>5e3)||(window.clearInterval(d),t(u))},1)}(function(e){var r=window.location.hash,n="";if(e[t.api])n=t.api;else if(e[r.substr(1)])n=r.substr(1);else{var o=!0,i=!1,a=void 0;try{for(var u,c=t.apiPrecedence[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;if(e[s]){n=s;break}}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}}if(ee[n]){var f="",l=e["audio/ogg"],p=e["audio/mpeg"],d=e.ogg_mp3_precedence;t.targetFormat?f=t.targetFormat:l&&"ogg"===d?f="ogg":p&&"mp3"===d?f="mp3":l?f="ogg":p?f="mp3":"webmidi"!==n&&(console.warn("no supporting playback formats...will try mp3 but unlikely"),f="mp3"),zt.api=n,zt.audioFormat=f,zt.supports=e,te(t)}})},te=function(t){var e=t.instruments||t.instrument||"acoustic_grand_piano";"object"!==Zt(e)&&(e=e||0===e?[e]:[]);for(var r=0;r<e.length;r++){var n=e[r];n===n+0&&l.byId[n]&&(e[r]=l.byId[n].id)}t.format=zt.audioFormat,t.instruments=e,ee[zt.api](t)},ee={webmidi:function(t){re(i,t),gt(t),zt.is_connected=!0},audiotag:function(t){re(n,t),ne(t,"AudioTag")},webaudio:function(t){re(o,t),ne(t,"WebAudio")}},re=function(t,e){zt.connected_plugin=t,t.shared_root_info.Soundfont=Xt,t.shared_root_info.config=zt,t.shared_root_info.webaudio_backup_connect=function(t){return ee.webaudio(t)}},ne=function(t,e){var r=t.format,n=t.instruments,o=t.onprogress,i=t.onerror,a=Qt[e]||e.WebAudio,u=n.length,c=u,s=function(){(c-=1)||(a.connect(t),zt.is_connected=!0,o&&o("load",1))},f=!0,l=!1,p=void 0;try{for(var d,h=function(){var t=d.value;if(Xt[t])s();else{oe(t,r,function(e,r){return function(t,e,r){o&&o("load",e/u+(u-c)/u,r)}(0,r,t)},function(){return s()},i)}},v=n[Symbol.iterator]();!(f=(d=v.next()).done);f=!0)h()}catch(t){l=!0,p=t}finally{try{f||null==v.return||v.return()}finally{if(l)throw p}}},oe=function(t,e,r,n,o){var i=zt.soundfontUrl+t+"-"+e+".js",a=new XMLHttpRequest;a.open("GET",i),a.setRequestHeader("Content-Type","text/plain"),a.onload=function(){if(200===a.status){var t=document.createElement("script");t.language="javascript",t.type="text/javascript",t.text=a.responseText,document.body.appendChild(t),n()}else o?o():console.error("Could not load soundfont; path was ".concat(i))},a.send()},ie=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).playChannel.apply(t,arguments);console.error("Connect before calling")},ae=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).stopChannel.apply(t,arguments);console.error("Connect before calling")},ue=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).send.apply(t,arguments);console.error("Connect before calling")},ce=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setController.apply(t,arguments);console.error("Connect before calling")},se=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setVolume.apply(t,arguments);console.error("Connect before calling")},fe=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).programChange.apply(t,arguments);console.error("Connect before calling")},le=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).pitchBend.apply(t,arguments);console.error("Connect before calling")},pe=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).noteOn.apply(t,arguments);console.error("Connect before calling")},de=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).noteOff.apply(t,arguments);console.error("Connect before calling")},he=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).chordOn.apply(t,arguments);console.error("Connect before calling")},ve=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).chordOff.apply(t,arguments);console.error("Connect before calling")},ye=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).stopAllNotes.apply(t,arguments);console.error("Connect before calling")},ge=function(){if(zt.is_connected)return zt.connected_plugin.setEffects();console.error("Connect before calling")},_e=function(){if(zt.is_connected)return zt.connected_plugin.getContext();console.error("Connect before calling")},me=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setContext.apply(t,arguments);console.error("Connect before calling")},be=function(t){function e(){return function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,e),Yt(this,Ht(e).call(this,zt.connected_plugin))}var r,n,o;return function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function");t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,writable:!0,configurable:!0}}),e&&Jt(t,e)}(e,Wt),r=e,(n=[{key:"loadPlugin",value:function(){return $t.apply(void 0,arguments)}}])&&Vt(r.prototype,n),o&&Vt(r,o),e}()}])});
+!function(t,e){ true?module.exports=e():undefined}(window,function(){return function(t){var e={};function r(n){if(e[n])return e[n].exports;var o=e[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=t,r.c=e,r.d=function(t,e,n){r.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:n})},r.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},r.t=function(t,e){if(1&e&&(t=r(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)r.d(n,o,function(e){return t[e]}.bind(null,o));return n},r.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return r.d(e,"a",e),e},r.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},r.p="",r(r.s=164)}([function(t,e,r){"use strict";var n,o=r(5),i=r(1),a=r(11),u=r(8),c=r(51),s=r(9),f=r(13),l=r(7).f,p=r(50),d=r(37),h=r(4),v=r(44),y=i.DataView,g=y&&y.prototype,_=i.Int8Array,m=_&&_.prototype,b=i.Uint8ClampedArray,A=b&&b.prototype,E=_&&p(_),w=m&&p(m),x=Object.prototype,S=x.isPrototypeOf,T=h("toStringTag"),O=v("TYPED_ARRAY_TAG"),I=!(!i.ArrayBuffer||!y),k=I&&!!d&&"Opera"!==c(i.opera),M=!1,C={Int8Array:1,Uint8Array:1,Uint8ClampedArray:1,Int16Array:2,Uint16Array:2,Int32Array:4,Uint32Array:4,Float32Array:4,Float64Array:8},q=function(t){return a(t)&&u(C,c(t))};for(n in C)i[n]||(k=!1);if((!k||"function"!=typeof E||E===Function.prototype)&&(E=function(){throw TypeError("Incorrect invocation")},k))for(n in C)i[n]&&d(i[n],E);if((!k||!w||w===x)&&(w=E.prototype,k))for(n in C)i[n]&&d(i[n].prototype,w);if(k&&p(A)!==w&&d(A,w),o&&!u(w,T))for(n in M=!0,l(w,T,{get:function(){return a(this)?this[O]:void 0}}),C)i[n]&&s(i[n],O,n);I&&d&&p(g)!==x&&d(g,x),t.exports={NATIVE_ARRAY_BUFFER:I,NATIVE_ARRAY_BUFFER_VIEWS:k,TYPED_ARRAY_TAG:M&&O,aTypedArray:function(t){if(q(t))return t;throw TypeError("Target is not a typed array")},aTypedArrayConstructor:function(t){if(d){if(S.call(E,t))return t}else for(var e in C)if(u(C,n)){var r=i[e];if(r&&(t===r||S.call(r,t)))return t}throw TypeError("Target is not a typed array constructor")},exportProto:function(t,e,r){if(o){if(r)for(var n in C){var a=i[n];a&&u(a.prototype,t)&&delete a.prototype[t]}w[t]&&!r||f(w,t,r?e:k&&m[t]||e)}},exportStatic:function(t,e,r){var n,a;if(o){if(d){if(r)for(n in C)(a=i[n])&&u(a,t)&&delete a[t];if(E[t]&&!r)return;try{return f(E,t,r?e:k&&_[t]||e)}catch(t){}}for(n in C)!(a=i[n])||a[t]&&!r||f(a,t,e)}},isView:function(t){var e=c(t);return"DataView"===e||u(C,e)},isTypedArray:q,TypedArray:E,TypedArrayPrototype:w}},function(t,e,r){(function(e){var r="object",n=function(t){return t&&t.Math==Math&&t};t.exports=n(typeof globalThis==r&&globalThis)||n(typeof window==r&&window)||n(typeof self==r&&self)||n(typeof e==r&&e)||Function("return this")()}).call(this,r(100))},function(t,e,r){var n=r(1),o=r(33).f,i=r(9),a=r(13),u=r(55),c=r(71),s=r(75);t.exports=function(t,e){var r,f,l,p,d,h=t.target,v=t.global,y=t.stat;if(r=v?n:y?n[h]||u(h,{}):(n[h]||{}).prototype)for(f in e){if(p=e[f],l=t.noTargetGet?(d=o(r,f))&&d.value:r[f],!s(v?f:h+(y?".":"#")+f,t.forced)&&void 0!==l){if(typeof p==typeof l)continue;c(p,l)}(t.sham||l&&l.sham)&&i(p,"sham",!0),a(r,f,p,t)}}},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e,r){var n=r(1),o=r(34),i=r(44),a=r(76),u=n.Symbol,c=o("wks");t.exports=function(t){return c[t]||(c[t]=a&&u[t]||(a?u:i)("Symbol."+t))}},function(t,e,r){var n=r(3);t.exports=!n(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e,r){var n=r(17),o=Math.min;t.exports=function(t){return t>0?o(n(t),9007199254740991):0}},function(t,e,r){var n=r(5),o=r(68),i=r(10),a=r(24),u=Object.defineProperty;e.f=n?u:function(t,e,r){if(i(t),e=a(e,!0),i(r),o)try{return u(t,e,r)}catch(t){}if("get"in r||"set"in r)throw TypeError("Accessors not supported");return"value"in r&&(t[e]=r.value),t}},function(t,e){var r={}.hasOwnProperty;t.exports=function(t,e){return r.call(t,e)}},function(t,e,r){var n=r(5),o=r(7),i=r(21);t.exports=n?function(t,e,r){return o.f(t,e,i(1,r))}:function(t,e,r){return t[e]=r,t}},function(t,e,r){var n=r(11);t.exports=function(t){if(!n(t))throw TypeError(String(t)+" is not an object");return t}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,r){var n=r(23);t.exports=function(t){return Object(n(t))}},function(t,e,r){var n=r(1),o=r(34),i=r(9),a=r(8),u=r(55),c=r(70),s=r(25),f=s.get,l=s.enforce,p=String(c).split("toString");o("inspectSource",function(t){return c.call(t)}),(t.exports=function(t,e,r,o){var c=!!o&&!!o.unsafe,s=!!o&&!!o.enumerable,f=!!o&&!!o.noTargetGet;"function"==typeof r&&("string"!=typeof e||a(r,"name")||i(r,"name",e),l(r).source=p.join("string"==typeof e?e:"")),t!==n?(c?!f&&t[e]&&(s=!0):delete t[e],s?t[e]=r:i(t,e,r)):s?t[e]=r:u(e,r)})(Function.prototype,"toString",function(){return"function"==typeof this&&f(this).source||c.call(this)})},function(t,e,r){var n=r(41),o=r(23);t.exports=function(t){return n(o(t))}},function(t,e,r){var n=r(58),o=r(41),i=r(12),a=r(6),u=r(106),c=[].push,s=function(t){var e=1==t,r=2==t,s=3==t,f=4==t,l=6==t,p=5==t||l;return function(d,h,v,y){for(var g,_,m=i(d),b=o(m),A=n(h,v,3),E=a(b.length),w=0,x=y||u,S=e?x(d,E):r?x(d,0):void 0;E>w;w++)if((p||w in b)&&(_=A(g=b[w],w,m),t))if(e)S[w]=_;else if(_)switch(t){case 3:return!0;case 5:return g;case 6:return w;case 2:c.call(S,g)}else if(f)return!1;return l?-1:s||f?f:S}};t.exports={forEach:s(0),map:s(1),filter:s(2),some:s(3),every:s(4),find:s(5),findIndex:s(6)}},function(t,e,r){"use strict";var n=r(14),o=r(107),i=r(36),a=r(25),u=r(79),c=a.set,s=a.getterFor("Array Iterator");t.exports=u(Array,"Array",function(t,e){c(this,{type:"Array Iterator",target:n(t),index:0,kind:e})},function(){var t=s(this),e=t.target,r=t.kind,n=t.index++;return!e||n>=e.length?(t.target=void 0,{value:void 0,done:!0}):"keys"==r?{value:n,done:!1}:"values"==r?{value:e[n],done:!1}:{value:[n,e[n]],done:!1}},"values"),i.Arguments=i.Array,o("keys"),o("values"),o("entries")},function(t,e){var r=Math.ceil,n=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?n:r)(t)}},function(t,e,r){var n=r(13),o=r(113),i=Object.prototype;o!==i.toString&&n(i,"toString",o,{unsafe:!0})},function(t,e,r){"use strict";var n=r(82).charAt,o=r(25),i=r(79),a=o.set,u=o.getterFor("String Iterator");i(String,"String",function(t){a(this,{type:"String Iterator",string:String(t),index:0})},function(){var t,e=u(this),r=e.string,o=e.index;return o>=r.length?{value:void 0,done:!0}:(t=n(r,o),e.index+=t.length,{value:t,done:!1})})},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(42),a=r(5),u=r(76),c=r(3),s=r(8),f=r(57),l=r(11),p=r(10),d=r(12),h=r(14),v=r(24),y=r(21),g=r(27),_=r(48),m=r(26),b=r(105),A=r(74),E=r(33),w=r(7),x=r(54),S=r(9),T=r(13),O=r(34),I=r(43),k=r(45),M=r(44),C=r(4),q=r(77),B=r(78),P=r(49),F=r(25),R=r(15).forEach,D=I("hidden"),L=C("toPrimitive"),j=F.set,U=F.getterFor("Symbol"),W=Object.prototype,K=o.Symbol,N=o.JSON,G=N&&N.stringify,V=E.f,Y=w.f,H=b.f,J=x.f,Z=O("symbols"),X=O("op-symbols"),Q=O("string-to-symbol-registry"),z=O("symbol-to-string-registry"),$=O("wks"),tt=o.QObject,et=!tt||!tt.prototype||!tt.prototype.findChild,rt=a&&c(function(){return 7!=g(Y({},"a",{get:function(){return Y(this,"a",{value:7}).a}})).a})?function(t,e,r){var n=V(W,e);n&&delete W[e],Y(t,e,r),n&&t!==W&&Y(W,e,n)}:Y,nt=function(t,e){var r=Z[t]=g(K.prototype);return j(r,{type:"Symbol",tag:t,description:e}),a||(r.description=e),r},ot=u&&"symbol"==typeof K.iterator?function(t){return"symbol"==typeof t}:function(t){return Object(t)instanceof K},it=function(t,e,r){t===W&&it(X,e,r),p(t);var n=v(e,!0);return p(r),s(Z,n)?(r.enumerable?(s(t,D)&&t[D][n]&&(t[D][n]=!1),r=g(r,{enumerable:y(0,!1)})):(s(t,D)||Y(t,D,y(1,{})),t[D][n]=!0),rt(t,n,r)):Y(t,n,r)},at=function(t,e){p(t);var r=h(e),n=_(r).concat(ft(r));return R(n,function(e){a&&!ut.call(r,e)||it(t,e,r[e])}),t},ut=function(t){var e=v(t,!0),r=J.call(this,e);return!(this===W&&s(Z,e)&&!s(X,e))&&(!(r||!s(this,e)||!s(Z,e)||s(this,D)&&this[D][e])||r)},ct=function(t,e){var r=h(t),n=v(e,!0);if(r!==W||!s(Z,n)||s(X,n)){var o=V(r,n);return!o||!s(Z,n)||s(r,D)&&r[D][n]||(o.enumerable=!0),o}},st=function(t){var e=H(h(t)),r=[];return R(e,function(t){s(Z,t)||s(k,t)||r.push(t)}),r},ft=function(t){var e=t===W,r=H(e?X:h(t)),n=[];return R(r,function(t){!s(Z,t)||e&&!s(W,t)||n.push(Z[t])}),n};u||(T((K=function(){if(this instanceof K)throw TypeError("Symbol is not a constructor");var t=arguments.length&&void 0!==arguments[0]?String(arguments[0]):void 0,e=M(t),r=function(t){this===W&&r.call(X,t),s(this,D)&&s(this[D],e)&&(this[D][e]=!1),rt(this,e,y(1,t))};return a&&et&&rt(W,e,{configurable:!0,set:r}),nt(e,t)}).prototype,"toString",function(){return U(this).tag}),x.f=ut,w.f=it,E.f=ct,m.f=b.f=st,A.f=ft,a&&(Y(K.prototype,"description",{configurable:!0,get:function(){return U(this).description}}),i||T(W,"propertyIsEnumerable",ut,{unsafe:!0})),q.f=function(t){return nt(C(t),t)}),n({global:!0,wrap:!0,forced:!u,sham:!u},{Symbol:K}),R(_($),function(t){B(t)}),n({target:"Symbol",stat:!0,forced:!u},{for:function(t){var e=String(t);if(s(Q,e))return Q[e];var r=K(e);return Q[e]=r,z[r]=e,r},keyFor:function(t){if(!ot(t))throw TypeError(t+" is not a symbol");if(s(z,t))return z[t]},useSetter:function(){et=!0},useSimple:function(){et=!1}}),n({target:"Object",stat:!0,forced:!u,sham:!a},{create:function(t,e){return void 0===e?g(t):at(g(t),e)},defineProperty:it,defineProperties:at,getOwnPropertyDescriptor:ct}),n({target:"Object",stat:!0,forced:!u},{getOwnPropertyNames:st,getOwnPropertySymbols:ft}),n({target:"Object",stat:!0,forced:c(function(){A.f(1)})},{getOwnPropertySymbols:function(t){return A.f(d(t))}}),N&&n({target:"JSON",stat:!0,forced:!u||c(function(){var t=K();return"[null]"!=G([t])||"{}"!=G({a:t})||"{}"!=G(Object(t))})},{stringify:function(t){for(var e,r,n=[t],o=1;arguments.length>o;)n.push(arguments[o++]);if(r=e=n[1],(l(e)||void 0!==t)&&!ot(t))return f(e)||(e=function(t,e){if("function"==typeof r&&(e=r.call(this,t,e)),!ot(e))return e}),n[1]=e,G.apply(N,n)}}),K.prototype[L]||S(K.prototype,L,K.prototype.valueOf),P(K,"Symbol"),k[D]=!0},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e){var r={}.toString;t.exports=function(t){return r.call(t).slice(8,-1)}},function(t,e){t.exports=function(t){if(null==t)throw TypeError("Can't call method on "+t);return t}},function(t,e,r){var n=r(11);t.exports=function(t,e){if(!n(t))return t;var r,o;if(e&&"function"==typeof(r=t.toString)&&!n(o=r.call(t)))return o;if("function"==typeof(r=t.valueOf)&&!n(o=r.call(t)))return o;if(!e&&"function"==typeof(r=t.toString)&&!n(o=r.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,e,r){var n,o,i,a=r(101),u=r(1),c=r(11),s=r(9),f=r(8),l=r(43),p=r(45),d=u.WeakMap;if(a){var h=new d,v=h.get,y=h.has,g=h.set;n=function(t,e){return g.call(h,t,e),e},o=function(t){return v.call(h,t)||{}},i=function(t){return y.call(h,t)}}else{var _=l("state");p[_]=!0,n=function(t,e){return s(t,_,e),e},o=function(t){return f(t,_)?t[_]:{}},i=function(t){return f(t,_)}}t.exports={set:n,get:o,has:i,enforce:function(t){return i(t)?o(t):n(t,{})},getterFor:function(t){return function(e){var r;if(!c(e)||(r=o(e)).type!==t)throw TypeError("Incompatible receiver, "+t+" required");return r}}}},function(t,e,r){var n=r(73),o=r(56).concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return n(t,o)}},function(t,e,r){var n=r(10),o=r(103),i=r(56),a=r(45),u=r(104),c=r(69),s=r(43)("IE_PROTO"),f=function(){},l=function(){var t,e=c("iframe"),r=i.length;for(e.style.display="none",u.appendChild(e),e.src=String("javascript:"),(t=e.contentWindow.document).open(),t.write("<script>document.F=Object<\/script>"),t.close(),l=t.F;r--;)delete l.prototype[i[r]];return l()};t.exports=Object.create||function(t,e){var r;return null!==t?(f.prototype=n(t),r=new f,f.prototype=null,r[s]=t):r=l(),void 0===e?r:o(r,e)},a[s]=!0},function(t,e,r){"use strict";var n=r(2),o=r(5),i=r(1),a=r(8),u=r(11),c=r(7).f,s=r(71),f=i.Symbol;if(o&&"function"==typeof f&&(!("description"in f.prototype)||void 0!==f().description)){var l={},p=function(){var t=arguments.length<1||void 0===arguments[0]?void 0:String(arguments[0]),e=this instanceof p?new f(t):void 0===t?f():f(t);return""===t&&(l[e]=!0),e};s(p,f);var d=p.prototype=f.prototype;d.constructor=p;var h=d.toString,v="Symbol(test)"==String(f("test")),y=/^Symbol\((.*)\)[^)]+$/;c(d,"description",{configurable:!0,get:function(){var t=u(this)?this.valueOf():this,e=h.call(t);if(a(l,t))return"";var r=v?e.slice(7,-1):e.replace(y,"$1");return""===r?void 0:r}}),n({global:!0,forced:!0},{Symbol:p})}},function(t,e,r){r(78)("iterator")},function(t,e,r){var n=r(1),o=r(114),i=r(16),a=r(9),u=r(4),c=u("iterator"),s=u("toStringTag"),f=i.values;for(var l in o){var p=n[l],d=p&&p.prototype;if(d){if(d[c]!==f)try{a(d,c,f)}catch(t){d[c]=f}if(d[s]||a(d,s,l),o[l])for(var h in i)if(d[h]!==i[h])try{a(d,h,i[h])}catch(t){d[h]=i[h]}}}},function(t,e,r){"use strict";var n=r(2),o=r(52);n({target:"RegExp",proto:!0,forced:/./.exec!==o},{exec:o})},function(t,e,r){var n=r(10),o=r(59),i=r(4)("species");t.exports=function(t,e){var r,a=n(t).constructor;return void 0===a||null==(r=n(a)[i])?e:o(r)}},function(t,e,r){var n=r(5),o=r(54),i=r(21),a=r(14),u=r(24),c=r(8),s=r(68),f=Object.getOwnPropertyDescriptor;e.f=n?f:function(t,e){if(t=a(t),e=u(e,!0),s)try{return f(t,e)}catch(t){}if(c(t,e))return i(!o.f.call(t,e),t[e])}},function(t,e,r){var n=r(1),o=r(55),i=r(42),a=n["__core-js_shared__"]||o("__core-js_shared__",{});(t.exports=function(t,e){return a[t]||(a[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.2.1",mode:i?"pure":"global",copyright:"© 2019 Denis Pushkarev (zloirock.ru)"})},function(t,e,r){var n=r(17),o=Math.max,i=Math.min;t.exports=function(t,e){var r=n(t);return r<0?o(r+e,0):i(r,e)}},function(t,e){t.exports={}},function(t,e,r){var n=r(10),o=r(109);t.exports=Object.setPrototypeOf||("__proto__"in{}?function(){var t,e=!1,r={};try{(t=Object.getOwnPropertyDescriptor(Object.prototype,"__proto__").set).call(r,[]),e=r instanceof Array}catch(t){}return function(r,i){return n(r),o(i),e?t.call(r,i):r.__proto__=i,r}}():void 0)},function(t,e,r){var n=r(2),o=r(5);n({target:"Object",stat:!0,forced:!o,sham:!o},{defineProperty:r(7).f})},function(t,e,r){"use strict";var n=r(2),o=r(47).indexOf,i=r(60),a=[].indexOf,u=!!a&&1/[1].indexOf(1,-0)<0,c=i("indexOf");n({target:"Array",proto:!0,forced:u||c},{indexOf:function(t){return u?a.apply(this,arguments)||0:o(this,t,arguments.length>1?arguments[1]:void 0)}})},function(t,e,r){var n=r(2),o=r(1),i=r(122),a=[].slice,u=function(t){return function(e,r){var n=arguments.length>2,o=n?a.call(arguments,2):void 0;return t(n?function(){("function"==typeof e?e:Function(e)).apply(this,o)}:e,r)}};n({global:!0,bind:!0,forced:/MSIE .\./.test(i)},{setTimeout:u(o.setTimeout),setInterval:u(o.setInterval)})},function(t,e,r){var n=r(3),o=r(22),i="".split;t.exports=n(function(){return!Object("z").propertyIsEnumerable(0)})?function(t){return"String"==o(t)?i.call(t,""):Object(t)}:Object},function(t,e){t.exports=!1},function(t,e,r){var n=r(34),o=r(44),i=n("keys");t.exports=function(t){return i[t]||(i[t]=o(t))}},function(t,e){var r=0,n=Math.random();t.exports=function(t){return"Symbol("+String(void 0===t?"":t)+")_"+(++r+n).toString(36)}},function(t,e){t.exports={}},function(t,e,r){var n=r(72),o=r(1),i=function(t){return"function"==typeof t?t:void 0};t.exports=function(t,e){return arguments.length<2?i(n[t])||i(o[t]):n[t]&&n[t][e]||o[t]&&o[t][e]}},function(t,e,r){var n=r(14),o=r(6),i=r(35),a=function(t){return function(e,r,a){var u,c=n(e),s=o(c.length),f=i(a,s);if(t&&r!=r){for(;s>f;)if((u=c[f++])!=u)return!0}else for(;s>f;f++)if((t||f in c)&&c[f]===r)return t||f||0;return!t&&-1}};t.exports={includes:a(!0),indexOf:a(!1)}},function(t,e,r){var n=r(73),o=r(56);t.exports=Object.keys||function(t){return n(t,o)}},function(t,e,r){var n=r(7).f,o=r(8),i=r(4)("toStringTag");t.exports=function(t,e,r){t&&!o(t=r?t:t.prototype,i)&&n(t,i,{configurable:!0,value:e})}},function(t,e,r){var n=r(8),o=r(12),i=r(43),a=r(81),u=i("IE_PROTO"),c=Object.prototype;t.exports=a?Object.getPrototypeOf:function(t){return t=o(t),n(t,u)?t[u]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?c:null}},function(t,e,r){var n=r(22),o=r(4)("toStringTag"),i="Arguments"==n(function(){return arguments}());t.exports=function(t){var e,r,a;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(r=function(t,e){try{return t[e]}catch(t){}}(e=Object(t),o))?r:i?n(e):"Object"==(a=n(e))&&"function"==typeof e.callee?"Arguments":a}},function(t,e,r){"use strict";var n,o,i=r(86),a=RegExp.prototype.exec,u=String.prototype.replace,c=a,s=(n=/a/,o=/b*/g,a.call(n,"a"),a.call(o,"a"),0!==n.lastIndex||0!==o.lastIndex),f=void 0!==/()??/.exec("")[1];(s||f)&&(c=function(t){var e,r,n,o,c=this;return f&&(r=new RegExp("^"+c.source+"$(?!\\s)",i.call(c))),s&&(e=c.lastIndex),n=a.call(c,t),s&&n&&(c.lastIndex=c.global?n.index+n[0].length:e),f&&n&&n.length>1&&u.call(n[0],r,function(){for(o=1;o<arguments.length-2;o++)void 0===arguments[o]&&(n[o]=void 0)}),n}),t.exports=c},function(t,e,r){"use strict";var n=r(88),o=r(121),i=r(10),a=r(23),u=r(32),c=r(89),s=r(6),f=r(90),l=r(52),p=r(3),d=[].push,h=Math.min,v=!p(function(){return!RegExp(4294967295,"y")});n("split",2,function(t,e,r){var n;return n="c"=="abbc".split(/(b)*/)[1]||4!="test".split(/(?:)/,-1).length||2!="ab".split(/(?:ab)*/).length||4!=".".split(/(.?)(.?)/).length||".".split(/()()/).length>1||"".split(/.?/).length?function(t,r){var n=String(a(this)),i=void 0===r?4294967295:r>>>0;if(0===i)return[];if(void 0===t)return[n];if(!o(t))return e.call(n,t,i);for(var u,c,s,f=[],p=(t.ignoreCase?"i":"")+(t.multiline?"m":"")+(t.unicode?"u":"")+(t.sticky?"y":""),h=0,v=new RegExp(t.source,p+"g");(u=l.call(v,n))&&!((c=v.lastIndex)>h&&(f.push(n.slice(h,u.index)),u.length>1&&u.index<n.length&&d.apply(f,u.slice(1)),s=u[0].length,h=c,f.length>=i));)v.lastIndex===u.index&&v.lastIndex++;return h===n.length?!s&&v.test("")||f.push(""):f.push(n.slice(h)),f.length>i?f.slice(0,i):f}:"0".split(void 0,0).length?function(t,r){return void 0===t&&0===r?[]:e.call(this,t,r)}:e,[function(e,r){var o=a(this),i=null==e?void 0:e[t];return void 0!==i?i.call(e,o,r):n.call(String(o),e,r)},function(t,o){var a=r(n,t,this,o,n!==e);if(a.done)return a.value;var l=i(t),p=String(this),d=u(l,RegExp),y=l.unicode,g=(l.ignoreCase?"i":"")+(l.multiline?"m":"")+(l.unicode?"u":"")+(v?"y":"g"),_=new d(v?l:"^(?:"+l.source+")",g),m=void 0===o?4294967295:o>>>0;if(0===m)return[];if(0===p.length)return null===f(_,p)?[p]:[];for(var b=0,A=0,E=[];A<p.length;){_.lastIndex=v?A:0;var w,x=f(_,v?p:p.slice(A));if(null===x||(w=h(s(_.lastIndex+(v?0:A)),p.length))===b)A=c(p,A,y);else{if(E.push(p.slice(b,A)),E.length===m)return E;for(var S=1;S<=x.length-1;S++)if(E.push(x[S]),E.length===m)return E;A=b=w}}return E.push(p.slice(b)),E}]},!v)},function(t,e,r){"use strict";var n={}.propertyIsEnumerable,o=Object.getOwnPropertyDescriptor,i=o&&!n.call({1:2},1);e.f=i?function(t){var e=o(this,t);return!!e&&e.enumerable}:n},function(t,e,r){var n=r(1),o=r(9);t.exports=function(t,e){try{o(n,t,e)}catch(r){n[t]=e}return e}},function(t,e){t.exports=["constructor","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","valueOf"]},function(t,e,r){var n=r(22);t.exports=Array.isArray||function(t){return"Array"==n(t)}},function(t,e,r){var n=r(59);t.exports=function(t,e,r){if(n(t),void 0===e)return t;switch(r){case 0:return function(){return t.call(e)};case 1:return function(r){return t.call(e,r)};case 2:return function(r,n){return t.call(e,r,n)};case 3:return function(r,n,o){return t.call(e,r,n,o)}}return function(){return t.apply(e,arguments)}}},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(String(t)+" is not a function");return t}},function(t,e,r){"use strict";var n=r(3);t.exports=function(t,e){var r=[][t];return!r||!n(function(){r.call(null,e||function(){throw 1},1)})}},function(t,e,r){var n=r(13),o=Date.prototype,i=o.toString,a=o.getTime;new Date(NaN)+""!="Invalid Date"&&n(o,"toString",function(){var t=a.call(this);return t==t?i.call(this):"Invalid Date"})},function(t,e,r){var n=r(2),o=r(12),i=r(48);n({target:"Object",stat:!0,forced:r(3)(function(){i(1)})},{keys:function(t){return i(o(t))}})},function(t,e,r){var n=r(2),o=r(124);n({global:!0,forced:parseInt!=o},{parseInt:o})},function(t,e,r){var n=r(23),o="["+r(65)+"]",i=RegExp("^"+o+o+"*"),a=RegExp(o+o+"*$"),u=function(t){return function(e){var r=String(n(e));return 1&t&&(r=r.replace(i,"")),2&t&&(r=r.replace(a,"")),r}};t.exports={start:u(1),end:u(2),trim:u(3)}},function(t,e){t.exports="\t\n\v\f\r                　\u2028\u2029\ufeff"},function(t,e,r){"use strict";var n=r(1),o=r(5),i=r(0).NATIVE_ARRAY_BUFFER,a=r(9),u=r(126),c=r(3),s=r(94),f=r(17),l=r(6),p=r(95),d=r(26).f,h=r(7).f,v=r(96),y=r(49),g=r(25),_=g.get,m=g.set,b=n.ArrayBuffer,A=b,E=n.DataView,w=n.Math,x=n.RangeError,S=w.abs,T=w.pow,O=w.floor,I=w.log,k=w.LN2,M=function(t,e,r){var n,o,i,a=new Array(r),u=8*r-e-1,c=(1<<u)-1,s=c>>1,f=23===e?T(2,-24)-T(2,-77):0,l=t<0||0===t&&1/t<0?1:0,p=0;for((t=S(t))!=t||t===1/0?(o=t!=t?1:0,n=c):(n=O(I(t)/k),t*(i=T(2,-n))<1&&(n--,i*=2),(t+=n+s>=1?f/i:f*T(2,1-s))*i>=2&&(n++,i/=2),n+s>=c?(o=0,n=c):n+s>=1?(o=(t*i-1)*T(2,e),n+=s):(o=t*T(2,s-1)*T(2,e),n=0));e>=8;a[p++]=255&o,o/=256,e-=8);for(n=n<<e|o,u+=e;u>0;a[p++]=255&n,n/=256,u-=8);return a[--p]|=128*l,a},C=function(t,e){var r,n=t.length,o=8*n-e-1,i=(1<<o)-1,a=i>>1,u=o-7,c=n-1,s=t[c--],f=127&s;for(s>>=7;u>0;f=256*f+t[c],c--,u-=8);for(r=f&(1<<-u)-1,f>>=-u,u+=e;u>0;r=256*r+t[c],c--,u-=8);if(0===f)f=1-a;else{if(f===i)return r?NaN:s?-1/0:1/0;r+=T(2,e),f-=a}return(s?-1:1)*r*T(2,f-e)},q=function(t){return t[3]<<24|t[2]<<16|t[1]<<8|t[0]},B=function(t){return[255&t]},P=function(t){return[255&t,t>>8&255]},F=function(t){return[255&t,t>>8&255,t>>16&255,t>>24&255]},R=function(t){return M(t,23,4)},D=function(t){return M(t,52,8)},L=function(t,e){h(t.prototype,e,{get:function(){return _(this)[e]}})},j=function(t,e,r,n){var o=p(+r),i=_(t);if(o+e>i.byteLength)throw x("Wrong index");var a=_(i.buffer).bytes,u=o+i.byteOffset,c=a.slice(u,u+e);return n?c:c.reverse()},U=function(t,e,r,n,o,i){var a=p(+r),u=_(t);if(a+e>u.byteLength)throw x("Wrong index");for(var c=_(u.buffer).bytes,s=a+u.byteOffset,f=n(+o),l=0;l<e;l++)c[s+l]=f[i?l:e-l-1]};if(i){if(!c(function(){b(1)})||!c(function(){new b(-1)})||c(function(){return new b,new b(1.5),new b(NaN),"ArrayBuffer"!=b.name})){for(var W,K=(A=function(t){return s(this,A),new b(p(t))}).prototype=b.prototype,N=d(b),G=0;N.length>G;)(W=N[G++])in A||a(A,W,b[W]);K.constructor=A}var V=new E(new A(2)),Y=E.prototype.setInt8;V.setInt8(0,2147483648),V.setInt8(1,2147483649),!V.getInt8(0)&&V.getInt8(1)||u(E.prototype,{setInt8:function(t,e){Y.call(this,t,e<<24>>24)},setUint8:function(t,e){Y.call(this,t,e<<24>>24)}},{unsafe:!0})}else A=function(t){s(this,A,"ArrayBuffer");var e=p(t);m(this,{bytes:v.call(new Array(e),0),byteLength:e}),o||(this.byteLength=e)},E=function(t,e,r){s(this,E,"DataView"),s(t,A,"DataView");var n=_(t).byteLength,i=f(e);if(i<0||i>n)throw x("Wrong offset");if(i+(r=void 0===r?n-i:l(r))>n)throw x("Wrong length");m(this,{buffer:t,byteLength:r,byteOffset:i}),o||(this.buffer=t,this.byteLength=r,this.byteOffset=i)},o&&(L(A,"byteLength"),L(E,"buffer"),L(E,"byteLength"),L(E,"byteOffset")),u(E.prototype,{getInt8:function(t){return j(this,1,t)[0]<<24>>24},getUint8:function(t){return j(this,1,t)[0]},getInt16:function(t){var e=j(this,2,t,arguments.length>1?arguments[1]:void 0);return(e[1]<<8|e[0])<<16>>16},getUint16:function(t){var e=j(this,2,t,arguments.length>1?arguments[1]:void 0);return e[1]<<8|e[0]},getInt32:function(t){return q(j(this,4,t,arguments.length>1?arguments[1]:void 0))},getUint32:function(t){return q(j(this,4,t,arguments.length>1?arguments[1]:void 0))>>>0},getFloat32:function(t){return C(j(this,4,t,arguments.length>1?arguments[1]:void 0),23)},getFloat64:function(t){return C(j(this,8,t,arguments.length>1?arguments[1]:void 0),52)},setInt8:function(t,e){U(this,1,t,B,e)},setUint8:function(t,e){U(this,1,t,B,e)},setInt16:function(t,e){U(this,2,t,P,e,arguments.length>2?arguments[2]:void 0)},setUint16:function(t,e){U(this,2,t,P,e,arguments.length>2?arguments[2]:void 0)},setInt32:function(t,e){U(this,4,t,F,e,arguments.length>2?arguments[2]:void 0)},setUint32:function(t,e){U(this,4,t,F,e,arguments.length>2?arguments[2]:void 0)},setFloat32:function(t,e){U(this,4,t,R,e,arguments.length>2?arguments[2]:void 0)},setFloat64:function(t,e){U(this,8,t,D,e,arguments.length>2?arguments[2]:void 0)}});y(A,"ArrayBuffer"),y(E,"DataView"),e.ArrayBuffer=A,e.DataView=E},function(module,__webpack_exports__,__webpack_require__){"use strict";__webpack_require__.d(__webpack_exports__,"a",function(){return Color});var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__=__webpack_require__(20),core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default=__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__),core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__=__webpack_require__(28),core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default=__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__),core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__=__webpack_require__(29),core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default=__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__),core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__=__webpack_require__(39),core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default=__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__),core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__=__webpack_require__(16),core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default=__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__),core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__=__webpack_require__(61),core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5___default=__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__),core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__=__webpack_require__(18),core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6___default=__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__),core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7__=__webpack_require__(162),core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7___default=__webpack_require__.n(core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7__),core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8__=__webpack_require__(63),core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8___default=__webpack_require__.n(core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8__),core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9__=__webpack_require__(31),core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9___default=__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9__),core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__=__webpack_require__(87),core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10___default=__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__),core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__=__webpack_require__(19),core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11___default=__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__),core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__=__webpack_require__(53),core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12___default=__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__),core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__=__webpack_require__(30),core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default=__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);function _typeof(t){return(_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}var Color={Space:{}};!function(){var useEval=!1,functions={},shortcuts={"HEX24>HSL":"HEX24>RGB>HSL","HEX32>HSLA":"HEX32>RGBA>HSLA","HEX24>CMYK":"HEX24>RGB>CMY>CMYK","RGB>CMYK":"RGB>CMY>CMYK"},root=Color.Space=function(color,route){shortcuts[route]&&(route=shortcuts[route]);var r=route.split(">");if("object"===_typeof(color)&&color[0]>=0){for(var type=r[0],tmp={},i=0;i<type.length;i++){var str=type.substr(i,1);tmp[str]=color[i]}color=tmp}if(functions[route])return functions[route](color);for(var f="color",pos=1,key=r[0];pos<r.length;pos++)pos>1&&(key=key.substr(key.indexOf("_")+1)),key+=(0===pos?"":"_")+r[pos],color=root[key](color),useEval&&(f="Color.Space."+key+"("+f+")");return useEval&&(functions[route]=eval("(function(color) { return "+f+" })")),color};root.RGB_W3=function(t){return"rgb("+(t.R>>0)+","+(t.G>>0)+","+(t.B>>0)+")"},root.RGBA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"rgba("+(t.R>>0)+","+(t.G>>0)+","+(t.B>>0)+","+e+")"},root.W3_RGB=function(t){t=t.substr(4,t.length-5).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2])}},root.W3_RGBA=function(t){t=t.substr(5,t.length-6).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2]),A:255*parseFloat(t[3])}},root.HSL_W3=function(t){return"hsl("+(t.H+.5>>0)+","+(t.S+.5>>0)+"%,"+(t.L+.5>>0)+"%)"},root.HSLA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"hsla("+(t.H+.5>>0)+","+(t.S+.5>>0)+"%,"+(t.L+.5>>0)+"%,"+e+")"},root.W3_HSL=function(t){t=t.substr(4,t.length-5).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2])}},root.W3_HSLA=function(t){t=t.substr(5,t.length-6).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2]),A:255*parseFloat(t[3])}},root.W3_HEX=root.W3_HEX24=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),3===t.length&&(t=t[0]+t[0]+t[1]+t[1]+t[2]+t[2]),parseInt("0x"+t)},root.W3_HEX32=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),6===t.length?parseInt("0xFF"+t):parseInt("0x"+t)},root.HEX_W3=root.HEX24_W3=function(t,e){e||(e=6),t||(t=0);for(var r=t.toString(16),n=r.length;n<e;)r="0"+r,n++;for(n=r.length;n>e;)r=r.substr(1),n--;return"#"+r},root.HEX32_W3=function(t){return root.HEX_W3(t,8)},root.HEX_RGB=root.HEX24_RGB=function(t){return{R:t>>16,G:t>>8&255,B:255&t}},root.HEX32_RGBA=function(t){return{R:t>>>16&255,G:t>>>8&255,B:255&t,A:t>>>24}},root.RGBA_HEX32=function(t){return(t.A<<24|t.R<<16|t.G<<8|t.B)>>>0},root.RGB_HEX24=root.RGB_HEX=function(t){return t.R<0&&(t.R=0),t.G<0&&(t.G=0),t.B<0&&(t.B=0),t.R>255&&(t.R=255),t.G>255&&(t.G=255),t.B>255&&(t.B=255),t.R<<16|t.G<<8|t.B},root.RGB_CMY=function(t){return{C:1-t.R/255,M:1-t.G/255,Y:1-t.B/255}},root.RGBA_HSLA=root.RGB_HSL=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a,s=(u+a)/2;if(0===c)e=0,r=0;else{r=s<.5?c/(u+a):c/(2-u-a);var f=((u-n)/6+c/2)/c,l=((u-o)/6+c/2)/c,p=((u-i)/6+c/2)/c;n===u?e=p-l:o===u?e=1/3+f-p:i===u&&(e=2/3+l-f),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,L:100*s,A:t.A}},root.RGBA_HSVA=root.RGB_HSV=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a;if(0===c)e=0,r=0;else{r=c/u;var s=((u-n)/6+c/2)/c,f=((u-o)/6+c/2)/c,l=((u-i)/6+c/2)/c;n===u?e=l-f:o===u?e=1/3+s-l:i===u&&(e=2/3+f-s),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,V:100*u,A:t.A}},root.CMY_RGB=function(t){return{R:Math.max(0,255*(1-t.C)),G:Math.max(0,255*(1-t.M)),B:Math.max(0,255*(1-t.Y))}},root.CMY_CMYK=function(t){var e=t.C,r=t.M,n=t.Y,o=Math.min(n,Math.min(r,Math.min(e,1)));return{C:e=Math.round((e-o)/(1-o)*100),M:r=Math.round((r-o)/(1-o)*100),Y:n=Math.round((n-o)/(1-o)*100),K:o=Math.round(100*o)}},root.CMYK_CMY=function(t){return{C:t.C*(1-t.K)+t.K,M:t.M*(1-t.K)+t.K,Y:t.Y*(1-t.K)+t.K}},root.HSLA_RGBA=root.HSL_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.L/100;return 0===c?e=r=n=s:(o=2*s-(i=s<.5?s*(1+c):s+c-c*s),(a=u+1/3)<0&&(a+=1),a>1&&(a-=1),e=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u)<0&&(a+=1),a>1&&(a-=1),r=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u-1/3)<0&&(a+=1),a>1&&(a-=1),n=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o),{R:255*e,G:255*r,B:255*n,A:t.A}},root.HSVA_RGBA=root.HSV_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.V/100;if(0===c)e=r=n=Math.round(255*s);else switch(u>=1&&(u=0),o=(u*=6)-Math.floor(u),i=Math.round(255*s*(1-c)),n=Math.round(255*s*(1-c*o)),a=Math.round(255*s*(1-c*(1-o))),s=Math.round(255*s),Math.floor(u)){case 0:e=s,r=a,n=i;break;case 1:e=n,r=s,n=i;break;case 2:e=i,r=s,n=a;break;case 3:e=i,r=n,n=s;break;case 4:e=a,r=i,n=s;break;case 5:e=s,r=i,n=n}return{R:e,G:r,B:n,A:t.A}}}()},function(t,e,r){var n=r(5),o=r(3),i=r(69);t.exports=!n&&!o(function(){return 7!=Object.defineProperty(i("div"),"a",{get:function(){return 7}}).a})},function(t,e,r){var n=r(1),o=r(11),i=n.document,a=o(i)&&o(i.createElement);t.exports=function(t){return a?i.createElement(t):{}}},function(t,e,r){var n=r(34);t.exports=n("native-function-to-string",Function.toString)},function(t,e,r){var n=r(8),o=r(102),i=r(33),a=r(7);t.exports=function(t,e){for(var r=o(e),u=a.f,c=i.f,s=0;s<r.length;s++){var f=r[s];n(t,f)||u(t,f,c(e,f))}}},function(t,e,r){t.exports=r(1)},function(t,e,r){var n=r(8),o=r(14),i=r(47).indexOf,a=r(45);t.exports=function(t,e){var r,u=o(t),c=0,s=[];for(r in u)!n(a,r)&&n(u,r)&&s.push(r);for(;e.length>c;)n(u,r=e[c++])&&(~i(s,r)||s.push(r));return s}},function(t,e){e.f=Object.getOwnPropertySymbols},function(t,e,r){var n=r(3),o=/#|\.prototype\./,i=function(t,e){var r=u[a(t)];return r==s||r!=c&&("function"==typeof e?n(e):!!e)},a=i.normalize=function(t){return String(t).replace(o,".").toLowerCase()},u=i.data={},c=i.NATIVE="N",s=i.POLYFILL="P";t.exports=i},function(t,e,r){var n=r(3);t.exports=!!Object.getOwnPropertySymbols&&!n(function(){return!String(Symbol())})},function(t,e,r){e.f=r(4)},function(t,e,r){var n=r(72),o=r(8),i=r(77),a=r(7).f;t.exports=function(t){var e=n.Symbol||(n.Symbol={});o(e,t)||a(e,t,{value:i.f(t)})}},function(t,e,r){"use strict";var n=r(2),o=r(108),i=r(50),a=r(37),u=r(49),c=r(9),s=r(13),f=r(4),l=r(42),p=r(36),d=r(80),h=d.IteratorPrototype,v=d.BUGGY_SAFARI_ITERATORS,y=f("iterator"),g=function(){return this};t.exports=function(t,e,r,f,d,_,m){o(r,e,f);var b,A,E,w=function(t){if(t===d&&I)return I;if(!v&&t in T)return T[t];switch(t){case"keys":case"values":case"entries":return function(){return new r(this,t)}}return function(){return new r(this)}},x=e+" Iterator",S=!1,T=t.prototype,O=T[y]||T["@@iterator"]||d&&T[d],I=!v&&O||w(d),k="Array"==e&&T.entries||O;if(k&&(b=i(k.call(new t)),h!==Object.prototype&&b.next&&(l||i(b)===h||(a?a(b,h):"function"!=typeof b[y]&&c(b,y,g)),u(b,x,!0,!0),l&&(p[x]=g))),"values"==d&&O&&"values"!==O.name&&(S=!0,I=function(){return O.call(this)}),l&&!m||T[y]===I||c(T,y,I),p[e]=I,d)if(A={values:w("values"),keys:_?I:w("keys"),entries:w("entries")},m)for(E in A)!v&&!S&&E in T||s(T,E,A[E]);else n({target:e,proto:!0,forced:v||S},A);return A}},function(t,e,r){"use strict";var n,o,i,a=r(50),u=r(9),c=r(8),s=r(4),f=r(42),l=s("iterator"),p=!1;[].keys&&("next"in(i=[].keys())?(o=a(a(i)))!==Object.prototype&&(n=o):p=!0),null==n&&(n={}),f||c(n,l)||u(n,l,function(){return this}),t.exports={IteratorPrototype:n,BUGGY_SAFARI_ITERATORS:p}},function(t,e,r){var n=r(3);t.exports=!n(function(){function t(){}return t.prototype.constructor=null,Object.getPrototypeOf(new t)!==t.prototype})},function(t,e,r){var n=r(17),o=r(23),i=function(t){return function(e,r){var i,a,u=String(o(e)),c=n(r),s=u.length;return c<0||c>=s?t?"":void 0:(i=u.charCodeAt(c))<55296||i>56319||c+1===s||(a=u.charCodeAt(c+1))<56320||a>57343?t?u.charAt(c):i:t?u.slice(c,c+2):a-56320+(i-55296<<10)+65536}};t.exports={codeAt:i(!1),charAt:i(!0)}},function(t,e,r){var n=r(4),o=r(36),i=n("iterator"),a=Array.prototype;t.exports=function(t){return void 0!==t&&(o.Array===t||a[i]===t)}},function(t,e,r){var n=r(51),o=r(36),i=r(4)("iterator");t.exports=function(t){if(null!=t)return t[i]||t["@@iterator"]||o[n(t)]}},function(t,e,r){var n=r(4)("iterator"),o=!1;try{var i=0,a={next:function(){return{done:!!i++}},return:function(){o=!0}};a[n]=function(){return this},Array.from(a,function(){throw 2})}catch(t){}t.exports=function(t,e){if(!e&&!o)return!1;var r=!1;try{var i={};i[n]=function(){return{next:function(){return{done:r=!0}}}},t(i)}catch(t){}return r}},function(t,e,r){"use strict";var n=r(10);t.exports=function(){var t=n(this),e="";return t.global&&(e+="g"),t.ignoreCase&&(e+="i"),t.multiline&&(e+="m"),t.dotAll&&(e+="s"),t.unicode&&(e+="u"),t.sticky&&(e+="y"),e}},function(t,e,r){"use strict";var n=r(13),o=r(10),i=r(3),a=r(86),u=RegExp.prototype,c=u.toString,s=i(function(){return"/a/b"!=c.call({source:"a",flags:"b"})}),f="toString"!=c.name;(s||f)&&n(RegExp.prototype,"toString",function(){var t=o(this),e=String(t.source),r=t.flags;return"/"+e+"/"+String(void 0===r&&t instanceof RegExp&&!("flags"in u)?a.call(t):r)},{unsafe:!0})},function(t,e,r){"use strict";var n=r(9),o=r(13),i=r(3),a=r(4),u=r(52),c=a("species"),s=!i(function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")}),f=!i(function(){var t=/(?:)/,e=t.exec;t.exec=function(){return e.apply(this,arguments)};var r="ab".split(t);return 2!==r.length||"a"!==r[0]||"b"!==r[1]});t.exports=function(t,e,r,l){var p=a(t),d=!i(function(){var e={};return e[p]=function(){return 7},7!=""[t](e)}),h=d&&!i(function(){var e=!1,r=/a/;return r.exec=function(){return e=!0,null},"split"===t&&(r.constructor={},r.constructor[c]=function(){return r}),r[p](""),!e});if(!d||!h||"replace"===t&&!s||"split"===t&&!f){var v=/./[p],y=r(p,""[t],function(t,e,r,n,o){return e.exec===u?d&&!o?{done:!0,value:v.call(e,r,n)}:{done:!0,value:t.call(r,e,n)}:{done:!1}}),g=y[0],_=y[1];o(String.prototype,t,g),o(RegExp.prototype,p,2==e?function(t,e){return _.call(t,this,e)}:function(t){return _.call(t,this)}),l&&n(RegExp.prototype[p],"sham",!0)}}},function(t,e,r){"use strict";var n=r(82).charAt;t.exports=function(t,e,r){return e+(r?n(t,e).length:1)}},function(t,e,r){var n=r(22),o=r(52);t.exports=function(t,e){var r=t.exec;if("function"==typeof r){var i=r.call(t,e);if("object"!=typeof i)throw TypeError("RegExp exec method returned something other than an Object or null");return i}if("RegExp"!==n(t))throw TypeError("RegExp#exec called on incompatible receiver");return o.call(t,e)}},function(t,e,r){r(2)({target:"Array",stat:!0},{isArray:r(57)})},function(t,e,r){var n=r(2),o=r(123).entries;n({target:"Object",stat:!0},{entries:function(t){return o(t)}})},function(t,e,r){"use strict";var n=r(88),o=r(10),i=r(12),a=r(6),u=r(17),c=r(23),s=r(89),f=r(90),l=Math.max,p=Math.min,d=Math.floor,h=/\$([$&'`]|\d\d?|<[^>]*>)/g,v=/\$([$&'`]|\d\d?)/g;n("replace",2,function(t,e,r){return[function(r,n){var o=c(this),i=null==r?void 0:r[t];return void 0!==i?i.call(r,o,n):e.call(String(o),r,n)},function(t,i){var c=r(e,t,this,i);if(c.done)return c.value;var d=o(t),h=String(this),v="function"==typeof i;v||(i=String(i));var y=d.global;if(y){var g=d.unicode;d.lastIndex=0}for(var _=[];;){var m=f(d,h);if(null===m)break;if(_.push(m),!y)break;""===String(m[0])&&(d.lastIndex=s(h,a(d.lastIndex),g))}for(var b,A="",E=0,w=0;w<_.length;w++){m=_[w];for(var x=String(m[0]),S=l(p(u(m.index),h.length),0),T=[],O=1;O<m.length;O++)T.push(void 0===(b=m[O])?b:String(b));var I=m.groups;if(v){var k=[x].concat(T,S,h);void 0!==I&&k.push(I);var M=String(i.apply(void 0,k))}else M=n(x,h,S,T,I,i);S>=E&&(A+=h.slice(E,S)+M,E=S+x.length)}return A+h.slice(E)}];function n(t,r,n,o,a,u){var c=n+t.length,s=o.length,f=v;return void 0!==a&&(a=i(a),f=h),e.call(u,f,function(e,i){var u;switch(i.charAt(0)){case"$":return"$";case"&":return t;case"`":return r.slice(0,n);case"'":return r.slice(c);case"<":u=a[i.slice(1,-1)];break;default:var f=+i;if(0===f)return e;if(f>s){var l=d(f/10);return 0===l?e:l<=s?void 0===o[l-1]?i.charAt(1):o[l-1]+i.charAt(1):e}u=o[f-1]}return void 0===u?"":u})}})},function(t,e){t.exports=function(t,e,r){if(!(t instanceof e))throw TypeError("Incorrect "+(r?r+" ":"")+"invocation");return t}},function(t,e,r){var n=r(17),o=r(6);t.exports=function(t){if(void 0===t)return 0;var e=n(t),r=o(e);if(e!==r)throw RangeError("Wrong length or index");return r}},function(t,e,r){"use strict";var n=r(12),o=r(35),i=r(6);t.exports=function(t){for(var e=n(this),r=i(e.length),a=arguments.length,u=o(a>1?arguments[1]:void 0,r),c=a>2?arguments[2]:void 0,s=void 0===c?r:o(c,r);s>u;)e[u++]=t;return e}},function(t,e,r){"use strict";var n=r(46),o=r(7),i=r(4),a=r(5),u=i("species");t.exports=function(t){var e=n(t),r=o.f;a&&e&&!e[u]&&r(e,u,{configurable:!0,get:function(){return this}})}},function(t,e,r){var n=r(17);t.exports=function(t,e){var r=n(t);if(r<0||r%e)throw RangeError("Wrong offset");return r}},function(t,e,r){var n=r(59),o=r(12),i=r(41),a=r(6),u=function(t){return function(e,r,u,c){n(r);var s=o(e),f=i(s),l=a(s.length),p=t?l-1:0,d=t?-1:1;if(u<2)for(;;){if(p in f){c=f[p],p+=d;break}if(p+=d,t?p<0:l<=p)throw TypeError("Reduce of empty array with no initial value")}for(;t?p>=0:l>p;p+=d)p in f&&(c=r(c,f[p],p,s));return c}};t.exports={left:u(!1),right:u(!0)}},function(t,e){var r;r=function(){return this}();try{r=r||new Function("return this")()}catch(t){"object"==typeof window&&(r=window)}t.exports=r},function(t,e,r){var n=r(1),o=r(70),i=n.WeakMap;t.exports="function"==typeof i&&/native code/.test(o.call(i))},function(t,e,r){var n=r(46),o=r(26),i=r(74),a=r(10);t.exports=n("Reflect","ownKeys")||function(t){var e=o.f(a(t)),r=i.f;return r?e.concat(r(t)):e}},function(t,e,r){var n=r(5),o=r(7),i=r(10),a=r(48);t.exports=n?Object.defineProperties:function(t,e){i(t);for(var r,n=a(e),u=n.length,c=0;u>c;)o.f(t,r=n[c++],e[r]);return t}},function(t,e,r){var n=r(46);t.exports=n("document","documentElement")},function(t,e,r){var n=r(14),o=r(26).f,i={}.toString,a="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[];t.exports.f=function(t){return a&&"[object Window]"==i.call(t)?function(t){try{return o(t)}catch(t){return a.slice()}}(t):o(n(t))}},function(t,e,r){var n=r(11),o=r(57),i=r(4)("species");t.exports=function(t,e){var r;return o(t)&&("function"!=typeof(r=t.constructor)||r!==Array&&!o(r.prototype)?n(r)&&null===(r=r[i])&&(r=void 0):r=void 0),new(void 0===r?Array:r)(0===e?0:e)}},function(t,e,r){var n=r(4),o=r(27),i=r(9),a=n("unscopables"),u=Array.prototype;null==u[a]&&i(u,a,o(null)),t.exports=function(t){u[a][t]=!0}},function(t,e,r){"use strict";var n=r(80).IteratorPrototype,o=r(27),i=r(21),a=r(49),u=r(36),c=function(){return this};t.exports=function(t,e,r){var s=e+" Iterator";return t.prototype=o(n,{next:i(1,r)}),a(t,s,!1,!0),u[s]=c,t}},function(t,e,r){var n=r(11);t.exports=function(t){if(!n(t)&&null!==t)throw TypeError("Can't set "+String(t)+" as a prototype");return t}},function(t,e,r){r(2)({target:"Object",stat:!0,sham:!r(5)},{create:r(27)})},function(t,e,r){var n=r(2),o=r(3),i=r(12),a=r(50),u=r(81);n({target:"Object",stat:!0,forced:o(function(){a(1)}),sham:!u},{getPrototypeOf:function(t){return a(i(t))}})},function(t,e,r){r(2)({target:"Object",stat:!0},{setPrototypeOf:r(37)})},function(t,e,r){"use strict";var n=r(51),o={};o[r(4)("toStringTag")]="z",t.exports="[object z]"!==String(o)?function(){return"[object "+n(this)+"]"}:o.toString},function(t,e){t.exports={CSSRuleList:0,CSSStyleDeclaration:0,CSSValueList:0,ClientRectList:0,DOMRectList:0,DOMStringList:0,DOMTokenList:1,DataTransferItemList:0,FileList:0,HTMLAllCollection:0,HTMLCollection:0,HTMLFormElement:0,HTMLSelectElement:0,MediaList:0,MimeTypeArray:0,NamedNodeMap:0,NodeList:1,PaintRequestList:0,Plugin:0,PluginArray:0,SVGLengthList:0,SVGNumberList:0,SVGPathSegList:0,SVGPointList:0,SVGStringList:0,SVGTransformList:0,SourceBufferList:0,StyleSheetList:0,TextTrackCueList:0,TextTrackList:0,TouchList:0}},function(t,e,r){var n=function(t){"use strict";var e,r=Object.prototype,n=r.hasOwnProperty,o="function"==typeof Symbol?Symbol:{},i=o.iterator||"@@iterator",a=o.asyncIterator||"@@asyncIterator",u=o.toStringTag||"@@toStringTag";function c(t,e,r,n){var o=e&&e.prototype instanceof v?e:v,i=Object.create(o.prototype),a=new O(n||[]);return i._invoke=function(t,e,r){var n=f;return function(o,i){if(n===p)throw new Error("Generator is already running");if(n===d){if("throw"===o)throw i;return k()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var u=x(a,r);if(u){if(u===h)continue;return u}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if(n===f)throw n=d,r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n=p;var c=s(t,e,r);if("normal"===c.type){if(n=r.done?d:l,c.arg===h)continue;return{value:c.arg,done:r.done}}"throw"===c.type&&(n=d,r.method="throw",r.arg=c.arg)}}}(t,r,a),i}function s(t,e,r){try{return{type:"normal",arg:t.call(e,r)}}catch(t){return{type:"throw",arg:t}}}t.wrap=c;var f="suspendedStart",l="suspendedYield",p="executing",d="completed",h={};function v(){}function y(){}function g(){}var _={};_[i]=function(){return this};var m=Object.getPrototypeOf,b=m&&m(m(I([])));b&&b!==r&&n.call(b,i)&&(_=b);var A=g.prototype=v.prototype=Object.create(_);function E(t){["next","throw","return"].forEach(function(e){t[e]=function(t){return this._invoke(e,t)}})}function w(t){var e;this._invoke=function(r,o){function i(){return new Promise(function(e,i){!function e(r,o,i,a){var u=s(t[r],t,o);if("throw"!==u.type){var c=u.arg,f=c.value;return f&&"object"==typeof f&&n.call(f,"__await")?Promise.resolve(f.__await).then(function(t){e("next",t,i,a)},function(t){e("throw",t,i,a)}):Promise.resolve(f).then(function(t){c.value=t,i(c)},function(t){return e("throw",t,i,a)})}a(u.arg)}(r,o,e,i)})}return e=e?e.then(i,i):i()}}function x(t,r){var n=t.iterator[r.method];if(n===e){if(r.delegate=null,"throw"===r.method){if(t.iterator.return&&(r.method="return",r.arg=e,x(t,r),"throw"===r.method))return h;r.method="throw",r.arg=new TypeError("The iterator does not provide a 'throw' method")}return h}var o=s(n,t.iterator,r.arg);if("throw"===o.type)return r.method="throw",r.arg=o.arg,r.delegate=null,h;var i=o.arg;return i?i.done?(r[t.resultName]=i.value,r.next=t.nextLoc,"return"!==r.method&&(r.method="next",r.arg=e),r.delegate=null,h):i:(r.method="throw",r.arg=new TypeError("iterator result is not an object"),r.delegate=null,h)}function S(t){var e={tryLoc:t[0]};1 in t&&(e.catchLoc=t[1]),2 in t&&(e.finallyLoc=t[2],e.afterLoc=t[3]),this.tryEntries.push(e)}function T(t){var e=t.completion||{};e.type="normal",delete e.arg,t.completion=e}function O(t){this.tryEntries=[{tryLoc:"root"}],t.forEach(S,this),this.reset(!0)}function I(t){if(t){var r=t[i];if(r)return r.call(t);if("function"==typeof t.next)return t;if(!isNaN(t.length)){var o=-1,a=function r(){for(;++o<t.length;)if(n.call(t,o))return r.value=t[o],r.done=!1,r;return r.value=e,r.done=!0,r};return a.next=a}}return{next:k}}function k(){return{value:e,done:!0}}return y.prototype=A.constructor=g,g.constructor=y,g[u]=y.displayName="GeneratorFunction",t.isGeneratorFunction=function(t){var e="function"==typeof t&&t.constructor;return!!e&&(e===y||"GeneratorFunction"===(e.displayName||e.name))},t.mark=function(t){return Object.setPrototypeOf?Object.setPrototypeOf(t,g):(t.__proto__=g,u in t||(t[u]="GeneratorFunction")),t.prototype=Object.create(A),t},t.awrap=function(t){return{__await:t}},E(w.prototype),w.prototype[a]=function(){return this},t.AsyncIterator=w,t.async=function(e,r,n,o){var i=new w(c(e,r,n,o));return t.isGeneratorFunction(r)?i:i.next().then(function(t){return t.done?t.value:i.next()})},E(A),A[u]="Generator",A[i]=function(){return this},A.toString=function(){return"[object Generator]"},t.keys=function(t){var e=[];for(var r in t)e.push(r);return e.reverse(),function r(){for(;e.length;){var n=e.pop();if(n in t)return r.value=n,r.done=!1,r}return r.done=!0,r}},t.values=I,O.prototype={constructor:O,reset:function(t){if(this.prev=0,this.next=0,this.sent=this._sent=e,this.done=!1,this.delegate=null,this.method="next",this.arg=e,this.tryEntries.forEach(T),!t)for(var r in this)"t"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=e)},stop:function(){this.done=!0;var t=this.tryEntries[0].completion;if("throw"===t.type)throw t.arg;return this.rval},dispatchException:function(t){if(this.done)throw t;var r=this;function o(n,o){return u.type="throw",u.arg=t,r.next=n,o&&(r.method="next",r.arg=e),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var a=this.tryEntries[i],u=a.completion;if("root"===a.tryLoc)return o("end");if(a.tryLoc<=this.prev){var c=n.call(a,"catchLoc"),s=n.call(a,"finallyLoc");if(c&&s){if(this.prev<a.catchLoc)return o(a.catchLoc,!0);if(this.prev<a.finallyLoc)return o(a.finallyLoc)}else if(c){if(this.prev<a.catchLoc)return o(a.catchLoc,!0)}else{if(!s)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return o(a.finallyLoc)}}}},abrupt:function(t,e){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===t||"continue"===t)&&i.tryLoc<=e&&e<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=t,a.arg=e,i?(this.method="next",this.next=i.finallyLoc,h):this.complete(a)},complete:function(t,e){if("throw"===t.type)throw t.arg;return"break"===t.type||"continue"===t.type?this.next=t.arg:"return"===t.type?(this.rval=this.arg=t.arg,this.method="return",this.next="end"):"normal"===t.type&&e&&(this.next=e),h},finish:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.finallyLoc===t)return this.complete(r.completion,r.afterLoc),T(r),h}},catch:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.tryLoc===t){var n=r.completion;if("throw"===n.type){var o=n.arg;T(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(t,r,n){return this.delegate={iterator:I(t),resultName:r,nextLoc:n},"next"===this.method&&(this.arg=e),h}},t}(t.exports);try{regeneratorRuntime=n}catch(t){Function("r","regeneratorRuntime = r")(n)}},function(t,e,r){var n=r(2),o=r(117);n({target:"Array",stat:!0,forced:!r(85)(function(t){Array.from(t)})},{from:o})},function(t,e,r){"use strict";var n=r(58),o=r(12),i=r(118),a=r(83),u=r(6),c=r(119),s=r(84);t.exports=function(t){var e,r,f,l,p=o(t),d="function"==typeof this?this:Array,h=arguments.length,v=h>1?arguments[1]:void 0,y=void 0!==v,g=0,_=s(p);if(y&&(v=n(v,h>2?arguments[2]:void 0,2)),null==_||d==Array&&a(_))for(r=new d(e=u(p.length));e>g;g++)c(r,g,y?v(p[g],g):p[g]);else for(l=_.call(p),r=new d;!(f=l.next()).done;g++)c(r,g,y?i(l,v,[f.value,g],!0):f.value);return r.length=g,r}},function(t,e,r){var n=r(10);t.exports=function(t,e,r,o){try{return o?e(n(r)[0],r[1]):e(r)}catch(e){var i=t.return;throw void 0!==i&&n(i.call(t)),e}}},function(t,e,r){"use strict";var n=r(24),o=r(7),i=r(21);t.exports=function(t,e,r){var a=n(e);a in t?o.f(t,a,i(0,r)):t[a]=r}},function(t,e,r){var n=r(5),o=r(7).f,i=Function.prototype,a=i.toString,u=/^\s*function ([^ (]*)/;!n||"name"in i||o(i,"name",{configurable:!0,get:function(){try{return a.call(this).match(u)[1]}catch(t){return""}}})},function(t,e,r){var n=r(11),o=r(22),i=r(4)("match");t.exports=function(t){var e;return n(t)&&(void 0!==(e=t[i])?!!e:"RegExp"==o(t))}},function(t,e,r){var n=r(46);t.exports=n("navigator","userAgent")||""},function(t,e,r){var n=r(5),o=r(48),i=r(14),a=r(54).f,u=function(t){return function(e){for(var r,u=i(e),c=o(u),s=c.length,f=0,l=[];s>f;)r=c[f++],n&&!a.call(u,r)||l.push(t?[r,u[r]]:u[r]);return l}};t.exports={entries:u(!0),values:u(!1)}},function(t,e,r){var n=r(1),o=r(64).trim,i=r(65),a=n.parseInt,u=/^[+-]?0[Xx]/,c=8!==a(i+"08")||22!==a(i+"0x16");t.exports=c?function(t,e){var r=o(String(t));return a(r,e>>>0||(u.test(r)?16:10))}:a},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(66),a=r(97),u=i.ArrayBuffer;n({global:!0,forced:o.ArrayBuffer!==u},{ArrayBuffer:u}),a("ArrayBuffer")},function(t,e,r){var n=r(13);t.exports=function(t,e,r){for(var o in e)n(t,o,e[o],r);return t}},function(t,e,r){"use strict";var n=r(2),o=r(3),i=r(66),a=r(10),u=r(35),c=r(6),s=r(32),f=i.ArrayBuffer,l=i.DataView,p=f.prototype.slice;n({target:"ArrayBuffer",proto:!0,unsafe:!0,forced:o(function(){return!new f(2).slice(1,void 0).byteLength})},{slice:function(t,e){if(void 0!==p&&void 0===e)return p.call(a(this),t);for(var r=a(this).byteLength,n=u(t,r),o=u(void 0===e?r:e,r),i=new(s(this,f))(c(o-n)),d=new l(this),h=new l(i),v=0;n<o;)h.setUint8(v++,d.getUint8(n++));return i}})},function(t,e,r){r(129)("Uint8",1,function(t){return function(e,r,n){return t(this,e,r,n)}})},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(5),a=r(130),u=r(0),c=r(66),s=r(94),f=r(21),l=r(9),p=r(6),d=r(95),h=r(98),v=r(24),y=r(8),g=r(51),_=r(11),m=r(27),b=r(37),A=r(26).f,E=r(131),w=r(15).forEach,x=r(97),S=r(7),T=r(33),O=r(25),I=O.get,k=O.set,M=S.f,C=T.f,q=Math.round,B=o.RangeError,P=c.ArrayBuffer,F=c.DataView,R=u.NATIVE_ARRAY_BUFFER_VIEWS,D=u.TYPED_ARRAY_TAG,L=u.TypedArray,j=u.TypedArrayPrototype,U=u.aTypedArrayConstructor,W=u.isTypedArray,K=function(t,e){for(var r=0,n=e.length,o=new(U(t))(n);n>r;)o[r]=e[r++];return o},N=function(t,e){M(t,e,{get:function(){return I(this)[e]}})},G=function(t){var e;return t instanceof P||"ArrayBuffer"==(e=g(t))||"SharedArrayBuffer"==e},V=function(t,e){return W(t)&&"symbol"!=typeof e&&e in t&&String(+e)==String(e)},Y=function(t,e){return V(t,e=v(e,!0))?f(2,t[e]):C(t,e)},H=function(t,e,r){return!(V(t,e=v(e,!0))&&_(r)&&y(r,"value"))||y(r,"get")||y(r,"set")||r.configurable||y(r,"writable")&&!r.writable||y(r,"enumerable")&&!r.enumerable?M(t,e,r):(t[e]=r.value,t)};i?(R||(T.f=Y,S.f=H,N(j,"buffer"),N(j,"byteOffset"),N(j,"byteLength"),N(j,"length")),n({target:"Object",stat:!0,forced:!R},{getOwnPropertyDescriptor:Y,defineProperty:H}),t.exports=function(t,e,r,i){var u=t+(i?"Clamped":"")+"Array",c="get"+t,f="set"+t,v=o[u],y=v,g=y&&y.prototype,S={},T=function(t,r){M(t,r,{get:function(){return function(t,r){var n=I(t);return n.view[c](r*e+n.byteOffset,!0)}(this,r)},set:function(t){return function(t,r,n){var o=I(t);i&&(n=(n=q(n))<0?0:n>255?255:255&n),o.view[f](r*e+o.byteOffset,n,!0)}(this,r,t)},enumerable:!0})};R?a&&(y=r(function(t,r,n,o){return s(t,y,u),_(r)?G(r)?void 0!==o?new v(r,h(n,e),o):void 0!==n?new v(r,h(n,e)):new v(r):W(r)?K(y,r):E.call(y,r):new v(d(r))}),b&&b(y,L),w(A(v),function(t){t in y||l(y,t,v[t])}),y.prototype=g):(y=r(function(t,r,n,o){s(t,y,u);var i,a,c,f=0,l=0;if(_(r)){if(!G(r))return W(r)?K(y,r):E.call(y,r);i=r,l=h(n,e);var v=r.byteLength;if(void 0===o){if(v%e)throw B("Wrong length");if((a=v-l)<0)throw B("Wrong length")}else if((a=p(o)*e)+l>v)throw B("Wrong length");c=a/e}else c=d(r),i=new P(a=c*e);for(k(t,{buffer:i,byteOffset:l,byteLength:a,length:c,view:new F(i)});f<c;)T(t,f++)}),b&&b(y,L),g=y.prototype=m(j)),g.constructor!==y&&l(g,"constructor",y),D&&l(g,D,u),S[u]=y,n({global:!0,forced:y!=v,sham:!R},S),"BYTES_PER_ELEMENT"in y||l(y,"BYTES_PER_ELEMENT",e),"BYTES_PER_ELEMENT"in g||l(g,"BYTES_PER_ELEMENT",e),x(u)}):t.exports=function(){}},function(t,e,r){var n=r(1),o=r(3),i=r(85),a=r(0).NATIVE_ARRAY_BUFFER_VIEWS,u=n.ArrayBuffer,c=n.Int8Array;t.exports=!a||!o(function(){c(1)})||!o(function(){new c(-1)})||!i(function(t){new c,new c(null),new c(1.5),new c(t)},!0)||o(function(){return 1!==new c(new u(2),1,void 0).length})},function(t,e,r){var n=r(12),o=r(6),i=r(84),a=r(83),u=r(58),c=r(0).aTypedArrayConstructor;t.exports=function(t){var e,r,s,f,l,p=n(t),d=arguments.length,h=d>1?arguments[1]:void 0,v=void 0!==h,y=i(p);if(null!=y&&!a(y))for(l=y.call(p),p=[];!(f=l.next()).done;)p.push(f.value);for(v&&d>2&&(h=u(h,arguments[2],2)),r=o(p.length),s=new(c(this))(r),e=0;r>e;e++)s[e]=v?h(p[e],e):p[e];return s}},function(t,e,r){"use strict";var n=r(0),o=r(133),i=n.aTypedArray;n.exportProto("copyWithin",function(t,e){return o.call(i(this),t,e,arguments.length>2?arguments[2]:void 0)})},function(t,e,r){"use strict";var n=r(12),o=r(35),i=r(6),a=Math.min;t.exports=[].copyWithin||function(t,e){var r=n(this),u=i(r.length),c=o(t,u),s=o(e,u),f=arguments.length>2?arguments[2]:void 0,l=a((void 0===f?u:o(f,u))-s,u-c),p=1;for(s<c&&c<s+l&&(p=-1,s+=l-1,c+=l-1);l-- >0;)s in r?r[c]=r[s]:delete r[c],c+=p,s+=p;return r}},function(t,e,r){"use strict";var n=r(0),o=r(15).every,i=n.aTypedArray;n.exportProto("every",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(96),i=n.aTypedArray;n.exportProto("fill",function(t){return o.apply(i(this),arguments)})},function(t,e,r){"use strict";var n=r(0),o=r(15).filter,i=r(32),a=n.aTypedArray,u=n.aTypedArrayConstructor;n.exportProto("filter",function(t){for(var e=o(a(this),t,arguments.length>1?arguments[1]:void 0),r=i(this,this.constructor),n=0,c=e.length,s=new(u(r))(c);c>n;)s[n]=e[n++];return s})},function(t,e,r){"use strict";var n=r(0),o=r(15).find,i=n.aTypedArray;n.exportProto("find",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(15).findIndex,i=n.aTypedArray;n.exportProto("findIndex",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(15).forEach,i=n.aTypedArray;n.exportProto("forEach",function(t){o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(47).includes,i=n.aTypedArray;n.exportProto("includes",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(47).indexOf,i=n.aTypedArray;n.exportProto("indexOf",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(16),a=r(4)("iterator"),u=n.Uint8Array,c=i.values,s=i.keys,f=i.entries,l=o.aTypedArray,p=o.exportProto,d=u&&u.prototype[a],h=!!d&&("values"==d.name||null==d.name),v=function(){return c.call(l(this))};p("entries",function(){return f.call(l(this))}),p("keys",function(){return s.call(l(this))}),p("values",v,!h),p(a,v,!h)},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=[].join;n.exportProto("join",function(t){return i.apply(o(this),arguments)})},function(t,e,r){"use strict";var n=r(0),o=r(145),i=n.aTypedArray;n.exportProto("lastIndexOf",function(t){return o.apply(i(this),arguments)})},function(t,e,r){"use strict";var n=r(14),o=r(17),i=r(6),a=r(60),u=Math.min,c=[].lastIndexOf,s=!!c&&1/[1].lastIndexOf(1,-0)<0,f=a("lastIndexOf");t.exports=s||f?function(t){if(s)return c.apply(this,arguments)||0;var e=n(this),r=i(e.length),a=r-1;for(arguments.length>1&&(a=u(a,o(arguments[1]))),a<0&&(a=r+a);a>=0;a--)if(a in e&&e[a]===t)return a||0;return-1}:c},function(t,e,r){"use strict";var n=r(0),o=r(15).map,i=r(32),a=n.aTypedArray,u=n.aTypedArrayConstructor;n.exportProto("map",function(t){return o(a(this),t,arguments.length>1?arguments[1]:void 0,function(t,e){return new(u(i(t,t.constructor)))(e)})})},function(t,e,r){"use strict";var n=r(0),o=r(99).left,i=n.aTypedArray;n.exportProto("reduce",function(t){return o(i(this),t,arguments.length,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(99).right,i=n.aTypedArray;n.exportProto("reduceRight",function(t){return o(i(this),t,arguments.length,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=Math.floor;n.exportProto("reverse",function(){for(var t,e=o(this).length,r=i(e/2),n=0;n<r;)t=this[n],this[n++]=this[--e],this[e]=t;return this})},function(t,e,r){"use strict";var n=r(0),o=r(6),i=r(98),a=r(12),u=r(3),c=n.aTypedArray,s=u(function(){new Int8Array(1).set({})});n.exportProto("set",function(t){c(this);var e=i(arguments.length>1?arguments[1]:void 0,1),r=this.length,n=a(t),u=o(n.length),s=0;if(u+e>r)throw RangeError("Wrong length");for(;s<u;)this[e+s]=n[s++]},s)},function(t,e,r){"use strict";var n=r(0),o=r(32),i=r(3),a=n.aTypedArray,u=n.aTypedArrayConstructor,c=[].slice,s=i(function(){new Int8Array(1).slice()});n.exportProto("slice",function(t,e){for(var r=c.call(a(this),t,e),n=o(this,this.constructor),i=0,s=r.length,f=new(u(n))(s);s>i;)f[i]=r[i++];return f},s)},function(t,e,r){"use strict";var n=r(0),o=r(15).some,i=n.aTypedArray;n.exportProto("some",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=[].sort;n.exportProto("sort",function(t){return i.call(o(this),t)})},function(t,e,r){"use strict";var n=r(0),o=r(6),i=r(35),a=r(32),u=n.aTypedArray;n.exportProto("subarray",function(t,e){var r=u(this),n=r.length,c=i(t,n);return new(a(r,r.constructor))(r.buffer,r.byteOffset+c*r.BYTES_PER_ELEMENT,o((void 0===e?n:i(e,n))-c))})},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(3),a=n.Int8Array,u=o.aTypedArray,c=[].toLocaleString,s=[].slice,f=!!a&&i(function(){c.call(new a(1))}),l=i(function(){return[1,2].toLocaleString()!=new a([1,2]).toLocaleString()})||!i(function(){a.prototype.toLocaleString.call([1,2])});o.exportProto("toLocaleString",function(){return c.apply(f?s.call(u(this)):u(this),arguments)},l)},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(3),a=n.Uint8Array,u=a&&a.prototype,c=[].toString,s=[].join;i(function(){c.call({})})&&(c=function(){return s.call(this)}),o.exportProto("toString",c,(u||{}).toString!=c)},function(t,e,r){"use strict";var n=r(2),o=r(41),i=r(14),a=r(60),u=[].join,c=o!=Object,s=a("join",",");n({target:"Array",proto:!0,forced:c||s},{join:function(t){return u.call(i(this),void 0===t?",":t)}})},function(t,e,r){r(2)({target:"Date",stat:!0},{now:function(){return(new Date).getTime()}})},function(t,e,r){"use strict";var n=r(5),o=r(1),i=r(75),a=r(13),u=r(8),c=r(22),s=r(160),f=r(24),l=r(3),p=r(27),d=r(26).f,h=r(33).f,v=r(7).f,y=r(64).trim,g=o.Number,_=g.prototype,m="Number"==c(p(_)),b=function(t){var e,r,n,o,i,a,u,c,s=f(t,!1);if("string"==typeof s&&s.length>2)if(43===(e=(s=y(s)).charCodeAt(0))||45===e){if(88===(r=s.charCodeAt(2))||120===r)return NaN}else if(48===e){switch(s.charCodeAt(1)){case 66:case 98:n=2,o=49;break;case 79:case 111:n=8,o=55;break;default:return+s}for(a=(i=s.slice(2)).length,u=0;u<a;u++)if((c=i.charCodeAt(u))<48||c>o)return NaN;return parseInt(i,n)}return+s};if(i("Number",!g(" 0o1")||!g("0b1")||g("+0x1"))){for(var A,E=function(t){var e=arguments.length<1?0:t,r=this;return r instanceof E&&(m?l(function(){_.valueOf.call(r)}):"Number"!=c(r))?s(new g(b(e)),r,E):b(e)},w=n?d(g):"MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger".split(","),x=0;w.length>x;x++)u(g,A=w[x])&&!u(E,A)&&v(E,A,h(g,A));E.prototype=_,_.constructor=E,a(o,"Number",E)}},function(t,e,r){var n=r(11),o=r(37);t.exports=function(t,e,r){var i,a;return o&&"function"==typeof(i=e.constructor)&&i!==r&&n(a=i.prototype)&&a!==r.prototype&&o(t,a),t}},function(t,e,r){r(2)({target:"Number",stat:!0},{isNaN:function(t){return t!=t}})},function(t,e,r){var n=r(2),o=r(163);n({global:!0,forced:parseFloat!=o},{parseFloat:o})},function(t,e,r){var n=r(1),o=r(64).trim,i=r(65),a=n.parseFloat,u=1/a(i+"-0")!=-1/0;t.exports=u?function(t){var e=o(String(t)),r=a(e);return 0===r&&"-"==e.charAt(0)?-0:r}:a},function(t,e,r){"use strict";r.r(e);var n={};r.r(n),r.d(n,"api",function(){return v}),r.d(n,"shared_root_info",function(){return y}),r.d(n,"connect",function(){return x}),r.d(n,"send",function(){return S}),r.d(n,"setController",function(){return T}),r.d(n,"pitchBend",function(){return O}),r.d(n,"setEffects",function(){return I}),r.d(n,"getContext",function(){return k}),r.d(n,"setContext",function(){return M}),r.d(n,"playChannel",function(){return C}),r.d(n,"stopChannel",function(){return q}),r.d(n,"setVolume",function(){return B}),r.d(n,"programChange",function(){return P}),r.d(n,"noteOn",function(){return F}),r.d(n,"noteOff",function(){return R}),r.d(n,"chordOn",function(){return D}),r.d(n,"chordOff",function(){return L}),r.d(n,"stopAllNotes",function(){return j});var o={};r.r(o),r.d(o,"api",function(){return G}),r.d(o,"shared_root_info",function(){return V}),r.d(o,"connect",function(){return X}),r.d(o,"playChannel",function(){return Q}),r.d(o,"stopChannel",function(){return z}),r.d(o,"send",function(){return $}),r.d(o,"setController",function(){return tt}),r.d(o,"setVolume",function(){return et}),r.d(o,"programChange",function(){return rt}),r.d(o,"pitchBend",function(){return nt}),r.d(o,"noteOn",function(){return ot}),r.d(o,"noteOff",function(){return it}),r.d(o,"chordOn",function(){return at}),r.d(o,"chordOff",function(){return ut}),r.d(o,"stopAllNotes",function(){return ct}),r.d(o,"setEffects",function(){return st}),r.d(o,"getContext",function(){return ft}),r.d(o,"setContext",function(){return lt}),r.d(o,"loadAudio",function(){return pt}),r.d(o,"createAudioContext",function(){return dt});var i={};r.r(i),r.d(i,"api",function(){return ht}),r.d(i,"shared_root_info",function(){return vt}),r.d(i,"connect",function(){return gt}),r.d(i,"playChannel",function(){return _t}),r.d(i,"stopChannel",function(){return mt}),r.d(i,"setEffects",function(){return bt}),r.d(i,"getContext",function(){return At}),r.d(i,"setContext",function(){return Et}),r.d(i,"send",function(){return wt}),r.d(i,"setController",function(){return xt}),r.d(i,"setVolume",function(){return St}),r.d(i,"programChange",function(){return Tt}),r.d(i,"pitchBend",function(){return Ot}),r.d(i,"noteOn",function(){return It}),r.d(i,"noteOff",function(){return kt}),r.d(i,"chordOn",function(){return Mt}),r.d(i,"chordOff",function(){return Ct}),r.d(i,"stopAllNotes",function(){return qt});var a={};r.r(a),r.d(a,"data",function(){return Nt}),r.d(a,"map",function(){return Gt});r(20),r(28),r(29),r(16),r(110),r(38),r(111),r(112),r(18),r(19),r(30),r(115),r(116),r(39),r(61),r(120),r(31),r(87),r(53),r(40);var u={},c=0,s=function(t){c+=1;var e=document.body,r=new Audio,n=t.split(";")[0];r.id="audio",r.setAttribute("preload","auto"),r.setAttribute("audiobuffer","true"),r.addEventListener("error",function(){e.removeChild(r),u[n]=!1,c-=1},!1),r.addEventListener("canplaythrough",function(){e.removeChild(r),u[n]=!0,c-=1},!1),r.src="data:"+t,e.appendChild(r)};r(62),r(91),r(92),r(63),r(93);function f(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=[],n=!0,o=!1,i=void 0;try{for(var a,u=t[Symbol.iterator]();!(n=(a=u.next()).done)&&(r.push(a.value),!e||r.length!==e);n=!0);}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}return r}(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}var l=function(t){for(var e=function(t){return t.replace(/[^a-z0-9 ]/gi,"").replace(/[ ]/g,"_").toLowerCase()},r={byName:{},byId:{},byCategory:{}},n=0,o=Object.entries(t);n<o.length;n++){var i=f(o[n],2),a=i[0],u=i[1],c=!0,s=!1,l=void 0;try{for(var p,d=u[Symbol.iterator]();!(c=(p=d.next()).done);c=!0){var h=p.value;if(h){var v=parseInt(h.substr(0,h.indexOf(" ")),10),y=v-1,g=h.replace(v+" ",""),_=e(g),m=e(a),b={id:_,name:g,program:y,category:a};r.byId[y]=b,r.byName[_]=b,r.byCategory[m]=r.byCategory[m]||[],r.byCategory[m].push(b)}}}catch(t){s=!0,l=t}finally{try{c||null==d.return||d.return()}finally{if(s)throw l}}}return r}({Piano:["1 Acoustic Grand Piano","2 Bright Acoustic Piano","3 Electric Grand Piano","4 Honky-tonk Piano","5 Electric Piano 1","6 Electric Piano 2","7 Harpsichord","8 Clavinet"],"Chromatic Percussion":["9 Celesta","10 Glockenspiel","11 Music Box","12 Vibraphone","13 Marimba","14 Xylophone","15 Tubular Bells","16 Dulcimer"],Organ:["17 Drawbar Organ","18 Percussive Organ","19 Rock Organ","20 Church Organ","21 Reed Organ","22 Accordion","23 Harmonica","24 Tango Accordion"],Guitar:["25 Acoustic Guitar (nylon)","26 Acoustic Guitar (steel)","27 Electric Guitar (jazz)","28 Electric Guitar (clean)","29 Electric Guitar (muted)","30 Overdriven Guitar","31 Distortion Guitar","32 Guitar Harmonics"],Bass:["33 Acoustic Bass","34 Electric Bass (finger)","35 Electric Bass (pick)","36 Fretless Bass","37 Slap Bass 1","38 Slap Bass 2","39 Synth Bass 1","40 Synth Bass 2"],Strings:["41 Violin","42 Viola","43 Cello","44 Contrabass","45 Tremolo Strings","46 Pizzicato Strings","47 Orchestral Harp","48 Timpani"],Ensemble:["49 String Ensemble 1","50 String Ensemble 2","51 Synth Strings 1","52 Synth Strings 2","53 Choir Aahs","54 Voice Oohs","55 Synth Choir","56 Orchestra Hit"],Brass:["57 Trumpet","58 Trombone","59 Tuba","60 Muted Trumpet","61 French Horn","62 Brass Section","63 Synth Brass 1","64 Synth Brass 2"],Reed:["65 Soprano Sax","66 Alto Sax","67 Tenor Sax","68 Baritone Sax","69 Oboe","70 English Horn","71 Bassoon","72 Clarinet"],Pipe:["73 Piccolo","74 Flute","75 Recorder","76 Pan Flute","77 Blown Bottle","78 Shakuhachi","79 Whistle","80 Ocarina"],"Synth Lead":["81 Lead 1 (square)","82 Lead 2 (sawtooth)","83 Lead 3 (calliope)","84 Lead 4 (chiff)","85 Lead 5 (charang)","86 Lead 6 (voice)","87 Lead 7 (fifths)","88 Lead 8 (bass + lead)"],"Synth Pad":["89 Pad 1 (new age)","90 Pad 2 (warm)","91 Pad 3 (polysynth)","92 Pad 4 (choir)","93 Pad 5 (bowed)","94 Pad 6 (metallic)","95 Pad 7 (halo)","96 Pad 8 (sweep)"],"Synth Effects":["97 FX 1 (rain)","98 FX 2 (soundtrack)","99 FX 3 (crystal)","100 FX 4 (atmosphere)","101 FX 5 (brightness)","102 FX 6 (goblins)","103 FX 7 (echoes)","104 FX 8 (sci-fi)"],Ethnic:["105 Sitar","106 Banjo","107 Shamisen","108 Koto","109 Kalimba","110 Bagpipe","111 Fiddle","112 Shanai"],Percussive:["113 Tinkle Bell","114 Agogo","115 Steel Drums","116 Woodblock","117 Taiko Drum","118 Melodic Tom","119 Synth Drum"],"Sound effects":["120 Reverse Cymbal","121 Guitar Fret Noise","122 Breath Noise","123 Seashore","124 Bird Tweet","125 Telephone Ring","126 Helicopter","127 Applause","128 Gunshot"]}),p=function(){for(var t={},e=0;e<16;e++)t[e]={program:e,pitchBend:0,mute:!1,mono:!1,omni:!1,solo:!1};return t}(),d={},h={};!function(){for(var t=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],e=21;e<=108;e++){var r=Math.floor((e-12)/12),n=t[e%12]+r;d[n]=e,h[e]=n}}();for(var v="audiotag",y={},g=[],_=0;_<16;_++)g[_]=127;for(var m=-1,b=[],A={},E=[],w=0;w<12;w++)E[w]=new Audio;var x=function(t){for(var e=0,r=Object.keys(d);e<r.length;e++){var n=r[e];A[n]={id:n}}t.onsuccess&&t.onsuccess()},S=function(t,e){},T=function(t,e,r,n){},O=function(t,e,r){},I=function(){},k=function(){},M=function(){},C=function(t,e){if(p[t]){var r=p[t].program,n=l.byId[r].id,o=A[e];if(o){var i=n+""+o.id,a=(m+1)%E.length,u=E[a];if(b[a]=i,!y.Soundfont[n])return void 0;u.src=y.Soundfont[n][o.id],u.volume=g[t]/127,u.play(),m=a}}},q=function(t,e){if(p[t]){var r=p[t].program,n=l.byId[r].id,o=A[e];if(o)for(var i=n+""+o.id,a=0,u=E.length;a<u;a++){var c=(a+m+1)%u,s=b[c];if(s&&s===i)return E[c].pause(),void(b[c]=null)}}},B=function(t,e){g[t]=e},P=function(t,e){p[t].instrument=e},F=function(t,e,r,n){var o=h[e];return!!A[o]&&(n?setTimeout(function(){g[t]=r,C(t,o)},1e3*n):(g[t]=r,C(t,o),!0))},R=function(t,e,r){},D=function(t,e,r,n){for(var o=function(r){var o=e[r],i=h[o];if(!A[i])return"continue";n?setTimeout(function(){C(t,i)},1e3*n):C(t,i)},i=0;i<e.length;i++)o(i)},L=function(t,e,r){for(var n=function(n){var o=e[n],i=h[o];if(!A[i])return"continue";r?setTimeout(function(){q(t,i)},1e3*r):q(t,i)},o=0;o<e.length;o++)n(o)},j=function(){for(var t=0,e=E.length;t<e;t++)E[t].pause()},U=(r(125),r(127),r(128),r(132),r(134),r(135),r(136),r(137),r(138),r(139),r(140),r(141),r(142),r(143),r(144),r(146),r(147),r(148),r(149),r(150),r(151),r(152),r(153),r(154),r(155),r(156),"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=");function W(t){var e=Math.ceil(3*t.length/4),r=new ArrayBuffer(e);return function(t,e){var r,n,o,i,a,u,c,s,f=U.indexOf(t.charAt(t.length-1)),l=U.indexOf(t.charAt(t.length-1)),p=Math.ceil(3*t.length/4);64===f&&p--;64===l&&p--;var d=0;r=e?new Uint8Array(e):new Uint8Array(p);t=t.replace(/[^A-Za-z0-9+\/=]/g,"");for(var h=0;h<p;h+=3)a=U.indexOf(t.charAt(d++)),u=U.indexOf(t.charAt(d++)),c=U.indexOf(t.charAt(d++)),s=U.indexOf(t.charAt(d++)),n=a<<2|u>>4,o=(15&u)<<4|c>>2,i=(3&c)<<6|s,r[h]=n,64!==c&&(r[h+1]=o),64!==s&&(r[h+2]=i)}(t,r),r}function K(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=[],n=!0,o=!1,i=void 0;try{for(var a,u=t[Symbol.iterator]();!(n=(a=u.next()).done)&&(r.push(a.value),!e||r.length!==e);n=!0);}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}return r}(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}var N,G="webaudio",V={},Y={},H={},J=127,Z={},X=function(t){lt(N||dt(),t.onsuccess)},Q=function(){},z=function(){},$=function(t,e){},tt=function(t,e,r,n){},et=function(t,e,r){r?setTimeout(function(){J=e},1e3*r):J=e},rt=function(t,e,r){var n=p[t];n&&(n.program=e)},nt=function(t,e,r){var n=p[t];n&&(r?setTimeout(function(){n.pitchBend=e},r):n.pitchBend=e)},ot=function(t,e,r){var n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:0,o=p[t],i=o.program,a=i+"x"+e,u=Z[a];if(u&&N){var c;if(n<N.currentTime&&(n+=N.currentTime),(c=N.createBufferSource()).buffer=u,H)for(var s=c,f=0,l=Object.keys(H);f<l.length;f++){var d=l[f];s.connect(H[d].input),s=H[d]}var h=r/127*(J/127)*2-1;return c.connect(N.destination),c.playbackRate.value=1,c.gainNode=N.createGain(),c.gainNode.connect(N.destination),c.gainNode.gain.value=Math.min(1,Math.max(-1,h)),c.connect(c.gainNode),c.start(n||0),Y[t+"x"+e]=c,c}},it=function(t,e){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,n=p[t],o=n.program,i=o+"x"+e,a=Z[i];if(N&&a){r<N.currentTime&&(r+=N.currentTime);var u=Y[t+"x"+e];if(u){if(u.gainNode){var c=u.gainNode.gain;c.linearRampToValueAtTime(c.value,r),c.linearRampToValueAtTime(-1,r+.3)}return u.noteOff?u.noteOff(r+.5):u.stop(r+.5),delete Y[t+"x"+e],u}}},at=function(t,e,r,n){var o={},i=!0,a=!1,u=void 0;try{for(var c,s=e[Symbol.iterator]();!(i=(c=s.next()).done);i=!0){var f=c.value;o[f]=ot(t,f,r,n)}}catch(t){a=!0,u=t}finally{try{i||null==s.return||s.return()}finally{if(a)throw u}}return o},ut=function(t,e,r){var n={},o=!0,i=!1,a=void 0;try{for(var u,c=e[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;n[s]=it(t,s,r)}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}return n},ct=function(){if(N)for(var t=0,e=Object.keys(Y);t<e.length;t++){var r=e[t],n=0;n<N.currentTime&&(n+=N.currentTime);var o=Y[r];o.gain.linearRampToValueAtTime(1,n),o.gain.linearRampToValueAtTime(0,n+.3),o.noteOff?o.noteOff(n+.3):o.stop(n+.3),delete Y[r]}},st=function(t){if(N&&N.tunajs){var e=!0,r=!1,n=void 0;try{for(var o,i=t[Symbol.iterator]();!(e=(o=i.next()).done);e=!0){var a=o.value,u=new N.tunajs[a.type](a);u.connect(N.destination),H[a.type]=u}}catch(t){r=!0,n=t}finally{try{e||null==i.return||i.return()}finally{if(r)throw n}}}else console.log("Effects module not installed.")},ft=function(){return N},lt=function(t,e,r,n){N=t,"undefined"==typeof Tuna||N.tunajs instanceof Tuna||(N.tunajs=new Tuna(N));for(var o=[],i=0,a=Object.keys(d);i<a.length;i++){var u=a[i];o.push(u)}for(var c=function(t){for(var r=0,n=Object.keys(f);r<n.length;r++){var o=n[r];if(f[o])return}e&&(e(),e=null)},s=function(t,e,r,n){var o=t[n];o&&(f[e]+=1,pt(o,function(r){r.id=n;var o=d[n];if(Z[e+"x"+o]=r,f[e]-=1,0===f[e]){0,t.isLoaded=!0,c()}},function(t){console.log(t)}))},f={},p=0,h=Object.entries(V.Soundfont);p<h.length;p++){var v=K(h[p],2),y=v[0],g=v[1];if(!g.isLoaded){var _=l.byName[y];if(_){var m=_.program;f[m]=0;for(var b=0;b<o.length;b++){s(g,m,0,o[b])}}}}setTimeout(c,1)},pt=function(t,e,r){if(0===t.indexOf("data:audio")){var n=W(t.split(",")[1]);return N.decodeAudioData(n,e,r)}var o=new XMLHttpRequest;return o.open("GET",t,!0),o.responseType="arraybuffer",o.onsuccess=function(){return N.decodeAudioData(o.response,e,r)},void o.send()},dt=function(){return new(window.AudioContext||window.webkitAudioContext)},ht="webmidi",vt={},yt=null,gt=function(t){var e=function(e){console.error("Could not connect to web midi! Falling back to WebAudio:",e),vt.webaudio_backup_connect&&(vt.config.api="webaudio",vt.webaudio_backup_connect(t))};navigator.requestMIDIAccess().then(function(r){var n=r.outputs;return void 0===(yt="function"==typeof n?n()[0]:n[0])?e("No outputs defined"):t.onsuccess&&t.onsuccess()},e)},_t=function(){},mt=function(){},bt=function(){},At=function(){},Et=function(){},wt=function(t,e){yt.send(t,1e3*e)},xt=function(t,e,r,n){yt.send([t,e,r],1e3*n)},St=function(t,e,r){yt.send([176+t,7,e],1e3*r)},Tt=function(t,e,r){yt.send([192+t,e],1e3*r)},Ot=function(t,e,r){yt.send([224+t,e],1e3*r)},It=function(t,e,r,n){yt.send([144+t,e,r],1e3*n)},kt=function(t,e,r){yt.send([128+t,e,0],1e3*r)},Mt=function(t,e,r,n){var o=!0,i=!1,a=void 0;try{for(var u,c=e[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;yt.send([144+t,s,r],1e3*n)}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}},Ct=function(t,e,r){var n=!0,o=!1,i=void 0;try{for(var a,u=e[Symbol.iterator]();!(n=(a=u.next()).done);n=!0){var c=a.value;yt.send([128+t,c,0],1e3*r)}}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}},qt=function(){yt.cancel();for(var t=0;t<16;t++)yt.send([176+t,123,0])};r(157),r(158),r(159),r(161);function Bt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Pt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.str=e,this.position=0}var e,r,n;return e=t,(r=[{key:"read",value:function(t){var e=this.str.substr(this.position,t);return this.position+=t,e}},{key:"readInt32",value:function(){var t=(this.str.charCodeAt(this.position)<<24)+(this.str.charCodeAt(this.position+1)<<16)+(this.str.charCodeAt(this.position+2)<<8)+this.str.charCodeAt(this.position+3);return this.position+=4,t}},{key:"readInt16",value:function(){var t=(this.str.charCodeAt(this.position)<<8)+this.str.charCodeAt(this.position+1);return this.position+=2,t}},{key:"readInt8",value:function(t){var e=this.str.charCodeAt(this.position);return t&&e>127&&(e-=256),this.position+=1,e}},{key:"eof",value:function(){return this.position>=this.str.length}},{key:"readVarInt",value:function(){for(var t=0;;){var e=this.readInt8();if(!(128&e))return t+e;t+=127&e,t<<=7}}}])&&Bt(e.prototype,r),n&&Bt(e,n),t}();function Ft(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Rt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.data=e,this.stream=new Pt(e),this.lastEventTypeByte=void 0}var e,r,n;return e=t,(r=[{key:"readChunk",value:function(t){var e=t.read(4),r=t.readInt32();return{id:e,length:r,data:t.read(r)}}},{key:"readEvent",value:function(t){var e={};e.deltaTime=t.readVarInt();var r=t.readInt8();if(240==(240&r)){if(255!==r){if(240===r){e.type="sysEx";var n=t.readVarInt();return e.data=t.read(n),e}if(247===r){e.type="dividedSysEx";var o=t.readVarInt();return e.data=t.read(o),e}throw"Unrecognised MIDI event type byte: "+r}e.type="meta";var i=t.readInt8(),a=t.readVarInt();switch(i){case 0:if(e.subtype="sequenceNumber",2!==a)throw"Expected length for sequenceNumber event is 2, got "+a;return e.number=t.readInt16(),e;case 1:return e.subtype="text",e.text=t.read(a),e;case 2:return e.subtype="copyrightNotice",e.text=t.read(a),e;case 3:return e.subtype="trackName",e.text=t.read(a),e;case 4:return e.subtype="instrumentName",e.text=t.read(a),e;case 5:return e.subtype="lyrics",e.text=t.read(a),e;case 6:return e.subtype="marker",e.text=t.read(a),e;case 7:return e.subtype="cuePoint",e.text=t.read(a),e;case 32:if(e.subtype="midiChannelPrefix",1!==a)throw"Expected length for midiChannelPrefix event is 1, got "+a;return e.channel=t.readInt8(),e;case 47:if(e.subtype="endOfTrack",0!==a)throw"Expected length for endOfTrack event is 0, got "+a;return e;case 81:if(e.subtype="setTempo",3!==a)throw"Expected length for setTempo event is 3, got "+a;return e.microsecondsPerBeat=(t.readInt8()<<16)+(t.readInt8()<<8)+t.readInt8(),e;case 84:if(e.subtype="smpteOffset",5!==a)throw"Expected length for smpteOffset event is 5, got "+a;var u=t.readInt8();return e.frameRate={0:24,32:25,64:29,96:30}[96&u],e.hour=31&u,e.min=t.readInt8(),e.sec=t.readInt8(),e.frame=t.readInt8(),e.subframe=t.readInt8(),e;case 88:if(e.subtype="timeSignature",4!==a)throw"Expected length for timeSignature event is 4, got "+a;return e.numerator=t.readInt8(),e.denominator=Math.pow(2,t.readInt8()),e.metronome=t.readInt8(),e.thirtyseconds=t.readInt8(),e;case 89:if(e.subtype="keySignature",2!==a)throw"Expected length for keySignature event is 2, got "+a;return e.key=t.readInt8(!0),e.scale=t.readInt8(),e;case 127:return e.subtype="sequencerSpecific",e.data=t.read(a),e;default:return e.subtype="unknown",e.data=t.read(a),e}}else{var c;0==(128&r)?(c=r,r=this.lastEventTypeByte):(c=t.readInt8(),this.lastEventTypeByte=r);var s=r>>4;switch(e.channel=15&r,e.type="channel",s){case 8:return e.subtype="noteOff",e.noteNumber=c,e.velocity=t.readInt8(),e;case 9:return e.noteNumber=c,e.velocity=t.readInt8(),0===e.velocity?e.subtype="noteOff":e.subtype="noteOn",e;case 10:return e.subtype="noteAftertouch",e.noteNumber=c,e.amount=t.readInt8(),e;case 11:return e.subtype="controller",e.controllerType=c,e.value=t.readInt8(),e;case 12:return e.subtype="programChange",e.programNumber=c,e;case 13:return e.subtype="channelAftertouch",e.amount=c,e;case 14:return e.subtype="pitchBend",e.value=c+(t.readInt8()<<7),e;default:throw"Unrecognised MIDI event type: "+s}}}},{key:"parseAndReturn",value:function(){var t=this.stream,e=this.readChunk(t);if("MThd"!==e.id||6!==e.length)throw"Bad .mid file - header not found";var r=new Pt(e.data),n=r.readInt16(),o=r.readInt16(),i=r.readInt16();if(32768&i)throw"Expressing time division in SMTPE frames is not supported yet";for(var a={formatType:n,trackCount:o,ticksPerBeat:i},u=[],c=0;c<a.trackCount;c++){u[c]=[];var s=this.readChunk(t);if("MTrk"!==s.id)throw"Unexpected chunk - expected MTrk, got "+s.id;for(var f=new Pt(s.data);!f.eof();){var l=this.readEvent(f);u[c].push(l)}}return{header:a,tracks:u}}}])&&Ft(e.prototype,r),n&&Ft(e,n),t}();function Dt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function Lt(t){return(Lt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}var jt=function(){function t(e,r,n,o){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.midiFile=e,this.timeWarp=r,this.eventProcessor=n,this.trackStates=[],this.beatsPerMinute=o||120,this.bpmOverride=!!o,this.ticksPerBeat=e.header.ticksPerBeat;for(var i=0;i<e.tracks.length;i++)this.trackStates[i]={nextEventIndex:0,ticksToNextEvent:e.tracks[i].length?e.tracks[i][0].deltaTime:null};this.temporal=[],this.processEvents()}var e,r,n;return e=t,(r=[{key:"getNextEvent",value:function(){for(var t=null,e=null,r=null,n=0;n<this.trackStates.length;n++)null!=this.trackStates[n].ticksToNextEvent&&(null==t||this.trackStates[n].ticksToNextEvent<t)&&(t=this.trackStates[n].ticksToNextEvent,e=n,r=this.trackStates[n].nextEventIndex);if(null!=e){var o=this.midiFile.tracks[e][r];this.midiFile.tracks[e][r+1]?this.trackStates[e].ticksToNextEvent+=this.midiFile.tracks[e][r+1].deltaTime:this.trackStates[e].ticksToNextEvent=null,this.trackStates[e].nextEventIndex+=1;for(var i=0;i<this.trackStates.length;i++)null!=this.trackStates[i].ticksToNextEvent&&(this.trackStates[i].ticksToNextEvent-=t);return{ticksToEvent:t,event:o,track:e}}return null}},{key:"processEvents",value:function(){for(var t=this.getNextEvent();t;){this.bpmOverride||"meta"!==t.event.type||"setTempo"!==t.event.subtype||(this.beatsPerMinute=6e7/t.event.microsecondsPerBeat);var e=0;t.ticksToEvent>0&&(e=t.ticksToEvent/this.ticksPerBeat/(this.beatsPerMinute/60));var r=1e3*e*this.timeWarp||0;this.temporal.push([t,r]),t=this.getNextEvent()}}},{key:"getData",value:function(){return function t(e){if("object"!=Lt(e))return e;if(null==e)return e;var r="number"==typeof e.length?[]:{};for(var n in e)r[n]=t(e[n]);return r}(this.temporal)}}])&&Dt(e.prototype,r),n&&Dt(e,n),t}();function Ut(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Wt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.plugin=e,this.currentTime=0,this.endTime=0,this.restart=0,this.playing=!1,this.timeWarp=1,this.startDelay=0,this.BPM=120,this.data=[],this.eventQueue=[],this.queuedTime=0,this.startTime=0,this.noteRegistrar={},this.onMidiEvent=void 0,this.MIDIOffset=0,this.frame=void 0,this.__now=void 0}var e,r,n;return e=t,(r=[{key:"start",value:function(t){this.currentTime<-1&&(this.currentTime=-1),this.startAudio(this.currentTime,null,t)}},{key:"resume",value:function(t){return this.start(t)}},{key:"pause",value:function(){var t=this.restart;this.stopAudio(),this.restart=t}},{key:"stop",value:function(){this.stopAudio(),this.restart=0,this.currentTime=0}},{key:"addListener",value:function(t){this.onMidiEvent=t}},{key:"removeListener",value:function(){this.onMidiEvent=void 0}},{key:"clearAnimation",value:function(){this.animationFrameId&&cancelAnimationFrame(this.animationFrameId)}},{key:"setAnimation",value:function(t){var e=this,r=0,n=0,o=0;this.clearAnimation(),this.frame=function(){if(e.animationFrameId=requestAnimationFrame(e.frame),0!==e.endTime){e.playing?(r=o===e.currentTime?n-Date.now():0,r=0===e.currentTime?0:e.currentTime-r,o!==e.currentTime&&(n=Date.now(),o=e.currentTime)):r=e.currentTime;var i=e.endTime,a=r/1e3,u=a/60,c=60*u+(a-60*u),s=i/1e3;s-c<-1||t({now:c,end:s,events:e.noteRegistrar})}},requestAnimationFrame(this.frame)}},{key:"loadMidiFile",value:function(t,e,r){try{this.replayer=new jt((n=this.currentData,new Rt(n).parseAndReturn()),this.timeWarp,null,this.BPM),this.data=this.replayer.getData(),this.endTime=this.getLength(),this.loadPlugin({onsuccess:t,onprogress:e,onerror:r})}catch(t){r&&r(t)}var n}},{key:"loadPlugin",value:function(){}},{key:"loadFile",value:function(t,e,r,n){var o=this;if(this.stop(),-1!==t.indexOf("base64,"))this.currentData=atob(t.split(",")[1]),this.loadMidiFile(e,r,n);else{var i=new XMLHttpRequest;i.open("GET",t),i.overrideMimeType("text/plain; charset=x-user-defined"),i.onreadystatechange=function(){if(4===i.readyState)if(200===i.status){for(var t=i.responseText||"",a=[],u=t.length,c=String.fromCharCode,s=0;s<u;s++)a[s]=c(255&t.charCodeAt(s));o.currentData=a.join(""),o.loadMidiFile(e,r,n)}else n&&n("Unable to load MIDI file")},i.send()}}},{key:"getFileInstruments",value:function(){for(var t={},e={},r=0;r<this.data.length;r++){var n=this.data[r][0].event;if("channel"===n.type){var o=n.channel;switch(n.subtype){case"controller":break;case"programChange":e[o]=n.programNumber;break;case"noteOn":var i=e[o],a=Number.isNaN(parseInt(i))?o:i;t[l.byId[a].id]=!0}}}for(var u=[],c=0,s=Object.keys(t);c<s.length;c++){var f=s[c];u.push(f)}return u}},{key:"scheduleTracking",value:function(t,e,r,n,o,i,a){var u=this;return setTimeout(function(){var n={channel:t,note:e,now:r,end:u.endTime,message:o,velocity:i};128===o?delete u.noteRegistrar[e]:u.noteRegistrar[e]=n,u.onMidiEvent&&u.onMidiEvent(n),u.currentTime=r,u.eventQueue.shift(),u.eventQueue.length<1e3?u.startAudio(u.queuedTime,!0):u.currentTime===u.queuedTime&&u.queuedTime<u.endTime&&u.startAudio(u.queuedTime,!0)},r-n)}},{key:"getContext",value:function(){return"webaudio"===this.plugin.api?this.plugin.getContext():(this.ctx={currentTime:0},this.ctx)}},{key:"getLength",value:function(){for(var t=this.data,e=t.length,r=.5,n=0;n<e;n++)r+=t[n][1];return r}},{key:"getNow",value:function(){return window.performance&&window.performance.now?window.performance.now():Date.now()}},{key:"startAudio",value:function(t,e,r){if(this.replayer){var n;e||(void 0===t&&(t=this.restart),this.playing&&this.stopAudio(),this.playing=!0,this.data=this.replayer.getData(),this.endTime=this.getLength());var o=0,i=0,a=this.data,u=this.getContext(),c=a.length;this.queuedTime=.5;var s=t-this.currentTime;if("webaudio"!==this.plugin.api){var f=this.getNow();this.__now=this.__now||f,u.currentTime=(f-this.__now)/1e3}this.startTime=u.currentTime;for(var l=0;l<c&&i<100;l++){var d=a[l];if(this.queuedTime+=d[1],this.queuedTime<=t)o=this.queuedTime;else{t=this.queuedTime-o;var h=d[0].event;if("channel"===h.type){var v=h.channel,y=p[v],g=u.currentTime+(t+s+this.startDelay)/1e3,_=this.queuedTime-o+this.startDelay;switch(h.subtype){case"controller":this.plugin.setController(v,h.controllerType,h.value,g);break;case"programChange":this.plugin.programChange(v,h.programNumber,g);break;case"pitchBend":this.plugin.pitchBend(v,h.value,g);break;case"noteOn":if(y.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:_,source:this.plugin.noteOn(v,h.noteNumber,h.velocity,g),interval:this.scheduleTracking(v,n,this.queuedTime+this.startDelay,o-s,144,h.velocity)}),i+=1;break;case"noteOff":if(y.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:_,source:this.plugin.noteOff(v,h.noteNumber,g),interval:this.scheduleTracking(v,n,this.queuedTime,o-s,128,0)})}}}}r&&r(this.eventQueue)}}},{key:"stopAudio",value:function(){var t=this.getContext();for(this.playing=!1,this.restart+=1e3*(t.currentTime-this.startTime);this.eventQueue.length;){var e=this.eventQueue.pop();window.clearInterval(e.interval),e.source&&("number"==typeof e.source?window.clearTimeout(e.source):e.source.disconnect(0))}for(var r=0,n=Object.keys(this.noteRegistrar);r<n.length;r++){var o=n[r],i=this.noteRegistrar[o];144===this.noteRegistrar[o].message&&this.onMidiEvent&&this.onMidiEvent({channel:i.channel,note:i.note,now:i.now,end:i.end,message:128,velocity:i.velocity})}this.noteRegistrar={}}}])&&Ut(e.prototype,r),n&&Ut(e,n),t}(),Kt=r(67),Nt={"Isaac Newton (1704)":{format:"HSL",ref:"Gerstner, p.167",english:["red",null,"orange",null,"yellow","green",null,"blue",null,"indigo",null,"violet"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[135,76,32],6:[0,0,0],7:[248,82,28],8:[0,0,0],9:[302,88,26],10:[0,0,0],11:[325,84,46]},"Louis Bertrand Castel (1734)":{format:"HSL",ref:"Peacock, p.400",english:["blue","blue-green","green","olive green","yellow","yellow-orange","orange","red","crimson","violet","agate","indigo"],0:[248,82,28],1:[172,68,34],2:[135,76,32],3:[79,59,36],4:[60,90,60],5:[49,90,60],6:[29,94,52],7:[360,96,51],8:[1,89,33],9:[325,84,46],10:[273,80,27],11:[302,88,26]},"George Field (1816)":{format:"HSL",ref:"Klein, p.69",english:["blue",null,"purple",null,"red","orange",null,"yellow",null,"yellow green",null,"green"],0:[248,82,28],1:[0,0,0],2:[302,88,26],3:[0,0,0],4:[360,96,51],5:[29,94,52],6:[0,0,0],7:[60,90,60],8:[0,0,0],9:[79,59,36],10:[0,0,0],11:[135,76,32]},"D. D. Jameson (1844)":{format:"HSL",ref:"Jameson, p.12",english:["red","red-orange","orange","orange-yellow","yellow","green","green-blue","blue","blue-purple","purple","purple-violet","violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[273,80,27],9:[302,88,26],10:[313,78,37],11:[325,84,46]},"Theodor Seemann (1881)":{format:"HSL",ref:"Klein, p.86",english:["carmine","scarlet","orange","yellow-orange","yellow","green","green blue","blue","indigo","violet","brown","black"],0:[0,58,26],1:[360,96,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[302,88,26],9:[325,84,46],10:[0,58,26],11:[0,0,3]},"A. Wallace Rimington (1893)":{format:"HSL",ref:"Peacock, p.402",english:["deep red","crimson","orange-crimson","orange","yellow","yellow-green","green","blueish green","blue-green","indigo","deep blue","violet"],0:[360,96,51],1:[1,89,33],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[79,59,36],6:[135,76,32],7:[163,62,40],8:[172,68,34],9:[302,88,26],10:[248,82,28],11:[325,84,46]},"Bainbridge Bishop (1893)":{format:"HSL",ref:"Bishop, p.11",english:["red","orange-red or scarlet","orange","gold or yellow-orange","yellow or green-gold","yellow-green","green","greenish-blue or aquamarine","blue","indigo or violet-blue","violet","violet-red","red"],0:[360,96,51],1:[1,89,33],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[163,62,40],8:[302,88,26],9:[325,84,46],10:[343,79,47],11:[360,96,51]},"H. von Helmholtz (1910)":{format:"HSL",ref:"Helmholtz, p.22",english:["yellow","green","greenish blue","cyan-blue","indigo blue","violet","end of red","red","red","red","red orange","orange"],0:[60,90,60],1:[135,76,32],2:[172,68,34],3:[211,70,37],4:[302,88,26],5:[325,84,46],6:[330,84,34],7:[360,96,51],8:[10,91,43],9:[10,91,43],10:[8,93,51],11:[28,89,50]},"Alexander Scriabin (1911)":{format:"HSL",ref:"Jones, p.104",english:["red","violet","yellow","steely with the glint of metal","pearly blue the shimmer of moonshine","dark red","bright blue","rosy orange","purple","green","steely with a glint of metal","pearly blue the shimmer of moonshine"],0:[360,96,51],1:[325,84,46],2:[60,90,60],3:[245,21,43],4:[211,70,37],5:[1,89,33],6:[248,82,28],7:[29,94,52],8:[302,88,26],9:[135,76,32],10:[245,21,43],11:[211,70,37]},"Adrian Bernard Klein (1930)":{format:"HSL",ref:"Klein, p.209",english:["dark red","red","red orange","orange","yellow","yellow green","green","blue-green","blue","blue violet","violet","dark violet"],0:[0,91,40],1:[360,96,51],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[292,70,31],10:[325,84,46],11:[330,84,34]},"August Aeppli (1940)":{format:"HSL",ref:"Gerstner, p.169",english:["red",null,"orange",null,"yellow",null,"green","blue-green",null,"ultramarine blue","violet","purple"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[0,0,0],6:[135,76,32],7:[172,68,34],8:[0,0,0],9:[211,70,37],10:[273,80,27],11:[302,88,26]},"I. J. Belmont (1944)":{ref:"Belmont, p.226",english:["red","red-orange","orange","yellow-orange","yellow","yellow-green","green","blue-green","blue","blue-violet","violet","red-violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[313,78,37],10:[325,84,46],11:[338,85,37]},"Steve Zieverink (2004)":{format:"HSL",ref:"Cincinnati Contemporary Art Center",english:["yellow-green","green","blue-green","blue","indigo","violet","ultra violet","infra red","red","orange","yellow-white","yellow"],0:[73,73,55],1:[135,76,32],2:[172,68,34],3:[248,82,28],4:[302,88,26],5:[325,84,46],6:[326,79,24],7:[1,89,33],8:[360,96,51],9:[29,94,52],10:[62,78,74],11:[60,90,60]},"Circle of Fifths (Johnston 2003)":{format:"RGB",ref:"Joseph Johnston",english:["yellow","blue","orange","teal","red","green","purple","light orange","light blue","dark orange","dark green","violet"],0:[255,255,0],1:[50,0,255],2:[255,150,0],3:[0,210,180],4:[255,0,0],5:[130,255,0],6:[150,0,200],7:[255,195,0],8:[30,130,255],9:[255,100,0],10:[0,200,0],11:[225,0,225]},"Circle of Fifths (Wheatman 2002)":{format:"HEX",ref:"Stuart Wheatman",english:[],data:["#122400","#2E002E","#002914","#470000","#002142","#2E2E00","#290052","#003D00","#520029","#003D3D","#522900","#000080","#244700","#570057","#004D26","#7A0000","#003B75","#4C4D00","#47008F","#006100","#850042","#005C5C","#804000","#0000C7","#366B00","#80007F","#00753B","#B80000","#0057AD","#6B6B00","#6600CC","#008A00","#B8005C","#007F80","#B35900","#2424FF","#478F00","#AD00AD","#00994D","#F00000","#0073E6","#8F8F00","#8A14FF","#00AD00","#EB0075","#00A3A3","#E07000","#6B6BFF","#5CB800","#DB00DB","#00C261","#FF5757","#3399FF","#ADAD00","#B56BFF","#00D600","#FF57AB","#00C7C7","#FF9124","#9999FF","#6EDB00","#FF29FF","#00E070","#FF9999","#7ABDFF","#D1D100","#D1A3FF","#00FA00","#FFA3D1","#00E5E6","#FFC285","#C2C2FF","#80FF00","#FFA8FF","#00E070","#FFCCCC","#C2E0FF","#F0F000","#EBD6FF","#ADFFAD","#FFD6EB","#8AFFFF","#FFEBD6","#EBEBFF","#E0FFC2","#FFEBFF","#E5FFF2","#FFF5F5"]}},Gt=function(t){for(var e,r,n,o,i,a={},u=Nt,c=u[t]||u["D. D. Jameson (1844)"],s=c[3],f=0;f<=88;f++)if(c.data)a[f]={hsl:c.data[f],hex:c.data[f]};else{var l=c[(f+9)%12];"RGB"===c.format?(l=Kt.a.Space(l,"RGB>HSL"),e=Math.floor(l.H),r=Math.floor(l.S),n=Math.floor(l.L)):(e=l[0],r=l[1],n=l[2]),e===r&&r===n&&(o=s,i=c[(f+10)%12],l=[Math.floor(.5*o[0]+.5*i[0]+.5),Math.floor(.5*o[1]+.5*i[1]+.5),Math.floor(.5*o[2]+.5*i[2]+.5)]),a[f]={hsl:"hsla("+e+","+r+"%,"+n+"%, 1)",hex:Kt.a.Space({H:e,S:r,L:n},"HSL>RGB>HEX>W3")},s=l}return a};function Vt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function Yt(t,e){return!e||"object"!==Zt(e)&&"function"!=typeof e?function(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}(t):e}function Ht(t){return(Ht=Object.setPrototypeOf?Object.getPrototypeOf:function(t){return t.__proto__||Object.getPrototypeOf(t)})(t)}function Jt(t,e){return(Jt=Object.setPrototypeOf||function(t,e){return t.__proto__=e,t})(t,e)}function Zt(t){return(Zt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}
+/*!
+    ----------------------------------------------------------
+    midicube
+    2019-08-17
+
+    based on MIDI.js.Plugin : 0.3.4 : 2015-03-26
+
+    MIT License
+    https://github.com/mscuthbert/midicube/
+
+    ----------------------------------------------------------
+    Inspired by javax.sound.midi (albeit a super simple version):
+        http://docs.oracle.com/javase/6/docs/api/javax/sound/midi/package-summary.html
+    ----------------------------------------------------------
+    Technologies
+    ----------------------------------------------------------
+        Web MIDI API - native support in Chrome. (Jazz plugin for safari, firefox, opera?)
+        Web Audio API - firefox 25+, chrome 10+, safari 6+, opera 15+, edge 18+
+            WebAudioShim allows Firefox < 25 to use, but not imported by default.
+        HTML5 Audio Tag - ie 9+, firefox 3.5+, chrome 4+, safari 4+,
+            opera 9.5+, ios 4+, android 2.3+
+    ----------------------------------------------------------
+*/r.d(e,"Soundfont",function(){return Xt}),r.d(e,"audio_contexts",function(){return Qt}),r.d(e,"config",function(){return zt}),r.d(e,"loadPlugin",function(){return $t}),r.d(e,"loadProgram",function(){return te}),r.d(e,"requestQueue",function(){return ne}),r.d(e,"sendRequest",function(){return oe}),r.d(e,"playChannel",function(){return ie}),r.d(e,"stopChannel",function(){return ae}),r.d(e,"send",function(){return ue}),r.d(e,"setController",function(){return ce}),r.d(e,"setVolume",function(){return se}),r.d(e,"programChange",function(){return fe}),r.d(e,"pitchBend",function(){return le}),r.d(e,"noteOn",function(){return pe}),r.d(e,"noteOff",function(){return de}),r.d(e,"chordOn",function(){return he}),r.d(e,"chordOff",function(){return ve}),r.d(e,"stopAllNotes",function(){return ye}),r.d(e,"setEffects",function(){return ge}),r.d(e,"getContext",function(){return _e}),r.d(e,"setContext",function(){return me}),r.d(e,"Player",function(){return be}),r.d(e,"GM",function(){return l}),r.d(e,"noteToKey",function(){return h}),r.d(e,"keyToNote",function(){return d}),r.d(e,"channels",function(){return p}),r.d(e,"AudioTag",function(){return n}),r.d(e,"WebAudio",function(){return o}),r.d(e,"WebMIDI",function(){return i}),r.d(e,"Synesthesia",function(){return a});var Xt={},Qt={AudioTag:n,WebAudio:o,WebMIDI:i},zt={soundfontUrl:"./soundfont/",api:"",audioFormat:"",supports:{},connected_plugin:o,is_connected:!1},$t=function(t){"function"==typeof t&&(t={onsuccess:t}),t.onprogress=t.onprogress||void 0,t.api=t.api||"",t.targetFormat=t.targetFormat||"",t.instrument=t.instrument||"acoustic_grand_piano",t.instruments=t.instruments||void 0,t.apiPrecedence=t.apiPrecedence||["webaudio","webmidi","audiotag"],zt.soundfontUrl=t.soundfontUrl||zt.soundfontUrl,function(t){if("undefined"!=typeof navigator&&navigator.requestMIDIAccess)if(Function.prototype.toString.call(navigator.requestMIDIAccess).indexOf("[native code]"))u.webmidi=!0;else if("undefined"!=typeof navigator&&void 0!==navigator.plugins)for(var e=0,r=Array.from(navigator.plugins);e<r.length;e++)r[e].name.indexOf("Jazz-Plugin")>=0&&(u.webmidi=!0);if("undefined"==typeof Audio)return t({});u.audiotag=!0;var n=window.AudioContext||window.webkitAudioContext;n&&n.prototype.createGain&&(u.webaudio=!0);var o=new Audio;if(void 0===o.canPlayType)return t(u);var i=o.canPlayType('audio/ogg; codecs="vorbis"'),a="probably"===i||"maybe"===i,f=o.canPlayType("audio/mpeg"),l="probably"===f||"maybe"===f;if(u.ogg_mp3_precedence="probably"===i?"ogg":"probably"===f?"mp3":"ogg",!a&&!l)return t(u);a&&s("audio/ogg;base64,T2dnUwACAAAAAAAAAADqnjMlAAAAAOyyzPIBHgF2b3JiaXMAAAAAAUAfAABAHwAAQB8AAEAfAACZAU9nZ1MAAAAAAAAAAAAA6p4zJQEAAAANJGeqCj3//////////5ADdm9yYmlzLQAAAFhpcGguT3JnIGxpYlZvcmJpcyBJIDIwMTAxMTAxIChTY2hhdWZlbnVnZ2V0KQAAAAABBXZvcmJpcw9CQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBACAAAAYRqF1TCqDEEPKQ4QUY9AzoxBDDEzGHGNONKQMMogzxZAyiFssLqgQBKEhKwKAKAAAwBjEGGIMOeekZFIi55iUTkoDnaPUUcoolRRLjBmlEluJMYLOUeooZZRCjKXFjFKJscRUAABAgAMAQICFUGjIigAgCgCAMAYphZRCjCnmFHOIMeUcgwwxxiBkzinoGJNOSuWck85JiRhjzjEHlXNOSuekctBJyaQTAAAQ4AAAEGAhFBqyIgCIEwAwSJKmWZomipamiaJniqrqiaKqWp5nmp5pqqpnmqpqqqrrmqrqypbnmaZnmqrqmaaqiqbquqaquq6nqrZsuqoum65q267s+rZru77uqapsm6or66bqyrrqyrbuurbtS56nqqKquq5nqq6ruq5uq65r25pqyq6purJtuq4tu7Js664s67pmqq5suqotm64s667s2rYqy7ovuq5uq7Ks+6os+75s67ru2rrwi65r66os674qy74x27bwy7ouHJMnqqqnqq7rmarrqq5r26rr2rqmmq5suq4tm6or26os67Yry7aumaosm64r26bryrIqy77vyrJui67r66Ys67oqy8Lu6roxzLat+6Lr6roqy7qvyrKuu7ru+7JuC7umqrpuyrKvm7Ks+7auC8us27oxuq7vq7It/KosC7+u+8Iy6z5jdF1fV21ZGFbZ9n3d95Vj1nVhWW1b+V1bZ7y+bgy7bvzKrQvLstq2scy6rSyvrxvDLux8W/iVmqratum6um7Ksq/Lui60dd1XRtf1fdW2fV+VZd+3hV9pG8OwjK6r+6os68Jry8ov67qw7MIvLKttK7+r68ow27qw3L6wLL/uC8uq277v6rrStXVluX2fsSu38QsAABhwAAAIMKEMFBqyIgCIEwBAEHIOKQahYgpCCKGkEEIqFWNSMuakZM5JKaWUFEpJrWJMSuaclMwxKaGUlkopqYRSWiqlxBRKaS2l1mJKqcVQSmulpNZKSa2llGJMrcUYMSYlc05K5pyUklJrJZXWMucoZQ5K6iCklEoqraTUYuacpA46Kx2E1EoqMZWUYgupxFZKaq2kFGMrMdXUWo4hpRhLSrGVlFptMdXWWqs1YkxK5pyUzDkqJaXWSiqtZc5J6iC01DkoqaTUYiopxco5SR2ElDLIqJSUWiupxBJSia20FGMpqcXUYq4pxRZDSS2WlFosqcTWYoy1tVRTJ6XFklKMJZUYW6y5ttZqDKXEVkqLsaSUW2sx1xZjjqGkFksrsZWUWmy15dhayzW1VGNKrdYWY40x5ZRrrT2n1mJNMdXaWqy51ZZbzLXnTkprpZQWS0oxttZijTHmHEppraQUWykpxtZara3FXEMpsZXSWiypxNhirLXFVmNqrcYWW62ltVprrb3GVlsurdXcYqw9tZRrrLXmWFNtBQAADDgAAASYUAYKDVkJAEQBAADGMMYYhEYpx5yT0ijlnHNSKucghJBS5hyEEFLKnINQSkuZcxBKSSmUklJqrYVSUmqttQIAAAocAAACbNCUWByg0JCVAEAqAIDBcTRNFFXVdX1fsSxRVFXXlW3jVyxNFFVVdm1b+DVRVFXXtW3bFn5NFFVVdmXZtoWiqrqybduybgvDqKqua9uybeuorqvbuq3bui9UXVmWbVu3dR3XtnXd9nVd+Bmzbeu2buu+8CMMR9/4IeTj+3RCCAAAT3AAACqwYXWEk6KxwEJDVgIAGQAAgDFKGYUYM0gxphhjTDHGmAAAgAEHAIAAE8pAoSErAoAoAADAOeecc84555xzzjnnnHPOOeecc44xxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY0wAwE6EA8BOhIVQaMhKACAcAABACCEpKaWUUkoRU85BSSmllFKqFIOMSkoppZRSpBR1lFJKKaWUIqWgpJJSSimllElJKaWUUkoppYw6SimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaVUSimllFJKKaWUUkoppRQAYPLgAACVYOMMK0lnhaPBhYasBAByAwAAhRiDEEJpraRUUkolVc5BKCWUlEpKKZWUUqqYgxBKKqmlklJKKbXSQSihlFBKKSWUUkooJYQQSgmhlFRCK6mEUkoHoYQSQimhhFRKKSWUzkEoIYUOQkmllNRCSB10VFIpIZVSSiklpZQ6CKGUklJLLZVSWkqpdBJSKamV1FJqqbWSUgmhpFZKSSWl0lpJJbUSSkklpZRSSymFVFJJJYSSUioltZZaSqm11lJIqZWUUkqppdRSSiWlkEpKqZSSUmollZRSaiGVlEpJKaTUSimlpFRCSamlUlpKLbWUSkmptFRSSaWUlEpJKaVSSksppRJKSqmllFpJKYWSUkoplZJSSyW1VEoKJaWUUkmptJRSSymVklIBAEAHDgAAAUZUWoidZlx5BI4oZJiAAgAAQABAgAkgMEBQMApBgDACAQAAAADAAAAfAABHARAR0ZzBAUKCwgJDg8MDAAAAAAAAAAAAAACAT2dnUwAEAAAAAAAAAADqnjMlAgAAADzQPmcBAQA="),l&&s("audio/mpeg;base64,/+MYxAAAAANIAUAAAASEEB/jwOFM/0MM/90b/+RhST//w4NFwOjf///PZu////9lns5GFDv//l9GlUIEEIAAAgIg8Ir/JGq3/+MYxDsLIj5QMYcoAP0dv9HIjUcH//yYSg+CIbkGP//8w0bLVjUP///3Z0x5QCAv/yLjwtGKTEFNRTMuOTeqqqqqqqqqqqqq/+MYxEkNmdJkUYc4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");var p=(new Date).getTime(),d=window.setInterval(function(){var e=(new Date).getTime();c&&!(e-p>5e3)||(window.clearInterval(d),t(u))},1)}(function(e){var r=window.location.hash,n="";if(e[t.api])n=t.api;else if(e[r.substr(1)])n=r.substr(1);else{var o=!0,i=!1,a=void 0;try{for(var u,c=t.apiPrecedence[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;if(e[s]){n=s;break}}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}}if(ee[n]){var f="",l=e["audio/ogg"],p=e["audio/mpeg"],d=e.ogg_mp3_precedence;t.targetFormat?f=t.targetFormat:l&&"ogg"===d?f="ogg":p&&"mp3"===d?f="mp3":l?f="ogg":p?f="mp3":"webmidi"!==n&&(console.warn("no supporting playback formats...will try mp3 but unlikely"),f="mp3"),zt.api=n,zt.audioFormat=f,zt.supports=e,te(t)}})},te=function(t){var e=t.instruments||t.instrument||"acoustic_grand_piano";"object"!==Zt(e)&&(e=e||0===e?[e]:[]);for(var r=0;r<e.length;r++){var n=e[r];n===n+0&&l.byId[n]&&(e[r]=l.byId[n].id)}t.format=zt.audioFormat,t.instruments=e,ee[zt.api](t)},ee={webmidi:function(t){re(i,t),gt(t),zt.is_connected=!0},audiotag:function(t){re(n,t),ne(t,"AudioTag")},webaudio:function(t){re(o,t),ne(t,"WebAudio")}},re=function(t,e){zt.connected_plugin=t,t.shared_root_info.Soundfont=Xt,t.shared_root_info.config=zt,t.shared_root_info.webaudio_backup_connect=function(t){return ee.webaudio(t)}},ne=function(t,e){var r=t.format,n=t.instruments,o=t.onprogress,i=t.onerror,a=Qt[e]||e.WebAudio,u=n.length,c=u,s=function(){(c-=1)||(a.connect(t),zt.is_connected=!0,o&&o("load",1))},f=!0,l=!1,p=void 0;try{for(var d,h=function(){var t=d.value;if(Xt[t])s();else{oe(t,r,function(e,r){return function(t,e,r){o&&o("load",e/u+(u-c)/u,r)}(0,r,t)},function(){return s()},i)}},v=n[Symbol.iterator]();!(f=(d=v.next()).done);f=!0)h()}catch(t){l=!0,p=t}finally{try{f||null==v.return||v.return()}finally{if(l)throw p}}},oe=function(t,e,r,n,o){var i=zt.soundfontUrl+t+"-"+e+".js",a=new XMLHttpRequest;a.open("GET",i),a.setRequestHeader("Content-Type","text/plain"),a.onload=function(){if(200===a.status){var t=document.createElement("script");t.language="javascript",t.type="text/javascript",t.text=a.responseText,document.body.appendChild(t),n()}else o?o():console.error("Could not load soundfont; path was ".concat(i))},a.send()},ie=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).playChannel.apply(t,arguments);console.error("Connect before calling")},ae=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).stopChannel.apply(t,arguments);console.error("Connect before calling")},ue=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).send.apply(t,arguments);console.error("Connect before calling")},ce=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setController.apply(t,arguments);console.error("Connect before calling")},se=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setVolume.apply(t,arguments);console.error("Connect before calling")},fe=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).programChange.apply(t,arguments);console.error("Connect before calling")},le=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).pitchBend.apply(t,arguments);console.error("Connect before calling")},pe=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).noteOn.apply(t,arguments);console.error("Connect before calling")},de=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).noteOff.apply(t,arguments);console.error("Connect before calling")},he=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).chordOn.apply(t,arguments);console.error("Connect before calling")},ve=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).chordOff.apply(t,arguments);console.error("Connect before calling")},ye=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).stopAllNotes.apply(t,arguments);console.error("Connect before calling")},ge=function(){if(zt.is_connected)return zt.connected_plugin.setEffects();console.error("Connect before calling")},_e=function(){if(zt.is_connected)return zt.connected_plugin.getContext();console.error("Connect before calling")},me=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setContext.apply(t,arguments);console.error("Connect before calling")},be=function(t){function e(){return function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,e),Yt(this,Ht(e).call(this,zt.connected_plugin))}var r,n,o;return function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function");t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,writable:!0,configurable:!0}}),e&&Jt(t,e)}(e,Wt),r=e,(n=[{key:"loadPlugin",value:function(){return $t.apply(void 0,arguments)}}])&&Vt(r.prototype,n),o&&Vt(r,o),e}()}])});
 //# sourceMappingURL=midicube.js.map
 
 /***/ }),
@@ -38332,9 +38478,9 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/music21/articulations.js":
+/***/ "./src/music21/articulations.ts":
 /*!**************************************!*\
-  !*** ./src/music21/articulations.js ***!
+  !*** ./src/music21/articulations.ts ***!
   \**************************************/
 /*! exports provided: Articulation, LengthArticulation, DynamicArticulation, PitchArticulation, TimbreArticulation, Accent, StrongAccent, Staccato, Staccatissimo, Spiccato, Marcato, Tenuto */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -38353,10 +38499,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Spiccato", function() { return Spiccato; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Marcato", function() { return Marcato; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tenuto", function() { return Tenuto; });
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+
+
+
 /**
  * articulations module. See {@link music21.articulations} namespace
  *
@@ -38375,7 +38528,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @class Articulation
  * @memberof music21.articulations
- * @extends music21.prebase.ProtoM21Object
  * @property {string} name
  * @property {string} [placement='above']
  * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
@@ -38383,19 +38535,16 @@ __webpack_require__.r(__webpack_exports__);
  * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
  */
 
-class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.articulation.Articulation';
-  }
-
+class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_4__["ProtoM21Object"] {
   constructor() {
-    super();
-    this.name = undefined;
+    super(...arguments);
     this.placement = 'above';
-    this.vexflowModifier = undefined;
-    this.setPosition = undefined;
     this.dynamicScale = 1.0;
     this.lengthScale = 1.0;
+  }
+
+  static get className() {
+    return 'music21.articulation.Articulation';
   }
   /**
    * Generates a Vex.Flow.Articulation for this articulation.
@@ -38405,7 +38554,7 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object
 
 
   vexflow() {
-    var vfa = new vexflow__WEBPACK_IMPORTED_MODULE_0___default.a.Flow.Articulation(this.vexflowModifier);
+    var vfa = new vexflow__WEBPACK_IMPORTED_MODULE_2___default.a.Flow.Articulation(this.vexflowModifier);
 
     if (this.setPosition) {
       vfa.setPosition(this.setPosition);
@@ -38420,7 +38569,6 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object
  *
  * @class LengthArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class LengthArticulation extends Articulation {
@@ -38439,7 +38587,6 @@ class LengthArticulation extends Articulation {
  *
  * @class DynamicArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class DynamicArticulation extends Articulation {
@@ -38458,7 +38605,6 @@ class DynamicArticulation extends Articulation {
  *
  * @class PitchArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class PitchArticulation extends Articulation {
@@ -38477,7 +38623,6 @@ class PitchArticulation extends Articulation {
  *
  * @class TimbreArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class TimbreArticulation extends Articulation {
@@ -38496,7 +38641,6 @@ class TimbreArticulation extends Articulation {
  *
  * @class Accent
  * @memberof music21.articulations
- * @extends music21.articulations.DynamicArticulation
  */
 
 class Accent extends DynamicArticulation {
@@ -38517,7 +38661,6 @@ class Accent extends DynamicArticulation {
  *
  * @class StrongAccent
  * @memberof music21.articulations
- * @extends music21.articulations.Accent
  */
 
 class StrongAccent extends Accent {
@@ -38538,7 +38681,6 @@ class StrongAccent extends Accent {
  *
  * @class Staccato
  * @memberof music21.articulations
- * @extends music21.articulations.LengthArticulation
  */
 
 class Staccato extends LengthArticulation {
@@ -38558,7 +38700,6 @@ class Staccato extends LengthArticulation {
  *
  * @class Staccatissimo
  * @memberof music21.articulations
- * @extends music21.articulations.Staccato
  */
 
 class Staccatissimo extends Staccato {
@@ -38578,7 +38719,6 @@ class Staccatissimo extends Staccato {
  *
  * @class Spiccato
  * @memberof music21.articulations
- * @extends music21.articulations.Staccato
  */
 
 class Spiccato extends Staccato {
@@ -38596,8 +38736,9 @@ class Spiccato extends Staccato {
 /**
  * @class Marcato
  * @memberof music21.articulations
- * @extends music21.articulations.DynamicArticulation
- * @extends music21.articulations.LengthArticulation
+ *
+ * is both a DynamicArticulation and a LengthArticulation
+ * TODO(msc): check that `.classes` reflects that
  */
 
 class Marcato extends DynamicArticulation {
@@ -38607,7 +38748,7 @@ class Marcato extends DynamicArticulation {
 
   constructor() {
     super();
-    _common__WEBPACK_IMPORTED_MODULE_1__["mixin"](LengthArticulation, this);
+    _common__WEBPACK_IMPORTED_MODULE_3__["mixin"](LengthArticulation, this);
     this.name = 'marcato';
     this.vexflowModifier = 'a^';
     this.dynamicScale = 1.7;
@@ -38617,7 +38758,6 @@ class Marcato extends DynamicArticulation {
 /**
  * @class Tenuto
  * @memberof music21.articulations
- * @extends music21.articulations.LengthArticulation
  */
 
 class Tenuto extends LengthArticulation {
@@ -38635,9 +38775,9 @@ class Tenuto extends LengthArticulation {
 
 /***/ }),
 
-/***/ "./src/music21/audioRecording.js":
+/***/ "./src/music21/audioRecording.ts":
 /*!***************************************!*\
-  !*** ./src/music21/audioRecording.js ***!
+  !*** ./src/music21/audioRecording.ts ***!
   \***************************************/
 /*! exports provided: Recorder */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -38661,7 +38801,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.url */ "./node_modules/core-js/modules/web.url.js");
 /* harmony import */ var core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _audioSearch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./audioSearch */ "./src/music21/audioSearch.js");
+/* harmony import */ var _audioSearch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./audioSearch */ "./src/music21/audioSearch.ts");
 
 
 
@@ -38670,23 +38810,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-/**
- * @namespace music21.audioRecording
- */
 
 /**
  * Adopted from Matt Diamond's recorder.js code MIT License
- *
- * @memberOf music21.audioRecording
  */
 
 class Recorder {
-  /**
-   *
-   * @param {Object} [cfg]
-   */
-  constructor(cfg) {
+  constructor() {
+    var cfg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    this.recording = false;
     var config = cfg || {};
     this.bufferLen = config.bufferLen || 4096;
     this.config = config;
@@ -38720,24 +38852,15 @@ class Recorder {
 
 
   initAudio() {
-    this.polyfillNavigator(); // not sure what function signature this wants.
-    // noinspection JSCheckFunctionSignatures
-
-    navigator.getUserMedia({
+    var constraints = {
       audio: {
-        mandatory: {
-          googEchoCancellation: 'false',
-          googAutoGainControl: 'false',
-          googNoiseSuppression: 'false',
-          googHighpassFilter: 'false' // 'echoCancellation': false,
-          // 'autoGainControl': false,
-          // 'noiseSuppression': false,
-          // 'highpassFilter': false,
-
-        },
-        optional: []
-      }
-    }, s => this.audioStreamConnected(s), error => {
+        echoCancellation: false,
+        autoGainControl: false,
+        noiseSuppression: false
+      },
+      video: false
+    };
+    navigator.mediaDevices.getUserMedia(constraints).then(s => this.audioStreamConnected(s)).catch(error => {
       console.log('Error getting audio -- try on google Chrome?');
       console.log(error);
     });
@@ -38819,6 +38942,7 @@ class Recorder {
      *
      * The 'record' command sends no message back.
      */
+    // should be replaced by workers somehow.
 
     this.node.onaudioprocess = e => {
       if (!this.recording) {
@@ -38851,15 +38975,7 @@ class Recorder {
   setNode() {
     var numInputChannels = 2;
     var numOutputChannels = 2;
-
-    if (!this.context.createScriptProcessor) {
-      // Old style BaseAudioContext -- not used anymore.
-      // noinspection JSUnresolvedFunction
-      this.node = this.context.createJavaScriptNode(this.bufferLen, numInputChannels, numOutputChannels);
-    } else {
-      this.node = this.context.createScriptProcessor(this.bufferLen, numInputChannels, numOutputChannels);
-    }
-
+    this.node = this.context.createScriptProcessor(this.bufferLen, numInputChannels, numOutputChannels);
     return this.node;
   }
   /**
@@ -38931,38 +39047,29 @@ class Recorder {
     this.exportWAV(cb, type, true);
   }
 
-  setupDownload(blob, filename, elementId) {
-    elementId = elementId || 'save';
+  setupDownload(blob) {
+    var filename = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'output.wav';
+    var elementId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'save';
     var url = (window.URL || window.webkitURL).createObjectURL(blob);
     var link = document.getElementById(elementId);
     link.href = url;
-    link.download = filename || 'output.wav';
+    link.download = filename;
   }
-  /**
-   * Polyfills for getUserMedia (requestAnimationFrame polyfills not needed.)
-   * As of 2016 September, only Edge support unprefixed.
-   */
 
-
-  polyfillNavigator() {
-    if (!navigator.getUserMedia) {
-      // polyfill...
-      // noinspection JSUnresolvedVariable
-      navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+  setContextForCanvasInfo(canvasInfo) {
+    if (canvasInfo.canvasContext) {
+      return;
     }
 
-    if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
-      var uint8 = new Uint8Array(2048);
+    var canvas = document.getElementById(canvasInfo.id);
 
-      window.AnalyserNode.prototype.getFloatTimeDomainData = function getFloatTimeDomainData(array) {
-        this.getByteTimeDomainData(uint8);
-        var imax = array.length;
-
-        for (var i = 0; i < imax; i++) {
-          array[i] = (uint8[i] - 128) * 0.0078125;
-        }
-      };
+    if (!canvas) {
+      return;
     }
+
+    canvasInfo.width = canvas.width;
+    canvasInfo.height = canvas.height;
+    canvasInfo.canvasContext = canvas.getContext('2d');
   }
   /**
    * Update the Analysers.
@@ -38972,18 +39079,7 @@ class Recorder {
 
 
   updateAnalysers(time) {
-    if (!this.frequencyCanvasInfo.canvasContext) {
-      var canvas = document.getElementById(this.frequencyCanvasInfo.id);
-
-      if (!canvas) {
-        return;
-      }
-
-      this.frequencyCanvasInfo.width = canvas.width;
-      this.frequencyCanvasInfo.height = canvas.height;
-      this.frequencyCanvasInfo.canvasContext = canvas.getContext('2d');
-    } // analyser draw code here
-
+    this.setContextForCanvasInfo(this.frequencyCanvasInfo); // analyser draw code here
 
     var SPACING = 3;
     var BAR_WIDTH = 1;
@@ -39020,19 +39116,8 @@ class Recorder {
   drawWaveformCanvas(buffers) {
     var data = buffers[0]; // one track of stereo recording.
 
-    if (!this.waveformCanvasInfo.context) {
-      var canvas = document.getElementById(this.waveformCanvasInfo.id);
-
-      if (!canvas) {
-        return;
-      }
-
-      this.waveformCanvasInfo.width = canvas.width;
-      this.waveformCanvasInfo.height = canvas.height;
-      this.waveformCanvasInfo.context = canvas.getContext('2d');
-    }
-
-    var context = this.waveformCanvasInfo.context;
+    this.setContextForCanvasInfo(this.waveformCanvasInfo);
+    var context = this.waveformCanvasInfo.canvasContext;
     var step = Math.ceil(data.length / this.waveformCanvasInfo.width);
     var amp = this.waveformCanvasInfo.height / 2;
     context.fillStyle = 'silver';
@@ -39092,9 +39177,9 @@ var recorderWorkerJs = "function recorderWorkerJs() {\n    /**\n     *\n     *  
 
 /***/ }),
 
-/***/ "./src/music21/audioSearch.js":
+/***/ "./src/music21/audioSearch.ts":
 /*!************************************!*\
-  !*** ./src/music21/audioSearch.js ***!
+  !*** ./src/music21/audioSearch.ts ***!
   \************************************/
 /*! exports provided: config, getUserMedia, userMediaStarted, animateLoop, smoothPitchExtraction, sampleCallback, autoCorrelate, midiNumDiffFromFrequency */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -39115,17 +39200,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_array_buffer_slice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array-buffer.slice */ "./node_modules/core-js/modules/es.array-buffer.slice.js");
 /* harmony import */ var core_js_modules_es_array_buffer_slice__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_buffer_slice__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_typed_array_float32_array__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.typed-array.float32-array */ "./node_modules/core-js/modules/es.typed-array.float32-array.js");
-/* harmony import */ var core_js_modules_es_typed_array_float32_array__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_float32_array__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_typed_array_to_locale_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.typed-array.to-locale-string */ "./node_modules/core-js/modules/es.typed-array.to-locale-string.js");
-/* harmony import */ var core_js_modules_es_typed_array_to_locale_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_to_locale_string__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_typed_array_to_string__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.typed-array.to-string */ "./node_modules/core-js/modules/es.typed-array.to-string.js");
-/* harmony import */ var core_js_modules_es_typed_array_to_string__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_to_string__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_typed_array_float32_array__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.typed-array.float32-array */ "./node_modules/core-js/modules/es.typed-array.float32-array.js");
+/* harmony import */ var core_js_modules_es_typed_array_float32_array__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_float32_array__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_typed_array_to_locale_string__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.typed-array.to-locale-string */ "./node_modules/core-js/modules/es.typed-array.to-locale-string.js");
+/* harmony import */ var core_js_modules_es_typed_array_to_locale_string__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_to_locale_string__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_typed_array_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.typed-array.to-string */ "./node_modules/core-js/modules/es.typed-array.to-string.js");
+/* harmony import */ var core_js_modules_es_typed_array_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_to_string__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+
 
 
 
@@ -39138,7 +39226,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -39155,65 +39243,48 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  // functions based on the prototype created by Chris Wilson's MIT License version
 // and on Jordi Bartolome Guillen's audioSearch module for music21
 // TODO(msc): Rewrite as a class -- config is just a class in disguise
-// noinspection JSUnresolvedVariable
 
-/**
- *
- * @type {
- *     {
- *     _audioContext: null,
- *     lastCentsDeviationsDetected: Array<number>,
- *     sampleBuffer: (Float32Array|null),
- *     maxFrequency: number,
- *     lastPitchesDetected: number[],
- *     fftSize: number,
- *     animationFrameCallbackId: number,
- *     AudioContextCaller: *,
- *     currentAnalyser: null,
- *     pitchSmoothingSize: number,
- *     minFrequency: number,
- *     lastPitchClassesDetected: number[]
- *     }
- * }
- */
+class _ConfigSingletonCreator {
+  constructor() {
+    this.fftSize = 2048;
+    this._audioContext = null;
+    this.animationFrameCallbackId = -1;
+    this.sampleBuffer = null;
+    this.minFrequency = 55;
+    this.maxFrequency = 1050;
+    this.pitchSmoothingSize = 40;
+    this.lastPitchClassesDetected = [];
+    this.lastPitchesDetected = [];
+    this.lastCentsDeviationsDetected = [];
+    this.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
+  }
 
-var config = {
-  fftSize: 2048,
-  AudioContextCaller: window.AudioContext || window.webkitAudioContext,
-  _audioContext: null,
-  animationFrameCallbackId: -1,
-  sampleBuffer: null,
-  currentAnalyser: null,
-  minFrequency: 55,
-  maxFrequency: 1050,
-  pitchSmoothingSize: 40,
-  lastPitchClassesDetected: [],
-  lastPitchesDetected: [],
-  lastCentsDeviationsDetected: []
-};
-Object.defineProperties(config, {
-  audioContext: {
-    get: () => {
-      if (config._audioContext !== null) {
-        return config._audioContext;
-      } else {
-        // AudioContext should be a singleton, but MIDI reports loaded before it is!
-        if (midicube__WEBPACK_IMPORTED_MODULE_7__ !== undefined && midicube__WEBPACK_IMPORTED_MODULE_7__["WebAudio"] !== undefined && midicube__WEBPACK_IMPORTED_MODULE_7__["WebAudio"].getContext() !== undefined) {
-          window.globalAudioContext = midicube__WEBPACK_IMPORTED_MODULE_7__["WebAudio"].getContext();
-        } else if (typeof window.globalAudioContext === 'undefined') {
-          window.globalAudioContext = new config.AudioContextCaller();
-        }
-
-        config._audioContext = window.globalAudioContext;
-        return config._audioContext;
+  get audioContext() {
+    if (this._audioContext !== null) {
+      return this._audioContext;
+    } else {
+      // AudioContext should be a singleton, but MIDI reports loaded before it is!
+      if (midicube__WEBPACK_IMPORTED_MODULE_8__ !== undefined && midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"] !== undefined && midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"].getContext() !== undefined) {
+        window.globalAudioContext = midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"].getContext();
+      } else if (typeof window.globalAudioContext === 'undefined') {
+        window.globalAudioContext = new this.AudioContextCaller();
       }
-    },
-    set: ac => {
-      config._audioContext = ac;
+
+      this._audioContext = window.globalAudioContext;
+      return this._audioContext;
     }
   }
-});
+
+  set audioContext(ac) {
+    this._audioContext = ac;
+  }
+
+}
+
+var config = new _ConfigSingletonCreator();
 /**
+ * Note: audioRecording uses the newer getUserMedia routines, so
+ * this should be ported to be similar to there.
  *
  * @function music21.audioSearch.getUserMedia
  * @memberof music21.audioSearch
@@ -39302,7 +39373,7 @@ function smoothPitchExtraction(frequency) {
     config.lastCentsDeviationsDetected.push(_centsOff);
   }
 
-  var mostCommonPitchClass = _common__WEBPACK_IMPORTED_MODULE_8__["statisticalMode"](config.lastPitchClassesDetected);
+  var mostCommonPitchClass = _common__WEBPACK_IMPORTED_MODULE_9__["statisticalMode"](config.lastPitchClassesDetected);
 
   if (mostCommonPitchClass === null) {
     return [-1, 0];
@@ -39318,7 +39389,7 @@ function smoothPitchExtraction(frequency) {
     }
   }
 
-  var mostCommonPitch = _common__WEBPACK_IMPORTED_MODULE_8__["statisticalMode"](pitchesMatchingClass); // find cents difference; weighing more recent samples more...
+  var mostCommonPitch = _common__WEBPACK_IMPORTED_MODULE_9__["statisticalMode"](pitchesMatchingClass); // find cents difference; weighing more recent samples more...
 
   var totalSamplePoints = 0;
   var totalSample = 0;
@@ -39338,6 +39409,8 @@ function sampleCallback(frequency) {
       _smoothPitchExtractio2 = _slicedToArray(_smoothPitchExtractio, 2),
       unused_midiNum = _smoothPitchExtractio2[0],
       unused_centsOff = _smoothPitchExtractio2[1];
+
+  return 0;
 } // from Chris Wilson. Replace with Jordi's
 
 function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
@@ -39558,12 +39631,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./derivation */ "./src/music21/derivation.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./derivation */ "./src/music21/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 /* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./editorial */ "./src/music21/editorial.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./sites */ "./src/music21/sites.js");
+/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./sites */ "./src/music21/sites.ts");
 
 
 
@@ -39579,7 +39652,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -39609,10 +39682,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 /**
- * Base class for any object that can be placed in a {@link music21.stream.Stream}.
+ * Base class for any object that can be placed in a {@link Stream}.
  *
- * @property {music21.stream.Stream} [activeSite] - hardlink to a
- *     {@link music21.stream.Stream} containing the element.
+ * @property {Stream} [activeSite] - hardlink to a
+ *     {@link Stream} containing the element.
  * @property {number} classSortOrder - Default sort order for this class
  *     (default 20; override in other classes). Lower numbered objects will sort
  *     before other objects in the staff if priority and offset are the same.
@@ -39643,15 +39716,13 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
 
     this.isMusic21Object = true;
     this.isStream = false;
-    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_12__["Duration"]();
+    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_12__["Duration"](0.0);
     this.id = _sites__WEBPACK_IMPORTED_MODULE_15__["getId"](this);
-    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"](); // noinspection JSUnusedLocalSymbols
+    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"]();
+    this._cloneCallbacks._activeSite = false;
+    this._cloneCallbacks._activeSiteStoredOffset = false;
 
-    this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(keyName, newObj, self) {
-      newObj[keyName] = undefined;
-    };
-
-    this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(keyName, newObj, self) {
+    this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(keyName, newObj, self, deep, memo) {
       var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_11__["Derivation"](newObj);
       newDerivation.origin = self;
       newDerivation.method = 'clone';
@@ -39659,13 +39730,29 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
     }; // noinspection JSUnusedLocalSymbols
 
 
-    this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self) {
-      newObj[keyName] = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"]();
+    this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self, deep, memo) {
+      newObj.sites = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"]();
     };
   }
 
   static get className() {
     return 'music21.base.Music21Object';
+  }
+  /**
+   * Override clone on prebase to add a derivation.
+   */
+
+
+  clone() {
+    var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    var memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var ret = super.clone(deep, memo);
+    var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_11__["Derivation"](ret);
+    newDerivation.origin = this;
+    newDerivation.method = 'clone'; // '__deepcopy__' in m21p
+
+    ret.derivation = newDerivation;
+    return ret;
   }
 
   stringInfo() {
@@ -39737,7 +39824,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
 
   get measureNumber() {
     if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
-      return this.activeSite.number;
+      var activeMeasure = this.activeSite;
+      return activeMeasure.number;
     } else {
       var m = this.sites.getObjByClass('Measure');
 
@@ -39808,13 +39896,14 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
    *
    * Does not change activeSite or .offset
    *
-   * @param {music21.stream.Stream} site
+   * @param {Stream} site
    * @param {boolean} [stringReturns=false] -- allow strings to be returned
    * @returns {number|string|undefined}
    */
 
 
-  getOffsetBySite(site) {
+  getOffsetBySite() {
+    var site = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
     var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     if (site === undefined) {
@@ -39826,7 +39915,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
   /**
    * setOffsetBySite - sets the offset for a given Stream
    *
-   * @param {music21.stream.Stream} site Stream object
+   * @param {Stream} site Stream object
    * @param {number} value offset
    */
 
@@ -39846,8 +39935,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
    * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
    * a method that is about 10x faster when running through a recursed stream.
    *
-   * @param {music21.stream.Stream} site
-   * @returns {Number|undefined}
+   * @param {Stream} site
+   * @returns {number|undefined}
    */
 
 
@@ -39892,65 +39981,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
   } // ---------- Contexts -------------
 
 
-  getContextByClass(className, options) {
-    var payloadExtractor = function payloadExtractor(useSite, flatten, positionStart, getElementMethod, classList) {
-      // this should all be done as a tree...
-      // do not use .flat or .semiFlat so as not
-      // to create new sites.
-      // VERY HACKY...
-      var lastElement;
-
-      for (var i = 0; i < useSite.length; i++) {
-        var thisElement = useSite._elements[i];
-        var indexOffset = useSite.elementOffset(thisElement);
-        var matchClass = thisElement.isClassOrSubclass(classList);
-
-        if (flatten === false && !matchClass) {
-          continue;
-        } else if (!thisElement.isStream && !matchClass) {
-          continue;
-        } // is a stream or an element of the appropriate class...
-        // first check normal elements
-
-
-        if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
-          if (getElementMethod.includes('At') && lastElement === undefined) {
-            lastElement = thisElement;
-
-            try {
-              lastElement.activeSite = useSite;
-            } catch (e) {// do nothing... should not happen.
-            }
-          } else if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
-            return lastElement;
-          } else if (matchClass) {
-            return thisElement;
-          }
-        } else {
-          lastElement = thisElement;
-        }
-
-        if (getElementMethod.includes('After') && indexOffset > positionStart && matchClass) {
-          return thisElement;
-        } // now check stream... already filtered out flatten == false;
-
-
-        if (thisElement.isStream) {
-          var potentialElement = payloadExtractor(thisElement, flatten, positionStart + indexOffset, getElementMethod, classList);
-
-          if (potentialElement !== undefined) {
-            return potentialElement;
-          }
-        }
-      }
-
-      if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
-        return lastElement;
-      } else {
-        return undefined;
-      }
-    };
-
+  getContextByClass(className) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var params = {
       getElementMethod: 'getElementAtOrBefore',
       sortByCreationTime: false
@@ -39986,14 +40018,9 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
         }
 
         if (searchType === 'elementsOnly' || searchType === 'elementsFirst') {
-          var contextEl = payloadExtractor(site, false, positionStart, getElementMethod, className);
+          var contextEl = getContextByClassPayloadExtractor(site, false, positionStart, getElementMethod, className);
 
           if (contextEl !== undefined) {
-            try {
-              contextEl.activeSite = site;
-            } catch (e) {// do nothing.
-            }
-
             return contextEl;
           }
         } else if (searchType !== 'elementsOnly') {
@@ -40003,14 +40030,9 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
             }
           }
 
-          var _contextEl = payloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
+          var _contextEl = getContextByClassPayloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
 
           if (_contextEl !== undefined) {
-            try {
-              _contextEl.activeSite = site;
-            } catch (e) {// do nothing.
-            }
-
             return _contextEl;
           }
 
@@ -40040,8 +40062,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
   }
 
   contextSites() {
-    var _this = this,
-        _arguments = arguments;
+    var _arguments = arguments,
+        _this = this;
 
     return (
       /*#__PURE__*/
@@ -40100,7 +40122,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
 
               case 19:
                 if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-                  _context.next = 65;
+                  _context.next = 73;
                   break;
                 }
 
@@ -40111,7 +40133,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                   break;
                 }
 
-                return _context.abrupt("continue", 62);
+                return _context.abrupt("continue", 70);
 
               case 23:
                 if (!siteObj.classes.includes('SpannerStorage')) {
@@ -40119,19 +40141,31 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                   break;
                 }
 
-                return _context.abrupt("continue", 62);
+                return _context.abrupt("continue", 70);
 
               case 25:
                 // let offset = this.getOffsetBySite(siteObj);
                 // followDerivation;
+                offsetInStream = void 0;
+                _context.prev = 26;
                 offsetInStream = siteObj.elementOffset(_this);
+                _context.next = 34;
+                break;
+
+              case 30:
+                _context.prev = 30;
+                _context.t0 = _context["catch"](26);
+                console.error("".concat(_this + '', " is not in ").concat(siteObj + ''));
+                return _context.abrupt("continue", 70);
+
+              case 34:
                 newOffset = offsetInStream + params.offsetAppend;
                 positionInStream = newOffset;
                 _recursionType = siteObj.recursionType;
-                _context.next = 31;
+                _context.next = 39;
                 return [siteObj, positionInStream, _recursionType];
 
-              case 31:
+              case 39:
                 memo.set(siteObj, true);
                 newParams = {
                   callerFirst: params.callerFirst,
@@ -40143,12 +40177,12 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                 _iteratorNormalCompletion6 = true;
                 _didIteratorError6 = false;
                 _iteratorError6 = undefined;
-                _context.prev = 36;
+                _context.prev = 44;
                 _iterator6 = siteObj.contextSites(newParams)[Symbol.iterator]();
 
-              case 38:
+              case 46:
                 if (_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done) {
-                  _context.next = 48;
+                  _context.next = 56;
                   break;
                 }
 
@@ -40157,109 +40191,109 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                 // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
 
                 if (memo.has(topLevelInner)) {
-                  _context.next = 45;
+                  _context.next = 53;
                   break;
                 }
 
-                _context.next = 44;
+                _context.next = 52;
                 return [topLevelInner, inStreamOffset, recurType];
 
-              case 44:
+              case 52:
                 memo.set(topLevelInner, true);
 
-              case 45:
+              case 53:
                 _iteratorNormalCompletion6 = true;
-                _context.next = 38;
+                _context.next = 46;
                 break;
 
-              case 48:
-                _context.next = 54;
+              case 56:
+                _context.next = 62;
                 break;
 
-              case 50:
-                _context.prev = 50;
-                _context.t0 = _context["catch"](36);
+              case 58:
+                _context.prev = 58;
+                _context.t1 = _context["catch"](44);
                 _didIteratorError6 = true;
-                _iteratorError6 = _context.t0;
+                _iteratorError6 = _context.t1;
 
-              case 54:
-                _context.prev = 54;
-                _context.prev = 55;
+              case 62:
+                _context.prev = 62;
+                _context.prev = 63;
 
                 if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
                   _iterator6.return();
                 }
 
-              case 57:
-                _context.prev = 57;
+              case 65:
+                _context.prev = 65;
 
                 if (!_didIteratorError6) {
-                  _context.next = 60;
+                  _context.next = 68;
                   break;
                 }
 
                 throw _iteratorError6;
 
-              case 60:
-                return _context.finish(57);
+              case 68:
+                return _context.finish(65);
 
-              case 61:
-                return _context.finish(54);
+              case 69:
+                return _context.finish(62);
 
-              case 62:
+              case 70:
                 _iteratorNormalCompletion3 = true;
                 _context.next = 19;
                 break;
 
-              case 65:
-                _context.next = 71;
+              case 73:
+                _context.next = 79;
                 break;
 
-              case 67:
-                _context.prev = 67;
-                _context.t1 = _context["catch"](17);
+              case 75:
+                _context.prev = 75;
+                _context.t2 = _context["catch"](17);
                 _didIteratorError3 = true;
-                _iteratorError3 = _context.t1;
+                _iteratorError3 = _context.t2;
 
-              case 71:
-                _context.prev = 71;
-                _context.prev = 72;
+              case 79:
+                _context.prev = 79;
+                _context.prev = 80;
 
                 if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
                   _iterator3.return();
                 }
 
-              case 74:
-                _context.prev = 74;
+              case 82:
+                _context.prev = 82;
 
                 if (!_didIteratorError3) {
-                  _context.next = 77;
+                  _context.next = 85;
                   break;
                 }
 
                 throw _iteratorError3;
 
-              case 77:
-                return _context.finish(74);
+              case 85:
+                return _context.finish(82);
 
-              case 78:
-                return _context.finish(71);
+              case 86:
+                return _context.finish(79);
 
-              case 79:
+              case 87:
                 if (!params.followDerivation) {
-                  _context.next = 131;
+                  _context.next = 139;
                   break;
                 }
 
                 _iteratorNormalCompletion4 = true;
                 _didIteratorError4 = false;
                 _iteratorError4 = undefined;
-                _context.prev = 83;
+                _context.prev = 91;
                 _iterator4 = topLevel.derivation.chain()[Symbol.iterator]();
 
-              case 85:
+              case 93:
                 if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
-                  _context.next = 117;
+                  _context.next = 125;
                   break;
                 }
 
@@ -40267,7 +40301,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                 _iteratorNormalCompletion5 = true;
                 _didIteratorError5 = false;
                 _iteratorError5 = undefined;
-                _context.prev = 90;
+                _context.prev = 98;
                 _iterator5 = derivedObject.contextSites({
                   callerFirst: undefined,
                   memo,
@@ -40276,112 +40310,171 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                   sortByCreationTime: params.sortByCreationTime
                 })[Symbol.iterator]();
 
-              case 92:
+              case 100:
                 if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
-                  _context.next = 100;
+                  _context.next = 108;
                   break;
                 }
 
                 _step5$value = _slicedToArray(_step5.value, 3), derivedSite = _step5$value[0], derivedOffset = _step5$value[1], derivedRecurseType = _step5$value[2];
                 offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
-                _context.next = 97;
+                _context.next = 105;
                 return offsetAdjustedCsTuple;
 
-              case 97:
+              case 105:
                 _iteratorNormalCompletion5 = true;
-                _context.next = 92;
+                _context.next = 100;
                 break;
 
-              case 100:
-                _context.next = 106;
+              case 108:
+                _context.next = 114;
                 break;
 
-              case 102:
-                _context.prev = 102;
-                _context.t2 = _context["catch"](90);
+              case 110:
+                _context.prev = 110;
+                _context.t3 = _context["catch"](98);
                 _didIteratorError5 = true;
-                _iteratorError5 = _context.t2;
+                _iteratorError5 = _context.t3;
 
-              case 106:
-                _context.prev = 106;
-                _context.prev = 107;
+              case 114:
+                _context.prev = 114;
+                _context.prev = 115;
 
                 if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
                   _iterator5.return();
                 }
 
-              case 109:
-                _context.prev = 109;
+              case 117:
+                _context.prev = 117;
 
                 if (!_didIteratorError5) {
-                  _context.next = 112;
+                  _context.next = 120;
                   break;
                 }
 
                 throw _iteratorError5;
 
-              case 112:
-                return _context.finish(109);
+              case 120:
+                return _context.finish(117);
 
-              case 113:
-                return _context.finish(106);
+              case 121:
+                return _context.finish(114);
 
-              case 114:
+              case 122:
                 _iteratorNormalCompletion4 = true;
-                _context.next = 85;
+                _context.next = 93;
                 break;
 
-              case 117:
-                _context.next = 123;
+              case 125:
+                _context.next = 131;
                 break;
 
-              case 119:
-                _context.prev = 119;
-                _context.t3 = _context["catch"](83);
+              case 127:
+                _context.prev = 127;
+                _context.t4 = _context["catch"](91);
                 _didIteratorError4 = true;
-                _iteratorError4 = _context.t3;
+                _iteratorError4 = _context.t4;
 
-              case 123:
-                _context.prev = 123;
-                _context.prev = 124;
+              case 131:
+                _context.prev = 131;
+                _context.prev = 132;
 
                 if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
                   _iterator4.return();
                 }
 
-              case 126:
-                _context.prev = 126;
+              case 134:
+                _context.prev = 134;
 
                 if (!_didIteratorError4) {
-                  _context.next = 129;
+                  _context.next = 137;
                   break;
                 }
 
                 throw _iteratorError4;
 
-              case 129:
-                return _context.finish(126);
+              case 137:
+                return _context.finish(134);
 
-              case 130:
-                return _context.finish(123);
+              case 138:
+                return _context.finish(131);
 
-              case 131:
+              case 139:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[17, 67, 71, 79], [36, 50, 54, 62], [55,, 57, 61], [72,, 74, 78], [83, 119, 123, 131], [90, 102, 106, 114], [107,, 109, 113], [124,, 126, 130]]);
+        }, _callee, null, [[17, 75, 79, 87], [26, 30], [44, 58, 62, 70], [63,, 65, 69], [80,, 82, 86], [91, 127, 131, 139], [98, 110, 114, 122], [115,, 117, 121], [132,, 134, 138]]);
       })()
     );
   }
 
+}
+
+function getContextByClassPayloadExtractor(useSite, flatten, // true, false, or semiflat
+positionStart, getElementMethod, classList) {
+  // this should all be done as a tree...
+  // do not use .flat or .semiFlat so as not
+  // to create new sites.
+  // VERY HACKY...
+  var lastElement;
+  var useSiteElements = useSite.elements; // we want sorting.
+
+  for (var i = 0; i < useSiteElements.length; i++) {
+    var thisElement = useSiteElements[i];
+    var matchClass = thisElement.isClassOrSubclass(classList);
+
+    if (flatten === false && !matchClass) {
+      continue;
+    } else if (!thisElement.isStream && !matchClass) {
+      continue;
+    }
+
+    var indexOffset = useSite.elementOffset(thisElement); // thisElement is a stream or has the appropriate class...
+    // first check normal elements
+
+    if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
+      if (getElementMethod.includes('At') && lastElement === undefined) {
+        lastElement = thisElement;
+      } else if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
+        lastElement.activeSite = useSite;
+        return lastElement;
+      } else if (matchClass) {
+        thisElement.activeSite = useSite;
+        return thisElement;
+      }
+    } else {
+      lastElement = thisElement;
+    }
+
+    if (getElementMethod.includes('After') && indexOffset > positionStart && matchClass) {
+      thisElement.activeSite = useSite;
+      return thisElement;
+    } // now check stream... already filtered out flatten == false;
+
+
+    if (thisElement.isStream) {
+      var potentialElement = getContextByClassPayloadExtractor(thisElement, flatten, positionStart + indexOffset, getElementMethod, classList);
+
+      if (potentialElement !== undefined) {
+        return potentialElement;
+      }
+    }
+  }
+
+  if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
+    lastElement.activeSite = useSite;
+    return lastElement;
+  } else {
+    return undefined;
+  }
 } // TODO(msc) -- ElementWrapper
 
 /***/ }),
 
-/***/ "./src/music21/beam.js":
+/***/ "./src/music21/beam.ts":
 /*!*****************************!*\
-  !*** ./src/music21/beam.js ***!
+  !*** ./src/music21/beam.ts ***!
   \*****************************/
 /*! exports provided: validBeamTypes, beamableDurationTypes, Beam, Beams */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -40406,7 +40499,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 
 
 
@@ -40445,26 +40538,24 @@ var beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNum
  *
  * @class Beam
  * @memberof music21.beam
- * @extends music21.prebase.ProtoM21Object
  * @param {string} type - "start", "stop", "continue", "partial"
  * @param {string} direction - only needed for partial beams: "left" or "right"
- * @property {int|undefined} number - which beam line does this refer to;
+ * @property {number|undefined} number - which beam line does this refer to;
  *     8th = 1, 16th = 2, etc.
  * @property {number|undefined} independentAngle - the angle of this beam
  *     if it is different than others (feathered beams)
  */
 
 class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.beam.Beam';
-  }
-
-  constructor(type, direction) {
+  constructor(type) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     super();
     this.type = type;
     this.direction = direction;
-    this.independentAngle = undefined;
-    this.number = undefined;
+  }
+
+  static get className() {
+    return 'music21.beam.Beam';
   }
 
 }
@@ -40473,13 +40564,18 @@ class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  *
  * @class Beams
  * @memberof music21.beam
- * @extends music21.prebase.ProtoM21Object
- * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
- * @property {Boolean} [feathered=false] - is this a feathered beam.
- * @property {int} length - length of beamsList
+ * @property {Beam[]} beamsList - a list of Beam objects
+ * @property {boolean} [feathered=false] - is this a feathered beam.
+ * @property {number} length - length of beamsList
  */
 
 class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
+  constructor() {
+    super(...arguments);
+    this.beamsList = [];
+    this.feathered = false;
+  }
+
   static get className() {
     return 'music21.beam.Beams';
   }
@@ -40734,26 +40830,21 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     return beamsList;
   }
 
-  constructor() {
-    super();
-    this.beamsList = [];
-    this.feathered = false;
-  }
-
   get length() {
     return this.beamsList.length;
   }
   /**
-   * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
+   * Append a new {@link Beam} object to this Beams, automatically creating the Beam
    *   object and incrementing the number count.
    *
-   * @param {string} type - the type (passed to {@link music21.beam.Beam})
+   * @param {string} type - the type (passed to {@link Beam})
    * @param {string} [direction=undefined] - the direction if type is "partial"
-   * @returns {music21.beam.Beam} newly appended object
+   * @returns {Beam} newly appended object
    */
 
 
-  append(type, direction) {
+  append(type) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var obj = new Beam(type, direction);
     obj.number = this.beamsList.length + 1;
     this.beamsList.push(obj);
@@ -40769,13 +40860,14 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
           object afterwards.
     * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
           like 512th notes) raises an error.
-    * @param {string|int} level - either a string like "eighth" or a number like 1 (="eighth")
+    * @param {string|number} level - either a string like "eighth" or a number like 1 (="eighth")
    * @param {string} [type] - type to fill all beams to.
    * @returns {this}
    */
 
 
-  fill(level, type) {
+  fill(level) {
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     this.beamsList = [];
     var count = 1;
 
@@ -40796,13 +40888,9 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     }
 
     for (var i = 1; i <= count; i++) {
-      var obj = new Beam();
+      var obj = new Beam(type);
       obj.number = i;
       this.beamsList.push(obj);
-    }
-
-    if (type !== undefined) {
-      this.setAll(type);
     }
 
     return this;
@@ -40810,8 +40898,8 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
   /**
    * Get the beam with the given number or throw an exception.
    *
-   * @param {int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
-   * @returns {music21.beam.Beam|undefined}
+   * @param {number} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
+   * @returns {Beam|undefined}
    */
 
 
@@ -40852,7 +40940,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
   /**
    * Get an Array of all the numbers for the beams
    *
-   * @returns {Array<int>} all the numbers
+   * @returns {Array<number>} all the numbers
    */
 
 
@@ -40888,13 +40976,17 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
    * Returns the type + "-" + direction (if direction is defined)
    * for the beam with the given number.
    *
-   * @param {int} number
-   * @returns {music21.beam.Beam|undefined}
+   * @param {number} number
+   * @returns {string|undefined}
    */
 
 
   getTypeByNumber(number) {
     var beamObj = this.getByNumber(number);
+
+    if (beamObj === undefined) {
+      return undefined;
+    }
 
     if (beamObj.direction === undefined) {
       return beamObj.type;
@@ -40920,7 +41012,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     return types;
   }
   /**
-   * Set all the {@link music21.beam.Beam} objects to a given type/direction
+   * Set all the {@link Beam} objects to a given type/direction
    *
    * @param {string} type - beam type
    * @param {string} [direction] - beam direction
@@ -40928,7 +41020,9 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
    */
 
 
-  setAll(type, direction) {
+  setAll(type) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (validBeamTypes[type] === undefined) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('invalid beam type: ' + type);
     }
@@ -40942,16 +41036,18 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     return this;
   }
   /**
-   * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
+   * Set the {@link Beam} object specified by `number` to a given type/direction
    *
-   * @param {int} number
+   * @param {number} number
    * @param {string} type
    * @param {string} [direction]
    * @returns {this}
    */
 
 
-  setByNumber(number, type, direction) {
+  setByNumber(number, type) {
+    var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
     if (direction === undefined) {
       var splitIt = type.split('-');
       type = splitIt[0];
@@ -40976,9 +41072,9 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
 
 /***/ }),
 
-/***/ "./src/music21/chord.js":
+/***/ "./src/music21/chord.ts":
 /*!******************************!*\
-  !*** ./src/music21/chord.js ***!
+  !*** ./src/music21/chord.ts ***!
   \******************************/
 /*! exports provided: chordTables, Chord, chordDefinitions */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -41011,11 +41107,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _chordTables__WEBPACK_IMPORTED_MODULE_15__; });
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _chordTables__WEBPACK_IMPORTED_MODULE_16__; });
 
 
 
@@ -41051,38 +41149,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
  *
  * @class Chord
  * @memberof music21.chord
- * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [notes] -
+ * @param {Array<string|note.Note|Pitch>} [notes] -
  *     an Array of strings
- *     (see {@link music21.pitch.Pitch} for valid formats), note.Note,
+ *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
  * @extends music21.note.NotRest
  * @property {number} length - the number of pitches in the Chord (readonly)
- * @property {music21.pitch.Pitch[]} pitches - an Array of Pitch objects in the
+ * @property {Pitch[]} pitches - an Array of Pitch objects in the
  *     chord. (Consider the Array read only and pass in a new Array to change)
  * @property {Boolean} [isChord=true]
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=false]
  */
 
-class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
-  static get className() {
-    return 'music21.chord.Chord';
-  }
-
-  constructor(notes) {
+class Chord extends _note__WEBPACK_IMPORTED_MODULE_15__["NotRest"] {
+  constructor() {
+    var notes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
     super();
-
-    if (typeof notes === 'undefined') {
-      notes = [];
-    } else if (typeof notes === 'string') {
-      notes = notes.split(/\s+/);
-    }
-
+    this._notes = [];
     this.isChord = true; // for speed
 
     this.isNote = false; // for speed
@@ -41091,15 +41181,14 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
     this._overrides = {};
     this._cache = {};
-    this._notes = [];
-    /**
-     *
-     * @type {Object|undefined}
-     * @private
-     */
-
     this._chordTablesAddress = undefined;
     this._chordTablesAddressNeedsUpdating = true; // only update when needed
+
+    if (typeof notes === 'undefined') {
+      notes = [];
+    } else if (typeof notes === 'string') {
+      notes = notes.split(/\s+/);
+    }
 
     notes.forEach(x => this.add(x, false), this);
 
@@ -41109,28 +41198,21 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
     this.sortPitches();
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.chord.Chord';
+  }
 
   stringInfo() {
     var info = this.pitches.map(x => x.nameWithOctave);
     return info.join(' ');
   }
-  /**
-   *
-   * @returns {number}
-   */
-
 
   get length() {
     return this._notes.length;
-  }
-  /**
-   * @type {music21.pitch.Pitch[]}
-   */
+  } // Typescript restriction... preventing full allowing of set pitches()
+  // to take string[] or Note[].
+  // https://github.com/microsoft/TypeScript/issues/2521
 
 
   get pitches() {
@@ -41150,15 +41232,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
       var addNote = void 0;
 
       if (typeof tempPitches[i] === 'string') {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"](tempPitches[i]);
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"](tempPitches[i]);
       } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"]();
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"]();
         addNote.pitch = tempPitches[i];
       } else if (tempPitches[i].isClassOrSubclass('Note')) {
         addNote = tempPitches[i];
       } else {
         console.warn('bad pitch', tempPitches[i]);
-        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('Cannot add pitch from ' + tempPitches[i]);
+        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('Cannot add pitch from ' + tempPitches[i]);
       }
 
       this._notes.push(addNote);
@@ -41205,7 +41287,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
   get chordTablesAddress() {
     if (this._chordTablesAddressNeedsUpdating) {
-      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_15__["seekChordTablesAddress"](this);
+      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_16__["seekChordTablesAddress"](this);
     }
 
     this._chordTablesAddressNeedsUpdating = false;
@@ -41215,7 +41297,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   get commonName() {
     // TODO: many more exemptions from music21p
     var cta = this.chordTablesAddress;
-    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToCommonNames"](cta);
+    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToCommonNames"](cta);
     var forteClass = this.forteClass;
     var enharmonicTests = {
       '3-11A': () => this.isMinorTriad(),
@@ -41243,7 +41325,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get forteClass() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tn');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToForteName"](this.chordTablesAddress, 'tn');
   }
 
   get forteClassNumber() {
@@ -41251,7 +41333,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get forteClassTnI() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tni');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToForteName"](this.chordTablesAddress, 'tni');
   }
 
   get(i) {
@@ -41300,7 +41382,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   areZRelations(other) {
-    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
+    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToZAddress"](this.chordTablesAddress);
 
     if (zRelationAddress === undefined) {
       return false;
@@ -41323,8 +41405,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     }
 
     var chordTablesAddress = this.chordTablesAddress;
-    var v = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](chordTablesAddress);
-    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_15__["intervalVectorToAddress"](v);
+    var v = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToIntervalVector"](chordTablesAddress);
+    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_16__["intervalVectorToAddress"](v);
     var other;
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
@@ -41354,12 +41436,12 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
       }
     }
 
-    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToTransposedNormalForm"](other);
+    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToTransposedNormalForm"](other);
     return new Chord(prime);
   }
 
   get hasZRelation() {
-    var post = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
+    var post = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToZAddress"](this.chordTablesAddress);
 
     if (post !== undefined) {
       return true;
@@ -41369,7 +41451,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get intervalVector() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](this.chordTablesAddress);
+    return _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToIntervalVector"](this.chordTablesAddress);
   } //    get intervalVectorString() {
   //
   //    }
@@ -41410,8 +41492,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * Adds a note to the chord, sorting the note array
    *
    * @param {
-   *     string|string[]|music21.note.Note|music21.pitch.Pitch|
-   *     music21.note.Note[]|music21.pitch.Pitch[]} notes - the
+   *     string|string[]|note.Note|Pitch|
+   *     music21.note.Note[]|Pitch[]} notes - the
    *     Note or Pitch to be added or a string defining a pitch.
    * @param {boolean} runSort - Sort after running (default true)
    * @returns {music21.chord.Chord} the original chord.
@@ -41435,10 +41517,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
         // takes in either a note or a pitch
         if (typeof noteObj === 'string') {
-          noteObj = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"](noteObj);
+          noteObj = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"](noteObj);
         } else if (noteObj.isClassOrSubclass('Pitch')) {
           var pitchObj = noteObj;
-          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"]();
+          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"]();
           noteObj2.pitch = pitchObj;
           noteObj = noteObj2;
         }
@@ -41477,7 +41559,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * Removes any pitches that appear more than once (in any octave),
    * removing the higher ones, and returns a new Chord.
    *
-   * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
+   * @returns {Chord} A new Chord object with duplicate pitches removed.
    */
 
 
@@ -41501,12 +41583,14 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   /**
    * Finds the Root of the chord.
    *
-   * @param {music21.pitch.Pitch} [newroot]
-   * @returns {music21.pitch.Pitch} the root of the chord.
+   * @param {Pitch} [newroot]
+   * @returns {Pitch} the root of the chord.
    */
 
 
-  root(newroot) {
+  root() {
+    var newroot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (newroot !== undefined) {
       this._overrides.root = newroot;
       this._cache.root = newroot;
@@ -41514,7 +41598,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     }
 
     if (this._overrides.root !== undefined) {
-      return this._cache.root;
+      return this._overrides.root;
     }
 
     if (this._cache.root !== undefined) {
@@ -41527,7 +41611,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     var closedPitches = closedChord.pitches;
 
     if (closedPitches.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('No notes in Chord!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('No notes in Chord!');
     } else if (closedPitches.length === 1) {
       return this.pitches[0];
     } // const indexOfPitchesWithPerfectlyStackedThirds = [];
@@ -41578,13 +41662,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
    *
    * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-   * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
+   * @param {Pitch} [testRoot] - the pitch to temporarily consider the root.
    * @returns {number|undefined} Number of semitones above the root for this
    *     chord step or undefined if no pitch matches that chord step.
    */
 
 
-  semitonesFromChordStep(chordStep, testRoot) {
+  semitonesFromChordStep(chordStep) {
+    var testRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (testRoot === undefined) {
       testRoot = this.root();
     }
@@ -41606,11 +41692,27 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   /**
    * Gets the lowest note (based on .ps not name) in the chord.
    *
-   * @returns {music21.pitch.Pitch} bass pitch
+   * @returns {[Pitch]} bass pitch
    */
 
 
   bass() {
+    var newBass = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+    if (newBass !== undefined) {
+      this._overrides.bass = newBass;
+      this._cache.bass = newBass;
+      this._cache.inversion = undefined;
+    }
+
+    if (this._overrides.bass !== undefined) {
+      return this._overrides.bass;
+    }
+
+    if (this._cache.bass !== undefined) {
+      return this._cache.bass;
+    }
+
     var lowest;
     var pitches = this.pitches;
 
@@ -41733,7 +41835,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
   isSeventhOfType(intervalArray) {
     if (intervalArray === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('intervalArray is required');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('intervalArray is required');
     }
 
     var third = this.third;
@@ -41752,7 +41854,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     try {
       for (var _iterator4 = this.pitches[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
         var thisPitch = _step4.value;
-        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_13__["Interval"](root, thisPitch);
+        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_14__["Interval"](root, thisPitch);
 
         if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
           return false;
@@ -41839,7 +41941,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    */
 
 
-  vexflowNote(options) {
+  vexflowNote() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      clef: undefined
+    };
     var clef = options.clef;
     var pitchKeys = [];
 
@@ -41868,6 +41973,41 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     this.activeVexflowNote = vfn;
     return vfn;
   }
+
+  playMidi() {
+    var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
+    var nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref$instrument = _ref.instrument,
+        instrument = _ref$instrument === void 0 ? undefined : _ref$instrument,
+        _ref$channel = _ref.channel,
+        channel = _ref$channel === void 0 ? undefined : _ref$channel;
+
+    var milliseconds = super.playMidi(tempo, nextElement, {
+      instrument,
+      channel
+    });
+
+    if (channel === undefined) {
+      channel = this.activeChannel();
+    }
+
+    var midNum;
+    var volume = this.midiVolume; // TODO: Tied Chords.
+
+    for (var j = 0; j < this._notes.length; j++) {
+      midNum = this._notes[j].pitch.midi;
+
+      try {
+        midicube__WEBPACK_IMPORTED_MODULE_12__["noteOn"](channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_12__["noteOff"](channel, midNum, milliseconds / 1000);
+      } catch (e) {// do nothing -- might not have an output channel because of audio not connected
+      }
+    }
+
+    return milliseconds;
+  }
   /**
    * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
    * the `.root()`
@@ -41875,13 +42015,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
    * the first one in `.pitches` is returned.
    *
-   * @param {int} chordStep a positive integer representing the chord step
-   * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
-   * @returns {music21.pitch.Pitch|undefined}
+   * @param {number} chordStep a positive integer representing the chord step
+   * @param {Pitch} [testRoot] - the Pitch to use as a temporary root
+   * @returns {Pitch|undefined}
    */
 
 
-  getChordStep(chordStep, testRoot) {
+  getChordStep(chordStep) {
+    var testRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (testRoot === undefined) {
       testRoot = this.root();
     }
@@ -41936,9 +42078,9 @@ var chordDefinitions = {
 
 /***/ }),
 
-/***/ "./src/music21/chordTables.js":
+/***/ "./src/music21/chordTables.ts":
 /*!************************************!*\
-  !*** ./src/music21/chordTables.js ***!
+  !*** ./src/music21/chordTables.ts ***!
   \************************************/
 /*! exports provided: FORTE, SCDICT, TNMAX, TNIMAX, TNREF, SCREF, forteIndexToInversionsAvailable, addressToTransposedNormalForm, addressToPrimeForm, addressToIntervalVector, intervalVectorToAddress, addressToZAddress, addressToCommonNames, addressToForteName, seekChordTablesAddress */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -41968,13 +42110,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.reverse */ "./node_modules/core-js/modules/es.array.reverse.js");
+/* harmony import */ var core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+
+
 
 
 
@@ -41987,7 +42135,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -42498,1092 +42646,390 @@ var FORTE = [undefined, monad, diad, trichord, tetrachord, pentachord, hexachord
 // cardinality 1
 
 var card_1 = {
-  '1,0': [FORTE[1][1][0], // 1
-  FORTE[1][1][2], // var
-  FORTE[1][1][1]]
+  '1,0': [FORTE[1][1][0], FORTE[1][1][2], FORTE[1][1][1]]
 }; // cardinality 2
 
 var card_2 = {
-  '1,0': [FORTE[2][1][0], // 2
-  FORTE[2][1][2], // var
-  FORTE[2][1][1]],
-  '2,0': [FORTE[2][2][0], // 3
-  FORTE[2][2][2], // var
-  FORTE[2][2][1]],
-  '3,0': [FORTE[2][3][0], // 4
-  FORTE[2][3][2], // var
-  FORTE[2][3][1]],
-  '4,0': [FORTE[2][4][0], // 5
-  FORTE[2][4][2], // var
-  FORTE[2][4][1]],
-  '5,0': [FORTE[2][5][0], // 6
-  FORTE[2][5][2], // var
-  FORTE[2][5][1]],
-  '6,0': [FORTE[2][6][0], // 7
-  FORTE[2][6][2], // var
-  FORTE[2][6][1]]
+  '1,0': [FORTE[2][1][0], FORTE[2][1][2], FORTE[2][1][1]],
+  '2,0': [FORTE[2][2][0], FORTE[2][2][2], FORTE[2][2][1]],
+  '3,0': [FORTE[2][3][0], FORTE[2][3][2], FORTE[2][3][1]],
+  '4,0': [FORTE[2][4][0], FORTE[2][4][2], FORTE[2][4][1]],
+  '5,0': [FORTE[2][5][0], FORTE[2][5][2], FORTE[2][5][1]],
+  '6,0': [FORTE[2][6][0], FORTE[2][6][2], FORTE[2][6][1]]
 }; // cardinality 3
 
 var card_3 = {
-  '1,0': [FORTE[3][1][0], // 8
-  FORTE[3][1][2], // var
-  FORTE[3][1][1]],
-  '2,1': [FORTE[3][2][0], // 9
-  FORTE[3][2][2], // var
-  FORTE[3][2][1]],
-  '2,-1': [[0, 2, 3], // 10
-  FORTE[3][2][2], // var
-  FORTE[3][2][1]],
-  '3,1': [FORTE[3][3][0], // 11
-  FORTE[3][3][2], // var
-  FORTE[3][3][1]],
-  '3,-1': [[0, 3, 4], // 12
-  FORTE[3][3][2], // var
-  FORTE[3][3][1]],
-  '4,1': [FORTE[3][4][0], // 13
-  FORTE[3][4][2], // var
-  FORTE[3][4][1]],
-  '4,-1': [[0, 4, 5], // 14
-  FORTE[3][4][2], // var
-  FORTE[3][4][1]],
-  '5,1': [FORTE[3][5][0], // 15
-  FORTE[3][5][2], // var
-  FORTE[3][5][1]],
-  '5,-1': [[0, 5, 6], // 16
-  FORTE[3][5][2], // var
-  FORTE[3][5][1]],
-  '6,0': [FORTE[3][6][0], // 17
-  FORTE[3][6][2], // var
-  FORTE[3][6][1]],
-  '7,1': [FORTE[3][7][0], // 18
-  FORTE[3][7][2], // var
-  FORTE[3][7][1]],
-  '7,-1': [[0, 3, 5], // 19
-  FORTE[3][7][2], // var
-  FORTE[3][7][1]],
-  '8,1': [FORTE[3][8][0], // 20
-  FORTE[3][8][2], // var
-  FORTE[3][8][1]],
-  '8,-1': [[0, 4, 6], // 21
-  FORTE[3][8][2], // var
-  FORTE[3][8][1]],
-  '9,0': [FORTE[3][9][0], // 22
-  FORTE[3][9][2], // var
-  FORTE[3][9][1]],
-  '10,0': [FORTE[3][10][0], // 23
-  FORTE[3][10][2], // var
-  FORTE[3][10][1]],
-  '11,1': [FORTE[3][11][0], // 24
-  FORTE[3][11][2], // var
-  FORTE[3][11][1]],
-  '11,-1': [[0, 4, 7], // 25
-  FORTE[3][11][2], // var
-  FORTE[3][11][1]],
-  '12,0': [FORTE[3][12][0], // 26
-  FORTE[3][12][2], // var
-  FORTE[3][12][1]]
+  '1,0': [FORTE[3][1][0], FORTE[3][1][2], FORTE[3][1][1]],
+  '2,1': [FORTE[3][2][0], FORTE[3][2][2], FORTE[3][2][1]],
+  '2,-1': [[0, 2, 3], FORTE[3][2][2], FORTE[3][2][1]],
+  '3,1': [FORTE[3][3][0], FORTE[3][3][2], FORTE[3][3][1]],
+  '3,-1': [[0, 3, 4], FORTE[3][3][2], FORTE[3][3][1]],
+  '4,1': [FORTE[3][4][0], FORTE[3][4][2], FORTE[3][4][1]],
+  '4,-1': [[0, 4, 5], FORTE[3][4][2], FORTE[3][4][1]],
+  '5,1': [FORTE[3][5][0], FORTE[3][5][2], FORTE[3][5][1]],
+  '5,-1': [[0, 5, 6], FORTE[3][5][2], FORTE[3][5][1]],
+  '6,0': [FORTE[3][6][0], FORTE[3][6][2], FORTE[3][6][1]],
+  '7,1': [FORTE[3][7][0], FORTE[3][7][2], FORTE[3][7][1]],
+  '7,-1': [[0, 3, 5], FORTE[3][7][2], FORTE[3][7][1]],
+  '8,1': [FORTE[3][8][0], FORTE[3][8][2], FORTE[3][8][1]],
+  '8,-1': [[0, 4, 6], FORTE[3][8][2], FORTE[3][8][1]],
+  '9,0': [FORTE[3][9][0], FORTE[3][9][2], FORTE[3][9][1]],
+  '10,0': [FORTE[3][10][0], FORTE[3][10][2], FORTE[3][10][1]],
+  '11,1': [FORTE[3][11][0], FORTE[3][11][2], FORTE[3][11][1]],
+  '11,-1': [[0, 4, 7], FORTE[3][11][2], FORTE[3][11][1]],
+  '12,0': [FORTE[3][12][0], FORTE[3][12][2], FORTE[3][12][1]]
 }; // cardinality 4
 
 var card_4 = {
-  '1,0': [FORTE[4][1][0], // 27
-  FORTE[4][1][2], // var
-  FORTE[4][1][1]],
-  '2,1': [FORTE[4][2][0], // 28
-  FORTE[4][2][2], // var
-  FORTE[4][2][1]],
-  '2,-1': [[0, 2, 3, 4], // 29
-  FORTE[4][2][2], // var
-  FORTE[4][2][1]],
-  '3,0': [FORTE[4][3][0], // 30
-  FORTE[4][3][2], // var
-  FORTE[4][3][1]],
-  '4,1': [FORTE[4][4][0], // 31
-  FORTE[4][4][2], // var
-  FORTE[4][4][1]],
-  '4,-1': [[0, 3, 4, 5], // 32
-  FORTE[4][4][2], // var
-  FORTE[4][4][1]],
-  '5,1': [FORTE[4][5][0], // 33
-  FORTE[4][5][2], // var
-  FORTE[4][5][1]],
-  '5,-1': [[0, 4, 5, 6], // 34
-  FORTE[4][5][2], // var
-  FORTE[4][5][1]],
-  '6,0': [FORTE[4][6][0], // 35
-  FORTE[4][6][2], // var
-  FORTE[4][6][1]],
-  '7,0': [FORTE[4][7][0], // 36
-  FORTE[4][7][2], // var
-  FORTE[4][7][1]],
-  '8,0': [FORTE[4][8][0], // 37
-  FORTE[4][8][2], // var
-  FORTE[4][8][1]],
-  '9,0': [FORTE[4][9][0], // 38
-  FORTE[4][9][2], // var
-  FORTE[4][9][1]],
-  '10,0': [FORTE[4][10][0], // 39
-  FORTE[4][10][2], // var
-  FORTE[4][10][1]],
-  '11,1': [FORTE[4][11][0], // 40
-  FORTE[4][11][2], // var
-  FORTE[4][11][1]],
-  '11,-1': [[0, 2, 4, 5], // 41
-  FORTE[4][11][2], // var
-  FORTE[4][11][1]],
-  '12,1': [FORTE[4][12][0], // 42
-  FORTE[4][12][2], // var
-  FORTE[4][12][1]],
-  '12,-1': [[0, 3, 4, 6], // 43
-  FORTE[4][12][2], // var
-  FORTE[4][12][1]],
-  '13,1': [FORTE[4][13][0], // 44
-  FORTE[4][13][2], // var
-  FORTE[4][13][1]],
-  '13,-1': [[0, 3, 5, 6], // 45
-  FORTE[4][13][2], // var
-  FORTE[4][13][1]],
-  '14,1': [FORTE[4][14][0], // 46
-  FORTE[4][14][2], // var
-  FORTE[4][14][1]],
-  '14,-1': [[0, 4, 5, 7], // 47
-  FORTE[4][14][2], // var
-  FORTE[4][14][1]],
-  '15,1': [FORTE[4][15][0], // 48
-  FORTE[4][15][2], // var
-  FORTE[4][15][1]],
-  '15,-1': [[0, 2, 5, 6], // 49
-  FORTE[4][15][2], // var
-  FORTE[4][15][1]],
-  '16,1': [FORTE[4][16][0], // 50
-  FORTE[4][16][2], // var
-  FORTE[4][16][1]],
-  '16,-1': [[0, 2, 6, 7], // 51
-  FORTE[4][16][2], // var
-  FORTE[4][16][1]],
-  '17,0': [FORTE[4][17][0], // 52
-  FORTE[4][17][2], // var
-  FORTE[4][17][1]],
-  '18,1': [FORTE[4][18][0], // 53
-  FORTE[4][18][2], // var
-  FORTE[4][18][1]],
-  '18,-1': [[0, 3, 6, 7], // 54
-  FORTE[4][18][2], // var
-  FORTE[4][18][1]],
-  '19,1': [FORTE[4][19][0], // 55
-  FORTE[4][19][2], // var
-  FORTE[4][19][1]],
-  '19,-1': [[0, 4, 7, 8], // 56
-  FORTE[4][19][2], // var
-  FORTE[4][19][1]],
-  '20,0': [FORTE[4][20][0], // 57
-  FORTE[4][20][2], // var
-  FORTE[4][20][1]],
-  '21,0': [FORTE[4][21][0], // 58
-  FORTE[4][21][2], // var
-  FORTE[4][21][1]],
-  '22,1': [FORTE[4][22][0], // 59
-  FORTE[4][22][2], // var
-  FORTE[4][22][1]],
-  '22,-1': [[0, 3, 5, 7], // 60
-  FORTE[4][22][2], // var
-  FORTE[4][22][1]],
-  '23,0': [FORTE[4][23][0], // 61
-  FORTE[4][23][2], // var
-  FORTE[4][23][1]],
-  '24,0': [FORTE[4][24][0], // 62
-  FORTE[4][24][2], // var
-  FORTE[4][24][1]],
-  '25,0': [FORTE[4][25][0], // 63
-  FORTE[4][25][2], // var
-  FORTE[4][25][1]],
-  '26,0': [FORTE[4][26][0], // 64
-  FORTE[4][26][2], // var
-  FORTE[4][26][1]],
-  '27,1': [FORTE[4][27][0], // 65
-  FORTE[4][27][2], // var
-  FORTE[4][27][1]],
-  '27,-1': [[0, 3, 6, 8], // 66
-  FORTE[4][27][2], // var
-  FORTE[4][27][1]],
-  '28,0': [FORTE[4][28][0], // 67
-  FORTE[4][28][2], // var
-  FORTE[4][28][1]],
-  '29,1': [FORTE[4][29][0], // 68
-  FORTE[4][29][2], // var
-  FORTE[4][29][1]],
-  '29,-1': [[0, 4, 6, 7], // 69
-  FORTE[4][29][2], // var
-  FORTE[4][29][1]]
+  '1,0': [FORTE[4][1][0], FORTE[4][1][2], FORTE[4][1][1]],
+  '2,1': [FORTE[4][2][0], FORTE[4][2][2], FORTE[4][2][1]],
+  '2,-1': [[0, 2, 3, 4], FORTE[4][2][2], FORTE[4][2][1]],
+  '3,0': [FORTE[4][3][0], FORTE[4][3][2], FORTE[4][3][1]],
+  '4,1': [FORTE[4][4][0], FORTE[4][4][2], FORTE[4][4][1]],
+  '4,-1': [[0, 3, 4, 5], FORTE[4][4][2], FORTE[4][4][1]],
+  '5,1': [FORTE[4][5][0], FORTE[4][5][2], FORTE[4][5][1]],
+  '5,-1': [[0, 4, 5, 6], FORTE[4][5][2], FORTE[4][5][1]],
+  '6,0': [FORTE[4][6][0], FORTE[4][6][2], FORTE[4][6][1]],
+  '7,0': [FORTE[4][7][0], FORTE[4][7][2], FORTE[4][7][1]],
+  '8,0': [FORTE[4][8][0], FORTE[4][8][2], FORTE[4][8][1]],
+  '9,0': [FORTE[4][9][0], FORTE[4][9][2], FORTE[4][9][1]],
+  '10,0': [FORTE[4][10][0], FORTE[4][10][2], FORTE[4][10][1]],
+  '11,1': [FORTE[4][11][0], FORTE[4][11][2], FORTE[4][11][1]],
+  '11,-1': [[0, 2, 4, 5], FORTE[4][11][2], FORTE[4][11][1]],
+  '12,1': [FORTE[4][12][0], FORTE[4][12][2], FORTE[4][12][1]],
+  '12,-1': [[0, 3, 4, 6], FORTE[4][12][2], FORTE[4][12][1]],
+  '13,1': [FORTE[4][13][0], FORTE[4][13][2], FORTE[4][13][1]],
+  '13,-1': [[0, 3, 5, 6], FORTE[4][13][2], FORTE[4][13][1]],
+  '14,1': [FORTE[4][14][0], FORTE[4][14][2], FORTE[4][14][1]],
+  '14,-1': [[0, 4, 5, 7], FORTE[4][14][2], FORTE[4][14][1]],
+  '15,1': [FORTE[4][15][0], FORTE[4][15][2], FORTE[4][15][1]],
+  '15,-1': [[0, 2, 5, 6], FORTE[4][15][2], FORTE[4][15][1]],
+  '16,1': [FORTE[4][16][0], FORTE[4][16][2], FORTE[4][16][1]],
+  '16,-1': [[0, 2, 6, 7], FORTE[4][16][2], FORTE[4][16][1]],
+  '17,0': [FORTE[4][17][0], FORTE[4][17][2], FORTE[4][17][1]],
+  '18,1': [FORTE[4][18][0], FORTE[4][18][2], FORTE[4][18][1]],
+  '18,-1': [[0, 3, 6, 7], FORTE[4][18][2], FORTE[4][18][1]],
+  '19,1': [FORTE[4][19][0], FORTE[4][19][2], FORTE[4][19][1]],
+  '19,-1': [[0, 4, 7, 8], FORTE[4][19][2], FORTE[4][19][1]],
+  '20,0': [FORTE[4][20][0], FORTE[4][20][2], FORTE[4][20][1]],
+  '21,0': [FORTE[4][21][0], FORTE[4][21][2], FORTE[4][21][1]],
+  '22,1': [FORTE[4][22][0], FORTE[4][22][2], FORTE[4][22][1]],
+  '22,-1': [[0, 3, 5, 7], FORTE[4][22][2], FORTE[4][22][1]],
+  '23,0': [FORTE[4][23][0], FORTE[4][23][2], FORTE[4][23][1]],
+  '24,0': [FORTE[4][24][0], FORTE[4][24][2], FORTE[4][24][1]],
+  '25,0': [FORTE[4][25][0], FORTE[4][25][2], FORTE[4][25][1]],
+  '26,0': [FORTE[4][26][0], FORTE[4][26][2], FORTE[4][26][1]],
+  '27,1': [FORTE[4][27][0], FORTE[4][27][2], FORTE[4][27][1]],
+  '27,-1': [[0, 3, 6, 8], FORTE[4][27][2], FORTE[4][27][1]],
+  '28,0': [FORTE[4][28][0], FORTE[4][28][2], FORTE[4][28][1]],
+  '29,1': [FORTE[4][29][0], FORTE[4][29][2], FORTE[4][29][1]],
+  '29,-1': [[0, 4, 6, 7], FORTE[4][29][2], FORTE[4][29][1]]
 }; // cardinality 5
 
 var card_5 = {
-  '1,0': [FORTE[5][1][0], // 70
-  FORTE[5][1][2], // var
-  FORTE[5][1][1]],
-  '2,1': [FORTE[5][2][0], // 71
-  FORTE[5][2][2], // var
-  FORTE[5][2][1]],
-  '2,-1': [[0, 2, 3, 4, 5], // 72
-  FORTE[5][2][2], // var
-  FORTE[5][2][1]],
-  '3,1': [FORTE[5][3][0], // 73
-  FORTE[5][3][2], // var
-  FORTE[5][3][1]],
-  '3,-1': [[0, 1, 3, 4, 5], // 74
-  FORTE[5][3][2], // var
-  FORTE[5][3][1]],
-  '4,1': [FORTE[5][4][0], // 75
-  FORTE[5][4][2], // var
-  FORTE[5][4][1]],
-  '4,-1': [[0, 3, 4, 5, 6], // 76
-  FORTE[5][4][2], // var
-  FORTE[5][4][1]],
-  '5,1': [FORTE[5][5][0], // 77
-  FORTE[5][5][2], // var
-  FORTE[5][5][1]],
-  '5,-1': [[0, 4, 5, 6, 7], // 78
-  FORTE[5][5][2], // var
-  FORTE[5][5][1]],
-  '6,1': [FORTE[5][6][0], // 79
-  FORTE[5][6][2], // var
-  FORTE[5][6][1]],
-  '6,-1': [[0, 1, 4, 5, 6], // 80
-  FORTE[5][6][2], // var
-  FORTE[5][6][1]],
-  '7,1': [FORTE[5][7][0], // 81
-  FORTE[5][7][2], // var
-  FORTE[5][7][1]],
-  '7,-1': [[0, 1, 5, 6, 7], // 82
-  FORTE[5][7][2], // var
-  FORTE[5][7][1]],
-  '8,0': [FORTE[5][8][0], // 83
-  FORTE[5][8][2], // var
-  FORTE[5][8][1]],
-  '9,1': [FORTE[5][9][0], // 84
-  FORTE[5][9][2], // var
-  FORTE[5][9][1]],
-  '9,-1': [[0, 2, 4, 5, 6], // 85
-  FORTE[5][9][2], // var
-  FORTE[5][9][1]],
-  '10,1': [FORTE[5][10][0], // 86
-  FORTE[5][10][2], // var
-  FORTE[5][10][1]],
-  '10,-1': [[0, 2, 3, 5, 6], // 87
-  FORTE[5][10][2], // var
-  FORTE[5][10][1]],
-  '11,1': [FORTE[5][11][0], // 88
-  FORTE[5][11][2], // var
-  FORTE[5][11][1]],
-  '11,-1': [[0, 3, 4, 5, 7], // 89
-  FORTE[5][11][2], // var
-  FORTE[5][11][1]],
-  '12,0': [FORTE[5][12][0], // 90
-  FORTE[5][12][2], // var
-  FORTE[5][12][1]],
-  '13,1': [FORTE[5][13][0], // 91
-  FORTE[5][13][2], // var
-  FORTE[5][13][1]],
-  '13,-1': [[0, 4, 6, 7, 8], // 92
-  FORTE[5][13][2], // var
-  FORTE[5][13][1]],
-  '14,1': [FORTE[5][14][0], // 93
-  FORTE[5][14][2], // var
-  FORTE[5][14][1]],
-  '14,-1': [[0, 2, 5, 6, 7], // 94
-  FORTE[5][14][2], // var
-  FORTE[5][14][1]],
-  '15,0': [FORTE[5][15][0], // 95
-  FORTE[5][15][2], // var
-  FORTE[5][15][1]],
-  '16,1': [FORTE[5][16][0], // 96
-  FORTE[5][16][2], // var
-  FORTE[5][16][1]],
-  '16,-1': [[0, 3, 4, 6, 7], // 97
-  FORTE[5][16][2], // var
-  FORTE[5][16][1]],
-  '17,0': [FORTE[5][17][0], // 98
-  FORTE[5][17][2], // var
-  FORTE[5][17][1]],
-  '18,1': [FORTE[5][18][0], // 99
-  FORTE[5][18][2], // var
-  FORTE[5][18][1]],
-  '18,-1': [[0, 2, 3, 6, 7], // 100
-  FORTE[5][18][2], // var
-  FORTE[5][18][1]],
-  '19,1': [FORTE[5][19][0], // 101
-  FORTE[5][19][2], // var
-  FORTE[5][19][1]],
-  '19,-1': [[0, 1, 4, 6, 7], // 102
-  FORTE[5][19][2], // var
-  FORTE[5][19][1]],
-  '20,1': [FORTE[5][20][0], // 103
-  FORTE[5][20][2], // var
-  FORTE[5][20][1]],
-  '20,-1': [[0, 1, 5, 7, 8], // 104
-  FORTE[5][20][2], // var
-  FORTE[5][20][1]],
-  '21,1': [FORTE[5][21][0], // 105
-  FORTE[5][21][2], // var
-  FORTE[5][21][1]],
-  '21,-1': [[0, 3, 4, 7, 8], // 106
-  FORTE[5][21][2], // var
-  FORTE[5][21][1]],
-  '22,0': [FORTE[5][22][0], // 107
-  FORTE[5][22][2], // var
-  FORTE[5][22][1]],
-  '23,1': [FORTE[5][23][0], // 108
-  FORTE[5][23][2], // var
-  FORTE[5][23][1]],
-  '23,-1': [[0, 2, 4, 5, 7], // 109
-  FORTE[5][23][2], // var
-  FORTE[5][23][1]],
-  '24,1': [FORTE[5][24][0], // 110
-  FORTE[5][24][2], // var
-  FORTE[5][24][1]],
-  '24,-1': [[0, 2, 4, 6, 7], // 111
-  FORTE[5][24][2], // var
-  FORTE[5][24][1]],
-  '25,1': [FORTE[5][25][0], // 112
-  FORTE[5][25][2], // var
-  FORTE[5][25][1]],
-  '25,-1': [[0, 3, 5, 6, 8], // 113
-  FORTE[5][25][2], // var
-  FORTE[5][25][1]],
-  '26,1': [FORTE[5][26][0], // 114
-  FORTE[5][26][2], // var
-  FORTE[5][26][1]],
-  '26,-1': [[0, 3, 4, 6, 8], // 115
-  FORTE[5][26][2], // var
-  FORTE[5][26][1]],
-  '27,1': [FORTE[5][27][0], // 116
-  FORTE[5][27][2], // var
-  FORTE[5][27][1]],
-  '27,-1': [[0, 3, 5, 7, 8], // 117
-  FORTE[5][27][2], // var
-  FORTE[5][27][1]],
-  '28,1': [FORTE[5][28][0], // 118
-  FORTE[5][28][2], // var
-  FORTE[5][28][1]],
-  '28,-1': [[0, 2, 5, 6, 8], // 119
-  FORTE[5][28][2], // var
-  FORTE[5][28][1]],
-  '29,1': [FORTE[5][29][0], // 120
-  FORTE[5][29][2], // var
-  FORTE[5][29][1]],
-  '29,-1': [[0, 2, 5, 7, 8], // 121
-  FORTE[5][29][2], // var
-  FORTE[5][29][1]],
-  '30,1': [FORTE[5][30][0], // 122
-  FORTE[5][30][2], // var
-  FORTE[5][30][1]],
-  '30,-1': [[0, 2, 4, 7, 8], // 123
-  FORTE[5][30][2], // var
-  FORTE[5][30][1]],
-  '31,1': [FORTE[5][31][0], // 124
-  FORTE[5][31][2], // var
-  FORTE[5][31][1]],
-  '31,-1': [[0, 3, 6, 8, 9], // 125
-  FORTE[5][31][2], // var
-  FORTE[5][31][1]],
-  '32,1': [FORTE[5][32][0], // 126
-  FORTE[5][32][2], // var
-  FORTE[5][32][1]],
-  '32,-1': [[0, 3, 5, 8, 9], // 127
-  FORTE[5][32][2], // var
-  FORTE[5][32][1]],
-  '33,0': [FORTE[5][33][0], // 128
-  FORTE[5][33][2], // var
-  FORTE[5][33][1]],
-  '34,0': [FORTE[5][34][0], // 129
-  FORTE[5][34][2], // var
-  FORTE[5][34][1]],
-  '35,0': [FORTE[5][35][0], // 130
-  FORTE[5][35][2], // var
-  FORTE[5][35][1]],
-  '36,1': [FORTE[5][36][0], // 131
-  FORTE[5][36][2], // var
-  FORTE[5][36][1]],
-  '36,-1': [[0, 3, 5, 6, 7], // 132
-  FORTE[5][36][2], // var
-  FORTE[5][36][1]],
-  '37,0': [FORTE[5][37][0], // 133
-  FORTE[5][37][2], // var
-  FORTE[5][37][1]],
-  '38,1': [FORTE[5][38][0], // 134
-  FORTE[5][38][2], // var
-  FORTE[5][38][1]],
-  '38,-1': [[0, 3, 6, 7, 8], // 135
-  FORTE[5][38][2], // var
-  FORTE[5][38][1]]
+  '1,0': [FORTE[5][1][0], FORTE[5][1][2], FORTE[5][1][1]],
+  '2,1': [FORTE[5][2][0], FORTE[5][2][2], FORTE[5][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5], FORTE[5][2][2], FORTE[5][2][1]],
+  '3,1': [FORTE[5][3][0], FORTE[5][3][2], FORTE[5][3][1]],
+  '3,-1': [[0, 1, 3, 4, 5], FORTE[5][3][2], FORTE[5][3][1]],
+  '4,1': [FORTE[5][4][0], FORTE[5][4][2], FORTE[5][4][1]],
+  '4,-1': [[0, 3, 4, 5, 6], FORTE[5][4][2], FORTE[5][4][1]],
+  '5,1': [FORTE[5][5][0], FORTE[5][5][2], FORTE[5][5][1]],
+  '5,-1': [[0, 4, 5, 6, 7], FORTE[5][5][2], FORTE[5][5][1]],
+  '6,1': [FORTE[5][6][0], FORTE[5][6][2], FORTE[5][6][1]],
+  '6,-1': [[0, 1, 4, 5, 6], FORTE[5][6][2], FORTE[5][6][1]],
+  '7,1': [FORTE[5][7][0], FORTE[5][7][2], FORTE[5][7][1]],
+  '7,-1': [[0, 1, 5, 6, 7], FORTE[5][7][2], FORTE[5][7][1]],
+  '8,0': [FORTE[5][8][0], FORTE[5][8][2], FORTE[5][8][1]],
+  '9,1': [FORTE[5][9][0], FORTE[5][9][2], FORTE[5][9][1]],
+  '9,-1': [[0, 2, 4, 5, 6], FORTE[5][9][2], FORTE[5][9][1]],
+  '10,1': [FORTE[5][10][0], FORTE[5][10][2], FORTE[5][10][1]],
+  '10,-1': [[0, 2, 3, 5, 6], FORTE[5][10][2], FORTE[5][10][1]],
+  '11,1': [FORTE[5][11][0], FORTE[5][11][2], FORTE[5][11][1]],
+  '11,-1': [[0, 3, 4, 5, 7], FORTE[5][11][2], FORTE[5][11][1]],
+  '12,0': [FORTE[5][12][0], FORTE[5][12][2], FORTE[5][12][1]],
+  '13,1': [FORTE[5][13][0], FORTE[5][13][2], FORTE[5][13][1]],
+  '13,-1': [[0, 4, 6, 7, 8], FORTE[5][13][2], FORTE[5][13][1]],
+  '14,1': [FORTE[5][14][0], FORTE[5][14][2], FORTE[5][14][1]],
+  '14,-1': [[0, 2, 5, 6, 7], FORTE[5][14][2], FORTE[5][14][1]],
+  '15,0': [FORTE[5][15][0], FORTE[5][15][2], FORTE[5][15][1]],
+  '16,1': [FORTE[5][16][0], FORTE[5][16][2], FORTE[5][16][1]],
+  '16,-1': [[0, 3, 4, 6, 7], FORTE[5][16][2], FORTE[5][16][1]],
+  '17,0': [FORTE[5][17][0], FORTE[5][17][2], FORTE[5][17][1]],
+  '18,1': [FORTE[5][18][0], FORTE[5][18][2], FORTE[5][18][1]],
+  '18,-1': [[0, 2, 3, 6, 7], FORTE[5][18][2], FORTE[5][18][1]],
+  '19,1': [FORTE[5][19][0], FORTE[5][19][2], FORTE[5][19][1]],
+  '19,-1': [[0, 1, 4, 6, 7], FORTE[5][19][2], FORTE[5][19][1]],
+  '20,1': [FORTE[5][20][0], FORTE[5][20][2], FORTE[5][20][1]],
+  '20,-1': [[0, 1, 5, 7, 8], FORTE[5][20][2], FORTE[5][20][1]],
+  '21,1': [FORTE[5][21][0], FORTE[5][21][2], FORTE[5][21][1]],
+  '21,-1': [[0, 3, 4, 7, 8], FORTE[5][21][2], FORTE[5][21][1]],
+  '22,0': [FORTE[5][22][0], FORTE[5][22][2], FORTE[5][22][1]],
+  '23,1': [FORTE[5][23][0], FORTE[5][23][2], FORTE[5][23][1]],
+  '23,-1': [[0, 2, 4, 5, 7], FORTE[5][23][2], FORTE[5][23][1]],
+  '24,1': [FORTE[5][24][0], FORTE[5][24][2], FORTE[5][24][1]],
+  '24,-1': [[0, 2, 4, 6, 7], FORTE[5][24][2], FORTE[5][24][1]],
+  '25,1': [FORTE[5][25][0], FORTE[5][25][2], FORTE[5][25][1]],
+  '25,-1': [[0, 3, 5, 6, 8], FORTE[5][25][2], FORTE[5][25][1]],
+  '26,1': [FORTE[5][26][0], FORTE[5][26][2], FORTE[5][26][1]],
+  '26,-1': [[0, 3, 4, 6, 8], FORTE[5][26][2], FORTE[5][26][1]],
+  '27,1': [FORTE[5][27][0], FORTE[5][27][2], FORTE[5][27][1]],
+  '27,-1': [[0, 3, 5, 7, 8], FORTE[5][27][2], FORTE[5][27][1]],
+  '28,1': [FORTE[5][28][0], FORTE[5][28][2], FORTE[5][28][1]],
+  '28,-1': [[0, 2, 5, 6, 8], FORTE[5][28][2], FORTE[5][28][1]],
+  '29,1': [FORTE[5][29][0], FORTE[5][29][2], FORTE[5][29][1]],
+  '29,-1': [[0, 2, 5, 7, 8], FORTE[5][29][2], FORTE[5][29][1]],
+  '30,1': [FORTE[5][30][0], FORTE[5][30][2], FORTE[5][30][1]],
+  '30,-1': [[0, 2, 4, 7, 8], FORTE[5][30][2], FORTE[5][30][1]],
+  '31,1': [FORTE[5][31][0], FORTE[5][31][2], FORTE[5][31][1]],
+  '31,-1': [[0, 3, 6, 8, 9], FORTE[5][31][2], FORTE[5][31][1]],
+  '32,1': [FORTE[5][32][0], FORTE[5][32][2], FORTE[5][32][1]],
+  '32,-1': [[0, 3, 5, 8, 9], FORTE[5][32][2], FORTE[5][32][1]],
+  '33,0': [FORTE[5][33][0], FORTE[5][33][2], FORTE[5][33][1]],
+  '34,0': [FORTE[5][34][0], FORTE[5][34][2], FORTE[5][34][1]],
+  '35,0': [FORTE[5][35][0], FORTE[5][35][2], FORTE[5][35][1]],
+  '36,1': [FORTE[5][36][0], FORTE[5][36][2], FORTE[5][36][1]],
+  '36,-1': [[0, 3, 5, 6, 7], FORTE[5][36][2], FORTE[5][36][1]],
+  '37,0': [FORTE[5][37][0], FORTE[5][37][2], FORTE[5][37][1]],
+  '38,1': [FORTE[5][38][0], FORTE[5][38][2], FORTE[5][38][1]],
+  '38,-1': [[0, 3, 6, 7, 8], FORTE[5][38][2], FORTE[5][38][1]]
 }; // cardinality 6
 
 var card_6 = {
-  '1,0': [FORTE[6][1][0], // 136
-  FORTE[6][1][2], // var
-  FORTE[6][1][1]],
-  '2,1': [FORTE[6][2][0], // 137
-  FORTE[6][2][2], // var
-  FORTE[6][2][1]],
-  '2,-1': [[0, 2, 3, 4, 5, 6], // 138
-  FORTE[6][2][2], // var
-  FORTE[6][2][1]],
-  '3,1': [FORTE[6][3][0], // 139
-  FORTE[6][3][2], // var
-  FORTE[6][3][1]],
-  '3,-1': [[0, 1, 3, 4, 5, 6], // 140
-  FORTE[6][3][2], // var
-  FORTE[6][3][1]],
-  '4,0': [FORTE[6][4][0], // 141
-  FORTE[6][4][2], // var
-  FORTE[6][4][1]],
-  '5,1': [FORTE[6][5][0], // 142
-  FORTE[6][5][2], // var
-  FORTE[6][5][1]],
-  '5,-1': [[0, 1, 4, 5, 6, 7], // 143
-  FORTE[6][5][2], // var
-  FORTE[6][5][1]],
-  '6,0': [FORTE[6][6][0], // 144
-  FORTE[6][6][2], // var
-  FORTE[6][6][1]],
-  '7,0': [FORTE[6][7][0], // 145
-  FORTE[6][7][2], // var
-  FORTE[6][7][1]],
-  '8,0': [FORTE[6][8][0], // 146
-  FORTE[6][8][2], // var
-  FORTE[6][8][1]],
-  '9,1': [FORTE[6][9][0], // 147
-  FORTE[6][9][2], // var
-  FORTE[6][9][1]],
-  '9,-1': [[0, 2, 4, 5, 6, 7], // 148
-  FORTE[6][9][2], // var
-  FORTE[6][9][1]],
-  '10,1': [FORTE[6][10][0], // 149
-  FORTE[6][10][2], // var
-  FORTE[6][10][1]],
-  '10,-1': [[0, 2, 3, 4, 6, 7], // 150
-  FORTE[6][10][2], // var
-  FORTE[6][10][1]],
-  '11,1': [FORTE[6][11][0], // 151
-  FORTE[6][11][2], // var
-  FORTE[6][11][1]],
-  '11,-1': [[0, 2, 3, 5, 6, 7], // 152
-  FORTE[6][11][2], // var
-  FORTE[6][11][1]],
-  '12,1': [FORTE[6][12][0], // 153
-  FORTE[6][12][2], // var
-  FORTE[6][12][1]],
-  '12,-1': [[0, 1, 3, 5, 6, 7], // 154
-  FORTE[6][12][2], // var
-  FORTE[6][12][1]],
-  '13,0': [FORTE[6][13][0], // 155
-  FORTE[6][13][2], // var
-  FORTE[6][13][1]],
-  '14,1': [FORTE[6][14][0], // 156
-  FORTE[6][14][2], // var
-  FORTE[6][14][1]],
-  '14,-1': [[0, 3, 4, 5, 7, 8], // 157
-  FORTE[6][14][2], // var
-  FORTE[6][14][1]],
-  '15,1': [FORTE[6][15][0], // 158
-  FORTE[6][15][2], // var
-  FORTE[6][15][1]],
-  '15,-1': [[0, 3, 4, 6, 7, 8], // 159
-  FORTE[6][15][2], // var
-  FORTE[6][15][1]],
-  '16,1': [FORTE[6][16][0], // 160
-  FORTE[6][16][2], // var
-  FORTE[6][16][1]],
-  '16,-1': [[0, 2, 3, 4, 7, 8], // 161
-  FORTE[6][16][2], // var
-  FORTE[6][16][1]],
-  '17,1': [FORTE[6][17][0], // 162
-  FORTE[6][17][2], // var
-  FORTE[6][17][1]],
-  '17,-1': [[0, 1, 4, 6, 7, 8], // 163
-  FORTE[6][17][2], // var
-  FORTE[6][17][1]],
-  '18,1': [FORTE[6][18][0], // 164
-  FORTE[6][18][2], // var
-  FORTE[6][18][1]],
-  '18,-1': [[0, 1, 3, 6, 7, 8], // 165
-  FORTE[6][18][2], // var
-  FORTE[6][18][1]],
-  '19,1': [FORTE[6][19][0], // 166
-  FORTE[6][19][2], // var
-  FORTE[6][19][1]],
-  '19,-1': [[0, 1, 4, 5, 7, 8], // 167
-  FORTE[6][19][2], // var
-  FORTE[6][19][1]],
-  '20,0': [FORTE[6][20][0], // 168
-  FORTE[6][20][2], // var
-  FORTE[6][20][1]],
-  '21,1': [FORTE[6][21][0], // 169
-  FORTE[6][21][2], // var
-  FORTE[6][21][1]],
-  '21,-1': [[0, 2, 4, 5, 6, 8], // 170
-  FORTE[6][21][2], // var
-  FORTE[6][21][1]],
-  '22,1': [FORTE[6][22][0], // 171
-  FORTE[6][22][2], // var
-  FORTE[6][22][1]],
-  '22,-1': [[0, 2, 4, 6, 7, 8], // 172
-  FORTE[6][22][2], // var
-  FORTE[6][22][1]],
-  '23,0': [FORTE[6][23][0], // 173
-  FORTE[6][23][2], // var
-  FORTE[6][23][1]],
-  '24,1': [FORTE[6][24][0], // 174
-  FORTE[6][24][2], // var
-  FORTE[6][24][1]],
-  '24,-1': [[0, 2, 4, 5, 7, 8], // 175
-  FORTE[6][24][2], // var
-  FORTE[6][24][1]],
-  '25,1': [FORTE[6][25][0], // 176
-  FORTE[6][25][2], // var
-  FORTE[6][25][1]],
-  '25,-1': [[0, 2, 3, 5, 7, 8], // 177
-  FORTE[6][25][2], // var
-  FORTE[6][25][1]],
-  '26,0': [FORTE[6][26][0], // 178
-  FORTE[6][26][2], // var
-  FORTE[6][26][1]],
-  '27,1': [FORTE[6][27][0], // 179
-  FORTE[6][27][2], // var
-  FORTE[6][27][1]],
-  '27,-1': [[0, 3, 5, 6, 8, 9], // 180
-  FORTE[6][27][2], // var
-  FORTE[6][27][1]],
-  '28,0': [FORTE[6][28][0], // 181
-  FORTE[6][28][2], // var
-  FORTE[6][28][1]],
-  '29,0': [FORTE[6][29][0], // 182
-  FORTE[6][29][2], // var
-  FORTE[6][29][1]],
-  '30,1': [FORTE[6][30][0], // 183
-  FORTE[6][30][2], // var
-  FORTE[6][30][1]],
-  '30,-1': [[0, 2, 3, 6, 8, 9], // 184
-  FORTE[6][30][2], // var
-  FORTE[6][30][1]],
-  '31,1': [FORTE[6][31][0], // 185
-  FORTE[6][31][2], // var
-  FORTE[6][31][1]],
-  '31,-1': [[0, 1, 4, 6, 8, 9], // 186
-  FORTE[6][31][2], // var
-  FORTE[6][31][1]],
-  '32,0': [FORTE[6][32][0], // 187
-  FORTE[6][32][2], // var
-  FORTE[6][32][1]],
-  '33,1': [FORTE[6][33][0], // 188
-  FORTE[6][33][2], // var
-  FORTE[6][33][1]],
-  '33,-1': [[0, 2, 4, 6, 7, 9], // 189
-  FORTE[6][33][2], // var
-  FORTE[6][33][1]],
-  '34,1': [FORTE[6][34][0], // 190
-  FORTE[6][34][2], // var
-  FORTE[6][34][1]],
-  '34,-1': [[0, 2, 4, 6, 8, 9], // 191
-  FORTE[6][34][2], // var
-  FORTE[6][34][1]],
-  '35,0': [FORTE[6][35][0], // 192
-  FORTE[6][35][2], // var
-  FORTE[6][35][1]],
-  '36,1': [FORTE[6][36][0], // 193
-  FORTE[6][36][2], // var
-  FORTE[6][36][1]],
-  '36,-1': [[0, 3, 4, 5, 6, 7], // 194
-  FORTE[6][36][2], // var
-  FORTE[6][36][1]],
-  '37,0': [FORTE[6][37][0], // 195
-  FORTE[6][37][2], // var
-  FORTE[6][37][1]],
-  '38,0': [FORTE[6][38][0], // 196
-  FORTE[6][38][2], // var
-  FORTE[6][38][1]],
-  '39,1': [FORTE[6][39][0], // 197
-  FORTE[6][39][2], // var
-  FORTE[6][39][1]],
-  '39,-1': [[0, 3, 4, 5, 6, 8], // 198
-  FORTE[6][39][2], // var
-  FORTE[6][39][1]],
-  '40,1': [FORTE[6][40][0], // 199
-  FORTE[6][40][2], // var
-  FORTE[6][40][1]],
-  '40,-1': [[0, 3, 5, 6, 7, 8], // 200
-  FORTE[6][40][2], // var
-  FORTE[6][40][1]],
-  '41,1': [FORTE[6][41][0], // 201
-  FORTE[6][41][2], // var
-  FORTE[6][41][1]],
-  '41,-1': [[0, 2, 5, 6, 7, 8], // 202
-  FORTE[6][41][2], // var
-  FORTE[6][41][1]],
-  '42,0': [FORTE[6][42][0], // 203
-  FORTE[6][42][2], // var
-  FORTE[6][42][1]],
-  '43,1': [FORTE[6][43][0], // 204
-  FORTE[6][43][2], // var
-  FORTE[6][43][1]],
-  '43,-1': [[0, 2, 3, 6, 7, 8], // 205
-  FORTE[6][43][2], // var
-  FORTE[6][43][1]],
-  '44,1': [FORTE[6][44][0], // 206
-  FORTE[6][44][2], // var
-  FORTE[6][44][1]],
-  '44,-1': [[0, 3, 4, 7, 8, 9], // 207
-  FORTE[6][44][2], // var
-  FORTE[6][44][1]],
-  '45,0': [FORTE[6][45][0], // 208
-  FORTE[6][45][2], // var
-  FORTE[6][45][1]],
-  '46,1': [FORTE[6][46][0], // 209
-  FORTE[6][46][2], // var
-  FORTE[6][46][1]],
-  '46,-1': [[0, 3, 5, 7, 8, 9], // 210
-  FORTE[6][46][2], // var
-  FORTE[6][46][1]],
-  '47,1': [FORTE[6][47][0], // 211
-  FORTE[6][47][2], // var
-  FORTE[6][47][1]],
-  '47,-1': [[0, 2, 5, 7, 8, 9], // 212
-  FORTE[6][47][2], // var
-  FORTE[6][47][1]],
-  '48,0': [FORTE[6][48][0], // 213
-  FORTE[6][48][2], // var
-  FORTE[6][48][1]],
-  '49,0': [FORTE[6][49][0], // 214
-  FORTE[6][49][2], // var
-  FORTE[6][49][1]],
-  '50,0': [FORTE[6][50][0], // 215
-  FORTE[6][50][2], // var
-  FORTE[6][50][1]]
+  '1,0': [FORTE[6][1][0], FORTE[6][1][2], FORTE[6][1][1]],
+  '2,1': [FORTE[6][2][0], FORTE[6][2][2], FORTE[6][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6], FORTE[6][2][2], FORTE[6][2][1]],
+  '3,1': [FORTE[6][3][0], FORTE[6][3][2], FORTE[6][3][1]],
+  '3,-1': [[0, 1, 3, 4, 5, 6], FORTE[6][3][2], FORTE[6][3][1]],
+  '4,0': [FORTE[6][4][0], FORTE[6][4][2], FORTE[6][4][1]],
+  '5,1': [FORTE[6][5][0], FORTE[6][5][2], FORTE[6][5][1]],
+  '5,-1': [[0, 1, 4, 5, 6, 7], FORTE[6][5][2], FORTE[6][5][1]],
+  '6,0': [FORTE[6][6][0], FORTE[6][6][2], FORTE[6][6][1]],
+  '7,0': [FORTE[6][7][0], FORTE[6][7][2], FORTE[6][7][1]],
+  '8,0': [FORTE[6][8][0], FORTE[6][8][2], FORTE[6][8][1]],
+  '9,1': [FORTE[6][9][0], FORTE[6][9][2], FORTE[6][9][1]],
+  '9,-1': [[0, 2, 4, 5, 6, 7], FORTE[6][9][2], FORTE[6][9][1]],
+  '10,1': [FORTE[6][10][0], FORTE[6][10][2], FORTE[6][10][1]],
+  '10,-1': [[0, 2, 3, 4, 6, 7], FORTE[6][10][2], FORTE[6][10][1]],
+  '11,1': [FORTE[6][11][0], FORTE[6][11][2], FORTE[6][11][1]],
+  '11,-1': [[0, 2, 3, 5, 6, 7], FORTE[6][11][2], FORTE[6][11][1]],
+  '12,1': [FORTE[6][12][0], FORTE[6][12][2], FORTE[6][12][1]],
+  '12,-1': [[0, 1, 3, 5, 6, 7], FORTE[6][12][2], FORTE[6][12][1]],
+  '13,0': [FORTE[6][13][0], FORTE[6][13][2], FORTE[6][13][1]],
+  '14,1': [FORTE[6][14][0], FORTE[6][14][2], FORTE[6][14][1]],
+  '14,-1': [[0, 3, 4, 5, 7, 8], FORTE[6][14][2], FORTE[6][14][1]],
+  '15,1': [FORTE[6][15][0], FORTE[6][15][2], FORTE[6][15][1]],
+  '15,-1': [[0, 3, 4, 6, 7, 8], FORTE[6][15][2], FORTE[6][15][1]],
+  '16,1': [FORTE[6][16][0], FORTE[6][16][2], FORTE[6][16][1]],
+  '16,-1': [[0, 2, 3, 4, 7, 8], FORTE[6][16][2], FORTE[6][16][1]],
+  '17,1': [FORTE[6][17][0], FORTE[6][17][2], FORTE[6][17][1]],
+  '17,-1': [[0, 1, 4, 6, 7, 8], FORTE[6][17][2], FORTE[6][17][1]],
+  '18,1': [FORTE[6][18][0], FORTE[6][18][2], FORTE[6][18][1]],
+  '18,-1': [[0, 1, 3, 6, 7, 8], FORTE[6][18][2], FORTE[6][18][1]],
+  '19,1': [FORTE[6][19][0], FORTE[6][19][2], FORTE[6][19][1]],
+  '19,-1': [[0, 1, 4, 5, 7, 8], FORTE[6][19][2], FORTE[6][19][1]],
+  '20,0': [FORTE[6][20][0], FORTE[6][20][2], FORTE[6][20][1]],
+  '21,1': [FORTE[6][21][0], FORTE[6][21][2], FORTE[6][21][1]],
+  '21,-1': [[0, 2, 4, 5, 6, 8], FORTE[6][21][2], FORTE[6][21][1]],
+  '22,1': [FORTE[6][22][0], FORTE[6][22][2], FORTE[6][22][1]],
+  '22,-1': [[0, 2, 4, 6, 7, 8], FORTE[6][22][2], FORTE[6][22][1]],
+  '23,0': [FORTE[6][23][0], FORTE[6][23][2], FORTE[6][23][1]],
+  '24,1': [FORTE[6][24][0], FORTE[6][24][2], FORTE[6][24][1]],
+  '24,-1': [[0, 2, 4, 5, 7, 8], FORTE[6][24][2], FORTE[6][24][1]],
+  '25,1': [FORTE[6][25][0], FORTE[6][25][2], FORTE[6][25][1]],
+  '25,-1': [[0, 2, 3, 5, 7, 8], FORTE[6][25][2], FORTE[6][25][1]],
+  '26,0': [FORTE[6][26][0], FORTE[6][26][2], FORTE[6][26][1]],
+  '27,1': [FORTE[6][27][0], FORTE[6][27][2], FORTE[6][27][1]],
+  '27,-1': [[0, 3, 5, 6, 8, 9], FORTE[6][27][2], FORTE[6][27][1]],
+  '28,0': [FORTE[6][28][0], FORTE[6][28][2], FORTE[6][28][1]],
+  '29,0': [FORTE[6][29][0], FORTE[6][29][2], FORTE[6][29][1]],
+  '30,1': [FORTE[6][30][0], FORTE[6][30][2], FORTE[6][30][1]],
+  '30,-1': [[0, 2, 3, 6, 8, 9], FORTE[6][30][2], FORTE[6][30][1]],
+  '31,1': [FORTE[6][31][0], FORTE[6][31][2], FORTE[6][31][1]],
+  '31,-1': [[0, 1, 4, 6, 8, 9], FORTE[6][31][2], FORTE[6][31][1]],
+  '32,0': [FORTE[6][32][0], FORTE[6][32][2], FORTE[6][32][1]],
+  '33,1': [FORTE[6][33][0], FORTE[6][33][2], FORTE[6][33][1]],
+  '33,-1': [[0, 2, 4, 6, 7, 9], FORTE[6][33][2], FORTE[6][33][1]],
+  '34,1': [FORTE[6][34][0], FORTE[6][34][2], FORTE[6][34][1]],
+  '34,-1': [[0, 2, 4, 6, 8, 9], FORTE[6][34][2], FORTE[6][34][1]],
+  '35,0': [FORTE[6][35][0], FORTE[6][35][2], FORTE[6][35][1]],
+  '36,1': [FORTE[6][36][0], FORTE[6][36][2], FORTE[6][36][1]],
+  '36,-1': [[0, 3, 4, 5, 6, 7], FORTE[6][36][2], FORTE[6][36][1]],
+  '37,0': [FORTE[6][37][0], FORTE[6][37][2], FORTE[6][37][1]],
+  '38,0': [FORTE[6][38][0], FORTE[6][38][2], FORTE[6][38][1]],
+  '39,1': [FORTE[6][39][0], FORTE[6][39][2], FORTE[6][39][1]],
+  '39,-1': [[0, 3, 4, 5, 6, 8], FORTE[6][39][2], FORTE[6][39][1]],
+  '40,1': [FORTE[6][40][0], FORTE[6][40][2], FORTE[6][40][1]],
+  '40,-1': [[0, 3, 5, 6, 7, 8], FORTE[6][40][2], FORTE[6][40][1]],
+  '41,1': [FORTE[6][41][0], FORTE[6][41][2], FORTE[6][41][1]],
+  '41,-1': [[0, 2, 5, 6, 7, 8], FORTE[6][41][2], FORTE[6][41][1]],
+  '42,0': [FORTE[6][42][0], FORTE[6][42][2], FORTE[6][42][1]],
+  '43,1': [FORTE[6][43][0], FORTE[6][43][2], FORTE[6][43][1]],
+  '43,-1': [[0, 2, 3, 6, 7, 8], FORTE[6][43][2], FORTE[6][43][1]],
+  '44,1': [FORTE[6][44][0], FORTE[6][44][2], FORTE[6][44][1]],
+  '44,-1': [[0, 3, 4, 7, 8, 9], FORTE[6][44][2], FORTE[6][44][1]],
+  '45,0': [FORTE[6][45][0], FORTE[6][45][2], FORTE[6][45][1]],
+  '46,1': [FORTE[6][46][0], FORTE[6][46][2], FORTE[6][46][1]],
+  '46,-1': [[0, 3, 5, 7, 8, 9], FORTE[6][46][2], FORTE[6][46][1]],
+  '47,1': [FORTE[6][47][0], FORTE[6][47][2], FORTE[6][47][1]],
+  '47,-1': [[0, 2, 5, 7, 8, 9], FORTE[6][47][2], FORTE[6][47][1]],
+  '48,0': [FORTE[6][48][0], FORTE[6][48][2], FORTE[6][48][1]],
+  '49,0': [FORTE[6][49][0], FORTE[6][49][2], FORTE[6][49][1]],
+  '50,0': [FORTE[6][50][0], FORTE[6][50][2], FORTE[6][50][1]]
 }; // cardinality 7
 
 var card_7 = {
-  '1,0': [FORTE[7][1][0], // 216
-  FORTE[7][1][2], // var
-  FORTE[7][1][1]],
-  '2,1': [FORTE[7][2][0], // 217
-  FORTE[7][2][2], // var
-  FORTE[7][2][1]],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7], // 218
-  FORTE[7][2][2], // var
-  FORTE[7][2][1]],
-  '3,1': [FORTE[7][3][0], // 219
-  FORTE[7][3][2], // var
-  FORTE[7][3][1]],
-  '3,-1': [[0, 3, 4, 5, 6, 7, 8], // 220
-  FORTE[7][3][2], // var
-  FORTE[7][3][1]],
-  '4,1': [FORTE[7][4][0], // 221
-  FORTE[7][4][2], // var
-  FORTE[7][4][1]],
-  '4,-1': [[0, 1, 3, 4, 5, 6, 7], // 222
-  FORTE[7][4][2], // var
-  FORTE[7][4][1]],
-  '5,1': [FORTE[7][5][0], // 223
-  FORTE[7][5][2], // var
-  FORTE[7][5][1]],
-  '5,-1': [[0, 1, 2, 4, 5, 6, 7], // 224
-  FORTE[7][5][2], // var
-  FORTE[7][5][1]],
-  '6,1': [FORTE[7][6][0], // 225
-  FORTE[7][6][2], // var
-  FORTE[7][6][1]],
-  '6,-1': [[0, 1, 4, 5, 6, 7, 8], // 226
-  FORTE[7][6][2], // var
-  FORTE[7][6][1]],
-  '7,1': [FORTE[7][7][0], // 227
-  FORTE[7][7][2], // var
-  FORTE[7][7][1]],
-  '7,-1': [[0, 1, 2, 5, 6, 7, 8], // 228
-  FORTE[7][7][2], // var
-  FORTE[7][7][1]],
-  '8,0': [FORTE[7][8][0], // 229
-  FORTE[7][8][2], // var
-  FORTE[7][8][1]],
-  '9,1': [FORTE[7][9][0], // 230
-  FORTE[7][9][2], // var
-  FORTE[7][9][1]],
-  '9,-1': [[0, 2, 4, 5, 6, 7, 8], // 231
-  FORTE[7][9][2], // var
-  FORTE[7][9][1]],
-  '10,1': [FORTE[7][10][0], // 232
-  FORTE[7][10][2], // var
-  FORTE[7][10][1]],
-  '10,-1': [[0, 3, 5, 6, 7, 8, 9], // 233
-  FORTE[7][10][2], // var
-  FORTE[7][10][1]],
-  '11,1': [FORTE[7][11][0], // 234
-  FORTE[7][11][2], // var
-  FORTE[7][11][1]],
-  '11,-1': [[0, 2, 3, 4, 5, 7, 8], // 235
-  FORTE[7][11][2], // var
-  FORTE[7][11][1]],
-  '12,0': [FORTE[7][12][0], // 236
-  FORTE[7][12][2], // var
-  FORTE[7][12][1]],
-  '13,1': [FORTE[7][13][0], // 237
-  FORTE[7][13][2], // var
-  FORTE[7][13][1]],
-  '13,-1': [[0, 2, 3, 4, 6, 7, 8], // 238
-  FORTE[7][13][2], // var
-  FORTE[7][13][1]],
-  '14,1': [FORTE[7][14][0], // 239
-  FORTE[7][14][2], // var
-  FORTE[7][14][1]],
-  '14,-1': [[0, 1, 3, 5, 6, 7, 8], // 240
-  FORTE[7][14][2], // var
-  FORTE[7][14][1]],
-  '15,0': [FORTE[7][15][0], // 241
-  FORTE[7][15][2], // var
-  FORTE[7][15][1]],
-  '16,1': [FORTE[7][16][0], // 242
-  FORTE[7][16][2], // var
-  FORTE[7][16][1]],
-  '16,-1': [[0, 3, 4, 6, 7, 8, 9], // 243
-  FORTE[7][16][2], // var
-  FORTE[7][16][1]],
-  '17,0': [FORTE[7][17][0], // 244
-  FORTE[7][17][2], // var
-  FORTE[7][17][1]],
-  '18,1': [FORTE[7][18][0], // 245
-  FORTE[7][18][2], // var
-  FORTE[7][18][1]],
-  '18,-1': [[0, 1, 4, 6, 7, 8, 9], // 246
-  FORTE[7][18][2], // var
-  FORTE[7][18][1]],
-  '19,1': [FORTE[7][19][0], // 247
-  FORTE[7][19][2], // var
-  FORTE[7][19][1]],
-  '19,-1': [[0, 2, 3, 6, 7, 8, 9], // 248
-  FORTE[7][19][2], // var
-  FORTE[7][19][1]],
-  '20,1': [FORTE[7][20][0], // 249
-  FORTE[7][20][2], // var
-  FORTE[7][20][1]],
-  '20,-1': [[0, 1, 2, 5, 7, 8, 9], // 250
-  FORTE[7][20][2], // var
-  FORTE[7][20][1]],
-  '21,1': [FORTE[7][21][0], // 251
-  FORTE[7][21][2], // var
-  FORTE[7][21][1]],
-  '21,-1': [[0, 1, 4, 5, 7, 8, 9], // 252
-  FORTE[7][21][2], // var
-  FORTE[7][21][1]],
-  '22,0': [FORTE[7][22][0], // 253
-  FORTE[7][22][2], // var
-  FORTE[7][22][1]],
-  '23,1': [FORTE[7][23][0], // 254
-  FORTE[7][23][2], // var
-  FORTE[7][23][1]],
-  '23,-1': [[0, 2, 4, 5, 6, 7, 9], // 255
-  FORTE[7][23][2], // var
-  FORTE[7][23][1]],
-  '24,1': [FORTE[7][24][0], // 256
-  FORTE[7][24][2], // var
-  FORTE[7][24][1]],
-  '24,-1': [[0, 2, 4, 6, 7, 8, 9], // 257
-  FORTE[7][24][2], // var
-  FORTE[7][24][1]],
-  '25,1': [FORTE[7][25][0], // 258
-  FORTE[7][25][2], // var
-  FORTE[7][25][1]],
-  '25,-1': [[0, 2, 3, 5, 6, 7, 9], // 259
-  FORTE[7][25][2], // var
-  FORTE[7][25][1]],
-  '26,1': [FORTE[7][26][0], // 260
-  FORTE[7][26][2], // var
-  FORTE[7][26][1]],
-  '26,-1': [[0, 2, 4, 5, 6, 8, 9], // 261
-  FORTE[7][26][2], // var
-  FORTE[7][26][1]],
-  '27,1': [FORTE[7][27][0], // 262
-  FORTE[7][27][2], // var
-  FORTE[7][27][1]],
-  '27,-1': [[0, 2, 4, 5, 7, 8, 9], // 263
-  FORTE[7][27][2], // var
-  FORTE[7][27][1]],
-  '28,1': [FORTE[7][28][0], // 264
-  FORTE[7][28][2], // var
-  FORTE[7][28][1]],
-  '28,-1': [[0, 2, 3, 4, 6, 8, 9], // 265
-  FORTE[7][28][2], // var
-  FORTE[7][28][1]],
-  '29,1': [FORTE[7][29][0], // 266
-  FORTE[7][29][2], // var
-  FORTE[7][29][1]],
-  '29,-1': [[0, 2, 3, 5, 7, 8, 9], // 267
-  FORTE[7][29][2], // var
-  FORTE[7][29][1]],
-  '30,1': [FORTE[7][30][0], // 268
-  FORTE[7][30][2], // var
-  FORTE[7][30][1]],
-  '30,-1': [[0, 1, 3, 5, 7, 8, 9], // 269
-  FORTE[7][30][2], // var
-  FORTE[7][30][1]],
-  '31,1': [FORTE[7][31][0], // 270
-  FORTE[7][31][2], // var
-  FORTE[7][31][1]],
-  '31,-1': [[0, 2, 3, 5, 6, 8, 9], // 271
-  FORTE[7][31][2], // var
-  FORTE[7][31][1]],
-  '32,1': [FORTE[7][32][0], // 272
-  FORTE[7][32][2], // var
-  FORTE[7][32][1]],
-  '32,-1': [[0, 1, 3, 5, 6, 8, 9], // 273
-  FORTE[7][32][2], // var
-  FORTE[7][32][1]],
-  '33,0': [FORTE[7][33][0], // 274
-  FORTE[7][33][2], // var
-  FORTE[7][33][1]],
-  '34,0': [FORTE[7][34][0], // 275
-  FORTE[7][34][2], // var
-  FORTE[7][34][1]],
-  '35,0': [FORTE[7][35][0], // 276
-  FORTE[7][35][2], // var
-  FORTE[7][35][1]],
-  '36,1': [FORTE[7][36][0], // 277
-  FORTE[7][36][2], // var
-  FORTE[7][36][1]],
-  '36,-1': [[0, 2, 3, 5, 6, 7, 8], // 278
-  FORTE[7][36][2], // var
-  FORTE[7][36][1]],
-  '37,0': [FORTE[7][37][0], // 279
-  FORTE[7][37][2], // var
-  FORTE[7][37][1]],
-  '38,1': [FORTE[7][38][0], // 280
-  FORTE[7][38][2], // var
-  FORTE[7][38][1]],
-  '38,-1': [[0, 1, 3, 4, 6, 7, 8], // 281
-  FORTE[7][38][2], // var
-  FORTE[7][38][1]]
+  '1,0': [FORTE[7][1][0], FORTE[7][1][2], FORTE[7][1][1]],
+  '2,1': [FORTE[7][2][0], FORTE[7][2][2], FORTE[7][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7], FORTE[7][2][2], FORTE[7][2][1]],
+  '3,1': [FORTE[7][3][0], FORTE[7][3][2], FORTE[7][3][1]],
+  '3,-1': [[0, 3, 4, 5, 6, 7, 8], FORTE[7][3][2], FORTE[7][3][1]],
+  '4,1': [FORTE[7][4][0], FORTE[7][4][2], FORTE[7][4][1]],
+  '4,-1': [[0, 1, 3, 4, 5, 6, 7], FORTE[7][4][2], FORTE[7][4][1]],
+  '5,1': [FORTE[7][5][0], FORTE[7][5][2], FORTE[7][5][1]],
+  '5,-1': [[0, 1, 2, 4, 5, 6, 7], FORTE[7][5][2], FORTE[7][5][1]],
+  '6,1': [FORTE[7][6][0], FORTE[7][6][2], FORTE[7][6][1]],
+  '6,-1': [[0, 1, 4, 5, 6, 7, 8], FORTE[7][6][2], FORTE[7][6][1]],
+  '7,1': [FORTE[7][7][0], FORTE[7][7][2], FORTE[7][7][1]],
+  '7,-1': [[0, 1, 2, 5, 6, 7, 8], FORTE[7][7][2], FORTE[7][7][1]],
+  '8,0': [FORTE[7][8][0], FORTE[7][8][2], FORTE[7][8][1]],
+  '9,1': [FORTE[7][9][0], FORTE[7][9][2], FORTE[7][9][1]],
+  '9,-1': [[0, 2, 4, 5, 6, 7, 8], FORTE[7][9][2], FORTE[7][9][1]],
+  '10,1': [FORTE[7][10][0], FORTE[7][10][2], FORTE[7][10][1]],
+  '10,-1': [[0, 3, 5, 6, 7, 8, 9], FORTE[7][10][2], FORTE[7][10][1]],
+  '11,1': [FORTE[7][11][0], FORTE[7][11][2], FORTE[7][11][1]],
+  '11,-1': [[0, 2, 3, 4, 5, 7, 8], FORTE[7][11][2], FORTE[7][11][1]],
+  '12,0': [FORTE[7][12][0], FORTE[7][12][2], FORTE[7][12][1]],
+  '13,1': [FORTE[7][13][0], FORTE[7][13][2], FORTE[7][13][1]],
+  '13,-1': [[0, 2, 3, 4, 6, 7, 8], FORTE[7][13][2], FORTE[7][13][1]],
+  '14,1': [FORTE[7][14][0], FORTE[7][14][2], FORTE[7][14][1]],
+  '14,-1': [[0, 1, 3, 5, 6, 7, 8], FORTE[7][14][2], FORTE[7][14][1]],
+  '15,0': [FORTE[7][15][0], FORTE[7][15][2], FORTE[7][15][1]],
+  '16,1': [FORTE[7][16][0], FORTE[7][16][2], FORTE[7][16][1]],
+  '16,-1': [[0, 3, 4, 6, 7, 8, 9], FORTE[7][16][2], FORTE[7][16][1]],
+  '17,0': [FORTE[7][17][0], FORTE[7][17][2], FORTE[7][17][1]],
+  '18,1': [FORTE[7][18][0], FORTE[7][18][2], FORTE[7][18][1]],
+  '18,-1': [[0, 1, 4, 6, 7, 8, 9], FORTE[7][18][2], FORTE[7][18][1]],
+  '19,1': [FORTE[7][19][0], FORTE[7][19][2], FORTE[7][19][1]],
+  '19,-1': [[0, 2, 3, 6, 7, 8, 9], FORTE[7][19][2], FORTE[7][19][1]],
+  '20,1': [FORTE[7][20][0], FORTE[7][20][2], FORTE[7][20][1]],
+  '20,-1': [[0, 1, 2, 5, 7, 8, 9], FORTE[7][20][2], FORTE[7][20][1]],
+  '21,1': [FORTE[7][21][0], FORTE[7][21][2], FORTE[7][21][1]],
+  '21,-1': [[0, 1, 4, 5, 7, 8, 9], FORTE[7][21][2], FORTE[7][21][1]],
+  '22,0': [FORTE[7][22][0], FORTE[7][22][2], FORTE[7][22][1]],
+  '23,1': [FORTE[7][23][0], FORTE[7][23][2], FORTE[7][23][1]],
+  '23,-1': [[0, 2, 4, 5, 6, 7, 9], FORTE[7][23][2], FORTE[7][23][1]],
+  '24,1': [FORTE[7][24][0], FORTE[7][24][2], FORTE[7][24][1]],
+  '24,-1': [[0, 2, 4, 6, 7, 8, 9], FORTE[7][24][2], FORTE[7][24][1]],
+  '25,1': [FORTE[7][25][0], FORTE[7][25][2], FORTE[7][25][1]],
+  '25,-1': [[0, 2, 3, 5, 6, 7, 9], FORTE[7][25][2], FORTE[7][25][1]],
+  '26,1': [FORTE[7][26][0], FORTE[7][26][2], FORTE[7][26][1]],
+  '26,-1': [[0, 2, 4, 5, 6, 8, 9], FORTE[7][26][2], FORTE[7][26][1]],
+  '27,1': [FORTE[7][27][0], FORTE[7][27][2], FORTE[7][27][1]],
+  '27,-1': [[0, 2, 4, 5, 7, 8, 9], FORTE[7][27][2], FORTE[7][27][1]],
+  '28,1': [FORTE[7][28][0], FORTE[7][28][2], FORTE[7][28][1]],
+  '28,-1': [[0, 2, 3, 4, 6, 8, 9], FORTE[7][28][2], FORTE[7][28][1]],
+  '29,1': [FORTE[7][29][0], FORTE[7][29][2], FORTE[7][29][1]],
+  '29,-1': [[0, 2, 3, 5, 7, 8, 9], FORTE[7][29][2], FORTE[7][29][1]],
+  '30,1': [FORTE[7][30][0], FORTE[7][30][2], FORTE[7][30][1]],
+  '30,-1': [[0, 1, 3, 5, 7, 8, 9], FORTE[7][30][2], FORTE[7][30][1]],
+  '31,1': [FORTE[7][31][0], FORTE[7][31][2], FORTE[7][31][1]],
+  '31,-1': [[0, 2, 3, 5, 6, 8, 9], FORTE[7][31][2], FORTE[7][31][1]],
+  '32,1': [FORTE[7][32][0], FORTE[7][32][2], FORTE[7][32][1]],
+  '32,-1': [[0, 1, 3, 5, 6, 8, 9], FORTE[7][32][2], FORTE[7][32][1]],
+  '33,0': [FORTE[7][33][0], FORTE[7][33][2], FORTE[7][33][1]],
+  '34,0': [FORTE[7][34][0], FORTE[7][34][2], FORTE[7][34][1]],
+  '35,0': [FORTE[7][35][0], FORTE[7][35][2], FORTE[7][35][1]],
+  '36,1': [FORTE[7][36][0], FORTE[7][36][2], FORTE[7][36][1]],
+  '36,-1': [[0, 2, 3, 5, 6, 7, 8], FORTE[7][36][2], FORTE[7][36][1]],
+  '37,0': [FORTE[7][37][0], FORTE[7][37][2], FORTE[7][37][1]],
+  '38,1': [FORTE[7][38][0], FORTE[7][38][2], FORTE[7][38][1]],
+  '38,-1': [[0, 1, 3, 4, 6, 7, 8], FORTE[7][38][2], FORTE[7][38][1]]
 }; // cardinality 8
 
 var card_8 = {
-  '1,0': [FORTE[8][1][0], // 282
-  FORTE[8][1][2], // var
-  FORTE[8][1][1]],
-  '2,1': [FORTE[8][2][0], // 283
-  FORTE[8][2][2], // var
-  FORTE[8][2][1]],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8], // 284
-  FORTE[8][2][2], // var
-  FORTE[8][2][1]],
-  '3,0': [FORTE[8][3][0], // 285
-  FORTE[8][3][2], // var
-  FORTE[8][3][1]],
-  '4,1': [FORTE[8][4][0], // 286
-  FORTE[8][4][2], // var
-  FORTE[8][4][1]],
-  '4,-1': [[0, 1, 3, 4, 5, 6, 7, 8], // 287
-  FORTE[8][4][2], // var
-  FORTE[8][4][1]],
-  '5,1': [FORTE[8][5][0], // 288
-  FORTE[8][5][2], // var
-  FORTE[8][5][1]],
-  '5,-1': [[0, 1, 2, 4, 5, 6, 7, 8], // 289
-  FORTE[8][5][2], // var
-  FORTE[8][5][1]],
-  '6,0': [FORTE[8][6][0], // 290
-  FORTE[8][6][2], // var
-  FORTE[8][6][1]],
-  '7,0': [FORTE[8][7][0], // 291
-  FORTE[8][7][2], // var
-  FORTE[8][7][1]],
-  '8,0': [FORTE[8][8][0], // 292
-  FORTE[8][8][2], // var
-  FORTE[8][8][1]],
-  '9,0': [FORTE[8][9][0], // 293
-  FORTE[8][9][2], // var
-  FORTE[8][9][1]],
-  '10,0': [FORTE[8][10][0], // 294
-  FORTE[8][10][2], // var
-  FORTE[8][10][1]],
-  '11,1': [FORTE[8][11][0], // 295
-  FORTE[8][11][2], // var
-  FORTE[8][11][1]],
-  '11,-1': [[0, 2, 4, 5, 6, 7, 8, 9], // 296
-  FORTE[8][11][2], // var
-  FORTE[8][11][1]],
-  '12,1': [FORTE[8][12][0], // 297
-  FORTE[8][12][2], // var
-  FORTE[8][12][1]],
-  '12,-1': [[0, 2, 3, 4, 5, 6, 8, 9], // 298
-  FORTE[8][12][2], // var
-  FORTE[8][12][1]],
-  '13,1': [FORTE[8][13][0], // 299
-  FORTE[8][13][2], // var
-  FORTE[8][13][1]],
-  '13,-1': [[0, 2, 3, 5, 6, 7, 8, 9], // 300
-  FORTE[8][13][2], // var
-  FORTE[8][13][1]],
-  '14,1': [FORTE[8][14][0], // 301
-  FORTE[8][14][2], // var
-  FORTE[8][14][1]],
-  '14,-1': [[0, 2, 3, 4, 5, 7, 8, 9], // 302
-  FORTE[8][14][2], // var
-  FORTE[8][14][1]],
-  '15,1': [FORTE[8][15][0], // 303
-  FORTE[8][15][2], // var
-  FORTE[8][15][1]],
-  '15,-1': [[0, 1, 3, 5, 6, 7, 8, 9], // 304
-  FORTE[8][15][2], // var
-  FORTE[8][15][1]],
-  '16,1': [FORTE[8][16][0], // 305
-  FORTE[8][16][2], // var
-  FORTE[8][16][1]],
-  '16,-1': [[0, 1, 2, 4, 6, 7, 8, 9], // 306
-  FORTE[8][16][2], // var
-  FORTE[8][16][1]],
-  '17,0': [FORTE[8][17][0], // 307
-  FORTE[8][17][2], // var
-  FORTE[8][17][1]],
-  '18,1': [FORTE[8][18][0], // 308
-  FORTE[8][18][2], // var
-  FORTE[8][18][1]],
-  '18,-1': [[0, 1, 3, 4, 6, 7, 8, 9], // 309
-  FORTE[8][18][2], // var
-  FORTE[8][18][1]],
-  '19,1': [FORTE[8][19][0], // 310
-  FORTE[8][19][2], // var
-  FORTE[8][19][1]],
-  '19,-1': [[0, 1, 3, 4, 5, 7, 8, 9], // 311
-  FORTE[8][19][2], // var
-  FORTE[8][19][1]],
-  '20,0': [FORTE[8][20][0], // 312
-  FORTE[8][20][2], // var
-  FORTE[8][20][1]],
-  '21,0': [FORTE[8][21][0], // 313
-  FORTE[8][21][2], // var
-  FORTE[8][21][1]],
-  '22,1': [FORTE[8][22][0], // 314
-  FORTE[8][22][2], // var
-  FORTE[8][22][1]],
-  '22,-1': [[0, 2, 4, 5, 7, 8, 9, 10], // 315
-  FORTE[8][22][2], // var
-  FORTE[8][22][1]],
-  '23,0': [FORTE[8][23][0], // 316
-  FORTE[8][23][2], // var
-  FORTE[8][23][1]],
-  '24,0': [FORTE[8][24][0], // 317
-  FORTE[8][24][2], // var
-  FORTE[8][24][1]],
-  '25,0': [FORTE[8][25][0], // 318
-  FORTE[8][25][2], // var
-  FORTE[8][25][1]],
-  '26,0': [FORTE[8][26][0], // 319
-  FORTE[8][26][2], // var
-  FORTE[8][26][1]],
-  '27,1': [FORTE[8][27][0], // 320
-  FORTE[8][27][2], // var
-  FORTE[8][27][1]],
-  '27,-1': [[0, 2, 3, 5, 6, 8, 9, 10], // 321
-  FORTE[8][27][2], // var
-  FORTE[8][27][1]],
-  '28,0': [FORTE[8][28][0], // 322
-  FORTE[8][28][2], // var
-  FORTE[8][28][1]],
-  '29,1': [FORTE[8][29][0], // 323
-  FORTE[8][29][2], // var
-  FORTE[8][29][1]],
-  '29,-1': [[0, 2, 3, 4, 6, 7, 8, 9], // 324
-  FORTE[8][29][2], // var
-  FORTE[8][29][1]]
+  '1,0': [FORTE[8][1][0], FORTE[8][1][2], FORTE[8][1][1]],
+  '2,1': [FORTE[8][2][0], FORTE[8][2][2], FORTE[8][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8], FORTE[8][2][2], FORTE[8][2][1]],
+  '3,0': [FORTE[8][3][0], FORTE[8][3][2], FORTE[8][3][1]],
+  '4,1': [FORTE[8][4][0], FORTE[8][4][2], FORTE[8][4][1]],
+  '4,-1': [[0, 1, 3, 4, 5, 6, 7, 8], FORTE[8][4][2], FORTE[8][4][1]],
+  '5,1': [FORTE[8][5][0], FORTE[8][5][2], FORTE[8][5][1]],
+  '5,-1': [[0, 1, 2, 4, 5, 6, 7, 8], FORTE[8][5][2], FORTE[8][5][1]],
+  '6,0': [FORTE[8][6][0], FORTE[8][6][2], FORTE[8][6][1]],
+  '7,0': [FORTE[8][7][0], FORTE[8][7][2], FORTE[8][7][1]],
+  '8,0': [FORTE[8][8][0], FORTE[8][8][2], FORTE[8][8][1]],
+  '9,0': [FORTE[8][9][0], FORTE[8][9][2], FORTE[8][9][1]],
+  '10,0': [FORTE[8][10][0], FORTE[8][10][2], FORTE[8][10][1]],
+  '11,1': [FORTE[8][11][0], FORTE[8][11][2], FORTE[8][11][1]],
+  '11,-1': [[0, 2, 4, 5, 6, 7, 8, 9], FORTE[8][11][2], FORTE[8][11][1]],
+  '12,1': [FORTE[8][12][0], FORTE[8][12][2], FORTE[8][12][1]],
+  '12,-1': [[0, 2, 3, 4, 5, 6, 8, 9], FORTE[8][12][2], FORTE[8][12][1]],
+  '13,1': [FORTE[8][13][0], FORTE[8][13][2], FORTE[8][13][1]],
+  '13,-1': [[0, 2, 3, 5, 6, 7, 8, 9], FORTE[8][13][2], FORTE[8][13][1]],
+  '14,1': [FORTE[8][14][0], FORTE[8][14][2], FORTE[8][14][1]],
+  '14,-1': [[0, 2, 3, 4, 5, 7, 8, 9], FORTE[8][14][2], FORTE[8][14][1]],
+  '15,1': [FORTE[8][15][0], FORTE[8][15][2], FORTE[8][15][1]],
+  '15,-1': [[0, 1, 3, 5, 6, 7, 8, 9], FORTE[8][15][2], FORTE[8][15][1]],
+  '16,1': [FORTE[8][16][0], FORTE[8][16][2], FORTE[8][16][1]],
+  '16,-1': [[0, 1, 2, 4, 6, 7, 8, 9], FORTE[8][16][2], FORTE[8][16][1]],
+  '17,0': [FORTE[8][17][0], FORTE[8][17][2], FORTE[8][17][1]],
+  '18,1': [FORTE[8][18][0], FORTE[8][18][2], FORTE[8][18][1]],
+  '18,-1': [[0, 1, 3, 4, 6, 7, 8, 9], FORTE[8][18][2], FORTE[8][18][1]],
+  '19,1': [FORTE[8][19][0], FORTE[8][19][2], FORTE[8][19][1]],
+  '19,-1': [[0, 1, 3, 4, 5, 7, 8, 9], FORTE[8][19][2], FORTE[8][19][1]],
+  '20,0': [FORTE[8][20][0], FORTE[8][20][2], FORTE[8][20][1]],
+  '21,0': [FORTE[8][21][0], FORTE[8][21][2], FORTE[8][21][1]],
+  '22,1': [FORTE[8][22][0], FORTE[8][22][2], FORTE[8][22][1]],
+  '22,-1': [[0, 2, 4, 5, 7, 8, 9, 10], FORTE[8][22][2], FORTE[8][22][1]],
+  '23,0': [FORTE[8][23][0], FORTE[8][23][2], FORTE[8][23][1]],
+  '24,0': [FORTE[8][24][0], FORTE[8][24][2], FORTE[8][24][1]],
+  '25,0': [FORTE[8][25][0], FORTE[8][25][2], FORTE[8][25][1]],
+  '26,0': [FORTE[8][26][0], FORTE[8][26][2], FORTE[8][26][1]],
+  '27,1': [FORTE[8][27][0], FORTE[8][27][2], FORTE[8][27][1]],
+  '27,-1': [[0, 2, 3, 5, 6, 8, 9, 10], FORTE[8][27][2], FORTE[8][27][1]],
+  '28,0': [FORTE[8][28][0], FORTE[8][28][2], FORTE[8][28][1]],
+  '29,1': [FORTE[8][29][0], FORTE[8][29][2], FORTE[8][29][1]],
+  '29,-1': [[0, 2, 3, 4, 6, 7, 8, 9], FORTE[8][29][2], FORTE[8][29][1]]
 }; // cardinality 9
 
 var card_9 = {
-  '1,0': [FORTE[9][1][0], // 325
-  FORTE[9][1][2], // var
-  FORTE[9][1][1]],
-  '2,1': [FORTE[9][2][0], // 326
-  FORTE[9][2][2], // var
-  FORTE[9][2][1]],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8, 9], // 327
-  FORTE[9][2][2], // var
-  FORTE[9][2][1]],
-  '3,1': [FORTE[9][3][0], // 328
-  FORTE[9][3][2], // var
-  FORTE[9][3][1]],
-  '3,-1': [[0, 1, 3, 4, 5, 6, 7, 8, 9], // 329
-  FORTE[9][3][2], // var
-  FORTE[9][3][1]],
-  '4,1': [FORTE[9][4][0], // 330
-  FORTE[9][4][2], // var
-  FORTE[9][4][1]],
-  '4,-1': [[0, 1, 2, 4, 5, 6, 7, 8, 9], // 331
-  FORTE[9][4][2], // var
-  FORTE[9][4][1]],
-  '5,1': [FORTE[9][5][0], // 332
-  FORTE[9][5][2], // var
-  FORTE[9][5][1]],
-  '5,-1': [[0, 1, 2, 3, 5, 6, 7, 8, 9], // 333
-  FORTE[9][5][2], // var
-  FORTE[9][5][1]],
-  '6,0': [FORTE[9][6][0], // 334
-  FORTE[9][6][2], // var
-  FORTE[9][6][1]],
-  '7,1': [FORTE[9][7][0], // 335
-  FORTE[9][7][2], // var
-  FORTE[9][7][1]],
-  '7,-1': [[0, 2, 3, 5, 6, 7, 8, 9, 10], // 336
-  FORTE[9][7][2], // var
-  FORTE[9][7][1]],
-  '8,1': [FORTE[9][8][0], // 337
-  FORTE[9][8][2], // var
-  FORTE[9][8][1]],
-  '8,-1': [[0, 2, 3, 4, 6, 7, 8, 9, 10], // 338
-  FORTE[9][8][2], // var
-  FORTE[9][8][1]],
-  '9,0': [FORTE[9][9][0], // 339
-  FORTE[9][9][2], // var
-  FORTE[9][9][1]],
-  '10,0': [FORTE[9][10][0], // 340
-  FORTE[9][10][2], // var
-  FORTE[9][10][1]],
-  '11,1': [FORTE[9][11][0], // 341
-  FORTE[9][11][2], // var
-  FORTE[9][11][1]],
-  '11,-1': [[0, 1, 3, 4, 5, 7, 8, 9, 10], // 342
-  FORTE[9][11][2], // var
-  FORTE[9][11][1]],
-  '12,0': [FORTE[9][12][0], // 343
-  FORTE[9][12][2], // var
-  FORTE[9][12][1]]
+  '1,0': [FORTE[9][1][0], FORTE[9][1][2], FORTE[9][1][1]],
+  '2,1': [FORTE[9][2][0], FORTE[9][2][2], FORTE[9][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8, 9], FORTE[9][2][2], FORTE[9][2][1]],
+  '3,1': [FORTE[9][3][0], FORTE[9][3][2], FORTE[9][3][1]],
+  '3,-1': [[0, 1, 3, 4, 5, 6, 7, 8, 9], FORTE[9][3][2], FORTE[9][3][1]],
+  '4,1': [FORTE[9][4][0], FORTE[9][4][2], FORTE[9][4][1]],
+  '4,-1': [[0, 1, 2, 4, 5, 6, 7, 8, 9], FORTE[9][4][2], FORTE[9][4][1]],
+  '5,1': [FORTE[9][5][0], FORTE[9][5][2], FORTE[9][5][1]],
+  '5,-1': [[0, 1, 2, 3, 5, 6, 7, 8, 9], FORTE[9][5][2], FORTE[9][5][1]],
+  '6,0': [FORTE[9][6][0], FORTE[9][6][2], FORTE[9][6][1]],
+  '7,1': [FORTE[9][7][0], FORTE[9][7][2], FORTE[9][7][1]],
+  '7,-1': [[0, 2, 3, 5, 6, 7, 8, 9, 10], FORTE[9][7][2], FORTE[9][7][1]],
+  '8,1': [FORTE[9][8][0], FORTE[9][8][2], FORTE[9][8][1]],
+  '8,-1': [[0, 2, 3, 4, 6, 7, 8, 9, 10], FORTE[9][8][2], FORTE[9][8][1]],
+  '9,0': [FORTE[9][9][0], FORTE[9][9][2], FORTE[9][9][1]],
+  '10,0': [FORTE[9][10][0], FORTE[9][10][2], FORTE[9][10][1]],
+  '11,1': [FORTE[9][11][0], FORTE[9][11][2], FORTE[9][11][1]],
+  '11,-1': [[0, 1, 3, 4, 5, 7, 8, 9, 10], FORTE[9][11][2], FORTE[9][11][1]],
+  '12,0': [FORTE[9][12][0], FORTE[9][12][2], FORTE[9][12][1]]
 }; // cardinality 10
 
 var card_10 = {
-  '1,0': [FORTE[10][1][0], // 344
-  FORTE[10][1][2], // var
-  FORTE[10][1][1]],
-  '2,0': [FORTE[10][2][0], // 345
-  FORTE[10][2][2], // var
-  FORTE[10][2][1]],
-  '3,0': [FORTE[10][3][0], // 346
-  FORTE[10][3][2], // var
-  FORTE[10][3][1]],
-  '4,0': [FORTE[10][4][0], // 347
-  FORTE[10][4][2], // var
-  FORTE[10][4][1]],
-  '5,0': [FORTE[10][5][0], // 348
-  FORTE[10][5][2], // var
-  FORTE[10][5][1]],
-  '6,0': [FORTE[10][6][0], // 349
-  FORTE[10][6][2], // var
-  FORTE[10][6][1]]
+  '1,0': [FORTE[10][1][0], FORTE[10][1][2], FORTE[10][1][1]],
+  '2,0': [FORTE[10][2][0], FORTE[10][2][2], FORTE[10][2][1]],
+  '3,0': [FORTE[10][3][0], FORTE[10][3][2], FORTE[10][3][1]],
+  '4,0': [FORTE[10][4][0], FORTE[10][4][2], FORTE[10][4][1]],
+  '5,0': [FORTE[10][5][0], FORTE[10][5][2], FORTE[10][5][1]],
+  '6,0': [FORTE[10][6][0], FORTE[10][6][2], FORTE[10][6][1]]
 }; // cardinality 11
 
 var card_11 = {
-  '1,0': [FORTE[11][1][0], // 350
-  FORTE[11][1][2], // var
-  FORTE[11][1][1]]
+  '1,0': [FORTE[11][1][0], FORTE[11][1][2], FORTE[11][1][1]]
 }; // cardinality 12
 
 var card_12 = {
-  '1,0': [FORTE[12][1][0], // 351
-  FORTE[12][1][2], // var
-  FORTE[12][1][1]]
+  '1,0': [FORTE[12][1][0], FORTE[12][1][2], FORTE[12][1][1]]
 }; //-------------------------------------------------------------------------------
 
 var SCDICT = {
@@ -44827,7 +44273,9 @@ function forteIndexToInversionsAvailable(card, index) {
   }
 }
 
-function _chordTableAddress(cardinality, forteClass, inversion, pcOriginal) {
+function _chordTableAddress(cardinality, forteClass) {
+  var inversion = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var pcOriginal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
   return {
     cardinality,
     forteClass,
@@ -44931,7 +44379,7 @@ function intervalVectorToAddress(vector) {
         } // index 1 is vector
 
 
-        if (Object(_common__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(sc[1], vector)) {
+        if (Object(_common__WEBPACK_IMPORTED_MODULE_9__["arrayEquals"])(sc[1], vector)) {
           post.push(_chordTableAddress(card, num));
         }
 
@@ -45048,7 +44496,7 @@ function seekChordTablesAddress(c) {
     try {
       for (var _iterator2 = testSetOrig[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var x = _step2.value;
-        var zeroTransposed = Object(_common__WEBPACK_IMPORTED_MODULE_7__["posMod"])(x - testSetOriginalPC, 12);
+        var zeroTransposed = Object(_common__WEBPACK_IMPORTED_MODULE_9__["posMod"])(x - testSetOriginalPC, 12);
         testSet.push(zeroTransposed);
       } // create inversion; first take difference from 12 mod 12
 
@@ -45071,7 +44519,7 @@ function seekChordTablesAddress(c) {
 
     for (var _i2 = 0, _testSet = testSet; _i2 < _testSet.length; _i2++) {
       var _x = _testSet[_i2];
-      testSetInvert.push(Object(_common__WEBPACK_IMPORTED_MODULE_7__["posMod"])(12 - _x, 12));
+      testSetInvert.push(Object(_common__WEBPACK_IMPORTED_MODULE_9__["posMod"])(12 - _x, 12));
     }
 
     testSetInvert.reverse(); // reverse order (first steps now last)
@@ -45080,7 +44528,7 @@ function seekChordTablesAddress(c) {
     var testSetInvertOriginalPC = testSetInvert[0];
 
     for (var i = 0; i < testSetInvert.length; i++) {
-      testSetInvert[i] = Object(_common__WEBPACK_IMPORTED_MODULE_7__["posMod"])(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
+      testSetInvert[i] = Object(_common__WEBPACK_IMPORTED_MODULE_9__["posMod"])(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
     }
 
     var candidateTuple = [testSet, testSetInvert, testSetOriginalPC];
@@ -45102,37 +44550,55 @@ function seekChordTablesAddress(c) {
 
     var dataLinePcs = dataLine[0];
     var inversionsAvailable = forteIndexToInversionsAvailable(card, indexCandidate);
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
-    for (var _i3 = 0, _candidates = candidates; _i3 < _candidates.length; _i3++) {
-      var _candidates$_i = _slicedToArray(_candidates[_i3], 3),
-          candidate = _candidates$_i[0],
-          candidateInversion = _candidates$_i[1],
-          candidateOriginalPC = _candidates$_i[2];
+    try {
+      for (var _iterator3 = candidates[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var _step3$value = _slicedToArray(_step3.value, 3),
+            candidate = _step3$value[0],
+            candidateInversion = _step3$value[1],
+            candidateOriginalPC = _step3$value[2];
 
-      if (Object(_common__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(dataLinePcs, candidate)) {
-        index = indexCandidate;
+        if (Object(_common__WEBPACK_IMPORTED_MODULE_9__["arrayEquals"])(dataLinePcs, candidate)) {
+          index = indexCandidate;
 
-        if (inversionsAvailable.includes(0)) {
-          inversion = 0;
-        } else {
-          inversion = 1;
+          if (inversionsAvailable.includes(0)) {
+            inversion = 0;
+          } else {
+            inversion = 1;
+          }
+
+          matchedPCOriginal = candidateOriginalPC;
+          match = true;
+          break;
+        } else if (Object(_common__WEBPACK_IMPORTED_MODULE_9__["arrayEquals"])(dataLinePcs, candidateInversion)) {
+          index = indexCandidate;
+
+          if (inversionsAvailable.includes(0)) {
+            inversion = 0;
+          } else {
+            inversion = -1;
+          }
+
+          matchedPCOriginal = candidateOriginalPC;
+          match = true;
+          break;
         }
-
-        matchedPCOriginal = candidateOriginalPC;
-        match = true;
-        break;
-      } else if (Object(_common__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(dataLinePcs, candidateInversion)) {
-        index = indexCandidate;
-
-        if (inversionsAvailable.includes(0)) {
-          inversion = 0;
-        } else {
-          inversion = -1;
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+          _iterator3.return();
         }
-
-        matchedPCOriginal = candidateOriginalPC;
-        match = true;
-        break;
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
+        }
       }
     }
   }
@@ -45146,9 +44612,9 @@ function seekChordTablesAddress(c) {
 
 /***/ }),
 
-/***/ "./src/music21/clef.js":
+/***/ "./src/music21/clef.ts":
 /*!*****************************!*\
-  !*** ./src/music21/clef.js ***!
+  !*** ./src/music21/clef.ts ***!
   \*****************************/
 /*! exports provided: lowestLines, nameToLine, nameToSign, Clef, TrebleClef, Treble8vbClef, Treble8vaClef, BassClef, Bass8vbClef, AltoClef, TenorClef, SopranoClef, MezzoSopranoClef, PercussionClef, all_clefs, bestClef, clefFromString */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -45179,7 +44645,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
@@ -45263,25 +44729,25 @@ var nameToSign = {
  * @memberof music21.clef
  * @extends music21.base.Music21Object
  * @param {string} name - clef name
- * @param {int} [octaveChange=0] - ottava
+ * @param {number} [octaveChange=0] - ottava
  * @property {string} [name]
- * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the
+ * @property {number} lowestLine - diatonicNoteNum (C4 = 29) for the
  *     lowest line (in a five-line staff)
- * @property {int} lowestLineTrebleOffset - difference between the first line
+ * @property {number} lowestLineTrebleOffset - difference between the first line
  *     of this staff and the first line in treble clef
- * @property {int} octaveChange
+ * @property {number} octaveChange
  */
 
 class Clef extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
-  static get className() {
-    return 'music21.clef.Clef';
-  }
-
-  constructor(name, octaveChange) {
+  constructor(name) {
+    var octaveChange = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     super();
-    this.classSortOrder = 0;
+    this.name = undefined;
     this.sign = undefined;
     this.line = 1;
+    this.lowestLine = lowestLines.treble;
+    this.lowestLineTrebleOffset = 0;
+    this.classSortOrder = 0;
 
     if (name !== undefined) {
       name = name.toLowerCase();
@@ -45290,19 +44756,15 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
       this.sign = nameToSign[name];
       this.line = nameToLine[name] || 1;
       this.lowestLineTrebleOffset = lowestLines.treble - this.lowestLine;
-    } else {
-      this.name = undefined;
-      this.lowestLine = lowestLines.treble;
-      this.lowestLineTrebleOffset = 0;
     }
 
-    if (octaveChange === undefined) {
-      this.octaveChange = 0;
-    } else {
-      this.octaveChange = octaveChange;
-      this.lowestLine += 7 * octaveChange;
-      this.lowestLineTrebleOffset -= 7 * octaveChange;
-    }
+    this.octaveChange = octaveChange;
+    this.lowestLine += 7 * octaveChange;
+    this.lowestLineTrebleOffset -= 7 * octaveChange;
+  }
+
+  static get className() {
+    return 'music21.clef.Clef';
   }
 
   stringInfo() {
@@ -45620,7 +45082,7 @@ function clefFromString(clefString) {
   var lineNum;
 
   if (xnStr.toLowerCase() === 'percussion') {
-    return new PercussionClef(clefString, octaveShift);
+    return new PercussionClef();
   } // todo: tab, none, jianpu
 
 
@@ -45685,11 +45147,11 @@ function clefFromString(clefString) {
 
 /***/ }),
 
-/***/ "./src/music21/common.js":
+/***/ "./src/music21/common.ts":
 /*!*******************************!*\
-  !*** ./src/music21/common.js ***!
+  !*** ./src/music21/common.ts ***!
   \*******************************/
-/*! exports provided: merge, range, mixin, aggregation, posMod, statisticalMode, fromRoman, toRoman, makeSVGright, ordinalAbbreviation, rationalize, stripPx, urlParam, arrayEquals, SingletonCounter, setWindowVisibilityWatcher, urls, hyphenToCamelCase, numToIntOrFloat, pathSimplify */
+/*! exports provided: merge, range, mixin, posMod, statisticalMode, fromRoman, toRoman, makeSVGright, ordinalAbbreviation, rationalize, stripPx, urlParam, arrayEquals, SingletonCounter, urls, hyphenToCamelCase, numToIntOrFloat, pathSimplify */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45697,7 +45159,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "merge", function() { return merge; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "range", function() { return range; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mixin", function() { return mixin; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "aggregation", function() { return aggregation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "posMod", function() { return posMod; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "statisticalMode", function() { return statisticalMode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fromRoman", function() { return fromRoman; });
@@ -45709,44 +45170,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "urlParam", function() { return urlParam; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrayEquals", function() { return arrayEquals; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonCounter", function() { return SingletonCounter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setWindowVisibilityWatcher", function() { return setWindowVisibilityWatcher; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "urls", function() { return urls; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hyphenToCamelCase", function() { return hyphenToCamelCase; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "numToIntOrFloat", function() { return numToIntOrFloat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pathSimplify", function() { return pathSimplify; });
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.concat */ "./node_modules/core-js/modules/es.array.concat.js");
-/* harmony import */ var core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor */ "./node_modules/core-js/modules/es.regexp.constructor.js");
-/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.match */ "./node_modules/core-js/modules/es.string.match.js");
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.string.search */ "./node_modules/core-js/modules/es.string.search.js");
-/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_14__);
-
-
-
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor */ "./node_modules/core-js/modules/es.regexp.constructor.js");
+/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.search */ "./node_modules/core-js/modules/es.string.search.js");
+/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__);
 
 
 
@@ -45765,7 +45216,6 @@ __webpack_require__.r(__webpack_exports__);
  * functions that are useful everywhere...
  *
  * @exports music21/common
- * @namespace music21.common
  * @memberof music21
  */
 
@@ -45848,39 +45298,42 @@ function mixin(OtherParent, thisClassOrObject) {
  *
  *  not currently used...
  */
+// export const aggregation = (baseClass, ...mixins) => {
+//     class base extends baseClass {
+//         constructor(...args) {
+//             super(...args);
+//             mixins.forEach(mixin => {
+//                 copyProps(this, new mixin());
+//             });
+//         }
+//     }
+//     const copyProps = (target, source) => {
+//         // this function copies all properties and symbols, filtering out some special ones
+//         // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
+//         Object.getOwnPropertyNames(source)
+//             .concat(Object.getOwnPropertySymbols(source))
+//             .forEach(prop => {
+//                 if (
+//                     !prop.match(
+//                         /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
+//                     )
+//                 ) {
+//                     Object.defineProperty(
+//                         target,
+//                         prop,
+//                         Object.getOwnPropertyDescriptor(source, prop)
+//                     );
+//                 }
+//             });
+//     };
+//     mixins.forEach(mixin => {
+//         // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+//         copyProps(base.prototype, mixin.prototype);
+//         copyProps(base, mixin);
+//     });
+//     return base;
+// };
 
-var aggregation = function aggregation(baseClass) {
-  for (var _len = arguments.length, mixins = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    mixins[_key - 1] = arguments[_key];
-  }
-
-  class base extends baseClass {
-    constructor() {
-      super(...arguments);
-      mixins.forEach(mixin => {
-        copyProps(this, new mixin());
-      });
-    }
-
-  }
-
-  var copyProps = (target, source) => {
-    // this function copies all properties and symbols, filtering out some special ones
-    // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
-    Object.getOwnPropertyNames(source).concat(Object.getOwnPropertySymbols(source)).forEach(prop => {
-      if (!prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/)) {
-        Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop));
-      }
-    });
-  };
-
-  mixins.forEach(mixin => {
-    // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
-    copyProps(base.prototype, mixin.prototype);
-    copyProps(base, mixin);
-  });
-  return base;
-};
 /**
  * posMod - return a modulo value that is not negative
  *
@@ -46064,13 +45517,14 @@ function makeSVGright() {
  * (for "32nd") etc.
  *
  * @function music21.common.ordinalAbbreviation
- * @param {int} value
- * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
+ * @param {number} value
+ * @param {boolean} [plural=false] - make plural (note that "21st" plural is "21st")
  * @return {string}
  */
 
-function ordinalAbbreviation(value, plural) {
-  var post = '';
+function ordinalAbbreviation(value) {
+  var plural = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var post;
   var valueHundredths = value % 100;
 
   if (valueHundredths === 11 || valueHundredths === 12 || valueHundredths === 13) {
@@ -46105,9 +45559,9 @@ function ordinalAbbreviation(value, plural) {
  * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
  */
 
-function rationalize(ql, epsilon, maxDenominator) {
-  epsilon = epsilon || 0.001;
-  maxDenominator = maxDenominator || 50;
+function rationalize(ql) {
+  var epsilon = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.001;
+  var maxDenominator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 50;
 
   for (var i = 2; i < maxDenominator; i++) {
     if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
@@ -46173,8 +45627,9 @@ function arrayEquals(a1, a2) {
 
   return true;
 }
-var _singletonCounter = {};
-_singletonCounter.value = 0;
+var _singletonCounter = {
+  value: 0
+};
 class SingletonCounter {
   call() {
     var post = _singletonCounter.value;
@@ -46183,75 +45638,6 @@ class SingletonCounter {
   }
 
 }
-/**
- * runs a callback with either "visible" or "hidden" as the argument anytime the
- * window or document state changes.
- *
- * Depending on the browser, may be called multiple times with the same argument
- * for a single event.  For instance, Safari calls once on losing focus completely
- * but twice for a tab change.
- *
- * @function music21.common.setWindowVisibilityWatcher
- * @param {function} callback
- */
-
-function setWindowVisibilityWatcher(callback) {
-  function windowFocusChanged(evt) {
-    var v = 'visible';
-    var h = 'hidden';
-    var evtMap = {
-      focus: v,
-      focusin: v,
-      pageshow: v,
-      blur: h,
-      focusout: h,
-      pagehide: h
-    }; // noinspection JSDeprecatedSymbols
-
-    evt = evt || window.event;
-    var callbackState = '';
-
-    if (evt.type in evtMap) {
-      callbackState = evtMap[evt.type];
-    } else {
-      callbackState = this[hidden] ? 'hidden' : 'visible';
-    }
-
-    callback(callbackState, evt);
-  }
-
-  var hidden = 'hidden'; // Standards:
-
-  if (hidden in document) {
-    document.addEventListener('visibilitychange', windowFocusChanged);
-  } else if ('mozHidden' in document) {
-    hidden = 'mozHidden';
-    document.addEventListener('mozvisibilitychange', windowFocusChanged);
-  } else if ('webkitHidden' in document) {
-    hidden = 'webkitHidden';
-    document.addEventListener('webkitvisibilitychange', windowFocusChanged);
-  } else if ('msHidden' in document) {
-    hidden = 'msHidden';
-    document.addEventListener('msvisibilitychange', windowFocusChanged);
-  } else if ('onfocusin' in document) {
-    // IE 9 and lower:
-    document.onfocusin = windowFocusChanged;
-    document.onfocusout = windowFocusChanged;
-  } // Also catch window... -- get two calls for a tab shift, but one for window losing focus
-  // noinspection AssignmentResultUsedJS
-
-
-  window.onpageshow = windowFocusChanged;
-  window.onpagehide = windowFocusChanged;
-  window.onfocus = windowFocusChanged;
-  window.onblur = windowFocusChanged; // set the initial state
-
-  var initialState = document.visibilityState === 'visible' ? 'focus' : 'blur';
-  var initialStateEvent = {
-    type: initialState
-  };
-  windowFocusChanged(initialStateEvent);
-}
 var urls = {
   css: '/css',
   webResources: '/webResources',
@@ -46259,7 +45645,7 @@ var urls = {
   soundfontUrl: '/soundfonts/midi-js-soundfonts-master/FluidR3_GM/'
 };
 function hyphenToCamelCase(usrStr) {
-  return usrStr.replace(/-([a-zA-Z])/, (all, match) => match.toUpperCase());
+  return usrStr.replace(/-([a-zA-Z])/g, (all, match) => match.toUpperCase());
 }
 function numToIntOrFloat(value) {
   var intVal = Math.round(value);
@@ -46344,9 +45730,9 @@ var pathSimplify = path => {
 
 /***/ }),
 
-/***/ "./src/music21/converter.js":
+/***/ "./src/music21/converter.ts":
 /*!**********************************!*\
-  !*** ./src/music21/converter.js ***!
+  !*** ./src/music21/converter.ts ***!
   \**********************************/
 /*! exports provided: parse */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -46354,7 +45740,7 @@ var pathSimplify = path => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parse", function() { return parse; });
-/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.js");
+/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.ts");
 
 function parse(txt) {
   var sp = new _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__["ScoreParser"]();
@@ -46363,9 +45749,9 @@ function parse(txt) {
 
 /***/ }),
 
-/***/ "./src/music21/debug.js":
+/***/ "./src/music21/debug.ts":
 /*!******************************!*\
-  !*** ./src/music21/debug.js ***!
+  !*** ./src/music21/debug.ts ***!
   \******************************/
 /*! exports provided: debug */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -46377,9 +45763,9 @@ var debug = false;
 
 /***/ }),
 
-/***/ "./src/music21/derivation.js":
+/***/ "./src/music21/derivation.ts":
 /*!***********************************!*\
-  !*** ./src/music21/derivation.js ***!
+  !*** ./src/music21/derivation.ts ***!
   \***********************************/
 /*! exports provided: Derivation, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -46393,28 +45779,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_1__);
 
 
-
-/**
- * @namespace music21.derivation
- * @memberOf music21.derivation
- */
 class Derivation {
-  /**
-   *
-   * @param {music21.base.Music21Object} [client]
-   * @property {string} [method]
-   * @property {music21.base.Music21Object} [origin]
-   */
   constructor(client) {
     this.client = client;
-    this.method = undefined;
-    this.origin = undefined;
   }
 
   clone() {
     var newThing = new Derivation(this.client);
     newThing.method = this.method;
     newThing.origin = this.origin;
+    return newThing;
   }
 
   chain() {
@@ -46469,9 +45843,9 @@ class Derivation {
 
 /***/ }),
 
-/***/ "./src/music21/duration.js":
+/***/ "./src/music21/duration.ts":
 /*!*********************************!*\
-  !*** ./src/music21/duration.js ***!
+  !*** ./src/music21/duration.ts ***!
   \*********************************/
 /*! exports provided: typeFromNumDict, quarterTypeIndex, ordinalTypeFromNum, vexflowDurationArray, Duration, Tuplet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -46491,8 +45865,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
 
 
@@ -46557,16 +45931,12 @@ var vexflowDurationArray = [undefined, undefined, undefined, undefined, 'w', 'h'
  *
  * @class Duration
  * @memberof music21.duration
- * @extends music21.prebase.ProtoM21Object
  * @param {(number|undefined)} ql - quarterLength (default 1.0)
  */
 
 class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.duration.Duration';
-  }
-
-  constructor(ql) {
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0.0;
     super();
     this.isGrace = false;
     this._quarterLength = 0.0;
@@ -46582,6 +45952,10 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     }
 
     this._cloneCallbacks._tuplets = this.cloneCallbacksTupletFunction;
+  }
+
+  static get className() {
+    return 'music21.duration.Duration';
   }
 
   stringInfo() {
@@ -46678,7 +46052,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
    * Use {@link music21.duration.Duration#appendTuplet} to
    * add a tuplet (no way to remove yet)
    *
-   * @type {music21.duration.Tuplet[]}
+   * @type {Tuplet[]}
    * @default []
    */
 
@@ -46713,7 +46087,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     return vd;
   }
 
-  cloneCallbacksTupletFunction(tupletKey, ret, obj) {
+  cloneCallbacksTupletFunction(tupletKey, ret, obj, deep, memo) {
     // make sure that tuplets clone properly
     var newTuplets = [];
 
@@ -46812,13 +46186,14 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    * Add a tuplet to music21j
    *
-   * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
+   * @param {Tuplet} newTuplet - tuplet to add to `.tuplets`
    * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
    * @returns {this}
    */
 
 
-  appendTuplet(newTuplet, skipUpdateQl) {
+  appendTuplet(newTuplet) {
+    var skipUpdateQl = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     newTuplet.frozen = true;
 
     this._tuplets.push(newTuplet);
@@ -46835,7 +46210,6 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
  * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
  *
  * @memberof music21.duration
- * @extends music21.prebase.ProtoM21Object
  * @param {number} [numberNotesActual=3] - numerator of the tuplet
  * @param {number} [numberNotesNormal=2] - denominator of the tuplet
  * @param {(music21.duration.Duration|number)} [durationActual] - duration or
@@ -46845,16 +46219,15 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
  */
 
 class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.duration.Tuplet';
-  }
-
   constructor() {
     var numberNotesActual = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3;
     var numberNotesNormal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-    var durationActual = arguments.length > 2 ? arguments[2] : undefined;
-    var durationNormal = arguments.length > 3 ? arguments[3] : undefined;
+    var durationActual = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var durationNormal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
     super();
+    this.frozen = false;
+    this.bracket = true;
+    this.placement = 'above';
     this.numberNotesActual = numberNotesActual;
     this.numberNotesNormal = numberNotesNormal;
     this.durationActual = durationActual || new Duration(0.5);
@@ -46868,17 +46241,11 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     this.type = undefined;
     /**
      * Show a bracket above the tuplet
-     *
-     * @property {boolean} bracket
-     * @default true
      */
 
     this.bracket = true;
     /**
      * Bracket placement. Options are `above` or `below`.
-     *
-     * @property {string} placement
-     * @default 'above'
      */
 
     this.placement = 'above';
@@ -46891,6 +46258,10 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
     this.tupletActualShow = 'number';
     this.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
+  }
+
+  static get className() {
+    return 'music21.duration.Tuplet';
   }
   /**
    * A nice name for the tuplet.
@@ -46979,9 +46350,9 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
 /***/ }),
 
-/***/ "./src/music21/dynamics.js":
+/***/ "./src/music21/dynamics.ts":
 /*!*********************************!*\
-  !*** ./src/music21/dynamics.js ***!
+  !*** ./src/music21/dynamics.ts ***!
   \*********************************/
 /*! exports provided: shortNames, longNames, englishNames, dynamicStrToScalar, Dynamic */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47042,7 +46413,6 @@ var englishNames = {
 };
 var dynamicStrToScalar = {
   None: [0.5],
-  // default value
   n: [0.0],
   pppp: [0.1],
   ppp: [0.15],
@@ -47071,29 +46441,13 @@ var dynamicStrToScalar = {
  */
 
 class Dynamic extends _base__WEBPACK_IMPORTED_MODULE_0__["Music21Object"] {
-  static get className() {
-    return 'music21.dynamics.Dynamic';
-  }
-
   constructor(value) {
     super();
-    /**
-     *
-     * @type {string|undefined}
-     * @private
-     */
-
-    this._value = undefined;
-    /**
-     *
-     * @type {number|undefined}
-     * @private
-     */
-
-    this._volumeScalar = undefined;
-    this.longName = undefined;
-    this.englishName = undefined;
     this.value = value;
+  }
+
+  static get className() {
+    return 'music21.dynamics.Dynamic';
   }
 
   get value() {
@@ -47251,9 +46605,9 @@ class StreamException extends Music21Exception {}
 
 /***/ }),
 
-/***/ "./src/music21/expressions.js":
+/***/ "./src/music21/expressions.ts":
 /*!************************************!*\
-  !*** ./src/music21/expressions.js ***!
+  !*** ./src/music21/expressions.ts ***!
   \************************************/
 /*! exports provided: Expression, Fermata */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47262,9 +46616,16 @@ class StreamException extends Music21Exception {}
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Expression", function() { return Expression; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Fermata", function() { return Fermata; });
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+
+
+
 /**
  * Expressions module.  See {@link music21.expressions}
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
@@ -47284,19 +46645,19 @@ __webpack_require__.r(__webpack_exports__);
  * @extends music21.base.Music21Object
  * @property {string} name
  * @property {string} vexflowModifier
- * @property {int} setPosition
+ * @property {number} setPosition
  */
 
-class Expression extends _base__WEBPACK_IMPORTED_MODULE_1__["Music21Object"] {
-  static get className() {
-    return 'music21.expressions.Expression';
-  }
-
+class Expression extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
   constructor() {
-    super();
+    super(...arguments);
     this.name = 'expression';
     this.vexflowModifier = '';
     this.setPosition = undefined;
+  }
+
+  static get className() {
+    return 'music21.expressions.Expression';
   }
   /**
    * Renders this Expression as a Vex.Flow.Articulation
@@ -47308,7 +46669,7 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_1__["Music21Object"] {
 
 
   vexflow() {
-    var vfe = new vexflow__WEBPACK_IMPORTED_MODULE_0___default.a.Flow.Articulation(this.vexflowModifier);
+    var vfe = new vexflow__WEBPACK_IMPORTED_MODULE_2___default.a.Flow.Articulation(this.vexflowModifier);
 
     if (this.setPosition) {
       vfe.setPosition(this.setPosition);
@@ -47342,9 +46703,9 @@ class Fermata extends Expression {
 
 /***/ }),
 
-/***/ "./src/music21/figuredBass.js":
+/***/ "./src/music21/figuredBass.ts":
 /*!************************************!*\
-  !*** ./src/music21/figuredBass.js ***!
+  !*** ./src/music21/figuredBass.ts ***!
   \************************************/
 /*! exports provided: Notation, Figure, Modifier */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47374,7 +46735,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
@@ -47425,19 +46786,19 @@ class Notation {
    */
   constructor() {
     var notationColumn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    this.notationColumn = notationColumn;
     this.figureStrings = undefined;
     this.origNumbers = undefined;
     this.origModStrings = undefined;
     this.numbers = undefined;
     this.modifierStrings = undefined;
+    this.notationColumn = notationColumn;
 
     this._parseNotationColumn();
 
     this._translateToLonghand();
 
-    this.modifiers = undefined;
-    this.figures = undefined;
+    this.modifiers = [];
+    this.figures = [];
 
     this._getModifiers();
 
@@ -47710,13 +47071,11 @@ class Modifier {
       return undefined;
     }
 
-    var a = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
-
     if (specialModifiers[modStr] !== undefined) {
       modStr = specialModifiers[modStr];
     }
 
-    a.set(modStr);
+    var a = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](modStr);
     return a;
   }
 
@@ -47738,9 +47097,8 @@ class Modifier {
     if (this.accidental.alter === 0.0 || pitchToAlter.accidental === undefined) {
       pitchToAlter.accidental = this.accidental.clone();
     } else {
-      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
       var newAlter = pitchToAlter.accidental.alter + this.accidental.alter;
-      newAccidental.set(newAlter);
+      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](newAlter);
       pitchToAlter.accidental = newAccidental;
     }
 
@@ -47751,9 +47109,9 @@ class Modifier {
 
 /***/ }),
 
-/***/ "./src/music21/fromPython.js":
+/***/ "./src/music21/fromPython.ts":
 /*!***********************************!*\
-  !*** ./src/music21/fromPython.js ***!
+  !*** ./src/music21/fromPython.ts ***!
   \***********************************/
 /*! exports provided: Converter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47815,9 +47173,11 @@ var unpickler = jp.unpickler;
 class Converter {
   constructor() {
     this.debug = true;
-    this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', // Soon...
-    'music21.tempo.MetronomeMark', // should be possible
-    'music21.metadata.Metadata'];
+    this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', 'music21.tempo.MetronomeMark', 'music21.metadata.Metadata'];
+    this.currentPart = undefined;
+    this.lastClef = undefined;
+    this.lastKeySignature = undefined;
+    this.lastTimeSignature = undefined;
     this.handlers = {
       'music21.duration.Duration': {
         post_restore: d => {
@@ -47856,10 +47216,6 @@ class Converter {
         post_restore: this.streamPostRestore.bind(this)
       }
     };
-    this.currentPart = undefined;
-    this.lastClef = undefined;
-    this.lastKeySignature = undefined;
-    this.lastTimeSignature = undefined;
   }
   /**
    * Fixes up some references that cannot be unpacked from jsonpickle.
@@ -47966,9 +47322,9 @@ class Converter {
 
 /***/ }),
 
-/***/ "./src/music21/harmony.js":
+/***/ "./src/music21/harmony.ts":
 /*!********************************!*\
-  !*** ./src/music21/harmony.js ***!
+  !*** ./src/music21/harmony.ts ***!
   \********************************/
 /*! exports provided: Harmony */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47980,51 +47336,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key */ "./src/music21/key.ts");
 
 
 
-/**
- * @namespace music21.harmony
- */
-
-
-/**
- * @memberOf music21.harmony
- * @extends music21.chord.Chord
- */
 
 class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
-  static get className() {
-    return 'music21.harmony.Harmony';
-  }
-  /**
-   *
-   * @param {string} figure
-   * @param {Object} keywords
-   */
-
-
   constructor(figure) {
-    var keywords = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref$parseFigure = _ref.parseFigure,
+        parseFigure = _ref$parseFigure === void 0 ? true : _ref$parseFigure,
+        _ref$updatePitches = _ref.updatePitches,
+        updatePitches = _ref$updatePitches === void 0 ? false : _ref$updatePitches;
+
     super();
     this._writeAsChord = false;
-    this._roman = undefined;
     this.chordStepModifications = [];
-    this._degreesList = [];
-    /**
-     *
-     * @type {music21.key.Key|undefined}
-     * @private
-     */
-
-    this._key = undefined; // this._updateBasedOnXMLInput(keywords);
+    this._degreesList = []; // this._updateBasedOnXMLInput(keywords);
 
     figure = figure.replace('/o', 'ø');
     this._figure = figure;
 
-    if (keywords.parseFigure !== false && this._figure !== undefined) {
+    if (parseFigure !== false && this._figure !== undefined) {
       this._parseFigure();
     }
 
@@ -48032,14 +47366,18 @@ class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
       this.bass(this._overrides.root);
     }
 
-    if (keywords.updatePitches && this._figure !== undefined || this._overrides.root !== undefined || this._overrides.bass !== undefined) {
+    if (updatePitches && this._figure !== undefined || this._overrides.root !== undefined || this._overrides.bass !== undefined) {
       this._updatePitches();
     } // this._updateBasedOnXMLInput(keywords);
 
 
-    if (keywords.parseFigure !== false && this._figure !== undefined && this._figure.indexOf('sus') !== -1 && this._figure.indexOf('sus2') === -1) {
+    if (parseFigure !== false && this._figure !== undefined && this._figure.indexOf('sus') !== -1 && this._figure.indexOf('sus2') === -1) {
       this.root(this.bass());
     }
+  }
+
+  static get className() {
+    return 'music21.harmony.Harmony';
   }
 
   _parseFigure() {}
@@ -48048,10 +47386,10 @@ class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
 
   get figure() {
     if (this._figure === undefined) {
-      return this.findFigure();
-    } else {
-      return this._figure;
+      this.findFigure();
     }
+
+    return this._figure;
   }
 
   set figure(newFigure) {
@@ -48083,9 +47421,9 @@ class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
 
 /***/ }),
 
-/***/ "./src/music21/instrument.js":
+/***/ "./src/music21/instrument.ts":
 /*!***********************************!*\
-  !*** ./src/music21/instrument.js ***!
+  !*** ./src/music21/instrument.ts ***!
   \***********************************/
 /*! exports provided: global_usedChannels, maxMidi, info, Instrument, find */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -48097,7 +47435,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "info", function() { return info; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Instrument", function() { return Instrument; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "find", function() { return find; });
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+
+
+
+
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/instrument -- instrument objects
@@ -48115,17 +47463,7 @@ __webpack_require__.r(__webpack_exports__);
  * @requires music21/base
  */
 
-/**
- *
- * @type {number[]}
- */
-
 var global_usedChannels = []; // differs from m21p -- stored midiProgram numbers
-
-/**
- *
- * @type {number}
- */
 
 var maxMidi = 16;
 /**
@@ -48654,7 +47992,6 @@ var info = [{
  *
  * @class Instrument
  * @memberof music21.instrument
- * @extends music21.base.Music21Object
  * @param {string} instrumentName
  * @property {string|undefined} partId
  * @property {string|undefined} partName
@@ -48673,19 +48010,15 @@ var info = [{
  * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
  */
 
-class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__["Music21Object"] {
-  static get className() {
-    return 'music21.instrument.Instrument';
-  }
-
-  constructor(instrumentName) {
+class Instrument extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
+  constructor() {
+    var instrumentName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     super();
-    this.classSortOrder = -25;
     this.partId = undefined;
     this.partName = undefined;
     this.partAbbreviation = undefined;
     this.instrumentId = undefined;
-    this.instrumentName = instrumentName;
+    this.instrumentName = '';
     this.instrumentAbbreviation = undefined;
     this.midiProgram = undefined;
     this._midiChannel = undefined;
@@ -48694,10 +48027,16 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__["Music21Object"] {
     this.transpostion = undefined;
     this.inGMPercMap = false;
     this.soundfontFn = undefined;
+    this.classSortOrder = -25;
+    this.instrumentName = instrumentName;
 
-    if (instrumentName !== undefined) {
+    if (instrumentName !== '') {
       find(instrumentName, this);
     }
+  }
+
+  static get className() {
+    return 'music21.instrument.Instrument';
   }
   /**
    * Assign an instrument to an unused midi channel.
@@ -48711,7 +48050,9 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__["Music21Object"] {
    */
 
 
-  autoAssignMidiChannel(usedChannels) {
+  autoAssignMidiChannel() {
+    var usedChannels = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (usedChannels === undefined) {
       usedChannels = global_usedChannels;
     }
@@ -48770,19 +48111,40 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__["Music21Object"] {
  * @returns {music21.instrument.Instrument|undefined}
  */
 
-function find(fn, inst) {
+function find(fn) {
+  var inst = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
   if (inst === undefined) {
     inst = new Instrument();
   }
 
-  for (var _i = 0, _info = info; _i < _info.length; _i++) {
-    var innerInfo = _info[_i];
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
 
-    if (innerInfo.fn === fn || innerInfo.name === fn) {
-      inst.soundfontFn = innerInfo.fn;
-      inst.instrumentName = innerInfo.name;
-      inst.midiProgram = innerInfo.midiNumber;
-      return inst;
+  try {
+    for (var _iterator = info[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var innerInfo = _step.value;
+
+      if (innerInfo.fn === fn || innerInfo.name === fn) {
+        inst.soundfontFn = innerInfo.fn;
+        inst.instrumentName = innerInfo.name;
+        inst.midiProgram = innerInfo.midiNumber;
+        return inst;
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return != null) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
     }
   }
 
@@ -48791,9 +48153,9 @@ function find(fn, inst) {
 
 /***/ }),
 
-/***/ "./src/music21/interval.js":
+/***/ "./src/music21/interval.ts":
 /*!*********************************!*\
-  !*** ./src/music21/interval.js ***!
+  !*** ./src/music21/interval.ts ***!
   \*********************************/
 /*! exports provided: Direction, IntervalDirectionTerms, MusicOrdinals, GenericInterval, IntervalSpecifiersEnum, IntervalNiceSpecNames, IntervalPrefixSpecs, IntervalOrderedPerfSpecs, IntervalPerfSpecifiers, IntervalPerfOffset, IntervalOrderedImperfSpecs, IntervalSpecifiers, IntervalMajOffset, IntervalSemitonesGeneric, IntervalAdjustPerfect, IntervalAdjustImperf, DiatonicInterval, ChromaticInterval, IntervalStepNames, convertDiatonicNumberToStep, Interval, intervalFromGenericAndChromatic, notesToGeneric, convertStaffDistanceToInterval, notesToChromatic, intervalsToDiatonic, _getSpecifierFromGenericChromatic, add */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -48836,19 +48198,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.reverse */ "./node_modules/core-js/modules/es.array.reverse.js");
+/* harmony import */ var core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+
 
 
 
@@ -48862,7 +48227,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -48986,11 +48351,7 @@ var MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth', 'Fifth', 
  *
  */
 
-class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.GenericInterval';
-  }
-
+class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
   constructor(gi) {
     super();
 
@@ -49032,7 +48393,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Ob
       this.isUnison = false;
     }
 
-    var tempSteps = _common__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.undirected, 7);
+    var tempSteps = _common__WEBPACK_IMPORTED_MODULE_10__["posMod"](this.undirected, 7);
     var tempOctaves = Math.floor(this.undirected / 7);
 
     if (tempSteps === 0) {
@@ -49098,6 +48459,10 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Ob
       this.mod7 = this.simpleDirected;
     }
   }
+
+  static get className() {
+    return 'music21.interval.GenericInterval';
+  }
   /**
    * Returns a new GenericInterval which is the mod7inversion; 3rds (and 10ths etc.) to 6ths, etc.
    *
@@ -49143,7 +48508,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Ob
 
 
   transposePitch(p) {
-    var pitch2 = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]();
+    var pitch2 = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"]();
     pitch2.step = p.step;
     pitch2.octave = p.octave;
     var oldDiatonicNum = p.diatonicNoteNum;
@@ -49160,7 +48525,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Ob
     pitch2.octave = newOctave;
 
     if (p.accidental !== undefined) {
-      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Accidental"](p.accidental.name);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](p.accidental.name);
     }
 
     return pitch2;
@@ -49246,11 +48611,7 @@ var IntervalAdjustImperf = {
  * // See music21p for more possibilities.
  */
 
-class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.DiatonicInterval';
-  }
-
+class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
   constructor(specifier, generic) {
     super();
 
@@ -49276,7 +48637,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21O
 
     if (generic.undirected !== 1 || specifier === IntervalSpecifiersEnum.PERFECT) {
       this.direction = generic.direction;
-    } else if (IntervalPerfSpecifiers.indexOf(specifier) <= IntervalPerfSpecifiers.indexOf(IntervalSpecifiersEnum.DIMINISHED)) {
+    } else if (IntervalPerfSpecifiers.indexOf(this.specifier) <= IntervalPerfSpecifiers.indexOf(IntervalSpecifiersEnum.DIMINISHED)) {
       // diminished unisons -- very controversial
       this.direction = Direction.DESCENDING;
     } else {
@@ -49320,6 +48681,10 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21O
     // TODO: reverse()
     // TODO: property cents
   }
+
+  static get className() {
+    return 'music21.interval.DiatonicInterval';
+  }
   /**
    * Returns a ChromaticInterval object of the same size.
    *
@@ -49331,7 +48696,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21O
     var octaveOffset = Math.floor(Math.abs(this.generic.staffDistance) / 7);
     var semitonesStart = IntervalSemitonesGeneric[this.generic.simpleUndirected];
     var specName = IntervalPrefixSpecs[this.specifier];
-    var semitonesAdjust = 0;
+    var semitonesAdjust;
 
     if (this.generic.perfectable) {
       semitonesAdjust = IntervalAdjustPerfect[specName];
@@ -49345,7 +48710,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21O
       semitones *= -1;
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_8__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_9__["debug"]) {
       console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
       console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
       console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
@@ -49398,12 +48763,9 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21O
  *
  */
 
-class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.ChromaticInterval';
-  }
-
-  constructor(value) {
+class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
+  constructor() {
+    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     super();
     this.semitones = value;
     this.cents = Math.round(value * 100.0);
@@ -49418,8 +48780,8 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21
       this.direction = Direction.DESCENDING;
     }
 
-    this.mod12 = _common__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.semitones, 12);
-    this.simpleUndirected = _common__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.undirected, 12);
+    this.mod12 = _common__WEBPACK_IMPORTED_MODULE_10__["posMod"](this.semitones, 12);
+    this.simpleUndirected = _common__WEBPACK_IMPORTED_MODULE_10__["posMod"](this.undirected, 12);
 
     if (this.direction === Direction.DESCENDING) {
       this.simpleDirected = -1 * this.simpleUndirected;
@@ -49438,6 +48800,10 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21
     } else {
       this.isChromaticStep = false;
     }
+  }
+
+  static get className() {
+    return 'music21.interval.ChromaticInterval';
   }
   /**
    *
@@ -49466,7 +48832,7 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21
     }
 
     var pps = p.ps;
-    var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]();
+    var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"]();
     newPitch.ps = pps + this.semitones;
 
     if (useImplicitOctave) {
@@ -49481,8 +48847,8 @@ var IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 /**
  * @function music21.interval.convertDiatonicNumberToStep
  * @memberof music21.interval
- * @param {int} dn - diatonic number, where 29 = C4, C#4 etc.
- * @returns {Array} two element array of {string} stepName and {Int} octave
+ * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
+ * @returns {Array} two element array of {string} stepName and {number} octave
  */
 
 function convertDiatonicNumberToStep(dn) {
@@ -49524,11 +48890,7 @@ function convertDiatonicNumberToStep(dn) {
  * // "Augmented Eleventh"
  */
 
-class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.Interval';
-  }
-
+class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
   constructor() {
     super(); // todo: allow full range of ways of specifying as in m21p
 
@@ -49572,13 +48934,13 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] 
 
         if (n1.classes !== undefined && n1.classes.includes('Pitch')) {
           var p1 = n1;
-          n1 = new _note__WEBPACK_IMPORTED_MODULE_10__["Note"]();
+          n1 = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"]();
           n1.pitch = p1;
         }
 
         if (n2.classes !== undefined && n2.classes.includes('Pitch')) {
           var p2 = n2;
-          n2 = new _note__WEBPACK_IMPORTED_MODULE_10__["Note"]();
+          n2 = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"]();
           n2.pitch = p2;
         }
 
@@ -49594,6 +48956,10 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] 
     this._noteStart = noteStart;
     this._noteEnd = noteEnd;
     this.reinit();
+  }
+
+  static get className() {
+    return 'music21.interval.Interval';
   }
   /**
    *
@@ -49719,10 +49085,10 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] 
     }
 
     if (halfStepsToFix !== 0) {
-      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Accidental"](halfStepsToFix);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](halfStepsToFix);
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_8__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_9__["debug"]) {
       console.log('Interval.transposePitch -- new step ' + pitch2.step);
       console.log('Interval.transposePitch -- new octave ' + pitch2.octave);
       console.log('Interval.transposePitch -- fixing half steps for ' + halfStepsToFix);
@@ -49814,7 +49180,7 @@ function _getSpecifierFromGenericChromatic(gInt, cInt) {
   }
 
   var semisRounded = Math.round(theseSemis);
-  var specifier = '';
+  var specifier;
 
   if (gInt.perfectable) {
     specifier = IntervalPerfSpecifiers[IntervalPerfOffset + semisRounded - normalSemis];
@@ -49831,8 +49197,8 @@ function _getSpecifierFromGenericChromatic(gInt, cInt) {
  */
 
 function add(intervalList) {
-  var p1 = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]('C4');
-  var p2 = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]('C4');
+  var p1 = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"]('C4');
+  var p2 = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"]('C4');
   var _iteratorNormalCompletion = true;
   var _didIteratorError = false;
   var _iteratorError = undefined;
@@ -49862,9 +49228,9 @@ function add(intervalList) {
 
 /***/ }),
 
-/***/ "./src/music21/key.js":
+/***/ "./src/music21/key.ts":
 /*!****************************!*\
-  !*** ./src/music21/key.js ***!
+  !*** ./src/music21/key.ts ***!
   \****************************/
 /*! exports provided: modeSharpsAlter, convertKeyStringToMusic21KeyString, KeySignature, Key */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -49892,11 +49258,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.js");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.ts");
 
 
 
@@ -49976,28 +49342,21 @@ function convertKeyStringToMusic21KeyString(textString) {
  */
 
 class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
-  static get className() {
-    return 'music21.key.KeySignature';
-  }
-
-  constructor(sharps) {
+  constructor() {
+    var sharps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     super();
-    this.classSortOrder = 2;
-    this._sharps = sharps || 0; // if undefined
-
-    /**
-     * @type {music21.pitch.Pitch[]}
-     */
-
-    this._alteredPitchesCache = undefined; // 12 flats/sharps enough for now...
+    this._sharps = 0; // 12 flats/sharps enough for now...
 
     this.flatMapping = ['C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-', 'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
     this.sharpMapping = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
+    this.classSortOrder = 2;
+    this._sharps = sharps;
+    this._alteredPitchesCache = undefined;
   }
-  /**
-   * @return string
-   */
 
+  static get className() {
+    return 'music21.key.KeySignature';
+  }
 
   stringInfo() {
     if (this.sharps === 0) {
@@ -50012,10 +49371,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
       return "of ".concat(this.sharps, " sharps");
     }
   }
-  /**
-   * @type {int}
-   */
-
 
   get sharps() {
     return this._sharps;
@@ -50027,9 +49382,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
   }
   /**
    * Gives the width in pixels necessary to represent the key signature.
-   *
-   * @type {number}
-   * @readonly
    */
 
 
@@ -50194,10 +49546,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
     var newPitch = p;
 
     for (var i = 0; i < transTimes; i++) {
-      /**
-       *
-       * @type {music21.pitch.Pitch}
-       */
       newPitch = transInterval.transposePitch(newPitch);
     }
 
@@ -50220,11 +49568,10 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
  */
 
 class Key extends KeySignature {
-  static get className() {
-    return 'music21.key.Key';
-  }
+  constructor() {
+    var keyName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
+    var mode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
-  constructor(keyName, mode) {
     if (keyName === undefined) {
       keyName = 'C';
     }
@@ -50259,6 +49606,10 @@ class Key extends KeySignature {
     this._scale = this.getScale();
   }
 
+  static get className() {
+    return 'music21.key.Key';
+  }
+
   stringInfo() {
     return this.tonicPitchNameWithCase + ' ' + this.mode;
   }
@@ -50283,7 +49634,9 @@ class Key extends KeySignature {
    */
 
 
-  getScale(scaleType) {
+  getScale() {
+    var scaleType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (scaleType === undefined) {
       scaleType = this.mode;
     }
@@ -50301,7 +49654,8 @@ class Key extends KeySignature {
     } else {
       return new _scale__WEBPACK_IMPORTED_MODULE_13__["ConcreteScale"](pitchObj);
     }
-  } // when scale.js adds functionality, it must be added here.
+  } // Because of lack of multiple inheritance,
+  // whenever scale.js adds functionality, it must be added here.
 
 
   get isConcrete() {
@@ -50312,21 +49666,29 @@ class Key extends KeySignature {
     return this._scale.getPitches(...arguments);
   }
 
-  pitchFromDegree() {
-    return this._scale.pitchFromDegree(...arguments);
+  pitchFromDegree(degree) {
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    return this._scale.pitchFromDegree(degree, ...args);
   }
 
-  getScaleDegreeFromPitch() {
-    return this._scale.getScaleDegreeFromPitch(...arguments);
+  getScaleDegreeFromPitch(pitchTarget) {
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    return this._scale.getScaleDegreeFromPitch(pitchTarget, ...args);
   }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/keyboard.js":
+/***/ "./src/music21/keyboard.ts":
 /*!*********************************!*\
-  !*** ./src/music21/keyboard.js ***!
+  !*** ./src/music21/keyboard.ts ***!
   \*********************************/
 /*! exports provided: Key, WhiteKey, BlackKey, Keyboard, triggerToggleShow, jazzHighlight */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -50345,9 +49707,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 /**
@@ -50408,7 +49770,9 @@ class Key {
   constructor() {
     this.classes = ['Key']; // name conflict with key.Key
 
-    this.callbacks = [];
+    this.callbacks = {
+      click: undefined
+    };
     this.scaleFactor = 1;
     this.parent = undefined;
     this.id = 0;
@@ -50638,6 +50002,17 @@ class Keyboard {
     this._endDNN = undefined;
     this.hideable = false;
     this.scrollable = false;
+    this.callbacks = {
+      click: undefined
+    }; //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
+
+    this.sharpOffsets = {
+      0: 14.3333,
+      1: 18.6666,
+      3: 13.25,
+      4: 16.25,
+      5: 19.75
+    };
     /**
      * An object of callbacks on events.
      *
@@ -50651,14 +50026,6 @@ class Keyboard {
 
     this.callbacks = {
       click: keyClicked => this.clickHandler(keyClicked)
-    }; //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
-
-    this.sharpOffsets = {
-      0: 14.3333,
-      1: 18.6666,
-      3: 13.25,
-      4: 16.25,
-      5: 19.75
     };
   }
   /**
@@ -50716,6 +50083,8 @@ class Keyboard {
   /**
    * Handle a click on a given SVG object
    *
+   * TODO(msc) - 2019-Dec -- separate into two calls, one for highlighting and one for playing.
+   *
    * @param {SVGElement} keyRect - the dom object with the keyboard.
    */
 
@@ -50747,8 +50116,6 @@ class Keyboard {
   }
   /**
    * Draws the SVG associated with this Keyboard
-   *
-   * @returns {SVGElement} new svgDOM
    */
 
 
@@ -50854,11 +50221,12 @@ class Keyboard {
    */
 
 
-  markMiddleC(strokeColor) {
+  markMiddleC() {
+    var strokeColor = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'red';
     var midC = this.keyObjects[60];
 
     if (midC !== undefined) {
-      midC.addCircle('red');
+      midC.addCircle(strokeColor);
     }
   }
   /**
@@ -50902,7 +50270,7 @@ class Keyboard {
    * scrollable property on the keyboard to True.
    *
    * @param {SVGElement} svgDOM
-   * @returns {jQuery}
+   * @returns {JQuery}
    */
 
 
@@ -51042,12 +50410,13 @@ function jazzHighlight(e) {
     if (this.keyObjects[midiNote] !== undefined) {
       var keyObj = this.keyObjects[midiNote];
       var svgObj = keyObj.svgObj;
-      var intensityRGB = '';
       var normalizedVelocity = (e.velocity + 25) / 127;
 
       if (normalizedVelocity > 1) {
         normalizedVelocity = 1.0;
       }
+
+      var intensityRGB;
 
       if (keyObj.keyClass === 'whitekey') {
         var intensity = normalizedVelocity.toString();
@@ -51074,9 +50443,9 @@ function jazzHighlight(e) {
 
 /***/ }),
 
-/***/ "./src/music21/layout.js":
+/***/ "./src/music21/layout.ts":
 /*!*******************************!*\
-  !*** ./src/music21/layout.js ***!
+  !*** ./src/music21/layout.ts ***!
   \*******************************/
 /*! exports provided: makeLayoutFromScore, LayoutScore, Page, System, Staff */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -51088,13 +50457,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Page", function() { return Page; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "System", function() { return System; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Staff", function() { return Staff; });
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.js");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
 /**
  *
  * THIS IS CURRENTLY UNUSED
  * Does not work yet, so not documented
  *
- * @namespace music21.layout
  */
 // future -- rewrite of Score and Part to Page, System, SystemPart
 // not currently used
@@ -51122,7 +50490,7 @@ __webpack_require__.r(__webpack_exports__);
 function makeLayoutFromScore(score, containerWidth) {
   // var systemHeight = score.systemHeight; /* part.show() called... */
   // var systemPadding = score.systemPadding;
-  var parts = score.parts; // console.log(parts);
+  var parts = score.parts.stream(); // console.log(parts);
 
   var numParts = parts.length;
   var partZero = parts.get(0);
@@ -51174,7 +50542,7 @@ function makeLayoutFromScore(score, containerWidth) {
     if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
       // new system...
       for (var j = 0; j < currentStaves.length; j++) {
-        currentStaves.measureEnd = i;
+        currentStaves[j].measureEnd = i;
         currentSystem.insert(0, currentStaves[j]);
       }
 
@@ -51197,12 +50565,12 @@ function makeLayoutFromScore(score, containerWidth) {
     }
 
     for (var pNum = 0; pNum < currentStaves.length; pNum++) {
-      currentStaves[pNum].append(parts[pNum].get(i));
+      currentStaves[pNum].append(parts.get(pNum).get(i));
     }
   }
 
   for (var _j = 0; _j < currentStaves.length; _j++) {
-    currentStaves.measureEnd = measureWidths.length - 1;
+    currentStaves[_j].measureEnd = measureWidths.length - 1;
     currentSystem.insert(0, currentStaves[_j]);
   }
 
@@ -51218,10 +50586,6 @@ function makeLayoutFromScore(score, containerWidth) {
  */
 
 class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
-  static get className() {
-    return 'music21.layout.LayoutScore';
-  }
-
   constructor() {
     super();
     this.scoreLayout = undefined;
@@ -51239,6 +50603,10 @@ class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
     this.left = 0;
   }
 
+  static get className() {
+    return 'music21.layout.LayoutScore';
+  }
+
   get pages() {
     return this.getElementsByClass('Page');
   }
@@ -51251,20 +50619,7 @@ class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
     } else {
       return undefined;
     }
-  } // /**
-  //  * return a tuple of (top, bottom) for a staff, specified by a given pageId,
-  //  * systemId, and staffId in PIXELS.
-  //
-  //  * @param pageId
-  //  * @param systemId
-  //  * @param staffId
-  //  * @param units -- "pixels" or "tenths" (not supported)
-  //  */
-  //
-  // getPositionForStaff(pageId, systemId, staffId, units) {
-  //     units = units || 'pixels';
-  // }
-
+  }
 
 }
 /**
@@ -51278,10 +50633,6 @@ class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  */
 
 class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
-  static get className() {
-    return 'music21.layout.Page';
-  }
-
   constructor() {
     super();
     this.pageNumber = 1;
@@ -51290,6 +50641,10 @@ class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
     this.systemStart = undefined;
     this.systemEnd = undefined;
     this.pageLayout = undefined;
+  }
+
+  static get className() {
+    return 'music21.layout.Page';
   }
 
   get systems() {
@@ -51318,26 +50673,19 @@ class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  */
 
 class System extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
-  static get className() {
-    return 'music21.layout.System';
-  }
-
   constructor() {
     super();
     this.systemNumber = 1;
     this.systemLayout = undefined;
     this.measureStart = undefined;
     this.measureEnd = undefined;
-    /**
-     *
-     * @type {number|undefined}
-     * @private
-     */
-
-    this._width = undefined;
     this.height = undefined;
     this.top = undefined;
     this.left = undefined;
+  }
+
+  static get className() {
+    return 'music21.layout.System';
   }
 
   get staves() {
@@ -51361,10 +50709,6 @@ class System extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  */
 
 class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__["Part"] {
-  static get className() {
-    return 'music21.layout.Staff';
-  }
-
   constructor() {
     super();
     this.staffNumber = 1;
@@ -51375,6 +50719,10 @@ class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__["Part"] {
     this.height = undefined;
     this.inheritedHeight = undefined;
     this.staffLayout = undefined;
+  }
+
+  static get className() {
+    return 'music21.layout.Staff';
   }
 
   get width() {
@@ -51391,9 +50739,9 @@ class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__["Part"] {
 
 /***/ }),
 
-/***/ "./src/music21/meter.js":
+/***/ "./src/music21/meter.ts":
 /*!******************************!*\
-  !*** ./src/music21/meter.js ***!
+  !*** ./src/music21/meter.ts ***!
   \******************************/
 /*! exports provided: TimeSignature */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -51418,9 +50766,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 
 
 
@@ -51433,7 +50781,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -51441,8 +50789,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  * meter module. See {@link music21.meter} namespace for details.
@@ -51469,18 +50816,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]
- * @property {int[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
+ * @property {number[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
  * @property {music21.duration.Duration} barDuration - a Duration object
  *     representing the expressed total length of the TimeSignature.
  */
 
 class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
-  static get className() {
-    return 'music21.meter.TimeSignature';
-  }
-
-  constructor(meterString) {
+  constructor() {
+    var meterString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
     super();
     this.classSortOrder = 4;
     this._numerator = 4;
@@ -51493,20 +50837,14 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
       this.ratioString = meterString;
     }
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.meter.TimeSignature';
+  }
 
   stringInfo() {
     return this.ratioString;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get numerator() {
     return this._numerator;
@@ -51515,11 +50853,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
   set numerator(s) {
     this._numerator = s;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get denominator() {
     return this._denominator;
@@ -51528,11 +50861,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
   set denominator(s) {
     this._denominator = s;
   }
-  /**
-   *
-   * @type {string}
-   */
-
 
   get ratioString() {
     return this.numerator.toString() + '/' + this.denominator.toString();
@@ -51569,7 +50897,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
   /**
    *  Get the beatCount from the numerator, assuming fast 6/8, etc.
    *  unless .beatCount has been set manually.
-   *  @type {number}
    */
 
 
@@ -51591,7 +50918,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
 
   set beatCount(overwrite) {
     this._overwrittenBeatCount = overwrite;
-    return overwrite;
   }
   /**
    * Gets a single duration.Duration object representing
@@ -51675,7 +51001,8 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
    */
 
 
-  getBeams(srcStream, options) {
+  getBeams(srcStream) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var params = {
       measureStartOffset: 0.0
     };
@@ -51840,11 +51167,11 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
 
 /***/ }),
 
-/***/ "./src/music21/miditools.js":
+/***/ "./src/music21/miditools.ts":
 /*!**********************************!*\
-  !*** ./src/music21/miditools.js ***!
+  !*** ./src/music21/miditools.ts ***!
   \**********************************/
-/*! exports provided: config, Event, loadedSoundfonts, clearOldChords, makeChords, sendOutChord, quantizeLastNote, sendToMIDIjs, postLoadCallback, loadSoundfont, MidiPlayer, callBacks */
+/*! exports provided: config, Event, loadedSoundfonts, clearOldChords, makeChords, sendOutChord, quantizeLastNote, sendToMIDIjs, postLoadCallback, loadSoundfont, MidiPlayer, callbacks, callBacks */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51860,18 +51187,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "postLoadCallback", function() { return postLoadCallback; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadSoundfont", function() { return loadSoundfont; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MidiPlayer", function() { return MidiPlayer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "callbacks", function() { return callbacks; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "callBacks", function() { return callBacks; });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../css/midiPlayer.css */ "./css/midiPlayer.css");
 /* harmony import */ var _css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
@@ -51901,15 +51229,73 @@ __webpack_require__.r(__webpack_exports__);
  // expose midicube's MIDI to window for soundfonts to load.
 
 window.MIDI = midicube__WEBPACK_IMPORTED_MODULE_1__;
-var config = {};
-/**
- * Number of octaves to transpose all incoming midi signals
- *
- * @type {number}
- * @default 0
- */
 
-config.transposeOctave = 0;
+class _ConfigSingletonClass {
+  constructor() {
+    /**
+     * Number of octaves to transpose all incoming midi signals
+     */
+    this.transposeOctave = 0;
+    /**
+     * How long to wait in milliseconds before deciding
+     * that a note belongs to another chord. Default 100ms
+     */
+
+    this.maxDelay = 100; // in ms
+
+    /**
+     * At what time (in ms since Epoch) the chord started.
+     */
+
+    this.heldChordTime = 0; // in ms
+
+    /**
+     * An Array (or undefined) of currently held Notes that have not been sent out yet.
+     */
+
+    this.heldChordNotes = undefined;
+    /**
+     * When, in MS since Jan 1, 1970, was the last {@link note.Note} played.
+     * Defaults to the time that the module was loaded.
+     */
+
+    this.timeOfLastNote = Date.now(); // in ms
+
+    /**
+     * The last Note or Chord to be sent out from miditools.  This is an important semi-global
+     * attribute, since the last element may need to be quantized by quantizeLastNote() to
+     * determine its length, since the note may need to be placed into a staff before its total
+     * length can be determined.
+     */
+
+    this.lastElement = undefined;
+    this._baseTempo = 60;
+    /**
+     * Assign (or query) a Metronome object to run all timing information.
+     */
+
+    this.metronome = undefined;
+  }
+
+  get tempo() {
+    if (this.metronome === undefined) {
+      return this._baseTempo;
+    } else {
+      return this.metronome.tempo;
+    }
+  }
+
+  set tempo(t) {
+    if (this.metronome === undefined) {
+      this._baseTempo = t;
+    } else {
+      this.metronome.tempo = t;
+    }
+  }
+
+}
+
+var config = new _ConfigSingletonClass();
 /**
  * @class Event
  * @memberof music21.miditools
@@ -51921,6 +51307,7 @@ config.transposeOctave = 0;
 
 class Event {
   constructor(t, a, b, c) {
+    this.velocity = undefined;
     this.timing = t;
     this.data1 = a;
     this.data2 = b;
@@ -51959,9 +51346,9 @@ class Event {
     }
   }
   /**
-   * Makes a {@link music21.note.Note} object from the event's midiNote number.
+   * Makes a {@link note.Note} object from the event's midiNote number.
    *
-   * @returns {music21.note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
+   * @returns {note.Note} - the {@link note.Note} object represented by Event.midiNote
    */
 
 
@@ -51972,83 +51359,6 @@ class Event {
   }
 
 }
-/**
- * How long to wait in milliseconds before deciding that a note belongs to another chord. Default 100ms
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-
-config.maxDelay = 100; // in ms
-
-/**
- * At what time (in ms since Epoch) the chord started.
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-
-config.heldChordTime = 0;
-/**
- * An Array (or undefined) of currently held chords that have not been sent out yet.
- *
- * @memberof music21.miditools.config
- * @type {Array|undefined}
- */
-
-config.heldChordNotes = undefined;
-/**
- * When, in MS since Jan 1, 1970, was the last {@link music21.note.Note} played.
- * Defaults to the time that the module was loaded.
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-
-config.timeOfLastNote = Date.now(); // in ms
-
-/**
- * The last Note or Chord to be sent out from miditools.  This is an important semi-global
- * attribute, since the last element may need to be quantized by quantizeLastNote() to
- * determine its length, since the note may need to be placed into a staff before its total
- * length can be determined.
- *
- * @memberof music21.miditools.config
- * @type {music21.chord.Chord|music21.note.Note|undefined}
- */
-
-config.lastElement = undefined;
-config._baseTempo = 60;
-/**
- * Assign (or query) a Metronome object to run all timing information.
- *
- * @memberof music21.miditools.config
- * @type {music21.tempo.Metronome}
- */
-
-config.metronome = undefined;
-Object.defineProperties(config, {
-  tempo: {
-    enumerable: true,
-
-    get() {
-      if (this.metronome === undefined) {
-        return this._baseTempo;
-      } else {
-        return this.metronome.tempo;
-      }
-    },
-
-    set(t) {
-      if (this.metronome === undefined) {
-        this._baseTempo = t;
-      } else {
-        this.metronome.tempo = t;
-      }
-    }
-
-  }
-});
 /**
  * a mapping of soundfont text names to true, false, or "loading".
  *
@@ -52116,7 +51426,7 @@ function makeChords(jEvent) {
 }
 /**
  * Take the list of Notes and makes a chord out of it, if appropriate and call
- * {@link music21.miditools.callBacks.sendOutChord} callback with the Chord or Note as a parameter.
+ * {@link music21.miditools.callbacks.sendOutChord} callback with the Chord or Note as a parameter.
  *
  * @memberof music21.miditools
  * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
@@ -52140,8 +51450,8 @@ function sendOutChord(chordNoteList) {
   quantizeLastNote();
   config.lastElement = appendObject;
 
-  if (callBacks.sendOutChord !== undefined) {
-    callBacks.sendOutChord(appendObject);
+  if (callbacks.sendOutChord !== undefined) {
+    callbacks.sendOutChord(appendObject);
   }
 
   return appendObject;
@@ -52158,12 +51468,18 @@ function sendOutChord(chordNoteList) {
  * duration quantized
  */
 
-function quantizeLastNote(lastElement) {
+function quantizeLastNote() {
+  var lastElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+  if (lastElement === undefined) {
+    lastElement = config.lastElement;
+  }
+
   if (lastElement === undefined) {
     return undefined;
   }
 
-  if (lastElement instanceof _note__WEBPACK_IMPORTED_MODULE_7__["GeneralNote"]) {
+  if (lastElement instanceof _note__WEBPACK_IMPORTED_MODULE_7__["NotRest"]) {
     lastElement.stemDirection = undefined;
   }
 
@@ -52222,10 +51538,7 @@ function postLoadCallback(soundfont, callback) {
     console.log('first playing two notes very softly -- seems to flush the buffer.');
   }
 
-  jquery__WEBPACK_IMPORTED_MODULE_0__('.loadingSoundfont').remove(); // noinspection JSUnresolvedVariable
-
-  var isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
-
+  jquery__WEBPACK_IMPORTED_MODULE_0__('.loadingSoundfont').remove();
   var isAudioTag = midicube__WEBPACK_IMPORTED_MODULE_1__["config"].api === 'audiotag';
   var instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
 
@@ -52236,9 +51549,10 @@ function postLoadCallback(soundfont, callback) {
       console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
     }
 
-    if (isFirefox === false && isAudioTag === false) {
+    if (isAudioTag === false) {
       // Firefox ignores sound volume! so don't play!
       // as does IE and others using HTML audio tag.
+      // these old browsers don't have auto prevention anyhow.
       var channel = instrumentObj.midiChannel;
       midicube__WEBPACK_IMPORTED_MODULE_1__["noteOn"](channel, 36, 1, 0); // if no notes have been played before then
 
@@ -52277,7 +51591,9 @@ function postLoadCallback(soundfont, callback) {
  * });
  */
 
-function loadSoundfont(soundfont, callback) {
+function loadSoundfont(soundfont) {
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
   if (loadedSoundfonts[soundfont] === true) {
     // this soundfont has already been loaded once, so just call the callback.
     if (callback !== undefined) {
@@ -52338,14 +51654,15 @@ function loadSoundfont(soundfont, callback) {
  * @class MidiPlayer
  * @memberOf music21.miditools
  * @property {number} speed - playback speed scaling (1=default).
- * @property {jQuery|undefined} $playDiv - div holding the player,
+ * @property {JQuery|undefined} $playDiv - div holding the player,
  */
 
 class MidiPlayer {
   constructor() {
-    this.player = new midicube__WEBPACK_IMPORTED_MODULE_1__["Player"]();
     this.speed = 1.0;
-    this.$playDiv = undefined;
+    this.state = ''; // up, down, or empty...
+
+    this.player = new midicube__WEBPACK_IMPORTED_MODULE_1__["Player"]();
   }
   /**
    * @param {jQuery|HTMLElement} [where]
@@ -52459,7 +51776,8 @@ class MidiPlayer {
     return _common__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/stop.png';
   }
 
-  pausePlayStop(stop) {
+  pausePlayStop() {
+    var stop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'no';
     var d;
 
     if (this.$playDiv === undefined) {
@@ -52491,6 +51809,7 @@ class MidiPlayer {
         // success
         m21MidiPlayer.fileLoaded();
       }, undefined, // loading
+      // loading
       e => {
         // failure
         console.log(e);
@@ -52512,7 +51831,6 @@ class MidiPlayer {
   }
 
   updatePlaying() {
-    var self = this;
     var player = this.player;
 
     if (this.$playDiv === undefined) {
@@ -52527,7 +51845,7 @@ class MidiPlayer {
     var $capsule = $d.find('.capsule'); //
 
     $capsule.on('dragstart', e => {
-      player.currentTime = (e.pageX - $capsule.left) / 420 * player.endTime;
+      player.currentTime = (e.pageX - $capsule.offset().left) / 420 * player.endTime;
 
       if (player.currentTime < 0) {
         player.currentTime = 0;
@@ -52537,9 +51855,9 @@ class MidiPlayer {
         player.currentTime = player.endTime;
       }
 
-      if (self.state === 'down') {
+      if (this.state === 'down') {
         this.pausePlayStop('pause');
-      } else if (self.state === 'up') {
+      } else if (this.state === 'up') {
         this.pausePlayStop('play');
       }
     }); //
@@ -52563,7 +51881,7 @@ class MidiPlayer {
 
       if (now === end) {
         // go to next song
-        self.songFinished();
+        this.songFinished();
       } // display the information to the user
 
 
@@ -52575,7 +51893,7 @@ class MidiPlayer {
 
 }
 /**
- * callBacks is an object with three keys:
+ * callbacks is an object with three keys:
  *
  * - raw: function (t, a, b,c) to call when any midi event arrives.
  *     Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
@@ -52594,39 +51912,38 @@ class MidiPlayer {
  * @memberof music21.miditools
  */
 
-var callBacks = {
+var callbacks = {
   raw: (t, a, b, c) => new Event(t, a, b, c),
   general: [sendToMIDIjs, quantizeLastNote],
   sendOutChord: arrayOfNotes => {}
-};
+}; // For backwards compatibility -- this used to have a capital b.
+
+var callBacks = callbacks;
 
 /***/ }),
 
-/***/ "./src/music21/musicxml.js":
+/***/ "./src/music21/musicxml.ts":
 /*!*********************************!*\
-  !*** ./src/music21/musicxml.js ***!
+  !*** ./src/music21/musicxml.ts ***!
   \*********************************/
 /*! exports provided: m21ToXml, xmlToM21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.js");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "m21ToXml", function() { return _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__; });
-/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.js");
+/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "xmlToM21", function() { return _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__; });
-/**
- * @namespace music21.musicxml
- */
 
 
 
 
 /***/ }),
 
-/***/ "./src/music21/musicxml/m21ToXml.js":
+/***/ "./src/music21/musicxml/m21ToXml.ts":
 /*!******************************************!*\
-  !*** ./src/music21/musicxml/m21ToXml.js ***!
+  !*** ./src/music21/musicxml/m21ToXml.ts ***!
   \******************************************/
 /*! exports provided: GeneralObjectExporter, XMLExporterBase, ScoreExporter, PartExporter, MeasureExporter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -52654,10 +51971,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../common */ "./src/music21/common.js");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
 
 
 
@@ -52671,13 +51989,14 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * @namespace music21.musicxml.m21ToXml
  */
+
 
 
 
@@ -52849,14 +52168,15 @@ function normalizeColor(color) {
   }
 }
 
-var _classMapping = ['Score', 'Part', 'Measure', 'Voice', // 'Stream',
-'GeneralNote'];
+var _classMapping = ['Score', 'Part', 'Measure', 'Voice', 'GeneralNote'];
 class GeneralObjectExporter {
   constructor(obj) {
     this.generalObj = obj;
   }
 
-  parse(obj) {
+  parse() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (obj === undefined) {
       obj = this.generalObj;
     }
@@ -52874,19 +52194,37 @@ class GeneralObjectExporter {
   fromGeneralObj(obj) {
     var classes = obj.classes;
     var outObj;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
-    for (var _i = 0, _classMapping2 = _classMapping; _i < _classMapping2.length; _i++) {
-      var cM = _classMapping2[_i];
+    try {
+      for (var _iterator = _classMapping[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var cM = _step.value;
 
-      if (classes.includes(cM)) {
-        var methName = 'from' + cM;
-        outObj = this[methName](obj);
-        break;
+        if (classes.includes(cM)) {
+          var methName = 'from' + cM;
+          outObj = this[methName](obj);
+          break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
       }
     }
 
     if (outObj === undefined) {
-      throw new MusicXMLExportException("Cannot translate the object ".concat(obj, " to a complete musicXML document; put it in a Stream first!"));
+      throw new MusicXMLExportException("Cannot translate the object ".concat(obj, " to a complete musicXML document; ") + 'put it in a Stream first!');
     }
 
     return outObj;
@@ -52945,8 +52283,7 @@ class GeneralObjectExporter {
     out.number = 1;
     out.append(nCopy);
     return this.fromMeasure(out);
-  } // TODO(msc): fromPitch
-
+  }
 
 }
 var _musicxmlVersion = '3.0';
@@ -52980,9 +52317,12 @@ class XMLExporterBase {
    */
 
 
-  _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName) {
+  _setTagTextFromAttribute(m21El, xmlEl, tag) {
+    var attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     var _ref2 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
-        transform = _ref2.transform,
+        _ref2$transform = _ref2.transform,
+        transform = _ref2$transform === void 0 ? undefined : _ref2$transform,
         _ref2$forceEmpty = _ref2.forceEmpty,
         forceEmpty = _ref2$forceEmpty === void 0 ? false : _ref2$forceEmpty;
 
@@ -53009,14 +52349,17 @@ class XMLExporterBase {
     return subElement;
   }
 
-  seta(m21El, xmlEl, tag, options) {
-    return this._setTagTextFromAttribute(m21El, xmlEl, tag, options);
+  seta(m21El, xmlEl, tag) {
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    return this._setTagTextFromAttribute(m21El, xmlEl, tag, undefined, options);
   }
 
   _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName) {
     var _ref3 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        attributeName = _ref3.attributeName,
-        transform = _ref3.transform;
+        _ref3$attributeName = _ref3.attributeName,
+        attributeName = _ref3$attributeName === void 0 ? undefined : _ref3$attributeName,
+        _ref3$transform = _ref3.transform,
+        transform = _ref3$transform === void 0 ? undefined : _ref3$transform;
 
     if (attributeName === undefined) {
       attributeName = _common__WEBPACK_IMPORTED_MODULE_9__["hyphenToCamelCase"](xmlAttributeName);
@@ -53035,7 +52378,8 @@ class XMLExporterBase {
     xmlEl.setAttribute(xmlAttributeName, value.toString());
   }
 
-  setb(m21El, xmlEl, xmlAttributeName, options) {
+  setb(m21El, xmlEl, xmlAttributeName) {
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
     return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
   } // TODO(msc): _synchronizeIds;
 
@@ -53127,15 +52471,6 @@ class XMLExporterBase {
 class ScoreExporter extends XMLExporterBase {
   constructor(score) {
     super();
-
-    if (score === undefined) {
-      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_10__["Score"]();
-    } else {
-      this.stream = score;
-    }
-
-    this.xmlRoot = this.doc.createElement('score-partwise');
-    this.xmlRoot.setAttribute('version', _musicxmlVersion);
     this.xmIdentification = undefined;
     this.scoreMetadata = undefined;
     this.spannerBundle = undefined;
@@ -53148,6 +52483,15 @@ class ScoreExporter extends XMLExporterBase {
     this.instrumentList = [];
     this.midiChannelList = [];
     this.parts = [];
+
+    if (score === undefined) {
+      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_10__["Score"]();
+    } else {
+      this.stream = score;
+    }
+
+    this.xmlRoot = this.doc.createElement('score-partwise');
+    this.xmlRoot.setAttribute('version', _musicxmlVersion);
   }
 
   parse() {
@@ -53181,13 +52525,13 @@ class ScoreExporter extends XMLExporterBase {
   setPartsAndRefStream() {
     var s = this.stream;
     var streamOfStreams = s.getElementsByClass('Stream');
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-      for (var _iterator = streamOfStreams[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var innerStream = _step.value;
+      for (var _iterator2 = streamOfStreams[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var innerStream = _step2.value;
         // innerStream.transferOffsetToElements(); // only needed for appended Parts
         var ht = innerStream.highestTime;
 
@@ -53196,42 +52540,6 @@ class ScoreExporter extends XMLExporterBase {
         }
 
         this.refStreamOrTimeRange = [0.0, this.highestTime];
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
-    this.parts = streamOfStreams;
-  } // TODO(msc): setMeterStream
-  // TODO(msc): setScoreLayouts
-
-
-  parsePartlikeScore() {
-    // makeRests
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = this.parts[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var innerStream = _step2.value;
-        var pp = new PartExporter(innerStream, {
-          parent: this
-        }); // spanner bundle.
-
-        pp.parse();
-        this.partExporterList.push(pp);
       }
     } catch (err) {
       _didIteratorError2 = true;
@@ -53244,6 +52552,42 @@ class ScoreExporter extends XMLExporterBase {
       } finally {
         if (_didIteratorError2) {
           throw _iteratorError2;
+        }
+      }
+    }
+
+    this.parts = streamOfStreams.stream();
+  } // TODO(msc): setMeterStream
+  // TODO(msc): setScoreLayouts
+
+
+  parsePartlikeScore() {
+    // makeRests
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = this.parts[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var innerStream = _step3.value;
+        var pp = new PartExporter(innerStream, {
+          parent: this
+        }); // spanner bundle.
+
+        pp.parse();
+        this.partExporterList.push(pp);
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+          _iterator3.return();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
         }
       }
     }
@@ -53278,41 +52622,34 @@ class ScoreExporter extends XMLExporterBase {
     // const spannerBundle = this.spannerBundle; // for now, always undefined;
     var mxPartList = this.subElement(this.xmlRoot, 'part-list'); // staffGroups are non-existent
 
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
     try {
-      for (var _iterator3 = this.partExporterList[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var pex = _step3.value;
+      for (var _iterator4 = this.partExporterList[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+        var pex = _step4.value;
         // const p = pex.stream;
         var mxScorePart = pex.getXmlScorePart();
         mxPartList.appendChild(mxScorePart);
       }
     } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
+      _didIteratorError4 = true;
+      _iteratorError4 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-          _iterator3.return();
+        if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+          _iterator4.return();
         }
       } finally {
-        if (_didIteratorError3) {
-          throw _iteratorError3;
+        if (_didIteratorError4) {
+          throw _iteratorError4;
         }
       }
     }
 
     return mxPartList;
-  } // TODO(msc): staffGroupToXmlPartGroup;
-  // TODO(msc): setIdentification
-  // TODO(msc): metadataToMiscellaneous
-  // TODO(msc): setEncoding
-  // TODO(msc): getSupports
-  // TODO(msc): setTitles
-  // TODO(msc): contributorToXmlCreator
-
+  }
 
 }
 /**
@@ -53322,7 +52659,8 @@ class ScoreExporter extends XMLExporterBase {
 class PartExporter extends XMLExporterBase {
   constructor(partObj) {
     var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        parent = _ref4.parent;
+        _ref4$parent = _ref4.parent,
+        parent = _ref4$parent === void 0 ? undefined : _ref4$parent;
 
     super();
     this.stream = partObj;
@@ -53352,13 +52690,13 @@ class PartExporter extends XMLExporterBase {
     var measureStream = this.stream.getElementsByClass('Stream'); // fixupNotation;
     // setIdLocals on spannerBundle;
 
-    var _iteratorNormalCompletion4 = true;
-    var _didIteratorError4 = false;
-    var _iteratorError4 = undefined;
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
 
     try {
-      for (var _iterator4 = measureStream[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-        var m = _step4.value;
+      for (var _iterator5 = measureStream[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+        var m = _step5.value;
         this.addDividerComment('Measure ' + m.number.toString());
         var measureExporter = new MeasureExporter(m, {
           parent: this
@@ -53368,16 +52706,16 @@ class PartExporter extends XMLExporterBase {
         this.xmlRoot.appendChild(mxMeasure);
       }
     } catch (err) {
-      _didIteratorError4 = true;
-      _iteratorError4 = err;
+      _didIteratorError5 = true;
+      _iteratorError5 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-          _iterator4.return();
+        if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+          _iterator5.return();
         }
       } finally {
-        if (_didIteratorError4) {
-          throw _iteratorError4;
+        if (_didIteratorError5) {
+          throw _iteratorError5;
         }
       }
     }
@@ -53396,9 +52734,7 @@ class PartExporter extends XMLExporterBase {
     // instrument
 
     return mxScorePart;
-  } // TODO(msc): instrumentToXmlScoreInstrument
-  // TODO(msc): instrumentToXmlMidiInstrument
-
+  }
 
 }
 var _classesToMeasureMethods = [['Note', 'noteToXml'], // NoChord
@@ -53416,12 +52752,10 @@ var divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
 class MeasureExporter extends XMLExporterBase {
   constructor(measureObj) {
     var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        parent = _ref5.parent;
+        _ref5$parent = _ref5.parent,
+        parent = _ref5$parent === void 0 ? undefined : _ref5$parent;
 
     super();
-    this.stream = measureObj;
-    this.parent = parent;
-    this.xmlRoot = this.doc.createElement('measure');
     this.currentDivisions = divisionsPerQuarter;
     this.transpositionInterval = undefined;
     this.mxTranspose = undefined;
@@ -53429,6 +52763,9 @@ class MeasureExporter extends XMLExporterBase {
     this.offsetInMeasure = 0.0;
     this.currentVoiceId = undefined;
     this.rbSpanners = [];
+    this.stream = measureObj;
+    this.parent = parent;
+    this.xmlRoot = this.doc.createElement('measure');
     this.spannerBundle = parent.spannerBundle;
     this.objectSpannerBundle = this.spannerBundle;
   }
@@ -53458,15 +52795,15 @@ class MeasureExporter extends XMLExporterBase {
 
 
     var allVoices = Array.from(m.voices);
-    var _iteratorNormalCompletion5 = true;
-    var _didIteratorError5 = false;
-    var _iteratorError5 = undefined;
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
 
     try {
-      for (var _iterator5 = allVoices.entries()[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-        var _step5$value = _slicedToArray(_step5.value, 2),
-            i = _step5$value[0],
-            v = _step5$value[1];
+      for (var _iterator6 = allVoices.entries()[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+        var _step6$value = _slicedToArray(_step6.value, 2),
+            i = _step6$value[0],
+            v = _step6$value[1];
 
         var backupAfterwards = true;
 
@@ -53479,16 +52816,16 @@ class MeasureExporter extends XMLExporterBase {
         });
       }
     } catch (err) {
-      _didIteratorError5 = true;
-      _iteratorError5 = err;
+      _didIteratorError6 = true;
+      _iteratorError6 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-          _iterator5.return();
+        if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
+          _iterator6.return();
         }
       } finally {
-        if (_didIteratorError5) {
-          throw _iteratorError5;
+        if (_didIteratorError6) {
+          throw _iteratorError6;
         }
       }
     }
@@ -53513,26 +52850,26 @@ class MeasureExporter extends XMLExporterBase {
     }
 
     this.currentVoiceId = voiceId;
-    var _iteratorNormalCompletion6 = true;
-    var _didIteratorError6 = false;
-    var _iteratorError6 = undefined;
+    var _iteratorNormalCompletion7 = true;
+    var _didIteratorError7 = false;
+    var _iteratorError7 = undefined;
 
     try {
-      for (var _iterator6 = m[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-        var el = _step6.value;
+      for (var _iterator7 = m[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+        var el = _step7.value;
         this.parseOneElement(el);
       }
     } catch (err) {
-      _didIteratorError6 = true;
-      _iteratorError6 = err;
+      _didIteratorError7 = true;
+      _iteratorError7 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
-          _iterator6.return();
+        if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
+          _iterator7.return();
         }
       } finally {
-        if (_didIteratorError6) {
-          throw _iteratorError6;
+        if (_didIteratorError7) {
+          throw _iteratorError7;
         }
       }
     }
@@ -53564,40 +52901,77 @@ class MeasureExporter extends XMLExporterBase {
 
 
     var parsedObject = false;
+    var _iteratorNormalCompletion8 = true;
+    var _didIteratorError8 = false;
+    var _iteratorError8 = undefined;
 
-    for (var _i2 = 0, _classesToMeasureMeth = _classesToMeasureMethods; _i2 < _classesToMeasureMeth.length; _i2++) {
-      var _classesToMeasureMeth2 = _slicedToArray(_classesToMeasureMeth[_i2], 2),
-          className = _classesToMeasureMeth2[0],
-          methName = _classesToMeasureMeth2[1];
+    try {
+      for (var _iterator8 = _classesToMeasureMethods[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+        var _step8$value = _slicedToArray(_step8.value, 2),
+            className = _step8$value[0],
+            methName = _step8$value[1];
 
-      if (classes.includes(className)) {
-        this[methName](obj);
-        parsedObject = true;
-        break;
+        if (classes.includes(className)) {
+          this[methName](obj);
+          parsedObject = true;
+          break;
+        }
+      }
+    } catch (err) {
+      _didIteratorError8 = true;
+      _iteratorError8 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
+          _iterator8.return();
+        }
+      } finally {
+        if (_didIteratorError8) {
+          throw _iteratorError8;
+        }
       }
     }
 
-    var _loop = function _loop() {
-      var _wrapAttributeMethodC2 = _slicedToArray(_wrapAttributeMethodC[_i3], 2),
-          className = _wrapAttributeMethodC2[0],
-          methName = _wrapAttributeMethodC2[1];
+    var _iteratorNormalCompletion9 = true;
+    var _didIteratorError9 = false;
+    var _iteratorError9 = undefined;
 
-      if (classes.includes(className)) {
-        var meth = o => _this[methName](o);
+    try {
+      var _loop = function _loop() {
+        var _step9$value = _slicedToArray(_step9.value, 2),
+            className = _step9$value[0],
+            methName = _step9$value[1];
 
-        _this.wrapObjectInAttributes(obj, meth);
+        if (classes.includes(className)) {
+          var meth = o => _this[methName](o);
 
-        parsedObject = true;
-        return "break";
+          _this.wrapObjectInAttributes(obj, meth);
+
+          parsedObject = true;
+          return "break";
+        }
+      };
+
+      for (var _iterator9 = _wrapAttributeMethodClasses[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+        var _ret = _loop();
+
+        if (_ret === "break") break;
+      } // deal with skipped objects.
+
+    } catch (err) {
+      _didIteratorError9 = true;
+      _iteratorError9 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+          _iterator9.return();
+        }
+      } finally {
+        if (_didIteratorError9) {
+          throw _iteratorError9;
+        }
       }
-    };
-
-    for (var _i3 = 0, _wrapAttributeMethodC = _wrapAttributeMethodClasses; _i3 < _wrapAttributeMethodC.length; _i3++) {
-      var _ret = _loop();
-
-      if (_ret === "break") break;
-    } // deal with skipped objects.
-
+    }
 
     if (!parsedObject && !_ignoreOnParseClasses.includes(obj.classes[0])) {
       console.warn('skipped object of class ' + obj.classes[0]);
@@ -53621,7 +52995,8 @@ class MeasureExporter extends XMLExporterBase {
     var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
         _ref7$noteIndexInChor = _ref7.noteIndexInChord,
         noteIndexInChord = _ref7$noteIndexInChor === void 0 ? 0 : _ref7$noteIndexInChor,
-        chordParent = _ref7.chordParent;
+        _ref7$chordParent = _ref7.chordParent,
+        chordParent = _ref7$chordParent === void 0 ? undefined : _ref7$chordParent;
 
     var addChordTag = noteIndexInChord !== 0;
     var chordOrN;
@@ -53647,7 +53022,7 @@ class MeasureExporter extends XMLExporterBase {
       this.subElement(mxNote, 'chord');
     }
 
-    if (n.pitch !== undefined) {
+    if (n.isNote) {
       var mxPitch = this.pitchToXml(n.pitch);
       mxNote.appendChild(mxPitch);
     } else {
@@ -53661,26 +53036,26 @@ class MeasureExporter extends XMLExporterBase {
 
     if (n.tie !== undefined) {
       var mxTieList = this.tieToXmlTie(n.tie);
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
+      var _iteratorNormalCompletion10 = true;
+      var _didIteratorError10 = false;
+      var _iteratorError10 = undefined;
 
       try {
-        for (var _iterator7 = mxTieList[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-          var t = _step7.value;
+        for (var _iterator10 = mxTieList[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var t = _step10.value;
           mxNote.appendChild(t);
         }
       } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
+        _didIteratorError10 = true;
+        _iteratorError10 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
-            _iterator7.return();
+          if (!_iteratorNormalCompletion10 && _iterator10.return != null) {
+            _iterator10.return();
           }
         } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
+          if (_didIteratorError10) {
+            throw _iteratorError10;
           }
         }
       }
@@ -53712,7 +53087,7 @@ class MeasureExporter extends XMLExporterBase {
     } // components.
 
 
-    if (n.pitch !== undefined && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
+    if (n instanceof _note__WEBPACK_IMPORTED_MODULE_12__["Note"] && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
       var mxAccidental = this.accidentalToMx(n.pitch.accidental);
       mxNote.appendChild(mxAccidental);
     }
@@ -53727,19 +53102,19 @@ class MeasureExporter extends XMLExporterBase {
 
     if (!addChordTag && ![undefined, 'unspecified'].includes(chordOrN.stemDirection)) {
       stemDirection = chordOrN.stemDirection;
-    } else if (chordOrN !== n && ![undefined, 'unspecified'].includes(n.stemDirection)) {
+    } else if (chordOrN !== n && n instanceof _note__WEBPACK_IMPORTED_MODULE_12__["Note"] && ![undefined, 'unspecified'].includes(n.stemDirection)) {
       stemDirection = n.stemDirection;
     }
 
     if (stemDirection !== undefined) {
       var mxStem = this.subElement(mxNote, 'stem');
-      var sdtext = stemDirection;
+      var sdText = stemDirection;
 
-      if (sdtext === 'noStem') {
-        sdtext = 'none';
+      if (sdText === 'noStem') {
+        sdText = 'none';
       }
 
-      mxStem.innerHTML = sdtext; // TODO: stemStyle
+      mxStem.innerHTML = sdText; // TODO: stemStyle
     } // dealWithNotehead
     // beams
     // staff
@@ -53749,13 +53124,13 @@ class MeasureExporter extends XMLExporterBase {
 
 
     if (!addChordTag) {
-      var _iteratorNormalCompletion8 = true;
-      var _didIteratorError8 = false;
-      var _iteratorError8 = undefined;
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
 
       try {
-        for (var _iterator8 = chordOrN.lyrics[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var lyricObj = _step8.value;
+        for (var _iterator11 = chordOrN.lyrics[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var lyricObj = _step11.value;
 
           if (lyricObj.text === undefined) {
             continue;
@@ -53765,16 +53140,16 @@ class MeasureExporter extends XMLExporterBase {
           mxNote.appendChild(mxLyric);
         }
       } catch (err) {
-        _didIteratorError8 = true;
-        _iteratorError8 = err;
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
-            _iterator8.return();
+          if (!_iteratorNormalCompletion11 && _iterator11.return != null) {
+            _iterator11.return();
           }
         } finally {
-          if (_didIteratorError8) {
-            throw _iteratorError8;
+          if (_didIteratorError11) {
+            throw _iteratorError11;
           }
         }
       }
@@ -53791,15 +53166,15 @@ class MeasureExporter extends XMLExporterBase {
 
   chordToXml(c) {
     var mxNoteList = [];
-    var _iteratorNormalCompletion9 = true;
-    var _didIteratorError9 = false;
-    var _iteratorError9 = undefined;
+    var _iteratorNormalCompletion12 = true;
+    var _didIteratorError12 = false;
+    var _iteratorError12 = undefined;
 
     try {
-      for (var _iterator9 = Array.from(c).entries()[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-        var _step9$value = _slicedToArray(_step9.value, 2),
-            i = _step9$value[0],
-            n = _step9$value[1];
+      for (var _iterator12 = Array.from(c).entries()[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+        var _step12$value = _slicedToArray(_step12.value, 2),
+            i = _step12$value[0],
+            n = _step12$value[1];
 
         var mxNote = this.noteToXml(n, {
           noteIndexInChord: i,
@@ -53808,16 +53183,16 @@ class MeasureExporter extends XMLExporterBase {
         mxNoteList.push(mxNote);
       }
     } catch (err) {
-      _didIteratorError9 = true;
-      _iteratorError9 = err;
+      _didIteratorError12 = true;
+      _iteratorError12 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
-          _iterator9.return();
+        if (!_iteratorNormalCompletion12 && _iterator12.return != null) {
+          _iterator12.return();
         }
       } finally {
-        if (_didIteratorError9) {
-          throw _iteratorError9;
+        if (_didIteratorError12) {
+          throw _iteratorError12;
         }
       }
     }
@@ -54053,17 +53428,15 @@ class MeasureExporter extends XMLExporterBase {
   setMxAttributes() {
     var m = this.stream;
     this.xmlRoot.setAttribute('number', m.measureNumberWithSuffix()); // layoutWidth
-  } // setRbSpanners
-  // transpose
-
+  }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/musicxml/xmlToM21.js":
+/***/ "./src/music21/musicxml/xmlToM21.ts":
 /*!******************************************!*\
-  !*** ./src/music21/musicxml/xmlToM21.js ***!
+  !*** ./src/music21/musicxml/xmlToM21.ts ***!
   \******************************************/
 /*! exports provided: ScoreParser, PartParser, MeasureParser, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -54079,23 +53452,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.set */ "./node_modules/core-js/modules/es.set.js");
 /* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../chord */ "./src/music21/chord.js");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../duration */ "./src/music21/duration.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../key */ "./src/music21/key.js");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../meter */ "./src/music21/meter.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note */ "./src/music21/note.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.js");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../tie */ "./src/music21/tie.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../chord */ "./src/music21/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../duration */ "./src/music21/duration.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../key */ "./src/music21/key.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../meter */ "./src/music21/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../tie */ "./src/music21/tie.ts");
 
 
 
@@ -54116,12 +53488,10 @@ var DEFAULTS = {
   divisionsPerQuarter: 32 * 3 * 3 * 5 * 7
 };
 
-function hyphenToCamelCase(tag) {
-  return tag.replace(/-([a-z])/g, firstLetter => firstLetter[1].toUpperCase());
-}
-
-function seta(m21El, xmlEl, tag, attributeName, transform) {
-  var $matchEl = jquery__WEBPACK_IMPORTED_MODULE_6__(xmlEl).children(tag);
+function seta(m21El, xmlEl, tag) {
+  var attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  var transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  var $matchEl = jquery__WEBPACK_IMPORTED_MODULE_5__(xmlEl).children(tag);
 
   if (!$matchEl) {
     return;
@@ -54138,7 +53508,7 @@ function seta(m21El, xmlEl, tag, attributeName, transform) {
   }
 
   if (attributeName === undefined) {
-    attributeName = hyphenToCamelCase(tag);
+    attributeName = Object(_common__WEBPACK_IMPORTED_MODULE_6__["hyphenToCamelCase"])(tag);
   }
 
   m21El[attributeName] = value;
@@ -54146,10 +53516,6 @@ function seta(m21El, xmlEl, tag, attributeName, transform) {
 
 class ScoreParser {
   constructor() {
-    this.xmlText = undefined;
-    this.xmlUrl = undefined;
-    this.$xmlRoot = undefined;
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
     this.definesExplicitSystemBreaks = false;
     this.definesExplicitPageBreaks = false;
     this.mxScorePartDict = {};
@@ -54157,24 +53523,25 @@ class ScoreParser {
     this.partGroupList = [];
     this.parts = [];
     this.musicXmlVersion = '1.0';
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
   }
 
   scoreFromUrl(url) {
     this.xmlUrl = url; // noinspection JSUnusedLocalSymbols
 
-    return jquery__WEBPACK_IMPORTED_MODULE_6__["get"](url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
+    return jquery__WEBPACK_IMPORTED_MODULE_5__["get"](url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
   }
 
   scoreFromText(xmlText) {
     this.xmlText = xmlText; // Not sure why this is not being found in jQuery
     // noinspection JSUnresolvedFunction
 
-    var xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_6__["parseXML"](xmlText);
+    var xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_5__["parseXML"](xmlText);
     return this.scoreFromDOMTree(xmlDoc);
   }
 
   scoreFromDOMTree(xmlDoc) {
-    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_6__(jquery__WEBPACK_IMPORTED_MODULE_6__(xmlDoc).children('score-partwise'));
+    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_5__(jquery__WEBPACK_IMPORTED_MODULE_5__(xmlDoc).children('score-partwise'));
     this.xmlRootToScore(this.$xmlRoot, this.stream);
     return this.stream;
   }
@@ -54197,7 +53564,7 @@ class ScoreParser {
     try {
       for (var _iterator = $mxScore.children('part')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var p = _step.value;
-        var $p = jquery__WEBPACK_IMPORTED_MODULE_6__(p);
+        var $p = jquery__WEBPACK_IMPORTED_MODULE_5__(p);
         var partId = $p.attr('id'); // if (partId === undefined) {
         //     partId = //something
         // }
@@ -54256,7 +53623,7 @@ class ScoreParser {
     try {
       for (var _iterator2 = mxPartList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var partListElement = _step2.value;
-        var $partListElement = jquery__WEBPACK_IMPORTED_MODULE_6__(partListElement);
+        var $partListElement = jquery__WEBPACK_IMPORTED_MODULE_5__(partListElement);
         var partId = $partListElement.attr('id');
         this.mxScorePartDict[partId] = $partListElement;
       } // deal with part-groups
@@ -54285,28 +53652,14 @@ class ScoreParser {
  */
 
 class PartParser {
-  constructor($mxPart, $mxScorePart, parent) {
-    this.parent = parent;
-    this.$mxPart = $mxPart;
-    this.$mxScorePart = $mxScorePart; // ignore parent for now
-
-    if ($mxPart !== undefined) {
-      this.partId = $mxPart.attr('id'); // ignore empty partId for now
-    } // spannerBundles
-
-
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
+  constructor($mxPart, $mxScorePart) {
+    var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     this.atSoundingPitch = true;
     this.staffReferenceList = [];
     this.lastTimeSignature = undefined;
     this.lastMeasureWasShort = false;
     this.lastMeasureOffset = 0.0;
-    this.lastClefs = {
-      0: new _clef__WEBPACK_IMPORTED_MODULE_8__["TrebleClef"]()
-    };
-    this.activeTuplets = [];
-    this.activeTuplets.length = 7;
-    this.activeTuplets.fill(undefined);
+    this.activeTuplets = [undefined, undefined, undefined, undefined, undefined, undefined, undefined];
     this.maxStaves = 1;
     this.lastMeasureNumber = 0;
     this.lastNumberSuffix = undefined;
@@ -54318,6 +53671,19 @@ class PartParser {
     this.lastDivisions = DEFAULTS.divisionsPerQuarter;
     this.appendToScoreAfterParse = true;
     this.lastMeasureParser = undefined;
+    this.parent = parent;
+    this.$mxPart = $mxPart;
+    this.$mxScorePart = $mxScorePart; // ignore parent for now
+
+    if ($mxPart !== undefined) {
+      this.partId = $mxPart.attr('id'); // ignore empty partId for now
+    } // TODO(msc): spannerBundles
+
+
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
+    this.lastClefs = {
+      0: new _clef__WEBPACK_IMPORTED_MODULE_8__["TrebleClef"]()
+    };
   }
 
   parse() {
@@ -54345,7 +53711,7 @@ class PartParser {
     try {
       for (var _iterator3 = this.$mxPart.children('measure')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
         var mxMeasure = _step3.value;
-        var $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_6__(mxMeasure);
+        var $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_5__(mxMeasure);
         this.xmlMeasureToMeasure($mxMeasure);
       }
     } catch (err) {
@@ -54419,42 +53785,22 @@ class MeasureParser {
    * @property {music21.note.GeneralNote|undefined} nLast
    * @property {jQuery|undefined} $activeAttributes
    */
-  constructor($mxMeasure, parent) {
-    this.$mxMeasure = $mxMeasure;
+  constructor($mxMeasure) {
+    var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     this.$mxMeasureElements = [];
     this.divisions = undefined;
-    this.parent = parent;
     this.transposition = undefined; // spannerBundles
 
     this.staffReference = {}; // activeTuplets
 
     this.useVoices = false;
     this.voicesById = {};
-    this.voiceIndices = new Set();
     this.staves = 1;
     this.$activeAttributes = undefined;
     this.attributesAreInternal = true;
-    /**
-     *
-     * @type {number|undefined}
-     */
-
     this.measureNumber = undefined;
-    /**
-     *
-     * @type {string|undefined}
-     */
-
     this.numberSuffix = undefined;
-
-    if (parent !== undefined) {
-      this.divisions = parent.lastDivisions;
-    } else {
-      this.divisions = DEFAULTS.divisionsPerQuarter;
-    }
-
     this.staffLayoutObjects = [];
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
     this.$mxNoteList = [];
     this.$mxLyricList = [];
     this.nLast = undefined;
@@ -54473,25 +53819,28 @@ class MeasureParser {
     this.attributeTagsToMethods = {
       time: 'handleTimeSignature',
       clef: 'handleClef',
-      key: 'handleKeySignature' // 'staff-details': 'handleStaffDetails',
-      // 'measure-style': 'handleMeasureStyle',
-
+      key: 'handleKeySignature'
     };
     this.musicDataMethods = {
       note: 'xmlToNote',
       // 'backup': 'xmlBackup',
       // 'forward': 'xmlForward',
       // 'direction': 'xmlDirection',
-      attributes: 'parseAttributesTag' // 'harmony': 'xmlHarmony',
-      // 'figured-bass': undefined,
-      // 'sound': undefined,
-      // 'barline': 'xmlBarline',
-      // 'grouping': undefined,
-      // 'link': undefined,
-      // 'bookmark': undefined,
-      // Note: <print> is handled separately...
-
+      attributes: 'parseAttributesTag'
     };
+    this.$mxMeasure = $mxMeasure;
+    this.parent = parent;
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
+    this.voiceIndices = new Set();
+    this.staves = 1;
+    this.$activeAttributes = undefined;
+    this.attributesAreInternal = true;
+
+    if (parent !== undefined) {
+      this.divisions = parent.lastDivisions;
+    } else {
+      this.divisions = DEFAULTS.divisionsPerQuarter;
+    }
   }
 
   parse() {
@@ -54507,7 +53856,7 @@ class MeasureParser {
     try {
       for (var _iterator4 = children[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
         var c = _step4.value;
-        var $c = jquery__WEBPACK_IMPORTED_MODULE_6__(c);
+        var $c = jquery__WEBPACK_IMPORTED_MODULE_5__(c);
         this.$mxMeasureElements.push($c);
       }
     } catch (err) {
@@ -54665,7 +54014,8 @@ class MeasureParser {
     return c;
   }
 
-  xmlToSimpleNote($mxNote, freeSpanners) {
+  xmlToSimpleNote($mxNote) {
+    var freeSpanners = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var n = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"]();
     this.xmlToPitch($mxNote, n.pitch); // beams;
     // stems;
@@ -54689,7 +54039,7 @@ class MeasureParser {
     if ($mxNote[0].tagName === 'pitch') {
       $mxPitch = $mxNote;
     } else {
-      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_6__($mxNote.children('pitch')[0]);
+      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_5__($mxNote.children('pitch')[0]);
 
       if ($mxPitch.length === 0) {
         // whoops!
@@ -54721,9 +54071,9 @@ class MeasureParser {
   }
 
   xmlToAccidental($mxAccidental) {
-    var acc = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](); // to-do m21/musicxml accidental name differences;
+    var acc = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](0); // to-do m21/musicxml accidental name differences;
 
-    var name = jquery__WEBPACK_IMPORTED_MODULE_6__($mxAccidental[0]).text().trim().toLowerCase();
+    var name = jquery__WEBPACK_IMPORTED_MODULE_5__($mxAccidental[0]).text().trim().toLowerCase();
 
     if (name === 'flat-flat') {
       name = 'double-flat';
@@ -54780,7 +54130,7 @@ class MeasureParser {
     var qLen = 0.0;
 
     if (mxDuration) {
-      var noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_6__(mxDuration).text().trim());
+      var noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_5__(mxDuration).text().trim());
       qLen = noteDivisions / divisions;
     }
 
@@ -54788,7 +54138,7 @@ class MeasureParser {
 
     if (mxType) {
       // long vs longa todo
-      var durationType = jquery__WEBPACK_IMPORTED_MODULE_6__(mxType).text().trim();
+      var durationType = jquery__WEBPACK_IMPORTED_MODULE_5__(mxType).text().trim();
       var numDots = $mxNote.children('dot').length; // tuplets!!!! big to-do!
 
       d.type = durationType;
@@ -54824,7 +54174,7 @@ class MeasureParser {
     if (allTies.length > 1) {
       t.type = 'continue';
     } else {
-      var $t0 = jquery__WEBPACK_IMPORTED_MODULE_6__(allTies[0]);
+      var $t0 = jquery__WEBPACK_IMPORTED_MODULE_5__(allTies[0]);
       t.type = $t0.attr('type');
     } // style
 
@@ -54842,7 +54192,7 @@ class MeasureParser {
     try {
       for (var _iterator7 = lyricList[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
         var mxLyric = _step7.value;
-        var lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_6__(mxLyric));
+        var lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_5__(mxLyric));
 
         if (lyricObj === undefined) {
           continue;
@@ -54878,11 +54228,12 @@ class MeasureParser {
    */
 
 
-  xmlToLyric($mxLyric, inputM21) {
+  xmlToLyric($mxLyric) {
+    var inputM21 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var l = inputM21;
 
     if (inputM21 === undefined) {
-      l = new _note__WEBPACK_IMPORTED_MODULE_12__["Lyric"]();
+      l = new _note__WEBPACK_IMPORTED_MODULE_12__["Lyric"]('');
     }
 
     try {
@@ -54964,7 +54315,7 @@ class MeasureParser {
       for (var _iterator8 = $mxAttributes.children()[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
         var mxSub = _step8.value;
         var tag = mxSub.tagName;
-        var $mxSub = jquery__WEBPACK_IMPORTED_MODULE_6__(mxSub);
+        var $mxSub = jquery__WEBPACK_IMPORTED_MODULE_5__(mxSub);
         var methName = this.attributeTagsToMethods[tag];
 
         if (methName !== undefined) {
@@ -55006,8 +54357,8 @@ class MeasureParser {
   xmlToTimeSignature($mxTime) {
     // senza-misura
     // simple time signature only;
-    var numerator = jquery__WEBPACK_IMPORTED_MODULE_6__($mxTime.children('beats')[0]).text().trim();
-    var denominator = jquery__WEBPACK_IMPORTED_MODULE_6__($mxTime.children('beat-type')[0]).text().trim();
+    var numerator = jquery__WEBPACK_IMPORTED_MODULE_5__($mxTime.children('beats')[0]).text().trim();
+    var denominator = jquery__WEBPACK_IMPORTED_MODULE_5__($mxTime.children('beat-type')[0]).text().trim();
     return new _meter__WEBPACK_IMPORTED_MODULE_11__["TimeSignature"](numerator + '/' + denominator); // symbol
   }
 
@@ -55021,14 +54372,14 @@ class MeasureParser {
   }
 
   xmlToClef($mxClef) {
-    var sign = jquery__WEBPACK_IMPORTED_MODULE_6__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
+    var sign = jquery__WEBPACK_IMPORTED_MODULE_5__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
 
-    var line = jquery__WEBPACK_IMPORTED_MODULE_6__($mxClef.children('line')[0]).text().trim();
+    var line = jquery__WEBPACK_IMPORTED_MODULE_5__($mxClef.children('line')[0]).text().trim();
     var clefOctaveChange = 0;
     var $coc = $mxClef.children('clef-octave-change');
 
     if ($coc.length > 0) {
-      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_6__($coc[0]).text().trim());
+      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_5__($coc[0]).text().trim());
     }
 
     return _clef__WEBPACK_IMPORTED_MODULE_8__["clefFromString"](sign + line, clefOctaveChange);
@@ -55044,8 +54395,6 @@ class MeasureParser {
     seta(ks, $mxKey, 'fifths', 'sharps', parseInt); // mode!
     // non-standard and key-octaves
 
-    ks._alteredPitchesCache = undefined; // TODO: remove private access...
-
     return ks;
   }
 
@@ -55059,9 +54408,9 @@ var musicxml = {
 
 /***/ }),
 
-/***/ "./src/music21/note.js":
+/***/ "./src/music21/note.ts":
 /*!*****************************!*\
-  !*** ./src/music21/note.js ***!
+  !*** ./src/music21/note.ts ***!
   \*****************************/
 /*! exports provided: NotRestException, noteheadTypeNames, stemDirectionNames, Lyric, GeneralNote, NotRest, Note, Rest */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -55092,11 +54441,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
@@ -55112,7 +54460,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Module for note classes. See the namespace {@link music21.note}
  *
- * @requires music21/common
  * @requires music21/prebase
  * @requires music21/base
  * @requires music21/pitch
@@ -55133,17 +54480,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"] {} // noinspection JSUnusedGlobalSymbols
 
-class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"] {// no need
-}
 var noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
 /**
- * Class for a single Lyric attached to a {@link music21.note.GeneralNote}
+ * Class for a single Lyric attached to a {@link GeneralNote}
  *
  * @class Lyric
  * @memberOf music21.note
- * @extends music21.prebase.ProtoM21Object
  * @param {string} text - the text of the lyric
  * @param {number} number=1 - the lyric number
  * @param {string} syllabic=undefined - placement of the syllable
@@ -55162,22 +54507,18 @@ var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up
  */
 
 class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.note.Lyric';
-  }
-
   constructor(text) {
     var number = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-    var syllabic = arguments.length > 2 ? arguments[2] : undefined;
-    var applyRaw = arguments.length > 3 ? arguments[3] : undefined;
-    var identifier = arguments.length > 4 ? arguments[4] : undefined;
+    var syllabic = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var applyRaw = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var identifier = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
     super();
     this.lyricConnector = '-'; // override to place something else between two notes...
 
     this.text = text;
     this._number = number;
     this.syllabic = syllabic;
-    this.applyRaw = applyRaw || false;
+    this.applyRaw = applyRaw !== null && applyRaw !== void 0 ? applyRaw : false;
     this.setTextAndSyllabic(this.text, this.applyRaw);
     this._identifier = identifier;
     this.style = {
@@ -55187,6 +54528,10 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
       fontSize: 12,
       fontWeight: ''
     };
+  }
+
+  static get className() {
+    return 'music21.note.Lyric';
   }
 
   get identifier() {
@@ -55204,7 +54549,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
 
   set number(n) {
     this._number = n;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
    * get rawText - gets the raw text.
    *
@@ -55222,7 +54568,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     } else {
       return this.text;
     }
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   set rawText(t) {
     this.setTextAndSyllabic(t, true);
@@ -55273,7 +54620,6 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  *
  * @class GeneralNote
  * @memberof music21.note
- * @extends music21.base.Music21Object
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
@@ -55285,8 +54631,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  * @property {Array<music21.articulations.Articulation>} articulations - array
  *     of attached articulations
  * @property {string} lyric - the text of the first
- *     {@link music21.note.Lyric} object; can also set one.
- * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
+ *     {@link Lyric} object; can also set one.
+ * @property {Array<Lyric>} lyrics - array of attached lyrics
  * @property {number} [volume=60] - how loud is this note, 0-127, before
  *     articulations
  * @property {number} midiVolume - how loud is this note, taking into
@@ -55295,29 +54641,24 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  */
 
 class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
-  static get className() {
-    return 'music21.note.GeneralNote';
-  }
-
-  constructor(ql) {
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
     super();
+    this.isNote = false;
+    this.isRest = false;
     this.isChord = false;
-
-    if (ql !== undefined) {
-      this.duration.quarterLength = ql;
-    } else {
-      this.duration.quarterLength = 1.0;
-    }
-
     this.volume = 60;
-    this.activeVexflowNote = undefined;
     this.expressions = [];
     this.articulations = [];
     this.lyrics = [];
-    this.tie = undefined;
-    /* TODO: editorial objects, color, addLyric, insertLyric, hasLyrics */
+    this.duration.quarterLength = ql;
+    /* TODO: editorial objects, style(color), addLyric, insertLyric, hasLyrics */
 
     /* Later: augmentOrDiminish, getGrace, */
+  }
+
+  static get className() {
+    return 'music21.note.GeneralNote';
   }
 
   get lyric() {
@@ -55331,7 +54672,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
   set lyric(value) {
     this.lyrics = [];
 
-    if (value !== undefined && value !== false) {
+    if (value !== undefined) {
       this.lyrics.push(new Lyric(value));
     }
   }
@@ -55357,9 +54698,10 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
 
     volume = Math.floor(volume);
     return volume;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
-   * Add a {@link music21.note.Lyric} object to the Note
+   * Add a {@link Lyric} object to the Note
    *
    * @param {string} text - text to be added
    * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
@@ -55419,126 +54761,66 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
    */
 
 
-  vexflowAccidentalsAndDisplay(vfn, options) {
+  vexflowAccidentalsAndDisplay(vfn) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     if (this.duration.dots > 0) {
       for (var i = 0; i < this.duration.dots; i++) {
         vfn.addDotToAll();
       }
     }
+  }
+  /**
+   * Return the active channel for the instrument or activeSite's instrument
+   * @param instrument
+   */
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
-      console.log(this.stemDirection);
-    }
 
-    if (this.stemDirection === 'noStem') {
-      vfn.hasStem = () => false; // need to override...
-      // vfn.render_options.stem_height = 0;
+  activeChannel() {
+    var instrument = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
 
-    } else {
-      // correct VexFlow stem length for notes far from the center line;
-      var staveDNNSpacing = 5;
-
-      if (options.stave) {
-        staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
-      }
-
-      if (options.clef !== undefined && this.pitch !== undefined) {
-        var midLine = options.clef.lowestLine + 4; // console.log(midLine);
-
-        var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
-        var absOverOctave = absDNNfromCenter - 7; // console.log(absOverOctave);
-
-        if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
-          var stemHeight = absOverOctave * staveDNNSpacing + vfn.getStemLength();
-          vfn.setStemLength(stemHeight);
-        }
+    if (instrument === undefined) {
+      if (this.activeSite !== undefined) {
+        instrument = this.activeSite.instrument;
       }
     }
+
+    var channel = 0;
+
+    if (instrument !== undefined) {
+      channel = instrument.midiChannel;
+    }
+
+    return channel;
   }
   /**
    * Play the current element as a MIDI note.
+   *
+   * For a general note -- same as a rest -- doesn't make a sound.  :-)
    *
    * @param {number} [tempo=120] - tempo in bpm
    * @param {base.Music21Object} [nextElement] - for determining
    *     the length to play in case of tied notes, etc.
    * @param {Object} [options] - other options (currently just
    *     `{instrument: {@link music21.instrument.Instrument} }`)
-   * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
+   * @returns {number} - delay time in milliseconds until the next element (may be ignored)
    */
 
 
   playMidi() {
     var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
     var nextElement = arguments.length > 1 ? arguments[1] : undefined;
-    var options = arguments.length > 2 ? arguments[2] : undefined;
+
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref$instrument = _ref.instrument,
+        instrument = _ref$instrument === void 0 ? undefined : _ref$instrument,
+        _ref$channel = _ref.channel,
+        channel = _ref$channel === void 0 ? undefined : _ref$channel;
 
     // returns the number of milliseconds to the next element in
     // case that can't be determined otherwise.
-    if (options === undefined) {
-      var inst;
-
-      if (this.activeSite !== undefined) {
-        inst = this.activeSite.instrument;
-      }
-
-      options = {
-        instrument: inst
-      };
-    }
-
-    var volume = this.midiVolume;
-    var channel = 0;
-
-    if (options.instrument !== undefined) {
-      channel = options.instrument.midiChannel;
-    }
-
     var ql = this.duration.quarterLength;
     var milliseconds = 60 * ql * 1000 / tempo;
-    var midNum;
-
-    if (this.isClassOrSubclass('Note')) {
-      // Note, not rest
-      midNum = this.pitch.midi;
-      var stopTime = milliseconds / 1000;
-
-      if (nextElement instanceof _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] && nextElement.isClassOrSubclass('Note')) {
-        if (nextElement.pitch.midi !== this.pitch.midi) {
-          stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
-        } else if (this.tie !== undefined && (this.tie.type === 'start' || this.tie.type === 'continue')) {
-          stopTime += 60 * nextElement.duration.quarterLength / tempo; // this does not take into account 3 or more notes tied.
-          // TODO: look ahead at next nexts, etc.
-        }
-      } else if (nextElement === undefined) {
-        // let last note ring an extra beat...
-        stopTime += 60 / tempo;
-      } // console.log(stopTime);
-      // console.log(this.tie);
-
-
-      if (this.tie === undefined || this.tie.type === 'start') {
-        // console.log(volume);
-        try {
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOn"](channel, midNum, volume, 0);
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOff"](channel, midNum, stopTime);
-        } catch (e) {// do nothing -- might not have an output channel because of audio not connected
-        }
-      } // else { console.log ('not going to play ', this.nameWithOctave); }
-
-    } else if (this.isClassOrSubclass('Chord')) {
-      // TODO: Tied Chords.
-      for (var j = 0; j < this._notes.length; j++) {
-        midNum = this._notes[j].pitch.midi;
-
-        try {
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOn"](channel, midNum, volume, 0);
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOff"](channel, midNum, milliseconds / 1000);
-        } catch (e) {// do nothing -- might not have an output channel because of audio not connected
-        }
-      }
-    } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
-
-
     return milliseconds;
   }
 
@@ -55546,9 +54828,6 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
 /**
  * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
  *
- * @class NotRest
- * @memberof music21.note
- * @extends music21.note.GeneralNote
  * @param {number} [ql=1.0] - length in quarter notes
  * @property {music21.beam.Beams} beams - a link to a beam object
  * @property {string} [notehead='normal'] - notehead type
@@ -55560,23 +54839,26 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
  */
 
 class NotRest extends GeneralNote {
-  static get className() {
-    return 'music21.note.NotRest';
-  }
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+    super(ql); // noinspection JSUnusedGlobalSymbols
 
-  constructor(ql) {
-    super(ql);
-    this.notehead = 'normal';
+    this.notehead = 'normal'; // noinspection JSUnusedGlobalSymbols
+
     this.noteheadFill = 'default';
     this.noteheadColor = 'black';
     this.noteheadParenthesis = false;
     this.volume = undefined; // not a real object yet.
 
+    this._stemDirection = 'unspecified';
     this.beams = new _beam__WEBPACK_IMPORTED_MODULE_10__["Beams"]();
     /* TODO: this.duration.linkage -- need durationUnits */
 
-    this._stemDirection = 'unspecified';
     /* TODO: check notehead, noteheadFill, noteheadParentheses */
+  }
+
+  static get className() {
+    return 'music21.note.NotRest';
   }
 
   get stemDirection() {
@@ -55603,51 +54885,51 @@ class NotRest extends GeneralNote {
  * object to describe pitch (highness/lowness) with a {@link music21.duration.Duration} object
  * that defines length, with additional features for drawing the Note, playing it back, etc.
  *
- * Together with {@link music21.stream.Stream} one of the two most important
+ * Together with {@link Stream} one of the two most important
  * classes in `music21`.
  *
- * See {@link music21.note.NotRest}, {@link music21.note.GeneralNote},
+ * See {@link NotRest}, {@link GeneralNote},
  * {@link base.Music21Object}
- * and {@link music21.prebase.ProtoM21Object} (or in general, the **extends** list below) for other
+ * and {@link prebase.ProtoM21Object} (or in general, the **extends** list below) for other
  * things you can do with a `Note` object.
  *
  * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
  *
  * @class Note
  * @memberof music21.note
- * @extends music21.note.NotRest
  */
 
 class Note extends NotRest {
-  static get className() {
-    return 'music21.note.Note';
-  }
   /**
    *
    * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch
    *     name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
    * @param {(number|undefined)} [ql=1.0] - length in quarter notes
-   * @property {Boolean} [isNote=true] - is it a Note? Yes!
-   * @property {Boolean} [isRest=false] - is it a Rest? No!
+   * @property {boolean} [isNote=true] - is it a Note? Yes!
+   * @property {boolean} [isRest=false] - is it a Rest? No!
    * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
    * @property {string} name - shortcut to `.pitch.name`
    * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`
    * @property {string} step - shortcut to `.pitch.step`
    * @property {number} octave - shortcut to `.pitch.octave`
    */
+  constructor() {
+    var nn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C4';
+    var ql = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
+    super(ql); // noinspection JSUnusedGlobalSymbols
 
-
-  constructor(nn, ql) {
-    super(ql);
-    this.isNote = true; // for speed
-
-    this.isRest = false; // for speed
+    this.isNote = true;
+    this.isRest = false;
 
     if (nn instanceof _pitch__WEBPACK_IMPORTED_MODULE_9__["Pitch"]) {
       this.pitch = nn;
     } else {
       this.pitch = new _pitch__WEBPACK_IMPORTED_MODULE_9__["Pitch"](nn);
     }
+  }
+
+  static get className() {
+    return 'music21.note.Note';
   }
   /**
    *
@@ -55759,6 +55041,48 @@ class Note extends NotRest {
       return 'up';
     }
   }
+
+  vexflowAccidentalsAndDisplay(vfn) {
+    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref2$stave = _ref2.stave,
+        stave = _ref2$stave === void 0 ? undefined : _ref2$stave,
+        _ref2$clef = _ref2.clef,
+        clef = _ref2$clef === void 0 ? undefined : _ref2$clef;
+
+    super.vexflowAccidentalsAndDisplay(vfn, {
+      stave,
+      clef
+    });
+
+    if (_debug__WEBPACK_IMPORTED_MODULE_11__["debug"]) {
+      console.log(this.stemDirection);
+    }
+
+    if (this.stemDirection === 'noStem') {
+      vfn.hasStem = () => false; // need to override...
+      // vfn.render_options.stem_height = 0;
+
+    } else {
+      // correct VexFlow stem length for notes far from the center line;
+      var staveDNNSpacing = 5;
+
+      if (stave !== undefined) {
+        staveDNNSpacing = Math.floor(stave.options.spacing_between_lines_px / 2);
+      }
+
+      if (clef !== undefined && this.pitch !== undefined) {
+        var midLine = clef.lowestLine + 4; // console.log(midLine);
+
+        var absDNNFromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
+        var absOverOctave = absDNNFromCenter - 7; // console.log(absOverOctave);
+
+        if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
+          var stemHeight = absOverOctave * staveDNNSpacing + vfn.getStemLength();
+          vfn.setStemLength(stemHeight);
+        }
+      }
+    }
+  }
   /**
    * Returns a `Vex.Flow.StaveNote` that approximates this note.
    *
@@ -55768,21 +55092,17 @@ class Note extends NotRest {
    */
 
 
-  vexflowNote(options) {
-    var params = {};
-    _common__WEBPACK_IMPORTED_MODULE_11__["merge"](params, options);
-    var clef = params.clef;
+  vexflowNote() {
+    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref3$clef = _ref3.clef,
+        clef = _ref3$clef === void 0 ? undefined : _ref3$clef;
+
     var useStemDirection = this.stemDirection; // fixup stem direction -- must happen before Vex.Flow.Note is created...
 
     if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined && stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
       useStemDirection = this.activeSite.renderOptions.stemDirection;
-    } else if ([undefined, 'unspecified'].includes(this.stemDirection) && options.clef !== undefined) {
-      useStemDirection = this.getStemDirectionFromClef(options.clef);
-    }
-
-    if (this.duration === undefined) {
-      // console.log(this);
-      return undefined;
+    } else if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
+      useStemDirection = this.getStemDirectionFromClef(clef);
     }
 
     var vfd = this.duration.vexflowDuration;
@@ -55799,7 +55119,9 @@ class Note extends NotRest {
       duration: vfd,
       stem_direction: vfnStemDirection
     });
-    this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
+    this.vexflowAccidentalsAndDisplay(vfn, {
+      clef
+    }); // clean up stuff...
 
     if (this.pitch.accidental !== undefined) {
       if (this.pitch.accidental.vexflowModifier !== 'n' && this.pitch.accidental.displayStatus !== false) {
@@ -55836,6 +55158,59 @@ class Note extends NotRest {
     return vfn;
   }
 
+  playMidi() {
+    var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
+    var nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+    var _ref4 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref4$instrument = _ref4.instrument,
+        instrument = _ref4$instrument === void 0 ? undefined : _ref4$instrument,
+        _ref4$channel = _ref4.channel,
+        channel = _ref4$channel === void 0 ? undefined : _ref4$channel,
+        _ref4$playLegato = _ref4.playLegato,
+        playLegato = _ref4$playLegato === void 0 ? true : _ref4$playLegato;
+
+    var milliseconds = super.playMidi(tempo, nextElement, {
+      instrument,
+      channel
+    });
+
+    if (channel === undefined) {
+      channel = this.activeChannel();
+    }
+
+    var volume = this.midiVolume; // Note, not rest
+
+    var midNum = this.pitch.midi;
+    var stopTime = milliseconds / 1000;
+
+    if (nextElement instanceof Note) {
+      if (nextElement.pitch.midi !== this.pitch.midi && playLegato) {
+        stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
+      } else if (this.tie !== undefined && (this.tie.type === 'start' || this.tie.type === 'continue')) {
+        stopTime += 60 * nextElement.duration.quarterLength / tempo; // this does not take into account 3 or more notes tied.
+        // TODO: look ahead at next nexts, etc.
+      }
+    } else if (nextElement === undefined && playLegato) {
+      // let last note ring an extra beat...
+      stopTime += 60 / tempo;
+    } // console.log(stopTime);
+    // console.log(this.tie);
+
+
+    if (this.tie === undefined || this.tie.type === 'start') {
+      // console.log(volume);
+      try {
+        midicube__WEBPACK_IMPORTED_MODULE_6__["noteOn"](channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_6__["noteOff"](channel, midNum, stopTime);
+      } catch (e) {// do nothing -- might not have an output channel because of audio not connected
+      }
+    } // else { console.log ('not going to play ', this.nameWithOctave); }
+
+
+    return milliseconds;
+  }
+
 }
 /* ------ TODO: Unpitched ------ */
 
@@ -55846,7 +55221,6 @@ class Note extends NotRest {
  *
  * @class Rest
  * @memberof music21.note
- * @extends music21.note.GeneralNote
  * @param {number} [ql=1.0] - length in number of quarterNotes
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
@@ -55856,20 +55230,22 @@ class Note extends NotRest {
  */
 
 class Rest extends GeneralNote {
-  static get className() {
-    return 'music21.note.Rest';
+  // this dummy constructor is here for JetBrains typescript linter
+  // which otherwise complains that Rests have no durations, etc.
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+    super(ql); // noinspection JSUnusedGlobalSymbols
+
+    this.isNote = false;
+    this.isRest = true;
+    this.name = 'rest';
+    this.lineShift = 0;
+    this.color = 'black';
+    this.name = 'rest';
   }
 
-  constructor(ql) {
-    super(ql);
-    this.isNote = false; // for speed
-
-    this.isRest = true; // for speed
-
-    this.name = 'rest'; // for note compatibility
-
-    this.lineShift = undefined;
-    this.color = 'black';
+  static get className() {
+    return 'music21.note.Rest';
   }
   /**
    *
@@ -55937,9 +55313,9 @@ class Rest extends GeneralNote {
 
 /***/ }),
 
-/***/ "./src/music21/parseLoader.js":
+/***/ "./src/music21/parseLoader.ts":
 /*!************************************!*\
-  !*** ./src/music21/parseLoader.js ***!
+  !*** ./src/music21/parseLoader.ts ***!
   \************************************/
 /*! exports provided: runConfiguration, getBasePath, fixUrls, renderHTML, loadDefaultSoundfont, loadConfiguration, getM21attribute, warnBanner */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -55960,10 +55336,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
-/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tinyNotation */ "./src/music21/tinyNotation.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tinyNotation */ "./src/music21/tinyNotation.ts");
 
 
 
@@ -56116,9 +55492,9 @@ function warnBanner() {
 
 /***/ }),
 
-/***/ "./src/music21/pitch.js":
+/***/ "./src/music21/pitch.ts":
 /*!******************************!*\
-  !*** ./src/music21/pitch.js ***!
+  !*** ./src/music21/pitch.ts ***!
   \******************************/
 /*! exports provided: Accidental, nameToMidi, nameToSteps, stepsToName, midiToName, Pitch */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -56143,7 +55519,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 
 
 
@@ -56175,37 +55551,14 @@ __webpack_require__.r(__webpack_exports__);
  * @property {number} alter
  * @property {string} displayType
  * @property {boolean|undefined} displayStatus
- * @extends music21.prebase.ProtoM21Object
  */
 
 class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.pitch.Accidental';
-  }
-
   constructor(accName) {
     super();
     this._name = '';
-    /**
-     *
-     * @type {number}
-     * @private
-     */
-
     this._alter = 0.0;
-    /**
-     *
-     * @type {string}
-     * @private
-     */
-
     this._modifier = '';
-    /**
-     *
-     * @type {string}
-     * @private
-     */
-
     this._unicodeModifier = '';
     this.displayType = 'normal'; // "normal", "always" supported currently
 
@@ -56213,11 +55566,10 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"]
 
     this.set(accName);
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.pitch.Accidental';
+  }
 
   stringInfo() {
     return this.name;
@@ -56231,7 +55583,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"]
 
 
   set(accName) {
-    if (accName !== undefined && accName.toLowerCase !== undefined) {
+    if (typeof accName === 'string') {
       accName = accName.toLowerCase();
     }
 
@@ -56434,13 +55786,12 @@ var midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B
  *
  * @class Pitch
  * @memberof music21.pitch
- * @param {string} pn - name of the pitch, with or without octave, see above.
- * @extends music21.prebase.ProtoM21Object
- * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
+ * @param {string|number} pn - name of the pitch, with or without octave, see above.
+ * @property {Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch,
  *     where 29 = C4, C#4, C-4, etc.; 30 = D-4, D4, D#4, etc. updates other properties.
  * @property {number} midi - midi number of the pitch (C4 = 60); readonly.
- *     See {@link music21.pitch.Pitch#ps} for settable version.
+ *     See {@link Pitch#ps} for settable version.
  * @property {string} name - letter name of pitch + accidental modifier;
  *     e.g., B-flat = 'B-'; changes automatically w/ step and accidental
  * @property {string} nameWithOctave - letter name of pitch + accidental
@@ -56454,29 +55805,14 @@ var midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B
  */
 
 class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.pitch.Pitch';
-  }
-
   constructor() {
     var pn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
     super();
     this._step = 'C';
-    /**
-     *
-     * @type {number}
-     * @private
-     */
-
     this._octave = 4;
-    /**
-     *
-     * @type {music21.pitch.Accidental|undefined}
-     * @private
-     */
-
     this._accidental = undefined;
     this.spellingIsInferred = false;
+    this.microtone = undefined;
     /* pn can be a nameWithOctave */
 
     if (typeof pn === 'number') {
@@ -56491,20 +55827,14 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
       this.name = pn;
     }
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.pitch.Pitch';
+  }
 
   stringInfo() {
     return this.nameWithOctave;
   } // N.B. cannot use transpose here, because of circular import.
-
-  /**
-   *
-   * @type {string}
-   */
 
 
   get step() {
@@ -56529,11 +55859,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     this._step = s;
     this.spellingIsInferred = false;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get octave() {
     return this._octave;
@@ -56542,11 +55867,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   set octave(o) {
     this._octave = o;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get implicitOctave() {
     var o = this._octave;
@@ -56557,35 +55877,23 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
       return o;
     }
   }
-  /**
-   *
-   * @type {music21.pitch.Accidental|undefined}
-   */
-
 
   get accidental() {
     return this._accidental;
   }
 
   set accidental(a) {
-    if (typeof a !== 'object' && a !== undefined) {
-      a = new Accidental(a);
-    }
-
     this._accidental = a;
     this.spellingIsInferred = false;
   }
-  /**
-   *
-    * @type {string}
-   */
-
 
   get name() {
-    if (this.accidental === undefined) {
+    var a = this.accidental;
+
+    if (a === undefined) {
       return this.step;
     } else {
-      return this.step + this.accidental.modifier;
+      return this.step + a.modifier;
     }
   }
 
@@ -56595,15 +55903,11 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
     if (tempAccidental) {
       // not the empty string
-      this.accidental = tempAccidental; // converts automatically
+      this.accidental = new Accidental(tempAccidental);
     } else {
       this.accidental = undefined;
     }
   }
-  /**
-   * @type {string}
-   */
-
 
   get nameWithOctave() {
     return this.name + this.octave.toString();
@@ -56614,7 +55918,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
     if (storedOctave !== undefined) {
       pn = pn.replace(/\d+/, '');
-      this.octave = parseInt(storedOctave);
+      this.octave = parseInt(storedOctave[0]);
       this.name = pn;
     } else {
       this.name = pn;
@@ -56717,7 +56021,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    * @param {boolean} inPlace
    * @param {int} directionInt -- -1 = down, 1 = up
-   * @returns {music21.pitch.Pitch}
+   * @returns {Pitch}
    */
 
 
@@ -56768,7 +56072,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    *
    * @param {boolean} [inPlace=false]
-   * @returns {music21.pitch.Pitch}
+   * @returns {Pitch}
    */
 
 
@@ -56779,7 +56083,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    *
    * @param {boolean} [inPlace=false]
-   * @returns {music21.pitch.Pitch}
+   * @returns {Pitch}
    */
 
 
@@ -56792,12 +56096,15 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    * Returns the vexflow name for the pitch in the given clef.
    *
+   * if clefObj is undefined, then the clef is treated as TrebleClef.
+   *
    * @param {music21.clef.Clef} [clefObj] - the active {@link music21.clef.Clef} object
    * @returns {string} - representation in vexflow
    */
 
 
-  vexflowName(clefObj) {
+  vexflowName() {
+    var clefObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
     // returns a vexflow Key name for this pitch.
     var tempPitch = this;
 
@@ -56862,8 +56169,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit. See the {@link music21.prebase} namespace.
@@ -56882,9 +56187,9 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
  * @memberof music21.prebase
  * @property {Array<string>} classes - An Array of strings of classes
  * that the object belongs to (default ['ProtoM21Object'])
- * @property {Boolean} isProtoM21Object - Does this object descend
+ * @property {boolean} isProtoM21Object - Does this object descend
  * from {@link music21.prebase.ProtoM21Object}: obviously true.
- * @property {Boolean} isMusic21Object - Does this object descend
+ * @property {boolean} isMusic21Object - Does this object descend
  * from Music21Object; default false.
  */
 class ProtoM21Object {
@@ -56959,9 +56264,9 @@ class ProtoM21Object {
    * Works similarly to Python's copy.deepcopy().
    *
    * Every ProtoM21Object has a `._cloneCallbacks` object which maps
-   * `{attribute: callbackFunction}`
+   * `{attribute: callbackFunction|boolean}`
    * to handle custom clone cases.  See, for instance, Music21Object which
-   * uses a custom callback to NOT clone the `.activeSite` attribute.
+   * uses a custom callback to NOT clone the `.derivation` attribute directly.
    *
    * @example
    * var n1 = new music21.note.Note("C#");
@@ -56975,17 +56280,13 @@ class ProtoM21Object {
   clone() {
     var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     var memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-    if (!deep) {
-      return _extends(Object.create(Object.getPrototypeOf(this)), this);
-    }
-
+    // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
     var classConstructor = this.constructor;
     var ret = new classConstructor();
 
     if (memo === undefined) {
       memo = new WeakMap();
-    } // todo: do Arrays work?
+    } // TODO(msc): test if Arrays work?
 
 
     for (var key in this) {
@@ -57001,11 +56302,11 @@ class ProtoM21Object {
           ret[key] = undefined;
         } else {
           // call the cloneCallbacks function
-          this._cloneCallbacks[key](key, ret, this);
+          this._cloneCallbacks[key](key, ret, this, deep, memo);
         }
       } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {// do nothing
       } else if (typeof this[key] === 'function') {// do nothing -- events might not be copied.
-      } else if (typeof this[key] === 'object' && this[key] !== null && this[key].isProtoM21Object) {
+      } else if (deep && typeof this[key] === 'object' && this[key] !== null && this[key].isProtoM21Object) {
         // console.log('cloning ', key);
         var m21Obj = this[key];
         var clonedVersion = void 0;
@@ -57019,7 +56320,9 @@ class ProtoM21Object {
         ret[key] = clonedVersion;
       } else {
         try {
-          ret[key] = this[key]; // music21.common.merge(ret[key], this[key]); // not really necessary?
+          // for deep this should be:
+          // music21.common.merge(ret[key], this[key]);
+          ret[key] = this[key];
         } catch (e) {
           if (e instanceof TypeError) {
             console.log('typeError:', e, key); // do nothing
@@ -57036,7 +56339,7 @@ class ProtoM21Object {
    * Check to see if an object is of this class or subclass.
    *
    * @param {string|string[]} testClass - a class or Array of classes to test
-   * @returns {Boolean}
+   * @returns {boolean}
    * @example
    * var n = new music21.note.Note();
    * n.isClassOrSubclass('Note'); // true
@@ -57110,9 +56413,9 @@ class ProtoM21Object {
 
 /***/ }),
 
-/***/ "./src/music21/renderOptions.js":
+/***/ "./src/music21/renderOptions.ts":
 /*!**************************************!*\
-  !*** ./src/music21/renderOptions.js ***!
+  !*** ./src/music21/renderOptions.ts ***!
   \**************************************/
 /*! exports provided: RenderOptions */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -57120,7 +56423,6 @@ class ProtoM21Object {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenderOptions", function() { return RenderOptions; });
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/renderOptions -- an object that defines the render options for a Stream
@@ -57145,83 +56447,52 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @memberof music21.renderOptions
  */
-
 class RenderOptions {
   constructor() {
-    var defaultOptions = {
-      displayClef: true,
-      displayTimeSignature: true,
-      displayKeySignature: true,
-      scaleFactor: {
-        x: 0.7,
-        y: 0.7
-      },
-      top: 0,
-
-      /**
-       * @type {number|undefined}
-       */
-      left: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      width: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      overriddenWidth: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      height: undefined,
-      naiveHeight: 120,
-      systemIndex: 0,
-      partIndex: 0,
-      measureIndex: 0,
-      systemMeasureIndex: 0,
-
-      /**
-       * @type {number|undefined}
-       */
-      systemPadding: undefined,
-      naiveSystemPadding: 40,
-      stemDirection: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      maxSystemWidth: undefined,
-      rightBarline: undefined,
-      staffLines: 5,
-      staffConnectors: ['single', 'brace'],
-      staffPadding: 60,
-      // width...
-      events: {
-        click: 'play',
-        dblclick: undefined // resize
-
-      },
-      startNewSystem: false,
-      startNewPage: false,
-
-      /**
-       * @type {boolean|undefined}
-       */
-      showMeasureNumber: undefined
+    this.displayClef = true;
+    this.displayTimeSignature = true;
+    this.displayKeySignature = true;
+    this.scaleFactor = {
+      x: 0.7,
+      y: 0.7
     };
-    _common__WEBPACK_IMPORTED_MODULE_0__["merge"](this, defaultOptions);
+    this.top = 0;
+    this.left = undefined;
+    this.width = undefined;
+    this.overriddenWidth = undefined;
+    this.height = undefined;
+    this.naiveHeight = 120; // additional padding at the bottom of the stream (not every system).
+
+    this.marginBottom = 0;
+    this.systemIndex = 0;
+    this.partIndex = 0;
+    this.measureIndex = 0;
+    this.systemPadding = undefined;
+    this.naiveSystemPadding = 40;
+    this.stemDirection = undefined;
+    this.maxSystemWidth = undefined;
+    this.rightBarline = undefined;
+    this.staffLines = 5;
+    this.staffConnectors = ['single', 'brace'];
+    this.staffPadding = 60; // width...
+
+    this.events = {
+      click: 'play',
+      dblclick: undefined
+    };
+    this.startNewSystem = false; // noinspection JSUnusedGlobalSymbols
+
+    this.startNewPage = false;
+    this.showMeasureNumber = undefined;
   }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/roman.js":
+/***/ "./src/music21/roman.ts":
 /*!******************************!*\
-  !*** ./src/music21/roman.js ***!
+  !*** ./src/music21/roman.ts ***!
   \******************************/
 /*! exports provided: figureShorthands, functionalityScores, expandShortHand, correctSuffixForChordQuality, romanToNumber, RomanNumeral */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -57255,14 +56526,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./figuredBass */ "./src/music21/figuredBass.js");
-/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./harmony */ "./src/music21/harmony.js");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./figuredBass */ "./src/music21/figuredBass.ts");
+/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./harmony */ "./src/music21/harmony.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./key */ "./src/music21/key.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.ts");
 
 
 
@@ -57278,7 +56549,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -57289,11 +56560,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
- * Roman numeral module. See {@link music21.roman} namespace
+ * Roman numeral module. See  namespace
  * music21.roman -- namespace for dealing with RomanNumeral analysis.
  *
  * @exports music21/roman
- * @namespace music21.roman
  * @memberof music21
  * @requires music21/chord
  * @requires music21/common
@@ -57318,20 +56588,13 @@ var figureShorthands = {
   '63': '6',
   '753': '7',
   '75': '7',
-  // controversial perhaps
   '73': '7',
-  // controversial perhaps
   '9753': '9',
   '975': '9',
-  // controversial perhaps
   '953': '9',
-  // controversial perhaps
   '97': '9',
-  // controversial perhaps
   '95': '9',
-  // controversial perhaps
   '93': '9',
-  // controversial perhaps
   '653': '65',
   '6b53': '6b5',
   '643': '43',
@@ -57372,10 +56635,8 @@ var functionalityScores = {
   viio: 39,
   '#viio': 39,
   iio: 37,
-  // common in Minor
   iio42: 36,
   bII6: 35,
-  // Neapolitan
   iio43: 32,
   iio65: 31,
   '#vio': 28,
@@ -57440,7 +56701,7 @@ function expandShortHand(shorthand) {
  *     chord of various qualities.
  *
  * @memberof music21.roman
- * @param  {music21.chord.Chord} chordObj
+ * @param  {chord.Chord} chordObj
  * @param  {string} inversionString a string like '6' to fix.
  * @return {string}           corrected inversionString
   */
@@ -57490,7 +56751,6 @@ var romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  *
  * @class RomanNumeral
  * @memberof music21.roman
- * @extends music21.harmony.Harmony
  * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
  * @param {string|music21.key.Key} [keyStr='C']
  * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale
@@ -57516,25 +56776,21 @@ var romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  */
 
 class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
-  static get className() {
-    return 'music21.roman.RomanNumeral';
-  }
-
   constructor() {
     var figure = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var keyStr = arguments.length > 1 ? arguments[1] : undefined;
-    var keywords = arguments.length > 2 ? arguments[2] : undefined;
-    var params = {
-      updatePitches: false,
-      parseFigure: false
-    };
-    _common__WEBPACK_IMPORTED_MODULE_12__["merge"](params, keywords);
+    var keyStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
-    if (typeof figure === 'string') {
-      figure = figure.replace('/o', 'ø');
-    }
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref$parseFigure = _ref.parseFigure,
+        parseFigure = _ref$parseFigure === void 0 ? false : _ref$parseFigure,
+        _ref$updatePitches = _ref.updatePitches,
+        updatePitches = _ref$updatePitches === void 0 ? false : _ref$updatePitches;
 
-    super(figure, params);
+    super(figure, {
+      updatePitches,
+      parseFigure
+    });
+    figure = figure.replace('/o', 'ø');
     this._parsingComplete = false; // not yet used...
 
     this.primaryFigure = undefined;
@@ -57564,18 +56820,18 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     this.omittedSteps = [];
     this.followsKeyChange = false;
     this._functionalityScore = undefined;
-    /**
-     *
-     * @type {music21.key.Key|music21.scale.Scale|undefined}
-     * @private
-     */
-
-    this._scale = undefined; // the Key or Scale
+    this._scale = undefined; // the Key
 
     this.figure = figure;
-    this.key = keyStr; // to remove...
 
-    this.numbers = '';
+    if (typeof keyStr === 'string') {
+      this.key = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](keyStr);
+    } else {
+      this.key = keyStr;
+    } // to remove...
+
+
+    this.numbers = undefined;
 
     if (figure !== '') {
       this._parseFigure();
@@ -57584,6 +56840,10 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
 
       this._updatePitches();
     }
+  }
+
+  static get className() {
+    return 'music21.roman.RomanNumeral';
   }
 
   stringInfo() {
@@ -57847,16 +57107,16 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
   }
 
   get key() {
-    return this._scale;
+    return this._key;
   }
 
   set key(keyOrScale) {
     if (typeof keyOrScale === 'string') {
-      this._scale = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](keyOrScale);
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](keyOrScale);
     } else if (typeof keyOrScale === 'undefined') {
-      this._scale = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"]('C');
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"]('C');
     } else {
-      this._scale = keyOrScale;
+      this._key = keyOrScale;
     }
 
     if (keyOrScale === undefined) {
@@ -57964,38 +57224,17 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
 
     if (this.frontAlterationTransposeInterval !== undefined) {
       var newPitches = [];
-
-      for (var _i2 = 0, _pitches = pitches; _i2 < _pitches.length; _i2++) {
-        var thisPitch = _pitches[_i2];
-
-        var _newPitch = this.frontAlterationTransposeInterval.transposePitch(thisPitch);
-
-        newPitches.push(_newPitch);
-      }
-
-      this.pitches = newPitches;
-    } else {
-      this.pitches = pitches;
-    }
-
-    this._matchAccidentalsToQuality(this.impliedQuality);
-
-    this.scaleOffset = this.frontAlterationTransposeInterval;
-
-    if (this.omittedSteps.length) {
-      var omittedPitches = [];
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator2 = this.omittedSteps[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var thisCS = _step2.value;
-          var p = this.getChordStep(thisCS);
+        for (var _iterator2 = pitches[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var thisPitch = _step2.value;
 
-          if (p !== undefined) {
-            omittedPitches.push(p.name);
-          }
+          var _newPitch = this.frontAlterationTransposeInterval.transposePitch(thisPitch);
+
+          newPitches.push(_newPitch);
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -58012,13 +57251,70 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
         }
       }
 
+      this.pitches = newPitches;
+    } else {
+      this.pitches = pitches;
+    }
+
+    this._matchAccidentalsToQuality(this.impliedQuality);
+
+    this.scaleOffset = this.frontAlterationTransposeInterval;
+
+    if (this.omittedSteps.length) {
+      var omittedPitches = [];
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = this.omittedSteps[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var thisCS = _step3.value;
+          var p = this.getChordStep(thisCS);
+
+          if (p !== undefined) {
+            omittedPitches.push(p.name);
+          }
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
       var _newPitches = [];
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
 
-      for (var _i3 = 0, _pitches2 = pitches; _i3 < _pitches2.length; _i3++) {
-        var _thisPitch = _pitches2[_i3];
+      try {
+        for (var _iterator4 = pitches[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var _thisPitch = _step4.value;
 
-        if (!omittedPitches.includes(_thisPitch.name)) {
-          _newPitches.push(_thisPitch);
+          if (!omittedPitches.includes(_thisPitch.name)) {
+            _newPitches.push(_thisPitch);
+          }
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+            _iterator4.return();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
         }
       }
 
@@ -58033,13 +57329,13 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     var cDNN = c.diatonicNoteNum; // always 22
 
     var pitches = [c];
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
 
     try {
-      for (var _iterator3 = notationObject.numbers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var i = _step3.value;
+      for (var _iterator5 = notationObject.numbers[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+        var i = _step5.value;
         var distanceToMove = i - 1;
         var newDiatonicNumber = cDNN + distanceToMove;
 
@@ -58054,16 +57350,16 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
         pitches.push(newPitch);
       }
     } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
+      _didIteratorError5 = true;
+      _iteratorError5 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-          _iterator3.return();
+        if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+          _iterator5.return();
         }
       } finally {
-        if (_didIteratorError3) {
-          throw _iteratorError3;
+        if (_didIteratorError5) {
+          throw _iteratorError5;
         }
       }
     }
@@ -58129,7 +57425,9 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     }
   }
 
-  _correctForSecondaryRomanNumeral(useScale, figure) {
+  _correctForSecondaryRomanNumeral(useScale) {
+    var figure = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (figure === undefined) {
       figure = this._figure;
     }
@@ -58141,7 +57439,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     if (match !== null) {
       var primaryFigure = match[1];
       var secondaryFigure = match[2];
-      var secondaryRomanNumeral = new RomanNumeral(secondaryFigure, useScale, this.caseMatters);
+      var secondaryRomanNumeral = new RomanNumeral(secondaryFigure, useScale);
       this.secondaryRomanNumeral = secondaryRomanNumeral;
       var secondaryMode;
 
@@ -58169,8 +57467,8 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     var match = rx.exec(workingFigure);
 
     while (match !== null) {
-      var thisStep = match[1];
-      thisStep = parseInt(thisStep);
+      var thisStepStr = match[1];
+      var thisStep = parseInt(thisStepStr);
       thisStep = thisStep % 7 || 7;
       omittedSteps.push(thisStep);
       workingFigure = workingFigure.replace(rx, '');
@@ -58225,12 +57523,13 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
    * Inverting 7th chords does not work.
    *
    * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-   * @param {int} [inversion=0]
+   * @param {number} [inversion=0]
    * @returns {string}
    */
 
 
-  asString(displayType, inversion) {
+  asString(displayType) {
+    var inversion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var keyObj = this.key;
     var tonicName = keyObj.tonic.name;
     var mode = keyObj.mode; // specifying inversion is for backwards compatibility only.
@@ -58292,9 +57591,9 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
 
 /***/ }),
 
-/***/ "./src/music21/scale.js":
+/***/ "./src/music21/scale.ts":
 /*!******************************!*\
-  !*** ./src/music21/scale.js ***!
+  !*** ./src/music21/scale.ts ***!
   \******************************/
 /*! exports provided: Scale, AbstractScale, AbstractDiatonicScale, AbstractHarmonicMinorScale, AbstractAscendingMelodicMinorScale, ConcreteScale, DiatonicScale, MajorScale, MinorScale, HarmonicMinorScale, AscendingMelodicMinorScale, SimpleDiatonicScale, ScaleSimpleMajor, ScaleSimpleMinor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -58332,11 +57631,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
@@ -58381,13 +57680,14 @@ __webpack_require__.r(__webpack_exports__);
 // const DIRECTION_ASCENDING = 'ascending';
 
 class Scale extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
-  static get className() {
-    return 'music21.scale.Scale';
-  }
-
   constructor() {
     super();
     this.type = 'Scale';
+    this.type = 'Scale';
+  }
+
+  static get className() {
+    return 'music21.scale.Scale';
   }
   /**
    *
@@ -58411,24 +57711,33 @@ class Scale extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
 
 }
 class AbstractScale extends Scale {
-  static get className() {
-    return 'music21.scale.AbstractScale';
-  }
-
   constructor() {
     super();
-    this._net = []; // simplified -- no IntervalNetwork, just list of intervals
-
+    this._net = [];
     this.tonicDegree = 1;
     this.octaveDuplicating = true;
     this.deterministic = true;
     this._alteredDegrees = {};
     this._oneOctaveRealizationCache = undefined;
+    this.type = 'Abstract';
+  }
+
+  static get className() {
+    return 'music21.scale.AbstractScale';
+  }
+  /**
+   * To be subclassed
+   */
+
+
+  buildNetwork() {
+    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    this._net = [];
   }
   /**
    * One scale equals another
    *
-   * @param {music21.scale.AbstractScale} other - the scale compared to.
+   * @param {AbstractScale} other - the scale compared to.
    * @returns {boolean}
    */
 
@@ -58474,13 +57783,12 @@ class AbstractScale extends Scale {
       }
     }
 
-    pitchList = pitchListReal;
-    var pLast = pitchList[pitchList.length - 1];
+    var pLast = pitchListReal[pitchListReal.length - 1];
 
-    if (pLast.name === pitchList[0]) {
-      var p = pitchList[0].clone();
+    if (pLast.name === pitchListReal[0].name) {
+      var p = pitchListReal[0].clone();
 
-      if (pLast.ps > pitchList[0]) {
+      if (pLast.ps > pitchListReal[0]) {
         // ascending;
         while (p.ps < pLast.ps) {
           p.octave += 1;
@@ -58491,13 +57799,13 @@ class AbstractScale extends Scale {
         }
       }
 
-      pitchList.push(p);
+      pitchListReal.push(p);
     }
 
     var intervalList = [];
 
-    for (var i = 0; i < pitchList.length - 1; i++) {
-      var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](pitchList[i], pitchList[i + 1]);
+    for (var i = 0; i < pitchListReal.length - 1; i++) {
+      var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](pitchListReal[i], pitchListReal[i + 1]);
       intervalList.push(thisInterval);
     }
 
@@ -58509,7 +57817,13 @@ class AbstractScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  getRealization(pitchObj, unused_stepOfPitch, unused_minPitch, unused_maxPitch, unused_direction, unused_reverse) {
+  getRealization(pitchObj) {
+    var unused_stepOfPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_minPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var unused_maxPitch = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+    var unused_reverse = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : undefined;
+
     // if (direction === undefined) {
     //     direction = DIRECTION_ASCENDING;
     // }
@@ -58563,7 +57877,10 @@ class AbstractScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget, unused_comparisonAttribute, unused_direction) {
+  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget) {
+    var unused_comparisonAttribute = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+
     if (typeof pitchTarget === 'string') {
       pitchTarget = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"](pitchTarget);
     }
@@ -58614,14 +57931,10 @@ class AbstractScale extends Scale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  *
  */
 
 class AbstractDiatonicScale extends AbstractScale {
-  static get className() {
-    return 'music21.scale.AbstractDiatonicScale';
-  }
   /**
    *
    * @param {string} [mode]
@@ -58630,25 +57943,27 @@ class AbstractDiatonicScale extends AbstractScale {
    * @property {number|undefined} dominantDegree
    * @property {boolean} octaveDuplicating
    */
-
-
-  constructor(mode) {
+  constructor() {
+    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'major';
     super();
     this.type = 'Abstract diatonic';
     this.tonicDegree = undefined;
     this.dominantDegree = undefined;
     this.octaveDuplicating = true;
-
-    this._buildNetwork(mode);
+    this.buildNetwork(mode);
   }
 
-  _buildNetwork(mode) {
+  static get className() {
+    return 'music21.scale.AbstractDiatonicScale';
+  }
+
+  buildNetwork(mode) {
     var srcList = ['M2', 'M2', 'm2', 'M2', 'M2', 'M2', 'm2'];
     var intervalList;
     this.tonicDegree = 1;
     this.dominantDegree = 5;
 
-    if (['major', 'ionian', undefined].includes(mode)) {
+    if (['major', 'ionian'].includes(mode)) {
       intervalList = srcList;
       this.relativeMajorDegree = 1;
       this.relativeMinorDegree = 6;
@@ -58689,7 +58004,6 @@ class AbstractDiatonicScale extends AbstractScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  *
  */
 
@@ -58702,11 +58016,10 @@ class AbstractHarmonicMinorScale extends AbstractScale {
     super();
     this.type = 'Abstract harmonic minor';
     this.octaveDuplicating = true;
-
-    this._buildNetwork();
+    this.buildNetwork();
   }
 
-  _buildNetwork() {
+  buildNetwork() {
     var intervalList = ['M2', 'm2', 'M2', 'M2', 'm2', 'A2', 'm2'];
     this._net = [];
 
@@ -58722,7 +58035,6 @@ class AbstractHarmonicMinorScale extends AbstractScale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  */
 
 class AbstractAscendingMelodicMinorScale extends AbstractScale {
@@ -58734,11 +58046,10 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
     super();
     this.type = 'Abstract ascending melodic minor';
     this.octaveDuplicating = true;
-
-    this._buildNetwork();
+    this.buildNetwork();
   }
 
-  _buildNetwork() {
+  buildNetwork() {
     var intervalList = ['M2', 'm2', 'M2', 'M2', 'M2', 'M2', 'm2'];
     this._net = [];
 
@@ -58752,14 +58063,9 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.Scale
  */
 
 class ConcreteScale extends Scale {
-  static get className() {
-    return 'music21.scale.ConcreteScale';
-  }
-
   constructor(tonic) {
     super();
 
@@ -58769,6 +58075,10 @@ class ConcreteScale extends Scale {
 
     this.tonic = tonic;
     this.abstract = undefined;
+  }
+
+  static get className() {
+    return 'music21.scale.ConcreteScale';
   } // when adding functionality here, must also be added to key.Key.
 
 
@@ -58791,7 +58101,10 @@ class ConcreteScale extends Scale {
   // noinspection JSUnusedLocalSymbols
 
 
-  getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
+  getPitches() {
+    var unused_minPitch = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var unused_maxPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     var pitchObj;
 
     if (this.tonic === undefined) {
@@ -58804,19 +58117,24 @@ class ConcreteScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  pitchFromDegree(degree, unused_minPitch, unused_maxPitch, unused_direction, unused_equateTermini) {
+  pitchFromDegree(degree) {
+    var unused_minPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_maxPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var unused_direction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var unused_equateTermini = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
     return this.abstract.getPitchFromNodeDegree(this.tonic, this.abstract.tonicDegree, degree);
   } // noinspection JSUnusedLocalSymbols
 
 
-  getScaleDegreeFromPitch(pitchTarget, unused_direction, unused_comparisonAttribute) {
+  getScaleDegreeFromPitch(pitchTarget) {
+    var unused_direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_comparisonAttribute = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     return this.abstract.getRelativeNodeDegree(this.tonic, this.abstract.tonicDegree, pitchTarget);
   }
 
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 
 class DiatonicScale extends ConcreteScale {
@@ -58834,7 +58152,6 @@ class DiatonicScale extends ConcreteScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.DiatonicScale
  */
 
 class MajorScale extends DiatonicScale {
@@ -58846,14 +58163,12 @@ class MajorScale extends DiatonicScale {
     super(tonic); // a.k.a. ^2 :-)
 
     this.type = 'major';
-
-    this.abstract._buildNetwork(this.type);
+    this.abstract.buildNetwork(this.type);
   }
 
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.DiatonicScale
  */
 
 class MinorScale extends DiatonicScale {
@@ -58865,14 +58180,12 @@ class MinorScale extends DiatonicScale {
     super(tonic); // a.k.a. ^2 :-)
 
     this.type = 'minor';
-
-    this.abstract._buildNetwork(this.type);
+    this.abstract.buildNetwork(this.type);
   }
 
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 
 class HarmonicMinorScale extends ConcreteScale {
@@ -58890,7 +58203,6 @@ class HarmonicMinorScale extends ConcreteScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 
 class AscendingMelodicMinorScale extends ConcreteScale {
@@ -58911,10 +58223,10 @@ class AscendingMelodicMinorScale extends ConcreteScale {
  *
  * @memberOf music21.scale
  * @function music21.scale.SimpleDiatonicScale
- * @param {music21.pitch.Pitch} [tonic]
+ * @param {pitch.Pitch} [tonic]
  * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
  *     generally 'M' (major) or 'm' (minor) describing the seconds.
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function SimpleDiatonicScale(tonic, scaleSteps) {
@@ -58929,11 +58241,6 @@ function SimpleDiatonicScale(tonic, scaleSteps) {
   }
 
   var gi = new _interval__WEBPACK_IMPORTED_MODULE_12__["GenericInterval"](2);
-  /**
-   *
-   * @type {music21.pitch.Pitch[]}
-   */
-
   var pitches = [tonic];
   var lastPitch = tonic;
 
@@ -58957,8 +58264,8 @@ function SimpleDiatonicScale(tonic, scaleSteps) {
  *
  * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMajor
- * @param {music21.pitch.Pitch} tonic
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @param {pitch.Pitch} tonic
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function ScaleSimpleMajor(tonic) {
@@ -58970,11 +58277,11 @@ function ScaleSimpleMajor(tonic) {
  *
  * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMinor
- * @param {music21.pitch.Pitch} tonic
+ * @param {pitch.Pitch} tonic
  * @param {string} [minorType='natural'] - 'harmonic', 'harmonic-minor',
  *     'melodic', 'melodic-minor', 'melodic-minor-ascending',
  *     'melodic-ascending' or other (=natural/melodic-descending)
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function ScaleSimpleMinor(tonic, minorType) {
@@ -58998,9 +58305,9 @@ function ScaleSimpleMinor(tonic, minorType) {
 
 /***/ }),
 
-/***/ "./src/music21/sites.js":
+/***/ "./src/music21/sites.ts":
 /*!******************************!*\
-  !*** ./src/music21/sites.js ***!
+  !*** ./src/music21/sites.ts ***!
   \******************************/
 /*! exports provided: SitesException, SiteRef, getId, Sites */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -59023,22 +58330,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
 /* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.reverse */ "./node_modules/core-js/modules/es.array.reverse.js");
+/* harmony import */ var core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+
+
 
 
 
@@ -59057,7 +58370,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -59076,7 +58389,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 /**
  */
 
-class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_14__["Music21Exception"] {}
+class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_16__["Music21Exception"] {}
 /**
  * SiteRef.site is held strongly in Javascript.  This is
  * actually NOT a problem because of the difference between
@@ -59091,19 +58404,9 @@ class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_14__["Music2
  */
 
 class SiteRef {
-  /**
-   * @property {boolean} isDead
-   * @property {string|undefined} classString
-   * @property {boolean|number} globalSiteIndex
-   * @property {number|undefined} siteIndex
-   * @property {music21.stream.Stream|undefined} site
-   */
   constructor() {
     this.isDead = false;
-    this.classString = undefined;
     this.globalSiteIndex = false;
-    this.siteIndex = undefined;
-    this.site = undefined;
   }
 
 }
@@ -59113,7 +58416,7 @@ var _NoneSiteRef = new SiteRef();
 _NoneSiteRef.globalSiteIndex = -2;
 _NoneSiteRef.siteIndex = -2;
 
-var _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_13__["SingletonCounter"]();
+var _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_15__["SingletonCounter"]();
 
 var GLOBAL_SITE_STATE_DICT = new WeakMap();
 /**
@@ -59137,26 +58440,15 @@ function getId(obj) {
 
 class Sites {
   constructor() {
-    this.siteDict = new Map();
-    this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
     this._siteIndex = 0;
     this._lastID = -1;
+    this.siteDict = new Map();
+    this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
   }
-  /**
-   *
-   * @returns {number}
-   */
-
 
   get length() {
     return this.siteDict.size;
   }
-  /**
-   *
-   * @param {music21.stream.Stream} [checkSite]
-   * @returns {boolean}
-   */
-
 
   includes(checkSite) {
     // noinspection JSUnusedLocalSymbols
@@ -59193,9 +58485,7 @@ class Sites {
   }
   /**
    *
-   * @param {boolean} [newFirst=true]
    * @returns {Array<*>}
-   * @private
    */
 
 
@@ -59239,7 +58529,10 @@ class Sites {
     return post.map(innerList => innerList[1]);
   }
 
-  add(obj, idKey, classString) {
+  add(obj) {
+    var idKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var classString = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
     if (idKey === undefined && obj !== undefined) {
       idKey = getId(obj);
     }
@@ -59279,9 +58572,7 @@ class Sites {
     }
   }
   /**
-   *
    * @param obj
-   * @returns {boolean}
    */
 
 
@@ -59301,17 +58592,12 @@ class Sites {
     this._lastID = -1;
   }
   /**
-   *
-   * @param {boolean|string} [sortByCreationTime=false]
-   * @param {music21.stream.Stream|undefined} [priorityTarget]
-   * @param {boolean} [excludeNone=false]
-   * @returns {IterableIterator<music21.stream.Stream|undefined>}
    */
 
 
   yieldSites() {
-    var _this = this,
-        _arguments = arguments;
+    var _arguments = arguments,
+        _this = this;
 
     return (
       /*#__PURE__*/
@@ -59440,18 +58726,10 @@ class Sites {
       })()
     );
   }
-  /**
-   *
-   * @param {boolean} [sortByCreationTime=false]
-   * @param {music21.stream.Stream} [priorityTarget]
-   * @param {boolean} [excludeNone=false]
-   * @returns {Array<(music21.stream.Stream|undefined)>}
-   */
-
 
   get() {
     var sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    var priorityTarget = arguments.length > 1 ? arguments[1] : undefined;
+    var priorityTarget = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
     var post = Array.from(this.yieldSites(sortByCreationTime, priorityTarget, excludeNone)); // we do this resorting again, because the priority target might not match id and we
     // want to be extra safe.  If you want fast, use .yieldSites
@@ -59511,11 +58789,12 @@ class Sites {
    *
    * @param {string} className
    * @param {Object} [options]
-   * @returns {music21.stream.Stream}
+   * @returns {Stream}
    */
 
 
-  getObjByClass(className, options) {
+  getObjByClass(className) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var params = {
       callerFirst: this,
       sortByCreationTime: false,
@@ -59523,7 +58802,7 @@ class Sites {
       getElementMethod: 'getElementAtOrBefore',
       memo: {}
     };
-    _common__WEBPACK_IMPORTED_MODULE_13__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_15__["merge"](params, options);
     var memo = params.memo;
     var post;
     var objs = Array.from(this.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
@@ -59565,9 +58844,9 @@ class Sites {
 
 /***/ }),
 
-/***/ "./src/music21/stream.js":
+/***/ "./src/music21/stream.ts":
 /*!*******************************!*\
-  !*** ./src/music21/stream.js ***!
+  !*** ./src/music21/stream.ts ***!
   \*******************************/
 /*! exports provided: filters, iterator, StreamException, Stream, Voice, Measure, Part, Score, OffsetMap */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -59583,66 +58862,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OffsetMap", function() { return OffsetMap; });
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.filter */ "./node_modules/core-js/modules/es.array.filter.js");
-/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.flat */ "./node_modules/core-js/modules/es.array.flat.js");
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.entries */ "./node_modules/core-js/modules/es.object.entries.js");
-/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_es_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.object.get-own-property-descriptors */ "./node_modules/core-js/modules/es.object.get-own-property-descriptors.js");
-/* harmony import */ var core_js_modules_es_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_20__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.js");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.js");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.js");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.js");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters__WEBPACK_IMPORTED_MODULE_36__; });
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator__WEBPACK_IMPORTED_MODULE_37__; });
+/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.flat */ "./node_modules/core-js/modules/es.array.flat.js");
+/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
+/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.entries */ "./node_modules/core-js/modules/es.object.entries.js");
+/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./tempo */ "./src/music21/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters__WEBPACK_IMPORTED_MODULE_34__; });
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator__WEBPACK_IMPORTED_MODULE_35__; });
 
 
 
@@ -59660,23 +58934,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -59685,7 +58952,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * Does not implement the full features of music21p Streams by a long shot...
  *
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert
+ *     and cuthbertLab
  *
  * powerful stream module, See {@link music21.stream} namespace
  * @exports music21/stream
@@ -59724,6 +58992,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
  // eslint-disable-next-line import/no-cycle
 
 
@@ -59731,49 +59000,45 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"] {}
+class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_19__["Music21Exception"] {}
 
 function _exportMusicXMLAsText(s) {
-  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_35__["GeneralObjectExporter"](s);
+  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_33__["GeneralObjectExporter"](s);
   return gox.parse();
 }
 /**
  * A generic Stream class -- a holder for other music21 objects
- * Will be subclassed into {@link music21.stream.Score},
- * {@link music21.stream.Part},
- * {@link music21.stream.Measure},
- * {@link music21.stream.Voice}, but most functions will be found here.
+ * Will be subclassed into {@link Score},
+ * {@link Part},
+ * {@link Measure},
+ * {@link Voice}, but most functions will be found here.
  *
- * @class Stream
- * @memberof music21.stream
- * @extends music21.base.Music21Object
- *
- * @property {music21.base.Music21Object[]} elements - the elements in the stream.
+ * @property {base.Music21Object[]} elements - the elements in the stream.
  *     DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {number} length - (readonly) the number of elements in the stream.
- * @property {music21.duration.Duration} duration - the total duration of the stream's elements
+ * @property {Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
  * @property {music21.clef.Clef} clef - the clef for the Stream (if there is
  *     one; if there are multiple, then the first clef)
  * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
  * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
- * @property {music21.renderOptions.RenderOptions} renderOptions - an object
+ * @property {renderOptions.RenderOptions} renderOptions - an object
  *     specifying how to render the stream
- * @property {music21.stream.Stream} flat - (readonly) a flattened representation of the Stream
- * @property {music21.stream.Stream} notes - (readonly) the stream with
+ * @property {Stream} flat - (readonly) a flattened representation of the Stream
+ * @property {iterator.StreamIterator} notes - (readonly) the stream with
  *     only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
- * @property {music21.stream.Stream} notesAndRests - (readonly) like notes but
+ * @property {iterator.StreamIterator} notesAndRests - (readonly) like notes but
  *     also with {@link music21.note.Rest} objects included
- * @property {music21.stream.Stream} parts - (readonly) a filter on the Stream
+ * @property {iterator.StreamIterator} parts - (readonly) a filter on the Stream
  *     to just get the parts (NON-recursive)
- * @property {music21.stream.Stream} measures - (readonly) a filter on the
+ * @property {iterator.StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
  * @property {number} tempo - tempo in beats per minute (will become more
  *     sophisticated later, but for now the whole stream has one tempo
  * @property {music21.instrument.Instrument|undefined} instrument - an
  *     instrument object associated with the stream (can be set with a
  *     string also, but will return an `Instrument` object)
- * @property {Boolean} autoBeam - whether the notes should be beamed automatically
+ * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
  * @property {Vex.Flow.Stave|undefined} activeVFStave - the current Stave object for the Stream
  * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current
@@ -59785,24 +59050,40 @@ function _exportMusicXMLAsText(s) {
  */
 
 
-class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
-  static get className() {
-    return 'music21.stream.Stream';
-  }
-
+class Stream extends _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"] {
   constructor() {
-    super(); // class variables;
+    super(); // from music21p's core.py
+
+    this._offsetDict = new WeakMap();
+    this._elements = []; // TODO(msc): endElements
+
+    this.isSorted = true; // from music21p's __init__.py
+    // class attributes.
 
     this.isStream = true;
     this.isMeasure = false;
     this.classSortOrder = -20;
-    this.recursionType = 'elementsFirst';
-    this._duration = undefined;
-    this._elements = [];
-    this._offsetDict = new WeakMap();
+    this.recursionType = 'elementsFirst'; // this may change to an enum
+    // TODO(msc): _styleClass
+    // individual instance attributes
+    // TODO(msc): StreamStatus
+    // TODO(msc): _unlinkedDuration
+
     this.autoSort = true;
-    this.isSorted = true;
-    this.isFlat = true;
+    this.isFlat = true; // TODO(msc): definesExplicitSystemBreaks
+    // TODO(msc): definesExplicitPageBreaks
+    // TODO(msc): _atSoundingPitch
+    // TODO(msc): _mutable -- experimental
+    // music21j specific attributes NOT to remove:
+
+    this.activeVFStave = undefined;
+    this.activeVFRenderer = undefined;
+    this.changedCallbackFunction = undefined; // for editable svg objects
+    // music21j specific attributes eventually to remove:
+
+    this.storedVexflowStave = undefined; // cannot figure out diff w/ activeVFStave
+
+    this.activeNote = undefined;
     this._clef = undefined;
     this.displayClef = undefined;
     this._keySignature = undefined; // a music21.key.KeySignature object
@@ -59811,26 +59092,47 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.activeVFStave = undefined;
-    this.activeVFRenderer = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_30__["RenderOptions"]();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
-    this._allowMultipleSimultaneousPlays = true; // not implemented yet.
+    this._overriddenDuration = undefined;
+    this._cloneCallbacks.activeVexflowNote = false;
+    this._cloneCallbacks.storedVexflowStave = false;
+    this._cloneCallbacks._offsetDict = false;
 
-    this.changedCallbackFunction = undefined; // for editable svges
+    this._cloneCallbacks.renderOptions = function cloneRenderOptions(keyName, newObj, self, deep, memo) {
+      if (!deep) {
+        newObj.renderOptions = self.renderOptions;
+        return;
+      }
 
-    /**
-     * A function bound to the current stream that
-     * will changes the stream. Used in editableAccidentalDOM, among other places.
-     *
-     *      var can = s.appendNewDOM();
-     *      $(can).on('click', s.DOMChangerFunction);
-     *
-     * @param {MouseEvent|TouchEvent} e
-     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
-     */
+      var newRenderOptions = JSON.parse(JSON.stringify(self.renderOptions));
+      newRenderOptions.events = _extends({}, self.renderOptions.events);
+      newObj.renderOptions = newRenderOptions;
+    };
+
+    this._cloneCallbacks._elements = function cloneElements(keyName, newObj, self, deep, memo) {
+      if (!deep) {
+        newObj.elements = self;
+        return;
+      }
+
+      newObj.clear();
+
+      for (var j = 0; j < self._elements.length; j++) {
+        var el = self._elements[j];
+        var elOffset = self.elementOffset(el); // console.log('cloning el: ', el.name);
+
+        var elCopy = el.clone(true, memo); // there may be more efficient ways to do this,
+        // but for now, safety trumps efficiency.
+
+        newObj.insert(elOffset, elCopy, {
+          ignoreSort: true
+        });
+      } // isSorted will be cloned elsewhere.
+
+    };
 
     this.DOMChangerFunction = e => {
       var canvasOrSVGElement = e.currentTarget;
@@ -59845,7 +59147,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           foundNote = _this$findNoteForClic2[1];
 
       if (foundNote === undefined) {
-        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
           console.log('No note found');
         }
 
@@ -59855,9 +59157,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSVGElement);
     };
   }
+
+  static get className() {
+    return 'music21.stream.Stream';
+  }
   /**
    *
-   * @returns {IterableIterator<music21.base.Music21Object>}
+   * @returns {IterableIterator<base.Music21Object>}
    */
 
 
@@ -59935,15 +59241,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get duration() {
-    if (this._duration !== undefined) {
-      return this._duration;
+    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_25__["Duration"]) {
+      // return new duration.Duration(32.0);
+      return this._overriddenDuration;
     }
 
-    return new _duration__WEBPACK_IMPORTED_MODULE_28__["Duration"](this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_25__["Duration"](this.highestTime);
   }
 
   set duration(newDuration) {
-    this._duration = newDuration;
+    this._overriddenDuration = newDuration;
   }
 
   get highestTime() {
@@ -59992,55 +59299,34 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   _getFlatOrSemiFlat(retainContainers) {
-    var newSt = this.clone(false);
+    var newSt = this.clone(false); // console.log('done cloning...');
 
     if (!this.isFlat) {
-      newSt.elements = [];
+      // not the most efficient, but safety counts for a lot...
+      // namely, do not set inner streams activeSites to be
+      // in things that they won't have later.
+      newSt.clear();
+      var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_35__["RecursiveIterator"](this, {
+        restoreActiveSites: false,
+        includeSelf: false,
+        ignoreSorting: true
+      });
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator3 = this[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var el = _step3.value;
+        for (var _iterator3 = ri[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var e = _step3.value;
 
-          if (el.isStream) {
-            if (retainContainers) {
-              newSt.append(el);
-            }
-
-            var offsetShift = this.elementOffset(el); // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-
-            var elFlat = el._getFlatOrSemiFlat(retainContainers);
-
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-              for (var _iterator4 = elFlat[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var elFlatElement = _step4.value;
-                // offset should NOT be null because already in Stream
-                var elFlatElementOffset = elFlat.elementOffset(elFlatElement);
-                newSt.insert(elFlatElementOffset + offsetShift, elFlatElement);
-              }
-            } catch (err) {
-              _didIteratorError4 = true;
-              _iteratorError4 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-                  _iterator4.return();
-                }
-              } finally {
-                if (_didIteratorError4) {
-                  throw _iteratorError4;
-                }
-              }
-            }
-          } else {
-            newSt.insert(this.elementOffset(el), el);
+          if (e.isStream && !retainContainers) {
+            continue;
           }
+
+          newSt.insert(ri.currentHierarchyOffset(), e, {
+            setActiveSite: false,
+            ignoreSort: true
+          });
         }
       } catch (err) {
         _didIteratorError3 = true;
@@ -60060,11 +59346,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (!retainContainers) {
       newSt.isFlat = true;
-      this.coreElementsChanged({
+      newSt.coreElementsChanged({
         updateIsFlat: false
       });
     } else {
-      this.coreElementsChanged();
+      newSt.coreElementsChanged();
     }
 
     return newSt;
@@ -60091,6 +59377,86 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   set tempo(newTempo) {
     this._tempo = newTempo;
   }
+  /**
+   * Return an array of the outer bounds of each MetronomeMark in the stream.
+   * [offsetStart, offsetEnd, tempo.MetronomeMark]
+   *
+   * @returns {Array<number|music21.tempo.MetronomeMark>}
+   */
+
+
+  _metronomeMarkBoundaries() {
+    var mmBoundaries = [];
+    var thisFlat = this.flat;
+    var metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
+    var highestTime = thisFlat.highestTime;
+    var lowestOffset = 0;
+    var mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_31__["MetronomeMark"]({
+      number: 120
+    });
+
+    if (!metronomeMarks.length) {
+      mmBoundaries.push([lowestOffset, highestTime, mmDefault]);
+    } else if (metronomeMarks.length === 1) {
+      var metronomeMark = metronomeMarks.get(0);
+      var offset = metronomeMark.getOffsetBySite(thisFlat);
+
+      if (offset > lowestOffset) {
+        mmBoundaries.push([lowestOffset, offset, mmDefault]);
+        mmBoundaries.push([offset, highestTime, metronomeMark]);
+      } else {
+        mmBoundaries.push([lowestOffset, highestTime, metronomeMark]);
+      }
+    } else {
+      var offsetPairs = [];
+
+      for (var i = 0; i < metronomeMarks.length; i++) {
+        var _metronomeMark = metronomeMarks.get(i);
+
+        offsetPairs.push([_metronomeMark.getOffsetBySite(thisFlat), _metronomeMark]);
+      }
+
+      if (offsetPairs[0][0] > lowestOffset) {
+        mmBoundaries.push([lowestOffset, offsetPairs[0][0], mmDefault]);
+      }
+
+      offsetPairs.forEach((offsetPair, i) => {
+        if (i === offsetPairs.length - 1) {
+          mmBoundaries.push([offsetPair[0], highestTime, offsetPair[1]]);
+        } else {
+          mmBoundaries.push([offsetPair[0], offsetPairs[i + 1][0], offsetPair[1]]);
+        }
+      });
+    }
+
+    return mmBoundaries;
+  }
+  /**
+   * Return the average tempo within the span indicated by offset start and end.
+   *
+   * @param {number} oStart - offset start
+   * @param {number} oEnd - offset end
+   * @returns {number}
+   */
+
+
+  _averageTempo(oStart, oEnd) {
+    var overallDuration = oEnd - oStart;
+    return this._metronomeMarkBoundaries().reduce((tempo, mm) => {
+      if (mm[0] >= oStart && mm[0] < oEnd) {
+        var overlapDur = mm[1] <= oEnd ? mm[1] - mm[0] : oEnd - mm[0];
+        tempo += overlapDur / overallDuration * mm[2].number;
+      } else if (mm[1] > oStart && mm[1] <= oEnd) {
+        var _overlapDur = mm[0] >= oStart ? mm[1] - mm[0] : mm[1] - oStart;
+
+        tempo += _overlapDur / overallDuration * mm[2].number;
+      } else if (mm[0] <= oStart && mm[1] >= oEnd) {
+        tempo = mm[2].number;
+      }
+
+      return tempo;
+    }, 0);
+  }
 
   get instrument() {
     if (this._instrument === undefined && this.activeSite !== undefined) {
@@ -60102,11 +59468,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_29__["Instrument"](newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_26__["Instrument"](newInstrument);
     }
 
     this._instrument = newInstrument;
   }
+  /**
+   * specialContext gets from a private attribute or from zero-position
+   * or from site's first or special context.
+   *
+   * @param attr
+   * @returns {music21.base.Music21Object|undefined|*}
+   * @private
+   */
+
 
   _specialContext(attr) {
     var privAttr = '_' + attr;
@@ -60122,41 +59497,55 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     //        }
 
 
-    var _iteratorNormalCompletion5 = true;
-    var _didIteratorError5 = false;
-    var _iteratorError5 = undefined;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
     try {
-      for (var _iterator5 = this.sites.yieldSites()[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-        var site = _step5.value;
+      for (var _iterator4 = this.sites.yieldSites()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+        var site = _step4.value;
 
         if (site === undefined) {
           continue;
         }
 
-        var contextObj = site._firstElementContext('attr') || site._specialContext('attr');
+        var contextObj = site._firstElementContext(attr);
+
+        if (contextObj === undefined) {
+          contextObj = site._specialContext(attr);
+        }
 
         if (contextObj !== undefined) {
           return contextObj;
         }
       }
     } catch (err) {
-      _didIteratorError5 = true;
-      _iteratorError5 = err;
+      _didIteratorError4 = true;
+      _iteratorError4 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-          _iterator5.return();
+        if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+          _iterator4.return();
         }
       } finally {
-        if (_didIteratorError5) {
-          throw _iteratorError5;
+        if (_didIteratorError4) {
+          throw _iteratorError4;
         }
       }
     }
 
     return undefined;
   }
+  /**
+   * Get an attribute like 'keySignature' from an element with the
+   * same class name (except 'KeySignature' instead of 'keySignature')
+   * in the stream at position 0.
+   *
+   * @param attr
+   * @returns {music21.base.Music21Object|undefined}
+   * @private
+   */
+
 
   _firstElementContext(attr) {
     var firstElements = this.getElementsByOffset(0.0).getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
@@ -60169,7 +59558,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get clef() {
-    return this.getSpecialContext('clef', true);
+    return this.getSpecialContext('clef', false);
   }
 
   set clef(newClef) {
@@ -60185,7 +59574,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get keySignature() {
-    return this.getSpecialContext('keySignature', true);
+    return this.getSpecialContext('keySignature', false);
   }
 
   set keySignature(newKeySignature) {
@@ -60201,12 +59590,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get timeSignature() {
-    return this.getSpecialContext('timeSignature', true);
+    return this.getSpecialContext('timeSignature', false);
   }
 
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_30__["TimeSignature"](newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_27__["TimeSignature"](newTimeSignature);
     }
 
     var oldTS = this._firstElementContext('timeSignature');
@@ -60259,8 +59648,18 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   get length() {
     return this._elements.length;
   }
+  /**
+   * Note that a Stream is never returned from .elements,
+   * but TypeScript requires getter and setters to have the same
+   * function signature.
+   */
+
 
   get elements() {
+    if (!this.isSorted) {
+      this.sort();
+    }
+
     return this._elements;
   }
 
@@ -60271,28 +59670,28 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     var i;
     var thisEl;
 
-    if (newElements.isStream === true) {
+    if (newElements instanceof Stream) {
       // iterate to set active site;
-      var _iteratorNormalCompletion6 = true;
-      var _didIteratorError6 = false;
-      var _iteratorError6 = undefined;
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator6 = newElements[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-          var unused = _step6.value;
+        for (var _iterator5 = newElements[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var unused = _step5.value;
         } // eslint-disable-line no-empty
 
       } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
-            _iterator6.return();
+          if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+            _iterator5.return();
           }
         } finally {
-          if (_didIteratorError6) {
-            throw _iteratorError6;
+          if (_didIteratorError5) {
+            throw _iteratorError5;
           }
         }
       }
@@ -60363,95 +59762,39 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   clear() {
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+      for (var _iterator6 = this._elements[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+        var e = _step6.value;
+
+        if (e.activeSite === this) {
+          e.activeSite = undefined;
+        }
+
+        e.sites.remove(this);
+      }
+    } catch (err) {
+      _didIteratorError6 = true;
+      _iteratorError6 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
+          _iterator6.return();
+        }
+      } finally {
+        if (_didIteratorError6) {
+          throw _iteratorError6;
+        }
+      }
+    }
+
     this._elements = [];
     this._offsetDict = new WeakMap();
     this.isFlat = true;
     this.isSorted = true;
-  }
-  /* override protoM21Object.clone() */
-
-
-  clone() {
-    var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    var memo = arguments.length > 1 ? arguments[1] : undefined;
-    var ret = Object.create(this.constructor.prototype);
-
-    for (var key in this) {
-      if ({}.hasOwnProperty.call(this, key) === false) {
-        continue;
-      }
-
-      if (key === '_activeSite') {
-        ret[key] = this[key];
-      } else if (key === 'renderOptions') {
-        ret[key] = _common__WEBPACK_IMPORTED_MODULE_27__["merge"]({}, this[key]);
-      } else if (deep !== true && key === '_elements') {
-        ret[key] = this[key].slice(); // shallow copy...
-      } else if (deep !== true && key === '_offsetDict') {
-        ret._offsetDict = new WeakMap();
-        var _iteratorNormalCompletion7 = true;
-        var _didIteratorError7 = false;
-        var _iteratorError7 = undefined;
-
-        try {
-          for (var _iterator7 = this.elements[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-            var el = _step7.value;
-
-            ret._offsetDict.set(el, this._offsetDict.get(el));
-          }
-        } catch (err) {
-          _didIteratorError7 = true;
-          _iteratorError7 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
-              _iterator7.return();
-            }
-          } finally {
-            if (_didIteratorError7) {
-              throw _iteratorError7;
-            }
-          }
-        }
-      } else if (deep && (key === '_elements' || key === '_offsetDict')) {
-        if (key === '_elements') {
-          // console.log('got elements for deepcopy');
-          ret.clear();
-
-          for (var j = 0; j < this._elements.length; j++) {
-            var _el = this._elements[j]; // console.log('cloning el: ', el.name);
-
-            var elCopy = _el.clone(deep, memo);
-
-            ret._elements[j] = elCopy;
-
-            ret._offsetDict.set(elCopy, this._offsetDict.get(_el));
-
-            elCopy.activeSite = ret;
-          }
-        }
-      } else if (key === 'activeVexflowNote' || key === 'storedVexflowStave') {// do nothing -- do not copy vexflowNotes -- permanent recursion
-      } else if (key in this._cloneCallbacks) {
-        if (this._cloneCallbacks[key] === true) {
-          ret[key] = this[key];
-        } else if (this._cloneCallbacks[key] === false) {
-          ret[key] = undefined;
-        } else {
-          // call the cloneCallbacks function
-          this._cloneCallbacks[key](key, ret, this);
-        }
-      } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {// do nothing
-      } else if (typeof this[key] === 'function') {// do nothing -- events might not be copied.
-      } else if (this[key] !== null && this[key] !== undefined && this[key].isMusic21Object === true) {
-        // console.log('cloning...', key);
-        ret[key] = this[key].clone(deep);
-      } else {
-        ret[key] = this[key];
-      }
-    }
-
-    ret.coreElementsChanged();
-    return ret;
   }
 
   coreElementsChanged() {
@@ -60471,13 +59814,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (updateIsFlat) {
       this.isFlat = true;
-      var _iteratorNormalCompletion8 = true;
-      var _didIteratorError8 = false;
-      var _iteratorError8 = undefined;
+      var _iteratorNormalCompletion7 = true;
+      var _didIteratorError7 = false;
+      var _iteratorError7 = undefined;
 
       try {
-        for (var _iterator8 = this._elements[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var e = _step8.value;
+        for (var _iterator7 = this._elements[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+          var e = _step7.value;
 
           if (e.isStream) {
             this.isFlat = false;
@@ -60485,16 +59828,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           }
         }
       } catch (err) {
-        _didIteratorError8 = true;
-        _iteratorError8 = err;
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
-            _iterator8.return();
+          if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
+            _iterator7.return();
           }
         } finally {
-          if (_didIteratorError8) {
-            throw _iteratorError8;
+          if (_didIteratorError7) {
+            throw _iteratorError7;
           }
         }
       }
@@ -60513,14 +59856,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         skipSelf = _ref2$skipSelf === void 0 ? true : _ref2$skipSelf;
 
     var includeSelf = !skipSelf;
-    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_37__["RecursiveIterator"](this, {
+    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_35__["RecursiveIterator"](this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
 
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_36__["ClassFilter"](classFilter));
+      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_34__["ClassFilter"](classFilter));
     }
 
     return ri;
@@ -60528,7 +59871,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   /**
    * Add an element to the end of the stream, setting its `.offset` accordingly
    *
-   * @param {music21.base.Music21Object|Array<music21.base.Music21Object>} elOrElList - element
+   * @param elOrElList - element
    * or list of elements to append
    * @returns {this}
    */
@@ -60536,42 +59879,37 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   append(elOrElList) {
     if (Array.isArray(elOrElList)) {
-      var _iteratorNormalCompletion9 = true;
-      var _didIteratorError9 = false;
-      var _iteratorError9 = undefined;
+      var _iteratorNormalCompletion8 = true;
+      var _didIteratorError8 = false;
+      var _iteratorError8 = undefined;
 
       try {
-        for (var _iterator9 = elOrElList[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-          var _el2 = _step9.value;
-          this.append(_el2);
+        for (var _iterator8 = elOrElList[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          var _el = _step8.value;
+          this.append(_el);
         }
       } catch (err) {
-        _didIteratorError9 = true;
-        _iteratorError9 = err;
+        _didIteratorError8 = true;
+        _iteratorError8 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
-            _iterator9.return();
+          if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
+            _iterator8.return();
           }
         } finally {
-          if (_didIteratorError9) {
-            throw _iteratorError9;
+          if (_didIteratorError8) {
+            throw _iteratorError8;
           }
         }
       }
 
       return this;
     }
-    /**
-     *
-     * @type {music21.base.Music21Object}
-     */
-
 
     var el = elOrElList;
 
-    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"])) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('Can only append a music21 object.');
+    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"])) {
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_19__["Music21Exception"]('Can only append a music21 object.');
     }
 
     try {
@@ -60720,7 +60058,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * Remove and return the last element in the stream,
    * or return undefined if the stream is empty
    *
-   * @returns {music21.base.Music21Object|undefined} last element in the stream
+   * @returns {base.Music21Object|undefined} last element in the stream
    */
 
 
@@ -60779,13 +60117,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
     var i = -1;
-    var _iteratorNormalCompletion10 = true;
-    var _didIteratorError10 = false;
-    var _iteratorError10 = undefined;
+    var _iteratorNormalCompletion9 = true;
+    var _didIteratorError9 = false;
+    var _iteratorError9 = undefined;
 
     try {
-      for (var _iterator10 = targetList[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-        var target = _step10.value;
+      for (var _iterator9 = targetList[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+        var target = _step9.value;
         i += 1;
         var indexInStream = void 0;
 
@@ -60842,16 +60180,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         //            }
       }
     } catch (err) {
-      _didIteratorError10 = true;
-      _iteratorError10 = err;
+      _didIteratorError9 = true;
+      _iteratorError9 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion10 && _iterator10.return != null) {
-          _iterator10.return();
+        if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+          _iterator9.return();
         }
       } finally {
-        if (_didIteratorError10) {
-          throw _iteratorError10;
+        if (_didIteratorError9) {
+          throw _iteratorError9;
         }
       }
     }
@@ -60953,7 +60291,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         this.insert(value, el);
         return;
       } else {
-        throw new StreamException('Cannot set the offset for elemenet ' + el.toString() + ', not in Stream');
+        throw new StreamException('Cannot set the offset for element ' + el.toString() + ', not in Stream');
       }
     }
 
@@ -60997,21 +60335,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       bestClef: false,
       inPlace: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_24__["merge"](params, options);
     var voiceCount;
 
     if (this.hasVoices()) {
       voiceCount = this.getElementsByClass('Voice').length;
     } else {
       voiceCount = 0;
-    } // meterStream
-
-
-    var meterStream = this.getElementsByClass('TimeSignature');
-
-    if (meterStream.length === 0) {
-      meterStream.append(this.timeSignature);
-    } // getContextByClass('Clef')
+    } // MSC 2019 -- this was not working or even being used.
+    // // meterStream
+    // const meterStream = this.getElementsByClass('TimeSignature');
+    // if (meterStream.length === 0) {
+    //     meterStream.append(this.timeSignature);
+    // }
+    // getContextByClass('Clef')
 
 
     var clefObj = this.getSpecialContext('clef') || this.getContextByClass('Clef');
@@ -61022,10 +60359,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       if (offsetMap[i].endTime > oMax) {
         oMax = offsetMap[i].endTime;
       }
-    } // console.log('oMax: ', oMax);
+    }
 
-
-    var post = new this.constructor(); // derivation
+    var classConstructor = this.constructor;
+    var post = new classConstructor(); // derivation
 
     var o = 0.0;
     var measureCount = 0;
@@ -61126,26 +60463,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       this.elements = []; // endElements
       // elementsChanged;
 
-      var _iteratorNormalCompletion11 = true;
-      var _didIteratorError11 = false;
-      var _iteratorError11 = undefined;
+      var _iteratorNormalCompletion10 = true;
+      var _didIteratorError10 = false;
+      var _iteratorError10 = undefined;
 
       try {
-        for (var _iterator11 = post[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-          var _e2 = _step11.value;
+        for (var _iterator10 = post[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var _e2 = _step10.value;
           this.insert(_e2.offset, _e2);
         }
       } catch (err) {
-        _didIteratorError11 = true;
-        _iteratorError11 = err;
+        _didIteratorError10 = true;
+        _iteratorError10 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion11 && _iterator11.return != null) {
-            _iterator11.return();
+          if (!_iteratorNormalCompletion10 && _iterator10.return != null) {
+            _iterator10.return();
           }
         } finally {
-          if (_didIteratorError11) {
-            throw _iteratorError11;
+          if (_didIteratorError10) {
+            throw _iteratorError10;
           }
         }
       }
@@ -61160,17 +60497,17 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         setActiveSite = _ref6$setActiveSite === void 0 ? true : _ref6$setActiveSite;
 
     var elSites = el.sites;
-    var _iteratorNormalCompletion12 = true;
-    var _didIteratorError12 = false;
-    var _iteratorError12 = undefined;
+    var _iteratorNormalCompletion11 = true;
+    var _didIteratorError11 = false;
+    var _iteratorError11 = undefined;
 
     try {
-      for (var _iterator12 = this.recurse({
+      for (var _iterator11 = this.recurse({
         skipSelf: false,
-        streamOnly: true,
+        streamsOnly: true,
         restoreActiveSites: false
-      })[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-        var s = _step12.value;
+      })[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+        var s = _step11.value;
 
         if (elSites.includes(s)) {
           if (setActiveSite) {
@@ -61181,16 +60518,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         }
       }
     } catch (err) {
-      _didIteratorError12 = true;
-      _iteratorError12 = err;
+      _didIteratorError11 = true;
+      _iteratorError11 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion12 && _iterator12.return != null) {
-          _iterator12.return();
+        if (!_iteratorNormalCompletion11 && _iterator11.return != null) {
+          _iterator11.return();
         }
       } finally {
-        if (_didIteratorError12) {
-          throw _iteratorError12;
+        if (_didIteratorError11) {
+          throw _iteratorError11;
         }
       }
     }
@@ -61255,20 +60592,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
 
       var restQL = restInfo.endTime - restInfo.offset;
-      var restObj = new _note__WEBPACK_IMPORTED_MODULE_31__["Rest"]();
+      var restObj = new _note__WEBPACK_IMPORTED_MODULE_28__["Rest"]();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
       restInfo.endTime = undefined;
     };
 
-    var _iteratorNormalCompletion13 = true;
-    var _didIteratorError13 = false;
-    var _iteratorError13 = undefined;
+    var _iteratorNormalCompletion12 = true;
+    var _didIteratorError12 = false;
+    var _iteratorError12 = undefined;
 
     try {
-      for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-        var el = _step13.value;
+      for (var _iterator12 = this[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+        var el = _step12.value;
 
         if (el.isStream && (retainVoices || el.classes.includes('Voice'))) {
           optionalAddRest();
@@ -61281,16 +60618,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         }
       }
     } catch (err) {
-      _didIteratorError13 = true;
-      _iteratorError13 = err;
+      _didIteratorError12 = true;
+      _iteratorError12 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion13 && _iterator13.return != null) {
-          _iterator13.return();
+        if (!_iteratorNormalCompletion12 && _iterator12.return != null) {
+          _iterator12.return();
         }
       } finally {
-        if (_didIteratorError13) {
-          throw _iteratorError13;
+        if (_didIteratorError12) {
+          throw _iteratorError12;
         }
       }
     }
@@ -61325,6 +60662,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   /**
    * makeNotation does not do anything yet, but it is a placeholder
    * so it can start to be called.
+   *
+   * TODO: move call to makeBeams from renderVexflow to here.
    */
 
 
@@ -61348,18 +60687,18 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * Return a new Stream or modify this stream
    * to have beams.
    *
-   * NOT yet being called March 2018
+   * Called from renderVexflow()
    */
 
 
-  makeBeams(options) {
-    var params = {
-      inPlace: false
-    };
-    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+  makeBeams() {
+    var _ref10 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref10$inPlace = _ref10.inPlace,
+        inPlace = _ref10$inPlace === void 0 ? false : _ref10$inPlace;
+
     var returnObj = this;
 
-    if (!params.inPlace) {
+    if (!inPlace) {
       returnObj = this.clone(true);
     }
 
@@ -61369,39 +60708,39 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       mColl = [returnObj];
     } else {
       mColl = [];
-      var _iteratorNormalCompletion14 = true;
-      var _didIteratorError14 = false;
-      var _iteratorError14 = undefined;
+      var _iteratorNormalCompletion13 = true;
+      var _didIteratorError13 = false;
+      var _iteratorError13 = undefined;
 
       try {
-        for (var _iterator14 = returnObj.getElementsByClass('Measure')[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
-          var m = _step14.value;
+        for (var _iterator13 = returnObj.getElementsByClass('Measure')[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+          var m = _step13.value;
           mColl.push(m);
         }
       } catch (err) {
-        _didIteratorError14 = true;
-        _iteratorError14 = err;
+        _didIteratorError13 = true;
+        _iteratorError13 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion14 && _iterator14.return != null) {
-            _iterator14.return();
+          if (!_iteratorNormalCompletion13 && _iterator13.return != null) {
+            _iterator13.return();
           }
         } finally {
-          if (_didIteratorError14) {
-            throw _iteratorError14;
+          if (_didIteratorError13) {
+            throw _iteratorError13;
           }
         }
       }
     }
 
     var lastTimeSignature;
-    var _iteratorNormalCompletion15 = true;
-    var _didIteratorError15 = false;
-    var _iteratorError15 = undefined;
+    var _iteratorNormalCompletion14 = true;
+    var _didIteratorError14 = false;
+    var _iteratorError14 = undefined;
 
     try {
-      for (var _iterator15 = mColl[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
-        var _m = _step15.value;
+      for (var _iterator14 = mColl[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+        var _m = _step14.value;
 
         if (_m.timeSignature !== undefined) {
           lastTimeSignature = _m.timeSignature;
@@ -61418,26 +60757,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
         var noteStream = _m.notesAndRests;
         var durList = [];
-        var _iteratorNormalCompletion16 = true;
-        var _didIteratorError16 = false;
-        var _iteratorError16 = undefined;
+        var _iteratorNormalCompletion15 = true;
+        var _didIteratorError15 = false;
+        var _iteratorError15 = undefined;
 
         try {
-          for (var _iterator16 = noteStream[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
-            var _n2 = _step16.value;
+          for (var _iterator15 = noteStream[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+            var _n2 = _step15.value;
             durList.push(_n2.duration);
           }
         } catch (err) {
-          _didIteratorError16 = true;
-          _iteratorError16 = err;
+          _didIteratorError15 = true;
+          _iteratorError15 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion16 && _iterator16.return != null) {
-              _iterator16.return();
+            if (!_iteratorNormalCompletion15 && _iterator15.return != null) {
+              _iterator15.return();
             }
           } finally {
-            if (_didIteratorError16) {
-              throw _iteratorError16;
+            if (_didIteratorError15) {
+              throw _iteratorError15;
             }
           }
         }
@@ -61468,22 +60807,22 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           if (thisBeams !== undefined) {
             n.beams = thisBeams;
           } else {
-            n.beams = new _beam__WEBPACK_IMPORTED_MODULE_25__["Beams"]();
+            n.beams = new _beam__WEBPACK_IMPORTED_MODULE_22__["Beams"]();
           }
         }
       } // returnObj.streamStatus.beams = true;
 
     } catch (err) {
-      _didIteratorError15 = true;
-      _iteratorError15 = err;
+      _didIteratorError14 = true;
+      _iteratorError14 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion15 && _iterator15.return != null) {
-          _iterator15.return();
+        if (!_iteratorNormalCompletion14 && _iterator14.return != null) {
+          _iterator14.return();
         }
       } finally {
-        if (_didIteratorError15) {
-          throw _iteratorError15;
+        if (_didIteratorError14) {
+          throw _iteratorError14;
         }
       }
     }
@@ -61505,6 +60844,43 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   hasPartLikeStreams() {
+    var _iteratorNormalCompletion16 = true;
+    var _didIteratorError16 = false;
+    var _iteratorError16 = undefined;
+
+    try {
+      for (var _iterator16 = this[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+        var el = _step16.value;
+
+        if (el.classes.includes('Part')) {
+          return true;
+        }
+      }
+    } catch (err) {
+      _didIteratorError16 = true;
+      _iteratorError16 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion16 && _iterator16.return != null) {
+          _iterator16.return();
+        }
+      } finally {
+        if (_didIteratorError16) {
+          throw _iteratorError16;
+        }
+      }
+    }
+
+    return false;
+  }
+  /**
+   * Returns true if any note in the stream has lyrics, otherwise false
+   *
+   * @returns {boolean}
+   */
+
+
+  hasLyrics() {
     var _iteratorNormalCompletion17 = true;
     var _didIteratorError17 = false;
     var _iteratorError17 = undefined;
@@ -61513,7 +60889,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       for (var _iterator17 = this[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
         var el = _step17.value;
 
-        if (el.classes.includes('Part')) {
+        if (el.lyric !== undefined) {
           return true;
         }
       }
@@ -61535,43 +60911,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     return false;
   }
   /**
-   * Returns true if any note in the stream has lyrics, otherwise false
-   *
-   * @returns {Boolean}
-   */
-
-
-  hasLyrics() {
-    var _iteratorNormalCompletion18 = true;
-    var _didIteratorError18 = false;
-    var _iteratorError18 = undefined;
-
-    try {
-      for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
-        var el = _step18.value;
-
-        if (el.lyric !== undefined) {
-          return true;
-        }
-      }
-    } catch (err) {
-      _didIteratorError18 = true;
-      _iteratorError18 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion18 && _iterator18.return != null) {
-          _iterator18.return();
-        }
-      } finally {
-        if (_didIteratorError18) {
-          throw _iteratorError18;
-        }
-      }
-    }
-
-    return false;
-  }
-  /**
    * Returns a list of OffsetMap objects
    *
    * @returns [music21.stream.OffsetMap]
@@ -61584,7 +60923,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (this.hasVoices()) {
       // TODO(msc) -- remove jQuery each...
-      jquery__WEBPACK_IMPORTED_MODULE_20__["each"](this.getElementsByClass('Voice'), (i, v) => {
+      jquery__WEBPACK_IMPORTED_MODULE_17__["each"](this.getElementsByClass('Voice'), (i, v) => {
         groups.push([v.flat, i]);
       });
     } else {
@@ -61609,7 +60948,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_37__["StreamIterator"](this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_35__["StreamIterator"](this);
   }
   /**
    * Find all elements with a certain class; if an Array is given, then any
@@ -61628,7 +60967,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * matching class will work.
    *
    * @param {string[]|string} classList - a list of classes to find
-   * @returns {music21.stream.Stream}
+   * @returns {Stream}
    */
 
 
@@ -61663,18 +61002,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  getElementsByOffset(offsetStart, offsetEnd) {
-    var _ref10 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref10$includeEndBoun = _ref10.includeEndBoundary,
-        includeEndBoundary = _ref10$includeEndBoun === void 0 ? true : _ref10$includeEndBoun,
-        _ref10$mustFinishInSp = _ref10.mustFinishInSpan,
-        mustFinishInSpan = _ref10$mustFinishInSp === void 0 ? false : _ref10$mustFinishInSp,
-        _ref10$mustBeginInSpa = _ref10.mustBeginInSpan,
-        mustBeginInSpan = _ref10$mustBeginInSpa === void 0 ? true : _ref10$mustBeginInSpa,
-        _ref10$includeElement = _ref10.includeElementsThatEndAtStart,
-        includeElementsThatEndAtStart = _ref10$includeElement === void 0 ? true : _ref10$includeElement,
-        _ref10$classList = _ref10.classList,
-        classList = _ref10$classList === void 0 ? undefined : _ref10$classList;
+  getElementsByOffset(offsetStart) {
+    var offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+    var _ref11 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref11$includeEndBoun = _ref11.includeEndBoundary,
+        includeEndBoundary = _ref11$includeEndBoun === void 0 ? true : _ref11$includeEndBoun,
+        _ref11$mustFinishInSp = _ref11.mustFinishInSpan,
+        mustFinishInSpan = _ref11$mustFinishInSp === void 0 ? false : _ref11$mustFinishInSp,
+        _ref11$mustBeginInSpa = _ref11.mustBeginInSpan,
+        mustBeginInSpan = _ref11$mustBeginInSpa === void 0 ? true : _ref11$mustBeginInSpa,
+        _ref11$includeElement = _ref11.includeElementsThatEndAtStart,
+        includeElementsThatEndAtStart = _ref11$includeElement === void 0 ? true : _ref11$includeElement,
+        _ref11$classList = _ref11.classList,
+        classList = _ref11$classList === void 0 ? undefined : _ref11$classList;
 
     var s;
 
@@ -61736,29 +61077,29 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     } else if (otherElements.length === 1) {
       return otherElements.get(0);
     } else {
-      var _iteratorNormalCompletion19 = true;
-      var _didIteratorError19 = false;
-      var _iteratorError19 = undefined;
+      var _iteratorNormalCompletion18 = true;
+      var _didIteratorError18 = false;
+      var _iteratorError18 = undefined;
 
       try {
-        for (var _iterator19 = otherElements[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-          var thisEl = _step19.value;
+        for (var _iterator18 = otherElements[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+          var thisEl = _step18.value;
 
           if (el.constructor === thisEl.constructor) {
             return thisEl;
           }
         }
       } catch (err) {
-        _didIteratorError19 = true;
-        _iteratorError19 = err;
+        _didIteratorError18 = true;
+        _iteratorError18 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion19 && _iterator19.return != null) {
-            _iterator19.return();
+          if (!_iteratorNormalCompletion18 && _iterator18.return != null) {
+            _iterator18.return();
           }
         } finally {
-          if (_didIteratorError19) {
-            throw _iteratorError19;
+          if (_didIteratorError18) {
+            throw _iteratorError18;
           }
         }
       }
@@ -61801,22 +61142,22 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     var lastOctaveStepList = [];
 
     for (var i = 0; i < 10; i++) {
-      var tempOctaveStepDict = _objectSpread({}, extendableStepList); // clone
+      var tempOctaveStepDict = _extends({}, extendableStepList); // clone
 
 
       lastOctaveStepList.push(tempOctaveStepDict);
     }
 
-    var lastOctavelessStepDict = _objectSpread({}, extendableStepList); // probably unnecessary, but safe...
+    var lastOctavelessStepDict = _extends({}, extendableStepList); // probably unnecessary, but safe...
 
 
-    var _iteratorNormalCompletion20 = true;
-    var _didIteratorError20 = false;
-    var _iteratorError20 = undefined;
+    var _iteratorNormalCompletion19 = true;
+    var _didIteratorError19 = false;
+    var _iteratorError19 = undefined;
 
     try {
-      for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
-        var el = _step20.value;
+      for (var _iterator19 = this[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+        var el = _step19.value;
 
         if (el.pitch !== undefined) {
           // note
@@ -61826,45 +61167,45 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
         } else if (el._notes !== undefined) {
           // chord
-          var _iteratorNormalCompletion21 = true;
-          var _didIteratorError21 = false;
-          var _iteratorError21 = undefined;
+          var _iteratorNormalCompletion20 = true;
+          var _didIteratorError20 = false;
+          var _iteratorError20 = undefined;
 
           try {
-            for (var _iterator21 = el._notes[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
-              var chordNote = _step21.value;
+            for (var _iterator20 = el._notes[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+              var chordNote = _step20.value;
               var _p = chordNote.pitch;
               var _lastStepDict = lastOctaveStepList[_p.octave];
 
               this._makeAccidentalForOnePitch(_p, _lastStepDict, lastOctavelessStepDict);
             }
           } catch (err) {
-            _didIteratorError21 = true;
-            _iteratorError21 = err;
+            _didIteratorError20 = true;
+            _iteratorError20 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion21 && _iterator21.return != null) {
-                _iterator21.return();
+              if (!_iteratorNormalCompletion20 && _iterator20.return != null) {
+                _iterator20.return();
               }
             } finally {
-              if (_didIteratorError21) {
-                throw _iteratorError21;
+              if (_didIteratorError20) {
+                throw _iteratorError20;
               }
             }
           }
         }
       }
     } catch (err) {
-      _didIteratorError20 = true;
-      _iteratorError20 = err;
+      _didIteratorError19 = true;
+      _iteratorError19 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion20 && _iterator20.return != null) {
-          _iterator20.return();
+        if (!_iteratorNormalCompletion19 && _iterator19.return != null) {
+          _iterator19.return();
         }
       } finally {
-        if (_didIteratorError20) {
-          throw _iteratorError20;
+        if (_didIteratorError19) {
+          throw _iteratorError19;
         }
       }
     }
@@ -61890,7 +61231,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (lastStepDict[p.step] !== newAlter || lastOctavelessStepDict[p.step] !== newAlter) {
       if (p.accidental === undefined) {
-        p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"]('natural');
+        p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Accidental"]('natural');
       }
 
       p.accidental.displayStatus = true; // console.log("setting displayStatus to true");
@@ -61922,44 +61263,44 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * Resets all the RenderOptions back to defaults. Can run recursively
    * and can also preserve the `RenderOptions.events` object.
    *
-   * @param {Boolean} [recursive=false]
-   * @param {Boolean} [preserveEvents=false]
+   * @param {boolean} [recursive=false]
+   * @param {boolean} [preserveEvents=false]
    * @returns {this}
    */
 
 
   resetRenderOptions(recursive, preserveEvents) {
     var oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_30__["RenderOptions"]();
 
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
     }
 
     if (recursive) {
-      var _iteratorNormalCompletion22 = true;
-      var _didIteratorError22 = false;
-      var _iteratorError22 = undefined;
+      var _iteratorNormalCompletion21 = true;
+      var _didIteratorError21 = false;
+      var _iteratorError21 = undefined;
 
       try {
-        for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-          var el = _step22.value;
+        for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+          var el = _step21.value;
 
           if (el.isClassOrSubclass('Stream')) {
             el.resetRenderOptions(recursive, preserveEvents);
           }
         }
       } catch (err) {
-        _didIteratorError22 = true;
-        _iteratorError22 = err;
+        _didIteratorError21 = true;
+        _iteratorError21 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion22 && _iterator22.return != null) {
-            _iterator22.return();
+          if (!_iteratorNormalCompletion21 && _iterator21.return != null) {
+            _iterator21.return();
           }
         } finally {
-          if (_didIteratorError22) {
-            throw _iteratorError22;
+          if (_didIteratorError21) {
+            throw _iteratorError21;
           }
         }
       }
@@ -61997,7 +61338,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
      */
     var canvasOrSVG;
 
-    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_20__) {
+    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_17__) {
       canvasOrSVG = $canvasOrSVG[0];
     } else {
       canvasOrSVG = $canvasOrSVG;
@@ -62024,7 +61365,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
     }
 
-    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_34__["Renderer"](this, canvasOrSVG);
+    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_32__["Renderer"](this, canvasOrSVG);
 
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
@@ -62048,22 +61389,25 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *
    * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
    *
-   * @param {Boolean} [ignoreSystems=false]
+   * @param {boolean} [ignoreSystems=false]
    * @returns {number} height in pixels
    */
 
 
-  estimateStreamHeight(ignoreSystems) {
+  estimateStreamHeight() {
+    var ignoreSystems = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var staffHeight = this.renderOptions.naiveHeight;
-    var systemPadding = this.systemPadding;
+    var marginBottom = this.renderOptions.marginBottom; // extra at end.
 
-    if (systemPadding === undefined) {
-      systemPadding = 0;
+    var systemPadding = 0;
+
+    if (this instanceof Score) {
+      systemPadding = this.systemPadding;
     }
 
     var numSystems;
 
-    if (this.isClassOrSubclass('Score')) {
+    if (this instanceof Score) {
       var numParts = this.parts.length;
       numSystems = this.numSystems();
 
@@ -62071,7 +61415,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         numSystems = 1;
       }
 
-      var scoreHeight = numSystems * staffHeight * numParts + (numSystems - 1) * systemPadding;
+      var scoreHeight = numSystems * staffHeight * numParts + (numSystems - 1) * systemPadding + marginBottom;
 
       if (numSystems > 1) {
         // needs a little extra padding for some reason...
@@ -62080,20 +61424,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
       return scoreHeight;
-    } else if (this.isClassOrSubclass('Part')) {
+    } else if (this instanceof Part) {
       numSystems = 1;
 
       if (!ignoreSystems) {
         numSystems = this.numSystems();
       }
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
 
-      return numSystems * staffHeight + (numSystems - 1) * systemPadding;
+      return numSystems * staffHeight + (numSystems - 1) * systemPadding + marginBottom;
     } else {
-      return staffHeight;
+      return staffHeight + marginBottom;
     }
   }
   /**
@@ -62104,6 +61448,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   estimateStaffLength() {
+    var _a, _b;
+
     var i;
     var totalLength;
 
@@ -62114,13 +61460,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (this.hasVoices()) {
       var maxLength = 0;
-      var _iteratorNormalCompletion23 = true;
-      var _didIteratorError23 = false;
-      var _iteratorError23 = undefined;
+      var _iteratorNormalCompletion22 = true;
+      var _didIteratorError22 = false;
+      var _iteratorError22 = undefined;
 
       try {
-        for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-          var v = _step23.value;
+        for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+          var v = _step22.value;
 
           if (v.isClassOrSubclass('Stream')) {
             var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
@@ -62131,16 +61477,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           }
         }
       } catch (err) {
-        _didIteratorError23 = true;
-        _iteratorError23 = err;
+        _didIteratorError22 = true;
+        _iteratorError22 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion23 && _iterator23.return != null) {
-            _iterator23.return();
+          if (!_iteratorNormalCompletion22 && _iterator22.return != null) {
+            _iterator22.return();
           }
         } finally {
-          if (_didIteratorError23) {
-            throw _iteratorError23;
+          if (_didIteratorError22) {
+            throw _iteratorError22;
           }
         }
       }
@@ -62166,9 +61512,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     } else {
       var rendOp = this.renderOptions;
       totalLength = 30 * this.notesAndRests.length;
-      totalLength += rendOp.displayClef ? 30 : 0;
-      totalLength += rendOp.displayKeySignature && this.getSpecialContext('keySignature') ? this.getSpecialContext('keySignature').width : 0;
-      totalLength += rendOp.displayTimeSignature ? 30 : 0; // totalLength += rendOp.staffPadding;
+
+      if (rendOp.displayClef) {
+        totalLength += 30;
+      }
+
+      if (rendOp.displayKeySignature) {
+        var ks = this.getSpecialContext('keySignature');
+        totalLength += (_b = (_a = ks) === null || _a === void 0 ? void 0 : _a.width, _b !== null && _b !== void 0 ? _b : 0);
+      }
+
+      if (rendOp.displayTimeSignature) {
+        totalLength += 30;
+      } // totalLength += rendOp.staffPadding;
+
 
       return totalLength;
     }
@@ -62186,14 +61543,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  playStream(options) {
+  playStream() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var params = {
       instrument: this.instrument,
       tempo: this.tempo,
       done: undefined,
       startNote: undefined
     };
-    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_24__["merge"](params, options);
     var startNoteIndex = params.startNote;
     var currentNoteIndex = 0;
 
@@ -62219,9 +61577,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           playDuration = el.duration.quarterLength;
         }
 
-        var milliseconds = playDuration * 1000 * 60 / params.tempo;
+        var milliseconds = playDuration * 1000 * 60 / params.tempo; // when we're ready to do full-on tempo marks:  from JV.
+        // const nextOffset = nextNote ? nextNote.offset : el.offset + el.duration.quarterLength;
+        // const tempo = thisStream._averageTempo(el.offset, nextOffset);
+        // const milliseconds = playDuration * 1000 * 60 / tempo;
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
           console.log('playing: ', el, playDuration, milliseconds, params.tempo);
         }
 
@@ -62253,7 +61614,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     this._stopPlaying = true;
 
     for (var i = 0; i < 127; i++) {
-      midicube__WEBPACK_IMPORTED_MODULE_21__["noteOff"](0, i, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_18__["noteOff"](0, i, 0);
     }
 
     return this;
@@ -62284,11 +61645,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *     `this.renderOptions.height`. If still undefined, will use
    *     `this.estimateStreamHeight()`
    * @param {string} elementType - what type of element, default = svg
-   * @returns {jQuery} svg in jquery.
+   * @returns {JQuery} svg in jquery.
    */
 
 
-  createNewDOM(width, height) {
+  createNewDOM() {
+    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
     if (!this.isFlat) {
@@ -62302,14 +61665,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       renderElementType = 'canvas';
     }
 
-    var $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_20__('<' + renderElementType + '/>');
+    var $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_17__('<' + renderElementType + '/>');
     $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
 
     $newCanvasOrDIV.css('display', 'inline-block');
 
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common__WEBPACK_IMPORTED_MODULE_27__["stripPx"](width);
+        width = _common__WEBPACK_IMPORTED_MODULE_24__["stripPx"](width);
       }
 
       $newCanvasOrDIV.attr('width', width);
@@ -62324,7 +61687,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       var computedHeight;
 
       if (this.renderOptions.height === undefined) {
-        computedHeight = this.estimateStreamHeight(); // console.log('computed Height estim: ' + computedHeight);
+        computedHeight = this.estimateStreamHeight(); // console.log('computed Height estimate: ' + computedHeight);
       } else {
         computedHeight = this.renderOptions.height; // console.log('computed Height: ' + computedHeight);
       }
@@ -62348,11 +61711,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * @param {number|string|undefined} [width]
    * @param {number|string|undefined} [height]
    * @param {string} [elementType='svg'] - what type of element, default = svg
-   * @returns {jQuery} canvas or svg
+   * @returns {JQuery} canvas or svg
    */
 
 
-  createPlayableDOM(width, height) {
+  createPlayableDOM() {
+    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
     this.renderOptions.events.click = 'play';
     return this.createDOM(width, height, elementType);
@@ -62369,11 +61734,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * @param {number|string|undefined} [width]
    * @param {number|string|undefined} [height]
    * @param {string} elementType - what type of element svg or canvas, default = svg
-   * @returns {jQuery} canvas or SVG
+   * @returns {JQuery} canvas or SVG
    */
 
 
-  createDOM(width, height) {
+  createDOM() {
+    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
     var $newSvg = this.createNewDOM(width, height, elementType); // temporarily append the SVG to the document to fix a Firefox bug
     // where nothing can be measured unless is it in the document.
@@ -62390,7 +61757,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   /**
    * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
    *
-   * @param {jQuery|HTMLElement} [appendElement=document.body] - where to place the svg
+   * @param {JQuery|HTMLElement} [appendElement=document.body] - where to place the svg
    * @param {number|string} [width]
    * @param {number|string} [height]
    * @param {string} elementType - what type of element, default = svg
@@ -62400,17 +61767,18 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  appendNewDOM(appendElement, width, height) {
+  appendNewDOM() {
+    var appendElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document.body;
+    var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     var elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
+    // noinspection JSMismatchedCollectionQueryUpdate
+    var $appendElement;
 
-    if (appendElement === undefined) {
-      appendElement = document.body;
-    }
-
-    var $appendElement = appendElement;
-
-    if (!(appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_20__)) {
-      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_20__(appendElement);
+    if (appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_17__) {
+      $appendElement = appendElement;
+    } else {
+      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_17__(appendElement);
     } //      if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
     //      var $bodyElement = bodyElement;
     //      if (!(bodyElement instanceof $) {
@@ -62420,9 +61788,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     //      };
 
 
-    var svgOrCanvasBlock = this.createDOM(width, height, elementType);
-    $appendElement.append(svgOrCanvasBlock);
-    return svgOrCanvasBlock[0];
+    var $svgOrCanvasBlock = this.createDOM(width, height, elementType);
+    $appendElement.append($svgOrCanvasBlock);
+    return $svgOrCanvasBlock[0];
   }
 
   replaceCanvas(where, preserveSvgSize) {
@@ -62437,7 +61805,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *
    * @param {jQuery|HTMLElement} [where] - the canvas or SVG to replace or
    *     a container holding the canvas(es) to replace.
-   * @param {Boolean} [preserveSvgSize=false]
+   * @param {boolean} [preserveSvgSize=false]
    * @param {string} elementType - what type of element, default = svg
    * @returns {jQuery} the svg
    */
@@ -62453,8 +61821,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     var $where;
 
-    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_20__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_20__(where);
+    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_17__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_17__(where);
     } else {
       $where = where; // where = $where[0];
     }
@@ -62469,13 +61837,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
     if ($oldSVGOrCanvas.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('No svg defined for replaceDOM!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_19__["Music21Exception"]('No svg defined for replaceDOM!');
     } else if ($oldSVGOrCanvas.length > 1) {
       // change last svg...
       // replacing each with svgBlock doesn't work
       // anyhow, it just resizes the svg but doesn't
       // draw.
-      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_20__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
+      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_17__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
     }
 
     var svgBlock;
@@ -62515,8 +61883,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (canvasOrDiv === undefined) {
       return this;
-    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_20__)) {
-      $svg = jquery__WEBPACK_IMPORTED_MODULE_20__(canvasOrDiv);
+    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_17__)) {
+      $svg = jquery__WEBPACK_IMPORTED_MODULE_17__(canvasOrDiv);
     }
 
     var playFunc = () => {
@@ -62550,9 +61918,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   recursiveGetStoredVexflowStave() {
-    var storedVFStave = this.storedVexflowStave;
+    var storedVexflowStave = this.storedVexflowStave;
 
-    if (storedVFStave === undefined) {
+    if (storedVexflowStave === undefined) {
       if (this.isFlat) {
         return undefined;
       } else {
@@ -62562,7 +61930,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
     }
 
-    return storedVFStave;
+    return storedVexflowStave;
   }
 
   getUnscaledXYforCanvas(svg, e) {
@@ -62580,7 +61948,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   getUnscaledXYforDOM(svg, e) {
-    var offset = null;
+    var offset;
 
     if (svg === undefined) {
       offset = {
@@ -62588,7 +61956,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         top: 0
       };
     } else {
-      offset = jquery__WEBPACK_IMPORTED_MODULE_20__(svg).offset();
+      offset = jquery__WEBPACK_IMPORTED_MODULE_17__(svg).offset();
     }
     /*
      * mouse event handler code from: http://diveintohtml5.org/canvas.html
@@ -62653,21 +62021,21 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   diatonicNoteNumFromScaledY(yPxScaled) {
-    var storedVFStave = this.recursiveGetStoredVexflowStave();
+    var storedVexflowStave = this.recursiveGetStoredVexflowStave();
 
-    if (storedVFStave === undefined) {
+    if (storedVexflowStave === undefined) {
       throw new StreamException('Could not find vexflowStave for getting size');
     } // for (var i = -10; i < 10; i++) {
-    //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
+    //    console.log("line: " + i + " y: " + storedVexflowStave.getYForLine(i));
     // }
 
 
     var thisClef = this.clef || this.getContextByClass('Clef');
     var lowestLine = thisClef !== undefined ? thisClef.lowestLine : 31;
-    var lineSpacing = storedVFStave.options.spacing_between_lines_px;
-    var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
+    var lineSpacing = storedVexflowStave.options.spacing_between_lines_px;
+    var linesAboveStaff = storedVexflowStave.options.space_above_staff_ln;
     var notesFromTop = yPxScaled * 2 / lineSpacing;
-    var notesAboveLowestLine = (storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
+    var notesAboveLowestLine = (storedVexflowStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
     var clickedDiatonicNoteNum = lowestLine + Math.round(notesAboveLowestLine);
     return clickedDiatonicNoteNum;
   }
@@ -62676,14 +62044,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *
    * Override in subclasses, always returns this; here.
    *
-   * @param {number} [xPxScaled]
+   * @param {number} xPxScaled
    * @param {number} [systemIndex]
    * @returns {this}
    *
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+  getStreamFromScaledXandSystemIndex(xPxScaled) {
+    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     return this;
   }
   /**
@@ -62706,18 +62075,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex, options) {
+  noteElementFromScaledX(xPxScaled) {
+    var allowablePixels = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+    var systemIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
     var params = {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_24__["merge"](params, options);
     var foundNote;
-
-    if (allowablePixels === undefined) {
-      allowablePixels = 10;
-    }
-
     var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
 
     if (subStream === undefined) {
@@ -62729,13 +62096,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       note: undefined
     }; // a backup in case we did not find within allowablePixels
 
-    var _iteratorNormalCompletion24 = true;
-    var _didIteratorError24 = false;
-    var _iteratorError24 = undefined;
+    var _iteratorNormalCompletion23 = true;
+    var _didIteratorError23 = false;
+    var _iteratorError23 = undefined;
 
     try {
-      for (var _iterator24 = subStream.flat.notesAndRests[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
-        var n = _step24.value;
+      for (var _iterator23 = subStream.flat.notesAndRests[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+        var n = _step23.value;
 
         /* should also
          * compensate for accidentals...
@@ -62755,16 +62122,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       } // console.log('note here is: ', foundNote);
 
     } catch (err) {
-      _didIteratorError24 = true;
-      _iteratorError24 = err;
+      _didIteratorError23 = true;
+      _iteratorError23 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion24 && _iterator24.return != null) {
-          _iterator24.return();
+        if (!_iteratorNormalCompletion23 && _iterator23.return != null) {
+          _iterator23.return();
         }
       } finally {
-        if (_didIteratorError24) {
-          throw _iteratorError24;
+        if (_didIteratorError23) {
+          throw _iteratorError23;
         }
       }
     }
@@ -62793,7 +62160,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  findNoteForClick(svg, e, x, y) {
+  findNoteForClick(svg, e) {
+    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD = this.getScaledXYforDOM(svg, e);
 
@@ -62811,18 +62181,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * Change the pitch of a note given that it has been clicked and then
    * call changedCallbackFunction
    *
-   * To be removed...
-   *
    * @param {number} clickedDiatonicNoteNum
    * @param {music21.note.Note} foundNote
-   * @param {Node} svg
+   * @param {SVGElement|HTMLElement} svg
    * @returns {*} output of changedCallbackFunction
    */
 
 
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     var n = foundNote;
-    var p = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Pitch"]('C');
+    var p = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Pitch"]('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -62848,8 +62216,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   /**
    * Redraws an svgDiv, keeping the events of the previous svg.
    *
-   * @param {jQuery|Node} svg
-   * @returns {jQuery}
+   * @param {JQuery|HTMLElement} svg
+   * @returns {JQuery}
    */
 
 
@@ -62859,7 +62227,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       this.setSubstreamRenderOptions();
     }
 
-    var $svg = jquery__WEBPACK_IMPORTED_MODULE_20__(svg); // works even if svg is already $jquery
+    var $svg = jquery__WEBPACK_IMPORTED_MODULE_17__(svg); // works even if svg is already $jquery
 
     var $newSvg = this.createNewDOM(svg.width, svg.height);
     this.renderVexflow($newSvg);
@@ -62885,12 +62253,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     /*
      * Create an editable svg with an accidental selection bar.
      */
-    var d = jquery__WEBPACK_IMPORTED_MODULE_20__('<div/>').css('text-align', 'left').css('position', 'relative');
+    var d = jquery__WEBPACK_IMPORTED_MODULE_17__('<div/>').css('text-align', 'left').css('position', 'relative');
     this.renderOptions.events.click = this.DOMChangerFunction;
     var $svgDiv = this.createDOM(width, height);
     var buttonDiv = this.getAccidentalToolbar(undefined, undefined, $svgDiv);
     d.append(buttonDiv);
-    d.append(jquery__WEBPACK_IMPORTED_MODULE_20__("<br style='clear: both;' />"));
+    d.append(jquery__WEBPACK_IMPORTED_MODULE_17__("<br style='clear: both;' />"));
     d.append($svgDiv);
     return d;
   }
@@ -62926,7 +62294,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       var $useSvg = $siblingSvg;
 
       if ($useSvg === undefined) {
-        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_20__(clickEvent.target).parent();
+        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_17__(clickEvent.target).parent();
         var maxSearch = 99;
 
         while (maxSearch > 0 && $searchParent !== undefined && ($useSvg === undefined || $useSvg[0] === undefined)) {
@@ -62941,9 +62309,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         }
       }
 
-      if (this.activeNote !== undefined) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_28__["Note"]) {
         var n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"](newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Accidental"](newAlter);
         /* console.log(n.pitch.name); */
 
         var $newSvg = this.redrawDOM($useSvg[0]);
@@ -62957,11 +62325,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
     };
 
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_20__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_17__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
 
     var _loop = function _loop(i) {
-      var acc = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"](i);
-      var $button = jquery__WEBPACK_IMPORTED_MODULE_20__('<button>' + acc.unicodeModifier + '</button>').click(e => addAccidental(i, e));
+      var acc = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Accidental"](i);
+      var $button = jquery__WEBPACK_IMPORTED_MODULE_17__('<button>' + acc.unicodeModifier + '</button>').click(e => addAccidental(i, e));
 
       if (Math.abs(i) > 1) {
         $button.css('font-family', 'Bravura Text');
@@ -62984,13 +62352,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   getPlayToolbar() {
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_20__('<div/>').attr('class', 'playToolbar scoreToolbar');
-    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_20__('<button>&#9658</button>');
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_17__('<div/>').attr('class', 'playToolbar scoreToolbar');
+    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_17__('<button>&#9658</button>');
     $bPlay.click(() => {
       this.playStream();
     });
     $buttonDiv.append($bPlay);
-    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_20__('<button>&#9724</button>');
+    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_17__('<button>&#9724</button>');
     $bStop.click(() => {
       this.stopPlayStream();
     });
@@ -63003,16 +62371,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * so that on resizing the stream is redrawn and reflowed to the
    * new size.
    *
-   * @param {jQuery} jSvg
+   * @param {JQuery} jSvg
    * @returns {this}
    */
 
 
   windowReflowStart(jSvg) {
     // set up a bunch of windowReflow bindings that affect the svg.
-    var callingStream = this;
     var jSvgNow = jSvg;
-    jquery__WEBPACK_IMPORTED_MODULE_20__(window).bind('resizeEnd', () => {
+
+    var resizeEnd = () => {
       // do something, window hasn't changed size in 500ms
       var jSvgParent = jSvgNow.parent();
       var newWidth = jSvgParent.width();
@@ -63020,65 +62388,63 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
       console.log('resizeEnd triggered', newWidth); // console.log(callingStream.renderOptions.events.click);
 
-      callingStream.resetRenderOptions(true, true); // recursive, preserveEvents
+      this.resetRenderOptions(true, true); // recursive, preserveEvents
       // console.log(callingStream.renderOptions.events.click);
 
-      callingStream.maxSystemWidth = svgWidth - 40;
+      this.maxSystemWidth = svgWidth - 40;
       jSvgNow.remove();
-      var svgObj = callingStream.appendNewDOM(jSvgParent);
-      jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_20__(svgObj);
-    });
-    jquery__WEBPACK_IMPORTED_MODULE_20__(window).resize(function resizeSvgTo() {
-      if (this.resizeTO) {
-        clearTimeout(this.resizeTO);
+      var svgObj = this.appendNewDOM(jSvgParent);
+      jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_17__(svgObj);
+    };
+
+    var resizeTimeout = 0;
+    jquery__WEBPACK_IMPORTED_MODULE_17__(window).on('resize', () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
       }
 
-      this.resizeTO = setTimeout(function resizeToTimeout() {
-        jquery__WEBPACK_IMPORTED_MODULE_20__(this).trigger('resizeEnd');
-      }, 200);
+      resizeTimeout = setTimeout(() => resizeEnd(), 200);
     });
-    setTimeout(function triggerResizeOnCreateSvg() {
-      var $window = jquery__WEBPACK_IMPORTED_MODULE_20__(window);
+    setTimeout(() => {
+      var $window = jquery__WEBPACK_IMPORTED_MODULE_17__(window);
       var doResize = $window.data('triggerResizeOnCreateSvg');
 
       if (doResize === undefined || doResize === true) {
-        jquery__WEBPACK_IMPORTED_MODULE_20__(this).trigger('resizeEnd');
+        resizeEnd();
         $window.data('triggerResizeOnCreateSvg', false);
       }
     }, 1000);
     return this;
   }
   /**
-   * Does this stream have a {@link music21.stream.Voice} inside it?
-   *
-   * @returns {Boolean}
+   * Does this stream have a {@link Voice} inside it?
    */
 
 
   hasVoices() {
-    var _iteratorNormalCompletion25 = true;
-    var _didIteratorError25 = false;
-    var _iteratorError25 = undefined;
+    var _iteratorNormalCompletion24 = true;
+    var _didIteratorError24 = false;
+    var _iteratorError24 = undefined;
 
     try {
-      for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
-        var el = _step25.value;
+      for (var _iterator24 = this[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+        var el = _step24.value;
 
         if (el.isClassOrSubclass('Voice')) {
           return true;
         }
       }
     } catch (err) {
-      _didIteratorError25 = true;
-      _iteratorError25 = err;
+      _didIteratorError24 = true;
+      _iteratorError24 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion25 && _iterator25.return != null) {
-          _iterator25.return();
+        if (!_iteratorNormalCompletion24 && _iterator24.return != null) {
+          _iterator24.return();
         }
       } finally {
-        if (_didIteratorError25) {
-          throw _iteratorError25;
+        if (_didIteratorError24) {
+          throw _iteratorError24;
         }
       }
     }
@@ -63112,21 +62478,24 @@ class Voice extends Stream {
  */
 
 class Measure extends Stream {
+  constructor() {
+    super(...arguments);
+    this.recursionType = 'elementsFirst';
+    this.isMeasure = true;
+    this.number = 0;
+    this.numberSuffix = '';
+  }
+
   static get className() {
     return 'music21.stream.Measure';
   }
 
-  constructor() {
-    super();
-    this.recursionType = 'elementsFirst';
-    this.isMeasure = true;
-    this.number = 0; // measure number
-
-    this.numberSuffix = '';
-  }
-
   stringInfo() {
-    return this.measureNumberWithSuffix() + ' offset=' + this.offset.toString();
+    var _a; // avoid using "this.offset" to not infinite loops.
+
+
+    var offset = (_a = this._activeSiteStoredOffset, _a !== null && _a !== void 0 ? _a : this._naiveOffset);
+    return this.measureNumberWithSuffix() + ' offset=' + offset.toString();
   }
 
   measureNumberWithSuffix() {
@@ -63139,25 +62508,22 @@ class Measure extends Stream {
  *
  * @class Part
  * @memberof music21.stream
- * @extends music21.stream.Stream
  */
 
 class Part extends Stream {
-  static get className() {
-    return 'music21.stream.Part';
-  }
-
   constructor() {
     super();
     this.recursionType = 'flatten';
     this.systemHeight = this.renderOptions.naiveHeight;
   }
+
+  static get className() {
+    return 'music21.stream.Part';
+  }
   /**
    * How many systems does this Part have?
    *
    * Does not change any reflow information, so by default it's always 1.
-   *
-   * @returns {Number}
    */
 
 
@@ -63175,21 +62541,19 @@ class Part extends Stream {
   }
   /**
    * Find the width of every measure in the Part.
-   *
-   * @returns {Array<number>}
    */
 
 
   getMeasureWidths() {
     /* call after setSubstreamRenderOptions */
     var measureWidths = [];
-    var _iteratorNormalCompletion26 = true;
-    var _didIteratorError26 = false;
-    var _iteratorError26 = undefined;
+    var _iteratorNormalCompletion25 = true;
+    var _didIteratorError25 = false;
+    var _iteratorError25 = undefined;
 
     try {
-      for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
-        var el = _step26.value;
+      for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+        var el = _step25.value;
 
         if (el.isClassOrSubclass('Measure')) {
           var elRendOp = el.renderOptions;
@@ -63201,16 +62565,16 @@ class Part extends Stream {
        */
 
     } catch (err) {
-      _didIteratorError26 = true;
-      _iteratorError26 = err;
+      _didIteratorError25 = true;
+      _iteratorError25 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion26 && _iterator26.return != null) {
-          _iterator26.return();
+        if (!_iteratorNormalCompletion25 && _iterator25.return != null) {
+          _iterator25.return();
         }
       } finally {
-        if (_didIteratorError26) {
-          throw _iteratorError26;
+        if (_didIteratorError25) {
+          throw _iteratorError25;
         }
       }
     }
@@ -63219,8 +62583,6 @@ class Part extends Stream {
   }
   /**
    * Overrides the default music21.stream.Stream#estimateStaffLength
-   *
-   * @returns {number}
    */
 
 
@@ -63234,13 +62596,13 @@ class Part extends Stream {
       // part with Measures underneath
       var totalLength = 0;
       var isFirst = true;
-      var _iteratorNormalCompletion27 = true;
-      var _didIteratorError27 = false;
-      var _iteratorError27 = undefined;
+      var _iteratorNormalCompletion26 = true;
+      var _didIteratorError26 = false;
+      var _iteratorError26 = undefined;
 
       try {
-        for (var _iterator27 = this.getElementsByClass('Measure')[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
-          var m = _step27.value;
+        for (var _iterator26 = this.getElementsByClass('Measure')[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+          var m = _step26.value;
           // this looks wrong, but actually seems to be right. moving it to
           // after the break breaks things.
           totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
@@ -63252,16 +62614,16 @@ class Part extends Stream {
           isFirst = false;
         }
       } catch (err) {
-        _didIteratorError27 = true;
-        _iteratorError27 = err;
+        _didIteratorError26 = true;
+        _iteratorError26 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion27 && _iterator27.return != null) {
-            _iterator27.return();
+          if (!_iteratorNormalCompletion26 && _iterator26.return != null) {
+            _iterator26.return();
           }
         } finally {
-          if (_didIteratorError27) {
-            throw _iteratorError27;
+          if (_didIteratorError26) {
+            throw _iteratorError26;
           }
         }
       }
@@ -63297,7 +62659,7 @@ class Part extends Stream {
     if (systemHeight === undefined) {
       systemHeight = this.systemHeight;
       /* part.show() called... */
-    } else if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+    } else if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
       console.log('overridden systemHeight: ' + systemHeight);
     }
 
@@ -63428,13 +62790,13 @@ class Part extends Stream {
     var lastTimeSignature;
     var lastKeySignature;
     var lastClef;
-    var _iteratorNormalCompletion28 = true;
-    var _didIteratorError28 = false;
-    var _iteratorError28 = undefined;
+    var _iteratorNormalCompletion27 = true;
+    var _didIteratorError27 = false;
+    var _iteratorError27 = undefined;
 
     try {
-      for (var _iterator28 = this.getElementsByClass('Measure')[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
-        var m = _step28.value;
+      for (var _iterator27 = this.getElementsByClass('Measure')[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+        var m = _step27.value;
         var mRendOp = m.renderOptions;
         mRendOp.measureIndex = currentMeasureIndex;
         mRendOp.top = rendOp.top;
@@ -63478,16 +62840,16 @@ class Part extends Stream {
         currentMeasureIndex += 1;
       }
     } catch (err) {
-      _didIteratorError28 = true;
-      _iteratorError28 = err;
+      _didIteratorError27 = true;
+      _iteratorError27 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion28 && _iterator28.return != null) {
-          _iterator28.return();
+        if (!_iteratorNormalCompletion27 && _iterator27.return != null) {
+          _iterator27.return();
         }
       } finally {
-        if (_didIteratorError28) {
-          throw _iteratorError28;
+        if (_didIteratorError27) {
+          throw _iteratorError27;
         }
       }
     }
@@ -63518,7 +62880,7 @@ class Part extends Stream {
    * Overrides the default music21.stream.Stream#findNoteForClick
    * by taking into account systems
    *
-   * @param {HTMLElement | SVGElement} svg
+   * @param {HTMLElement|SVGElement} svg
    * @param {MouseEvent|TouchEvent} e
    * @param {number} [x]
    * @param {number} [y]
@@ -63526,7 +62888,10 @@ class Part extends Stream {
    */
 
 
-  findNoteForClick(svg, e, x, y) {
+  findNoteForClick(svg, e) {
+    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD3 = this.getScaledXYforDOM(svg, e);
 
@@ -63537,8 +62902,8 @@ class Part extends Stream {
     } // debug = true;
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
-      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_20__(svg).height());
+    if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
+      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_17__(svg).height());
     } // TODO(msc) -- systemPadding was never used -- should it be?
     // let systemPadding = this.renderOptions.systemPadding;
     // if (systemPadding === undefined) {
@@ -63565,23 +62930,24 @@ class Part extends Stream {
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+  getStreamFromScaledXandSystemIndex(xPxScaled) {
+    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var gotMeasure;
     var measures = this.measures;
-    var _iteratorNormalCompletion29 = true;
-    var _didIteratorError29 = false;
-    var _iteratorError29 = undefined;
+    var _iteratorNormalCompletion28 = true;
+    var _didIteratorError28 = false;
+    var _iteratorError28 = undefined;
 
     try {
-      for (var _iterator29 = measures[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
-        var m = _step29.value;
+      for (var _iterator28 = measures[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+        var m = _step28.value;
         var rendOp = m.renderOptions;
         var left = rendOp.left;
         var right = left + rendOp.width;
         var top = rendOp.top;
         var bottom = top + rendOp.height;
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
           console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
         }
 
@@ -63596,16 +62962,16 @@ class Part extends Stream {
         }
       }
     } catch (err) {
-      _didIteratorError29 = true;
-      _iteratorError29 = err;
+      _didIteratorError28 = true;
+      _iteratorError28 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion29 && _iterator29.return != null) {
-          _iterator29.return();
+        if (!_iteratorNormalCompletion28 && _iterator28.return != null) {
+          _iterator28.return();
         }
       } finally {
-        if (_didIteratorError29) {
-          throw _iteratorError29;
+        if (_didIteratorError28) {
+          throw _iteratorError28;
         }
       }
     }
@@ -63623,10 +62989,6 @@ class Part extends Stream {
  */
 
 class Score extends Stream {
-  static get className() {
-    return 'music21.stream.Score';
-  }
-
   constructor() {
     super();
     this.recursionType = 'elementsOnly';
@@ -63634,12 +62996,15 @@ class Score extends Stream {
     this.partSpacing = this.renderOptions.naiveHeight;
   }
 
+  static get className() {
+    return 'music21.stream.Score';
+  }
+
   get clef() {
-    // TODO: remove -- this is unlike m21p
     var c = super.clef;
 
     if (c === undefined) {
-      return new _clef__WEBPACK_IMPORTED_MODULE_26__["TrebleClef"]();
+      return new _clef__WEBPACK_IMPORTED_MODULE_23__["TrebleClef"]();
     } else {
       return c;
     }
@@ -63664,18 +63029,66 @@ class Score extends Stream {
     return systemPadding;
   }
   /**
+   * Override main stream makeBeams to call on each part.
+   *
+   * @param {boolean} [inPlace=false]
+   */
+
+
+  makeBeams() {
+    var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref12$inPlace = _ref12.inPlace,
+        inPlace = _ref12$inPlace === void 0 ? false : _ref12$inPlace;
+
+    var returnObj = this;
+
+    if (!inPlace) {
+      returnObj = this.clone(true);
+    }
+
+    var _iteratorNormalCompletion29 = true;
+    var _didIteratorError29 = false;
+    var _iteratorError29 = undefined;
+
+    try {
+      for (var _iterator29 = returnObj.parts[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+        var p = _step29.value;
+        p.makeBeams({
+          inPlace: true
+        });
+      } // returnObj.streamStatus.beams = true;
+
+    } catch (err) {
+      _didIteratorError29 = true;
+      _iteratorError29 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion29 && _iterator29.return != null) {
+          _iterator29.return();
+        }
+      } finally {
+        if (_didIteratorError29) {
+          throw _iteratorError29;
+        }
+      }
+    }
+
+    return returnObj;
+  }
+  /**
    * Returns the measure that is at X location xPxScaled and system systemIndex.
    *
    * Always returns the measure of the top part...
    *
-   * @param {number} [xPxScaled]
+   * @param {number} xPxScaled
    * @param {number} [systemIndex]
-   * @returns {music21.stream.Stream} usually a Measure
+   * @returns {Stream} usually a Measure
    *
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+  getStreamFromScaledXandSystemIndex(xPxScaled) {
+    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var parts = this.parts;
     return parts.get(0).getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
   }
@@ -63979,7 +63392,10 @@ class Score extends Stream {
    */
 
 
-  findNoteForClick(svg, e, x, y) {
+  findNoteForClick(svg, e) {
+    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD5 = this.getScaledXYforDOM(svg, e);
 
@@ -64009,8 +63425,6 @@ class Score extends Stream {
   }
   /**
    * How many systems are there? Calls numSystems() on the first part.
-   *
-   * @returns {int}
    */
 
 
@@ -64021,15 +63435,15 @@ class Score extends Stream {
    * Fixes the part measure spacing for all parts.
    *
    * @param {Object} options
-   * @param {Boolean} [options.setLeft=true]
+   * @param {boolean} [options.setLeft=true]
    * @returns {this}
    */
 
 
   evenPartMeasureSpacing() {
-    var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref11$setLeft = _ref11.setLeft,
-        setLeft = _ref11$setLeft === void 0 ? true : _ref11$setLeft;
+    var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref13$setLeft = _ref13.setLeft,
+        setLeft = _ref13$setLeft === void 0 ? true : _ref13$setLeft;
 
     var measureStacks = [];
     var currentPartNumber = 0;
@@ -64130,9 +63544,9 @@ class OffsetMap {
 
 /***/ }),
 
-/***/ "./src/music21/stream/filters.js":
+/***/ "./src/music21/stream/filters.ts":
 /*!***************************************!*\
-  !*** ./src/music21/stream/filters.js ***!
+  !*** ./src/music21/stream/filters.ts ***!
   \***************************************/
 /*! exports provided: FilterException, StopIterationSingleton, StreamFilter, IsFilter, IsNotFilter, ClassFilter, ClassNotFilter, OffsetFilter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -64154,6 +63568,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
 
 
+ // noinspection JSUnusedGlobalSymbols
 
 class FilterException extends _exceptions21__WEBPACK_IMPORTED_MODULE_2__["Music21Exception"] {}
 
@@ -64176,15 +63591,7 @@ class StreamFilter {
   }
 
 }
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class IsFilter extends StreamFilter {
-  static get derivationStr() {
-    return 'is';
-  }
-
   constructor() {
     var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     super();
@@ -64195,6 +63602,10 @@ class IsFilter extends StreamFilter {
 
     this.target = target;
     this.numToFind = target.length;
+  }
+
+  static get derivationStr() {
+    return 'is';
   }
 
   reset() {
@@ -64215,10 +63626,6 @@ class IsFilter extends StreamFilter {
   }
 
 }
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class IsNotFilter extends IsFilter {
   static get derivationStr() {
     return 'IsNot';
@@ -64243,15 +63650,7 @@ class IsNotFilter extends IsFilter {
 
 } // TODO(msc): IdFilter
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class ClassFilter extends StreamFilter {
-  static get derivationStr() {
-    return 'getElementsByClass';
-  }
-
   constructor() {
     var classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     super();
@@ -64261,6 +63660,10 @@ class ClassFilter extends StreamFilter {
     }
 
     this.classList = classList;
+  }
+
+  static get derivationStr() {
+    return 'getElementsByClass';
   } // TODO: __eq__
 
 
@@ -64269,10 +63672,6 @@ class ClassFilter extends StreamFilter {
   }
 
 }
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class ClassNotFilter extends ClassFilter {
   static get derivationStr() {
     return 'getElementsNotOfClass';
@@ -64284,16 +63683,10 @@ class ClassNotFilter extends ClassFilter {
 
 } // TODO: GroupFilter
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class OffsetFilter extends StreamFilter {
-  static get derivationStr() {
-    return 'getElementsByOffset';
-  }
+  constructor(offsetStart) {
+    var offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
-  constructor(offsetStart, offsetEnd) {
     var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
         _ref$includeEndBounda = _ref.includeEndBoundary,
         includeEndBoundary = _ref$includeEndBounda === void 0 ? true : _ref$includeEndBounda,
@@ -64305,13 +63698,13 @@ class OffsetFilter extends StreamFilter {
         includeElementsThatEndAtStart = _ref$includeElementsT === void 0 ? true : _ref$includeElementsT;
 
     super();
+    this.zeroLengthSearch = false;
     this.offsetStart = offsetStart;
     this.offsetEnd = offsetEnd;
     this.includeEndBoundary = includeEndBoundary;
     this.mustFinishInSpan = mustFinishInSpan;
     this.mustBeginInSpan = mustBeginInSpan;
     this.includeElementsThatEndAtStart = includeElementsThatEndAtStart;
-    this.zeroLengthSearch = false;
 
     if (offsetEnd === undefined) {
       this.offsetEnd = offsetStart;
@@ -64321,8 +63714,14 @@ class OffsetFilter extends StreamFilter {
     }
   }
 
+  static get derivationStr() {
+    return 'getElementsByOffset';
+  }
+
   call(item, iterator) {
-    return this.isElementOffsetInRange(item, item.offset);
+    // N.B. iterator.srcStream.elementOffset is necessary instead
+    // of elementOffset, because we have not set activeSite yet.
+    return this.isElementOffsetInRange(item, iterator.srcStream.elementOffset(item));
   }
 
   isElementOffsetInRange(e, offset) {
@@ -64383,14 +63782,13 @@ class OffsetFilter extends StreamFilter {
     return true;
   }
 
-} // TODO: OffsetFilter (high priority)
-// TODO: OffsetHierarchyFilter
+} // TODO: OffsetHierarchyFilter
 
 /***/ }),
 
-/***/ "./src/music21/stream/iterator.js":
+/***/ "./src/music21/stream/iterator.ts":
 /*!****************************************!*\
-  !*** ./src/music21/stream/iterator.js ***!
+  !*** ./src/music21/stream/iterator.ts ***!
   \****************************************/
 /*! exports provided: StreamIteratorException, StreamIterator, OffsetIterator, RecursiveIterator */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -64418,7 +63816,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters */ "./src/music21/stream/filters.js");
+/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters */ "./src/music21/stream/filters.ts");
 
 
 
@@ -64429,12 +63827,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_9__["StopIterationSingleton"];
+var StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_9__["StopIterationSingleton"]; // noinspection JSUnusedGlobalSymbols
+
 class StreamIteratorException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__["StreamException"] {}
-/**
- * @memberof music21.stream.iterator
- */
-
 class StreamIterator {
   constructor(srcStream) {
     var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
@@ -64447,16 +63842,18 @@ class StreamIterator {
         _ref$ignoreSorting = _ref.ignoreSorting,
         ignoreSorting = _ref$ignoreSorting === void 0 ? false : _ref$ignoreSorting;
 
+    this.index = 0;
+    this.iterSection = '_elements';
+    this.cleanupOnStop = false;
+    this.sectionIndex = 0;
+
     if (!ignoreSorting && !srcStream.isSorted && srcStream.autoSort) {
       srcStream.sort();
     }
 
     this.srcStream = srcStream;
-    this.index = 0;
     this.srcStreamElements = srcStream.elements;
     this.streamLength = this.srcStreamElements.length;
-    this.iterSection = '_elements';
-    this.cleanupOnStop = false;
     this.restoreActiveSites = restoreActiveSites;
     this.overrideDerivation = undefined;
 
@@ -64465,20 +63862,6 @@ class StreamIterator {
     }
 
     this.filters = filterList;
-    /**
-     *
-     * @type {number|undefined}
-     * @private
-     */
-
-    this._len = undefined;
-    /**
-     *
-     * @type {music21.base.Music21Object[]|undefined}
-     * @private
-     */
-
-    this._matchingElements = undefined;
     this.sectionIndex = 0; // no endElements yet...
 
     if (activeInformation === undefined) {
@@ -64508,6 +63891,7 @@ class StreamIterator {
                   break;
                 }
 
+                // noinspection DuplicatedCode
                 _this.index += 1;
                 e = void 0;
                 _context.prev = 4;
@@ -64755,7 +64139,8 @@ class StreamIterator {
     }
 
     return found;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   get activeElementList() {
     return this.activeInformation.stream[this.activeInformation.iterSection];
@@ -64792,7 +64177,8 @@ class StreamIterator {
     this.filters.push(newFilter);
     this.resetCaches();
     return this;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   removeFilter(oldFilter) {
     var index = this.filters.indexOf(oldFilter);
@@ -64818,12 +64204,12 @@ class StreamIterator {
   // getElementsByOffset;
 
 
-  getElementsByOffset() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
+  getElementsByOffset(offsetStart) {
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
     }
 
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["OffsetFilter"](...args));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["OffsetFilter"](offsetStart, ...args));
   }
 
   get notes() {
@@ -64836,7 +64222,8 @@ class StreamIterator {
 
   get parts() {
     return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Part'));
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   get spanners() {
     return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Spanner'));
@@ -64847,16 +64234,11 @@ class StreamIterator {
   }
 
 }
-/**
- * @extends music21.stream.iterator.StreamIterator
- */
-
 class OffsetIterator extends StreamIterator {
   constructor(srcStream) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     super(srcStream, options);
     this.nextToYield = [];
-    this.nextOffsetToYield = undefined;
   }
 
   [Symbol.iterator]() {
@@ -64865,129 +64247,171 @@ class OffsetIterator extends StreamIterator {
     return (
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee2() {
-        var e, matches, yieldEls, eOffset, forwardIndex, nextE, nextOffset, _i, _yieldEls, el;
+        var e, matches, yieldEls, eOffset, forwardIndex, nextE, nextOffset, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, el;
 
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _this2.reset();
+                _this2.reset(); // this.sort();
 
-                _this2.sort();
 
-              case 2:
+              case 1:
                 if (!(_this2.index < _this2.streamLength)) {
-                  _context2.next = 47;
+                  _context2.next = 65;
                   break;
                 }
 
+                // noinspection DuplicatedCode
                 _this2.index += 1;
                 e = void 0;
-                _context2.prev = 5;
+                _context2.prev = 4;
                 e = _this2.srcStreamElements[_this2.index - 1];
-                _context2.next = 12;
+                _context2.next = 11;
                 break;
 
-              case 9:
-                _context2.prev = 9;
-                _context2.t0 = _context2["catch"](5);
-                return _context2.abrupt("continue", 2);
+              case 8:
+                _context2.prev = 8;
+                _context2.t0 = _context2["catch"](4);
+                return _context2.abrupt("continue", 1);
 
-              case 12:
+              case 11:
                 matches = _this2.matchesFilters(e);
 
                 if (!(matches === false)) {
-                  _context2.next = 15;
+                  _context2.next = 14;
                   break;
                 }
 
-                return _context2.abrupt("continue", 2);
+                return _context2.abrupt("continue", 1);
 
-              case 15:
+              case 14:
                 if (!(matches === StopIterationSingleton)) {
-                  _context2.next = 17;
+                  _context2.next = 16;
                   break;
                 }
 
-                return _context2.abrupt("break", 47);
+                return _context2.abrupt("break", 65);
 
-              case 17:
+              case 16:
                 yieldEls = [e];
-                eOffset = _this2.elementOffset(e);
+                eOffset = _this2.srcStream.elementOffset(e);
                 forwardIndex = _this2.index;
 
-              case 20:
+              case 19:
                 if (!(forwardIndex < _this2.streamLength)) {
-                  _context2.next = 41;
+                  _context2.next = 40;
                   break;
                 }
 
                 nextE = void 0;
-                _context2.prev = 22;
+                _context2.prev = 21;
                 nextE = _this2.srcStreamElements[_this2.index - 1];
-                _context2.next = 29;
+                _context2.next = 28;
                 break;
 
-              case 26:
-                _context2.prev = 26;
-                _context2.t1 = _context2["catch"](22);
-                return _context2.abrupt("continue", 38);
+              case 25:
+                _context2.prev = 25;
+                _context2.t1 = _context2["catch"](21);
+                return _context2.abrupt("continue", 37);
 
-              case 29:
-                nextOffset = _this2.elementOffset(nextE);
+              case 28:
+                nextOffset = _this2.srcStream.elementOffset(nextE);
 
                 if (!(nextOffset !== eOffset)) {
-                  _context2.next = 34;
+                  _context2.next = 33;
                   break;
                 }
 
                 _this2.nextToYield = [nextE];
                 _this2.nextOffsetToYield = nextOffset;
-                return _context2.abrupt("break", 41);
+                return _context2.abrupt("break", 40);
 
-              case 34:
+              case 33:
                 if (_this2.matchesFilters(nextE)) {
-                  _context2.next = 36;
+                  _context2.next = 35;
                   break;
                 }
 
-                return _context2.abrupt("continue", 38);
+                return _context2.abrupt("continue", 37);
 
-              case 36:
+              case 35:
                 yieldEls.push(e);
                 _this2.index = forwardIndex;
 
-              case 38:
+              case 37:
                 forwardIndex++;
-                _context2.next = 20;
+                _context2.next = 19;
                 break;
 
-              case 41:
-                if (_this2.restoreActiveSites) {
-                  for (_i = 0, _yieldEls = yieldEls; _i < _yieldEls.length; _i++) {
-                    el = _yieldEls[_i];
-                    el.activeSite = _this2.srcStream;
-                  }
+              case 40:
+                if (!_this2.restoreActiveSites) {
+                  _context2.next = 60;
+                  break;
                 }
 
-                _this2.updateActiveInformation();
+                _iteratorNormalCompletion6 = true;
+                _didIteratorError6 = false;
+                _iteratorError6 = undefined;
+                _context2.prev = 44;
 
-                _context2.next = 45;
-                return yieldEls;
+                for (_iterator6 = yieldEls[Symbol.iterator](); !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                  el = _step6.value;
+                  el.activeSite = _this2.srcStream;
+                }
 
-              case 45:
-                _context2.next = 2;
+                _context2.next = 52;
                 break;
 
-              case 47:
+              case 48:
+                _context2.prev = 48;
+                _context2.t2 = _context2["catch"](44);
+                _didIteratorError6 = true;
+                _iteratorError6 = _context2.t2;
+
+              case 52:
+                _context2.prev = 52;
+                _context2.prev = 53;
+
+                if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
+                  _iterator6.return();
+                }
+
+              case 55:
+                _context2.prev = 55;
+
+                if (!_didIteratorError6) {
+                  _context2.next = 58;
+                  break;
+                }
+
+                throw _iteratorError6;
+
+              case 58:
+                return _context2.finish(55);
+
+              case 59:
+                return _context2.finish(52);
+
+              case 60:
+                _this2.updateActiveInformation();
+
+                _context2.next = 63;
+                return yieldEls;
+
+              case 63:
+                _context2.next = 1;
+                break;
+
+              case 65:
                 _this2.cleanup();
 
-              case 48:
+              case 66:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[5, 9], [22, 26]]);
+        }, _callee2, null, [[4, 8], [21, 25], [44, 48, 52, 60], [53,, 55, 59]]);
       })()
     );
   }
@@ -64999,21 +64423,21 @@ class OffsetIterator extends StreamIterator {
   }
 
 }
-/**
- * @extends music21.stream.iterator.StreamIterator
- */
-
 class RecursiveIterator extends StreamIterator {
   constructor(srcStream) {
     var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        filterList = _ref2.filterList,
-        restoreActiveSites = _ref2.restoreActiveSites,
-        activeInformation = _ref2.activeInformation,
+        _ref2$filterList = _ref2.filterList,
+        filterList = _ref2$filterList === void 0 ? [] : _ref2$filterList,
+        _ref2$restoreActiveSi = _ref2.restoreActiveSites,
+        restoreActiveSites = _ref2$restoreActiveSi === void 0 ? true : _ref2$restoreActiveSi,
+        _ref2$activeInformati = _ref2.activeInformation,
+        activeInformation = _ref2$activeInformati === void 0 ? undefined : _ref2$activeInformati,
         _ref2$streamsOnly = _ref2.streamsOnly,
         streamsOnly = _ref2$streamsOnly === void 0 ? false : _ref2$streamsOnly,
         _ref2$includeSelf = _ref2.includeSelf,
         includeSelf = _ref2$includeSelf === void 0 ? false : _ref2$includeSelf,
-        ignoreSorting = _ref2.ignoreSorting;
+        _ref2$ignoreSorting = _ref2.ignoreSorting,
+        ignoreSorting = _ref2$ignoreSorting === void 0 ? false : _ref2$ignoreSorting;
 
     super(srcStream, {
       filterList,
@@ -65021,19 +64445,14 @@ class RecursiveIterator extends StreamIterator {
       activeInformation,
       ignoreSorting
     });
+    this.iteratorStartOffsetInHierarchy = 0.0;
     this.returnSelf = includeSelf;
     this.includeSelf = includeSelf;
     this.ignoreSorting = ignoreSorting;
-    this.iteratorStartOffsetInHierarchy = 0.0;
 
     if (streamsOnly) {
       this.filters.push(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Stream'));
     }
-    /**
-     *
-     * @type {RecursiveIterator|undefined}
-     */
-
 
     this.childRecursiveIterator = undefined;
   }
@@ -65051,7 +64470,7 @@ class RecursiveIterator extends StreamIterator {
     return (
       /*#__PURE__*/
       regeneratorRuntime.mark(function _callee3() {
-        var e, newStartOffset, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, _e;
+        var e, newStartOffset, _iteratorNormalCompletion7, _didIteratorError7, _iteratorError7, _iterator7, _step7, _e;
 
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -65123,34 +64542,30 @@ class RecursiveIterator extends StreamIterator {
                 _this3.childRecursiveIterator = new RecursiveIterator(e, {
                   restoreActiveSites: _this3.restoreActiveSites,
                   filterList: _this3.filters,
-                  // shared list
                   activeInformation: _this3.activeInformation,
-                  // shared
                   includeSelf: false,
-                  ignoreSorting: _this3.ignoreSorting // parentIterator: this,
-                  //
-
+                  ignoreSorting: _this3.ignoreSorting
                 });
                 newStartOffset = _this3.iteratorStartOffsetInHierarchy + _this3.srcStream.elementOffset(e);
                 _this3.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
-                _iteratorNormalCompletion6 = true;
-                _didIteratorError6 = false;
-                _iteratorError6 = undefined;
+                _iteratorNormalCompletion7 = true;
+                _didIteratorError7 = false;
+                _iteratorError7 = undefined;
                 _context3.prev = 29;
-                _iterator6 = _this3.childRecursiveIterator[Symbol.iterator]();
+                _iterator7 = _this3.childRecursiveIterator[Symbol.iterator]();
 
               case 31:
-                if (_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done) {
+                if (_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done) {
                   _context3.next = 38;
                   break;
                 }
 
-                _e = _step6.value;
+                _e = _step7.value;
                 _context3.next = 35;
                 return _e;
 
               case 35:
-                _iteratorNormalCompletion6 = true;
+                _iteratorNormalCompletion7 = true;
                 _context3.next = 31;
                 break;
 
@@ -65161,26 +64576,26 @@ class RecursiveIterator extends StreamIterator {
               case 40:
                 _context3.prev = 40;
                 _context3.t0 = _context3["catch"](29);
-                _didIteratorError6 = true;
-                _iteratorError6 = _context3.t0;
+                _didIteratorError7 = true;
+                _iteratorError7 = _context3.t0;
 
               case 44:
                 _context3.prev = 44;
                 _context3.prev = 45;
 
-                if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
-                  _iterator6.return();
+                if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
+                  _iterator7.return();
                 }
 
               case 47:
                 _context3.prev = 47;
 
-                if (!_didIteratorError6) {
+                if (!_didIteratorError7) {
                   _context3.next = 50;
                   break;
                 }
 
-                throw _iteratorError6;
+                throw _iteratorError7;
 
               case 50:
                 return _context3.finish(47);
@@ -65221,16 +64636,10 @@ class RecursiveIterator extends StreamIterator {
   /**
    *   Returns a stack of RecursiveIterators at this point in the iteration.
    *   Last is most recent.
-   *
-   *   @returns {RecursiveIterator[]}
    */
 
 
   iteratorStack() {
-    /**
-     *
-     * @type {RecursiveIterator[]}
-     */
     var iterStack = [this];
     var x = this;
 
@@ -65240,7 +64649,8 @@ class RecursiveIterator extends StreamIterator {
     }
 
     return iterStack;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
    *   Returns a stack of Streams at this point.  Last is most recent.
    */
@@ -65248,7 +64658,8 @@ class RecursiveIterator extends StreamIterator {
 
   streamStack() {
     return this.iteratorStack().map(iter => iter.srcStream);
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
    *  Called on the current iterator, returns the current offset
    *  in the hierarchy. or undefined if we are not currently iterating.
@@ -65272,32 +64683,54 @@ class RecursiveIterator extends StreamIterator {
     } else {
       return lastStartOffset + lastStream.elementOffset(lastYield);
     }
-  } // TODO(msc): getElementsByOffsetInHierarchy
-
+  }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/tempo.js":
+/***/ "./src/music21/tempo.ts":
 /*!******************************!*\
-  !*** ./src/music21/tempo.js ***!
+  !*** ./src/music21/tempo.ts ***!
   \******************************/
-/*! exports provided: defaultTempoValues, baseTempo, Metronome */
+/*! exports provided: TempoException, defaultTempoValues, baseTempo, Metronome, MetronomeMark */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TempoException", function() { return TempoException; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultTempoValues", function() { return defaultTempoValues; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "baseTempo", function() { return baseTempo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Metronome", function() { return Metronome; });
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MetronomeMark", function() { return MetronomeMark; });
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+
+
+
+
+
+
 
 
 /**
@@ -65312,6 +64745,7 @@ __webpack_require__.r(__webpack_exports__);
  * @exports music21/tempo
  * @namespace music21.tempo
  * @memberof music21
+ * @requires music21/duration
  * @requires music21/prebase
  * @requires music21/base
  * @requires MIDI
@@ -65320,11 +64754,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/**
- * The tempo object itself is a full object in music21p -- TODO(msc): make it one here too.
- * (MetronomeMark)
- */
-// noinspection JSNonASCIINames,NonAsciiCharacters
+
+
+
+class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"] {} // noinspection JSNonASCIINames,NonAsciiCharacters
 
 /**
  * Object mapping names to tempo values
@@ -65378,44 +64811,40 @@ var baseTempo = 60;
  * @extends music21.prebase.ProtoM21Object
  * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
  * @property {number} tempo
- * @property {int} [numBeatsPerMeasure=4]
+ * @property {number} [numBeatsPerMeasure=4]
  * @property {number} [minTempo=10]
  * @property {number} [maxTempo=600]
- * @property {bool} [flash=false] - flash the tempo
- * @property {bool} [silent=false] - play silently
- * @property {int} beat - current beat number
- * @property {int} chirpTimeout - an index of a timeout object for chirping
+ * @property {boolean} [flash=false] - flash the tempo
+ * @property {boolean} [silent=false] - play silently
+ * @property {number} beat - current beat number
+ * @property {number} chirpTimeout - an index of a timeout object for chirping
  */
 
-class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.tempo.Metronome';
-  }
-
-  constructor(tempoInt) {
+class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_9__["ProtoM21Object"] {
+  constructor() {
+    var tempoInt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : baseTempo;
     super();
-    this._tempo = 60; // overridden by music21.tempo.baseTempo;
+    this._tempo = baseTempo;
+    this.numBeatsPerMeasure = 4;
+    this.minTempo = 10;
+    this.maxTempo = 600;
+    this.beat = 4;
+    this.chirpTimeout = undefined;
+    this.silent = false;
+    this.flash = false;
+    this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
+    this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
 
     if (tempoInt === undefined) {
       this.tempo = baseTempo;
     } else {
       this.tempo = tempoInt;
     }
-
-    this.numBeatsPerMeasure = 4;
-    this.minTempo = 10;
-    this.maxTempo = 600;
-    this.beat = this.numBeatsPerMeasure;
-    this.chirpTimeout = undefined;
-    this.silent = false;
-    this.flash = false;
-    this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
-    this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
   }
-  /**
-   * @type {number}
-   */
 
+  static get className() {
+    return 'music21.tempo.Metronome';
+  }
 
   get tempo() {
     return this._tempo;
@@ -65430,11 +64859,6 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       this._tempo = this.minTempo;
     }
   }
-  /**
-   *
-   * @returns {number}
-   */
-
 
   get beatLength() {
     return 60.0 / this.tempo;
@@ -65442,7 +64866,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
 
   _silentFlash(flashColor) {
     this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 / 4, function silentFadeOut() {
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).css('background-color', '#ffffff').fadeIn(1);
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).css('background-color', '#ffffff').fadeIn(1);
     });
   }
   /**
@@ -65457,8 +64881,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       this.beat = 1;
 
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOn"](0, 96, 100, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOff"](0, 96, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOn"](0, 96, 100, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOff"](0, 96, 0.1);
       }
 
       if (this.flash === true) {
@@ -65466,8 +64890,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       }
     } else {
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOn"](0, 84, 70, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOff"](0, 84, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOn"](0, 84, 70, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOff"](0, 84, 0.1);
       }
 
       if (this.flash === true) {
@@ -65575,12 +64999,12 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      */
     var $where;
 
-    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_1__) {
+    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_7__) {
       $where = where;
-    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_1__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_1__(where);
+    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_7__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_7__(where);
     } else {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_1__('body');
+      $where = jquery__WEBPACK_IMPORTED_MODULE_7__('body');
     }
 
     var metroThis = this;
@@ -65589,7 +65013,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_1__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_7__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
     $tempoHolder.css({
       'font-size': '24px',
       'padding-left': '10px',
@@ -65600,14 +65024,14 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_1__('<div class="metronomeRendered"></div>');
+    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_7__('<div class="metronomeRendered"></div>');
     $newDiv.append($tempoHolder);
     /**
      *
      * @type {jQuery}
      */
 
-    var b1 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>start</button>');
+    var b1 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>start</button>');
     b1.on('click', () => {
       metroThis.chirp();
     });
@@ -65616,7 +65040,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var b2 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>stop</button>');
+    var b2 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>stop</button>');
     b2.on('click', () => {
       metroThis.stopChirp();
     });
@@ -65627,20 +65051,20 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var b3 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>up</button>');
+    var b3 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>up</button>');
     b3.on('click', function increaseSpeedButton() {
       metroThis.increaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     /**
      *
      * @type {jQuery}
      */
 
-    var b4 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>down</button>');
+    var b4 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>down</button>');
     b4.on('click', function decreaseSpeedButton() {
       metroThis.decreaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     $newDiv.append(b3);
     $newDiv.append(b4);
@@ -65649,7 +65073,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $flash = jquery__WEBPACK_IMPORTED_MODULE_1__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+    var $flash = jquery__WEBPACK_IMPORTED_MODULE_7__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     $flash.css('margin-left', '40px');
     $flash.css('height', '40px');
     $newDiv.append($flash);
@@ -65660,11 +65084,199 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
 
 }
 
+class TempoText {
+  constructor() {
+    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    this.text = text;
+  }
+
+}
+/**
+ *
+ * @class MetronomeMark
+ * @memberof music21.tempo
+ * @extends base.Music21Object
+ * @param {Object} metronome - metronome
+ * @param {string} metronome.text - tempo text
+ * @param {number} metronome.number - beats per minute
+ * @param {number|music21.duration.Duration} metronome.referent - duration value of tempo
+ * @param {boolean} metronome.parentheses - ???
+ * @property {string} text - tempo text
+ * @property {number} number - beats per minute
+ * @property {music21.duration.Duration} referent - duration value of tempo
+ */
+
+
+class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
+  constructor() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$text = _ref.text,
+        text = _ref$text === void 0 ? undefined : _ref$text,
+        _ref$number = _ref.number,
+        number = _ref$number === void 0 ? undefined : _ref$number,
+        _ref$referent = _ref.referent,
+        referent = _ref$referent === void 0 ? undefined : _ref$referent,
+        _ref$parentheses = _ref.parentheses,
+        parentheses = _ref$parentheses === void 0 ? false : _ref$parentheses;
+
+    super();
+    this.parentheses = false;
+    this._number = number;
+
+    if (this._number !== undefined) {
+      this.numberImplicit = false;
+    }
+
+    this._tempoText = undefined;
+    this.textImplicit = undefined;
+    this.text = text;
+    this._referent = undefined;
+    this.referent = referent;
+    this.parentheses = parentheses;
+
+    this._updateNumberFromText();
+
+    this._updateTextFromNumber();
+  }
+
+  static get className() {
+    return 'music21.tempo.MetronomeMark';
+  }
+
+  _updateNumberFromText() {
+    if (this._number === undefined && this._tempoText !== undefined) {
+      this._number = this._getDefaultNumber(this._tempoText);
+
+      if (this._number !== undefined) {
+        this.numberImplicit = true;
+      }
+    }
+  }
+
+  _updateTextFromNumber() {
+    if (this._tempoText === undefined && this._number !== undefined) {
+      this.text = this._getDefaultText(this._number);
+
+      if (this.text !== undefined) {
+        this.textImplicit = true;
+      }
+    }
+  } // sigh, again the TypeScript limitation...
+
+
+  get text() {
+    if (this._tempoText === undefined) {
+      return undefined;
+    }
+
+    return this._tempoText.text;
+  }
+
+  set text(value) {
+    if (value === undefined) {
+      this._tempoText = undefined;
+    } else if (value instanceof TempoText) {
+      this._tempoText = value;
+      this.textImplicit = false;
+    } else {
+      this._tempoText = new TempoText(value); // if (this.hasStyleInformation) { // TODO: where is this?
+      //     this._tempoText.style = this.style;
+      // } else {
+      //     this.style = this._tempoText.style;
+      // }
+
+      this.textImplicit = false;
+    }
+  }
+
+  get number() {
+    return this._number;
+  }
+
+  set number(value) {
+    if (typeof value !== 'number') {
+      throw new TempoException('cannot set number to a string');
+    }
+
+    this._number = value;
+    this.numberImplicit = false;
+  }
+
+  get referent() {
+    return this._referent;
+  }
+
+  set referent(value) {
+    if (value === undefined) {
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_11__["Duration"](1);
+    } else if (['number', 'string'].includes(typeof value)) {
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_11__["Duration"](value);
+    } else if (value.classes.includes('Duration')) {
+      this._referent = value;
+    } else if (value.duration) {
+      this._referent = value.duration;
+    } else {
+      throw new TempoException("Cannot get a Duration from the supplied object: ".concat(value));
+    }
+  }
+
+  _getDefaultNumber(tempoText) {
+    var tempoStr = tempoText instanceof TempoText ? tempoText.text : tempoText;
+    var post;
+    var tempoNames = Object.keys(defaultTempoValues);
+
+    if (tempoNames.includes(tempoStr.toLowerCase())) {
+      post = defaultTempoValues[tempoStr.toLowerCase()];
+    } else if (tempoNames.includes(tempoStr)) {
+      post = defaultTempoValues[tempoStr];
+    } else {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = tempoStr.split(' ')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var word = _step.value;
+
+          if (tempoNames.includes(word.toLowerCase())) {
+            post = defaultTempoValues[tempoStr.toLowerCase()];
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+
+    return post;
+  }
+
+  _getDefaultText(number) {
+    var spread = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+    var tempoNumber = typeof number === 'number' ? number : parseFloat(number);
+    return Object.keys(defaultTempoValues).find(tempoName => {
+      var tempoValue = defaultTempoValues[tempoName];
+      return tempoValue - spread <= tempoNumber && tempoValue + spread >= tempoNumber;
+    });
+  }
+
+}
+
 /***/ }),
 
-/***/ "./src/music21/tie.js":
+/***/ "./src/music21/tie.ts":
 /*!****************************!*\
-  !*** ./src/music21/tie.js ***!
+  !*** ./src/music21/tie.ts ***!
   \****************************/
 /*! exports provided: Tie */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -65719,32 +65331,20 @@ var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-ri
  */
 
 class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__["ProtoM21Object"] {
+  constructor() {
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'start';
+    super();
+    this.style = 'normal';
+    this.type = type;
+  }
+
   static get className() {
     return 'music21.tie.Tie';
   }
 
-  constructor() {
-    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'start';
-    super();
-    this._type = undefined;
-    this.style = 'normal';
-    this.type = type;
-    this.placement = undefined;
-  }
-  /**
-   *
-   * @returns {string}
-   */
-
-
   stringInfo() {
     return this.type;
   }
-  /**
-   *
-   * @type {string}
-   */
-
 
   get type() {
     return this._type;
@@ -65762,9 +65362,9 @@ class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__["ProtoM21Object"] {
 
 /***/ }),
 
-/***/ "./src/music21/tinyNotation.js":
+/***/ "./src/music21/tinyNotation.ts":
 /*!*************************************!*\
-  !*** ./src/music21/tinyNotation.js ***!
+  !*** ./src/music21/tinyNotation.ts ***!
   \*************************************/
 /*! exports provided: TinyNotation, renderNotationDivs */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -65779,23 +65379,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
 /* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.js");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.js");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.ts");
+
 
 
 
@@ -65808,7 +65411,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -65857,22 +65460,16 @@ var regularExpressions = {
   EDFLAT: /\((-+)\)/,
   EDNAT: /\(n\)/,
   SHARP: /^[A-Ga-g]+'*(#+)/,
-  // simple notation finds
   FLAT: /^[A-Ga-g]+'*(-+)/,
-  //   double accidentals too
   NAT: /^[A-Ga-g]+'*n/,
-  // explicit naturals
   TYPE: /(\d+)/,
   TIE: /.~/,
-  // not preceding ties
   PRECTIE: /~/,
-  // front ties
   ID_EL: /=([A-Za-z0-9]*)/,
   LYRIC: /_(.*)/,
   DOT: /\.+/,
   TIMESIG: /(\d+)\/(\d+)/,
   PARTBREAK: /partBreak/,
-  // nonstandard...fix later...
   TRIP: /trip{/,
   QUAD: /quad{/,
   ENDBRAC: /}$/
@@ -65899,8 +65496,8 @@ function TinyNotation(textIn) {
   textIn = textIn.trim();
   var tokens = textIn.split(' ');
   var optionalScore;
-  var p = new _stream__WEBPACK_IMPORTED_MODULE_13__["Part"]();
-  var m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+  var p = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
+  var m = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
   m.number = 1;
   var currentTSBarDuration = 4.0;
   var lastDurationQL = 1.0;
@@ -65920,7 +65517,7 @@ function TinyNotation(textIn) {
     if (m.duration.quarterLength >= currentTSBarDuration || Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001) {
       p.append(m);
       measureNumber += 1;
-      m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+      m = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
       m.number = measureNumber;
     }
 
@@ -65935,15 +65532,15 @@ function TinyNotation(textIn) {
     if (tnre.PARTBREAK.exec(token)) {
       if (m.length > 0) {
         p.append(m);
-        m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+        m = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
       }
 
       if (optionalScore === undefined) {
-        optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_13__["Score"]();
+        optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
       }
 
       optionalScore.insert(0, p);
-      p = new _stream__WEBPACK_IMPORTED_MODULE_13__["Part"]();
+      p = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
       storedDict.lastNoteTied = false;
       storedDict.inTrip = false;
       storedDict.inQuad = false;
@@ -65982,7 +65579,7 @@ function TinyNotation(textIn) {
     if (tnre.TIMESIG.exec(token)) {
       var _MATCH = tnre.TIMESIG.exec(token);
 
-      var ts = new _meter__WEBPACK_IMPORTED_MODULE_12__["TimeSignature"]();
+      var ts = new _meter__WEBPACK_IMPORTED_MODULE_13__["TimeSignature"]();
       ts.numerator = parseInt(_MATCH[1]);
       ts.denominator = parseInt(_MATCH[2]);
       m.timeSignature = ts;
@@ -65990,27 +65587,27 @@ function TinyNotation(textIn) {
 
       continue;
     } else if (tnre.REST.exec(token)) {
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Rest"](lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Rest"](lastDurationQL);
     } else if (tnre.OCTAVE2.exec(token)) {
       var _MATCH2 = tnre.OCTAVE2.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH2[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH2[1], lastDurationQL);
       noteObj.pitch.octave = 4 - _MATCH2[0].length;
     } else if (tnre.OCTAVE3.exec(token)) {
       var _MATCH3 = tnre.OCTAVE3.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH3[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH3[1], lastDurationQL);
       noteObj.pitch.octave = 3;
     } else if (tnre.OCTAVE5.exec(token)) {
       // must match octave 5 before 4
       var _MATCH4 = tnre.OCTAVE5.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH4[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH4[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 3 + _MATCH4[0].length;
     } else if (tnre.OCTAVE4.exec(token)) {
       var _MATCH5 = tnre.OCTAVE4.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH5[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH5[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 4;
     }
 
@@ -66023,7 +65620,7 @@ function TinyNotation(textIn) {
     }
 
     if (tnre.TIE.exec(token)) {
-      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_14__["Tie"]('start');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_15__["Tie"]('start');
 
       if (storedDict.lastNoteTied) {
         noteObj.tie.type = 'continue';
@@ -66031,7 +65628,7 @@ function TinyNotation(textIn) {
 
       storedDict.lastNoteTied = true;
     } else if (storedDict.lastNoteTied) {
-      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_14__["Tie"]('stop');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_15__["Tie"]('stop');
       storedDict.lastNoteTied = false;
     }
 
@@ -66039,14 +65636,14 @@ function TinyNotation(textIn) {
       var _MATCH6 = tnre.SHARP.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](_MATCH6[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__["Accidental"](_MATCH6[1].length);
     } else if (tnre.FLAT.exec(token)) {
       var _MATCH7 = tnre.FLAT.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](-1 * _MATCH7[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__["Accidental"](-1 * _MATCH7[1].length);
     } else if (tnre.NAT.exec(token)) {
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]('natural');
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__["Accidental"]('natural');
       noteObj.pitch.accidental.displayType = 'always';
     }
 
@@ -66069,11 +65666,11 @@ function TinyNotation(textIn) {
 
     if (storedDict.inTrip) {
       // console.log(noteObj.duration.quarterLength);
-      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](3, 2, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_10__["Tuplet"](3, 2, noteObj.duration.quarterLength));
     }
 
     if (storedDict.inQuad) {
-      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](4, 3, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_10__["Tuplet"](4, 3, noteObj.duration.quarterLength));
     }
 
     if (storedDict.endTupletAfterNote) {
@@ -66098,15 +65695,18 @@ function TinyNotation(textIn) {
 
     for (var _i2 = 0; _i2 < optionalScore.parts.length; _i2++) {
       var innerPart = optionalScore.parts.get(_i2);
-      innerPart.clef = _clef__WEBPACK_IMPORTED_MODULE_8__["bestClef"](innerPart);
+      var innerPartClef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](innerPart);
       var innerMeasure = innerPart.getElementsByClass('Measure').get(0);
-      innerMeasure.clef = innerPart.clef;
+
+      if (innerMeasure !== undefined) {
+        innerMeasure.insert(0, innerPartClef);
+      }
     }
 
     returnObject = optionalScore;
   } else {
-    p.clef = _clef__WEBPACK_IMPORTED_MODULE_8__["bestClef"](p);
-    p.getElementsByClass('Measure').get(0).clef = p.clef;
+    var bestClef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](p);
+    p.getElementsByClass('Measure').get(0).insert(0, bestClef);
     returnObject = p;
   }
 
@@ -66125,34 +65725,29 @@ function TinyNotation(textIn) {
 
 function renderNotationDivs() {
   var classTypes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '.music21.tinyNotation';
-  var selector = arguments.length > 1 ? arguments[1] : undefined;
-
-  /**
-   *
-   * @type {jQuery[]}
-   */
-  var allRender = [];
+  var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var $allRender;
 
   if (selector === undefined) {
-    allRender = jquery__WEBPACK_IMPORTED_MODULE_7__(classTypes);
+    $allRender = jquery__WEBPACK_IMPORTED_MODULE_8__(classTypes);
   } else {
     /**
      * @type {jQuery}
      */
     var $selector;
 
-    if (!(selector instanceof jquery__WEBPACK_IMPORTED_MODULE_7__)) {
-      $selector = jquery__WEBPACK_IMPORTED_MODULE_7__(selector);
+    if (!(selector instanceof jquery__WEBPACK_IMPORTED_MODULE_8__)) {
+      $selector = jquery__WEBPACK_IMPORTED_MODULE_8__(selector);
     } else {
       $selector = selector;
     }
 
-    allRender = $selector.find(classTypes);
+    $allRender = $selector.find(classTypes);
   }
 
-  for (var i = 0; i < allRender.length; i++) {
-    var thisTN = allRender[i];
-    var $thisTN = jquery__WEBPACK_IMPORTED_MODULE_7__(thisTN);
+  for (var i = 0; i < $allRender.length; i++) {
+    var thisTN = $allRender[i];
+    var $thisTN = jquery__WEBPACK_IMPORTED_MODULE_8__(thisTN);
     var thisTNContents = void 0;
 
     if ($thisTN.attr('tinynotationcontents') !== undefined) {
@@ -66184,9 +65779,9 @@ function renderNotationDivs() {
 
 /***/ }),
 
-/***/ "./src/music21/vfShow.js":
+/***/ "./src/music21/vfShow.ts":
 /*!*******************************!*\
-  !*** ./src/music21/vfShow.js ***!
+  !*** ./src/music21/vfShow.ts ***!
   \*******************************/
 /*! exports provided: RenderStack, Renderer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -66197,37 +65792,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Renderer", function() { return Renderer; });
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.flat */ "./node_modules/core-js/modules/es.array.flat.js");
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.from */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
-
-
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.from */ "./node_modules/core-js/modules/es.array.from.js");
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 
 
 
@@ -66243,7 +65832,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -66270,7 +65859,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_15__["TrebleClef"]();
+var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_13__["TrebleClef"]();
 /**
  * Represents a stack of objects that need to be rendered together.
  *
@@ -66278,17 +65867,17 @@ var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_15__["TrebleClef"]();
  *
  * @class RenderStack
  * @memberof music21.vfShow
- * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
- * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects
+ * @property {Array<stream.Stream>} streams - {@link music21.stream.Stream} objects
  * associated with the voices
+ * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
  * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
  */
 
 
 class RenderStack {
   constructor() {
-    this.voices = [];
     this.streams = [];
+    this.voices = [];
     this.textVoices = [];
     this.voiceToStreamMapping = new Map();
   }
@@ -66387,9 +65976,10 @@ class RenderStack {
  */
 
 class Renderer {
-  constructor(s, div, where) {
-    this.stream = s; // this.streamType = s.classes[-1];
-
+  // measureFormatters = [];
+  constructor(s) {
+    var div = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var where = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     this.rendererType = 'svg';
     this.div = undefined;
     this.$div = undefined;
@@ -66403,15 +65993,8 @@ class Renderer {
 
     this.vfTies = [];
     this.systemBreakOffsets = [];
-    this.vfTuplets = []; // this.measureFormatters = [];
-
-    if (where !== undefined) {
-      if (where.jquery !== undefined) {
-        this.$where = where;
-      } else {
-        this.$where = jquery__WEBPACK_IMPORTED_MODULE_12__(where);
-      }
-    }
+    this.vfTuplets = [];
+    this.stream = s; // this.streamType = s.classes[-1];
 
     if (div !== undefined) {
       if (div.jquery !== undefined) {
@@ -66419,7 +66002,15 @@ class Renderer {
         this.div = div[0];
       } else {
         this.div = div;
-        this.$div = jquery__WEBPACK_IMPORTED_MODULE_12__(div);
+        this.$div = jquery__WEBPACK_IMPORTED_MODULE_10__(div);
+      }
+    }
+
+    if (where !== undefined) {
+      if (where.jquery !== undefined) {
+        this.$where = where;
+      } else {
+        this.$where = jquery__WEBPACK_IMPORTED_MODULE_10__(where);
       }
     }
   }
@@ -66428,15 +66019,15 @@ class Renderer {
     var backend;
 
     if (this.rendererType === 'canvas') {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Renderer.Backends.CANVAS;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Renderer.Backends.CANVAS;
     } else {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Renderer.Backends.SVG;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Renderer.Backends.SVG;
     }
 
     if (this._vfRenderer !== undefined) {
       return this._vfRenderer;
     } else {
-      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Renderer(this.div, backend);
+      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Renderer(this.div, backend);
 
       if (this.rendererType === 'svg') {
         this._vfRenderer.resize(this.$div.attr('width'), this.$div.attr('height'));
@@ -66478,7 +66069,9 @@ class Renderer {
    */
 
 
-  render(s) {
+  render() {
+    var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (s === undefined) {
       s = this.stream;
     }
@@ -66657,7 +66250,8 @@ class Renderer {
 
           if (i === 0) {
             voiceToRender = firstVoiceCopy;
-          }
+          } // noinspection JSUnusedAssignment
+
 
           stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
 
@@ -66697,7 +66291,9 @@ class Renderer {
    */
 
 
-  prepareFlat(s, stack, optionalStave, optional_renderOp) {
+  prepareFlat(s, stack) {
+    var optionalStave = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var optional_renderOp = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
     s.makeNotation();
     var stave;
 
@@ -66731,7 +66327,10 @@ class Renderer {
    */
 
 
-  renderStave(m, optional_rendOp) {
+  renderStave() {
+    var m = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var optional_rendOp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (m === undefined) {
       m = this.stream;
     }
@@ -66796,16 +66395,16 @@ class Renderer {
 
 
   prepareTies(p) {
-    var pf = p.flat.notesAndRests; // console.log('newSystemsAt', this.systemBreakOffsets);
+    var pf = Array.from(p.recurse().notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
 
     for (var i = 0; i < pf.length - 1; i++) {
-      var thisNote = pf.get(i);
+      var thisNote = pf[i];
 
       if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
         continue;
       }
 
-      var nextNote = pf.get(i + 1);
+      var nextNote = pf[i + 1];
       var onSameSystem = true; // this.systemBreakOffsets.length will be 0 for a flat score
 
       for (var sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
@@ -66818,7 +66417,7 @@ class Renderer {
       }
 
       if (onSameSystem) {
-        var vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveTie({
+        var vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveTie({
           first_note: thisNote.activeVexflowNote,
           last_note: nextNote.activeVexflowNote,
           first_indices: [0],
@@ -66827,12 +66426,12 @@ class Renderer {
         this.vfTies.push(vfTie);
       } else {
         // console.log('got me a tie across systemBreaks!');
-        var vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveTie({
+        var vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveTie({
           first_note: thisNote.activeVexflowNote,
           first_indices: [0]
         });
         this.vfTies.push(vfTie1);
-        var vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveTie({
+        var vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveTie({
           last_note: nextNote.activeVexflowNote,
           first_indices: [0]
         });
@@ -66845,13 +66444,16 @@ class Renderer {
    *
    * Does not draw it...
    *
-   * @param {music21.stream.Stream} [s=this.stream] -- usually a Measure or Voice
+   * @param {stream.Stream} [s=this.stream] -- usually a Measure or Voice
    * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
    * @returns {Vex.Flow.Voice}
    */
 
 
-  getVoice(s, stave) {
+  getVoice() {
+    var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var stave = arguments.length > 1 ? arguments[1] : undefined;
+
     if (s === undefined) {
       s = this.stream;
     } // gets a group of notes as a voice, but completely unformatted and not drawn.
@@ -66904,12 +66506,13 @@ class Renderer {
    * Formats a single voice group from a stack.
    *
    * @param {music21.vfShow.RenderStack} stack
-   * @param {Boolean} [autoBeam=measures[0].autoBeam]
+   * @param {boolean} [autoBeam=measures[0].autoBeam]
    * @returns {Vex.Flow.Formatter}
    */
 
 
-  formatVoiceGroup(stack, autoBeam) {
+  formatVoiceGroup(stack) {
+    var autoBeam = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     // formats a group of voices to use the same formatter; returns the formatter
     // if autoBeam is true then it will apply beams for each voice and put them in
     // this.beamGroups;
@@ -66921,7 +66524,7 @@ class Renderer {
       autoBeam = measuresOrVoices[0].autoBeam;
     }
 
-    var formatter = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Formatter(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
+    var formatter = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Formatter(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
     // console.log(minLength);
 
     if (vf_voices.length === 0) {
@@ -66970,27 +66573,27 @@ class Renderer {
       }
     }
 
-    formatter.formatToStave(allTickables, stave); //        const vf_auto_stem = false;
-    //        for (const voice of voices) {
-    //            let activeBeamGroupNotes = [];
-    //            for (let j = 0; j < voice.notes.length; j++) {
-    //                const n = voice.notes[j];
-    //                if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
-    //                    continue;
-    //                }
-    //                const eighthNoteBeam = n.beams.getByNumber(1);
-    //                if (eighthNoteBeam.type === 'start') {
-    //                    activeBeamGroupNotes = [n];
-    //                } else {
-    //                    activeBeamGroupNotes.push(n);
-    //                }
-    //                if (eighthNoteBeam.type === 'stop') {
-    //                    const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
-    //                    this.beamGroups.push(vfBeam);
-    //                    activeBeamGroupNotes = []; // housekeeping, not really necessary...
-    //                }
-    //            }
-    //        }
+    formatter.formatToStave(allTickables, stave); // const vf_auto_stem = false;
+    // for (const voice of voices) {
+    //     let activeBeamGroupNotes = [];
+    //     for (let j = 0; j < voice.notes.length; j++) {
+    //         const n = voice.notes[j];
+    //         if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+    //             continue;
+    //         }
+    //         const eighthNoteBeam = n.beams.getByNumber(1);
+    //         if (eighthNoteBeam.type === 'start') {
+    //             activeBeamGroupNotes = [n];
+    //         } else {
+    //             activeBeamGroupNotes.push(n);
+    //         }
+    //         if (eighthNoteBeam.type === 'stop') {
+    //             const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
+    //             this.beamGroups.push(vfBeam);
+    //             activeBeamGroupNotes = []; // housekeeping, not really necessary...
+    //         }
+    //     }
+    // }
 
     if (autoBeam) {
       for (var _i3 = 0; _i3 < vf_voices.length; _i3++) {
@@ -67000,13 +66603,13 @@ class Renderer {
         var beatGroups = void 0;
 
         if (associatedStream !== undefined && associatedStream.getSpecialContext('timeSignature') !== undefined) {
-          beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a); // TODO: getContextByClass...
+          beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(); // TODO: getContextByClass...
           // console.log(beatGroups);
         } else {
-          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Fraction(2, 8)]; // default beam groups
+          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Fraction(2, 8)]; // default beam groups
         }
 
-        var beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
+        var beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
         this.beamGroups.push(...beamGroups);
       }
     }
@@ -67065,11 +66668,11 @@ class Renderer {
     } // console.log('streamLength: ' + streamLength);
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
       console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
     }
 
-    var stave = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Stave(left, top, width);
+    var stave = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Stave(left, top, width);
     return stave;
   }
   /**
@@ -67142,7 +66745,7 @@ class Renderer {
       var vxBL = barlineMap[bl];
 
       if (vxBL !== undefined) {
-        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Barline.type[vxBL]);
+        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Barline.type[vxBL]);
       }
     }
   }
@@ -67174,8 +66777,7 @@ class Renderer {
           visible: false
         }, {
           visible: true
-        }, // show middle
-        {
+        }, {
           visible: false
         }, {
           visible: false
@@ -67187,8 +66789,7 @@ class Renderer {
           visible: false
         }, {
           visible: true
-        }, // show middle
-        {
+        }, {
           visible: true
         }, {
           visible: false
@@ -67200,8 +66801,7 @@ class Renderer {
           visible: true
         }, {
           visible: true
-        }, // show middle
-        {
+        }, {
           visible: true
         }, {
           visible: false
@@ -67290,7 +66890,7 @@ class Renderer {
                 notes_occupied: activeTuplet.numberNotesNormal
               }; // console.log('tupletOptions', tupletOptions);
 
-              var vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
+              var vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
 
               if (activeTuplet.tupletNormalShow === 'ratio') {
                 vfTuplet.setRatioed(true);
@@ -67339,13 +66939,14 @@ class Renderer {
 
 
   vexflowLyrics(s, stave) {
-    var getTextNote = (text, font, d, lyricObj) => {
+    var getTextNote = function getTextNote(text, font, d) {
+      var lyricObj = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
       // console.log(text, font, d);
-      var t1 = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.TextNote({
+      var t1 = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.TextNote({
         text,
         font,
         duration: d.vexflowDuration
-      }).setLine(11).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.TextNote.Justification.LEFT);
+      }).setLine(11).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.TextNote.Justification.LEFT);
 
       if (lyricObj) {
         t1.setStyle(lyricObj.style);
@@ -67400,7 +67001,7 @@ class Renderer {
           if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
             addConnector = ' ' + firstLyric.lyricConnector;
             var tempQl = el.duration.quarterLength / 2.0;
-            d = new _duration__WEBPACK_IMPORTED_MODULE_16__["Duration"](tempQl);
+            d = new _duration__WEBPACK_IMPORTED_MODULE_14__["Duration"](tempQl);
           }
 
           if (firstLyric.style.fontFamily) {
@@ -67484,14 +67085,14 @@ class Renderer {
     } // console.log('creating voice');
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
       console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
     }
 
-    var vfv = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Voice({
+    var vfv = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Voice({
       num_beats: num1024,
       beat_value: beatValue,
-      resolution: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.RESOLUTION
+      resolution: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.RESOLUTION
     }); // from vexflow/src/voice.js
     //
     // Modes allow the addition of ticks in three different ways:
@@ -67501,16 +67102,16 @@ class Renderer {
     // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
     //         tick length.
 
-    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Voice.Mode.SOFT);
+    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Voice.Mode.SOFT);
     return vfv;
   }
 
   staffConnectorsMap(connectorType) {
     var connectorMap = {
-      brace: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.BRACE,
-      single: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.SINGLE,
-      double: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.DOUBLE,
-      bracket: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.BRACKET
+      brace: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.BRACE,
+      single: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.SINGLE,
+      double: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.DOUBLE,
+      bracket: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.BRACKET
     };
     return connectorMap[connectorType];
   }
@@ -67574,7 +67175,7 @@ class Renderer {
         }
 
         for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-          var sc = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+          var sc = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector(topVFStaff, bottomVFStaff);
           var scTypeM21 = s.renderOptions.staffConnectors[i];
           var scTypeVF = this.staffConnectorsMap(scTypeM21);
           sc.setType(scTypeVF);
@@ -67661,7 +67262,7 @@ class Renderer {
     if (stave !== undefined) {
       noteOffsetLeft = stave.start_x + stave.glyph_start_x;
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
         console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
         console.log('Bottom y: ' + stave.getBottomY());
       } // staveHeight = stave.height;
@@ -67718,7 +67319,7 @@ class Renderer {
       }
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
       var _iteratorNormalCompletion10 = true;
       var _didIteratorError10 = false;
       var _iteratorError10 = undefined;
@@ -67754,9 +67355,9 @@ class Renderer {
 
 /***/ }),
 
-/***/ "./src/music21/voiceLeading.js":
+/***/ "./src/music21/voiceLeading.ts":
 /*!*************************************!*\
-  !*** ./src/music21/voiceLeading.js ***!
+  !*** ./src/music21/voiceLeading.ts ***!
   \*************************************/
 /*! exports provided: MotionType, VoiceLeadingQuartet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -67775,10 +67376,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
 
 
 
@@ -67797,7 +67397,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 var intervalCache = [];
 var MotionType = {
   antiParallel: 'Anti-Parallel',
@@ -67812,11 +67411,7 @@ var MotionType = {
  * @extends music21.base.Music21Object
  */
 
-class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
-  static get className() {
-    return 'music21.voiceLeading.VoiceLeadingQuartet';
-  }
-
+class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_7__["Music21Object"] {
   constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
     super();
 
@@ -67850,15 +67445,19 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     }
   }
 
+  static get className() {
+    return 'music21.voiceLeading.VoiceLeadingQuartet';
+  }
+
   _setVoiceNote(value, which) {
     if (value === undefined) {
       this[which] = value;
     } else if (typeof value === 'string') {
-      this[which] = new _note__WEBPACK_IMPORTED_MODULE_7__["Note"](value);
+      this[which] = new _note__WEBPACK_IMPORTED_MODULE_6__["Note"](value);
     } else if (value.classes.includes('Note')) {
       this[which] = value;
     } else {
-      var n = new _note__WEBPACK_IMPORTED_MODULE_7__["Note"](value.nameWithOctave);
+      var n = new _note__WEBPACK_IMPORTED_MODULE_6__["Note"](value.nameWithOctave);
       n.duration.quarterLength = 0.0;
       this[which] = n;
     }
@@ -67898,13 +67497,15 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
 
   get key() {
     return this._key;
-  }
+  } // turning off string entry because of Typescript deficiency
+
 
   set key(keyValue) {
-    if (typeof keyValue === 'string') {
-      keyValue = new _key__WEBPACK_IMPORTED_MODULE_6__["Key"](_key__WEBPACK_IMPORTED_MODULE_6__["convertKeyStringToMusic21KeyString"](keyValue));
-    }
-
+    // if (typeof keyValue === 'string') {
+    //     keyValue = new key.Key(
+    //         key.convertKeyStringToMusic21KeyString(keyValue)
+    //     );
+    // }
     this._key = keyValue;
   }
 
@@ -68011,7 +67612,9 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     }
   }
 
-  parallelMotion(requiredInterval) {
+  parallelMotion() {
+    var requiredInterval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (!this.similarMotion()) {
       return false;
     }
@@ -68059,7 +67662,9 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_5__["Direction"].DESCENDING;
   }
 
-  antiParallelMotion(simpleName) {
+  antiParallelMotion() {
+    var simpleName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (!this.contraryMotion()) {
       return false;
     }
@@ -68246,9 +67851,9 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
 
 /***/ }),
 
-/***/ "./src/music21/webmidi.js":
+/***/ "./src/music21/webmidi.ts":
 /*!********************************!*\
-  !*** ./src/music21/webmidi.js ***!
+  !*** ./src/music21/webmidi.ts ***!
   \********************************/
 /*! exports provided: webmidi, jazzMidiInArrived, midiInArrived, createPlugin, createJazzSelector, selectionChanged, createSelector, populateSelect */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -68267,9 +67872,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
 
 
 /**
@@ -68327,7 +67932,7 @@ MIDI Input: <div id="putMidiSelectHere" />
             var svgDiv = s.appendNewDOM($svgDiv);
         }
     }
-    music21.miditools.callBacks.general = displayStream;
+    music21.miditools.callbacks.general = displayStream;
 
 </script>
 </body>
@@ -68369,8 +67974,7 @@ var webmidi = {
   $select: undefined,
   jazzDownloadUrl: 'http://jazz-soft.net/download/Jazz-Plugin/',
   storedPlugin: undefined,
-  selectedJazzInterface: undefined // not the same as "" etc. uses last selected interface by default.
-
+  selectedJazzInterface: undefined
 };
 /**
  * Called by Jazz MIDI plugin when an event arrives.
@@ -68413,14 +68017,15 @@ function midiInArrived(midiMessageEvent) {
   var a = midiMessageEvent.data[0];
   var b = midiMessageEvent.data[1];
   var c = midiMessageEvent.data[2];
-  var eventObject = _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].raw(t, a, b, c);
+  var midiCallbacks = _miditools__WEBPACK_IMPORTED_MODULE_4__["callbacks"];
+  var eventObject = midiCallbacks.raw(t, a, b, c);
 
-  if (_miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general instanceof Array) {
-    return _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general.forEach((el, index, array) => {
+  if (midiCallbacks.general instanceof Array) {
+    return midiCallbacks.general.forEach((el, index, array) => {
       el(eventObject);
     });
-  } else if (_miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general !== undefined) {
-    return _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general(eventObject);
+  } else if (midiCallbacks.general instanceof Function) {
+    return midiCallbacks.general(eventObject);
   } else {
     return undefined;
   }
@@ -68433,14 +68038,17 @@ function midiInArrived(midiMessageEvent) {
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
  * @function music21.webmidi.createPlugin
- * @param {Node} [appendElement=document.body] - where to place this hidden object (does not really matter)
+ * @param {HTMLElement} [appendElement=document.body] - where to place this hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called
  *     successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
 
-function createPlugin(appendElement, override) {
-  if (webmidi.storedPlugin && override !== true) {
+function createPlugin() {
+  var appendElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var override = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+  if (webmidi.storedPlugin && !override) {
     return webmidi.storedPlugin;
   }
 
@@ -68448,7 +68056,8 @@ function createPlugin(appendElement, override) {
     appendElement = jquery__WEBPACK_IMPORTED_MODULE_1__('body')[0];
   }
 
-  var obj = document.createElement('object');
+  var obj = document.createElement('object'); // noinspection SpellCheckingInspection
+
   obj.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
 
   if (!obj.isJazz) {
@@ -68478,8 +68087,13 @@ function createPlugin(appendElement, override) {
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 
-function createJazzSelector($newSelect, options) {
-  var params = {};
+function createJazzSelector($newSelect) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var params = {
+    onsuccess: undefined,
+    oninputsuccess: undefined,
+    oninputempty: undefined
+  };
   _common__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
   var Jazz = createPlugin();
 
@@ -68487,7 +68101,7 @@ function createJazzSelector($newSelect, options) {
     return undefined;
   }
 
-  $newSelect.change(() => {
+  $newSelect.on('change', () => {
     var selectedInput = jquery__WEBPACK_IMPORTED_MODULE_1__('#midiInSelect option:selected').text();
 
     if (selectedInput !== 'None selected') {
@@ -68497,7 +68111,7 @@ function createJazzSelector($newSelect, options) {
     }
 
     if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
-      console.log('current input changed to: ' + webmidi.selectedInterface);
+      console.log('current input changed to: ' + webmidi.selectedJazzInterface);
     }
   });
   var midiOptions = Jazz.MidiInList();
@@ -68510,7 +68124,7 @@ function createJazzSelector($newSelect, options) {
     var $appendOption = jquery__WEBPACK_IMPORTED_MODULE_1__("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + '</option>');
 
     if (midiOptions[i] === webmidi.selectedJazzInterface) {
-      $appendOption.attr('selected', true);
+      $appendOption.prop('selected', true);
       anySelected = true;
     }
 
@@ -68521,11 +68135,11 @@ function createJazzSelector($newSelect, options) {
 
   if (anySelected === false && midiOptions.length > 0) {
     $newSelect.val(midiOptions[0]);
-    allAppendOptions[0].attr('selected', true);
+    allAppendOptions[0].prop('selected', true);
     webmidi.selectedJazzInterface = Jazz.MidiInOpen(midiOptions[0], jazzMidiInArrived);
     anySelected = true;
   } else {
-    noneAppendOption.attr('selected', true);
+    noneAppendOption.prop('selected', true);
   }
 
   if (params.onsuccess !== undefined) {
@@ -68591,7 +68205,10 @@ function selectionChanged() {
 function createSelector(midiSelectDiv, options) {
   var params = {
     autoUpdate: true,
-    existingMidiSelect: false
+    existingMidiSelect: false,
+    onsuccess: undefined,
+    oninputsuccess: undefined,
+    oninputempty: undefined
   };
   _common__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
   /**
@@ -68625,7 +68242,7 @@ function createSelector(midiSelectDiv, options) {
     createJazzSelector($newSelect, params);
   } else {
     if (params.existingMidiSelect !== true) {
-      $newSelect.change(selectionChanged);
+      $newSelect.on('change', selectionChanged);
     }
 
     navigator.requestMIDIAccess().then(access => {
@@ -68675,12 +68292,12 @@ function populateSelect() {
 
   if (allAppendOptions.length > 0) {
     webmidi.$select.val(midiOptions[0]);
-    allAppendOptions[0].attr('selected', true);
+    allAppendOptions[0].prop('selected', true);
   } else {
-    $noneAppendOption.attr('selected', true);
+    $noneAppendOption.prop('selected', true);
   }
 
-  webmidi.$select.change();
+  webmidi.$select.trigger('change');
 }
 
 /***/ }),
@@ -68710,95 +68327,100 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "prebase", function() { return _music21_prebase__WEBPACK_IMPORTED_MODULE_5__; });
 /* harmony import */ var _music21_base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./music21/base */ "./src/music21/base.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "base", function() { return _music21_base__WEBPACK_IMPORTED_MODULE_6__; });
-/* harmony import */ var _music21_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./music21/common */ "./src/music21/common.js");
+/* harmony import */ var _music21_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./music21/common */ "./src/music21/common.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "common", function() { return _music21_common__WEBPACK_IMPORTED_MODULE_7__; });
-/* harmony import */ var _music21_articulations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./music21/articulations */ "./src/music21/articulations.js");
+/* harmony import */ var _music21_articulations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./music21/articulations */ "./src/music21/articulations.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "articulations", function() { return _music21_articulations__WEBPACK_IMPORTED_MODULE_8__; });
-/* harmony import */ var _music21_audioRecording__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./music21/audioRecording */ "./src/music21/audioRecording.js");
+/* harmony import */ var _music21_audioRecording__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./music21/audioRecording */ "./src/music21/audioRecording.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "audioRecording", function() { return _music21_audioRecording__WEBPACK_IMPORTED_MODULE_9__; });
-/* harmony import */ var _music21_audioSearch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./music21/audioSearch */ "./src/music21/audioSearch.js");
+/* harmony import */ var _music21_audioSearch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./music21/audioSearch */ "./src/music21/audioSearch.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "audioSearch", function() { return _music21_audioSearch__WEBPACK_IMPORTED_MODULE_10__; });
 /* harmony import */ var _music21_bar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./music21/bar */ "./src/music21/bar.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "bar", function() { return _music21_bar__WEBPACK_IMPORTED_MODULE_11__; });
-/* harmony import */ var _music21_beam__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./music21/beam */ "./src/music21/beam.js");
+/* harmony import */ var _music21_beam__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./music21/beam */ "./src/music21/beam.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "beam", function() { return _music21_beam__WEBPACK_IMPORTED_MODULE_12__; });
-/* harmony import */ var _music21_chord__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./music21/chord */ "./src/music21/chord.js");
+/* harmony import */ var _music21_chord__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./music21/chord */ "./src/music21/chord.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chord", function() { return _music21_chord__WEBPACK_IMPORTED_MODULE_13__; });
-/* harmony import */ var _music21_chordTables__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./music21/chordTables */ "./src/music21/chordTables.js");
+/* harmony import */ var _music21_chordTables__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./music21/chordTables */ "./src/music21/chordTables.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _music21_chordTables__WEBPACK_IMPORTED_MODULE_14__; });
-/* harmony import */ var _music21_clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./music21/clef */ "./src/music21/clef.js");
+/* harmony import */ var _music21_clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./music21/clef */ "./src/music21/clef.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "clef", function() { return _music21_clef__WEBPACK_IMPORTED_MODULE_15__; });
-/* harmony import */ var _music21_converter__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./music21/converter */ "./src/music21/converter.js");
+/* harmony import */ var _music21_converter__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./music21/converter */ "./src/music21/converter.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "converter", function() { return _music21_converter__WEBPACK_IMPORTED_MODULE_16__; });
-/* harmony import */ var _music21_derivation__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./music21/derivation */ "./src/music21/derivation.js");
+/* harmony import */ var _music21_derivation__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./music21/derivation */ "./src/music21/derivation.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "derivation", function() { return _music21_derivation__WEBPACK_IMPORTED_MODULE_17__; });
-/* harmony import */ var _music21_duration__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./music21/duration */ "./src/music21/duration.js");
+/* harmony import */ var _music21_duration__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./music21/duration */ "./src/music21/duration.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "duration", function() { return _music21_duration__WEBPACK_IMPORTED_MODULE_18__; });
-/* harmony import */ var _music21_dynamics__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./music21/dynamics */ "./src/music21/dynamics.js");
+/* harmony import */ var _music21_dynamics__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./music21/dynamics */ "./src/music21/dynamics.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "dynamics", function() { return _music21_dynamics__WEBPACK_IMPORTED_MODULE_19__; });
 /* harmony import */ var _music21_editorial__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./music21/editorial */ "./src/music21/editorial.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "editorial", function() { return _music21_editorial__WEBPACK_IMPORTED_MODULE_20__; });
-/* harmony import */ var _music21_expressions__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./music21/expressions */ "./src/music21/expressions.js");
+/* harmony import */ var _music21_expressions__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./music21/expressions */ "./src/music21/expressions.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "expressions", function() { return _music21_expressions__WEBPACK_IMPORTED_MODULE_21__; });
-/* harmony import */ var _music21_figuredBass__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./music21/figuredBass */ "./src/music21/figuredBass.js");
+/* harmony import */ var _music21_figuredBass__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./music21/figuredBass */ "./src/music21/figuredBass.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "figuredBass", function() { return _music21_figuredBass__WEBPACK_IMPORTED_MODULE_22__; });
-/* harmony import */ var _music21_fromPython__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./music21/fromPython */ "./src/music21/fromPython.js");
+/* harmony import */ var _music21_fromPython__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./music21/fromPython */ "./src/music21/fromPython.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "fromPython", function() { return _music21_fromPython__WEBPACK_IMPORTED_MODULE_23__; });
-/* harmony import */ var _music21_harmony__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./music21/harmony */ "./src/music21/harmony.js");
+/* harmony import */ var _music21_harmony__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./music21/harmony */ "./src/music21/harmony.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "harmony", function() { return _music21_harmony__WEBPACK_IMPORTED_MODULE_24__; });
-/* harmony import */ var _music21_instrument__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./music21/instrument */ "./src/music21/instrument.js");
+/* harmony import */ var _music21_instrument__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./music21/instrument */ "./src/music21/instrument.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "instrument", function() { return _music21_instrument__WEBPACK_IMPORTED_MODULE_25__; });
-/* harmony import */ var _music21_interval__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./music21/interval */ "./src/music21/interval.js");
+/* harmony import */ var _music21_interval__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./music21/interval */ "./src/music21/interval.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "interval", function() { return _music21_interval__WEBPACK_IMPORTED_MODULE_26__; });
-/* harmony import */ var _music21_key__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./music21/key */ "./src/music21/key.js");
+/* harmony import */ var _music21_key__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./music21/key */ "./src/music21/key.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "key", function() { return _music21_key__WEBPACK_IMPORTED_MODULE_27__; });
-/* harmony import */ var _music21_keyboard__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./music21/keyboard */ "./src/music21/keyboard.js");
+/* harmony import */ var _music21_keyboard__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./music21/keyboard */ "./src/music21/keyboard.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "keyboard", function() { return _music21_keyboard__WEBPACK_IMPORTED_MODULE_28__; });
-/* harmony import */ var _music21_layout__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./music21/layout */ "./src/music21/layout.js");
+/* harmony import */ var _music21_layout__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./music21/layout */ "./src/music21/layout.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "layout", function() { return _music21_layout__WEBPACK_IMPORTED_MODULE_29__; });
-/* harmony import */ var _music21_meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./music21/meter */ "./src/music21/meter.js");
+/* harmony import */ var _music21_meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./music21/meter */ "./src/music21/meter.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "meter", function() { return _music21_meter__WEBPACK_IMPORTED_MODULE_30__; });
-/* harmony import */ var _music21_miditools__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./music21/miditools */ "./src/music21/miditools.js");
+/* harmony import */ var _music21_miditools__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./music21/miditools */ "./src/music21/miditools.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "miditools", function() { return _music21_miditools__WEBPACK_IMPORTED_MODULE_31__; });
-/* harmony import */ var _music21_musicxml__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./music21/musicxml */ "./src/music21/musicxml.js");
+/* harmony import */ var _music21_musicxml__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./music21/musicxml */ "./src/music21/musicxml.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "musicxml", function() { return _music21_musicxml__WEBPACK_IMPORTED_MODULE_32__; });
-/* harmony import */ var _music21_note__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./music21/note */ "./src/music21/note.js");
+/* harmony import */ var _music21_note__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./music21/note */ "./src/music21/note.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "note", function() { return _music21_note__WEBPACK_IMPORTED_MODULE_33__; });
-/* harmony import */ var _music21_parseLoader__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./music21/parseLoader */ "./src/music21/parseLoader.js");
+/* harmony import */ var _music21_parseLoader__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./music21/parseLoader */ "./src/music21/parseLoader.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "parseLoader", function() { return _music21_parseLoader__WEBPACK_IMPORTED_MODULE_34__; });
-/* harmony import */ var _music21_pitch__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./music21/pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _music21_pitch__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./music21/pitch */ "./src/music21/pitch.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "pitch", function() { return _music21_pitch__WEBPACK_IMPORTED_MODULE_35__; });
-/* harmony import */ var _music21_renderOptions__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./music21/renderOptions */ "./src/music21/renderOptions.js");
+/* harmony import */ var _music21_renderOptions__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./music21/renderOptions */ "./src/music21/renderOptions.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "renderOptions", function() { return _music21_renderOptions__WEBPACK_IMPORTED_MODULE_36__; });
-/* harmony import */ var _music21_roman__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./music21/roman */ "./src/music21/roman.js");
+/* harmony import */ var _music21_roman__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./music21/roman */ "./src/music21/roman.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "roman", function() { return _music21_roman__WEBPACK_IMPORTED_MODULE_37__; });
-/* harmony import */ var _music21_scale__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./music21/scale */ "./src/music21/scale.js");
+/* harmony import */ var _music21_scale__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./music21/scale */ "./src/music21/scale.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "scale", function() { return _music21_scale__WEBPACK_IMPORTED_MODULE_38__; });
-/* harmony import */ var _music21_sites__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./music21/sites */ "./src/music21/sites.js");
+/* harmony import */ var _music21_sites__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./music21/sites */ "./src/music21/sites.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "sites", function() { return _music21_sites__WEBPACK_IMPORTED_MODULE_39__; });
-/* harmony import */ var _music21_stream__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./music21/stream */ "./src/music21/stream.js");
+/* harmony import */ var _music21_stream__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./music21/stream */ "./src/music21/stream.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "stream", function() { return _music21_stream__WEBPACK_IMPORTED_MODULE_40__; });
-/* harmony import */ var _music21_tempo__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./music21/tempo */ "./src/music21/tempo.js");
+/* harmony import */ var _music21_tempo__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./music21/tempo */ "./src/music21/tempo.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "tempo", function() { return _music21_tempo__WEBPACK_IMPORTED_MODULE_41__; });
-/* harmony import */ var _music21_tie__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./music21/tie */ "./src/music21/tie.js");
+/* harmony import */ var _music21_tie__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./music21/tie */ "./src/music21/tie.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "tie", function() { return _music21_tie__WEBPACK_IMPORTED_MODULE_42__; });
-/* harmony import */ var _music21_tinyNotation__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./music21/tinyNotation */ "./src/music21/tinyNotation.js");
+/* harmony import */ var _music21_tinyNotation__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./music21/tinyNotation */ "./src/music21/tinyNotation.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "tinyNotation", function() { return _music21_tinyNotation__WEBPACK_IMPORTED_MODULE_43__; });
-/* harmony import */ var _music21_vfShow__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./music21/vfShow */ "./src/music21/vfShow.js");
+/* harmony import */ var _music21_vfShow__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./music21/vfShow */ "./src/music21/vfShow.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "vfShow", function() { return _music21_vfShow__WEBPACK_IMPORTED_MODULE_44__; });
-/* harmony import */ var _music21_voiceLeading__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./music21/voiceLeading */ "./src/music21/voiceLeading.js");
+/* harmony import */ var _music21_voiceLeading__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./music21/voiceLeading */ "./src/music21/voiceLeading.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "voiceLeading", function() { return _music21_voiceLeading__WEBPACK_IMPORTED_MODULE_45__; });
-/* harmony import */ var _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./music21/webmidi */ "./src/music21/webmidi.js");
+/* harmony import */ var _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./music21/webmidi */ "./src/music21/webmidi.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "webmidi", function() { return _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__; });
-/* harmony import */ var _music21_debug__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./music21/debug */ "./src/music21/debug.js");
+/* harmony import */ var _music21_debug__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./music21/debug */ "./src/music21/debug.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "debug", function() { return _music21_debug__WEBPACK_IMPORTED_MODULE_47__["debug"]; });
 
-/**
+/**!
  * **music21j**: Javascript reimplementation of Core music21 features.
  *
  * See http://web.mit.edu/music21/ for more details.
  *
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Released under a BSD-3-clause license
+ *
+ */
+
+/**
  *
  * Based on music21, Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
  * The plan is to implement all core music21 features as Javascript and to expose

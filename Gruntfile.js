@@ -89,6 +89,7 @@ module.exports = grunt => {
                         test: /\.ts$/,
                         exclude: /node_modules/,
                         use: [
+                            'cache-loader',
                             babel_loader(preset),
                             { loader: 'ts-loader' },
                         ],
@@ -97,6 +98,7 @@ module.exports = grunt => {
                         test: /\.js$/,
                         exclude: /(node_modules|src\/ext)/,
                         use: [
+                            'cache-loader',
                             babel_loader(preset)
                         ],
                     },
