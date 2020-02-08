@@ -138,7 +138,6 @@ export default function tests() {
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
         const bm = new music21.tinyNotation.TinyNotation("tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
-        console.log(bm.flat.elements);
         // Function does not work, stream.ts 1353
         //bm.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);  
 
@@ -171,13 +170,21 @@ export default function tests() {
     });
     */ 
 
-    /* Microtones not supported in Pitch class @ 285 
+    /* // Microtones not supported in Pitch class @ 285 
     test('music21.pitch.Microtone A', assert => {
-        const p = new music21.pitch.Pitch('a4');
+        let p = new music21.pitch.Pitch('a4');
         p.microtone = 25;
         console.log(p);
-        assert.equal(p, p, p);
+        assert.equal(p.toString(), 'A4(+25c)');
+        assert.equal(p.ps, 69.25);
+        p.microtone = '-10';
+        assert.equal(p.toString(), 'A4(-10c)');
+        assert.equal(p.ps, 68.90);
+        assert.equal(p.pitchClass, 9);
+        p = p.transpose(12);
+        assert.equal(p.toString(), 'A5(-10c)');
+        assert.equal(p.ps, 80.90);
 
     });
-    */ 
+    */
 }
