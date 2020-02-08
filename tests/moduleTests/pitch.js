@@ -86,7 +86,7 @@ export default function tests() {
             const p2 = new music21.pitch.Pitch(pair[1]);
             if (!pair[2]) {
                 assert.notDeepEqual(p1, p2, 'Not Equal');
-            } else (pair[2]) {
+            } else {
                 assert.deepEqual(p1, p2, 'Equal');
             }
                
@@ -266,7 +266,7 @@ export default function tests() {
    */
 
     // Waiting on getHarmonic
-   /*
+    /*
     test('music21.pitch.Microtone B', assert => {
         assert.equal(new music21.pitch.Pitch('c4').getHarmonic(1).toString(), 'C4');
 
