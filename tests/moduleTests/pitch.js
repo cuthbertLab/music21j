@@ -122,7 +122,6 @@ export default function tests() {
         //   new music21.pitch.Pitch('c')
         // ];
         const a = new music21.pitch.Pitch('c');
-        console.log(a);
         a.accidental = new music21.pitch.Accidental('natural');
         a.accidental.displayStatus = false; // displays status does not exist?
         assert.equal(a.name, 'C', 'Name is C');
@@ -163,5 +162,22 @@ export default function tests() {
         //assert.notEqual(bm.flat.notes[8].pitch.accidental.displayStatus, 'True');
     });
 
+    /* // Transpose is Not Implemented in pitch class
+    test('music21.pitch.Low Notes', assert => {
+        const dPitch = new music21.pitch.Pitch('D2');
+        const lowC = dPitch.transpose('M-23')
+        assert.equal(lowC.name, 'C', 'C');
+        assert.equal(lowC.octave, -1, '-1'); 
+    });
+    */ 
 
+    /* Microtones not supported in Pitch class @ 285 
+    test('music21.pitch.Microtone A', assert => {
+        const p = new music21.pitch.Pitch('a4');
+        p.microtone = 25;
+        console.log(p);
+        assert.equal(p, p, p);
+
+    });
+    */ 
 }
