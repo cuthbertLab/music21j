@@ -65,7 +65,7 @@ export default function tests() {
 
     });
 
-    test('music21.pitch.To String', assert => {
+    test('music21.pitch.Pitch To String', assert => {
         const p = new music21.pitch.Pitch('B#3');
         assert.equal(p.toString(), '<Pitch B#3>', 'Equal');
     });
@@ -133,109 +133,107 @@ export default function tests() {
                 }
             }
         };
-        const Pitch = (pitch) => {
-            return new music21.pitch.Pitch(pitch);
-        };
+        const convertToPitch = pitch => new music21.pitch.Pitch(pitch);
         // alternating, in a sequence, same pitch space
-        let pList = [Pitch('a#3'), Pitch('a3'), Pitch('a#3'),
-            Pitch('a3'), Pitch('a#3')];
-        let result = [('sharp', true), ('natural', true), ('sharp', true),
-            ('natural', true), ('sharp', true)];
+        let pList = [convertToPitch('a#3'), convertToPitch('a3'), convertToPitch('a#3'),
+            convertToPitch('a3'), convertToPitch('a#3')];
+        let result = [['sharp', true], ['natural', true], ['sharp', true],
+            ['natural', true], ['sharp', true]];
         proc(pList, []);
         compare(pList, result);
 
         // alternating, in a sequence, different pitch space
-        pList = [Pitch('a#2'), Pitch('a6'), Pitch('a#1'),
-            Pitch('a5'), Pitch('a#3')];
-        result = [('sharp', true), ('natural', true), ('sharp', true),
-            ('natural', true), ('sharp', true)];
+        pList = [convertToPitch('a#2'), convertToPitch('a6'), convertToPitch('a#1'),
+            convertToPitch('a5'), convertToPitch('a#3')];
+        result = [['sharp', true], ['natural', true], ['sharp', true],
+            ['natural', true], ['sharp', true]];
         proc(pList, []);
         compare(pList, result);
 
         // alternating, after gaps
-        pList = [Pitch('a-2'), Pitch('g3'), Pitch('a5'),
-            Pitch('a#5'), Pitch('g-3'), Pitch('a3')];
-        result = [('flat', true), (null, null), ('natural', true),
-            ('sharp', true), ('flat', true), ('natural', true)];
+        pList = [convertToPitch('a-2'), convertToPitch('g3'), convertToPitch('a5'),
+            convertToPitch('a#5'), convertToPitch('g-3'), convertToPitch('a3')];
+        result = [['flat', true], [null, null], ['natural', true],
+            ['sharp', true], ['flat', true], ['natural', true]];
         proc(pList, []);
         compare(pList, result);
 
         // epeats of the same: show at different registers
-        pList = [Pitch('a-2'), Pitch('a-2'), Pitch('a-5'),
-            Pitch('a#5'), Pitch('a#3'), Pitch('a3'), Pitch('a2')];
-        result = [('flat', true), ('flat', false), ('flat', true),
-            ('sharp', true), ('sharp', true), ('natural', true), ('natural', true)];
+        pList = [convertToPitch('a-2'), convertToPitch('a-2'), convertToPitch('a-5'),
+            convertToPitch('a#5'), convertToPitch('a#3'), convertToPitch('a3'), convertToPitch('a2')];
+        result = [['flat', true], ['flat', false], ['flat', true],
+            ['sharp', true], ['sharp', true], ['natural', true], ['natural', true]];
         proc(pList, []);
         compare(pList, result);
 
         // the always- 'unless-repeated' setting
         // first, with no modification, repeated accidentals are not shown
-        pList = [Pitch('a-2'), Pitch('a#3'), Pitch('a#5')];
-        result = [('flat', true), ('sharp', true), ('sharp', true)];
+        pList = [convertToPitch('a-2'), convertToPitch('a#3'), convertToPitch('a#5')];
+        result = [['flat', true], ['sharp', true], ['sharp', true]];
         proc(pList, []);
         compare(pList, result);
 
         // second, with status set to always
-        pList = [Pitch('a-2'), Pitch('a#3'), Pitch('a#3')];
+        pList = [convertToPitch('a-2'), convertToPitch('a#3'), convertToPitch('a#3')];
         pList[2].accidental.displayType = 'always';
-        result = [('flat', true), ('sharp', true), ('sharp', true)];
+        result = [['flat', true], ['sharp', true], ['sharp', true]];
         proc(pList, []);
         compare(pList, result);
 
         // status set to always
-        pList = [Pitch('a2'), Pitch('a3'), Pitch('a5')];
+        pList = [convertToPitch('a2'), convertToPitch('a3'), convertToPitch('a5')];
         pList[2].accidental ='natural';
         pList[2].accidental.displayType = 'always';
-        result = [(null, null), (null, null), ('natural', true)];
+        result = [[null, null], [null, null], ['natural', true]];
         proc(pList, []);
         compare(pList, result);
 
         // first use after other pitches in different register
         // note: this will force the display of the accidental
-        pList = [Pitch('a-2'), Pitch('g3'), Pitch('a-5')];
-        result = [('flat', true), (null, null), ('flat', true)];
+        pList = [convertToPitch('a-2'), convertToPitch('g3'), convertToPitch('a-5')];
+        result = [['flat', true], [null, null], ['flat', true)];
         proc(pList, []);
         compare(pList, result);
 
         // first use after other pitches in different register
         // note: this will force the display of the accidental
-        pList = [Pitch('a-2'), Pitch('g3'), Pitch('a-2')];
+        pList = [convertToPitch('a-2'), convertToPitch('g3'), convertToPitch('a-2')];
         // pairs of accidental, displayStatus
-        result = [('flat', true), (null, null), ('flat', true)];
+        result = [['flat', true], [null, null], ['flat', true]];
         proc(pList, []);
         compare(pList, result);
 
         // accidentals, first usage, not first pitch
-        pList = [Pitch('a2'), Pitch('g#3'), Pitch('d-2')];
-        result = [(null, null), ('sharp', true), ('flat', true)];
+        pList = [convertToPitch('a2'), convertToPitch('g#3'), convertToPitch('d-2')];
+        result = [[null, null], ['sharp', true], ['flat', true]];
         proc(pList, []);
         compare(pList, result);
     });
     */
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
-        const bm = new music21.tinyNotation.TinyNotation("tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
+        const convertedNotes = new music21.tinyNotation.TinyNotation("tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
         // Function does not work, stream.ts 1353
-        //bm.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);  
+        //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);  
 
         // Possible bug, first note has accidental information undefined
-        assert.equal(bm.flat.elements[2].pitches.accidental, undefined, 'Undefined');
+        assert.equal(convertedNotes.elements[2].pitches.accidental, undefined, 'Undefined');
         
         // displayStatus not defined in Note class, or Renamed
-        // assert.equal(bm.flat.elements[2].pitch.accName.displayStatus, 'True');
-        assert.equal(bm.flat.elements[3].pitch.accidental.name, 'natural', 'Natural');
-        //assert.equal(bm.flat.elements[3].pitch.accidental.displayStatus, 'True');
-        assert.equal(bm.flat.elements[4].pitch.accidental.name, 'natural', 'Natural');  
-        //assert.equal(bm.flat.elements[4].pitch.accidental.displayStatus, 'True');
-        assert.equal(bm.flat.elements[5].pitch.accidental.name, 'flat', 'Flat');    
-        //assert.equal(bm.flat.elements[5].pitch.accidental.displayStatus, 'True');
-        assert.equal(bm.flat.elements[6].pitch.accidental.name, 'flat', 'Flat');    
-        //assert.equal(bm.flat.elements[6].pitch.accidental.displayStatus, 'True');
-        assert.equal(bm.flat.elements[7].pitch.accidental.name, 'natural', 'Natural');   
-        //assert.equal(bm.flat.elements[7].pitch.accidental.displayStatus, 'True');
-        assert.notEqual(bm.flat.elements[8].pitch.accidental, 'None', 'None');
-        assert.notEqual(bm.flat.elements[8].pitch.accidental.name, 'flat', 'Natural');
-        //assert.notEqual(bm.flat.notes[8].pitch.accidental.displayStatus, 'True');
+        // assert.equal(convertedNotes.elements[2].pitch.accName.displayStatus, 'True');
+        assert.equal(convertedNotes.elements[3].pitch.accidental.name, 'natural', 'Natural');
+        //assert.equal(convertedNotes.elements[3].pitch.accidental.displayStatus, 'True');
+        assert.equal(convertedNotes.elements[4].pitch.accidental.name, 'natural', 'Natural');  
+        //assert.equal(convertedNotes.elements[4].pitch.accidental.displayStatus, 'True');
+        assert.equal(convertedNotes.elements[5].pitch.accidental.name, 'flat', 'Flat');    
+        //assert.equal(convertedNotes.elements[5].pitch.accidental.displayStatus, 'True');
+        assert.equal(convertedNotes.elements[6].pitch.accidental.name, 'flat', 'Flat');    
+        //assert.equal(convertedNotes.elements[6].pitch.accidental.displayStatus, 'True');
+        assert.equal(convertedNotes.elements[7].pitch.accidental.name, 'natural', 'Natural');   
+        //assert.equal(convertedNotes.elements[7].pitch.accidental.displayStatus, 'True');
+        assert.notEqual(convertedNotes.elements[8].pitch.accidental, 'None', 'None');
+        assert.notEqual(convertedNotes.elements[8].pitch.accidental.name, 'flat', 'Natural');
+        //assert.notEqual(convertedNotes.notes[8].pitch.accidental.displayStatus, 'True');
     });
 
     /* // Transpose is Not Implemented in pitch class
@@ -335,15 +333,15 @@ export default function tests() {
 
     /* // Awaiting Microtone support
     test('music21.pitch.Microtone D', assert => {
-        let scale = [440, 458 + 1 / 3, 476 + 2 / 3, 495, 513 + 1 / 3,
+        const scale = [440, 458 + 1 / 3, 476 + 2 / 3, 495, 513 + 1 / 3,
              531 + 2 / 3, 550, 568 + 1 / 3,
              586 + 2 / 3, 605, 623 + 1 / 3, 641 + 2 / 3,
              660, 678 + 1 / 3, 696 + 2 / 3, 715,
              733 + 1 / 3, 751 + 2 / 3, 770, 788 + 1 / 3,
              806 + 2 / 3, 825, 843 + 1 / 3, 861 + 2 / 3];
         assert.equal(len(f), 24);
-        let pList = [];
-        for(fq in scale){
+        const pList = [];
+        for(const fq of scale){
             let p = new music21.pitch.Pitch()
             p.frequency = fq
             pList.push(p.toString())
