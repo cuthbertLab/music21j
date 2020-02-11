@@ -26,3 +26,20 @@ jobs:
 
     - name: Run frontend tests
       run: grunt test_no_watch
+
+  eslint:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+
+    - uses: actions/checkout@v1
+      with:
+        submodules: True
+
+    - name: Install deps
+      run: npm ci
+
+    - name: Run eslint
+      run: ./node_modules/.bin/eslint ./src/music21j --ext .ts
