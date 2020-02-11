@@ -42,4 +42,4 @@ jobs:
       run: npm ci
 
     - name: Run eslint
-      run: ./node_modules/.bin/eslint ./src/music21 --ext .ts
+      run: grunt eslint
