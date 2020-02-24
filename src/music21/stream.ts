@@ -1316,6 +1316,7 @@ export class Stream extends base.Music21Object {
 
     cloneEmpty(derivationMethod) {
         const returnObj = this.constructor();
+        console.trace(returnObj);
         // TODO(msc): derivation
         returnObj.mergeAttributes(this);
         return returnObj;
@@ -1945,13 +1946,71 @@ export class Stream extends base.Music21Object {
         }
     }
 
+    /**
+     * Returns either (1) a Stream containing Elements
+     * (that wrap the None object) whose offsets and durations
+     * are the length of gaps in the Stream
+     * or (2) None if there are no gaps.
+     * @returns {boolean}
+     */ 
+    findGaps(self) {
+        console.log('first', self);
+        if (self.isSorted === false && self.autoSort) {
+            self.sort();
+        }
+        const sortedElements = self.elements;
+        console.log(sortedElements);
+        let eDur = 0;      
+        const gapStream = new Score(); // cloneEmpty does not work, created new obj       
+        let highestCurrentEndTime = 0.0;
+        for (let i = 0; i < sortedElements[0]._elements.length; i++) {
+            const element = sortedElements[0]._elements[i];
+            if (element[0] > highestCurrentEndTime) {
+                const gapElement = new base.Music21Object();
+                const gapQuarterLength = common.opFrac(element.offset - highestCurrentEndTime);
+                gapElement.duration = this.duration;
+                gapElement.duration.quarterLength = gapQuarterLength;
+                gapStream.insert(highestCurrentEndTime, gapElement);
+                if (element && element.duration !== null) {
+                    eDur = element.duration.quarterLength;
+                } else {
+                    eDur = 0;
+                }
+                highestCurrentEndTime = common.opFrac(Math.max(highestCurrentEndTime, element.offset + eDur));          
+            }      
+        }
+        gapStream.sort();
+        if (!gapStream) {
+            return null;
+        } else {
+            console.log(gapStream);
+            //self._duration.gapStream = gapStream;
+            console.log('gaps');
+            return gapStream;
+            //self._cache
+        }     
+
+    }
+
+    /**
+     * Returns True if there are no gaps betweent he lowest offset and the highest time.
+     * Otherwise returns False
+     *
+     * @returns {boolean}
+     */    
+
+    isGapless(self) {
+        const x = this.findGaps(self);
+        console.log(x);
+    }
+
     //  * ***** MIDI related routines...
 
     /**
      * Plays the Stream through the MIDI/sound playback (for now, only MIDI.js is supported)
      *
      * `options` can be an object containing:
-     * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
+     * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
      *
      * @param {Object} [options] - object of playback options
