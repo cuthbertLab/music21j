@@ -463,7 +463,7 @@ export function opFrac(num) {
         return num;
     }
     else if (Number.isInteger(num)) {
-        return num + 0.0;
+        return num; // number, no int's
     }
     else if (num === 'Fraction') { // Replace with fraction object
         return num; // no fraction support yet
