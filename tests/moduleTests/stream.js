@@ -405,4 +405,12 @@ export default function tests() {
         const sf_offsets = Array.from(sf).map(n => n.offset);
         assert.deepEqual(sf_offsets, [0, 0, 2, 4, 4, 6, 8, 8]);
     });
+
+    test('music21.stream.Stream isGapless', assert => {
+        const testOne = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
+        const s = new music21.stream.Score();
+        s.insert(0, testOne);
+        s.isGapless(s);
+        assert.equal(true);
+    });
 }
