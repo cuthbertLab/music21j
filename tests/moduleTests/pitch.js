@@ -159,8 +159,10 @@ export default function tests() {
         compare(pList, result);
 
         // epeats of the same: show at different registers
-        pList = [convertToPitch('a-2'), convertToPitch('a-2'), convertToPitch('a-5'),
-            convertToPitch('a#5'), convertToPitch('a#3'), convertToPitch('a3'), convertToPitch('a2')];
+        pList = [
+            convertToPitch('a-2'), convertToPitch('a-2'), convertToPitch('a-5'),
+            convertToPitch('a#5'), convertToPitch('a#3'), convertToPitch('a3'), 
+            convertToPitch('a2')];
         result = [['flat', true], ['flat', false], ['flat', true],
             ['sharp', true], ['sharp', true], ['natural', true], ['natural', true]];
         proc(pList, []);
@@ -212,7 +214,8 @@ export default function tests() {
     */
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
-        const convertedNotes = new music21.tinyNotation.TinyNotation("tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
+        const convertedNotes = new music21.tinyNotation.TinyNotation(
+            "tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
         // Function does not work, stream.ts 1353
         //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);  
 
@@ -353,7 +356,8 @@ export default function tests() {
                 ['A4', 'A~4(+21c)', 'B`4(-11c)', 'B4(+4c)', 'B~4(+17c)', 'C~5(-22c)',
                  'C#5(-14c)', 'C#~5(-7c)', 'D5(-2c)', 'D~5(+1c)', 'E-5(+3c)', 'E`5(+3c)',
                  'E5(+2c)', 'E~5(-1c)', 'F5(-4c)', 'F~5(-9c)', 'F#5(-16c)', 'F#~5(-23c)',
-                 'F#~5(+19c)', 'G5(+10c)', 'G~5(-1c)', 'G#5(-12c)', 'G#~5(-24c)', 'G#~5(+14c)']''',
+                 'F#~5(+19c)', 'G5(+10c)', 'G~5(-1c)', 'G#5(-12c)', 
+                 'G#~5(-24c)', 'G#~5(+14c)']''',
             ),
             str(pList),
         )
