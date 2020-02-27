@@ -407,10 +407,14 @@ export default function tests() {
     });
 
     test('music21.stream.Stream isGapless', assert => {
-        const testOne = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
-        const s = new music21.stream.Score();
-        s.insert(0, testOne);
-        s.isGapless(s);
-        assert.equal(true);
+        const testOne = new music21.stream.Stream();
+        const n1 = new music21.note.Note('C');
+        const n2 = new music21.note.Note('D');
+        testOne.insert(0, n1);
+        testOne.insert(0, n2);
+        assert.equal(testOne.isGapless(testOne), true);
+        const n3 = new music21.note.Note('E');
+        testOne.insert(10.0, n3);
+        assert.equal(testOne.isGapless(testOne), false);
     });
 }

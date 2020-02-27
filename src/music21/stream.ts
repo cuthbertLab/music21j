@@ -1954,40 +1954,37 @@ export class Stream extends base.Music21Object {
      * @returns {boolean}
      */ 
     findGaps(self) {
-        console.log('first', self);
-        if (self.isSorted === false && self.autoSort) {
+        if (!self.isSorted && self.autoSort) {
             self.sort();
-        }
+        }  
         const sortedElements = self.elements;
-        console.log(sortedElements);
         let eDur = 0;      
         const gapStream = new Score(); // cloneEmpty does not work, created new obj       
         let highestCurrentEndTime = 0.0;
-        for (let i = 0; i < sortedElements[0]._elements.length; i++) {
-            const element = sortedElements[0]._elements[i];
-            if (element[0] > highestCurrentEndTime) {
-                const gapElement = new base.Music21Object();
-                const gapQuarterLength = common.opFrac(element.offset - highestCurrentEndTime);
-                gapElement.duration = this.duration;
-                gapElement.duration.quarterLength = gapQuarterLength;
-                gapStream.insert(highestCurrentEndTime, gapElement);
-                if (element && element.duration !== null) {
+        for (const element of sortedElements) {
+            if (element) { // check to make sure element exists
+                if (element.offset > highestCurrentEndTime) {
+                    const gapElement = new base.Music21Object(); // name this 
+                    const gapQuarterLength = common.opFrac(element.offset - highestCurrentEndTime);
+                    gapElement.duration = this.duration;
+                    gapElement.duration.quarterLength = gapQuarterLength;
+                    gapStream.insert(highestCurrentEndTime, gapElement);
+                } if ('duration' in element && element.duration !== null) {
                     eDur = element.duration.quarterLength;
                 } else {
                     eDur = 0;
                 }
-                highestCurrentEndTime = common.opFrac(Math.max(highestCurrentEndTime, element.offset + eDur));          
-            }      
+                highestCurrentEndTime = common.opFrac(
+                    Math.max(highestCurrentEndTime, element.offset + eDur) 
+                ); 
+            }   
         }
         gapStream.sort();
-        if (!gapStream) {
+        if (gapStream.elements.length === 0) {
             return null;
         } else {
-            console.log(gapStream);
-            //self._duration.gapStream = gapStream;
-            console.log('gaps');
+            self.GapStream = gapStream;
             return gapStream;
-            //self._cache
         }     
 
     }
@@ -2000,8 +1997,13 @@ export class Stream extends base.Music21Object {
      */    
 
     isGapless(self) {
-        const x = this.findGaps(self);
-        console.log(x);
+        if (this.findGaps(self) === null) {
+            self.Gapless = true;
+            return true;
+        } else {
+            self.Gapless = false;
+            return false;
+        }
     }
 
     //  * ***** MIDI related routines...
