@@ -1316,7 +1316,6 @@ export class Stream extends base.Music21Object {
 
     cloneEmpty(derivationMethod) {
         const returnObj = this.constructor();
-        console.trace(returnObj);
         // TODO(msc): derivation
         returnObj.mergeAttributes(this);
         return returnObj;
