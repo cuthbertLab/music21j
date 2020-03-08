@@ -69,35 +69,35 @@ export default function tests() {
         const p = new music21.pitch.Pitch('B#3');
         assert.equal(p.toString(), '<Pitch B#3>', 'Equal');
     });
-    
+
     test('music21.pitch.Pitch Equality', assert => {
         const pitch_pairs = [
             ['a#', 'a', false],
-            ['a#', 'b-', false], 
-            ['a#', 'a-', false], 
+            ['a#', 'b-', false],
+            ['a#', 'a-', false],
             ['a##', 'a#', false],
-            ['a#4', 'a#4', true], 
-            ['a-3', 'a-4', false], 
+            ['a#4', 'a#4', true],
+            ['a-3', 'a-4', false],
             ['a#3', 'a#4', false]
         ];
-        
+
         for (const pair of pitch_pairs) {
             const p1 = new music21.pitch.Pitch(pair[0]);
             const p2 = new music21.pitch.Pitch(pair[1]);
             if (pair[2]) {
                 assert.deepEqual(p1, p2, 'Equal');
             } else {
-                assert.notDeepEqual(p1, p2, 'Not Equal');                
+                assert.notDeepEqual(p1, p2, 'Not Equal');
             }
-               
+
         }
         const p1 = new music21.pitch.Pitch('a#');
         const p2 = new music21.pitch.Pitch('a#');
         assert.deepEqual(p1, p2, 'Pitch is Equal');
-        p1.octave = 4; 
+        p1.octave = 4;
         p2.octave = 3;
         assert.notDeepEqual(p1, p2, 'Pitch with changed octaves are not equal');
-        p1.octave = 4; 
+        p1.octave = 4;
         p2.octave = 4;
         assert.deepEqual(p1, p2, 'Pitch with reverted octaves are equal');
     });
@@ -161,7 +161,7 @@ export default function tests() {
         // epeats of the same: show at different registers
         pList = [
             convertToPitch('a-2'), convertToPitch('a-2'), convertToPitch('a-5'),
-            convertToPitch('a#5'), convertToPitch('a#3'), convertToPitch('a3'), 
+            convertToPitch('a#5'), convertToPitch('a#3'), convertToPitch('a3'),
             convertToPitch('a2')];
         result = [['flat', true], ['flat', false], ['flat', true],
             ['sharp', true], ['sharp', true], ['natural', true], ['natural', true]];
@@ -215,24 +215,25 @@ export default function tests() {
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
         const convertedNotes = new music21.tinyNotation.TinyNotation(
-            "tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
+            "tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4"
+        ).flat;
         // Function does not work, stream.ts 1353
-        //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);  
+        //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
 
         // Possible bug, first note has accidental information undefined
         assert.equal(convertedNotes.elements[2].pitches.accidental, undefined, 'Undefined');
-        
+
         // displayStatus not defined in Note class, or Renamed
         // assert.equal(convertedNotes.elements[2].pitch.accName.displayStatus, 'True');
         assert.equal(convertedNotes.elements[3].pitch.accidental.name, 'natural', 'Natural');
         //assert.equal(convertedNotes.elements[3].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[4].pitch.accidental.name, 'natural', 'Natural');  
+        assert.equal(convertedNotes.elements[4].pitch.accidental.name, 'natural', 'Natural');
         //assert.equal(convertedNotes.elements[4].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[5].pitch.accidental.name, 'flat', 'Flat');    
+        assert.equal(convertedNotes.elements[5].pitch.accidental.name, 'flat', 'Flat');
         //assert.equal(convertedNotes.elements[5].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[6].pitch.accidental.name, 'flat', 'Flat');    
+        assert.equal(convertedNotes.elements[6].pitch.accidental.name, 'flat', 'Flat');
         //assert.equal(convertedNotes.elements[6].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[7].pitch.accidental.name, 'natural', 'Natural');   
+        assert.equal(convertedNotes.elements[7].pitch.accidental.name, 'natural', 'Natural');
         //assert.equal(convertedNotes.elements[7].pitch.accidental.displayStatus, 'True');
         assert.notEqual(convertedNotes.elements[8].pitch.accidental, 'None', 'None');
         assert.notEqual(convertedNotes.elements[8].pitch.accidental.name, 'flat', 'Natural');
@@ -244,11 +245,11 @@ export default function tests() {
         const dPitch = new music21.pitch.Pitch('D2');
         const lowC = dPitch.transpose('M-23')
         assert.equal(lowC.name, 'C', 'C');
-        assert.equal(lowC.octave, -1, '-1'); 
+        assert.equal(lowC.octave, -1, '-1');
     });
-    */ 
+    */
 
-    /* // Microtones not supported in Pitch class @ 285 
+    /* // Microtones not supported in Pitch class @ 285
     test('music21.pitch.Microtone A', assert => {
         let p = new music21.pitch.Pitch('a4');
         p.microtone = 25;
@@ -317,7 +318,7 @@ export default function tests() {
     */
 
     // Awaiting Microtone support
-    /* 
+    /*
     test('music21.pitch.Microtone C', assert => {
         const match = [];
         const p = new music21.pitch.Pitch('C4');
@@ -326,7 +327,7 @@ export default function tests() {
             match.push(p.toString());
             p.microtone = p.microtone.cents - 1;
         }
-        
+
         assert.equal(match.toString(),
             "['C4(+5c)', 'C4(+4c)', 'C4(+3c)', 'C4(+2c)', 'C4(+1c)', "
             + "'C4', 'C4(-1c)', 'C4(-2c)', 'C4(-3c)', 'C4(-4c)', 'C4(-5c)']");
@@ -356,7 +357,7 @@ export default function tests() {
                 ['A4', 'A~4(+21c)', 'B`4(-11c)', 'B4(+4c)', 'B~4(+17c)', 'C~5(-22c)',
                  'C#5(-14c)', 'C#~5(-7c)', 'D5(-2c)', 'D~5(+1c)', 'E-5(+3c)', 'E`5(+3c)',
                  'E5(+2c)', 'E~5(-1c)', 'F5(-4c)', 'F~5(-9c)', 'F#5(-16c)', 'F#~5(-23c)',
-                 'F#~5(+19c)', 'G5(+10c)', 'G~5(-1c)', 'G#5(-12c)', 
+                 'F#~5(+19c)', 'G5(+10c)', 'G~5(-1c)', 'G#5(-12c)',
                  'G#~5(-24c)', 'G#~5(+14c)']''',
             ),
             str(pList),

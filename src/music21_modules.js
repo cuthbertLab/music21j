@@ -31,6 +31,7 @@
 import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';  // to be removed when export * from is okay.
 import * as $ from 'jquery';
+import * as Vex from 'vexflow';
 import 'jquery-ui-bundle';
 
 // TODO: add attrchange
@@ -89,6 +90,7 @@ import { debug } from './music21/debug';
 
 export {
     MIDI,
+    Vex,
 
     exceptions21,
     base,
