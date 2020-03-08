@@ -2201,7 +2201,7 @@ export class Stream extends base.Music21Object {
         return $svgOrCanvasBlock[0];
     }
 
-    replaceCanvas(where, preserveSvgSize, elementType = 'svg') {
+    replaceCanvas(where, preserveSvgSize?, elementType='svg') {
         console.warn('replaceCanvas is deprecated, use replaceDOM instead');
         return this.replaceDOM(where, preserveSvgSize, elementType);
     }
@@ -2211,13 +2211,13 @@ export class Stream extends base.Music21Object {
      *
      * Note that if 'where' is empty, will replace all svg elements on the page.
      *
-     * @param {jQuery|HTMLElement} [where] - the canvas or SVG to replace or
+     * @param {JQuery|HTMLElement} [where] - the canvas or SVG to replace or
      *     a container holding the canvas(es) to replace.
      * @param {boolean} [preserveSvgSize=false]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {jQuery} the svg
+     * @returns {JQuery} the svg
      */
-    replaceDOM(where, preserveSvgSize, elementType='svg') {
+    replaceDOM(where, preserveSvgSize: boolean=false, elementType: string='svg') {
         // if called with no where, replaces all the svgs on the page...
         if (where === undefined) {
             where = document.body;

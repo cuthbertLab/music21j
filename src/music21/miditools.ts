@@ -1,20 +1,19 @@
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
- * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
+ * music21/miditools -- A collection of tools for midi.
  *
  * Copyright (c) 2014-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  * @author Michael Scott Cuthbert
  *
- * A collection of tools for midi. See the namespace {@link music21.miditools}
+ * A collection of tools for midi. See the namespace.
  *
  * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
  * events from the Jazz plugin or the WebMIDI protocol.
  *
  *
  * @exports music21/miditools
- * @namespace music21.miditools
  * @memberof music21
  */
 import * as $ from 'jquery';
@@ -285,8 +284,8 @@ export function quantizeLastNote(lastElement=undefined) {
         lastElement.stemDirection = undefined;
     }
     const nowInMS = Date.now();
-    const msSinceLastNote = nowInMS - this.timeOfLastNote;
-    this.timeOfLastNote = nowInMS;
+    const msSinceLastNote = nowInMS - config.timeOfLastNote;
+    config.timeOfLastNote = nowInMS;
     const normalQuarterNoteLength = 1000 * 60 / config.tempo;
     const numQuarterNotes = msSinceLastNote / normalQuarterNoteLength;
     let roundedQuarterLength = Math.round(4 * numQuarterNotes) / 4;
@@ -595,7 +594,7 @@ export class MidiPlayer {
             this.player.pause(true);
         } else {
             d.src = this.pausePng();
-            this.player.resume();
+            this.player.resume().catch(console.error);
         }
     }
 
