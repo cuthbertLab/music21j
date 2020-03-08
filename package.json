@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.9.40",
+  "version": "0.9.41",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "src/music21_modules.js",
   "files": [
@@ -26,7 +26,7 @@
     "jsonpickle": "^1.1.2",
     "midicube": "^0.6.1",
     "regenerator-runtime": "^0.13.3",
-    "vexflow": "^1.2.89"
+    "vexflow": "^1.2.90"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",
