@@ -76,5 +76,18 @@ export default function tests() {
             [sc, 4.0, 'elementsOnly'],
             'third site is sc'
         );
+        test('music21.base.Music21Object.beat', assert => {
+            const n = new music21.note.Note();
+            n.quarterLength = 0.5;
+            const m = new music21.stream.Measure();
+            m.timeSignature = music21.meter.TimeSignature('3/4');
+            m.append(n);
+            m.append(n);
+            m.append(n);
+            m.append(n);
+            console.log(m);
+            assert.equal(m, true);
+    
+        });
     });
 }
