@@ -76,18 +76,29 @@ export default function tests() {
             [sc, 4.0, 'elementsOnly'],
             'third site is sc'
         );
-        test('music21.base.Music21Object.beat', assert => {
-            const n = new music21.note.Note();
-            n.quarterLength = 0.5;
-            const m = new music21.stream.Measure();
-            m.timeSignature = music21.meter.TimeSignature('3/4');
-            m.append(n);
-            m.append(n);
-            m.append(n);
-            m.append(n);
-            console.log(m);
-            assert.equal(m, true);
-    
-        });
     });
+    test('music21.base.Music21Object.beat', assert => {
+        const n = new music21.note.Note();
+        n.quarterLength = 0.5;
+        const m = new music21.stream.Measure();
+        m.timeSignature = new music21.meter.TimeSignature('3/4');
+        m.append(n);
+        m.append(n);
+        m.append(n);
+        m.append(n);
+        m.append(n);
+        assert.deepEqual(m.getBeat(m), [1, 1.5, 2, 2.5, 3, 3.5]);
+        const s = new music21.stream.Stream();
+        s.timeSignature = new music21.meter.TimeSignature('3/4');
+        s.append(n);
+        s.append(n);
+        s.append(n);
+        s.append(n);
+        s.append(n);
+        s.append(n);
+        s.append(n);
+        s.append(n);
+        assert.deepEqual(s.getBeat(s), [1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0]);
+    });
+    
 }

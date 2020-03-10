@@ -238,6 +238,57 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.duration.quarterLength = ql;
     }
 
+    getBeat(measure) {
+        //const ts = self.timeSignature;
+        const timeArray = [];
+        let timeTrack = 1.0;
+        const notesInMeasure = measure.notesAndRests;
+
+        for (const element in notesInMeasure.srcStreamElements) {
+            if (element) {            
+                console.log(notesInMeasure.srcStreamElements[element]);
+                timeTrack = notesInMeasure.srcStreamElements[element]._duration._quarterLength + timeTrack;
+                timeArray.push(timeTrack);
+            }
+            
+        }
+        console.log(timeArray);
+        return timeArray;
+
+    }
+
+    getMeasureOffset(measure, includeMeasurePadding=true) {
+        console.log(measure);
+        console.log(measure.measures);
+        const m = measure.measures;
+        if (m !== undefined) {
+            let offsetLocal = null;
+            // OffsetLocal has to be called, otherwise linter goes crazy
+            try {
+                if (includeMeasurePadding) {
+                    offsetLocal = m.elementOffset(measure) + m.paddingLeft;
+                    console.log(offsetLocal);
+                } else {
+                    offsetLocal = m.elementOffset(measure);
+                    console.log(offsetLocal);
+                }
+            } catch (SitesException) {
+                try {
+                    offsetLocal = measure.offset;
+                    console.log(offsetLocal);
+                } catch (AttributeError) {
+                    offsetLocal = 0.0;
+                    console.log(offsetLocal);
+                }
+            }
+            return offsetLocal;
+        } else {
+            const offsetLocal = measure.offset;
+            console.log(offsetLocal);
+            return offsetLocal;
+        }
+    }
+
     mergeAttributes(other) {
         // id;
         this.groups = other.groups.slice();
