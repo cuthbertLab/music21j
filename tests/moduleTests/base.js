@@ -78,29 +78,28 @@ export default function tests() {
         );
     });
     test('music21.base.Music21Object.beat', assert => {
-        const n = new music21.note.Note();
-        n.quarterLength = 0.5;
-        const m = new music21.stream.Measure();
-        m.timeSignature = new music21.meter.TimeSignature('3/4');
-        m.append(n);
-        m.append(n);
-        m.append(n);
-        m.append(n);
-        m.append(n);
-        assert.deepEqual(m.getBeat(m), [1, 1.5, 2, 2.5, 3, 3.5]);
-        /*
         const s = new music21.stream.Stream();
-        s.append(new music21.meter.TimeSignature('3/4'));
-        s.append(n);
-        s.append(n);
-        s.append(n);
-        s.append(n);
-        s.append(n);
-        s.append(n);
-        s.append(n);
-        s.append(n);
-        assert.deepEqual(s.getBeat(s), [1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0]);
-        */
+        const ts0 = new music21.meter.TimeSignature('4/4');
+        const ts1 = new music21.meter.TimeSignature('4/4');
+        ts1.symbol = 'common';
+        const ts2 = new music21.meter.TimeSignature('2/2');
+        const ts3 = new music21.meter.TimeSignature('2/2');
+        ts3.symbol = 'cut';
+        s.append(ts0);
+        s.append(new music21.note.Note('C5', 1));
+        s.append(ts1);
+        s.append(new music21.note.Note('B4', 1));
+        s.append(ts2);
+        s.append(new music21.note.Note('A4', 1));
+        s.append(ts3);
+        s.append(new music21.note.Note('G4', 1));
+        assert.deepEqual(s.getBeat(s), [1, 1.5, 2, 2.5, 3, 3.5]);
+
+       
+        //m.timeSignature = new music21.meter.TimeSignature('6/8');
+        
+        //assert.deepEqual(m.getBeat(m), [1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0]);
+        
     });
     
 }

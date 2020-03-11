@@ -241,12 +241,16 @@ export class Music21Object extends prebase.ProtoM21Object {
     getBeat(measure) {
         //const ts = self.timeSignature;
         const timeArray = [];
-        let timeTrack = 1.0;
+        let timeTrack = 0;
         const notesInMeasure = measure.notesAndRests;
 
+
+        // Needs to track time in measure
+        // Create a fraction of time in the measure, essentiallly 
+
         for (const element in notesInMeasure.srcStreamElements) {
-            if (element) {            
-                console.log(notesInMeasure.srcStreamElements[element]);
+            if (notesInMeasure.srcStreamElements[element].isNote) {            
+                console.log('element', notesInMeasure.srcStreamElements[element]);
                 timeTrack = notesInMeasure.srcStreamElements[element]._duration._quarterLength + timeTrack;
                 timeArray.push(timeTrack);
             }
