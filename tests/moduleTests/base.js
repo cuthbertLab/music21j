@@ -98,11 +98,14 @@ export default function tests() {
         m2.append(noteF);
         sc.insert(0.0, p);
         sc.appendNewDOM(document.body);
-        console.log('BLANK');
-        console.log(sc);
-        console.log('score', sc.getBeat(sc));
-        console.log('note', noteC.getBeat(noteC));
-        console.log('part', p.getBeat(p));
+        //console.log('BLANK');
+        //console.log(sc);
+        //console.log('score', sc.getBeat(sc));
+        //console.log('note', noteC.getBeat(noteC));
+        //console.log('part', p.getBeat(p));
+        assert.deepEqual(sc.getBeat(sc), [4, 2, 4, 6]);
+        assert.deepEqual(p.getBeat(p), [4, 2, 4, 6]);
+        assert.deepEqual(noteC.getBeat(noteC), [4]);
 
     });
     
