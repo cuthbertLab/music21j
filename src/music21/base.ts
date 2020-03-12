@@ -268,6 +268,26 @@ export class Music21Object extends prebase.ProtoM21Object {
             }
                 
         } 
+        else if (input._storedClasses[0] === 'Part') {
+            console.log('part');
+            for (const measure of input) {
+                if (measure._storedClasses[0] !== 'TimeSignature') {
+                    let timeTrack = 0;
+                    for (const notes of measure._elements) {
+                        timeTrack += notes.duration._quarterLength;
+                        timeArray.push(timeTrack);
+                    }   
+                }
+            }
+        }
+        else if (input._storedClasses[0] === 'Measure') {
+            console.log('measure');
+            let timeTrack = 0;
+            for (const notes of input._elements) {
+                timeTrack += notes.duration._quarterLength;
+                timeArray.push(timeTrack);
+            }   
+        }
         else if (input._storedClasses[0] === 'Note') {
             timeArray.push(input.duration._quarterLength);
         }

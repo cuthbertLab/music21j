@@ -100,8 +100,9 @@ export default function tests() {
         sc.appendNewDOM(document.body);
         console.log('BLANK');
         console.log(sc);
-        console.log(sc.getBeat(sc));
-        console.log(noteC.getBeat(noteC));
+        console.log('score', sc.getBeat(sc));
+        console.log('note', noteC.getBeat(noteC));
+        console.log('part', p.getBeat(p));
 
     });
     
