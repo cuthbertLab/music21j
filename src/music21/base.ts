@@ -484,6 +484,20 @@ export class Music21Object extends prebase.ProtoM21Object {
             }
         }
     }
+
+    repeatAppend(object, item, numberOfTimes) {
+        let unused = null;
+        try {
+            unused = item.isStream;
+            console.log(item.isStream);
+        } catch (AttributeError) {
+            console.log('to put a non Music21Object in a stream, '
+            + 'create a music21.ElementWrapper for the item');
+        }
+        for (let i = 0; i < numberOfTimes; i++) {
+            object.append(item);
+        }
+    }
 }
 
 
