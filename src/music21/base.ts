@@ -26,6 +26,7 @@ import * as sites from './sites';
 
 // imports for typing only
 import { Stream, Measure } from './stream';
+import { StreamException } from './exceptions21';
 
 
 declare interface StreamRecursionLike {
@@ -485,17 +486,17 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
-    repeatAppend(object, item, numberOfTimes) {
+    repeatAppend(this, item, numberOfTimes) {
         let unused = null;
         try {
             unused = item.isStream;
-            console.log(item.isStream);
         } catch (AttributeError) {
-            console.log('to put a non Music21Object in a stream, '
+            throw new StreamException('to put a non Music21Object in a stream, '
             + 'create a music21.ElementWrapper for the item');
+            
         }
         for (let i = 0; i < numberOfTimes; i++) {
-            object.append(item);
+            this.append(item.clone(true));
         }
     }
 }
