@@ -486,6 +486,17 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
+    /*
+        Given an object and a number, run append that many times on
+        a deepcopy of the object.
+        numberOfTimes should of course be a positive integer.
+
+        a = stream.Stream()
+        n = note.Note('D--')
+        n.duration.type = 'whole'
+        a.repeatAppend(n, 10)
+    */
+
     repeatAppend(this, item, numberOfTimes) {
         let unused = null;
         try {
