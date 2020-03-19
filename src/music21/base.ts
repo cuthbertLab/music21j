@@ -27,6 +27,8 @@ import * as sites from './sites';
 // imports for typing only
 import { Stream, Measure } from './stream';
 import { StreamException } from './exceptions21';
+import { Music21Exception } from './exceptions21';
+
 
 
 declare interface StreamRecursionLike {
@@ -178,6 +180,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         return (this._editorial !== undefined);
     }
 
+
     get measureNumber() {
         if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
             const activeMeasure = <Measure> this.activeSite;
@@ -237,6 +240,121 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     set quarterLength(ql: number) {
         this.duration.quarterLength = ql;
+    }
+
+    getTimeSignatureForBeat(self) {
+        /*
+        used by all the _getBeat, _getBeatDuration, _getBeatStrength functions.
+        extracted to make sure that all three of the routines use the same one.
+        */
+        const ts = self.getContextByClass('TimeSignature');
+        if (!ts) {
+            throw new Music21Exception('this object does not have a TimeSignature in Sites');
+        }
+        return ts;
+    }
+
+    getBeat(input) {
+
+        //const ts = self.timeSignature;
+        const timeArray = [];
+        
+        //const notesInMeasure = input.notesAndRests;
+        console.log('start getBeat');
+        console.log(input);
+        console.log(typeof input._storedClasses[0]);
+        if (input._storedClasses[0] === 'Score') {
+            console.log('Score Confirmed');
+            //const measureArray = [];
+            const holdMeasureData = input._elements[0].elements; // Route this for multiple parts
+            // Loop through parts
+            //console.log(measureArray, holdMeasureData[0].elements);
+            for (const measure of holdMeasureData) {
+                if (measure._storedClasses[0] !== 'TimeSignature') {
+                    let timeTrack = 0;
+                    console.log('New Measure', measure);
+                    for (const notes of measure._elements) {
+                        //console.log(notes._duration._quarterLength);
+                        //console.log(notes);
+                        timeTrack += notes.duration._quarterLength;
+                        timeArray.push(timeTrack);
+                    }   
+                }
+            }
+                
+        } 
+        else if (input._storedClasses[0] === 'Part') {
+            console.log('part');
+            for (const measure of input) {
+                if (measure._storedClasses[0] !== 'TimeSignature') {
+                    let timeTrack = 0;
+                    for (const notes of measure._elements) {
+                        timeTrack += notes.duration._quarterLength;
+                        timeArray.push(timeTrack);
+                    }   
+                }
+            }
+        }
+        else if (input._storedClasses[0] === 'Measure') {
+            console.log('measure');
+            let timeTrack = 0;
+            for (const notes of input._elements) {
+                timeTrack += notes.duration._quarterLength;
+                timeArray.push(timeTrack);
+            }   
+        }
+        else if (input._storedClasses[0] === 'Note') {
+            timeArray.push(input.duration._quarterLength);
+        }
+
+        // Needs to track time in measure
+        // Create a fraction of time in the measure, essentiallly 
+
+        /*
+        for (const element in notesInMeasure.srcStreamElements) {
+            if (notesInMeasure.srcStreamElements[element].isNote) {            
+                //console.log('element', notesInMeasure.srcStreamElements[element]);
+                //console.log('elementTime', notesInMeasure.srcStreamElements[element]._duration._quarterLength);
+                timeTrack = notesInMeasure.srcStreamElements[element]._duration._quarterLength + timeTrack;
+                timeArray.push(timeTrack);
+            }
+            
+        }
+        */
+        return timeArray;
+
+    }
+
+    getMeasureOffset(measure, includeMeasurePadding=true) {
+        console.log(measure);
+        console.log(measure.measures);
+        const m = measure.measures;
+        if (m !== undefined) {
+            let offsetLocal = null;
+            // OffsetLocal has to be called, otherwise linter goes crazy
+            try {
+                if (includeMeasurePadding) {
+                    offsetLocal = m.elementOffset(measure) + m.paddingLeft;
+                    console.log(offsetLocal);
+                } else {
+                    offsetLocal = m.elementOffset(measure);
+                    console.log(offsetLocal);
+                }
+            } catch (SitesException) {
+                try {
+                    offsetLocal = measure.offset;
+                    console.log(offsetLocal);
+                } catch (AttributeError) {
+                    offsetLocal = 0.0;
+                    console.log(offsetLocal);
+                }
+            }
+            return offsetLocal;
+        } else {
+            const offsetLocal = measure.offset;
+            console.log(offsetLocal);
+            return offsetLocal;
+        }
     }
 
     mergeAttributes(other) {
@@ -587,4 +705,3 @@ function getContextByClassPayloadExtractor(
 
 
 // TODO(msc) -- ElementWrapper
-

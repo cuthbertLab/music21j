@@ -77,10 +77,20 @@ export default function tests() {
             'third site is sc'
         );
     });
+
     test('music21.base.repeatAppend', assert => {
         const a = new music21.stream.Stream();
         const n = new music21.note.Note();
         a.repeatAppend(n, 10);
         assert.equal(a.notes.length, 10);
+
+    });
+    test('music21.base.getTimeSignatureForBeat', assert => {
+        const m = new music21.stream.Measure();
+        const tsThreeFour = new music21.meter.TimeSignature('3/4');
+        m.insert(0, tsThreeFour);
+        const x = m.getTimeSignatureForBeat(m);
+        assert.equal(x.ratioString, '3/4', 'returns time signature');
+
     });
 }
