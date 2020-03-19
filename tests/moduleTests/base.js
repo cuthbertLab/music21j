@@ -108,5 +108,12 @@ export default function tests() {
         assert.deepEqual(noteC.getBeat(noteC), [4]);
 
     });
-    
+    test('music21.base.getTimeSignatureForBeat', assert => {
+        const m = new music21.stream.Measure();
+        const tsThreeFour = new music21.meter.TimeSignature('3/4');
+        m.insert(0, tsThreeFour);
+        const x = m.getTimeSignatureForBeat(m);
+        assert.equal(x.ratioString, '3/4', 'returns time signature');
+
+    });
 }
