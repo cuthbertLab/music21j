@@ -26,6 +26,7 @@ import * as sites from './sites';
 
 // imports for typing only
 import { Stream, Measure } from './stream';
+import { Music21Exception } from './exceptions21';
 
 
 declare interface StreamRecursionLike {
@@ -237,6 +238,18 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     set quarterLength(ql: number) {
         this.duration.quarterLength = ql;
+    }
+
+    getTimeSignatureForBeat(self) {
+        /*
+        used by all the _getBeat, _getBeatDuration, _getBeatStrength functions.
+        extracted to make sure that all three of the routines use the same one.
+        */
+        const ts = self.getContextByClass('TimeSignature');
+        if (!ts) {
+            throw new Music21Exception('this object does not have a TimeSignature in Sites');
+        }
+        return ts;
     }
 
     getBeat(input) {
