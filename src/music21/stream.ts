@@ -1947,34 +1947,34 @@ export class Stream extends base.Music21Object {
 
     /**
      * Returns either (1) a Stream containing Elements
-     * (that wrap the None object) whose offsets and durations
+     * (that wrap the null object) whose offsets and durations
      * are the length of gaps in the Stream
-     * or (2) None if there are no gaps.
-     * @returns {boolean}
+     * or (2) null if there are no gaps.
+     * @returns {object}
      */ 
     findGaps(self) {
         if (!self.isSorted && self.autoSort) {
             self.sort();
         }  
         const sortedElements = self.elements;
-        let eDur = 0;      
+        let elementDuration = 0;      
         const gapStream = new Score(); // cloneEmpty does not work, created new obj       
         let highestCurrentEndTime = 0.0;
         for (const element of sortedElements) {
-            if (element) { // check to make sure element exists
+            if (element) { 
                 if (element.offset > highestCurrentEndTime) {
-                    const gapElement = new base.Music21Object(); // name this 
+                    const gapElement = new base.Music21Object(); 
                     const gapQuarterLength = common.opFrac(element.offset - highestCurrentEndTime);
                     gapElement.duration = this.duration;
                     gapElement.duration.quarterLength = gapQuarterLength;
                     gapStream.insert(highestCurrentEndTime, gapElement);
                 } if ('duration' in element && element.duration !== null) {
-                    eDur = element.duration.quarterLength;
+                    elementDuration = element.duration.quarterLength;
                 } else {
-                    eDur = 0;
+                    elementDuration = 0;
                 }
                 highestCurrentEndTime = common.opFrac(
-                    Math.max(highestCurrentEndTime, element.offset + eDur) 
+                    Math.max(highestCurrentEndTime, element.offset + elementDuration) 
                 ); 
             }   
         }
@@ -1989,7 +1989,7 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Returns True if there are no gaps betweent he lowest offset and the highest time.
+     * Returns True if there are no gaps between the lowest offset and the highest time.
      * Otherwise returns False
      *
      * @returns {boolean}

@@ -413,6 +413,7 @@ export default function tests() {
         testOne.insert(0, n1);
         testOne.insert(0, n2);
         assert.equal(testOne.isGapless(testOne), true);
+        assert.equal(testOne.findGaps(testOne), null);
         const n3 = new music21.note.Note('E');
         testOne.insert(10.0, n3);
         assert.equal(testOne.isGapless(testOne), false);
