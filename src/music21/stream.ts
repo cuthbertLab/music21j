@@ -14,7 +14,7 @@
  * Streams are powerful music21 objects that hold Music21Object collections,
  * such as {@link music21.note.Note} or {@link music21.chord.Chord} objects.
  *
- * Understanding the {@link music21.stream.Stream} object is of fundamental
+ * Understanding the {@link Stream} object is of fundamental
  * importance for using music21.  Definitely read the music21(python) tutorial
  * on using Streams before proceeding
  *
@@ -56,6 +56,7 @@ import { GeneralObjectExporter } from './musicxml/m21ToXml';
 
 import * as filters from './stream/filters';
 import * as iterator from './stream/iterator';
+import {chord} from '../music21_modules';
 
 export { filters };
 export { iterator };
@@ -81,8 +82,6 @@ function _exportMusicXMLAsText(s) {
  * {@link Measure},
  * {@link Voice}, but most functions will be found here.
  *
- * @property {base.Music21Object[]} elements - the elements in the stream.
- *     DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {number} length - (readonly) the number of elements in the stream.
  * @property {Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
@@ -93,13 +92,13 @@ function _exportMusicXMLAsText(s) {
  * @property {renderOptions.RenderOptions} renderOptions - an object
  *     specifying how to render the stream
  * @property {Stream} flat - (readonly) a flattened representation of the Stream
- * @property {iterator.StreamIterator} notes - (readonly) the stream with
+ * @property {StreamIterator} notes - (readonly) the stream with
  *     only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
- * @property {iterator.StreamIterator} notesAndRests - (readonly) like notes but
+ * @property {StreamIterator} notesAndRests - (readonly) like notes but
  *     also with {@link music21.note.Rest} objects included
- * @property {iterator.StreamIterator} parts - (readonly) a filter on the Stream
+ * @property {StreamIterator} parts - (readonly) a filter on the Stream
  *     to just get the parts (NON-recursive)
- * @property {iterator.StreamIterator} measures - (readonly) a filter on the
+ * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
  * @property {number} tempo - tempo in beats per minute (will become more
  *     sophisticated later, but for now the whole stream has one tempo
@@ -245,7 +244,7 @@ export class Stream extends base.Music21Object {
             }
             return this.noteChanged(
                 clickedDiatonicNoteNum,
-                foundNote,
+                foundNote as note.Note,
                 canvasOrSVGElement
             );
         };
@@ -253,9 +252,9 @@ export class Stream extends base.Music21Object {
 
     /**
      *
-     * @returns {IterableIterator<base.Music21Object>}
+     * @returns {IterableIterator<Music21Object>}
      */
-    * [Symbol.iterator]() {
+    * [Symbol.iterator](): IterableIterator<base.Music21Object> {
         if (this.autoSort && !this.isSorted) {
             this.sort();
         }
@@ -265,7 +264,10 @@ export class Stream extends base.Music21Object {
         }
     }
 
-    forEach(callback, thisArg) {
+    forEach(
+        callback: (el: base.Music21Object, i: number, innerThis: any) => void,
+        thisArg: any
+    ) {
         if (thisArg !== undefined) {
             callback = callback.bind(thisArg);
         }
@@ -289,7 +291,7 @@ export class Stream extends base.Music21Object {
         this._overriddenDuration = newDuration;
     }
 
-    get highestTime() {
+    get highestTime(): number {
         let highestTime = 0.0;
         for (const el of this) {
             let endTime = el.offset;
@@ -319,7 +321,7 @@ export class Stream extends base.Music21Object {
             // namely, do not set inner streams activeSites to be
             // in things that they won't have later.
             newSt.clear();
-            const ri = new iterator.RecursiveIterator(this, {
+            const ri = new iterator.RecursiveIterator<base.Music21Object>(this, {
                 restoreActiveSites: false,
                 includeSelf: false,
                 ignoreSorting: true,
@@ -347,15 +349,16 @@ export class Stream extends base.Music21Object {
         return newSt as this;
     }
 
-    get notes() {
-        return this.getElementsByClass(['Note', 'Chord']);
+    get notes(): iterator.StreamIterator<note.GeneralNote> {
+        return this.getElementsByClass(['Note', 'Chord']) as
+            iterator.StreamIterator<note.GeneralNote>;
     }
 
-    get notesAndRests() {
-        return this.getElementsByClass('GeneralNote');
+    get notesAndRests(): iterator.StreamIterator<note.GeneralNote> {
+        return this.getElementsByClass('GeneralNote') as iterator.StreamIterator<note.GeneralNote>;
     }
 
-    get tempo() {
+    get tempo(): number {
         if (this._tempo === undefined && this.activeSite !== undefined) {
             return this.activeSite.tempo;
         } else if (this._tempo === undefined) {
@@ -365,7 +368,7 @@ export class Stream extends base.Music21Object {
         }
     }
 
-    set tempo(newTempo) {
+    set tempo(newTempo: number) {
         this._tempo = newTempo;
     }
 
@@ -426,7 +429,7 @@ export class Stream extends base.Music21Object {
      * @param {number} oEnd - offset end
      * @returns {number}
      */
-    _averageTempo(oStart, oEnd) {
+    _averageTempo(oStart: number, oEnd: number): number {
         const overallDuration = oEnd - oStart;
         return this._metronomeMarkBoundaries().reduce((tempo, mm) => {
             if (mm[0] >= oStart && mm[0] < oEnd) {
@@ -462,11 +465,9 @@ export class Stream extends base.Music21Object {
      * specialContext gets from a private attribute or from zero-position
      * or from site's first or special context.
      *
-     * @param attr
-     * @returns {music21.base.Music21Object|undefined|*}
      * @private
      */
-    _specialContext(attr) {
+    _specialContext(attr: string): any {
         const privAttr = '_' + attr;
         if (this[privAttr] !== undefined) {
             return this[privAttr];
@@ -498,11 +499,9 @@ export class Stream extends base.Music21Object {
      * same class name (except 'KeySignature' instead of 'keySignature')
      * in the stream at position 0.
      *
-     * @param attr
-     * @returns {music21.base.Music21Object|undefined}
      * @private
      */
-    _firstElementContext(attr) {
+    _firstElementContext(attr: string): base.Music21Object {
         const firstElements = this
             .getElementsByOffset(0.0)
             .getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
@@ -513,11 +512,11 @@ export class Stream extends base.Music21Object {
         }
     }
 
-    get clef() {
-        return this.getSpecialContext('clef', false);
+    get clef(): clef.Clef {
+        return this.getSpecialContext('clef', false) as clef.Clef;
     }
 
-    set clef(newClef) {
+    set clef(newClef: clef.Clef) {
         const oldClef = this._firstElementContext('clef');
         if (oldClef !== undefined) {
             this.replace(oldClef, newClef);
@@ -584,23 +583,28 @@ export class Stream extends base.Music21Object {
             = newSW * this.renderOptions.scaleFactor.x;
     }
 
-    get parts() {
-        return this.getElementsByClass('Part');
+    get parts(): iterator.StreamIterator<Part> {
+        return this.getElementsByClass('Part') as iterator.StreamIterator<Part>;
     }
 
-    get measures() {
-        return this.getElementsByClass('Measure');
+    get measures(): iterator.StreamIterator<Measure> {
+        return this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
     }
 
-    get voices() {
-        return this.getElementsByClass('Voice');
+    get voices(): iterator.StreamIterator<Voice> {
+        return this.getElementsByClass('Voice') as iterator.StreamIterator<Voice>;
     }
 
-    get length() {
+    get length(): number {
         return this._elements.length;
     }
 
     /**
+     * Property: the elements in the stream returned as an Array and set
+     * either from an Array or from another Stream.  Setting from another Stream
+     * will preserve the offsets.
+     * DO NOT MODIFY individual components (consider it like a Python tuple)
+     *
      * Note that a Stream is never returned from .elements,
      * but TypeScript requires getter and setters to have the same
      * function signature.
@@ -789,15 +793,15 @@ export class Stream extends base.Music21Object {
      * Add an element to the specified place in the stream, setting its `.offset` accordingly
      *
      * @param {number} offset - offset to place.
-     * @param {music21.base.Music21Object} el - element to append
+     * @param {Music21Object} el - element to append
      * @param {Object} [config] -- configuration options
      * @param {boolean} [config.ignoreSort=false] -- do not sort
      * @param {boolean} [config.setActiveSite=true] -- set the active site for the inserted element.
      * @returns {this}
      */
     insert(
-        offset,
-        el,
+        offset: number,
+        el: base.Music21Object,
         {
             ignoreSort=false,
             setActiveSite=true,
@@ -840,17 +844,20 @@ export class Stream extends base.Music21Object {
      *
      * Unlike music21p, does not take a list of elements.  TODO(msc): add this feature.
      *
-     * @param {number|music21.base.Music21Object} offset -- offset of the item to insert
-     * @param {music21.base.Music21Object|undefined} [elementOrNone] -- element.
+     * @param {number|Music21Object} offset -- offset of the item to insert
+     * @param {Music21Object|undefined} [elementOrNone] -- element.
      * @return {this}
      */
-    insertAndShift(offset, elementOrNone) {
+    insertAndShift(offset: number|base.Music21Object, elementOrNone?: base.Music21Object): this {
         let element;
         if (elementOrNone === undefined) {
             element = offset;
             offset = element.offset;
         } else {
             element = elementOrNone;
+            if (typeof offset !== 'number') {
+                throw new Error('offset must be a number if elementOrNone is not given');
+            }
         }
         const amountToShift = element.duration.quarterLength;
 
@@ -865,14 +872,14 @@ export class Stream extends base.Music21Object {
                 this.setElementOffset(existingEl, existingElOffset + amountToShift);
             }
         }
-        this.insert(offset, element);
+        this.insert(offset as number, element);
         return this;
     }
 
     /**
      * Return the first matched index
      */
-    index(el) {
+    index(el: base.Music21Object) {
         if (!this.isSorted && this.autoSort) {
             this.sort();
         }
@@ -889,10 +896,8 @@ export class Stream extends base.Music21Object {
     /**
      * Remove and return the last element in the stream,
      * or return undefined if the stream is empty
-     *
-     * @returns {base.Music21Object|undefined} last element in the stream
      */
-    pop() {
+    pop(): base.Music21Object|undefined {
         if (!this.isSorted && this.autoSort) {
             this.sort();
         }
@@ -912,11 +917,13 @@ export class Stream extends base.Music21Object {
     /**
      * Remove an object from this Stream.  shiftOffsets and recurse do nothing.
      */
-    remove(targetOrList,
+    remove(
+        targetOrList: base.Music21Object|base.Music21Object[],
         {
             shiftOffsets=false,
             recurse=false,
-        } = {}) {
+        } = {}
+    ) {
         if (shiftOffsets === true) {
             throw new StreamException('sorry cannot shiftOffsets yet');
         }
@@ -924,7 +931,7 @@ export class Stream extends base.Music21Object {
             throw new StreamException('sorry cannot recurse yet');
         }
 
-        let targetList;
+        let targetList: base.Music21Object[];
         if (!Array.isArray(targetOrList)) {
             targetList = [targetOrList];
         } else {
@@ -1000,10 +1007,14 @@ export class Stream extends base.Music21Object {
      *
      *  Does nothing if target cannot be found.
      */
-    replace(target, replacement, {
-        recurse=false,
-        allDerivated=true,
-    } = {}) {
+    replace(
+        target: base.Music21Object,
+        replacement: base.Music21Object,
+        {
+            recurse=false,
+            allDerived=true,
+        } = {}
+    ) {
         try {
             this.index(target);
         } catch (err) {
@@ -1025,10 +1036,10 @@ export class Stream extends base.Music21Object {
      *
      * Once Proxy objects are supported by all operating systems for
      *
-     * @param {int} index - can be -1, -2, to index from the end, like python
-     * @returns {music21.base.Music21Object|undefined}
+     * @param {number} index - can be -1, -2, to index from the end, like python
+     * @returns {Music21Object|undefined}
      */
-    get(index) {
+    get(index: number): base.Music21Object {
         // substitute for Python stream __getitem__; supports -1 indexing, etc.
         if (!this.isSorted) {
             this.sort();
@@ -1106,7 +1117,7 @@ export class Stream extends base.Music21Object {
      * if `options.inPlace` is False, this returns a modified deep copy.
 
      * @param {Object} [options]
-     * @returns {music21.stream.Stream}
+     * @returns {Stream}
      */
     makeMeasures(options) {
         const params = {
@@ -1280,7 +1291,7 @@ export class Stream extends base.Music21Object {
         fillWithRests=true,
         removeClasses=[],
         retainVoices=true,
-    }={}) {
+    }={}): this {
         const out = this.cloneEmpty('template');
         const restInfo = {
             offset: undefined,
@@ -1304,7 +1315,7 @@ export class Stream extends base.Music21Object {
             if (el.isStream
                     && (retainVoices || el.classes.includes('Voice'))) {
                 optionalAddRest();
-                const outEl = el.template({
+                const outEl = (el as Stream).template({
                     fillWithRests,
                     removeClasses,
                     retainVoices,
@@ -1312,9 +1323,10 @@ export class Stream extends base.Music21Object {
                 out.insert(el.offset, outEl);
             }
         }
+        return out;
     }
 
-    cloneEmpty(derivationMethod) {
+    cloneEmpty(derivationMethod?: string): this {
         const returnObj = this.constructor();
         // TODO(msc): derivation
         returnObj.mergeAttributes(this);
@@ -1326,7 +1338,7 @@ export class Stream extends base.Music21Object {
      * @param {this} other
      * @returns {this}
      */
-    mergeAttributes(other) {
+    mergeAttributes(other: Stream): this {
         super.mergeAttributes(other);
         for (const attr of [
             'autoSort',
@@ -1350,7 +1362,7 @@ export class Stream extends base.Music21Object {
      *
      * TODO: move call to makeBeams from renderVexflow to here.
      */
-    makeNotation({ inPlace=true }={}) {
+    makeNotation({ inPlace=true }={}): this {
         let out;
         if (inPlace) {
             out = this;
@@ -1368,7 +1380,7 @@ export class Stream extends base.Music21Object {
      *
      * Called from renderVexflow()
      */
-    makeBeams({ inPlace=false }={}) {
+    makeBeams({ inPlace=false }={}): this {
         let returnObj = this;
         if (!inPlace) {
             returnObj = this.clone(true);
@@ -1455,7 +1467,7 @@ export class Stream extends base.Music21Object {
      */
     hasLyrics() {
         for (const el of this) {
-            if (el.lyric !== undefined) {
+            if ((el as note.Note).lyric !== undefined) {
                 return true;
             }
         }
@@ -1464,10 +1476,8 @@ export class Stream extends base.Music21Object {
 
     /**
      * Returns a list of OffsetMap objects
-     *
-     * @returns [music21.stream.OffsetMap]
      */
-    offsetMap() {
+    offsetMap(): OffsetMap[] {
         const offsetMap = [];
         let groups = [];
         if (this.hasVoices()) {
@@ -1498,7 +1508,7 @@ export class Stream extends base.Music21Object {
         return offsetMap;
     }
 
-    get iter() {
+    get iter(): iterator.StreamIterator {
         return new iterator.StreamIterator(this);
     }
 
@@ -1507,9 +1517,8 @@ export class Stream extends base.Music21Object {
      * matching class will work.
      *
      * @param {string[]|string} classList - a list of classes to find
-     * @returns {music21.stream.Stream}
      */
-    getElementsByClass(classList) {
+    getElementsByClass(classList: string|string[]): iterator.StreamIterator {
         return this.iter.getElementsByClass(classList);
     }
 
@@ -1518,9 +1527,8 @@ export class Stream extends base.Music21Object {
      * matching class will work.
      *
      * @param {string[]|string} classList - a list of classes to find
-     * @returns {Stream}
      */
-    getElementsNotOfClass(classList) {
+    getElementsNotOfClass(classList: string|string[]): iterator.StreamIterator {
         return this.iter.getElementsNotOfClass(classList);
     }
 
@@ -1602,11 +1610,11 @@ export class Stream extends base.Music21Object {
      *  you want, because of some fancy manipulation of
      *  el.activeSite
      *
-     * @param {music21.base.Music21Object} el - object with an offset and class to search for.
-     * @param {music21.stream.Stream} [elStream] - a place to get el's offset from.
-     * @returns {music21.base.Music21Object|undefined}
+     * @param {Music21Object} el - object with an offset and class to search for.
+     * @param {Stream} [elStream] - a place to get el's offset from.
+     * @returns {Music21Object|undefined}
      */
-    playingWhenAttacked(el, elStream) {
+    playingWhenAttacked(el: base.Music21Object, elStream?): base.Music21Object {
         let elOffset;
         if (elStream !== undefined) {
             elOffset = el.getOffsetBySite(elStream);
@@ -1665,18 +1673,18 @@ export class Stream extends base.Music21Object {
         const lastOctavelessStepDict = {...extendableStepList};  // probably unnecessary, but safe...
 
         for (const el of this) {
-            if (el.pitch !== undefined) {
+            if ((el as note.Note).pitch !== undefined) {
                 // note
-                const p = el.pitch;
+                const p = (el as note.Note).pitch;
                 const lastStepDict = lastOctaveStepList[p.octave];
                 this._makeAccidentalForOnePitch(
                     p,
                     lastStepDict,
                     lastOctavelessStepDict
                 );
-            } else if (el._notes !== undefined) {
+            } else if ((el as chord.Chord).notes !== undefined) {
                 // chord
-                for (const chordNote of el._notes) {
+                for (const chordNote of (el as chord.Chord).notes) {
                     const p = chordNote.pitch;
                     const lastStepDict = lastOctaveStepList[p.octave];
                     this._makeAccidentalForOnePitch(
@@ -1756,7 +1764,7 @@ export class Stream extends base.Music21Object {
         if (recursive) {
             for (const el of this) {
                 if (el.isClassOrSubclass('Stream')) {
-                    el.resetRenderOptions(recursive, preserveEvents);
+                    (el as Stream).resetRenderOptions(recursive, preserveEvents);
                 }
             }
         }
@@ -1904,7 +1912,7 @@ export class Stream extends base.Music21Object {
         if (this.hasVoices()) {
             let maxLength = 0;
             for (const v of this) {
-                if (v.isClassOrSubclass('Stream')) {
+                if (v instanceof Stream) {
                     const thisLength
                         = v.estimateStaffLength() + v.renderOptions.staffPadding;
                     if (thisLength > maxLength) {
@@ -1918,7 +1926,7 @@ export class Stream extends base.Music21Object {
             totalLength = 0;
             for (i = 0; i < this.length; i++) {
                 const m = this.get(i);
-                if (m.isClassOrSubclass('Stream')) {
+                if (m instanceof Stream) {
                     totalLength
                         += m.estimateStaffLength() + m.renderOptions.staffPadding;
                     if (i !== 0 && m.renderOptions.startNewSystem === true) {
@@ -2320,7 +2328,8 @@ export class Stream extends base.Music21Object {
             if (this.isFlat) {
                 return undefined;
             } else {
-                const subStreams = this.getElementsByClass('Stream');
+                const subStreams = this.getElementsByClass('Stream') as
+                    iterator.StreamIterator<Stream>;
                 const first_subStream = subStreams.get(0);
                 return first_subStream.recursiveGetStoredVexflowStave();
             }
@@ -2464,14 +2473,14 @@ export class Stream extends base.Music21Object {
      * @param {number} [allowablePixels=10]
      * @param {number} [systemIndex]
      * @param {Object} [options]
-     * @returns {music21.base.Music21Object|undefined}
+     * @returns {Music21Object|undefined}
      */
     noteElementFromScaledX(
-        xPxScaled,
-        allowablePixels=10,
-        systemIndex=undefined,
+        xPxScaled: number,
+        allowablePixels: number = 10,
+        systemIndex?: number,
         options={},
-    ) {
+    ): base.Music21Object {
         const params = {
             allowBackup: true,
             backupMaximum: 70,
@@ -2542,7 +2551,7 @@ export class Stream extends base.Music21Object {
         e: MouseEvent|TouchEvent,
         x: number = undefined,
         y: number = undefined
-    ): [number, note.Note] {
+    ): [number, base.Music21Object] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -2796,12 +2805,6 @@ export class Stream extends base.Music21Object {
     }
 }
 
-/**
- *
- * @class Voice
- * @memberof music21.stream
- * @extends music21.stream.Stream
- */
 export class Voice extends Stream {
     static get className() { return 'music21.stream.Voice'; }
 
@@ -2811,11 +2814,6 @@ export class Voice extends Stream {
     }
 }
 
-/**
- * @class Measure
- * @memberof music21.stream
- * @extends music21.stream.Stream
- */
 export class Measure extends Stream {
     static get className() { return 'music21.stream.Measure'; }
 
@@ -2859,7 +2857,7 @@ export class Part extends Stream {
      */
     numSystems(): number {
         let numSystems = 1;
-        const subStreams = this.getElementsByClass('Stream');
+        const subStreams = this.getElementsByClass('Stream') as iterator.StreamIterator<Stream>;
         for (let i = 1; i < subStreams.length; i++) {
             if (subStreams.get(i).renderOptions.startNewSystem) {
                 numSystems += 1;
@@ -2876,7 +2874,7 @@ export class Part extends Stream {
         const measureWidths = [];
         for (const el of this) {
             if (el.isClassOrSubclass('Measure')) {
-                const elRendOp = el.renderOptions;
+                const elRendOp = (el as Measure).renderOptions;
                 measureWidths[elRendOp.measureIndex] = elRendOp.width;
             }
         }
@@ -2972,6 +2970,10 @@ export class Part extends Stream {
         let newLeftSubtract;
         for (i = 0; i < this.length; i++) {
             const m = this.get(i);
+            if (!(m instanceof Stream)) {
+                continue;
+            }
+
             if (m.renderOptions === undefined) {
                 continue;
             }
@@ -3057,7 +3059,7 @@ export class Part extends Stream {
         const rendOp = this.renderOptions;
         let lastTimeSignature;
         let lastKeySignature;
-        let lastClef;
+        let lastClef: clef.Clef;
 
         for (const m of this.getElementsByClass('Measure')) {
             const mRendOp = m.renderOptions;
@@ -3075,11 +3077,13 @@ export class Part extends Stream {
                 mRendOp.displayKeySignature = true;
                 mRendOp.displayTimeSignature = true;
             } else {
+                // noinspection JSUnusedAssignment
                 if (
                     m._clef !== undefined
                     && lastClef !== undefined
                     && m._clef.name !== lastClef.name
                 ) {
+                    // noinspection JSUnusedAssignment
                     console.log(
                         'changing clefs for ',
                         mRendOp.measureIndex,
@@ -3094,6 +3098,7 @@ export class Part extends Stream {
                     mRendOp.displayClef = false;
                 }
 
+                // noinspection JSUnusedAssignment
                 if (
                     m._keySignature !== undefined
                     && lastKeySignature !== undefined
@@ -3105,6 +3110,7 @@ export class Part extends Stream {
                     mRendOp.displayKeySignature = false;
                 }
 
+                // noinspection JSUnusedAssignment
                 if (
                     m._timeSignature !== undefined
                     && lastTimeSignature !== undefined
@@ -3159,7 +3165,7 @@ export class Part extends Stream {
         e: MouseEvent|TouchEvent,
         x: number = undefined,
         y: number = undefined
-    ): [number, note.Note] {
+    ): [number, base.Music21Object] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -3195,7 +3201,7 @@ export class Part extends Stream {
      *
      * @param {number} [xPxScaled]
      * @param {number} [systemIndex]
-     * @returns {music21.stream.Stream}
+     * @returns {Stream}
      *
      */
     getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex=undefined) {
@@ -3238,10 +3244,6 @@ export class Part extends Stream {
 
 /**
  * Scores with multiple parts
- *
- * @class Score
- * @memberof music21.stream
- * @extends music21.stream.Stream
  */
 export class Score extends Stream {
     static get className() { return 'music21.stream.Score'; }
@@ -3383,13 +3385,12 @@ export class Score extends Stream {
      * Render scrollable score works better...
      *
      * @param {Object} params -- passed to each part
-     * @returns {this}
      */
-    playStream(params) {
+    playStream(params): this {
         // play multiple parts in parallel...
         for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
-                el.playStream(params);
+                (el as Part).playStream(params);
             }
         }
         return this;
@@ -3397,13 +3398,11 @@ export class Score extends Stream {
 
     /**
      * Overrides the default music21.stream.Stream#stopPlayScore()
-     *
-     * @returns {this}
      */
-    stopPlayStream() {
+    stopPlayStream(): this {
         for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
-                el.stopPlayStream();
+                (el as Part).stopPlayStream();
             }
         }
         return this;
@@ -3481,7 +3480,7 @@ export class Score extends Stream {
         e: MouseEvent|TouchEvent,
         x: number = undefined,
         y: number = undefined
-    ): [number, note.Note] {
+    ): [number, base.Music21Object] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -3513,7 +3512,7 @@ export class Score extends Stream {
      * How many systems are there? Calls numSystems() on the first part.
      */
     numSystems(): number {
-        return this.getElementsByClass('Part')
+        return (this.getElementsByClass('Part') as iterator.StreamIterator<Part>)
             .get(0)
             .numSystems();
     }

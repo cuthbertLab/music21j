@@ -42,6 +42,10 @@
       <w>dodecachord</w>
       <w>dodecamirror</w>
       <w>drawbar</w>
+      <w>edflat</w>
+      <w>ednat</w>
+      <w>edsharp</w>
+      <w>endbrac</w>
       <w>enharmonics</w>
       <w>fati</w>
       <w>fermata</w>
@@ -83,6 +87,7 @@
       <w>largamente</w>
       <w>larghetto</w>
       <w>larghissimo</w>
+      <w>lilypond</w>
       <w>locrian</w>
       <w>longa</w>
       <w>maestoso</w>
@@ -108,6 +113,7 @@
       <w>mozvisibilitychange</w>
       <w>mpeg</w>
       <w>msvisibilitychange</w>
+      <w>multimeasure</w>
       <w>musescore</w>
       <w>musicxml</w>
       <w>nabhomani</w>
@@ -129,6 +135,7 @@
       <w>ottava</w>
       <w>overdriven</w>
       <w>pantuvarali</w>
+      <w>partbreak</w>
       <w>partlike</w>
       <w>partwise</w>
       <w>pelog</w>
@@ -139,9 +146,11 @@
       <w>perfectable</w>
       <w>petrushka</w>
       <w>phrygian</w>
+      <w>pizz</w>
       <w>polysynth</w>
       <w>pppp</w>
       <w>prebase</w>
+      <w>prectie</w>
       <w>prestissimo</w>
       <w>priv</w>
       <w>quantizes</w>
@@ -149,6 +158,7 @@
       <w>ramkali</w>
       <w>ranjaniraga</w>
       <w>ratioed</w>
+      <w>recordare</w>
       <w>recursed</w>
       <w>reflowed</w>
       <w>reinit</w>
@@ -163,9 +173,11 @@
       <w>scifi</w>
       <w>scref</w>
       <w>seemann</w>
+      <w>segno</w>
       <w>senza</w>
       <w>septachord</w>
       <w>seta</w>
+      <w>setb</w>
       <w>shakuhachi</w>
       <w>shamisen</w>
       <w>shanai</w>
@@ -194,6 +206,8 @@
       <w>tetracluster</w>
       <w>tetramirror</w>
       <w>tickables</w>
+      <w>timesig</w>
+      <w>tinynotation</w>
       <w>tinynotationcontents</w>
       <w>tnimax</w>
       <w>tnmax</w>
@@ -225,6 +239,7 @@
       <w>webaudio</w>
       <w>webkitvisibilitychange</w>
       <w>webmidi</w>
+      <w>wellformed</w>
       <w>wheatman</w>
       <w>whitekey</w>
       <w>xand</w>

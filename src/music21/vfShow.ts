@@ -36,7 +36,7 @@ const _clefSingleton = new clef.TrebleClef();
  *
  * @class RenderStack
  * @memberof music21.vfShow
- * @property {Array<stream.Stream>} streams - {@link music21.stream.Stream} objects
+ * @property {Stream[]} streams - {@link Stream} objects
  * associated with the voices
  * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
  * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
@@ -96,13 +96,13 @@ export class RenderStack {
  *
  * @class Renderer
  * @memberof music21.vfShow
- * @param {music21.stream.Stream} s - main stream to render
+ * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
  * @param {Node|jQuery} [where=document.body] - where to render the stream
  * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
  * (will create if not existing)
  * @property {string} rendererType - canvas or svg
- * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or SVG) to use.
+ * @property ctx - a Vex.Flow.SVGContext or Vex.Flow.CanvasContext to use.
  * @property {div} div - div-with-svg-or-canvas element
  * @property {jQuery} $div - jQuery div or canvas element
  * @property {jQuery} $where - jQuery element to render onto
@@ -209,7 +209,7 @@ export class Renderer {
      * if s is undefined, uses the stored Stream from
      * the constructor object.
      *
-     * @param {music21.stream.Stream} [s=this.stream]
+     * @param {Stream} [s=this.stream]
      */
     render(s=undefined) {
         if (s === undefined) {
@@ -292,7 +292,7 @@ export class Renderer {
      * Prepares a score that arrived flat... sets up
      * stacks and vfTies after calling prepareFlat
      *
-     * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
+     * @param {Stream} m - a flat stream (maybe a measure or voice)
      */
     prepareArrivedFlat(m: stream.Stream) {
         const stack = new RenderStack();
@@ -340,7 +340,7 @@ export class Renderer {
     /**
      * Main internal routine to prepare a flat stream
      *
-     * @param {music21.stream.Stream} s - a flat stream object
+     * @param {Stream} s - a flat stream object
      * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
      * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
      * @param {Object} [optional_renderOp] - render options.
@@ -374,7 +374,7 @@ export class Renderer {
      *
      * Just draws the stave, not the notes, etc.
      *
-     * @param {music21.stream.Stream} [m=this.stream] - a flat stream
+     * @param {Stream} [m=this.stream] - a flat stream
      * @param {Object} [optional_rendOp] - render options, passed
      * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
      * @returns {Vex.Flow.Stave} stave
@@ -434,7 +434,7 @@ export class Renderer {
      * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
      * `this.vfTies`.
      *
-     * @param {music21.stream.Stream} p - a Part or similar object
+     * @param {Stream} p - a Part or similar object
      */
     prepareTies(p: stream.Stream) {
         const pf = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
@@ -486,7 +486,7 @@ export class Renderer {
      *
      * Does not draw it...
      *
-     * @param {stream.Stream} [s=this.stream] -- usually a Measure or Voice
+     * @param {Stream} [s=this.stream] -- usually a Measure or Voice
      * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
      * @returns {Vex.Flow.Voice}
      */
@@ -507,7 +507,7 @@ export class Renderer {
     /**
      * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
      *
-     * @param {music21.stream.Stream} s -- usually a Measure or Voice
+     * @param {Stream} s -- usually a Measure or Voice
      * @param {Vex.Flow.Stave} stave
      * @returns {Vex.Flow.Voice}
      */
@@ -645,7 +645,7 @@ export class Renderer {
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
      *
-     * @param {music21.stream.Stream} s
+     * @param {Stream} s
      * @param {Object} [rendOp]
      * @returns {Vex.Flow.Stave}
      */
@@ -688,7 +688,7 @@ export class Renderer {
      * Sets the number of stafflines, puts the clef on the Stave,
      * adds keySignature, timeSignature, and rightBarline
      *
-     * @param {music21.stream.Stream} s
+     * @param {Stream} s
      * @param {Vex.Flow.Stave} stave
      * @param {Object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
      * object that might have
@@ -762,7 +762,7 @@ export class Renderer {
      * if the number of lines is 0 or >=4, because the default in VexFlow is
      * to show the bottom(top?), not middle, lines and that looks bad.
      *
-     * @param {music21.stream.Stream} s - stream to get the `.staffLines`
+     * @param {Stream} s - stream to get the `.staffLines`
      * from `s.renderOptions` from -- should allow for overriding.
      * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
      */
@@ -808,7 +808,7 @@ export class Renderer {
      *
      * Also changes `this.vfTuplets`.
      *
-     * @param {music21.stream.Stream} [s=this.stream] - flat stream to find notes in
+     * @param {Stream} [s=this.stream] - flat stream to find notes in
      * @param {Vex.Flow.Stave} stave - Vex.Flow.Stave to render notes on to.
      * @returns {Array<Vex.Flow.StaveNote>} notes to return
      */
@@ -845,6 +845,7 @@ export class Renderer {
                     continue;
                 }
                 if (stave !== undefined) {
+                    // noinspection TypeScriptValidateJSTypes
                     vfn.setStave(stave);
                 }
                 notes.push(vfn);
@@ -902,13 +903,14 @@ export class Renderer {
     /**
      * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
      *
-     * @param {music21.stream.Stream} s - flat stream to search.
+     * @param {Stream} s - flat stream to search.
      * @param {Vex.Flow.Stave} stave
      * @returns {Array<Vex.Flow.TextNote>}
      */
     vexflowLyrics(s, stave) {
         const getTextNote = (text, font, d, lyricObj=undefined) => {
             // console.log(text, font, d);
+            // noinspection TypeScriptValidateJSTypes
             const t1 = new Vex.Flow.TextNote({
                 text,
                 font,
@@ -984,11 +986,8 @@ export class Renderer {
 
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
-     *
-     * @param {music21.stream.Stream} s
-     * @returns {Vex.Flow.Voice}
      */
-    vexflowVoice(s) {
+    vexflowVoice(s: stream.Stream): Vex.Flow.Voice {
         const totalLength = s.duration.quarterLength;
 
         let num1024 = Math.round(totalLength / (1 / 256));
@@ -1045,6 +1044,7 @@ export class Renderer {
         // SOFT:   Ticks can be added without restrictions.
         // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
         //         tick length.
+        // noinspection TypeScriptValidateJSTypes
         vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
         return vfv;
     }
@@ -1128,6 +1128,7 @@ export class Renderer {
                     );
                     const scTypeM21 = s.renderOptions.staffConnectors[i];
                     const scTypeVF = this.staffConnectorsMap(scTypeM21);
+                    // noinspection TypeScriptValidateJSTypes
                     sc.setType(scTypeVF);
                     sc.setContext(this.ctx);
                     sc.draw();
@@ -1139,14 +1140,14 @@ export class Renderer {
     /**
      * The process of putting a Stream onto a div affects each of the
      * elements in the Stream by adding pieces of information to
-     * each {@link music21.base.Music21Object} -- see `applyFormatterInformationToNotes`
+     * each {@link Music21Object} -- see `applyFormatterInformationToNotes`
      *
      * You might want to remove this information; this routine does that.
      *
-     * @param {music21.stream.Stream} s - can have parts, measures, etc.
+     * @param {Stream} s - can have parts, measures, etc.
      * @param {boolean} [recursive=false]
      */
-    removeFormatterInformation(s, recursive) {
+    removeFormatterInformation(s, recursive=false) {
         s.storedVexflowStave = undefined;
         for (const el of s) {
             el.x = undefined;
@@ -1174,10 +1175,10 @@ export class Renderer {
      * Also sets s.storedVexflowStave to stave.
      *
      * @param {Vex.Flow.Stave} stave
-     * @param {music21.stream.Stream} [s=this.stream]
+     * @param {Stream} [s=this.stream]
      * @param {Vex.Flow.Formatter} formatter
      */
-    applyFormatterInformationToNotes(stave, s, formatter) {
+    applyFormatterInformationToNotes(stave: Vex.Flow.Stave, s?: stream.Stream, formatter?) {
         if (s === undefined) {
             s = this.stream;
         }
@@ -1199,9 +1200,10 @@ export class Renderer {
         }
 
         let nextTicks = 0;
-        for (const el of s) {
+        for (const ee of s) {
+            const el = <any> ee;  // TODO: get rid of the hacky el.x, el.systemIndex, el.width.
             if (el.isClassOrSubclass('GeneralNote')) {
-                const vfn = el.activeVexflowNote;
+                const vfn = (el as note.GeneralNote).activeVexflowNote;
                 if (vfn === undefined) {
                     continue;
                 }
@@ -1219,7 +1221,7 @@ export class Renderer {
                 }
 
                 el.width = formatterNote.width;
-                if (el.pitch !== undefined) {
+                if (el.pitch !== undefined && stave !== undefined) {
                     // note only...
                     el.y
                         = stave.getBottomY()
@@ -1231,13 +1233,14 @@ export class Renderer {
         }
         if (debug) {
             for (const n of s) {
-                if (n.pitch !== undefined) {
+                if ((n as note.Note).pitch !== undefined) {
+                    const nn = <any> n;
                     console.log(
-                        n.pitch.diatonicNoteNum
+                        nn.pitch.diatonicNoteNum
                             + ' '
-                            + n.x
+                            + nn.x
                             + ' '
-                            + (n.x + n.width)
+                            + (nn.x + nn.width)
                     );
                 }
             }
