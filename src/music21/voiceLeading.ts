@@ -31,7 +31,7 @@ export const MotionType = {
 
 /**
  * @memberOf music21.voiceLeading
- * @extends music21.base.Music21Object
+ * @extends Music21Object
  */
 export class VoiceLeadingQuartet extends Music21Object {
     static get className() { return 'music21.voiceLeading.VoiceLeadingQuartet'; }

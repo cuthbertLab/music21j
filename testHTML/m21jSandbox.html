@@ -46,9 +46,9 @@
         <p></p>
         <div class="example sandbox">
             <textarea id="sandbox" class="editor">
-var n = new music21.note.Note("C#");
+const n = new music21.note.Note("C#");
 n.duration.type = "whole";
-var s = new music21.stream.Stream();
+const s = new music21.stream.Stream();
 s.append(n);
 s.replaceDOM();
 </textarea>

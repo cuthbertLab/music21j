@@ -5,10 +5,9 @@
  * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
- * TinyNotation module, see {@link music21.tinyNotation} namespace
+ * TinyNotation module
  *
  * @exports music21.tinyNotation
- * @namespace music21.tinyNotation
  * @memberof music21
  * @requires music21/base
  * @requires music21/clef
@@ -66,7 +65,7 @@ const regularExpressions = {
  *
  * Converts a TinyNotation String into a music21 Stream
  *
- * See music21p for examples of what can go into tinynotation. It's an
+ * See music21p for examples of what can go into tinyNotation. It's an
  * adaptation of Lilypond format, by design Extremely simple!
  *
  * @memberof music21.tinyNotation
@@ -263,7 +262,7 @@ export function TinyNotation(textIn) {
         returnObject = optionalScore;
     } else {
         const bestClef = clef.bestClef(p);
-        p.getElementsByClass('Measure').get(0).insert(0, bestClef);
+        (p.getElementsByClass('Measure').get(0) as stream.Measure).insert(0, bestClef);
         returnObject = p;
     }
     return returnObject;
@@ -283,7 +282,7 @@ export function renderNotationDivs(
     classTypes: string = '.music21.tinyNotation',
     selector=undefined
 ) {
-    let $allRender: JQuery<HTMLElement>;
+    let $allRender: JQuery;
 
     if (selector === undefined) {
         $allRender = $(classTypes);

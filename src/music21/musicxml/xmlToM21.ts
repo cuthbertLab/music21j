@@ -13,6 +13,7 @@ import * as tie from '../tie';
 
 // imports just for typing:
 import { Music21Object } from '../base';
+import {base} from '../../music21_modules';
 
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
@@ -686,12 +687,7 @@ export class MeasureParser {
     }
 
 
-    /**
-     *
-     * @param {jQuery} $mxElement
-     * @param {music21.base.Music21Object} el
-     */
-    insertIntoMeasureOrVoice($mxElement, el) {
+    insertIntoMeasureOrVoice($mxElement: JQuery, el: base.Music21Object) {
         this.stream.insert(this.offsetMeasureNote, el);
     }
 

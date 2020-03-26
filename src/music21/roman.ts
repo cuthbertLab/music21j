@@ -262,7 +262,13 @@ export class RomanNumeral extends harmony.Harmony {
         }={}
     ) {
         super(figure, { updatePitches, parseFigure });
+
+        // immediately fix low-preference figures
+        figure = figure.replace('0', 'o');
         figure = figure.replace('/o', 'ø');
+
+        // end immediate fixes
+
         this._parsingComplete = false;
 
         // not yet used...

@@ -350,6 +350,7 @@ export class XMLExporterBase {
     getRandomId() {
         // hack to get random ids.
         let text = '';
+        // noinspection SpellCheckingInspection
         const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
         for (let i = 0; i < 6; i++) {
@@ -377,7 +378,7 @@ export class ScoreExporter extends XMLExporterBase {
     partExporterList = [];
     instrumentList = [];
     midiChannelList = [];
-    parts = [];
+    parts: Part[] = [];
 
     constructor(score) {
         super();
@@ -427,7 +428,7 @@ export class ScoreExporter extends XMLExporterBase {
             }
             this.refStreamOrTimeRange = [0.0, this.highestTime];
         }
-        this.parts = streamOfStreams.stream();
+        this.parts = Array.from(streamOfStreams.stream()) as Part[];
     }
 
     // TODO(msc): setMeterStream
@@ -456,7 +457,7 @@ export class ScoreExporter extends XMLExporterBase {
 
     setScoreHeader() {
         // const s = this.stream;
-        // scoreMeatadata
+        // scoreMetadata
         // titles
         // identification
         // setDefaults
@@ -567,7 +568,7 @@ const _classesToMeasureMethods = [
     ['Chord', 'chordToXml'],
     ['Rest', 'restToXml'],
     // Dynamic, Segno, Coda, MetronomeMark, MetricModulation,
-    // TextExpression, RepeatExpression, RehersalMark
+    // TextExpression, RepeatExpression, RehearsalMark
 ];
 
 const _wrapAttributeMethodClasses = [
@@ -708,7 +709,7 @@ export class MeasureExporter extends XMLExporterBase {
     // TODO(msc): prePostObjectSpanners
     // TODO(msc): _spannerStartParameters
     // TODO(msc): _spannerEndParameters
-    // TODO(msc): objectAttachedSpaners
+    // TODO(msc): objectAttachedSpanners
 
     /**
      *
@@ -1035,7 +1036,7 @@ export class MeasureExporter extends XMLExporterBase {
 
     clefToXml(clefObj) {
         const mxClef = this.doc.createElement('clef');
-        // printstyle
+        // print-style
         const sign = clefObj.sign || 'G';
         const mxSign = this.subElement(mxClef, 'sign');
         mxSign.innerHTML = sign;

@@ -59,7 +59,7 @@ export class RenderOptions {
     stemDirection: any = undefined;
 
     maxSystemWidth: number = undefined;
-    rightBarline: number = undefined;
+    rightBarline: string = undefined;
     staffLines: number = 5;
     staffConnectors: string[] = ['single', 'brace'];
     staffPadding: number = 60; // width...

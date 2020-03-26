@@ -120,6 +120,16 @@ export class Chord extends note.NotRest {
         this._overrides = {};
     }
 
+    get notes(): note.Note[] {
+        return [...this._notes];
+    }
+
+    set notes(newNotes: note.Note[]) {
+        this._notes = [...newNotes];
+        this._cache = {};
+        this._overrides = {};
+    }
+
 
     get orderedPitchClasses(): number[] {
         const pcGroup = [];
@@ -634,7 +644,7 @@ export class Chord extends note.NotRest {
      * @param {Object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
      * @returns {Vex.Flow.StaveNote}
      */
-    vexflowNote(options={clef: undefined}) {
+    vexflowNote(options={clef: undefined}): Vex.Flow.StaveNote {
         const clef = options.clef;
 
         const pitchKeys = [];

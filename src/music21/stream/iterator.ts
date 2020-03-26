@@ -1,6 +1,9 @@
 import { StreamException } from '../exceptions21';
 import * as filters from './filters';
 
+// just for declaration
+import {base, stream} from '../../music21_modules';
+
 const StopIterationSingleton = filters.StopIterationSingleton;
 
 // noinspection JSUnusedGlobalSymbols
@@ -8,10 +11,10 @@ export class StreamIteratorException extends StreamException {
 
 }
 
-export class StreamIterator {
-    srcStream;  // should be Stream
+export class StreamIterator<T = base.Music21Object> {
+    srcStream: stream.Stream;  // should be Stream
     index: number = 0;
-    srcStreamElements: any[];  // should be Music21Object[]
+    srcStreamElements: base.Music21Object[];
     streamLength: number;
     iterSection: string = '_elements';
     cleanupOnStop: boolean = false;
@@ -20,13 +23,13 @@ export class StreamIterator {
     filters: any[];
 
     protected _len: number;
-    protected _matchingElements: any[];  // should be Music21Object[]
+    protected _matchingElements: base.Music21Object[];
 
     sectionIndex: number = 0;
     activeInformation: any;
 
     constructor(
-        srcStream,
+        srcStream: stream.Stream,
         {
             filterList = [],
             restoreActiveSites=true,
@@ -38,7 +41,7 @@ export class StreamIterator {
             srcStream.sort();
         }
         this.srcStream = srcStream;
-        this.srcStreamElements = srcStream.elements;
+        this.srcStreamElements = srcStream.elements as base.Music21Object[];
         this.streamLength = this.srcStreamElements.length;
 
         this.restoreActiveSites = restoreActiveSites;
@@ -85,7 +88,7 @@ export class StreamIterator {
         this.cleanup();
     }
 
-    get(k) {
+    get(k): T {
         const fe = this.matchingElements();
         if (k < 0) {
             k = fe.length + k;
@@ -93,7 +96,7 @@ export class StreamIterator {
         return fe[k];
     }
 
-    get length() {
+    get length(): number {
         if (this._len !== undefined) {
             return this._len;
         }
@@ -134,9 +137,9 @@ export class StreamIterator {
         }
     }
 
-    matchingElements() {
+    matchingElements(): T[] {
         if (this._matchingElements !== undefined) {
-            return this._matchingElements;
+            return <T[]><any[]> this._matchingElements;
         }
 
         const savedIndex = this.index;
@@ -154,7 +157,7 @@ export class StreamIterator {
         return me;
     }
 
-    matchesFilters(e) {
+    matchesFilters(e: base.Music21Object) {
         for (const f of this.filters) {
             const ret = f.call(e, this);
             if (ret === false) {
@@ -176,10 +179,11 @@ export class StreamIterator {
         // derivation;
         const fe = this.matchingElements();
         for (const e of fe) {
-            const o = ss.elementOffset(e, { stringReturns: true });
+            const stringReturns = true;
+            const o = ss.elementOffset(e, stringReturns);
             // try: getOffsetInHierarchy...
             // string returns;
-            found.insert(o, e);
+            found.insert(o, <base.Music21Object><any> e);
         }
         // if (fe.length) {
         //     found.coreElementsChanged()
@@ -254,7 +258,7 @@ export class StreamIterator {
     }
 }
 
-export class OffsetIterator extends StreamIterator {
+export class OffsetIterator<T> extends StreamIterator<T> {
     nextToYield: any[];  // should be Music21Object[]
     nextOffsetToYield: number;
 
@@ -325,21 +329,24 @@ export class OffsetIterator extends StreamIterator {
     }
 }
 
-export class RecursiveIterator extends StreamIterator {
+export class RecursiveIterator<T> extends StreamIterator<T> {
     returnSelf: boolean;
     includeSelf: boolean;
     ignoreSorting: boolean;
     iteratorStartOffsetInHierarchy: number = 0.0;
-    childRecursiveIterator: RecursiveIterator;
+    childRecursiveIterator: RecursiveIterator<T>;
 
-    constructor(srcStream, {
-        filterList=[],
-        restoreActiveSites=true,
-        activeInformation=undefined,
-        streamsOnly=false,
-        includeSelf=false,
-        ignoreSorting=false,
-    }={}) {
+    constructor(
+        srcStream: stream.Stream,
+        {
+            filterList=[],
+            restoreActiveSites=true,
+            activeInformation=undefined,
+            streamsOnly=false,
+            includeSelf=false,
+            ignoreSorting=false,
+        }={}
+    ) {
         super(srcStream, {
             filterList,
             restoreActiveSites,
@@ -362,7 +369,7 @@ export class RecursiveIterator extends StreamIterator {
         super.reset();
     }
 
-    * [Symbol.iterator]() {
+    * [Symbol.iterator](): Generator<T, void, void> {
         this.reset(); // in __iter__.
 
         if (this.returnSelf && this.matchesFilters(this.srcStream)) {
@@ -370,7 +377,7 @@ export class RecursiveIterator extends StreamIterator {
             this.activeInformation.index = -1;
             this.activeInformation.lastYielded = this.srcStream;
             this.returnSelf = false;
-            yield this.srcStream;
+            yield <T><any> this.srcStream;
         } else if (this.returnSelf) {
             // did not match filters...
             this.returnSelf = false;
@@ -389,12 +396,12 @@ export class RecursiveIterator extends StreamIterator {
                 }
                 this.updateActiveInformation();
                 this.activeInformation.lastYielded = e;
-                yield e;
+                yield <T><any> e;
             }
 
             if (e.isStream) {
                 this.childRecursiveIterator = new RecursiveIterator(
-                    e,
+                    <stream.Stream><any> e,
                     {
                         restoreActiveSites: this.restoreActiveSites,
                         filterList: this.filters, // shared list
@@ -433,9 +440,9 @@ export class RecursiveIterator extends StreamIterator {
      *   Returns a stack of RecursiveIterators at this point in the iteration.
      *   Last is most recent.
      */
-    iteratorStack(): RecursiveIterator[] {
-        const iterStack: RecursiveIterator[] = [this];
-        let x: RecursiveIterator = this;
+    iteratorStack(): RecursiveIterator<T>[] {
+        const iterStack: RecursiveIterator<T>[] = [this];
+        let x: RecursiveIterator<T> = this;
         while (x.childRecursiveIterator !== undefined) {
             x = x.childRecursiveIterator;
             iterStack.push(x);
