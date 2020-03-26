@@ -451,3 +451,29 @@ export const pathSimplify = path => {
     pNew = pPrefix + pNew;
     return pNew;
 };
+
+export function isFloat(num) {
+    return Number(num) === num && num % 1 !== 0; 
+}
+
+// TODO: implement and test
+// export function opFrac(num) {
+//
+//     //const DENOM_LIMIT = 65535; // move to another location
+//     if (isFloat(num)) { // no builtin isFloat function exists
+//         // no fraction support yet
+//         return num;
+//     }
+//     else if (Number.isInteger(num)) {
+//         return num; // number, no int's
+//     }
+//     else if (num === 'Fraction') { // Replace with fraction object
+//         return num; // no fraction support yet
+//     }
+//     else if (num === null) {
+//         return null;
+//     }
+//     else {
+//         return null;
+//     }
+// }

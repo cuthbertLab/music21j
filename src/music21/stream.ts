@@ -1953,13 +1953,64 @@ export class Stream extends base.Music21Object {
         }
     }
 
+    /**
+     * Returns either (1) a Stream containing Elements
+     * (that wrap the null object) whose offsets and durations
+     * are the length of gaps in the Stream
+     * or (2) null if there are no gaps.
+     * @returns {object}
+     */ 
+    findGaps() {
+        if (!this.isSorted && this.autoSort) {
+            this.sort();
+        }  
+        const sortedElements = this.elements;
+        let elementDuration = 0;      
+        const gapStream = new Stream(); // cloneEmpty does not work, created new obj
+        let highestCurrentEndTime = 0.0;
+        for (const element of sortedElements) {
+            if (element) { 
+                if (element.offset > highestCurrentEndTime) {
+                    const gapElement = new base.Music21Object(); 
+                    const gapQuarterLength = element.offset - highestCurrentEndTime;
+                    gapElement.duration = this.duration;
+                    gapElement.duration.quarterLength = gapQuarterLength;
+                    gapStream.insert(highestCurrentEndTime, gapElement);
+                } if ('duration' in element && element.duration !== null) {
+                    elementDuration = element.duration.quarterLength;
+                } else {
+                    elementDuration = 0;
+                }
+                highestCurrentEndTime = (
+                    Math.max(highestCurrentEndTime, element.offset + elementDuration) 
+                ); 
+            }   
+        }
+        gapStream.sort();
+        if (gapStream.elements.length) {
+            return gapStream;
+        }
+        return null;
+    }
+
+    /**
+     * Returns True if there are no gaps between the lowest offset and the highest time.
+     * Otherwise returns False
+     *
+     * @returns {boolean}
+     */    
+
+    get isGapless() {
+        return (this.findGaps() === null);
+    }
+
     //  * ***** MIDI related routines...
 
     /**
      * Plays the Stream through the MIDI/sound playback (for now, only MIDI.js is supported)
      *
      * `options` can be an object containing:
-     * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
+     * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
      *
      * @param {Object} [options] - object of playback options
