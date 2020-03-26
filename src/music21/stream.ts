@@ -1952,19 +1952,19 @@ export class Stream extends base.Music21Object {
      * or (2) null if there are no gaps.
      * @returns {object}
      */ 
-    findGaps(self) {
-        if (!self.isSorted && self.autoSort) {
-            self.sort();
+    findGaps() {
+        if (!this.isSorted && this.autoSort) {
+            this.sort();
         }  
-        const sortedElements = self.elements;
+        const sortedElements = this.elements;
         let elementDuration = 0;      
-        const gapStream = new Score(); // cloneEmpty does not work, created new obj       
+        const gapStream = new Stream(); // cloneEmpty does not work, created new obj
         let highestCurrentEndTime = 0.0;
         for (const element of sortedElements) {
             if (element) { 
                 if (element.offset > highestCurrentEndTime) {
                     const gapElement = new base.Music21Object(); 
-                    const gapQuarterLength = common.opFrac(element.offset - highestCurrentEndTime);
+                    const gapQuarterLength = element.offset - highestCurrentEndTime;
                     gapElement.duration = this.duration;
                     gapElement.duration.quarterLength = gapQuarterLength;
                     gapStream.insert(highestCurrentEndTime, gapElement);
@@ -1973,19 +1973,16 @@ export class Stream extends base.Music21Object {
                 } else {
                     elementDuration = 0;
                 }
-                highestCurrentEndTime = common.opFrac(
+                highestCurrentEndTime = (
                     Math.max(highestCurrentEndTime, element.offset + elementDuration) 
                 ); 
             }   
         }
         gapStream.sort();
-        if (gapStream.elements.length === 0) {
-            return null;
-        } else {
-            self.GapStream = gapStream;
+        if (gapStream.elements.length) {
             return gapStream;
-        }     
-
+        }
+        return null;
     }
 
     /**
@@ -1995,14 +1992,8 @@ export class Stream extends base.Music21Object {
      * @returns {boolean}
      */    
 
-    isGapless(self) {
-        if (this.findGaps(self) === null) {
-            self.Gapless = true;
-            return true;
-        } else {
-            self.Gapless = false;
-            return false;
-        }
+    get isGapless() {
+        return (this.findGaps() === null);
     }
 
     //  * ***** MIDI related routines...

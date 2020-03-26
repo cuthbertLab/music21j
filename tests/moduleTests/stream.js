@@ -412,10 +412,22 @@ export default function tests() {
         const n2 = new music21.note.Note('D');
         testOne.insert(0, n1);
         testOne.insert(0, n2);
-        assert.equal(testOne.isGapless(testOne), true);
-        assert.equal(testOne.findGaps(testOne), null);
+        assert.equal(testOne.isGapless, true);
+        assert.equal(testOne.findGaps(), null);
+
         const n3 = new music21.note.Note('E');
         testOne.insert(10.0, n3);
-        assert.equal(testOne.isGapless(testOne), false);
+        assert.equal(testOne.isGapless, false);
+        let gapStream = testOne.findGaps();
+        assert.ok(gapStream instanceof music21.stream.Stream);
+        assert.equal(gapStream.length, 1);
+        assert.equal(gapStream.get(0).duration.quarterLength, 9);
+
+        const n4 = new music21.note.Note('E');
+        testOne.insert(4.0, n4);
+        gapStream = testOne.findGaps();
+        assert.equal(gapStream.length, 2);
+        assert.equal(gapStream.get(0).duration.quarterLength, 3);
+        assert.equal(gapStream.get(1).duration.quarterLength, 5);
     });
 }
