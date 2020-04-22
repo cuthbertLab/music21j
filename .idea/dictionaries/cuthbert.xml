@@ -17,6 +17,7 @@
       <w>bainbridge</w>
       <w>barline</w>
       <w>barlines</w>
+      <w>bartolome</w>
       <w>bauli</w>
       <w>bbbb</w>
       <w>beamable</w>
@@ -30,6 +31,8 @@
       <w>castel</w>
       <w>charang</w>
       <w>chiff</w>
+      <w>chordify</w>
+      <w>chordstep</w>
       <w>classid</w>
       <w>clavinet</w>
       <w>contrabass</w>
@@ -49,14 +52,17 @@
       <w>enharmonics</w>
       <w>fati</w>
       <w>fermata</w>
+      <w>ferneyhough</w>
       <w>ffff</w>
       <w>ficta</w>
       <w>foffset</w>
       <w>fretless</w>
+      <w>gapless</w>
       <w>gerstner</w>
       <w>goog</w>
       <w>gright</w>
       <w>guidon</w>
+      <w>guillen</w>
       <w>hacky</w>
       <w>hepatonic</w>
       <w>heptachord</w>
@@ -119,6 +125,7 @@
       <w>nabhomani</w>
       <w>newroot</w>
       <w>nexts</w>
+      <w>nfrom</w>
       <w>nonachord</w>
       <w>nonamirror</w>
       <w>nonatonic</w>
@@ -171,9 +178,11 @@
       <w>scdict</w>
       <w>schnell</w>
       <w>scifi</w>
+      <w>scorelike</w>
       <w>scref</w>
       <w>seemann</w>
       <w>segno</w>
+      <w>semiflat</w>
       <w>senza</w>
       <w>septachord</w>
       <w>seta</w>
@@ -194,6 +203,7 @@
       <w>subdominant</w>
       <w>submediant</w>
       <w>substream</w>
+      <w>substreams</w>
       <w>subtonic</w>
       <w>supertonic</w>
       <w>symlinking</w>
@@ -233,6 +243,7 @@
       <w>vexflow</w>
       <w>viio</w>
       <w>viioo</w>
+      <w>viro</w>
       <w>visibilitychange</w>
       <w>vivacissimo</w>
       <w>vorbis</w>

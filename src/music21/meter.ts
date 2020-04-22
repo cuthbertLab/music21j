@@ -22,12 +22,11 @@ import * as beam from './beam';
 import * as common from './common';
 import * as duration from './duration';
 
+import { Stream } from './stream'; // typing only import
+
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
  *
- * @class TimeSignature
- * @memberof music21.meter
- * @extends music21.base.Music21Object
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]
@@ -201,10 +200,9 @@ export class TimeSignature extends base.Music21Object {
     }
 
     /**
-     * @param {music21.stream.Stream} srcStream - a stream of elements.
-     * @param {Object} options - an object with measureStartOffset
+     * options - an object with measureStartOffset
      */
-    getBeams(srcStream, options={}) {
+    getBeams(srcStream: Stream, options={}) {
         const params = { measureStartOffset: 0.0 };
         common.merge(params, options);
         const measureStartOffset = params.measureStartOffset;

@@ -300,8 +300,8 @@ export class XMLExporterBase {
     /**
      * Helper method since SubElement does not exist in javascript document.implementation
      */
-    subElement(el, tag) {
-        const subElement = this.doc.createElement(tag);
+    subElement(el: HTMLElement, tag: string): HTMLElement {
+        const subElement = <HTMLElement> this.doc.createElement(tag);
         el.appendChild(subElement);
         return subElement;
     }

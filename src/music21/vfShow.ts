@@ -152,7 +152,7 @@ export class Renderer {
         }
     }
 
-    get vfRenderer() {
+    get vfRenderer(): any {
         let backend;
         if (this.rendererType === 'canvas') {
             backend = Vex.Flow.Renderer.Backends.CANVAS;
@@ -163,8 +163,10 @@ export class Renderer {
         if (this._vfRenderer !== undefined) {
             return this._vfRenderer;
         } else {
-            this._vfRenderer = new Vex.Flow.Renderer(this.div, backend);
+            this._vfRenderer = <any> new Vex.Flow.Renderer(this.div, backend);
             if (this.rendererType === 'svg') {
+                // this is NOT NOT NOT a JQuery object.
+                // noinspection JSDeprecatedSymbols
                 this._vfRenderer.resize(
                     this.$div.attr('width'),
                     this.$div.attr('height')
@@ -174,7 +176,7 @@ export class Renderer {
         }
     }
 
-    set vfRenderer(vfr) {
+    set vfRenderer(vfr: any) {
         this._vfRenderer = vfr;
     }
 
@@ -211,7 +213,7 @@ export class Renderer {
      *
      * @param {Stream} [s=this.stream]
      */
-    render(s=undefined) {
+    render(s: stream.Stream = undefined) {
         if (s === undefined) {
             s = this.stream;
         }
@@ -222,16 +224,16 @@ export class Renderer {
 
         if (s.isClassOrSubclass('Score')) {
             isScorelike = true;
-        } else if (!isFlat && !s.get(0).isFlat) {
+        } else if (!isFlat && !(s.get(0) as stream.Stream).isFlat) {
             isScorelike = true;
         } else if (!isFlat) {
             isPartlike = true;
         }
         // requires organization Score -> Part -> Measure -> elements...
         if (isScorelike) {
-            this.prepareScorelike(s);
+            this.prepareScorelike(s as stream.Score);
         } else if (isPartlike) {
-            this.preparePartlike(s);
+            this.preparePartlike(s as stream.Part);
         } else {
             this.prepareArrivedFlat(s);
         }
@@ -495,7 +497,7 @@ export class Renderer {
             s = this.stream;
         }
 
-        // gets a group of notes as a voice, but completely unformatted and not drawn.
+        // gets a group of notes as a voice, but completely un-formatted and not drawn.
         const notes = this.vexflowNotes(s, stave);
         const voice = this.vexflowVoice(s);
         voice.setStave(stave);

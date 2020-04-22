@@ -2622,6 +2622,7 @@ function _validateAddress(address) {
         address = [address.cardinality, address.forteClass, address.inversion, address.pcOriginal];
     }
 
+    // noinspection JSObjectNullOrUndefined
     const [card, index] = address.slice(0, 2);
     let inversion;
     if (address.length >= 3 && address[2] !== undefined) {

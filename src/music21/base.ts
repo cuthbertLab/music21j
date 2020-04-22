@@ -486,7 +486,6 @@ export class Music21Object extends prebase.ProtoM21Object {
     }
 }
 
-
 function getContextByClassPayloadExtractor(
     useSite: Stream,
     flatten: boolean|string,  // true, false, or semiflat
@@ -498,8 +497,8 @@ function getContextByClassPayloadExtractor(
     // do not use .flat or .semiFlat so as not
     // to create new sites.
 
-    // VERY HACKY...
-    let lastElement;
+    // conflict between two linters requires setting lastElement to undefined.
+    let lastElement = undefined;  // eslint-disable-line no-undef-init
     const useSiteElements = useSite.elements; // we want sorting.
 
     for (let i = 0; i < useSiteElements.length; i++) {

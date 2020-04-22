@@ -33,13 +33,10 @@ export { chordTables };
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
  *
- * @class Chord
- * @memberof music21.chord
  * @param {Array<string|note.Note|Pitch>} [notes] -
  *     an Array of strings
  *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
- * @extends music21.note.NotRest
  * @property {number} length - the number of pitches in the Chord (readonly)
  * @property {Pitch[]} pitches - an Array of Pitch objects in the
  *     chord. (Consider the Array read only and pass in a new Array to change)
@@ -296,15 +293,18 @@ export class Chord extends note.NotRest {
         if (!(notes instanceof Array)) {
             notes = [notes];
         }
-        for (let noteObj of notes) {
+        for (const noteObj_StrOrNote of notes) {
             // takes in either a note or a pitch
-            if (typeof noteObj === 'string') {
-                noteObj = new note.Note(noteObj);
-            } else if (noteObj.isClassOrSubclass('Pitch')) {
-                const pitchObj = noteObj;
+            let noteObj: note.Note;
+            if (typeof noteObj_StrOrNote === 'string') {
+                noteObj = new note.Note(noteObj_StrOrNote);
+            } else if (noteObj_StrOrNote.isClassOrSubclass('Pitch')) {
+                const pitchObj = noteObj_StrOrNote;
                 const noteObj2 = new note.Note();
                 noteObj2.pitch = pitchObj;
                 noteObj = noteObj2;
+            } else {
+                noteObj = noteObj_StrOrNote;
             }
             this._notes.push(noteObj);
         }
@@ -736,7 +736,7 @@ export class Chord extends note.NotRest {
         for (let i = 0; i < thisPitches.length; i++) {
             const thisPitch = thisPitches[i];
             let thisInterval
-                = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
+                = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast kludge
             if (thisInterval <= 0) {
                 thisInterval += 7;
             }

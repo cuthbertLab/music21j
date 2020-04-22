@@ -154,7 +154,7 @@ export class Stream extends base.Music21Object {
      *      $(can).on('click', s.DOMChangerFunction);
      */
     DOMChangerFunction:
-        (e: MouseEvent|TouchEvent) => base.Music21Object|undefined;
+        (e: MouseEvent|Touch) => base.Music21Object|undefined;
 
     // music21j specific attributes eventually to remove:
     storedVexflowStave: Vex.Flow.Stave = undefined;  // cannot figure out diff w/ activeVFStave
@@ -165,10 +165,10 @@ export class Stream extends base.Music21Object {
     _keySignature = undefined; // a music21.key.KeySignature object
     _timeSignature = undefined; // a music21.meter.TimeSignature object
     _instrument = undefined;
-    _autoBeam = undefined;
-    renderOptions = new renderOptions.RenderOptions();
+    _autoBeam: boolean = undefined;
+    renderOptions: renderOptions.RenderOptions = new renderOptions.RenderOptions();
     _tempo = undefined;
-    staffLines = 5;
+    staffLines: number = 5;
     _stopPlaying = false;
     _overriddenDuration: Duration = undefined;
 
@@ -225,7 +225,7 @@ export class Stream extends base.Music21Object {
             // isSorted will be cloned elsewhere.
         };
 
-        this.DOMChangerFunction = (e: MouseEvent|TouchEvent) => {
+        this.DOMChangerFunction = (e: MouseEvent) => {
             const canvasOrSVGElement = e.currentTarget;
             if (!(canvasOrSVGElement instanceof HTMLElement)
                 && !(canvasOrSVGElement instanceof SVGElement)) {
@@ -446,7 +446,11 @@ export class Stream extends base.Music21Object {
     }
 
 
-    get instrument() {
+    /**
+     * Note that .instrument will never return a string, but Typescript requires
+     * that getter and setter are the same.
+     */
+    get instrument(): instrument.Instrument|string {
         if (this._instrument === undefined && this.activeSite !== undefined) {
             return this.activeSite.instrument;
         } else {
@@ -454,7 +458,7 @@ export class Stream extends base.Music21Object {
         }
     }
 
-    set instrument(newInstrument) {
+    set instrument(newInstrument: instrument.Instrument|string) {
         if (typeof newInstrument === 'string') {
             newInstrument = new instrument.Instrument(newInstrument);
         }
@@ -587,6 +591,7 @@ export class Stream extends base.Music21Object {
         return this.getElementsByClass('Part') as iterator.StreamIterator<Part>;
     }
 
+    // TODO -- replace w/ music21p version.
     get measures(): iterator.StreamIterator<Measure> {
         return this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
     }
@@ -1610,11 +1615,11 @@ export class Stream extends base.Music21Object {
      *  you want, because of some fancy manipulation of
      *  el.activeSite
      *
-     * @param {Music21Object} el - object with an offset and class to search for.
-     * @param {Stream} [elStream] - a place to get el's offset from.
-     * @returns {Music21Object|undefined}
+     *  el is the object with an offset and class to search for.
+     *
+     *  elStream is a place to get el's offset from.  Otherwise activeSite is used
      */
-    playingWhenAttacked(el: base.Music21Object, elStream?): base.Music21Object {
+    playingWhenAttacked(el: base.Music21Object, elStream?): base.Music21Object|undefined {
         let elOffset;
         if (elStream !== undefined) {
             elOffset = el.getOffsetBySite(elStream);
@@ -2189,9 +2194,9 @@ export class Stream extends base.Music21Object {
         elementType: string = 'svg'
     ) {
         // noinspection JSMismatchedCollectionQueryUpdate
-        let $appendElement: JQuery<HTMLElement>;
+        let $appendElement: JQuery;
         if (appendElement instanceof $) {
-            $appendElement = <JQuery<HTMLElement>><any> appendElement;
+            $appendElement = <JQuery><any> appendElement;
         } else {
             $appendElement = $(appendElement);
         }
@@ -2226,7 +2231,7 @@ export class Stream extends base.Music21Object {
      * @returns {JQuery} the svg
      */
     replaceDOM(where, preserveSvgSize: boolean=false, elementType: string='svg') {
-        // if called with no where, replaces all the svgs on the page...
+        // if called with no where, replaces all the svg elements on the page...
         if (where === undefined) {
             where = document.body;
         }
@@ -2282,15 +2287,17 @@ export class Stream extends base.Music21Object {
      *                    find the original stream; var s = this; var f = function () { s...}
      *                   )
      *
-     * @param {jQuery|HTMLElement} canvasOrDiv - canvas or the Div surrounding it.
+     * @param {JQuery|HTMLElement} canvasOrDiv - canvas or the Div surrounding it.
      * @returns {this}
      */
-    setRenderInteraction(canvasOrDiv) {
-        let $svg = canvasOrDiv;
+    setRenderInteraction(canvasOrDiv: JQuery|HTMLElement) {
+        let $svg;
         if (canvasOrDiv === undefined) {
             return this;
         } else if (!(canvasOrDiv instanceof $)) {
             $svg = $(canvasOrDiv);
+        } else {
+            $svg = <JQuery> canvasOrDiv;
         }
         const playFunc = () => {
             this.playStream();
@@ -2310,7 +2317,8 @@ export class Stream extends base.Music21Object {
             ) {
                 this.windowReflowStart($svg);
             } else if (eventFunction !== undefined) {
-                $svg.on(eventType, eventFunction);
+                const eventFunctionTyped = <Function><any> eventFunction;
+                $svg.on(eventType, eventFunctionTyped);
             }
         }
         return this;
@@ -2352,22 +2360,33 @@ export class Stream extends base.Music21Object {
      * @param {MouseEvent|TouchEvent} e
      * @returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg, e) {
+    getUnscaledXYforDOM(svg, e: MouseEvent|Touch): [number, number] {
         let offset;
         if (svg === undefined) {
             offset = { left: 0, top: 0 };
         } else {
             offset = $(svg).offset();
         }
+
         /*
-         * mouse event handler code from: http://diveintohtml5.org/canvas.html
+         * mouse event handler code originally from: http://diveintohtml5.org/canvas.html
          */
-        let xClick;
-        let yClick;
-        if (e.pageX !== undefined && e.pageY !== undefined) {
+        let xClick: number;
+        let yClick: number;
+        if (e instanceof MouseEvent && e.pageX !== undefined && e.pageY !== undefined) {
             xClick = e.pageX;
             yClick = e.pageY;
+        } else if (e instanceof Touch) {
+            xClick
+                = e.clientX
+                + document.body.scrollLeft
+                + document.documentElement.scrollLeft;
+            yClick
+                = e.clientY
+                + document.body.scrollTop
+                + document.documentElement.scrollTop;
         } else {
+            console.error(`what are you? ${typeof e}`);
             xClick
                 = e.clientX
                 + document.body.scrollLeft
@@ -2382,7 +2401,7 @@ export class Stream extends base.Music21Object {
         return [xPx, yPx];
     }
 
-    getScaledXYforCanvas(svg, e) {
+    getScaledXYforCanvas(svg: HTMLElement|SVGElement, e: MouseEvent|Touch): [number, number]  {
         console.warn(
             'getScaledXYforCanvas is deprecated, use getScaledXYforDOM instead'
         );
@@ -2396,11 +2415,8 @@ export class Stream extends base.Music21Object {
      * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
      * x of 1 gives 1.42857...
      *
-     * @param {Node|SVGElement} svg -- a canvas or SVG object
-     * @param {MouseEvent|TouchEvent} e
-     * @returns {Array<number>} [scaledX, scaledY]
      */
-    getScaledXYforDOM(svg, e) {
+    getScaledXYforDOM(svg: HTMLElement|SVGElement, e: MouseEvent|Touch): [number, number] {
         const [xPx, yPx] = this.getUnscaledXYforDOM(svg, e);
         const pixelScaling = this.renderOptions.scaleFactor;
 
@@ -2416,11 +2432,8 @@ export class Stream extends base.Music21Object {
      * searches this.storedVexflowStave
      *
      * Y position must be offset from the start of the stave...
-     *
-     * @param {number} yPxScaled
-     * @returns {number}
      */
-    diatonicNoteNumFromScaledY(yPxScaled) {
+    diatonicNoteNumFromScaledY(yPxScaled: number): number {
         const storedVexflowStave = this.recursiveGetStoredVexflowStave();
         if (storedVexflowStave === undefined) {
             throw new StreamException('Could not find vexflowStave for getting size');
@@ -2430,10 +2443,12 @@ export class Stream extends base.Music21Object {
         //    console.log("line: " + i + " y: " + storedVexflowStave.getYForLine(i));
         // }
         const thisClef = this.clef || this.getContextByClass('Clef');
-        const lowestLine = (thisClef !== undefined) ? thisClef.lowestLine : 31;
 
-        const lineSpacing = storedVexflowStave.options.spacing_between_lines_px;
-        const linesAboveStaff = storedVexflowStave.options.space_above_staff_ln;
+        // TODO: on music21p percussion clef defines no lowest line, but does in music21j...
+        const lowestLine: number = (thisClef !== undefined) ? thisClef.lowestLine : 31;
+
+        const lineSpacing: number = storedVexflowStave.options.spacing_between_lines_px;
+        const linesAboveStaff: number = storedVexflowStave.options.space_above_staff_ln;
 
         const notesFromTop = yPxScaled * 2 / lineSpacing;
         const notesAboveLowestLine
@@ -2540,17 +2555,13 @@ export class Stream extends base.Music21Object {
      * Return a list of [diatonicNoteNum, closestXNote]
      * for an event (e) called on the svg (svg)
      *
-     * @param {HTMLElement|SVGElement} svg
-     * @param {MouseEvent|TouchEvent} e
-     * @param {number} [x]
-     * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, closestXNote]
      */
     findNoteForClick(
         svg: HTMLElement|SVGElement,
-        e: MouseEvent|TouchEvent,
-        x: number = undefined,
-        y: number = undefined
+        e: MouseEvent|Touch,
+        x?: number,
+        y?: number,
     ): [number, base.Music21Object] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
@@ -2714,7 +2725,7 @@ export class Stream extends base.Music21Object {
             const acc = new pitch.Accidental(i);
             const $button = $(
                 '<button>' + acc.unicodeModifier + '</button>'
-            ).click(e => addAccidental(i, e));
+            ).on('click', e => addAccidental(i, e));
             if (Math.abs(i) > 1) {
                 $button.css('font-family', 'Bravura Text');
                 $button.css('font-size', '20px');
@@ -2725,21 +2736,20 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     *
-     * @returns {jQuery} a Div containing two buttons -- play and stop
+     * get a JQuery div containing two buttons -- play and stop
      */
-    getPlayToolbar() {
+    getPlayToolbar(): JQuery {
         const $buttonDiv = $('<div/>').attr(
             'class',
             'playToolbar scoreToolbar'
         );
         const $bPlay = $('<button>&#9658</button>');
-        $bPlay.click(() => {
+        $bPlay.on('click', () => {
             this.playStream();
         });
         $buttonDiv.append($bPlay);
         const $bStop = $('<button>&#9724</button>');
-        $bStop.click(() => {
+        $bStop.on('click', () => {
             this.stopPlayStream();
         });
         $buttonDiv.append($bStop);
@@ -2910,7 +2920,7 @@ export class Part extends Stream {
         }
         // no measures found in part... treat as measure
         const tempM = new Measure();
-        tempM.elements = this;
+        tempM.elements = <Stream> this;
         return tempM.estimateStaffLength();
     }
 
@@ -3154,17 +3164,13 @@ export class Part extends Stream {
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
      *
-     * @param {HTMLElement|SVGElement} svg
-     * @param {MouseEvent|TouchEvent} e
-     * @param {number} [x]
-     * @param {number} [y]
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
     findNoteForClick(
         svg: HTMLElement|SVGElement,
-        e: MouseEvent|TouchEvent,
-        x: number = undefined,
-        y: number = undefined
+        e: MouseEvent|Touch,
+        x?: number,
+        y?: number,
     ): [number, base.Music21Object] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
@@ -3372,7 +3378,7 @@ export class Score extends Stream {
         // no parts found in score... use part...
         console.log('no parts found in score');
         const tempPart = new Part();
-        tempPart.elements = this;
+        tempPart.elements = <Stream> this;
         return tempPart.estimateStaffLength();
     }
 
@@ -3380,7 +3386,7 @@ export class Score extends Stream {
     /**
      * Overrides the default music21.stream.Stream#playStream
      *
-     * Works crappily -- just starts *n* midi players.
+     * Works poorly -- just starts *n* midi players.
      *
      * Render scrollable score works better...
      *
@@ -3469,17 +3475,13 @@ export class Score extends Stream {
      * click event, taking into account that the note will be in different
      * Part objects (and different Systems) given the height and possibly different Systems.
      *
-     * @param {HTMLElement|SVGElement} svg
-     * @param {MouseEvent|TouchEvent} e
-     * @param {number} [x]
-     * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, m21Element]
      */
     findNoteForClick(
         svg: HTMLElement|SVGElement,
-        e: MouseEvent|TouchEvent,
-        x: number = undefined,
-        y: number = undefined
+        e: MouseEvent|Touch,
+        x?: number,
+        y?: number,
     ): [number, base.Music21Object] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
