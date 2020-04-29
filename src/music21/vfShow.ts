@@ -450,8 +450,8 @@ export class Renderer {
             for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
                 const thisSystemBreak = this.systemBreakOffsets[sbI];
                 if (
-                    thisNote.offset < thisSystemBreak
-                    && nextNote.offset >= thisSystemBreak
+                    thisNote.getOffsetInHierarchy(p) < thisSystemBreak
+                    && nextNote.getOffsetInHierarchy(p) >= thisSystemBreak
                 ) {
                     onSameSystem = false;
                     break;
