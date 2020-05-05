@@ -3,13 +3,13 @@
  *
  * See http://web.mit.edu/music21/ for more details.
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-20, Michael Scott Cuthbert and cuthbertLab
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006-20, Michael Scott Cuthbert and cuthbertLab
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
