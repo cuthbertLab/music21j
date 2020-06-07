@@ -2,7 +2,7 @@
   "name": "music21j",
   "version": "0.9.43",
   "description": "A toolkit for computer-aided musicology, Javascript version",
-  "main": "src/music21_modules.js",
+  "main": "releases/music21.debug.js",
   "files": [
     ".editorconfig",
     ".eslintignore",
@@ -93,6 +93,5 @@
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/cuthbertLab/music21j/issues"
-  },
-  "type": "module"
+  }
 }
