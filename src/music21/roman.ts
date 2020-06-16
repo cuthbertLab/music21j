@@ -128,11 +128,11 @@ export function expandShortHand(shorthand) {
         shorthandGroups = ['5', shorthandGroups[0]];
     }
     const shGroupOut = [];
-    for (let sh of shorthandGroups) {
-        sh = sh.replace('x', '11');
-        sh = sh.replace('y', '13');
-        sh = sh.replace('z', '15');
-        shGroupOut.push(sh);
+    for (const sh of shorthandGroups) {
+        let sh2 = sh.replace('x', '11');
+        sh2 = sh2.replace('y', '13');
+        sh2 = sh2.replace('z', '15');
+        shGroupOut.push(sh2);
     }
     return shGroupOut;
 }
@@ -470,8 +470,7 @@ export class RomanNumeral extends harmony.Harmony {
         if (fati !== undefined) {
             const newFati = interval.add([fati, new interval.Interval('A1')]);
             this.frontAlterationTransposeInterval = newFati;
-            this.frontAlterationAccidental.alter
-                = this.frontAlterationAccidental.alter + 1;
+            this.frontAlterationAccidental.alter += 1;
         } else {
             this.frontAlterationTransposeInterval = new interval.Interval('A1');
             this.frontAlterationAccidental = new pitch.Accidental(1);
