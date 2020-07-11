@@ -605,12 +605,10 @@ export class Renderer {
                 this.beamGroups.push(...beamGroups);
             }
         } else {
-            const vf_auto_stem = false;
             for (const s of stack.streams) {
                 const notes = s.flat.notes;
                 let activeBeamGroupNotes = [];
                 for (const n of notes) {
-
                     if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
                         continue;
                     }
@@ -621,9 +619,9 @@ export class Renderer {
                         activeBeamGroupNotes.push(n.activeVexflowNote);
                     }
                     if (eighthNoteBeam.type === 'stop') {
-                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
+                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes);
                         this.beamGroups.push(vfBeam);
-                        activeBeamGroupNotes = []; // housekeeping, not really necessary...
+                        activeBeamGroupNotes = [];
                     }
                 }
             }
