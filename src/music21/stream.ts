@@ -569,12 +569,18 @@ export class Stream extends base.Music21Object {
         this._autoBeam = ab;
     }
 
+
+    /**
+     * maxSystemWidth starts at 750.  It can then be changed
+     * by renderOptions.maxSystemWidth, by activeSite's maxSystemWidth
+     * (recursively); and then is scaled by renderOptions.scaleFactor.x
+     *
+     * Smaller scaleFactors lead to LARGER maxSystemWidth
+     */
     get maxSystemWidth() {
         let baseMaxSystemWidth = 750;
-        if (
-            this.renderOptions.maxSystemWidth === undefined
-            && this.activeSite !== undefined
-        ) {
+        if (this.renderOptions.maxSystemWidth === undefined
+               && this.activeSite !== undefined) {
             baseMaxSystemWidth = this.activeSite.maxSystemWidth;
         } else if (this.renderOptions.maxSystemWidth !== undefined) {
             baseMaxSystemWidth = this.renderOptions.maxSystemWidth;
@@ -582,6 +588,11 @@ export class Stream extends base.Music21Object {
         return baseMaxSystemWidth / this.renderOptions.scaleFactor.x;
     }
 
+
+    /**
+     * Sets the renderOptions.maxSystemWidth after accounting for
+     * scaleFactor
+     */
     set maxSystemWidth(newSW) {
         this.renderOptions.maxSystemWidth
             = newSW * this.renderOptions.scaleFactor.x;
@@ -2998,7 +3009,7 @@ export class Part extends Stream {
             = this.renderOptions.systemPadding
             || this.renderOptions.naiveSystemPadding;
         const measureWidths = this.getMeasureWidths();
-        const maxSystemWidth = this.maxSystemWidth; /* of course fix! */
+        const maxSystemWidth = this.maxSystemWidth; // cryptic note: "of course fix!"?
         const systemCurrentWidths = [];
         const systemBreakIndexes = [];
         let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
@@ -3100,7 +3111,6 @@ export class Part extends Stream {
             // console.log('M: ' + i + '; New top: ' + newTop + " ; old Top: " + m.renderOptions.top);
             m.renderOptions.top = newTop;
         }
-
         return systemCurrentWidths;
     }
 

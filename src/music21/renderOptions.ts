@@ -58,7 +58,10 @@ export class RenderOptions {
 
     stemDirection: any = undefined;
 
+    // this sets a fixed width for a system, not accounting for
+    // scaleFactors.
     maxSystemWidth: number = undefined;
+
     rightBarline: string = undefined;
     staffLines: number = 5;
     staffConnectors: string[] = ['single', 'brace'];

@@ -278,6 +278,37 @@ export default function tests() {
         );
     });
 
+    test('music21.stream.Stream maxSystemWidth', assert => {
+        // has caused confusion in past...
+        const s = new music21.stream.Stream();
+        s.renderOptions.scaleFactor = {x: 1.0, y: 1.0};
+        assert.equal(s.maxSystemWidth, 750);
+        s.renderOptions.maxSystemWidth = 700;
+        assert.equal(s.maxSystemWidth, 700);
+        s.renderOptions.scaleFactor.x = 1/2;
+        assert.equal(s.maxSystemWidth, 1400);
+
+        const m = new music21.stream.Measure();
+        const p = new music21.stream.Part();
+        const sc = new music21.stream.Score();
+        for (const obj of [m, p, sc]) {
+            obj.renderOptions.scaleFactor = {x: 1.0, y: 1.0};
+        }
+
+        p.append(m);
+        sc.append(p);
+        assert.equal(m.maxSystemWidth, 750);
+        sc.renderOptions.maxSystemWidth = 200;
+        assert.equal(m.maxSystemWidth, 200);
+
+        m.renderOptions.scaleFactor.x = 2;
+        assert.equal(m.maxSystemWidth, 100);
+
+        m.maxSystemWidth = 500;
+        assert.equal(m.maxSystemWidth, 500);
+        assert.equal(m.renderOptions.maxSystemWidth, 1000);
+    });
+
     test('music21.stream.Stream insertAndShift', assert => {
         const s = new music21.stream.Stream();
         s.insert(0, new music21.note.Note('C4'));
