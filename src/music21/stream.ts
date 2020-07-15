@@ -1864,17 +1864,14 @@ export class Stream extends base.Music21Object {
      * @returns {number} height in pixels
      */
     estimateStreamHeight(ignoreSystems=false) {
-        const staffHeight = this.renderOptions.naiveHeight;
+        const staffHeight = this.renderOptions.staffAreaHeight;
         const marginBottom = this.renderOptions.marginBottom;  // extra at end.
-        let systemPadding = 0;
-        if (this instanceof Score) {
-            systemPadding = this.systemPadding;
-        }
+        const systemPadding = this.renderOptions.systemPadding;
         let numSystems;
         if (this instanceof Score) {
             const numParts = this.parts.length;
             numSystems = this.numSystems();
-            if (numSystems === undefined || ignoreSystems) {
+            if (ignoreSystems) {
                 numSystems = 1;
             }
             let scoreHeight
@@ -1882,6 +1879,7 @@ export class Stream extends base.Music21Object {
                 + (numSystems - 1) * systemPadding
                 + marginBottom;
 
+            // TODO(msc) -- Fix and Remove
             if (numSystems > 1) {
                 // needs a little extra padding for some reason...
                 scoreHeight += systemPadding / 2;
@@ -2919,7 +2917,7 @@ export class Part extends Stream {
 
     constructor() {
         super();
-        this.systemHeight = this.renderOptions.naiveHeight;
+        this.systemHeight = this.renderOptions.staffAreaHeight;
     }
 
     /**
@@ -3005,9 +3003,7 @@ export class Part extends Stream {
         } else if (debug) {
             console.log('overridden systemHeight: ' + systemHeight);
         }
-        const systemPadding
-            = this.renderOptions.systemPadding
-            || this.renderOptions.naiveSystemPadding;
+        const systemPadding = this.renderOptions.systemPadding;
         const measureWidths = this.getMeasureWidths();
         const maxSystemWidth = this.maxSystemWidth; // cryptic note: "of course fix!"?
         const systemCurrentWidths = [];
@@ -3207,10 +3203,7 @@ export class Part extends Stream {
      * @return {number[]}  systemIndex, scaledYRelativeToSystem
      */
     systemIndexAndScaledY(y) {
-        let systemPadding = this.renderOptions.systemPadding;
-        if (systemPadding === undefined) {
-            systemPadding = this.renderOptions.naiveSystemPadding;
-        }
+        const systemPadding = this.renderOptions.systemPadding;
         const systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
         const scaledYRelativeToSystem
             = y - systemIndex * (this.systemHeight + systemPadding);
@@ -3243,9 +3236,6 @@ export class Part extends Stream {
         }
         // TODO(msc) -- systemPadding was never used -- should it be?
         // let systemPadding = this.renderOptions.systemPadding;
-        // if (systemPadding === undefined) {
-        //     systemPadding = this.renderOptions.naiveSystemPadding;
-        // }
         const [systemIndex, scaledYRelativeToSystem] = this.systemIndexAndScaledY(y);
         const clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(
             scaledYRelativeToSystem
@@ -3313,11 +3303,10 @@ export class Score extends Stream {
 
     recursionType = 'elementsOnly';
     measureWidths: number[] = [];
-    partSpacing: number;
 
     constructor() {
         super();
-        this.partSpacing = this.renderOptions.naiveHeight;
+        this.renderOptions.systemPadding = 40;
     }
 
     get clef() { // TODO: remove -- this is unlike m21p
@@ -3331,19 +3320,6 @@ export class Score extends Stream {
 
     set clef(newClef) {
         super.clef = newClef;
-    }
-
-    get systemPadding() {
-        const numParts = this.parts.length;
-        let systemPadding = this.renderOptions.systemPadding;
-        if (systemPadding === undefined) {
-            if (numParts === 1) {
-                systemPadding = this.renderOptions.naiveSystemPadding; // fix to 0
-            } else {
-                systemPadding = this.renderOptions.naiveSystemPadding;
-            }
-        }
-        return systemPadding;
     }
 
     /**
@@ -3392,7 +3368,8 @@ export class Score extends Stream {
     setSubstreamRenderOptions() {
         let currentPartNumber = 0;
         let currentPartTop = 0;
-        const partSpacing = this.partSpacing;
+        // was this.partSpacing.
+        const partSpacing = this.renderOptions.staffAreaHeight;
         for (const p of this.parts) {
             p.renderOptions.partIndex = currentPartNumber;
             p.renderOptions.top = currentPartTop;
@@ -3521,7 +3498,8 @@ export class Score extends Stream {
         // }
 
         const numParts = this.parts.length;
-        const systemHeight = numParts * this.partSpacing + this.systemPadding;
+        const staffHeight = this.renderOptions.staffAreaHeight;
+        const systemHeight = numParts * staffHeight + this.renderOptions.systemPadding;
         const systemIndex = Math.floor(y / systemHeight);
         const scaledYRelativeToSystem = y - systemIndex * systemHeight;
         return [systemIndex, scaledYRelativeToSystem];
@@ -3546,9 +3524,9 @@ export class Score extends Stream {
         const [systemIndex, scaledYFromSystemTop] = this.systemIndexAndScaledY(
             y
         );
-        const partIndex = Math.floor(scaledYFromSystemTop / this.partSpacing);
+        const partIndex = Math.floor(scaledYFromSystemTop / this.renderOptions.staffAreaHeight);
         const scaledYinPart
-            = scaledYFromSystemTop - partIndex * this.partSpacing;
+            = scaledYFromSystemTop - partIndex * this.renderOptions.staffAreaHeight;
         // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
         const rightPart = this.parts.get(partIndex);
         if (rightPart === undefined) {
@@ -3571,9 +3549,11 @@ export class Score extends Stream {
      * How many systems are there? Calls numSystems() on the first part.
      */
     numSystems(): number {
-        return (this.getElementsByClass('Part') as iterator.StreamIterator<Part>)
-            .get(0)
-            .numSystems();
+        const pIter = (this.getElementsByClass('Part') as iterator.StreamIterator<Part>);
+        if (!(pIter.length)) {
+            return 1;
+        }
+        return pIter.get(0).numSystems();
     }
 
     /**

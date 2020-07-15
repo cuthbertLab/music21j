@@ -21,6 +21,11 @@ interface EventInterface {
     resize?: string|Function|undefined,
 }
 
+interface ScaleFactor {
+    x: number,
+    y: number,
+}
+
 
 /**
  * An object that contains information on rendering the current stream
@@ -34,7 +39,7 @@ export class RenderOptions {
     displayTimeSignature: boolean = true;
     displayKeySignature: boolean = true;
 
-    scaleFactor = {
+    scaleFactor: ScaleFactor = {
         x: 0.7,
         y: 0.7,
     };
@@ -44,17 +49,19 @@ export class RenderOptions {
     width: number = undefined;
     overriddenWidth: number = undefined;
     height: number = undefined;
-    naiveHeight: number = 120;
 
-    // additional padding at the bottom of the stream (not every system).
+    // additional padding at the bottom of the stream
+    // (not every system).
     marginBottom: number = 0;
 
     systemIndex: number = 0;
     partIndex: number = 0;
     measureIndex: number = 0;
 
-    systemPadding: number = undefined;
-    naiveSystemPadding: number = 40;
+    // amount of space between systems on a Score object
+    // does nothing on any other object.  Defaults to 0 for everything
+    // except Score which overrides in constructor to 40.
+    systemPadding: number = 0;
 
     // this sets a fixed width for a system, not accounting for
     // scaleFactors.
@@ -74,4 +81,13 @@ export class RenderOptions {
     // noinspection JSUnusedGlobalSymbols
     startNewPage: boolean = false;
     showMeasureNumber: boolean = undefined;
+
+    heightAboveStaff: number = 20;
+    heightOfStaffProper: number = 80;
+    heightBelowStaff: number = 20;
+
+    // was naiveHeight
+    get staffAreaHeight() {
+        return this.heightAboveStaff + this.heightOfStaffProper + this.heightBelowStaff;
+    }
 }
