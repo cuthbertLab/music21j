@@ -22,7 +22,8 @@ import * as beam from './beam';
 import * as common from './common';
 import * as duration from './duration';
 
-import { Stream } from './stream'; // typing only import
+// imports for typing
+import * as stream from './stream';
 
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
@@ -89,11 +90,7 @@ export class TimeSignature extends base.Music21Object {
         this._beatGroups = [];
     }
 
-    /**
-     *
-     * @type {music21.duration.Duration}
-     */
-    get barDuration() {
+    get barDuration(): duration.Duration {
         const ql = 4.0 * this._numerator / this._denominator;
         return new duration.Duration(ql);
     }
@@ -154,14 +151,16 @@ export class TimeSignature extends base.Music21Object {
     /**
      * Compute the Beat Group according to this time signature.
      *
-     * @returns {Array<Array<int>>} a list of numerator and denominators, find a list of beat groups.
+     * @returns {Array<Array<int>>} a list of numerator and denominators,
+     *     find a list of beat groups.
      */
-    computeBeatGroups() {
+    computeBeatGroups(): number[][] {
         const tempBeatGroups = [];
         let numBeats = this.numerator;
         let beatValue = this.denominator;
         if (beatValue < 8 && numBeats >= 5) {
-            const beatsToEighthNoteRatio = 8 / beatValue; // hopefully Int -- right Brian Ferneyhough?
+            const beatsToEighthNoteRatio = 8 / beatValue;
+            // hopefully beatValue is an int -- right Brian Ferneyhough?
             beatValue = 8;
             numBeats *= beatsToEighthNoteRatio;
         }
@@ -191,7 +190,7 @@ export class TimeSignature extends base.Music21Object {
     /**
      * Return a span of [start, end] for the current beat/beam grouping
      */
-    offsetToSpan(offset) {
+    offsetToSpan(offset: number): number[] {
         const beatDuration = this.beatDuration.quarterLength;
         const beatsFromStart = Math.floor(offset / beatDuration);
         const start = beatsFromStart * beatDuration;
@@ -200,9 +199,10 @@ export class TimeSignature extends base.Music21Object {
     }
 
     /**
+     * srcStream - a stream of elements.
      * options - an object with measureStartOffset
      */
-    getBeams(srcStream: Stream, options={}) {
+    getBeams(srcStream: stream.Stream, options={}) {
         const params = { measureStartOffset: 0.0 };
         common.merge(params, options);
         const measureStartOffset = params.measureStartOffset;
@@ -309,11 +309,10 @@ export class TimeSignature extends base.Music21Object {
      */
     vexflowBeatGroups(): Vex.Flow.Fraction[] {
         const tempBeatGroups = this.beatGroups;
-        // console.log(tempBeatGroups);
         const vfBeatGroups = [];
         for (let i = 0; i < tempBeatGroups.length; i++) {
-            const bg = tempBeatGroups[i];
-            vfBeatGroups.push(new Vex.Flow.Fraction(bg[0], bg[1]));
+            const [bg_numerator, bg_denominator] = tempBeatGroups[i];
+            vfBeatGroups.push(new Vex.Flow.Fraction(bg_numerator, bg_denominator));
         }
         return vfBeatGroups;
 

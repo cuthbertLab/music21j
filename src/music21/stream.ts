@@ -1958,13 +1958,64 @@ export class Stream extends base.Music21Object {
         }
     }
 
+    /**
+     * Returns either (1) a Stream containing Elements
+     * (that wrap the null object) whose offsets and durations
+     * are the length of gaps in the Stream
+     * or (2) null if there are no gaps.
+     * @returns {object}
+     */
+    findGaps() {
+        if (!this.isSorted && this.autoSort) {
+            this.sort();
+        }
+        const sortedElements = this.elements;
+        let elementDuration = 0;
+        const gapStream = new Stream(); // cloneEmpty does not work, created new obj
+        let highestCurrentEndTime = 0.0;
+        for (const element of sortedElements) {
+            if (element) {
+                if (element.offset > highestCurrentEndTime) {
+                    const gapElement = new base.Music21Object();
+                    const gapQuarterLength = element.offset - highestCurrentEndTime;
+                    gapElement.duration = this.duration;
+                    gapElement.duration.quarterLength = gapQuarterLength;
+                    gapStream.insert(highestCurrentEndTime, gapElement);
+                } if ('duration' in element && element.duration !== null) {
+                    elementDuration = element.duration.quarterLength;
+                } else {
+                    elementDuration = 0;
+                }
+                highestCurrentEndTime = (
+                    Math.max(highestCurrentEndTime, element.offset + elementDuration)
+                );
+            }
+        }
+        gapStream.sort();
+        if (gapStream.elements.length) {
+            return gapStream;
+        }
+        return null;
+    }
+
+    /**
+     * Returns True if there are no gaps between the lowest offset and the highest time.
+     * Otherwise returns False
+     *
+     * @returns {boolean}
+     */
+
+    get isGapless() {
+        return (this.findGaps() === null);
+    }
+
     //  * ***** MIDI related routines...
 
     /**
      * Plays the Stream through the MIDI/sound playback (for now, only MIDI.js is supported)
      *
      * `options` can be an object containing:
-     * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
+     * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
      *
      * @param {Object} [options] - object of playback options
@@ -2881,16 +2932,13 @@ export class Part extends Stream {
      */
     getMeasureWidths(): number[] {
         /* call after setSubstreamRenderOptions */
-        const measureWidths = [];
+        const measureWidths: number[] = [];
         for (const el of this) {
             if (el.isClassOrSubclass('Measure')) {
                 const elRendOp = (el as Measure).renderOptions;
                 measureWidths[elRendOp.measureIndex] = elRendOp.width;
             }
         }
-        /* console.log(measureWidths);
-         *
-         */
         return measureWidths;
     }
 
@@ -2929,8 +2977,7 @@ export class Part extends Stream {
      * widths so that they are all even.
      *
      * Note that this is done on the part level even though
-     * the measure widths need to be consistent across parts.
-     *
+     * the measure widths need to be consistent across parts in a score.
      * This is possible because the system is deterministic and
      * will come to the same result for each part.  Opportunity
      * for making more efficient through this...
@@ -3520,20 +3567,21 @@ export class Score extends Stream {
     }
 
     /**
-     * Fixes the part measure spacing for all parts.
+     * Makes the width of every Measure object within a measure stack be the same.
+     * if setLeft is true then also set the renderOptions.left
+     *
+     * This does not even out systems.
      *
      * @param {Object} options
      * @param {boolean} [options.setLeft=true]
-     * @returns {this}
      */
-    evenPartMeasureSpacing({ setLeft=true }={}) {
-        const measureStacks = [];
+    evenPartMeasureSpacing({ setLeft=true }={}): this {
+        const measureStacks: number[][] = [];
         let currentPartNumber = 0;
-        const maxMeasureWidth = []; // the maximum measure width among all parts
-        let j;
+        const maxMeasureWidth: number[] = []; // the maximum measure width among all parts
         for (const p of this.parts) {
-            const measureWidths = p.getMeasureWidths();
-            for (j = 0; j < measureWidths.length; j++) {
+            const measureWidths = (p as Part).getMeasureWidths();
+            for (let j = 0; j < measureWidths.length; j++) {
                 const thisMeasureWidth = measureWidths[j];
                 if (measureStacks[j] === undefined) {
                     measureStacks[j] = [];
@@ -3545,7 +3593,8 @@ export class Score extends Stream {
             }
             currentPartNumber += 1;
         }
-        let currentLeft = 20;
+
+        let currentLeft = 20; // TODO: do not hardcode left start.
         for (let i = 0; i < maxMeasureWidth.length; i++) {
             const measureNewWidth = maxMeasureWidth[i];
             for (const part of this.parts) {

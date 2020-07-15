@@ -77,4 +77,10 @@ export default function tests() {
             'third site is sc'
         );
     });
+    test('music21.base.repeatAppend', assert => {
+        const a = new music21.stream.Stream();
+        const n = new music21.note.Note();
+        a.repeatAppend(n, 10);
+        assert.equal(a.notes.length, 10);
+    });
 }

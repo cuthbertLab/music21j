@@ -26,6 +26,7 @@ import * as sites from './sites';
 
 // imports for typing only
 import { Stream, Measure } from './stream';
+import { StreamException } from './exceptions21';
 
 
 declare interface StreamRecursionLike {
@@ -482,6 +483,31 @@ export class Music21Object extends prebase.ProtoM21Object {
                     yield offsetAdjustedCsTuple;
                 }
             }
+        }
+    }
+
+    /*
+        Given an object and a number, run append that many times on
+        a deepcopy of the object.
+        numberOfTimes should of course be a positive integer.
+
+        a = stream.Stream()
+        n = note.Note('D--')
+        n.duration.type = 'whole'
+        a.repeatAppend(n, 10)
+    */
+
+    repeatAppend(this, item, numberOfTimes) {
+        let unused = null;
+        try {
+            unused = item.isStream;
+        } catch (AttributeError) {
+            throw new StreamException('to put a non Music21Object in a stream, '
+            + 'create a music21.ElementWrapper for the item');
+            
+        }
+        for (let i = 0; i < numberOfTimes; i++) {
+            this.append(item.clone(true));
         }
     }
 }
