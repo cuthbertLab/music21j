@@ -77,7 +77,7 @@ const regularExpressions = {
  * p.duration.quarterLength;
  * // 6.0
  */
-export function TinyNotation(textIn) {
+export function TinyNotation(textIn): stream.Part|stream.Measure {
     textIn = textIn.trim();
     const tokens = textIn.split(' ');
 

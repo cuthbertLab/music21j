@@ -154,7 +154,7 @@ export class Stream extends base.Music21Object {
      *      $(can).on('click', s.DOMChangerFunction);
      */
     DOMChangerFunction:
-        (e: MouseEvent|Touch) => base.Music21Object|undefined;
+        (e: MouseEvent|TouchEvent|JQuery.MouseEventBase) => base.Music21Object|undefined;
 
     // music21j specific attributes eventually to remove:
     storedVexflowStave: Vex.Flow.Stave = undefined;  // cannot figure out diff w/ activeVFStave
@@ -225,7 +225,7 @@ export class Stream extends base.Music21Object {
             // isSorted will be cloned elsewhere.
         };
 
-        this.DOMChangerFunction = (e: MouseEvent) => {
+        this.DOMChangerFunction = (e: MouseEvent|TouchEvent|JQuery.MouseEventBase) => {
             const canvasOrSVGElement = e.currentTarget;
             if (!(canvasOrSVGElement instanceof HTMLElement)
                 && !(canvasOrSVGElement instanceof SVGElement)) {
@@ -1676,7 +1676,7 @@ export class Stream extends base.Music21Object {
                 );
                 if (tempAccidental !== undefined) {
                     stepAlter = tempAccidental.alter;
-                    // console.log(stepAlter + " " + stepName);
+                    // console.log(stepAlter + ' ' + stepName);
                 }
             }
             extendableStepList[stepName] = stepAlter;
@@ -1726,7 +1726,7 @@ export class Stream extends base.Music21Object {
         } else {
             newAlter = p.accidental.alter;
         }
-        // console.log(p.name + " " + lastStepDict[p.step].toString());
+        // console.log(p.name + ' ' + lastStepDict[p.step].toString());
         if (
             lastStepDict[p.step] !== newAlter
             || lastOctavelessStepDict[p.step] !== newAlter
@@ -1735,7 +1735,7 @@ export class Stream extends base.Music21Object {
                 p.accidental = new pitch.Accidental('natural');
             }
             p.accidental.displayStatus = true;
-            // console.log("setting displayStatus to true");
+            // console.log('setting displayStatus to true');
         } else if (
             lastStepDict[p.step] === newAlter
             && lastOctavelessStepDict[p.step] === newAlter
@@ -1743,7 +1743,7 @@ export class Stream extends base.Music21Object {
             if (p.accidental !== undefined) {
                 p.accidental.displayStatus = false;
             }
-            // console.log("setting displayStatus to false");
+            // console.log('setting displayStatus to false');
         }
         lastStepDict[p.step] = newAlter;
         lastOctavelessStepDict[p.step] = newAlter;
@@ -1860,10 +1860,9 @@ export class Stream extends base.Music21Object {
      *
      * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
      *
-     * @param {boolean} [ignoreSystems=false]
      * @returns {number} height in pixels
      */
-    estimateStreamHeight(ignoreSystems=false) {
+    estimateStreamHeight({ignoreSystems=false, ignoreMarginBottom=false}={}): number {
         const staffHeight = this.renderOptions.staffAreaHeight;
         const marginBottom = this.renderOptions.marginBottom;  // extra at end.
         const systemPadding = this.renderOptions.systemPadding;
@@ -1876,8 +1875,11 @@ export class Stream extends base.Music21Object {
             }
             let scoreHeight
                 = numSystems * staffHeight * numParts
-                + (numSystems - 1) * systemPadding
-                + marginBottom;
+                + (numSystems - 1) * systemPadding;
+
+            if (!ignoreMarginBottom) {
+                scoreHeight += marginBottom;
+            }
 
             // TODO(msc) -- Fix and Remove
             if (numSystems > 1) {
@@ -1905,9 +1907,17 @@ export class Stream extends base.Music21Object {
                         + '].'
                 );
             }
-            return numSystems * staffHeight + (numSystems - 1) * systemPadding + marginBottom;
+            let partHeight = numSystems * staffHeight + (numSystems - 1) * systemPadding;
+            if (!ignoreMarginBottom) {
+                partHeight += marginBottom;
+            }
+            return partHeight;
         } else {
-            return staffHeight + marginBottom;
+            if (!ignoreMarginBottom) {
+                return staffHeight + marginBottom;
+            } else {
+                return staffHeight;
+            }
         }
     }
 
@@ -1920,7 +1930,7 @@ export class Stream extends base.Music21Object {
         let i;
         let totalLength;
         if (this.renderOptions.overriddenWidth !== undefined) {
-            // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
+            // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
         if (this.hasVoices()) {
@@ -2416,11 +2426,12 @@ export class Stream extends base.Music21Object {
      * Given a mouse click, or other event with .pageX and .pageY,
      * find the x and y for the svg.
      *
-     * @param {HTMLElement|SVGElement} svg - a canvas or SVG object
-     * @param {MouseEvent|TouchEvent} e
-     * @returns {Array<number>} two-elements, [x, y] in pixels.
+     * returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg, e: MouseEvent|Touch): [number, number] {
+    getUnscaledXYforDOM(
+        svg,
+        e: MouseEvent|TouchEvent|JQuery.MouseEventBase
+    ): [number, number] {
         let offset;
         if (svg === undefined) {
             offset = { left: 0, top: 0 };
@@ -2433,26 +2444,29 @@ export class Stream extends base.Music21Object {
          */
         let xClick: number;
         let yClick: number;
-        if (e instanceof MouseEvent && e.pageX !== undefined && e.pageY !== undefined) {
-            xClick = e.pageX;
-            yClick = e.pageY;
-        } else if (e instanceof Touch) {
+        if ((e instanceof MouseEvent || e instanceof $.Event)
+                && (e as MouseEvent).pageX !== undefined
+                && (e as MouseEvent).pageY !== undefined) {
+            xClick = (e as MouseEvent).pageX;
+            yClick = (e as MouseEvent).pageY;
+        } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
+            const touch1 = (e as TouchEvent).touches[0];
             xClick
-                = e.clientX
+                = touch1.clientX
                 + document.body.scrollLeft
                 + document.documentElement.scrollLeft;
             yClick
-                = e.clientY
+                = touch1.clientY
                 + document.body.scrollTop
                 + document.documentElement.scrollTop;
         } else {
             console.error(`what are you? ${typeof e}`);
             xClick
-                = e.clientX
+                = (e as MouseEvent).clientX
                 + document.body.scrollLeft
                 + document.documentElement.scrollLeft;
             yClick
-                = e.clientY
+                = (e as MouseEvent).clientY
                 + document.body.scrollTop
                 + document.documentElement.scrollTop;
         }
@@ -2461,7 +2475,10 @@ export class Stream extends base.Music21Object {
         return [xPx, yPx];
     }
 
-    getScaledXYforCanvas(svg: HTMLElement|SVGElement, e: MouseEvent|Touch): [number, number]  {
+    getScaledXYforCanvas(
+        svg: HTMLElement|SVGElement,
+        e: MouseEvent|TouchEvent|JQuery.MouseEventBase
+    ): [number, number]  {
         console.warn(
             'getScaledXYforCanvas is deprecated, use getScaledXYforDOM instead'
         );
@@ -2476,7 +2493,10 @@ export class Stream extends base.Music21Object {
      * x of 1 gives 1.42857...
      *
      */
-    getScaledXYforDOM(svg: HTMLElement|SVGElement, e: MouseEvent|Touch): [number, number] {
+    getScaledXYforDOM(
+        svg: HTMLElement|SVGElement,
+        e: MouseEvent|TouchEvent|JQuery.MouseEventBase
+    ): [number, number] {
         const [xPx, yPx] = this.getUnscaledXYforDOM(svg, e);
         const pixelScaling = this.renderOptions.scaleFactor;
 
@@ -2500,7 +2520,7 @@ export class Stream extends base.Music21Object {
         }
 
         // for (var i = -10; i < 10; i++) {
-        //    console.log("line: " + i + " y: " + storedVexflowStave.getYForLine(i));
+        //    console.log('line: ' + i + ' y: ' + storedVexflowStave.getYForLine(i));
         // }
         const thisClef = this.clef || this.getContextByClass('Clef');
 
@@ -2619,10 +2639,11 @@ export class Stream extends base.Music21Object {
      */
     findNoteForClick(
         svg: HTMLElement|SVGElement,
-        e: MouseEvent|Touch,
+        e: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
     ): [number, base.Music21Object] {
+        // this is Stream.findNoteForClick.
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -2684,7 +2705,7 @@ export class Stream extends base.Music21Object {
         return $newSvg;
     }
 
-    editableAccidentalCanvas(width, height) {
+    editableAccidentalCanvas(width?, height?) {
         console.warn(
             'editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead'
         );
@@ -2699,7 +2720,7 @@ export class Stream extends base.Music21Object {
      * @param {number} [height]
      * @returns {Node} the div tag around the svg.
      */
-    editableAccidentalDOM(width, height) {
+    editableAccidentalDOM(width?, height?) {
         /*
          * Create an editable svg with an accidental selection bar.
          */
@@ -2893,7 +2914,7 @@ export class Measure extends Stream {
     numberSuffix: string = '';
 
     stringInfo(): string {
-        // avoid using "this.offset" to not infinite loops.
+        // avoid using 'this.offset' to not infinite loops.
         const offset = this._activeSiteStoredOffset ?? this._naiveOffset;
         return this.measureNumberWithSuffix() + ' offset=' + offset.toString();
     }
@@ -2913,12 +2934,10 @@ export class Part extends Stream {
     static get className() { return 'music21.stream.Part'; }
 
     recursionType: string = 'flatten';
-    systemHeight: number;
 
-    constructor() {
-        super();
-        this.systemHeight = this.renderOptions.staffAreaHeight;
-    }
+    // constructor() {
+    //     super();
+    // }
 
     /**
      * How many systems does this Part have?
@@ -2942,11 +2961,9 @@ export class Part extends Stream {
     getMeasureWidths(): number[] {
         /* call after setSubstreamRenderOptions */
         const measureWidths: number[] = [];
-        for (const el of this) {
-            if (el.isClassOrSubclass('Measure')) {
-                const elRendOp = (el as Measure).renderOptions;
-                measureWidths[elRendOp.measureIndex] = elRendOp.width;
-            }
+        for (const el of this.getElementsByClass('Measure')) {
+            const elRendOp = (el as Measure).renderOptions;
+            measureWidths[elRendOp.measureIndex] = elRendOp.width;
         }
         return measureWidths;
     }
@@ -2956,7 +2973,7 @@ export class Part extends Stream {
      */
     estimateStaffLength(): number {
         if (this.renderOptions.overriddenWidth !== undefined) {
-            // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
+            // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
         if (!this.isFlat) {
@@ -2981,6 +2998,31 @@ export class Part extends Stream {
         return tempM.estimateStaffLength();
     }
 
+    systemWidthsAndBreaks(): [number[], number[]] {
+        const measureWidths = this.getMeasureWidths();
+        const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
+        const systemCurrentWidths = [];
+        const systemBreakIndexes = [];
+        let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
+        const startLeft = 20; /* TODO: make it obtained elsewhere */
+        let currentLeft = startLeft;
+        for (let i = 0; i < measureWidths.length; i++) {
+            const currentRight = currentLeft + measureWidths[i];
+            /* console.log('left: ' + currentLeft + ' ; right: ' + currentRight + ' ; m: ' + i); */
+            if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
+                systemBreakIndexes.push(i - 1);
+                systemCurrentWidths.push(currentLeft);
+
+                // console.log('setting new width at ' + currentLeft);
+                currentLeft = startLeft + measureWidths[i]; // 20 + this width;
+                lastSystemBreak = i;
+            } else {
+                currentLeft = currentRight;
+            }
+        }
+        return [systemCurrentWidths, systemBreakIndexes];
+    }
+
     /**
      * Divide a part up into systems and fix the measure
      * widths so that they are all even.
@@ -2994,57 +3036,30 @@ export class Part extends Stream {
      * @param {number} systemHeight
      * @returns {Array}
      */
-    fixSystemInformation(systemHeight) {
-        /*
-         * console.log('system height: ' + systemHeight);
-         */
+    fixSystemInformation(systemHeight?, systemPadding?) {
+        // this is a method on Part!
         if (systemHeight === undefined) {
-            systemHeight = this.systemHeight; /* part.show() called... */
+            /* part.show() called... */
+            systemHeight = this.renderOptions.staffAreaHeight;
         } else if (debug) {
             console.log('overridden systemHeight: ' + systemHeight);
         }
-        const systemPadding = this.renderOptions.systemPadding;
-        const measureWidths = this.getMeasureWidths();
-        const maxSystemWidth = this.maxSystemWidth; // cryptic note: "of course fix!"?
-        const systemCurrentWidths = [];
-        const systemBreakIndexes = [];
-        let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
-        const startLeft = 20; /* TODO: make it obtained elsewhere */
-        let currentLeft = startLeft;
-        let i;
-        for (i = 0; i < measureWidths.length; i++) {
-            const currentRight = currentLeft + measureWidths[i];
-            /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
-            if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
-                systemBreakIndexes.push(i - 1);
-                systemCurrentWidths.push(currentLeft);
+        const [systemCurrentWidths, systemBreakIndexes] = this.systemWidthsAndBreaks();
 
-                // console.log('setting new width at ' + currentLeft);
-                currentLeft = startLeft + measureWidths[i]; // 20 + this width;
-                lastSystemBreak = i;
-            } else {
-                currentLeft = currentRight;
-            }
+        if (systemPadding === undefined) {
+            systemPadding = this.renderOptions.systemPadding;
         }
-        // console.log(systemCurrentWidths);
-        // console.log(systemBreakIndexes);
+        const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
 
         let currentSystemIndex = 0;
         let leftSubtract = 0;
         let newLeftSubtract;
-        for (i = 0; i < this.length; i++) {
-            const m = this.get(i);
-            if (!(m instanceof Stream)) {
-                continue;
-            }
 
-            if (m.renderOptions === undefined) {
-                continue;
-            }
+        for (const [i, m] of Array.from(this.getElementsByClass('Measure')).entries()) {
             if (i === 0) {
                 m.renderOptions.startNewSystem = true;
             }
-            currentLeft = m.renderOptions.left;
+            const currentLeft = m.renderOptions.left;
 
             if (systemBreakIndexes.indexOf(i - 1) !== -1) {
                 /* first measure of new System */
@@ -3082,8 +3097,7 @@ export class Part extends Stream {
                 /* last system... non-justified */
                 currentSystemMultiplier = 1;
             } else {
-                const currentSystemWidth
-                    = systemCurrentWidths[currentSystemIndex];
+                const currentSystemWidth = systemCurrentWidths[currentSystemIndex];
                 currentSystemMultiplier = maxSystemWidth / currentSystemWidth;
                 // console.log('systemMultiplier: ' + currentSystemMultiplier
                 // + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
@@ -3095,16 +3109,11 @@ export class Part extends Stream {
                 newLeftSubtract = undefined;
             }
             // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
-            m.renderOptions.left = Math.floor(
-                newLeft * currentSystemMultiplier
-            );
-            m.renderOptions.width = Math.floor(
-                m.renderOptions.width * currentSystemMultiplier
-            );
-            const newTop
-                = m.renderOptions.top
-                + currentSystemIndex * (systemHeight + systemPadding);
-            // console.log('M: ' + i + '; New top: ' + newTop + " ; old Top: " + m.renderOptions.top);
+            m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
+            m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
+            const newTop = (m.renderOptions.top
+                            + currentSystemIndex * (systemHeight + systemPadding));
+            // console.log('M: ' + i + '; New top: ' + newTop + ' ; old Top: ' + m.renderOptions.top);
             m.renderOptions.top = newTop;
         }
         return systemCurrentWidths;
@@ -3203,10 +3212,12 @@ export class Part extends Stream {
      * @return {number[]}  systemIndex, scaledYRelativeToSystem
      */
     systemIndexAndScaledY(y) {
+        // this is Part.systemIndexAndScaledY
+        const systemHeight = this.renderOptions.staffAreaHeight;
         const systemPadding = this.renderOptions.systemPadding;
-        const systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
+        const systemIndex = Math.floor(y / (systemHeight + systemPadding));
         const scaledYRelativeToSystem
-            = y - systemIndex * (this.systemHeight + systemPadding);
+            = y - systemIndex * (systemHeight + systemPadding);
         return [systemIndex, scaledYRelativeToSystem];
     }
 
@@ -3218,10 +3229,11 @@ export class Part extends Stream {
      */
     findNoteForClick(
         svg: HTMLElement|SVGElement,
-        e: MouseEvent|Touch,
+        e: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
     ): [number, base.Music21Object] {
+        // this is Part.FindNoteForClick
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -3378,10 +3390,14 @@ export class Score extends Stream {
             currentPartNumber += 1;
         }
         this.evenPartMeasureSpacing();
-        const ignoreNumSystems = true;
-        const currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
+        const currentScoreHeight = this.estimateStreamHeight(
+            {
+                ignoreSystems: true,
+                ignoreMarginBottom: true,
+            }
+        );
         for (const p of this.parts) {
-            p.fixSystemInformation(currentScoreHeight);
+            p.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding);
         }
         this.renderOptions.height = this.estimateStreamHeight();
         return this;
@@ -3395,7 +3411,7 @@ export class Score extends Stream {
     estimateStaffLength() {
         // override
         if (this.renderOptions.overriddenWidth !== undefined) {
-            // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
+            // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
         let maxWidth = -1;
@@ -3491,51 +3507,56 @@ export class Score extends Stream {
      * @return Array<number>   systemIndex, scaledYRelativeToSystem
      */
     systemIndexAndScaledY(y) {
-        // TODO(msc) -- systemPadding was not being used; should it be?
-        // let systemPadding = this.renderOptions.systemPadding;
-        // if (systemPadding === undefined) {
-        //     systemPadding = this.renderOptions.naiveSystemPadding;
-        // }
-
+        // this is Score.systemIndexAndScaledY
         const numParts = this.parts.length;
         const staffHeight = this.renderOptions.staffAreaHeight;
-        const systemHeight = numParts * staffHeight + this.renderOptions.systemPadding;
-        const systemIndex = Math.floor(y / systemHeight);
-        const scaledYRelativeToSystem = y - systemIndex * systemHeight;
-        return [systemIndex, scaledYRelativeToSystem];
+        const numSystems = this.numSystems();
+        let endOfLastSystem = 0;
+        for (let tryIndex = 0; tryIndex < numSystems; tryIndex++) {
+            const endOfThisSystem = endOfLastSystem + (numParts * staffHeight) + this.renderOptions.systemPadding;
+            if (y > endOfThisSystem && tryIndex !== numSystems - 1) {
+                endOfLastSystem = endOfThisSystem;
+                continue;
+            }
+            const scaledYRelativeToSystem = y - endOfLastSystem;
+            return [tryIndex, scaledYRelativeToSystem];
+        }
+        console.error('Should not get here!');
+        return [0, 0];
     }
 
     /**
+     * Score object
+     *
      * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
-     * click event, taking into account that the note will be in different
+     * click or other mouse event, taking into account that the note will be in different
      * Part objects (and different Systems) given the height and possibly different Systems.
      *
-     * @returns {Array} [diatonicNoteNum, m21Element]
+     * returns [diatonicNoteNum, m21Element]
      */
     findNoteForClick(
         svg: HTMLElement|SVGElement,
-        e: MouseEvent|Touch,
+        e: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
     ): [number, base.Music21Object] {
+        // this is Score.findNoteForClick()
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
-        const [systemIndex, scaledYFromSystemTop] = this.systemIndexAndScaledY(
-            y
-        );
-        const partIndex = Math.floor(scaledYFromSystemTop / this.renderOptions.staffAreaHeight);
-        const scaledYinPart
-            = scaledYFromSystemTop - partIndex * this.renderOptions.staffAreaHeight;
-        // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
+
+        // defaults to 120 and includes ledger line area
+        const staffHeight = this.renderOptions.staffAreaHeight;
+        const [systemIndex, scaledYFromSystemTop] = this.systemIndexAndScaledY(y);
+        const partIndex = Math.floor(scaledYFromSystemTop / staffHeight);
+        const scaledYinPart = scaledYFromSystemTop - partIndex * staffHeight;
+        // console.log('systemIndex: ' + systemIndex + ' partIndex: ' + partIndex);
         const rightPart = this.parts.get(partIndex);
         if (rightPart === undefined) {
             return [undefined, undefined]; // may be too low?
         }
 
-        const clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(
-            scaledYinPart
-        );
+        const clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
 
         const foundNote = rightPart.noteElementFromScaledX(
             x,
