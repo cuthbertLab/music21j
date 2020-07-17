@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.43 built on 2020-05-05.
+ * music21j 0.9.43 built on 2020-07-17.
  * Copyright (c) 2013-2020 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -26329,7 +26329,7 @@ var effectsEffectTransfer = effect;
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * jQuery JavaScript Library v3.4.1
+ * jQuery JavaScript Library v3.5.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -26339,7 +26339,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2019-05-01T21:04Z
+ * Date: 2020-05-04T22:49Z
  */
 ( function( global, factory ) {
 
@@ -26377,13 +26377,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 var arr = [];
 
-var document = window.document;
-
 var getProto = Object.getPrototypeOf;
 
 var slice = arr.slice;
 
-var concat = arr.concat;
+var flat = arr.flat ? function( array ) {
+	return arr.flat.call( array );
+} : function( array ) {
+	return arr.concat.apply( [], array );
+};
+
 
 var push = arr.push;
 
@@ -26415,6 +26418,8 @@ var isWindow = function isWindow( obj ) {
 		return obj != null && obj === obj.window;
 	};
 
+
+var document = window.document;
 
 
 
@@ -26472,7 +26477,7 @@ function toType( obj ) {
 
 
 var
-	version = "3.4.1",
+	version = "3.5.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -26480,11 +26485,7 @@ var
 		// The jQuery object is actually just the init constructor 'enhanced'
 		// Need init if jQuery is called (just allow error to be thrown if not included)
 		return new jQuery.fn.init( selector, context );
-	},
-
-	// Support: Android <=4.0 only
-	// Make sure we trim BOM and NBSP
-	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+	};
 
 jQuery.fn = jQuery.prototype = {
 
@@ -26548,6 +26549,18 @@ jQuery.fn = jQuery.prototype = {
 
 	last: function() {
 		return this.eq( -1 );
+	},
+
+	even: function() {
+		return this.pushStack( jQuery.grep( this, function( _elem, i ) {
+			return ( i + 1 ) % 2;
+		} ) );
+	},
+
+	odd: function() {
+		return this.pushStack( jQuery.grep( this, function( _elem, i ) {
+			return i % 2;
+		} ) );
 	},
 
 	eq: function( i ) {
@@ -26683,9 +26696,10 @@ jQuery.extend( {
 		return true;
 	},
 
-	// Evaluates a script in a global context
-	globalEval: function( code, options ) {
-		DOMEval( code, { nonce: options && options.nonce } );
+	// Evaluates a script in a provided context; falls back to the global one
+	// if not specified.
+	globalEval: function( code, options, doc ) {
+		DOMEval( code, { nonce: options && options.nonce }, doc );
 	},
 
 	each: function( obj, callback ) {
@@ -26707,13 +26721,6 @@ jQuery.extend( {
 		}
 
 		return obj;
-	},
-
-	// Support: Android <=4.0 only
-	trim: function( text ) {
-		return text == null ?
-			"" :
-			( text + "" ).replace( rtrim, "" );
 	},
 
 	// results is for internal usage only
@@ -26802,7 +26809,7 @@ jQuery.extend( {
 		}
 
 		// Flatten any nested arrays
-		return concat.apply( [], ret );
+		return flat( ret );
 	},
 
 	// A global GUID counter for objects
@@ -26819,7 +26826,7 @@ if ( typeof Symbol === "function" ) {
 
 // Populate the class2type map
 jQuery.each( "Boolean Number String Function Array Date RegExp Object Error Symbol".split( " " ),
-function( i, name ) {
+function( _i, name ) {
 	class2type[ "[object " + name + "]" ] = name.toLowerCase();
 } );
 
@@ -26841,17 +26848,16 @@ function isArrayLike( obj ) {
 }
 var Sizzle =
 /*!
- * Sizzle CSS Selector Engine v2.3.4
+ * Sizzle CSS Selector Engine v2.3.5
  * https://sizzlejs.com/
  *
  * Copyright JS Foundation and other contributors
  * Released under the MIT license
  * https://js.foundation/
  *
- * Date: 2019-04-08
+ * Date: 2020-03-14
  */
-(function( window ) {
-
+( function( window ) {
 var i,
 	support,
 	Expr,
@@ -26891,59 +26897,70 @@ var i,
 	},
 
 	// Instance methods
-	hasOwn = ({}).hasOwnProperty,
+	hasOwn = ( {} ).hasOwnProperty,
 	arr = [],
 	pop = arr.pop,
-	push_native = arr.push,
+	pushNative = arr.push,
 	push = arr.push,
 	slice = arr.slice,
+
 	// Use a stripped-down indexOf as it's faster than native
 	// https://jsperf.com/thor-indexof-vs-for/5
 	indexOf = function( list, elem ) {
 		var i = 0,
 			len = list.length;
 		for ( ; i < len; i++ ) {
-			if ( list[i] === elem ) {
+			if ( list[ i ] === elem ) {
 				return i;
 			}
 		}
 		return -1;
 	},
 
-	booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",
+	booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|" +
+		"ismap|loop|multiple|open|readonly|required|scoped",
 
 	// Regular expressions
 
 	// http://www.w3.org/TR/css3-selectors/#whitespace
 	whitespace = "[\\x20\\t\\r\\n\\f]",
 
-	// http://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
-	identifier = "(?:\\\\.|[\\w-]|[^\0-\\xa0])+",
+	// https://www.w3.org/TR/css-syntax-3/#ident-token-diagram
+	identifier = "(?:\\\\[\\da-fA-F]{1,6}" + whitespace +
+		"?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+",
 
 	// Attribute selectors: http://www.w3.org/TR/selectors/#attribute-selectors
 	attributes = "\\[" + whitespace + "*(" + identifier + ")(?:" + whitespace +
+
 		// Operator (capture 2)
 		"*([*^$|!~]?=)" + whitespace +
-		// "Attribute values must be CSS identifiers [capture 5] or strings [capture 3 or capture 4]"
-		"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace +
-		"*\\]",
+
+		// "Attribute values must be CSS identifiers [capture 5]
+		// or strings [capture 3 or capture 4]"
+		"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" +
+		whitespace + "*\\]",
 
 	pseudos = ":(" + identifier + ")(?:\\((" +
+
 		// To reduce the number of selectors needing tokenize in the preFilter, prefer arguments:
 		// 1. quoted (capture 3; capture 4 or capture 5)
 		"('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|" +
+
 		// 2. simple (capture 6)
 		"((?:\\\\.|[^\\\\()[\\]]|" + attributes + ")*)|" +
+
 		// 3. anything else (capture 2)
 		".*" +
 		")\\)|)",
 
 	// Leading and non-escaped trailing whitespace, capturing some non-whitespace characters preceding the latter
 	rwhitespace = new RegExp( whitespace + "+", "g" ),
-	rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g" ),
+	rtrim = new RegExp( "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" +
+		whitespace + "+$", "g" ),
 
 	rcomma = new RegExp( "^" + whitespace + "*," + whitespace + "*" ),
-	rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*" ),
+	rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace +
+		"*" ),
 	rdescend = new RegExp( whitespace + "|>" ),
 
 	rpseudo = new RegExp( pseudos ),
@@ -26955,14 +26972,16 @@ var i,
 		"TAG": new RegExp( "^(" + identifier + "|[*])" ),
 		"ATTR": new RegExp( "^" + attributes ),
 		"PSEUDO": new RegExp( "^" + pseudos ),
-		"CHILD": new RegExp( "^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" + whitespace +
-			"*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" + whitespace +
-			"*(\\d+)|))" + whitespace + "*\\)|)", "i" ),
+		"CHILD": new RegExp( "^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" +
+			whitespace + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" +
+			whitespace + "*(\\d+)|))" + whitespace + "*\\)|)", "i" ),
 		"bool": new RegExp( "^(?:" + booleans + ")$", "i" ),
+
 		// For use in libraries implementing .is()
 		// We use this for POS matching in `select`
-		"needsContext": new RegExp( "^" + whitespace + "*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" +
-			whitespace + "*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
+		"needsContext": new RegExp( "^" + whitespace +
+			"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace +
+			"*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
 	},
 
 	rhtml = /HTML$/i,
@@ -26978,18 +26997,21 @@ var i,
 
 	// CSS escapes
 	// http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
-	runescape = new RegExp( "\\\\([\\da-f]{1,6}" + whitespace + "?|(" + whitespace + ")|.)", "ig" ),
-	funescape = function( _, escaped, escapedWhitespace ) {
-		var high = "0x" + escaped - 0x10000;
-		// NaN means non-codepoint
-		// Support: Firefox<24
-		// Workaround erroneous numeric interpretation of +"0x"
-		return high !== high || escapedWhitespace ?
-			escaped :
+	runescape = new RegExp( "\\\\[\\da-fA-F]{1,6}" + whitespace + "?|\\\\([^\\r\\n\\f])", "g" ),
+	funescape = function( escape, nonHex ) {
+		var high = "0x" + escape.slice( 1 ) - 0x10000;
+
+		return nonHex ?
+
+			// Strip the backslash prefix from a non-hex escape sequence
+			nonHex :
+
+			// Replace a hexadecimal escape sequence with the encoded Unicode code point
+			// Support: IE <=11+
+			// For values outside the Basic Multilingual Plane (BMP), manually construct a
+			// surrogate pair
 			high < 0 ?
-				// BMP codepoint
 				String.fromCharCode( high + 0x10000 ) :
-				// Supplemental Plane codepoint (surrogate pair)
 				String.fromCharCode( high >> 10 | 0xD800, high & 0x3FF | 0xDC00 );
 	},
 
@@ -27005,7 +27027,8 @@ var i,
 			}
 
 			// Control characters and (dependent upon position) numbers get escaped as code points
-			return ch.slice( 0, -1 ) + "\\" + ch.charCodeAt( ch.length - 1 ).toString( 16 ) + " ";
+			return ch.slice( 0, -1 ) + "\\" +
+				ch.charCodeAt( ch.length - 1 ).toString( 16 ) + " ";
 		}
 
 		// Other potentially-special ASCII characters get backslash-escaped
@@ -27030,18 +27053,20 @@ var i,
 // Optimize for push.apply( _, NodeList )
 try {
 	push.apply(
-		(arr = slice.call( preferredDoc.childNodes )),
+		( arr = slice.call( preferredDoc.childNodes ) ),
 		preferredDoc.childNodes
 	);
+
 	// Support: Android<4.0
 	// Detect silently failing push.apply
+	// eslint-disable-next-line no-unused-expressions
 	arr[ preferredDoc.childNodes.length ].nodeType;
 } catch ( e ) {
 	push = { apply: arr.length ?
 
 		// Leverage slice if possible
 		function( target, els ) {
-			push_native.apply( target, slice.call(els) );
+			pushNative.apply( target, slice.call( els ) );
 		} :
 
 		// Support: IE<9
@@ -27049,8 +27074,9 @@ try {
 		function( target, els ) {
 			var j = target.length,
 				i = 0;
+
 			// Can't trust NodeList.length
-			while ( (target[j++] = els[i++]) ) {}
+			while ( ( target[ j++ ] = els[ i++ ] ) ) {}
 			target.length = j - 1;
 		}
 	};
@@ -27074,24 +27100,21 @@ function Sizzle( selector, context, results, seed ) {
 
 	// Try to shortcut find operations (as opposed to filters) in HTML documents
 	if ( !seed ) {
-
-		if ( ( context ? context.ownerDocument || context : preferredDoc ) !== document ) {
-			setDocument( context );
-		}
+		setDocument( context );
 		context = context || document;
 
 		if ( documentIsHTML ) {
 
 			// If the selector is sufficiently simple, try using a "get*By*" DOM method
 			// (excepting DocumentFragment context, where the methods don't exist)
-			if ( nodeType !== 11 && (match = rquickExpr.exec( selector )) ) {
+			if ( nodeType !== 11 && ( match = rquickExpr.exec( selector ) ) ) {
 
 				// ID selector
-				if ( (m = match[1]) ) {
+				if ( ( m = match[ 1 ] ) ) {
 
 					// Document context
 					if ( nodeType === 9 ) {
-						if ( (elem = context.getElementById( m )) ) {
+						if ( ( elem = context.getElementById( m ) ) ) {
 
 							// Support: IE, Opera, Webkit
 							// TODO: identify versions
@@ -27110,7 +27133,7 @@ function Sizzle( selector, context, results, seed ) {
 						// Support: IE, Opera, Webkit
 						// TODO: identify versions
 						// getElementById can match elements by name instead of ID
-						if ( newContext && (elem = newContext.getElementById( m )) &&
+						if ( newContext && ( elem = newContext.getElementById( m ) ) &&
 							contains( context, elem ) &&
 							elem.id === m ) {
 
@@ -27120,12 +27143,12 @@ function Sizzle( selector, context, results, seed ) {
 					}
 
 				// Type selector
-				} else if ( match[2] ) {
+				} else if ( match[ 2 ] ) {
 					push.apply( results, context.getElementsByTagName( selector ) );
 					return results;
 
 				// Class selector
-				} else if ( (m = match[3]) && support.getElementsByClassName &&
+				} else if ( ( m = match[ 3 ] ) && support.getElementsByClassName &&
 					context.getElementsByClassName ) {
 
 					push.apply( results, context.getElementsByClassName( m ) );
@@ -27136,11 +27159,11 @@ function Sizzle( selector, context, results, seed ) {
 			// Take advantage of querySelectorAll
 			if ( support.qsa &&
 				!nonnativeSelectorCache[ selector + " " ] &&
-				(!rbuggyQSA || !rbuggyQSA.test( selector )) &&
+				( !rbuggyQSA || !rbuggyQSA.test( selector ) ) &&
 
 				// Support: IE 8 only
 				// Exclude object elements
-				(nodeType !== 1 || context.nodeName.toLowerCase() !== "object") ) {
+				( nodeType !== 1 || context.nodeName.toLowerCase() !== "object" ) ) {
 
 				newSelector = selector;
 				newContext = context;
@@ -27149,27 +27172,36 @@ function Sizzle( selector, context, results, seed ) {
 				// descendant combinators, which is not what we want.
 				// In such cases, we work around the behavior by prefixing every selector in the
 				// list with an ID selector referencing the scope context.
+				// The technique has to be used as well when a leading combinator is used
+				// as such selectors are not recognized by querySelectorAll.
 				// Thanks to Andrew Dupont for this technique.
-				if ( nodeType === 1 && rdescend.test( selector ) ) {
+				if ( nodeType === 1 &&
+					( rdescend.test( selector ) || rcombinators.test( selector ) ) ) {
 
-					// Capture the context ID, setting it first if necessary
-					if ( (nid = context.getAttribute( "id" )) ) {
-						nid = nid.replace( rcssescape, fcssescape );
-					} else {
-						context.setAttribute( "id", (nid = expando) );
+					// Expand context for sibling selectors
+					newContext = rsibling.test( selector ) && testContext( context.parentNode ) ||
+						context;
+
+					// We can use :scope instead of the ID hack if the browser
+					// supports it & if we're not changing the context.
+					if ( newContext !== context || !support.scope ) {
+
+						// Capture the context ID, setting it first if necessary
+						if ( ( nid = context.getAttribute( "id" ) ) ) {
+							nid = nid.replace( rcssescape, fcssescape );
+						} else {
+							context.setAttribute( "id", ( nid = expando ) );
+						}
 					}
 
 					// Prefix every selector in the list
 					groups = tokenize( selector );
 					i = groups.length;
 					while ( i-- ) {
-						groups[i] = "#" + nid + " " + toSelector( groups[i] );
+						groups[ i ] = ( nid ? "#" + nid : ":scope" ) + " " +
+							toSelector( groups[ i ] );
 					}
 					newSelector = groups.join( "," );
-
-					// Expand context for sibling selectors
-					newContext = rsibling.test( selector ) && testContext( context.parentNode ) ||
-						context;
 				}
 
 				try {
@@ -27202,12 +27234,14 @@ function createCache() {
 	var keys = [];
 
 	function cache( key, value ) {
+
 		// Use (key + " ") to avoid collision with native prototype properties (see Issue #157)
 		if ( keys.push( key + " " ) > Expr.cacheLength ) {
+
 			// Only keep the most recent entries
 			delete cache[ keys.shift() ];
 		}
-		return (cache[ key + " " ] = value);
+		return ( cache[ key + " " ] = value );
 	}
 	return cache;
 }
@@ -27226,17 +27260,19 @@ function markFunction( fn ) {
  * @param {Function} fn Passed the created element and returns a boolean result
  */
 function assert( fn ) {
-	var el = document.createElement("fieldset");
+	var el = document.createElement( "fieldset" );
 
 	try {
 		return !!fn( el );
-	} catch (e) {
+	} catch ( e ) {
 		return false;
 	} finally {
+
 		// Remove from its parent by default
 		if ( el.parentNode ) {
 			el.parentNode.removeChild( el );
 		}
+
 		// release memory in IE
 		el = null;
 	}
@@ -27248,11 +27284,11 @@ function assert( fn ) {
  * @param {Function} handler The method that will be applied
  */
 function addHandle( attrs, handler ) {
-	var arr = attrs.split("|"),
+	var arr = attrs.split( "|" ),
 		i = arr.length;
 
 	while ( i-- ) {
-		Expr.attrHandle[ arr[i] ] = handler;
+		Expr.attrHandle[ arr[ i ] ] = handler;
 	}
 }
 
@@ -27274,7 +27310,7 @@ function siblingCheck( a, b ) {
 
 	// Check if b follows a
 	if ( cur ) {
-		while ( (cur = cur.nextSibling) ) {
+		while ( ( cur = cur.nextSibling ) ) {
 			if ( cur === b ) {
 				return -1;
 			}
@@ -27302,7 +27338,7 @@ function createInputPseudo( type ) {
 function createButtonPseudo( type ) {
 	return function( elem ) {
 		var name = elem.nodeName.toLowerCase();
-		return (name === "input" || name === "button") && elem.type === type;
+		return ( name === "input" || name === "button" ) && elem.type === type;
 	};
 }
 
@@ -27345,7 +27381,7 @@ function createDisabledPseudo( disabled ) {
 					// Where there is no isDisabled, check manually
 					/* jshint -W018 */
 					elem.isDisabled !== !disabled &&
-						inDisabledFieldset( elem ) === disabled;
+					inDisabledFieldset( elem ) === disabled;
 			}
 
 			return elem.disabled === disabled;
@@ -27367,21 +27403,21 @@ function createDisabledPseudo( disabled ) {
  * @param {Function} fn
  */
 function createPositionalPseudo( fn ) {
-	return markFunction(function( argument ) {
+	return markFunction( function( argument ) {
 		argument = +argument;
-		return markFunction(function( seed, matches ) {
+		return markFunction( function( seed, matches ) {
 			var j,
 				matchIndexes = fn( [], seed.length, argument ),
 				i = matchIndexes.length;
 
 			// Match elements found at the specified indexes
 			while ( i-- ) {
-				if ( seed[ (j = matchIndexes[i]) ] ) {
-					seed[j] = !(matches[j] = seed[j]);
+				if ( seed[ ( j = matchIndexes[ i ] ) ] ) {
+					seed[ j ] = !( matches[ j ] = seed[ j ] );
 				}
 			}
-		});
-	});
+		} );
+	} );
 }
 
 /**
@@ -27403,7 +27439,7 @@ support = Sizzle.support = {};
  */
 isXML = Sizzle.isXML = function( elem ) {
 	var namespace = elem.namespaceURI,
-		docElem = (elem.ownerDocument || elem).documentElement;
+		docElem = ( elem.ownerDocument || elem ).documentElement;
 
 	// Support: IE <=8
 	// Assume HTML when documentElement doesn't yet exist, such as inside loading iframes
@@ -27421,7 +27457,11 @@ setDocument = Sizzle.setDocument = function( node ) {
 		doc = node ? node.ownerDocument || node : preferredDoc;
 
 	// Return early if doc is invalid or already selected
-	if ( doc === document || doc.nodeType !== 9 || !doc.documentElement ) {
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( doc == document || doc.nodeType !== 9 || !doc.documentElement ) {
 		return document;
 	}
 
@@ -27430,10 +27470,14 @@ setDocument = Sizzle.setDocument = function( node ) {
 	docElem = document.documentElement;
 	documentIsHTML = !isXML( document );
 
-	// Support: IE 9-11, Edge
+	// Support: IE 9 - 11+, Edge 12 - 18+
 	// Accessing iframe documents after unload throws "permission denied" errors (jQuery #13936)
-	if ( preferredDoc !== document &&
-		(subWindow = document.defaultView) && subWindow.top !== subWindow ) {
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( preferredDoc != document &&
+		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
 
 		// Support: IE 11, Edge
 		if ( subWindow.addEventListener ) {
@@ -27445,25 +27489,36 @@ setDocument = Sizzle.setDocument = function( node ) {
 		}
 	}
 
+	// Support: IE 8 - 11+, Edge 12 - 18+, Chrome <=16 - 25 only, Firefox <=3.6 - 31 only,
+	// Safari 4 - 5 only, Opera <=11.6 - 12.x only
+	// IE/Edge & older browsers don't support the :scope pseudo-class.
+	// Support: Safari 6.0 only
+	// Safari 6.0 supports :scope but it's an alias of :root there.
+	support.scope = assert( function( el ) {
+		docElem.appendChild( el ).appendChild( document.createElement( "div" ) );
+		return typeof el.querySelectorAll !== "undefined" &&
+			!el.querySelectorAll( ":scope fieldset div" ).length;
+	} );
+
 	/* Attributes
 	---------------------------------------------------------------------- */
 
 	// Support: IE<8
 	// Verify that getAttribute really returns attributes and not properties
 	// (excepting IE8 booleans)
-	support.attributes = assert(function( el ) {
+	support.attributes = assert( function( el ) {
 		el.className = "i";
-		return !el.getAttribute("className");
-	});
+		return !el.getAttribute( "className" );
+	} );
 
 	/* getElement(s)By*
 	---------------------------------------------------------------------- */
 
 	// Check if getElementsByTagName("*") returns only elements
-	support.getElementsByTagName = assert(function( el ) {
-		el.appendChild( document.createComment("") );
-		return !el.getElementsByTagName("*").length;
-	});
+	support.getElementsByTagName = assert( function( el ) {
+		el.appendChild( document.createComment( "" ) );
+		return !el.getElementsByTagName( "*" ).length;
+	} );
 
 	// Support: IE<9
 	support.getElementsByClassName = rnative.test( document.getElementsByClassName );
@@ -27472,38 +27527,38 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// Check if getElementById returns elements by name
 	// The broken getElementById methods don't pick up programmatically-set names,
 	// so use a roundabout getElementsByName test
-	support.getById = assert(function( el ) {
+	support.getById = assert( function( el ) {
 		docElem.appendChild( el ).id = expando;
 		return !document.getElementsByName || !document.getElementsByName( expando ).length;
-	});
+	} );
 
 	// ID filter and find
 	if ( support.getById ) {
-		Expr.filter["ID"] = function( id ) {
+		Expr.filter[ "ID" ] = function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
-				return elem.getAttribute("id") === attrId;
+				return elem.getAttribute( "id" ) === attrId;
 			};
 		};
-		Expr.find["ID"] = function( id, context ) {
+		Expr.find[ "ID" ] = function( id, context ) {
 			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
 				var elem = context.getElementById( id );
 				return elem ? [ elem ] : [];
 			}
 		};
 	} else {
-		Expr.filter["ID"] =  function( id ) {
+		Expr.filter[ "ID" ] =  function( id ) {
 			var attrId = id.replace( runescape, funescape );
 			return function( elem ) {
 				var node = typeof elem.getAttributeNode !== "undefined" &&
-					elem.getAttributeNode("id");
+					elem.getAttributeNode( "id" );
 				return node && node.value === attrId;
 			};
 		};
 
 		// Support: IE 6 - 7 only
 		// getElementById is not reliable as a find shortcut
-		Expr.find["ID"] = function( id, context ) {
+		Expr.find[ "ID" ] = function( id, context ) {
 			if ( typeof context.getElementById !== "undefined" && documentIsHTML ) {
 				var node, i, elems,
 					elem = context.getElementById( id );
@@ -27511,7 +27566,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 				if ( elem ) {
 
 					// Verify the id attribute
-					node = elem.getAttributeNode("id");
+					node = elem.getAttributeNode( "id" );
 					if ( node && node.value === id ) {
 						return [ elem ];
 					}
@@ -27519,8 +27574,8 @@ setDocument = Sizzle.setDocument = function( node ) {
 					// Fall back on getElementsByName
 					elems = context.getElementsByName( id );
 					i = 0;
-					while ( (elem = elems[i++]) ) {
-						node = elem.getAttributeNode("id");
+					while ( ( elem = elems[ i++ ] ) ) {
+						node = elem.getAttributeNode( "id" );
 						if ( node && node.value === id ) {
 							return [ elem ];
 						}
@@ -27533,7 +27588,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	}
 
 	// Tag
-	Expr.find["TAG"] = support.getElementsByTagName ?
+	Expr.find[ "TAG" ] = support.getElementsByTagName ?
 		function( tag, context ) {
 			if ( typeof context.getElementsByTagName !== "undefined" ) {
 				return context.getElementsByTagName( tag );
@@ -27548,12 +27603,13 @@ setDocument = Sizzle.setDocument = function( node ) {
 			var elem,
 				tmp = [],
 				i = 0,
+
 				// By happy coincidence, a (broken) gEBTN appears on DocumentFragment nodes too
 				results = context.getElementsByTagName( tag );
 
 			// Filter out possible comments
 			if ( tag === "*" ) {
-				while ( (elem = results[i++]) ) {
+				while ( ( elem = results[ i++ ] ) ) {
 					if ( elem.nodeType === 1 ) {
 						tmp.push( elem );
 					}
@@ -27565,7 +27621,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 		};
 
 	// Class
-	Expr.find["CLASS"] = support.getElementsByClassName && function( className, context ) {
+	Expr.find[ "CLASS" ] = support.getElementsByClassName && function( className, context ) {
 		if ( typeof context.getElementsByClassName !== "undefined" && documentIsHTML ) {
 			return context.getElementsByClassName( className );
 		}
@@ -27586,10 +27642,14 @@ setDocument = Sizzle.setDocument = function( node ) {
 	// See https://bugs.jquery.com/ticket/13378
 	rbuggyQSA = [];
 
-	if ( (support.qsa = rnative.test( document.querySelectorAll )) ) {
+	if ( ( support.qsa = rnative.test( document.querySelectorAll ) ) ) {
+
 		// Build QSA regex
 		// Regex strategy adopted from Diego Perini
-		assert(function( el ) {
+		assert( function( el ) {
+
+			var input;
+
 			// Select is set to empty string on purpose
 			// This is to test IE's treatment of not explicitly
 			// setting a boolean content attribute,
@@ -27603,78 +27663,98 @@ setDocument = Sizzle.setDocument = function( node ) {
 			// Nothing should be selected when empty strings follow ^= or $= or *=
 			// The test attribute must be unknown in Opera but "safe" for WinRT
 			// https://msdn.microsoft.com/en-us/library/ie/hh465388.aspx#attribute_section
-			if ( el.querySelectorAll("[msallowcapture^='']").length ) {
+			if ( el.querySelectorAll( "[msallowcapture^='']" ).length ) {
 				rbuggyQSA.push( "[*^$]=" + whitespace + "*(?:''|\"\")" );
 			}
 
 			// Support: IE8
 			// Boolean attributes and "value" are not treated correctly
-			if ( !el.querySelectorAll("[selected]").length ) {
+			if ( !el.querySelectorAll( "[selected]" ).length ) {
 				rbuggyQSA.push( "\\[" + whitespace + "*(?:value|" + booleans + ")" );
 			}
 
 			// Support: Chrome<29, Android<4.4, Safari<7.0+, iOS<7.0+, PhantomJS<1.9.8+
 			if ( !el.querySelectorAll( "[id~=" + expando + "-]" ).length ) {
-				rbuggyQSA.push("~=");
+				rbuggyQSA.push( "~=" );
+			}
+
+			// Support: IE 11+, Edge 15 - 18+
+			// IE 11/Edge don't find elements on a `[name='']` query in some cases.
+			// Adding a temporary attribute to the document before the selection works
+			// around the issue.
+			// Interestingly, IE 10 & older don't seem to have the issue.
+			input = document.createElement( "input" );
+			input.setAttribute( "name", "" );
+			el.appendChild( input );
+			if ( !el.querySelectorAll( "[name='']" ).length ) {
+				rbuggyQSA.push( "\\[" + whitespace + "*name" + whitespace + "*=" +
+					whitespace + "*(?:''|\"\")" );
 			}
 
 			// Webkit/Opera - :checked should return selected option elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			// IE8 throws error here and will not see later tests
-			if ( !el.querySelectorAll(":checked").length ) {
-				rbuggyQSA.push(":checked");
+			if ( !el.querySelectorAll( ":checked" ).length ) {
+				rbuggyQSA.push( ":checked" );
 			}
 
 			// Support: Safari 8+, iOS 8+
 			// https://bugs.webkit.org/show_bug.cgi?id=136851
 			// In-page `selector#id sibling-combinator selector` fails
 			if ( !el.querySelectorAll( "a#" + expando + "+*" ).length ) {
-				rbuggyQSA.push(".#.+[+~]");
+				rbuggyQSA.push( ".#.+[+~]" );
 			}
-		});
 
-		assert(function( el ) {
+			// Support: Firefox <=3.6 - 5 only
+			// Old Firefox doesn't throw on a badly-escaped identifier.
+			el.querySelectorAll( "\\\f" );
+			rbuggyQSA.push( "[\\r\\n\\f]" );
+		} );
+
+		assert( function( el ) {
 			el.innerHTML = "<a href='' disabled='disabled'></a>" +
 				"<select disabled='disabled'><option/></select>";
 
 			// Support: Windows 8 Native Apps
 			// The type and name attributes are restricted during .innerHTML assignment
-			var input = document.createElement("input");
+			var input = document.createElement( "input" );
 			input.setAttribute( "type", "hidden" );
 			el.appendChild( input ).setAttribute( "name", "D" );
 
 			// Support: IE8
 			// Enforce case-sensitivity of name attribute
-			if ( el.querySelectorAll("[name=d]").length ) {
+			if ( el.querySelectorAll( "[name=d]" ).length ) {
 				rbuggyQSA.push( "name" + whitespace + "*[*^$|!~]?=" );
 			}
 
 			// FF 3.5 - :enabled/:disabled and hidden elements (hidden elements are still enabled)
 			// IE8 throws error here and will not see later tests
-			if ( el.querySelectorAll(":enabled").length !== 2 ) {
+			if ( el.querySelectorAll( ":enabled" ).length !== 2 ) {
 				rbuggyQSA.push( ":enabled", ":disabled" );
 			}
 
 			// Support: IE9-11+
 			// IE's :disabled selector does not pick up the children of disabled fieldsets
 			docElem.appendChild( el ).disabled = true;
-			if ( el.querySelectorAll(":disabled").length !== 2 ) {
+			if ( el.querySelectorAll( ":disabled" ).length !== 2 ) {
 				rbuggyQSA.push( ":enabled", ":disabled" );
 			}
 
+			// Support: Opera 10 - 11 only
 			// Opera 10-11 does not throw on post-comma invalid pseudos
-			el.querySelectorAll("*,:x");
-			rbuggyQSA.push(",.*:");
-		});
+			el.querySelectorAll( "*,:x" );
+			rbuggyQSA.push( ",.*:" );
+		} );
 	}
 
-	if ( (support.matchesSelector = rnative.test( (matches = docElem.matches ||
+	if ( ( support.matchesSelector = rnative.test( ( matches = docElem.matches ||
 		docElem.webkitMatchesSelector ||
 		docElem.mozMatchesSelector ||
 		docElem.oMatchesSelector ||
-		docElem.msMatchesSelector) )) ) {
+		docElem.msMatchesSelector ) ) ) ) {
 
-		assert(function( el ) {
+		assert( function( el ) {
+
 			// Check to see if it's possible to do matchesSelector
 			// on a disconnected node (IE 9)
 			support.disconnectedMatch = matches.call( el, "*" );
@@ -27683,11 +27763,11 @@ setDocument = Sizzle.setDocument = function( node ) {
 			// Gecko does not error, returns false instead
 			matches.call( el, "[s!='']:x" );
 			rbuggyMatches.push( "!=", pseudos );
-		});
+		} );
 	}
 
-	rbuggyQSA = rbuggyQSA.length && new RegExp( rbuggyQSA.join("|") );
-	rbuggyMatches = rbuggyMatches.length && new RegExp( rbuggyMatches.join("|") );
+	rbuggyQSA = rbuggyQSA.length && new RegExp( rbuggyQSA.join( "|" ) );
+	rbuggyMatches = rbuggyMatches.length && new RegExp( rbuggyMatches.join( "|" ) );
 
 	/* Contains
 	---------------------------------------------------------------------- */
@@ -27704,11 +27784,11 @@ setDocument = Sizzle.setDocument = function( node ) {
 				adown.contains ?
 					adown.contains( bup ) :
 					a.compareDocumentPosition && a.compareDocumentPosition( bup ) & 16
-			));
+			) );
 		} :
 		function( a, b ) {
 			if ( b ) {
-				while ( (b = b.parentNode) ) {
+				while ( ( b = b.parentNode ) ) {
 					if ( b === a ) {
 						return true;
 					}
@@ -27737,7 +27817,11 @@ setDocument = Sizzle.setDocument = function( node ) {
 		}
 
 		// Calculate position if both inputs belong to the same document
-		compare = ( a.ownerDocument || a ) === ( b.ownerDocument || b ) ?
+		// Support: IE 11+, Edge 17 - 18+
+		// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+		// two documents; shallow comparisons work.
+		// eslint-disable-next-line eqeqeq
+		compare = ( a.ownerDocument || a ) == ( b.ownerDocument || b ) ?
 			a.compareDocumentPosition( b ) :
 
 			// Otherwise we know they are disconnected
@@ -27745,13 +27829,24 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 		// Disconnected nodes
 		if ( compare & 1 ||
-			(!support.sortDetached && b.compareDocumentPosition( a ) === compare) ) {
+			( !support.sortDetached && b.compareDocumentPosition( a ) === compare ) ) {
 
 			// Choose the first element that is related to our preferred document
-			if ( a === document || a.ownerDocument === preferredDoc && contains(preferredDoc, a) ) {
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			// eslint-disable-next-line eqeqeq
+			if ( a == document || a.ownerDocument == preferredDoc &&
+				contains( preferredDoc, a ) ) {
 				return -1;
 			}
-			if ( b === document || b.ownerDocument === preferredDoc && contains(preferredDoc, b) ) {
+
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			// eslint-disable-next-line eqeqeq
+			if ( b == document || b.ownerDocument == preferredDoc &&
+				contains( preferredDoc, b ) ) {
 				return 1;
 			}
 
@@ -27764,6 +27859,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 		return compare & 4 ? -1 : 1;
 	} :
 	function( a, b ) {
+
 		// Exit early if the nodes are identical
 		if ( a === b ) {
 			hasDuplicate = true;
@@ -27779,8 +27875,14 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 		// Parentless nodes are either documents or disconnected
 		if ( !aup || !bup ) {
-			return a === document ? -1 :
-				b === document ? 1 :
+
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			/* eslint-disable eqeqeq */
+			return a == document ? -1 :
+				b == document ? 1 :
+				/* eslint-enable eqeqeq */
 				aup ? -1 :
 				bup ? 1 :
 				sortInput ?
@@ -27794,26 +27896,32 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 		// Otherwise we need full lists of their ancestors for comparison
 		cur = a;
-		while ( (cur = cur.parentNode) ) {
+		while ( ( cur = cur.parentNode ) ) {
 			ap.unshift( cur );
 		}
 		cur = b;
-		while ( (cur = cur.parentNode) ) {
+		while ( ( cur = cur.parentNode ) ) {
 			bp.unshift( cur );
 		}
 
 		// Walk down the tree looking for a discrepancy
-		while ( ap[i] === bp[i] ) {
+		while ( ap[ i ] === bp[ i ] ) {
 			i++;
 		}
 
 		return i ?
+
 			// Do a sibling check if the nodes have a common ancestor
-			siblingCheck( ap[i], bp[i] ) :
+			siblingCheck( ap[ i ], bp[ i ] ) :
 
 			// Otherwise nodes in our document sort first
-			ap[i] === preferredDoc ? -1 :
-			bp[i] === preferredDoc ? 1 :
+			// Support: IE 11+, Edge 17 - 18+
+			// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+			// two documents; shallow comparisons work.
+			/* eslint-disable eqeqeq */
+			ap[ i ] == preferredDoc ? -1 :
+			bp[ i ] == preferredDoc ? 1 :
+			/* eslint-enable eqeqeq */
 			0;
 	};
 
@@ -27825,10 +27933,7 @@ Sizzle.matches = function( expr, elements ) {
 };
 
 Sizzle.matchesSelector = function( elem, expr ) {
-	// Set document vars if needed
-	if ( ( elem.ownerDocument || elem ) !== document ) {
-		setDocument( elem );
-	}
+	setDocument( elem );
 
 	if ( support.matchesSelector && documentIsHTML &&
 		!nonnativeSelectorCache[ expr + " " ] &&
@@ -27840,12 +27945,13 @@ Sizzle.matchesSelector = function( elem, expr ) {
 
 			// IE 9's matchesSelector returns false on disconnected nodes
 			if ( ret || support.disconnectedMatch ||
-					// As well, disconnected nodes are said to be in a document
-					// fragment in IE 9
-					elem.document && elem.document.nodeType !== 11 ) {
+
+				// As well, disconnected nodes are said to be in a document
+				// fragment in IE 9
+				elem.document && elem.document.nodeType !== 11 ) {
 				return ret;
 			}
-		} catch (e) {
+		} catch ( e ) {
 			nonnativeSelectorCache( expr, true );
 		}
 	}
@@ -27854,20 +27960,31 @@ Sizzle.matchesSelector = function( elem, expr ) {
 };
 
 Sizzle.contains = function( context, elem ) {
+
 	// Set document vars if needed
-	if ( ( context.ownerDocument || context ) !== document ) {
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( ( context.ownerDocument || context ) != document ) {
 		setDocument( context );
 	}
 	return contains( context, elem );
 };
 
 Sizzle.attr = function( elem, name ) {
+
 	// Set document vars if needed
-	if ( ( elem.ownerDocument || elem ) !== document ) {
+	// Support: IE 11+, Edge 17 - 18+
+	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+	// two documents; shallow comparisons work.
+	// eslint-disable-next-line eqeqeq
+	if ( ( elem.ownerDocument || elem ) != document ) {
 		setDocument( elem );
 	}
 
 	var fn = Expr.attrHandle[ name.toLowerCase() ],
+
 		// Don't get fooled by Object.prototype properties (jQuery #13807)
 		val = fn && hasOwn.call( Expr.attrHandle, name.toLowerCase() ) ?
 			fn( elem, name, !documentIsHTML ) :
@@ -27877,13 +27994,13 @@ Sizzle.attr = function( elem, name ) {
 		val :
 		support.attributes || !documentIsHTML ?
 			elem.getAttribute( name ) :
-			(val = elem.getAttributeNode(name)) && val.specified ?
+			( val = elem.getAttributeNode( name ) ) && val.specified ?
 				val.value :
 				null;
 };
 
 Sizzle.escape = function( sel ) {
-	return (sel + "").replace( rcssescape, fcssescape );
+	return ( sel + "" ).replace( rcssescape, fcssescape );
 };
 
 Sizzle.error = function( msg ) {
@@ -27906,7 +28023,7 @@ Sizzle.uniqueSort = function( results ) {
 	results.sort( sortOrder );
 
 	if ( hasDuplicate ) {
-		while ( (elem = results[i++]) ) {
+		while ( ( elem = results[ i++ ] ) ) {
 			if ( elem === results[ i ] ) {
 				j = duplicates.push( i );
 			}
@@ -27934,17 +28051,21 @@ getText = Sizzle.getText = function( elem ) {
 		nodeType = elem.nodeType;
 
 	if ( !nodeType ) {
+
 		// If no nodeType, this is expected to be an array
-		while ( (node = elem[i++]) ) {
+		while ( ( node = elem[ i++ ] ) ) {
+
 			// Do not traverse comment nodes
 			ret += getText( node );
 		}
 	} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
+
 		// Use textContent for elements
 		// innerText usage removed for consistency of new lines (jQuery #11153)
 		if ( typeof elem.textContent === "string" ) {
 			return elem.textContent;
 		} else {
+
 			// Traverse its children
 			for ( elem = elem.firstChild; elem; elem = elem.nextSibling ) {
 				ret += getText( elem );
@@ -27953,6 +28074,7 @@ getText = Sizzle.getText = function( elem ) {
 	} else if ( nodeType === 3 || nodeType === 4 ) {
 		return elem.nodeValue;
 	}
+
 	// Do not include comment or processing instruction nodes
 
 	return ret;
@@ -27980,19 +28102,21 @@ Expr = Sizzle.selectors = {
 
 	preFilter: {
 		"ATTR": function( match ) {
-			match[1] = match[1].replace( runescape, funescape );
+			match[ 1 ] = match[ 1 ].replace( runescape, funescape );
 
 			// Move the given value to match[3] whether quoted or unquoted
-			match[3] = ( match[3] || match[4] || match[5] || "" ).replace( runescape, funescape );
+			match[ 3 ] = ( match[ 3 ] || match[ 4 ] ||
+				match[ 5 ] || "" ).replace( runescape, funescape );
 
-			if ( match[2] === "~=" ) {
-				match[3] = " " + match[3] + " ";
+			if ( match[ 2 ] === "~=" ) {
+				match[ 3 ] = " " + match[ 3 ] + " ";
 			}
 
 			return match.slice( 0, 4 );
 		},
 
 		"CHILD": function( match ) {
+
 			/* matches from matchExpr["CHILD"]
 				1 type (only|nth|...)
 				2 what (child|of-type)
@@ -28003,22 +28127,25 @@ Expr = Sizzle.selectors = {
 				7 sign of y-component
 				8 y of y-component
 			*/
-			match[1] = match[1].toLowerCase();
+			match[ 1 ] = match[ 1 ].toLowerCase();
 
-			if ( match[1].slice( 0, 3 ) === "nth" ) {
+			if ( match[ 1 ].slice( 0, 3 ) === "nth" ) {
+
 				// nth-* requires argument
-				if ( !match[3] ) {
-					Sizzle.error( match[0] );
+				if ( !match[ 3 ] ) {
+					Sizzle.error( match[ 0 ] );
 				}
 
 				// numeric x and y parameters for Expr.filter.CHILD
 				// remember that false/true cast respectively to 0/1
-				match[4] = +( match[4] ? match[5] + (match[6] || 1) : 2 * ( match[3] === "even" || match[3] === "odd" ) );
-				match[5] = +( ( match[7] + match[8] ) || match[3] === "odd" );
+				match[ 4 ] = +( match[ 4 ] ?
+					match[ 5 ] + ( match[ 6 ] || 1 ) :
+					2 * ( match[ 3 ] === "even" || match[ 3 ] === "odd" ) );
+				match[ 5 ] = +( ( match[ 7 ] + match[ 8 ] ) || match[ 3 ] === "odd" );
 
-			// other types prohibit arguments
-			} else if ( match[3] ) {
-				Sizzle.error( match[0] );
+				// other types prohibit arguments
+			} else if ( match[ 3 ] ) {
+				Sizzle.error( match[ 0 ] );
 			}
 
 			return match;
@@ -28026,26 +28153,28 @@ Expr = Sizzle.selectors = {
 
 		"PSEUDO": function( match ) {
 			var excess,
-				unquoted = !match[6] && match[2];
+				unquoted = !match[ 6 ] && match[ 2 ];
 
-			if ( matchExpr["CHILD"].test( match[0] ) ) {
+			if ( matchExpr[ "CHILD" ].test( match[ 0 ] ) ) {
 				return null;
 			}
 
 			// Accept quoted arguments as-is
-			if ( match[3] ) {
-				match[2] = match[4] || match[5] || "";
+			if ( match[ 3 ] ) {
+				match[ 2 ] = match[ 4 ] || match[ 5 ] || "";
 
 			// Strip excess characters from unquoted arguments
 			} else if ( unquoted && rpseudo.test( unquoted ) &&
+
 				// Get excess from tokenize (recursively)
-				(excess = tokenize( unquoted, true )) &&
+				( excess = tokenize( unquoted, true ) ) &&
+
 				// advance to the next closing parenthesis
-				(excess = unquoted.indexOf( ")", unquoted.length - excess ) - unquoted.length) ) {
+				( excess = unquoted.indexOf( ")", unquoted.length - excess ) - unquoted.length ) ) {
 
 				// excess is a negative index
-				match[0] = match[0].slice( 0, excess );
-				match[2] = unquoted.slice( 0, excess );
+				match[ 0 ] = match[ 0 ].slice( 0, excess );
+				match[ 2 ] = unquoted.slice( 0, excess );
 			}
 
 			// Return only captures needed by the pseudo filter method (type and argument)
@@ -28058,7 +28187,9 @@ Expr = Sizzle.selectors = {
 		"TAG": function( nodeNameSelector ) {
 			var nodeName = nodeNameSelector.replace( runescape, funescape ).toLowerCase();
 			return nodeNameSelector === "*" ?
-				function() { return true; } :
+				function() {
+					return true;
+				} :
 				function( elem ) {
 					return elem.nodeName && elem.nodeName.toLowerCase() === nodeName;
 				};
@@ -28068,10 +28199,16 @@ Expr = Sizzle.selectors = {
 			var pattern = classCache[ className + " " ];
 
 			return pattern ||
-				(pattern = new RegExp( "(^|" + whitespace + ")" + className + "(" + whitespace + "|$)" )) &&
-				classCache( className, function( elem ) {
-					return pattern.test( typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== "undefined" && elem.getAttribute("class") || "" );
-				});
+				( pattern = new RegExp( "(^|" + whitespace +
+					")" + className + "(" + whitespace + "|$)" ) ) && classCache(
+						className, function( elem ) {
+							return pattern.test(
+								typeof elem.className === "string" && elem.className ||
+								typeof elem.getAttribute !== "undefined" &&
+									elem.getAttribute( "class" ) ||
+								""
+							);
+				} );
 		},
 
 		"ATTR": function( name, operator, check ) {
@@ -28087,6 +28224,8 @@ Expr = Sizzle.selectors = {
 
 				result += "";
 
+				/* eslint-disable max-len */
+
 				return operator === "=" ? result === check :
 					operator === "!=" ? result !== check :
 					operator === "^=" ? check && result.indexOf( check ) === 0 :
@@ -28095,10 +28234,12 @@ Expr = Sizzle.selectors = {
 					operator === "~=" ? ( " " + result.replace( rwhitespace, " " ) + " " ).indexOf( check ) > -1 :
 					operator === "|=" ? result === check || result.slice( 0, check.length + 1 ) === check + "-" :
 					false;
+				/* eslint-enable max-len */
+
 			};
 		},
 
-		"CHILD": function( type, what, argument, first, last ) {
+		"CHILD": function( type, what, _argument, first, last ) {
 			var simple = type.slice( 0, 3 ) !== "nth",
 				forward = type.slice( -4 ) !== "last",
 				ofType = what === "of-type";
@@ -28110,7 +28251,7 @@ Expr = Sizzle.selectors = {
 					return !!elem.parentNode;
 				} :
 
-				function( elem, context, xml ) {
+				function( elem, _context, xml ) {
 					var cache, uniqueCache, outerCache, node, nodeIndex, start,
 						dir = simple !== forward ? "nextSibling" : "previousSibling",
 						parent = elem.parentNode,
@@ -28124,7 +28265,7 @@ Expr = Sizzle.selectors = {
 						if ( simple ) {
 							while ( dir ) {
 								node = elem;
-								while ( (node = node[ dir ]) ) {
+								while ( ( node = node[ dir ] ) ) {
 									if ( ofType ?
 										node.nodeName.toLowerCase() === name :
 										node.nodeType === 1 ) {
@@ -28132,6 +28273,7 @@ Expr = Sizzle.selectors = {
 										return false;
 									}
 								}
+
 								// Reverse direction for :only-* (if we haven't yet done so)
 								start = dir = type === "only" && !start && "nextSibling";
 							}
@@ -28147,22 +28289,22 @@ Expr = Sizzle.selectors = {
 
 							// ...in a gzip-friendly way
 							node = parent;
-							outerCache = node[ expando ] || (node[ expando ] = {});
+							outerCache = node[ expando ] || ( node[ expando ] = {} );
 
 							// Support: IE <9 only
 							// Defend against cloned attroperties (jQuery gh-1709)
 							uniqueCache = outerCache[ node.uniqueID ] ||
-								(outerCache[ node.uniqueID ] = {});
+								( outerCache[ node.uniqueID ] = {} );
 
 							cache = uniqueCache[ type ] || [];
 							nodeIndex = cache[ 0 ] === dirruns && cache[ 1 ];
 							diff = nodeIndex && cache[ 2 ];
 							node = nodeIndex && parent.childNodes[ nodeIndex ];
 
-							while ( (node = ++nodeIndex && node && node[ dir ] ||
+							while ( ( node = ++nodeIndex && node && node[ dir ] ||
 
 								// Fallback to seeking `elem` from the start
-								(diff = nodeIndex = 0) || start.pop()) ) {
+								( diff = nodeIndex = 0 ) || start.pop() ) ) {
 
 								// When found, cache indexes on `parent` and break
 								if ( node.nodeType === 1 && ++diff && node === elem ) {
@@ -28172,16 +28314,18 @@ Expr = Sizzle.selectors = {
 							}
 
 						} else {
+
 							// Use previously-cached element index if available
 							if ( useCache ) {
+
 								// ...in a gzip-friendly way
 								node = elem;
-								outerCache = node[ expando ] || (node[ expando ] = {});
+								outerCache = node[ expando ] || ( node[ expando ] = {} );
 
 								// Support: IE <9 only
 								// Defend against cloned attroperties (jQuery gh-1709)
 								uniqueCache = outerCache[ node.uniqueID ] ||
-									(outerCache[ node.uniqueID ] = {});
+									( outerCache[ node.uniqueID ] = {} );
 
 								cache = uniqueCache[ type ] || [];
 								nodeIndex = cache[ 0 ] === dirruns && cache[ 1 ];
@@ -28191,9 +28335,10 @@ Expr = Sizzle.selectors = {
 							// xml :nth-child(...)
 							// or :nth-last-child(...) or :nth(-last)?-of-type(...)
 							if ( diff === false ) {
+
 								// Use the same loop as above to seek `elem` from the start
-								while ( (node = ++nodeIndex && node && node[ dir ] ||
-									(diff = nodeIndex = 0) || start.pop()) ) {
+								while ( ( node = ++nodeIndex && node && node[ dir ] ||
+									( diff = nodeIndex = 0 ) || start.pop() ) ) {
 
 									if ( ( ofType ?
 										node.nodeName.toLowerCase() === name :
@@ -28202,12 +28347,13 @@ Expr = Sizzle.selectors = {
 
 										// Cache the index of each encountered element
 										if ( useCache ) {
-											outerCache = node[ expando ] || (node[ expando ] = {});
+											outerCache = node[ expando ] ||
+												( node[ expando ] = {} );
 
 											// Support: IE <9 only
 											// Defend against cloned attroperties (jQuery gh-1709)
 											uniqueCache = outerCache[ node.uniqueID ] ||
-												(outerCache[ node.uniqueID ] = {});
+												( outerCache[ node.uniqueID ] = {} );
 
 											uniqueCache[ type ] = [ dirruns, diff ];
 										}
@@ -28228,6 +28374,7 @@ Expr = Sizzle.selectors = {
 		},
 
 		"PSEUDO": function( pseudo, argument ) {
+
 			// pseudo-class names are case-insensitive
 			// http://www.w3.org/TR/selectors/#pseudo-classes
 			// Prioritize by case sensitivity in case custom pseudos are added with uppercase letters
@@ -28247,15 +28394,15 @@ Expr = Sizzle.selectors = {
 			if ( fn.length > 1 ) {
 				args = [ pseudo, pseudo, "", argument ];
 				return Expr.setFilters.hasOwnProperty( pseudo.toLowerCase() ) ?
-					markFunction(function( seed, matches ) {
+					markFunction( function( seed, matches ) {
 						var idx,
 							matched = fn( seed, argument ),
 							i = matched.length;
 						while ( i-- ) {
-							idx = indexOf( seed, matched[i] );
-							seed[ idx ] = !( matches[ idx ] = matched[i] );
+							idx = indexOf( seed, matched[ i ] );
+							seed[ idx ] = !( matches[ idx ] = matched[ i ] );
 						}
-					}) :
+					} ) :
 					function( elem ) {
 						return fn( elem, 0, args );
 					};
@@ -28266,8 +28413,10 @@ Expr = Sizzle.selectors = {
 	},
 
 	pseudos: {
+
 		// Potentially complex pseudos
-		"not": markFunction(function( selector ) {
+		"not": markFunction( function( selector ) {
+
 			// Trim the selector passed to compile
 			// to avoid treating leading and trailing
 			// spaces as combinators
@@ -28276,39 +28425,40 @@ Expr = Sizzle.selectors = {
 				matcher = compile( selector.replace( rtrim, "$1" ) );
 
 			return matcher[ expando ] ?
-				markFunction(function( seed, matches, context, xml ) {
+				markFunction( function( seed, matches, _context, xml ) {
 					var elem,
 						unmatched = matcher( seed, null, xml, [] ),
 						i = seed.length;
 
 					// Match elements unmatched by `matcher`
 					while ( i-- ) {
-						if ( (elem = unmatched[i]) ) {
-							seed[i] = !(matches[i] = elem);
+						if ( ( elem = unmatched[ i ] ) ) {
+							seed[ i ] = !( matches[ i ] = elem );
 						}
 					}
-				}) :
-				function( elem, context, xml ) {
-					input[0] = elem;
+				} ) :
+				function( elem, _context, xml ) {
+					input[ 0 ] = elem;
 					matcher( input, null, xml, results );
+
 					// Don't keep the element (issue #299)
-					input[0] = null;
+					input[ 0 ] = null;
 					return !results.pop();
 				};
-		}),
+		} ),
 
-		"has": markFunction(function( selector ) {
+		"has": markFunction( function( selector ) {
 			return function( elem ) {
 				return Sizzle( selector, elem ).length > 0;
 			};
-		}),
+		} ),
 
-		"contains": markFunction(function( text ) {
+		"contains": markFunction( function( text ) {
 			text = text.replace( runescape, funescape );
 			return function( elem ) {
 				return ( elem.textContent || getText( elem ) ).indexOf( text ) > -1;
 			};
-		}),
+		} ),
 
 		// "Whether an element is represented by a :lang() selector
 		// is based solely on the element's language value
@@ -28318,25 +28468,26 @@ Expr = Sizzle.selectors = {
 		// The identifier C does not have to be a valid language name."
 		// http://www.w3.org/TR/selectors/#lang-pseudo
 		"lang": markFunction( function( lang ) {
+
 			// lang value must be a valid identifier
-			if ( !ridentifier.test(lang || "") ) {
+			if ( !ridentifier.test( lang || "" ) ) {
 				Sizzle.error( "unsupported lang: " + lang );
 			}
 			lang = lang.replace( runescape, funescape ).toLowerCase();
 			return function( elem ) {
 				var elemLang;
 				do {
-					if ( (elemLang = documentIsHTML ?
+					if ( ( elemLang = documentIsHTML ?
 						elem.lang :
-						elem.getAttribute("xml:lang") || elem.getAttribute("lang")) ) {
+						elem.getAttribute( "xml:lang" ) || elem.getAttribute( "lang" ) ) ) {
 
 						elemLang = elemLang.toLowerCase();
 						return elemLang === lang || elemLang.indexOf( lang + "-" ) === 0;
 					}
-				} while ( (elem = elem.parentNode) && elem.nodeType === 1 );
+				} while ( ( elem = elem.parentNode ) && elem.nodeType === 1 );
 				return false;
 			};
-		}),
+		} ),
 
 		// Miscellaneous
 		"target": function( elem ) {
@@ -28349,7 +28500,9 @@ Expr = Sizzle.selectors = {
 		},
 
 		"focus": function( elem ) {
-			return elem === document.activeElement && (!document.hasFocus || document.hasFocus()) && !!(elem.type || elem.href || ~elem.tabIndex);
+			return elem === document.activeElement &&
+				( !document.hasFocus || document.hasFocus() ) &&
+				!!( elem.type || elem.href || ~elem.tabIndex );
 		},
 
 		// Boolean properties
@@ -28357,16 +28510,20 @@ Expr = Sizzle.selectors = {
 		"disabled": createDisabledPseudo( true ),
 
 		"checked": function( elem ) {
+
 			// In CSS3, :checked should return both checked and selected elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			var nodeName = elem.nodeName.toLowerCase();
-			return (nodeName === "input" && !!elem.checked) || (nodeName === "option" && !!elem.selected);
+			return ( nodeName === "input" && !!elem.checked ) ||
+				( nodeName === "option" && !!elem.selected );
 		},
 
 		"selected": function( elem ) {
+
 			// Accessing this property makes selected-by-default
 			// options in Safari work properly
 			if ( elem.parentNode ) {
+				// eslint-disable-next-line no-unused-expressions
 				elem.parentNode.selectedIndex;
 			}
 
@@ -28375,6 +28532,7 @@ Expr = Sizzle.selectors = {
 
 		// Contents
 		"empty": function( elem ) {
+
 			// http://www.w3.org/TR/selectors/#empty-pseudo
 			// :empty is negated by element (1) or content nodes (text: 3; cdata: 4; entity ref: 5),
 			//   but not by others (comment: 8; processing instruction: 7; etc.)
@@ -28388,7 +28546,7 @@ Expr = Sizzle.selectors = {
 		},
 
 		"parent": function( elem ) {
-			return !Expr.pseudos["empty"]( elem );
+			return !Expr.pseudos[ "empty" ]( elem );
 		},
 
 		// Element/input types
@@ -28412,39 +28570,40 @@ Expr = Sizzle.selectors = {
 
 				// Support: IE<8
 				// New HTML5 attribute values (e.g., "search") appear with elem.type === "text"
-				( (attr = elem.getAttribute("type")) == null || attr.toLowerCase() === "text" );
+				( ( attr = elem.getAttribute( "type" ) ) == null ||
+					attr.toLowerCase() === "text" );
 		},
 
 		// Position-in-collection
-		"first": createPositionalPseudo(function() {
+		"first": createPositionalPseudo( function() {
 			return [ 0 ];
-		}),
+		} ),
 
-		"last": createPositionalPseudo(function( matchIndexes, length ) {
+		"last": createPositionalPseudo( function( _matchIndexes, length ) {
 			return [ length - 1 ];
-		}),
+		} ),
 
-		"eq": createPositionalPseudo(function( matchIndexes, length, argument ) {
+		"eq": createPositionalPseudo( function( _matchIndexes, length, argument ) {
 			return [ argument < 0 ? argument + length : argument ];
-		}),
+		} ),
 
-		"even": createPositionalPseudo(function( matchIndexes, length ) {
+		"even": createPositionalPseudo( function( matchIndexes, length ) {
 			var i = 0;
 			for ( ; i < length; i += 2 ) {
 				matchIndexes.push( i );
 			}
 			return matchIndexes;
-		}),
+		} ),
 
-		"odd": createPositionalPseudo(function( matchIndexes, length ) {
+		"odd": createPositionalPseudo( function( matchIndexes, length ) {
 			var i = 1;
 			for ( ; i < length; i += 2 ) {
 				matchIndexes.push( i );
 			}
 			return matchIndexes;
-		}),
+		} ),
 
-		"lt": createPositionalPseudo(function( matchIndexes, length, argument ) {
+		"lt": createPositionalPseudo( function( matchIndexes, length, argument ) {
 			var i = argument < 0 ?
 				argument + length :
 				argument > length ?
@@ -28454,19 +28613,19 @@ Expr = Sizzle.selectors = {
 				matchIndexes.push( i );
 			}
 			return matchIndexes;
-		}),
+		} ),
 
-		"gt": createPositionalPseudo(function( matchIndexes, length, argument ) {
+		"gt": createPositionalPseudo( function( matchIndexes, length, argument ) {
 			var i = argument < 0 ? argument + length : argument;
 			for ( ; ++i < length; ) {
 				matchIndexes.push( i );
 			}
 			return matchIndexes;
-		})
+		} )
 	}
 };
 
-Expr.pseudos["nth"] = Expr.pseudos["eq"];
+Expr.pseudos[ "nth" ] = Expr.pseudos[ "eq" ];
 
 // Add button/input type pseudos
 for ( i in { radio: true, checkbox: true, file: true, password: true, image: true } ) {
@@ -28497,37 +28656,39 @@ tokenize = Sizzle.tokenize = function( selector, parseOnly ) {
 	while ( soFar ) {
 
 		// Comma and first run
-		if ( !matched || (match = rcomma.exec( soFar )) ) {
+		if ( !matched || ( match = rcomma.exec( soFar ) ) ) {
 			if ( match ) {
+
 				// Don't consume trailing commas as valid
-				soFar = soFar.slice( match[0].length ) || soFar;
+				soFar = soFar.slice( match[ 0 ].length ) || soFar;
 			}
-			groups.push( (tokens = []) );
+			groups.push( ( tokens = [] ) );
 		}
 
 		matched = false;
 
 		// Combinators
-		if ( (match = rcombinators.exec( soFar )) ) {
+		if ( ( match = rcombinators.exec( soFar ) ) ) {
 			matched = match.shift();
-			tokens.push({
+			tokens.push( {
 				value: matched,
+
 				// Cast descendant combinators to space
-				type: match[0].replace( rtrim, " " )
-			});
+				type: match[ 0 ].replace( rtrim, " " )
+			} );
 			soFar = soFar.slice( matched.length );
 		}
 
 		// Filters
 		for ( type in Expr.filter ) {
-			if ( (match = matchExpr[ type ].exec( soFar )) && (!preFilters[ type ] ||
-				(match = preFilters[ type ]( match ))) ) {
+			if ( ( match = matchExpr[ type ].exec( soFar ) ) && ( !preFilters[ type ] ||
+				( match = preFilters[ type ]( match ) ) ) ) {
 				matched = match.shift();
-				tokens.push({
+				tokens.push( {
 					value: matched,
 					type: type,
 					matches: match
-				});
+				} );
 				soFar = soFar.slice( matched.length );
 			}
 		}
@@ -28544,6 +28705,7 @@ tokenize = Sizzle.tokenize = function( selector, parseOnly ) {
 		soFar.length :
 		soFar ?
 			Sizzle.error( selector ) :
+
 			// Cache the tokens
 			tokenCache( selector, groups ).slice( 0 );
 };
@@ -28553,7 +28715,7 @@ function toSelector( tokens ) {
 		len = tokens.length,
 		selector = "";
 	for ( ; i < len; i++ ) {
-		selector += tokens[i].value;
+		selector += tokens[ i ].value;
 	}
 	return selector;
 }
@@ -28566,9 +28728,10 @@ function addCombinator( matcher, combinator, base ) {
 		doneName = done++;
 
 	return combinator.first ?
+
 		// Check against closest ancestor/preceding element
 		function( elem, context, xml ) {
-			while ( (elem = elem[ dir ]) ) {
+			while ( ( elem = elem[ dir ] ) ) {
 				if ( elem.nodeType === 1 || checkNonElements ) {
 					return matcher( elem, context, xml );
 				}
@@ -28583,7 +28746,7 @@ function addCombinator( matcher, combinator, base ) {
 
 			// We can't set arbitrary data on XML nodes, so they don't benefit from combinator caching
 			if ( xml ) {
-				while ( (elem = elem[ dir ]) ) {
+				while ( ( elem = elem[ dir ] ) ) {
 					if ( elem.nodeType === 1 || checkNonElements ) {
 						if ( matcher( elem, context, xml ) ) {
 							return true;
@@ -28591,27 +28754,29 @@ function addCombinator( matcher, combinator, base ) {
 					}
 				}
 			} else {
-				while ( (elem = elem[ dir ]) ) {
+				while ( ( elem = elem[ dir ] ) ) {
 					if ( elem.nodeType === 1 || checkNonElements ) {
-						outerCache = elem[ expando ] || (elem[ expando ] = {});
+						outerCache = elem[ expando ] || ( elem[ expando ] = {} );
 
 						// Support: IE <9 only
 						// Defend against cloned attroperties (jQuery gh-1709)
-						uniqueCache = outerCache[ elem.uniqueID ] || (outerCache[ elem.uniqueID ] = {});
+						uniqueCache = outerCache[ elem.uniqueID ] ||
+							( outerCache[ elem.uniqueID ] = {} );
 
 						if ( skip && skip === elem.nodeName.toLowerCase() ) {
 							elem = elem[ dir ] || elem;
-						} else if ( (oldCache = uniqueCache[ key ]) &&
+						} else if ( ( oldCache = uniqueCache[ key ] ) &&
 							oldCache[ 0 ] === dirruns && oldCache[ 1 ] === doneName ) {
 
 							// Assign to newCache so results back-propagate to previous elements
-							return (newCache[ 2 ] = oldCache[ 2 ]);
+							return ( newCache[ 2 ] = oldCache[ 2 ] );
 						} else {
+
 							// Reuse newcache so results back-propagate to previous elements
 							uniqueCache[ key ] = newCache;
 
 							// A match means we're done; a fail means we have to keep checking
-							if ( (newCache[ 2 ] = matcher( elem, context, xml )) ) {
+							if ( ( newCache[ 2 ] = matcher( elem, context, xml ) ) ) {
 								return true;
 							}
 						}
@@ -28627,20 +28792,20 @@ function elementMatcher( matchers ) {
 		function( elem, context, xml ) {
 			var i = matchers.length;
 			while ( i-- ) {
-				if ( !matchers[i]( elem, context, xml ) ) {
+				if ( !matchers[ i ]( elem, context, xml ) ) {
 					return false;
 				}
 			}
 			return true;
 		} :
-		matchers[0];
+		matchers[ 0 ];
 }
 
 function multipleContexts( selector, contexts, results ) {
 	var i = 0,
 		len = contexts.length;
 	for ( ; i < len; i++ ) {
-		Sizzle( selector, contexts[i], results );
+		Sizzle( selector, contexts[ i ], results );
 	}
 	return results;
 }
@@ -28653,7 +28818,7 @@ function condense( unmatched, map, filter, context, xml ) {
 		mapped = map != null;
 
 	for ( ; i < len; i++ ) {
-		if ( (elem = unmatched[i]) ) {
+		if ( ( elem = unmatched[ i ] ) ) {
 			if ( !filter || filter( elem, context, xml ) ) {
 				newUnmatched.push( elem );
 				if ( mapped ) {
@@ -28673,14 +28838,18 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 	if ( postFinder && !postFinder[ expando ] ) {
 		postFinder = setMatcher( postFinder, postSelector );
 	}
-	return markFunction(function( seed, results, context, xml ) {
+	return markFunction( function( seed, results, context, xml ) {
 		var temp, i, elem,
 			preMap = [],
 			postMap = [],
 			preexisting = results.length,
 
 			// Get initial elements from seed or context
-			elems = seed || multipleContexts( selector || "*", context.nodeType ? [ context ] : context, [] ),
+			elems = seed || multipleContexts(
+				selector || "*",
+				context.nodeType ? [ context ] : context,
+				[]
+			),
 
 			// Prefilter to get matcher input, preserving a map for seed-results synchronization
 			matcherIn = preFilter && ( seed || !selector ) ?
@@ -28688,6 +28857,7 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 				elems,
 
 			matcherOut = matcher ?
+
 				// If we have a postFinder, or filtered seed, or non-seed postFilter or preexisting results,
 				postFinder || ( seed ? preFilter : preexisting || postFilter ) ?
 
@@ -28711,8 +28881,8 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 			// Un-match failing elements by moving them back to matcherIn
 			i = temp.length;
 			while ( i-- ) {
-				if ( (elem = temp[i]) ) {
-					matcherOut[ postMap[i] ] = !(matcherIn[ postMap[i] ] = elem);
+				if ( ( elem = temp[ i ] ) ) {
+					matcherOut[ postMap[ i ] ] = !( matcherIn[ postMap[ i ] ] = elem );
 				}
 			}
 		}
@@ -28720,25 +28890,27 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 		if ( seed ) {
 			if ( postFinder || preFilter ) {
 				if ( postFinder ) {
+
 					// Get the final matcherOut by condensing this intermediate into postFinder contexts
 					temp = [];
 					i = matcherOut.length;
 					while ( i-- ) {
-						if ( (elem = matcherOut[i]) ) {
+						if ( ( elem = matcherOut[ i ] ) ) {
+
 							// Restore matcherIn since elem is not yet a final match
-							temp.push( (matcherIn[i] = elem) );
+							temp.push( ( matcherIn[ i ] = elem ) );
 						}
 					}
-					postFinder( null, (matcherOut = []), temp, xml );
+					postFinder( null, ( matcherOut = [] ), temp, xml );
 				}
 
 				// Move matched elements from seed to results to keep them synchronized
 				i = matcherOut.length;
 				while ( i-- ) {
-					if ( (elem = matcherOut[i]) &&
-						(temp = postFinder ? indexOf( seed, elem ) : preMap[i]) > -1 ) {
+					if ( ( elem = matcherOut[ i ] ) &&
+						( temp = postFinder ? indexOf( seed, elem ) : preMap[ i ] ) > -1 ) {
 
-						seed[temp] = !(results[temp] = elem);
+						seed[ temp ] = !( results[ temp ] = elem );
 					}
 				}
 			}
@@ -28756,14 +28928,14 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 				push.apply( results, matcherOut );
 			}
 		}
-	});
+	} );
 }
 
 function matcherFromTokens( tokens ) {
 	var checkContext, matcher, j,
 		len = tokens.length,
-		leadingRelative = Expr.relative[ tokens[0].type ],
-		implicitRelative = leadingRelative || Expr.relative[" "],
+		leadingRelative = Expr.relative[ tokens[ 0 ].type ],
+		implicitRelative = leadingRelative || Expr.relative[ " " ],
 		i = leadingRelative ? 1 : 0,
 
 		// The foundational matcher ensures that elements are reachable from top-level context(s)
@@ -28775,38 +28947,43 @@ function matcherFromTokens( tokens ) {
 		}, implicitRelative, true ),
 		matchers = [ function( elem, context, xml ) {
 			var ret = ( !leadingRelative && ( xml || context !== outermostContext ) ) || (
-				(checkContext = context).nodeType ?
+				( checkContext = context ).nodeType ?
 					matchContext( elem, context, xml ) :
 					matchAnyContext( elem, context, xml ) );
+
 			// Avoid hanging onto element (issue #299)
 			checkContext = null;
 			return ret;
 		} ];
 
 	for ( ; i < len; i++ ) {
-		if ( (matcher = Expr.relative[ tokens[i].type ]) ) {
-			matchers = [ addCombinator(elementMatcher( matchers ), matcher) ];
+		if ( ( matcher = Expr.relative[ tokens[ i ].type ] ) ) {
+			matchers = [ addCombinator( elementMatcher( matchers ), matcher ) ];
 		} else {
-			matcher = Expr.filter[ tokens[i].type ].apply( null, tokens[i].matches );
+			matcher = Expr.filter[ tokens[ i ].type ].apply( null, tokens[ i ].matches );
 
 			// Return special upon seeing a positional matcher
 			if ( matcher[ expando ] ) {
+
 				// Find the next relative operator (if any) for proper handling
 				j = ++i;
 				for ( ; j < len; j++ ) {
-					if ( Expr.relative[ tokens[j].type ] ) {
+					if ( Expr.relative[ tokens[ j ].type ] ) {
 						break;
 					}
 				}
 				return setMatcher(
 					i > 1 && elementMatcher( matchers ),
 					i > 1 && toSelector(
-						// If the preceding token was a descendant combinator, insert an implicit any-element `*`
-						tokens.slice( 0, i - 1 ).concat({ value: tokens[ i - 2 ].type === " " ? "*" : "" })
+
+					// If the preceding token was a descendant combinator, insert an implicit any-element `*`
+					tokens
+						.slice( 0, i - 1 )
+						.concat( { value: tokens[ i - 2 ].type === " " ? "*" : "" } )
 					).replace( rtrim, "$1" ),
 					matcher,
 					i < j && matcherFromTokens( tokens.slice( i, j ) ),
-					j < len && matcherFromTokens( (tokens = tokens.slice( j )) ),
+					j < len && matcherFromTokens( ( tokens = tokens.slice( j ) ) ),
 					j < len && toSelector( tokens )
 				);
 			}
@@ -28827,28 +29004,40 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 				unmatched = seed && [],
 				setMatched = [],
 				contextBackup = outermostContext,
+
 				// We must always have either seed elements or outermost context
-				elems = seed || byElement && Expr.find["TAG"]( "*", outermost ),
+				elems = seed || byElement && Expr.find[ "TAG" ]( "*", outermost ),
+
 				// Use integer dirruns iff this is the outermost matcher
-				dirrunsUnique = (dirruns += contextBackup == null ? 1 : Math.random() || 0.1),
+				dirrunsUnique = ( dirruns += contextBackup == null ? 1 : Math.random() || 0.1 ),
 				len = elems.length;
 
 			if ( outermost ) {
-				outermostContext = context === document || context || outermost;
+
+				// Support: IE 11+, Edge 17 - 18+
+				// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+				// two documents; shallow comparisons work.
+				// eslint-disable-next-line eqeqeq
+				outermostContext = context == document || context || outermost;
 			}
 
 			// Add elements passing elementMatchers directly to results
 			// Support: IE<9, Safari
 			// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching elements by id
-			for ( ; i !== len && (elem = elems[i]) != null; i++ ) {
+			for ( ; i !== len && ( elem = elems[ i ] ) != null; i++ ) {
 				if ( byElement && elem ) {
 					j = 0;
-					if ( !context && elem.ownerDocument !== document ) {
+
+					// Support: IE 11+, Edge 17 - 18+
+					// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+					// two documents; shallow comparisons work.
+					// eslint-disable-next-line eqeqeq
+					if ( !context && elem.ownerDocument != document ) {
 						setDocument( elem );
 						xml = !documentIsHTML;
 					}
-					while ( (matcher = elementMatchers[j++]) ) {
-						if ( matcher( elem, context || document, xml) ) {
+					while ( ( matcher = elementMatchers[ j++ ] ) ) {
+						if ( matcher( elem, context || document, xml ) ) {
 							results.push( elem );
 							break;
 						}
@@ -28860,8 +29049,9 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 
 				// Track unmatched elements for set filters
 				if ( bySet ) {
+
 					// They will have gone through all possible matchers
-					if ( (elem = !matcher && elem) ) {
+					if ( ( elem = !matcher && elem ) ) {
 						matchedCount--;
 					}
 
@@ -28885,16 +29075,17 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 			// numerically zero.
 			if ( bySet && i !== matchedCount ) {
 				j = 0;
-				while ( (matcher = setMatchers[j++]) ) {
+				while ( ( matcher = setMatchers[ j++ ] ) ) {
 					matcher( unmatched, setMatched, context, xml );
 				}
 
 				if ( seed ) {
+
 					// Reintegrate element matches to eliminate the need for sorting
 					if ( matchedCount > 0 ) {
 						while ( i-- ) {
-							if ( !(unmatched[i] || setMatched[i]) ) {
-								setMatched[i] = pop.call( results );
+							if ( !( unmatched[ i ] || setMatched[ i ] ) ) {
+								setMatched[ i ] = pop.call( results );
 							}
 						}
 					}
@@ -28935,13 +29126,14 @@ compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
 		cached = compilerCache[ selector + " " ];
 
 	if ( !cached ) {
+
 		// Generate a function of recursive functions that can be used to check each element
 		if ( !match ) {
 			match = tokenize( selector );
 		}
 		i = match.length;
 		while ( i-- ) {
-			cached = matcherFromTokens( match[i] );
+			cached = matcherFromTokens( match[ i ] );
 			if ( cached[ expando ] ) {
 				setMatchers.push( cached );
 			} else {
@@ -28950,7 +29142,10 @@ compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
 		}
 
 		// Cache the compiled function
-		cached = compilerCache( selector, matcherFromGroupMatchers( elementMatchers, setMatchers ) );
+		cached = compilerCache(
+			selector,
+			matcherFromGroupMatchers( elementMatchers, setMatchers )
+		);
 
 		// Save selector and tokenization
 		cached.selector = selector;
@@ -28970,7 +29165,7 @@ compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
 select = Sizzle.select = function( selector, context, results, seed ) {
 	var i, tokens, token, type, find,
 		compiled = typeof selector === "function" && selector,
-		match = !seed && tokenize( (selector = compiled.selector || selector) );
+		match = !seed && tokenize( ( selector = compiled.selector || selector ) );
 
 	results = results || [];
 
@@ -28979,11 +29174,12 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 	if ( match.length === 1 ) {
 
 		// Reduce context if the leading compound selector is an ID
-		tokens = match[0] = match[0].slice( 0 );
-		if ( tokens.length > 2 && (token = tokens[0]).type === "ID" &&
-				context.nodeType === 9 && documentIsHTML && Expr.relative[ tokens[1].type ] ) {
+		tokens = match[ 0 ] = match[ 0 ].slice( 0 );
+		if ( tokens.length > 2 && ( token = tokens[ 0 ] ).type === "ID" &&
+			context.nodeType === 9 && documentIsHTML && Expr.relative[ tokens[ 1 ].type ] ) {
 
-			context = ( Expr.find["ID"]( token.matches[0].replace(runescape, funescape), context ) || [] )[0];
+			context = ( Expr.find[ "ID" ]( token.matches[ 0 ]
+				.replace( runescape, funescape ), context ) || [] )[ 0 ];
 			if ( !context ) {
 				return results;
 
@@ -28996,20 +29192,22 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 		}
 
 		// Fetch a seed set for right-to-left matching
-		i = matchExpr["needsContext"].test( selector ) ? 0 : tokens.length;
+		i = matchExpr[ "needsContext" ].test( selector ) ? 0 : tokens.length;
 		while ( i-- ) {
-			token = tokens[i];
+			token = tokens[ i ];
 
 			// Abort if we hit a combinator
-			if ( Expr.relative[ (type = token.type) ] ) {
+			if ( Expr.relative[ ( type = token.type ) ] ) {
 				break;
 			}
-			if ( (find = Expr.find[ type ]) ) {
+			if ( ( find = Expr.find[ type ] ) ) {
+
 				// Search, expanding context for leading sibling combinators
-				if ( (seed = find(
-					token.matches[0].replace( runescape, funescape ),
-					rsibling.test( tokens[0].type ) && testContext( context.parentNode ) || context
-				)) ) {
+				if ( ( seed = find(
+					token.matches[ 0 ].replace( runescape, funescape ),
+					rsibling.test( tokens[ 0 ].type ) && testContext( context.parentNode ) ||
+						context
+				) ) ) {
 
 					// If seed is empty or no tokens remain, we can return early
 					tokens.splice( i, 1 );
@@ -29040,7 +29238,7 @@ select = Sizzle.select = function( selector, context, results, seed ) {
 // One-time assignments
 
 // Sort stability
-support.sortStable = expando.split("").sort( sortOrder ).join("") === expando;
+support.sortStable = expando.split( "" ).sort( sortOrder ).join( "" ) === expando;
 
 // Support: Chrome 14-35+
 // Always assume duplicates if they aren't passed to the comparison function
@@ -29051,58 +29249,59 @@ setDocument();
 
 // Support: Webkit<537.32 - Safari 6.0.3/Chrome 25 (fixed in Chrome 27)
 // Detached nodes confoundingly follow *each other*
-support.sortDetached = assert(function( el ) {
+support.sortDetached = assert( function( el ) {
+
 	// Should return 1, but returns 4 (following)
-	return el.compareDocumentPosition( document.createElement("fieldset") ) & 1;
-});
+	return el.compareDocumentPosition( document.createElement( "fieldset" ) ) & 1;
+} );
 
 // Support: IE<8
 // Prevent attribute/property "interpolation"
 // https://msdn.microsoft.com/en-us/library/ms536429%28VS.85%29.aspx
-if ( !assert(function( el ) {
+if ( !assert( function( el ) {
 	el.innerHTML = "<a href='#'></a>";
-	return el.firstChild.getAttribute("href") === "#" ;
-}) ) {
+	return el.firstChild.getAttribute( "href" ) === "#";
+} ) ) {
 	addHandle( "type|href|height|width", function( elem, name, isXML ) {
 		if ( !isXML ) {
 			return elem.getAttribute( name, name.toLowerCase() === "type" ? 1 : 2 );
 		}
-	});
+	} );
 }
 
 // Support: IE<9
 // Use defaultValue in place of getAttribute("value")
-if ( !support.attributes || !assert(function( el ) {
+if ( !support.attributes || !assert( function( el ) {
 	el.innerHTML = "<input/>";
 	el.firstChild.setAttribute( "value", "" );
 	return el.firstChild.getAttribute( "value" ) === "";
-}) ) {
-	addHandle( "value", function( elem, name, isXML ) {
+} ) ) {
+	addHandle( "value", function( elem, _name, isXML ) {
 		if ( !isXML && elem.nodeName.toLowerCase() === "input" ) {
 			return elem.defaultValue;
 		}
-	});
+	} );
 }
 
 // Support: IE<9
 // Use getAttributeNode to fetch booleans when getAttribute lies
-if ( !assert(function( el ) {
-	return el.getAttribute("disabled") == null;
-}) ) {
+if ( !assert( function( el ) {
+	return el.getAttribute( "disabled" ) == null;
+} ) ) {
 	addHandle( booleans, function( elem, name, isXML ) {
 		var val;
 		if ( !isXML ) {
 			return elem[ name ] === true ? name.toLowerCase() :
-					(val = elem.getAttributeNode( name )) && val.specified ?
+				( val = elem.getAttributeNode( name ) ) && val.specified ?
 					val.value :
-				null;
+					null;
 		}
-	});
+	} );
 }
 
 return Sizzle;
 
-})( window );
+} )( window );
 
 
 
@@ -29471,7 +29670,7 @@ jQuery.each( {
 	parents: function( elem ) {
 		return dir( elem, "parentNode" );
 	},
-	parentsUntil: function( elem, i, until ) {
+	parentsUntil: function( elem, _i, until ) {
 		return dir( elem, "parentNode", until );
 	},
 	next: function( elem ) {
@@ -29486,10 +29685,10 @@ jQuery.each( {
 	prevAll: function( elem ) {
 		return dir( elem, "previousSibling" );
 	},
-	nextUntil: function( elem, i, until ) {
+	nextUntil: function( elem, _i, until ) {
 		return dir( elem, "nextSibling", until );
 	},
-	prevUntil: function( elem, i, until ) {
+	prevUntil: function( elem, _i, until ) {
 		return dir( elem, "previousSibling", until );
 	},
 	siblings: function( elem ) {
@@ -29499,7 +29698,13 @@ jQuery.each( {
 		return siblings( elem.firstChild );
 	},
 	contents: function( elem ) {
-		if ( typeof elem.contentDocument !== "undefined" ) {
+		if ( elem.contentDocument != null &&
+
+			// Support: IE 11+
+			// <object> elements with no `data` attribute has an object
+			// `contentDocument` with a `null` prototype.
+			getProto( elem.contentDocument ) ) {
+
 			return elem.contentDocument;
 		}
 
@@ -29842,7 +30047,7 @@ jQuery.extend( {
 					var fns = arguments;
 
 					return jQuery.Deferred( function( newDefer ) {
-						jQuery.each( tuples, function( i, tuple ) {
+						jQuery.each( tuples, function( _i, tuple ) {
 
 							// Map tuples (progress, done, fail) to arguments (done, fail, progress)
 							var fn = isFunction( fns[ tuple[ 4 ] ] ) && fns[ tuple[ 4 ] ];
@@ -30295,7 +30500,7 @@ var access = function( elems, fn, key, value, chainable, emptyGet, raw ) {
 			// ...except when executing function values
 			} else {
 				bulk = fn;
-				fn = function( elem, key, value ) {
+				fn = function( elem, _key, value ) {
 					return bulk.call( jQuery( elem ), value );
 				};
 			}
@@ -30330,7 +30535,7 @@ var rmsPrefix = /^-ms-/,
 	rdashAlpha = /-([a-z])/g;
 
 // Used by camelCase as callback to replace()
-function fcamelCase( all, letter ) {
+function fcamelCase( _all, letter ) {
 	return letter.toUpperCase();
 }
 
@@ -30858,27 +31063,6 @@ var isHiddenWithinTree = function( elem, el ) {
 			jQuery.css( elem, "display" ) === "none";
 	};
 
-var swap = function( elem, options, callback, args ) {
-	var ret, name,
-		old = {};
-
-	// Remember the old values, and insert the new ones
-	for ( name in options ) {
-		old[ name ] = elem.style[ name ];
-		elem.style[ name ] = options[ name ];
-	}
-
-	ret = callback.apply( elem, args || [] );
-
-	// Revert the old values
-	for ( name in options ) {
-		elem.style[ name ] = old[ name ];
-	}
-
-	return ret;
-};
-
-
 
 
 function adjustCSS( elem, prop, valueParts, tween ) {
@@ -31049,11 +31233,40 @@ var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
 
 
 
-// We have to close these tags to support XHTML (#13200)
-var wrapMap = {
+( function() {
+	var fragment = document.createDocumentFragment(),
+		div = fragment.appendChild( document.createElement( "div" ) ),
+		input = document.createElement( "input" );
+
+	// Support: Android 4.0 - 4.3 only
+	// Check state lost if the name is set (#11217)
+	// Support: Windows Web Apps (WWA)
+	// `name` and `type` must use .setAttribute for WWA (#14901)
+	input.setAttribute( "type", "radio" );
+	input.setAttribute( "checked", "checked" );
+	input.setAttribute( "name", "t" );
+
+	div.appendChild( input );
+
+	// Support: Android <=4.1 only
+	// Older WebKit doesn't clone checked state correctly in fragments
+	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
+
+	// Support: IE <=11 only
+	// Make sure textarea (and checkbox) defaultValue is properly cloned
+	div.innerHTML = "<textarea>x</textarea>";
+	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
 
 	// Support: IE <=9 only
-	option: [ 1, "<select multiple='multiple'>", "</select>" ],
+	// IE <=9 replaces <option> tags with their contents when inserted outside of
+	// the select element.
+	div.innerHTML = "<option></option>";
+	support.option = !!div.lastChild;
+} )();
+
+
+// We have to close these tags to support XHTML (#13200)
+var wrapMap = {
 
 	// XHTML parsers do not magically insert elements in the
 	// same way that tag soup parsers do. So we cannot shorten
@@ -31066,11 +31279,13 @@ var wrapMap = {
 	_default: [ 0, "", "" ]
 };
 
-// Support: IE <=9 only
-wrapMap.optgroup = wrapMap.option;
-
 wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
 wrapMap.th = wrapMap.td;
+
+// Support: IE <=9 only
+if ( !support.option ) {
+	wrapMap.optgroup = wrapMap.option = [ 1, "<select multiple='multiple'>", "</select>" ];
+}
 
 
 function getAll( context, tag ) {
@@ -31204,32 +31419,6 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 }
 
 
-( function() {
-	var fragment = document.createDocumentFragment(),
-		div = fragment.appendChild( document.createElement( "div" ) ),
-		input = document.createElement( "input" );
-
-	// Support: Android 4.0 - 4.3 only
-	// Check state lost if the name is set (#11217)
-	// Support: Windows Web Apps (WWA)
-	// `name` and `type` must use .setAttribute for WWA (#14901)
-	input.setAttribute( "type", "radio" );
-	input.setAttribute( "checked", "checked" );
-	input.setAttribute( "name", "t" );
-
-	div.appendChild( input );
-
-	// Support: Android <=4.1 only
-	// Older WebKit doesn't clone checked state correctly in fragments
-	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
-
-	// Support: IE <=11 only
-	// Make sure textarea (and checkbox) defaultValue is properly cloned
-	div.innerHTML = "<textarea>x</textarea>";
-	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
-} )();
-
-
 var
 	rkeyEvent = /^key/,
 	rmouseEvent = /^(?:mouse|pointer|contextmenu|drag|drop)|click/,
@@ -31338,8 +31527,8 @@ jQuery.event = {
 			special, handlers, type, namespaces, origType,
 			elemData = dataPriv.get( elem );
 
-		// Don't attach events to noData or text/comment nodes (but allow plain objects)
-		if ( !elemData ) {
+		// Only attach events to objects that accept data
+		if ( !acceptData( elem ) ) {
 			return;
 		}
 
@@ -31363,7 +31552,7 @@ jQuery.event = {
 
 		// Init the element's event structure and main handler, if this is the first
 		if ( !( events = elemData.events ) ) {
-			events = elemData.events = {};
+			events = elemData.events = Object.create( null );
 		}
 		if ( !( eventHandle = elemData.handle ) ) {
 			eventHandle = elemData.handle = function( e ) {
@@ -31521,12 +31710,15 @@ jQuery.event = {
 
 	dispatch: function( nativeEvent ) {
 
-		// Make a writable jQuery.Event from the native event object
-		var event = jQuery.event.fix( nativeEvent );
-
 		var i, j, ret, matched, handleObj, handlerQueue,
 			args = new Array( arguments.length ),
-			handlers = ( dataPriv.get( this, "events" ) || {} )[ event.type ] || [],
+
+			// Make a writable jQuery.Event from the native event object
+			event = jQuery.event.fix( nativeEvent ),
+
+			handlers = (
+					dataPriv.get( this, "events" ) || Object.create( null )
+				)[ event.type ] || [],
 			special = jQuery.event.special[ event.type ] || {};
 
 		// Use the fix-ed jQuery.Event rather than the (read-only) native event
@@ -32101,13 +32293,6 @@ jQuery.fn.extend( {
 
 var
 
-	/* eslint-disable max-len */
-
-	// See https://github.com/eslint/eslint/issues/3229
-	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi,
-
-	/* eslint-enable */
-
 	// Support: IE <=10 - 11, Edge 12 - 13 only
 	// In IE/Edge using regex groups here causes severe slowdowns.
 	// See https://connect.microsoft.com/IE/feedback/details/1736512/
@@ -32144,7 +32329,7 @@ function restoreScript( elem ) {
 }
 
 function cloneCopyEvent( src, dest ) {
-	var i, l, type, pdataOld, pdataCur, udataOld, udataCur, events;
+	var i, l, type, pdataOld, udataOld, udataCur, events;
 
 	if ( dest.nodeType !== 1 ) {
 		return;
@@ -32152,13 +32337,11 @@ function cloneCopyEvent( src, dest ) {
 
 	// 1. Copy private data: events, handlers, etc.
 	if ( dataPriv.hasData( src ) ) {
-		pdataOld = dataPriv.access( src );
-		pdataCur = dataPriv.set( dest, pdataOld );
+		pdataOld = dataPriv.get( src );
 		events = pdataOld.events;
 
 		if ( events ) {
-			delete pdataCur.handle;
-			pdataCur.events = {};
+			dataPriv.remove( dest, "handle events" );
 
 			for ( type in events ) {
 				for ( i = 0, l = events[ type ].length; i < l; i++ ) {
@@ -32194,7 +32377,7 @@ function fixInput( src, dest ) {
 function domManip( collection, args, callback, ignored ) {
 
 	// Flatten any nested arrays
-	args = concat.apply( [], args );
+	args = flat( args );
 
 	var fragment, first, scripts, hasScripts, node, doc,
 		i = 0,
@@ -32269,7 +32452,7 @@ function domManip( collection, args, callback, ignored ) {
 							if ( jQuery._evalUrl && !node.noModule ) {
 								jQuery._evalUrl( node.src, {
 									nonce: node.nonce || node.getAttribute( "nonce" )
-								} );
+								}, doc );
 							}
 						} else {
 							DOMEval( node.textContent.replace( rcleanScript, "" ), node, doc );
@@ -32306,7 +32489,7 @@ function remove( elem, selector, keepData ) {
 
 jQuery.extend( {
 	htmlPrefilter: function( html ) {
-		return html.replace( rxhtmlTag, "<$1></$2>" );
+		return html;
 	},
 
 	clone: function( elem, dataAndEvents, deepDataAndEvents ) {
@@ -32568,6 +32751,27 @@ var getStyles = function( elem ) {
 		return view.getComputedStyle( elem );
 	};
 
+var swap = function( elem, options, callback ) {
+	var ret, name,
+		old = {};
+
+	// Remember the old values, and insert the new ones
+	for ( name in options ) {
+		old[ name ] = elem.style[ name ];
+		elem.style[ name ] = options[ name ];
+	}
+
+	ret = callback.call( elem );
+
+	// Revert the old values
+	for ( name in options ) {
+		elem.style[ name ] = old[ name ];
+	}
+
+	return ret;
+};
+
+
 var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 
 
@@ -32625,7 +32829,7 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 	}
 
 	var pixelPositionVal, boxSizingReliableVal, scrollboxSizeVal, pixelBoxStylesVal,
-		reliableMarginLeftVal,
+		reliableTrDimensionsVal, reliableMarginLeftVal,
 		container = document.createElement( "div" ),
 		div = document.createElement( "div" );
 
@@ -32660,6 +32864,35 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 		scrollboxSize: function() {
 			computeStyleTests();
 			return scrollboxSizeVal;
+		},
+
+		// Support: IE 9 - 11+, Edge 15 - 18+
+		// IE/Edge misreport `getComputedStyle` of table rows with width/height
+		// set in CSS while `offset*` properties report correct values.
+		// Behavior in IE 9 is more subtle than in newer versions & it passes
+		// some versions of this test; make sure not to make it pass there!
+		reliableTrDimensions: function() {
+			var table, tr, trChild, trStyle;
+			if ( reliableTrDimensionsVal == null ) {
+				table = document.createElement( "table" );
+				tr = document.createElement( "tr" );
+				trChild = document.createElement( "div" );
+
+				table.style.cssText = "position:absolute;left:-11111px";
+				tr.style.height = "1px";
+				trChild.style.height = "9px";
+
+				documentElement
+					.appendChild( table )
+					.appendChild( tr )
+					.appendChild( trChild );
+
+				trStyle = window.getComputedStyle( tr );
+				reliableTrDimensionsVal = parseInt( trStyle.height ) > 3;
+
+				documentElement.removeChild( table );
+			}
+			return reliableTrDimensionsVal;
 		}
 	} );
 } )();
@@ -32784,7 +33017,7 @@ var
 		fontWeight: "400"
 	};
 
-function setPositiveNumber( elem, value, subtract ) {
+function setPositiveNumber( _elem, value, subtract ) {
 
 	// Any relative (+/-) values have already been
 	// normalized at this point
@@ -32889,17 +33122,26 @@ function getWidthOrHeight( elem, dimension, extra ) {
 	}
 
 
-	// Fall back to offsetWidth/offsetHeight when value is "auto"
-	// This happens for inline elements with no explicit setting (gh-3571)
-	// Support: Android <=4.1 - 4.3 only
-	// Also use offsetWidth/offsetHeight for misreported inline dimensions (gh-3602)
-	// Support: IE 9-11 only
-	// Also use offsetWidth/offsetHeight for when box sizing is unreliable
-	// We use getClientRects() to check for hidden/disconnected.
-	// In those cases, the computed value can be trusted to be border-box
+	// Support: IE 9 - 11 only
+	// Use offsetWidth/offsetHeight for when box sizing is unreliable.
+	// In those cases, the computed value can be trusted to be border-box.
 	if ( ( !support.boxSizingReliable() && isBorderBox ||
+
+		// Support: IE 10 - 11+, Edge 15 - 18+
+		// IE/Edge misreport `getComputedStyle` of table rows with width/height
+		// set in CSS while `offset*` properties report correct values.
+		// Interestingly, in some cases IE 9 doesn't suffer from this issue.
+		!support.reliableTrDimensions() && nodeName( elem, "tr" ) ||
+
+		// Fall back to offsetWidth/offsetHeight when value is "auto"
+		// This happens for inline elements with no explicit setting (gh-3571)
 		val === "auto" ||
+
+		// Support: Android <=4.1 - 4.3 only
+		// Also use offsetWidth/offsetHeight for misreported inline dimensions (gh-3602)
 		!parseFloat( val ) && jQuery.css( elem, "display", false, styles ) === "inline" ) &&
+
+		// Make sure the element is visible & connected
 		elem.getClientRects().length ) {
 
 		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
@@ -33094,7 +33336,7 @@ jQuery.extend( {
 	}
 } );
 
-jQuery.each( [ "height", "width" ], function( i, dimension ) {
+jQuery.each( [ "height", "width" ], function( _i, dimension ) {
 	jQuery.cssHooks[ dimension ] = {
 		get: function( elem, computed, extra ) {
 			if ( computed ) {
@@ -33867,7 +34109,7 @@ jQuery.fn.extend( {
 			clearQueue = type;
 			type = undefined;
 		}
-		if ( clearQueue && type !== false ) {
+		if ( clearQueue ) {
 			this.queue( type || "fx", [] );
 		}
 
@@ -33950,7 +34192,7 @@ jQuery.fn.extend( {
 	}
 } );
 
-jQuery.each( [ "toggle", "show", "hide" ], function( i, name ) {
+jQuery.each( [ "toggle", "show", "hide" ], function( _i, name ) {
 	var cssFn = jQuery.fn[ name ];
 	jQuery.fn[ name ] = function( speed, easing, callback ) {
 		return speed == null || typeof speed === "boolean" ?
@@ -34171,7 +34413,7 @@ boolHook = {
 	}
 };
 
-jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( i, name ) {
+jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( _i, name ) {
 	var getter = attrHandle[ name ] || jQuery.find.attr;
 
 	attrHandle[ name ] = function( elem, name, isXML ) {
@@ -34795,7 +35037,9 @@ jQuery.extend( jQuery.event, {
 				special.bindType || type;
 
 			// jQuery handler
-			handle = ( dataPriv.get( cur, "events" ) || {} )[ event.type ] &&
+			handle = (
+					dataPriv.get( cur, "events" ) || Object.create( null )
+				)[ event.type ] &&
 				dataPriv.get( cur, "handle" );
 			if ( handle ) {
 				handle.apply( cur, data );
@@ -34906,7 +35150,10 @@ if ( !support.focusin ) {
 
 		jQuery.event.special[ fix ] = {
 			setup: function() {
-				var doc = this.ownerDocument || this,
+
+				// Handle: regular nodes (via `this.ownerDocument`), window
+				// (via `this.document`) & document (via `this`).
+				var doc = this.ownerDocument || this.document || this,
 					attaches = dataPriv.access( doc, fix );
 
 				if ( !attaches ) {
@@ -34915,7 +35162,7 @@ if ( !support.focusin ) {
 				dataPriv.access( doc, fix, ( attaches || 0 ) + 1 );
 			},
 			teardown: function() {
-				var doc = this.ownerDocument || this,
+				var doc = this.ownerDocument || this.document || this,
 					attaches = dataPriv.access( doc, fix ) - 1;
 
 				if ( !attaches ) {
@@ -34931,7 +35178,7 @@ if ( !support.focusin ) {
 }
 var location = window.location;
 
-var nonce = Date.now();
+var nonce = { guid: Date.now() };
 
 var rquery = ( /\?/ );
 
@@ -35063,7 +35310,7 @@ jQuery.fn.extend( {
 				rsubmittable.test( this.nodeName ) && !rsubmitterTypes.test( type ) &&
 				( this.checked || !rcheckableType.test( type ) );
 		} )
-		.map( function( i, elem ) {
+		.map( function( _i, elem ) {
 			var val = jQuery( this ).val();
 
 			if ( val == null ) {
@@ -35676,7 +35923,8 @@ jQuery.extend( {
 			// Add or update anti-cache param if needed
 			if ( s.cache === false ) {
 				cacheURL = cacheURL.replace( rantiCache, "$1" );
-				uncached = ( rquery.test( cacheURL ) ? "&" : "?" ) + "_=" + ( nonce++ ) + uncached;
+				uncached = ( rquery.test( cacheURL ) ? "&" : "?" ) + "_=" + ( nonce.guid++ ) +
+					uncached;
 			}
 
 			// Put hash and anti-cache on the URL that will be requested (gh-1732)
@@ -35809,6 +36057,11 @@ jQuery.extend( {
 				response = ajaxHandleResponses( s, jqXHR, responses );
 			}
 
+			// Use a noop converter for missing script
+			if ( !isSuccess && jQuery.inArray( "script", s.dataTypes ) > -1 ) {
+				s.converters[ "text script" ] = function() {};
+			}
+
 			// Convert no matter what (that way responseXXX fields are always set)
 			response = ajaxConvert( s, response, jqXHR, isSuccess );
 
@@ -35899,7 +36152,7 @@ jQuery.extend( {
 	}
 } );
 
-jQuery.each( [ "get", "post" ], function( i, method ) {
+jQuery.each( [ "get", "post" ], function( _i, method ) {
 	jQuery[ method ] = function( url, data, callback, type ) {
 
 		// Shift arguments if data argument was omitted
@@ -35920,8 +36173,17 @@ jQuery.each( [ "get", "post" ], function( i, method ) {
 	};
 } );
 
+jQuery.ajaxPrefilter( function( s ) {
+	var i;
+	for ( i in s.headers ) {
+		if ( i.toLowerCase() === "content-type" ) {
+			s.contentType = s.headers[ i ] || "";
+		}
+	}
+} );
 
-jQuery._evalUrl = function( url, options ) {
+
+jQuery._evalUrl = function( url, options, doc ) {
 	return jQuery.ajax( {
 		url: url,
 
@@ -35939,7 +36201,7 @@ jQuery._evalUrl = function( url, options ) {
 			"text script": function() {}
 		},
 		dataFilter: function( response ) {
-			jQuery.globalEval( response, options );
+			jQuery.globalEval( response, options, doc );
 		}
 	} );
 };
@@ -36261,7 +36523,7 @@ var oldCallbacks = [],
 jQuery.ajaxSetup( {
 	jsonp: "callback",
 	jsonpCallback: function() {
-		var callback = oldCallbacks.pop() || ( jQuery.expando + "_" + ( nonce++ ) );
+		var callback = oldCallbacks.pop() || ( jQuery.expando + "_" + ( nonce.guid++ ) );
 		this[ callback ] = true;
 		return callback;
 	}
@@ -36478,23 +36740,6 @@ jQuery.fn.load = function( url, params, callback ) {
 
 
 
-// Attach a bunch of functions for handling common AJAX events
-jQuery.each( [
-	"ajaxStart",
-	"ajaxStop",
-	"ajaxComplete",
-	"ajaxError",
-	"ajaxSuccess",
-	"ajaxSend"
-], function( i, type ) {
-	jQuery.fn[ type ] = function( fn ) {
-		return this.on( type, fn );
-	};
-} );
-
-
-
-
 jQuery.expr.pseudos.animated = function( elem ) {
 	return jQuery.grep( jQuery.timers, function( fn ) {
 		return elem === fn.elem;
@@ -36551,6 +36796,12 @@ jQuery.offset = {
 			options.using.call( elem, props );
 
 		} else {
+			if ( typeof props.top === "number" ) {
+				props.top += "px";
+			}
+			if ( typeof props.left === "number" ) {
+				props.left += "px";
+			}
 			curElem.css( props );
 		}
 	}
@@ -36701,7 +36952,7 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 // Blink bug: https://bugs.chromium.org/p/chromium/issues/detail?id=589347
 // getComputedStyle returns percent when specified for top/left/bottom/right;
 // rather than make the css module depend on the offset module, just check for it here
-jQuery.each( [ "top", "left" ], function( i, prop ) {
+jQuery.each( [ "top", "left" ], function( _i, prop ) {
 	jQuery.cssHooks[ prop ] = addGetHookIf( support.pixelPosition,
 		function( elem, computed ) {
 			if ( computed ) {
@@ -36764,23 +37015,17 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 } );
 
 
-jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
-	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
-	function( i, name ) {
-
-	// Handle event binding
-	jQuery.fn[ name ] = function( data, fn ) {
-		return arguments.length > 0 ?
-			this.on( name, null, data, fn ) :
-			this.trigger( name );
+jQuery.each( [
+	"ajaxStart",
+	"ajaxStop",
+	"ajaxComplete",
+	"ajaxError",
+	"ajaxSuccess",
+	"ajaxSend"
+], function( _i, type ) {
+	jQuery.fn[ type ] = function( fn ) {
+		return this.on( type, fn );
 	};
-} );
-
-jQuery.fn.extend( {
-	hover: function( fnOver, fnOut ) {
-		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
-	}
 } );
 
 
@@ -36804,8 +37049,32 @@ jQuery.fn.extend( {
 		return arguments.length === 1 ?
 			this.off( selector, "**" ) :
 			this.off( types, selector || "**", fn );
+	},
+
+	hover: function( fnOver, fnOut ) {
+		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
 	}
 } );
+
+jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
+	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
+	function( _i, name ) {
+
+		// Handle event binding
+		jQuery.fn[ name ] = function( data, fn ) {
+			return arguments.length > 0 ?
+				this.on( name, null, data, fn ) :
+				this.trigger( name );
+		};
+	} );
+
+
+
+
+// Support: Android <=4.0 only
+// Make sure we trim BOM and NBSP
+var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
 
 // Bind a function to a context, optionally partially applying any
 // arguments.
@@ -36869,6 +37138,11 @@ jQuery.isNumeric = function( obj ) {
 		!isNaN( obj - parseFloat( obj ) );
 };
 
+jQuery.trim = function( text ) {
+	return text == null ?
+		"" :
+		( text + "" ).replace( rtrim, "" );
+};
 
 
 
@@ -36918,7 +37192,7 @@ jQuery.noConflict = function( deep ) {
 // Expose jQuery and $ identifiers, even in AMD
 // (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
-if ( !noGlobal ) {
+if ( typeof noGlobal === "undefined" ) {
 	window.jQuery = window.$ = jQuery;
 }
 
@@ -39027,10 +39301,9 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
- * audioSearch module. See {@link music21.audioSearch} namespace
+ * audioSearch module. See music21.audioSearch namespace
  *
  * @exports music21/audioSearch
- * @namespace music21.audioSearch
  * @memberof music21
  * @requires music21/pitch
  * @requires music21/common
@@ -40225,8 +40498,9 @@ positionStart, getElementMethod, classList) {
   // this should all be done as a tree...
   // do not use .flat or .semiFlat so as not
   // to create new sites.
-  // VERY HACKY...
-  var lastElement;
+  // conflict between two linters requires setting lastElement to undefined.
+  var lastElement = undefined; // eslint-disable-line no-undef-init
+
   var useSiteElements = useSite.elements; // we want sorting.
 
   for (var i = 0; i < useSiteElements.length; i++) {
@@ -40950,13 +41224,10 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
  *
- * @class Chord
- * @memberof music21.chord
  * @param {Array<string|note.Note|Pitch>} [notes] -
  *     an Array of strings
  *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
- * @extends music21.note.NotRest
  * @property {number} length - the number of pitches in the Chord (readonly)
  * @property {Pitch[]} pitches - an Array of Pitch objects in the
  *     chord. (Consider the Array read only and pass in a new Array to change)
@@ -41320,16 +41591,19 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__["NotRest"] {
 
     try {
       for (var _iterator3 = notes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var noteObj = _step3.value;
-
+        var noteObj_StrOrNote = _step3.value;
         // takes in either a note or a pitch
-        if (typeof noteObj === 'string') {
-          noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](noteObj);
-        } else if (noteObj.isClassOrSubclass('Pitch')) {
-          var pitchObj = noteObj;
+        var noteObj = void 0;
+
+        if (typeof noteObj_StrOrNote === 'string') {
+          noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](noteObj_StrOrNote);
+        } else if (noteObj_StrOrNote.isClassOrSubclass('Pitch')) {
+          var pitchObj = noteObj_StrOrNote;
           var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"]();
           noteObj2.pitch = pitchObj;
           noteObj = noteObj2;
+        } else {
+          noteObj = noteObj_StrOrNote;
         }
 
         this._notes.push(noteObj);
@@ -41844,7 +42118,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__["NotRest"] {
 
     for (var i = 0; i < thisPitches.length; i++) {
       var thisPitch = thisPitches[i];
-      var thisInterval = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
+      var thisInterval = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast kludge
 
       if (thisInterval <= 0) {
         thisInterval += 7;
@@ -44086,7 +44360,8 @@ function _validateAddress(address) {
   if (address !== undefined && address.cardinality !== undefined) {
     // got an object...
     address = [address.cardinality, address.forteClass, address.inversion, address.pcOriginal];
-  }
+  } // noinspection JSObjectNullOrUndefined
+
 
   var _address$slice = address.slice(0, 2),
       _address$slice2 = _slicedToArray(_address$slice, 2),
@@ -44523,9 +44798,6 @@ var nameToSign = {
  * Clef name can be one of
  * "treble", "bass", "soprano", "mezzo-soprano", "alto", "tenor", "percussion"
  *
- * @class Clef
- * @memberof music21.clef
- * @extends music21.base.Music21Object
  * @param {string} name - clef name
  * @param {number} [octaveChange=0] - ottava
  * @property {string} [name]
@@ -44811,12 +45083,6 @@ var all_clefs = {
  * Looks at the pitches in a Stream and returns the best clef
  * of Treble and Bass
  *
- * @function music21.clef.bestClef
- * @memberof music21.clef
- * @param {music21.stream.Stream} st
- * @param {Object} [options]
- * @param {boolean} [options.recurse=true]
- * @returns {music21.clef.Clef}
  */
 
 function bestClef(st) {
@@ -45733,7 +45999,7 @@ var quarterTypeIndex = 6; // where is quarter in the following array.
 var ordinalTypeFromNum = ['duplex-maxima', 'maxima', 'longa', 'breve', 'whole', 'half', 'quarter', 'eighth', '16th', '32nd', '64th', '128th', '256th', '512th', '1024th'];
 var vexflowDurationArray = [undefined, undefined, undefined, undefined, 'w', 'h', 'q', '8', '16', '32', undefined, undefined, undefined, undefined, undefined];
 /**
- * Duration object; found as the `.duration` attribute on {@link music21.base.Music21Object} instances
+ * Duration object; found as the `.duration` attribute on Music21Object instances
  * such as {@link music21.note.Note}
  *
  * @class Duration
@@ -50276,8 +50542,6 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 function makeLayoutFromScore(score, containerWidth) {
-  // var systemHeight = score.systemHeight; /* part.show() called... */
-  // var systemPadding = score.systemPadding;
   var parts = score.parts.stream(); // console.log(parts);
 
   var numParts = parts.length;
@@ -50595,9 +50859,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
  *
- * @class TimeSignature
- * @memberof music21.meter
- * @extends music21.base.Music21Object
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]
@@ -50657,11 +50918,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_7__["Music21Object"] 
     this.denominator = parseInt(meterList[1]);
     this._beatGroups = [];
   }
-  /**
-   *
-   * @type {music21.duration.Duration}
-   */
-
 
   get barDuration() {
     var ql = 4.0 * this._numerator / this._denominator;
@@ -50729,7 +50985,8 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_7__["Music21Object"] 
   /**
    * Compute the Beat Group according to this time signature.
    *
-   * @returns {Array<Array<int>>} a list of numerator and denominators, find a list of beat groups.
+   * @returns {Array<Array<int>>} a list of numerator and denominators,
+   *     find a list of beat groups.
    */
 
 
@@ -50739,7 +50996,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_7__["Music21Object"] 
     var beatValue = this.denominator;
 
     if (beatValue < 8 && numBeats >= 5) {
-      var beatsToEighthNoteRatio = 8 / beatValue; // hopefully Int -- right Brian Ferneyhough?
+      var beatsToEighthNoteRatio = 8 / beatValue; // hopefully beatValue is an int -- right Brian Ferneyhough?
 
       beatValue = 8;
       numBeats *= beatsToEighthNoteRatio;
@@ -50781,8 +51038,8 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_7__["Music21Object"] 
     return [start, end];
   }
   /**
-   * @param {music21.stream.Stream} srcStream - a stream of elements.
-   * @param {Object} options - an object with measureStartOffset
+   * srcStream - a stream of elements.
+   * options - an object with measureStartOffset
    */
 
 
@@ -50932,13 +51189,15 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_7__["Music21Object"] 
 
 
   vexflowBeatGroups() {
-    var tempBeatGroups = this.beatGroups; // console.log(tempBeatGroups);
-
+    var tempBeatGroups = this.beatGroups;
     var vfBeatGroups = [];
 
     for (var i = 0; i < tempBeatGroups.length; i++) {
-      var bg = tempBeatGroups[i];
-      vfBeatGroups.push(new vexflow__WEBPACK_IMPORTED_MODULE_6___default.a.Flow.Fraction(bg[0], bg[1]));
+      var _tempBeatGroups$i = _slicedToArray(tempBeatGroups[i], 2),
+          bg_numerator = _tempBeatGroups$i[0],
+          bg_denominator = _tempBeatGroups$i[1];
+
+      vfBeatGroups.push(new vexflow__WEBPACK_IMPORTED_MODULE_6___default.a.Flow.Fraction(bg_numerator, bg_denominator));
     }
 
     return vfBeatGroups; //  if (numBeats % 3 == 0 && beatValue < 4) {
@@ -54864,9 +55123,7 @@ class Note extends NotRest {
 
     var useStemDirection = this.stemDirection; // fixup stem direction -- must happen before Vex.Flow.Note is created...
 
-    if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined && stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
-      useStemDirection = this.activeSite.renderOptions.stemDirection;
-    } else if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
+    if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
       useStemDirection = this.getStemDirectionFromClef(clef);
     }
 
@@ -56216,16 +56473,19 @@ class RenderOptions {
     this.left = undefined;
     this.width = undefined;
     this.overriddenWidth = undefined;
-    this.height = undefined;
-    this.naiveHeight = 120; // additional padding at the bottom of the stream (not every system).
+    this.height = undefined; // additional padding at the bottom of the stream
+    // (not every system).
 
     this.marginBottom = 0;
     this.systemIndex = 0;
     this.partIndex = 0;
-    this.measureIndex = 0;
-    this.systemPadding = undefined;
-    this.naiveSystemPadding = 40;
-    this.stemDirection = undefined;
+    this.measureIndex = 0; // amount of space between systems on a Score object
+    // does nothing on any other object.  Defaults to 0 for everything
+    // except Score which overrides in constructor to 40.
+
+    this.systemPadding = 0; // this sets a fixed width for a system, not accounting for
+    // scaleFactors.
+
     this.maxSystemWidth = undefined;
     this.rightBarline = undefined;
     this.staffLines = 5;
@@ -56240,6 +56500,14 @@ class RenderOptions {
 
     this.startNewPage = false;
     this.showMeasureNumber = undefined;
+    this.heightAboveStaff = 20;
+    this.heightOfStaffProper = 80;
+    this.heightBelowStaff = 20;
+  } // was naiveHeight
+
+
+  get staffAreaHeight() {
+    return this.heightAboveStaff + this.heightOfStaffProper + this.heightBelowStaff;
   }
 
 }
@@ -56441,10 +56709,10 @@ function expandShortHand(shorthand) {
 
   for (var _i = 0, _shorthandGroups = shorthandGroups; _i < _shorthandGroups.length; _i++) {
     var sh = _shorthandGroups[_i];
-    sh = sh.replace('x', '11');
-    sh = sh.replace('y', '13');
-    sh = sh.replace('z', '15');
-    shGroupOut.push(sh);
+    var sh2 = sh.replace('x', '11');
+    sh2 = sh2.replace('y', '13');
+    sh2 = sh2.replace('z', '15');
+    shGroupOut.push(sh2);
   }
 
   return shGroupOut;
@@ -56780,7 +57048,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_13__["Harmony"] {
     if (fati !== undefined) {
       var newFati = _interval__WEBPACK_IMPORTED_MODULE_14__["add"]([fati, new _interval__WEBPACK_IMPORTED_MODULE_14__["Interval"]('A1')]);
       this.frontAlterationTransposeInterval = newFati;
-      this.frontAlterationAccidental.alter = this.frontAlterationAccidental.alter + 1;
+      this.frontAlterationAccidental.alter += 1;
     } else {
       this.frontAlterationTransposeInterval = new _interval__WEBPACK_IMPORTED_MODULE_14__["Interval"]('A1');
       this.frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_16__["Accidental"](1);
@@ -58599,47 +58867,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.flat */ "./node_modules/core-js/modules/es.array.flat.js");
 /* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./tempo */ "./src/music21/tempo.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.ts");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.ts");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters__WEBPACK_IMPORTED_MODULE_28__; });
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.ts");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator__WEBPACK_IMPORTED_MODULE_29__; });
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.from */ "./node_modules/core-js/modules/es.array.from.js");
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
+/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./tempo */ "./src/music21/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters__WEBPACK_IMPORTED_MODULE_29__; });
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator__WEBPACK_IMPORTED_MODULE_30__; });
+
 
 
 
@@ -58717,10 +58988,10 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 
 
-class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"] {}
+class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_14__["Music21Exception"] {}
 
 function _exportMusicXMLAsText(s) {
-  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_27__["GeneralObjectExporter"](s);
+  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_28__["GeneralObjectExporter"](s);
   return gox.parse();
 }
 /**
@@ -58765,7 +59036,7 @@ function _exportMusicXMLAsText(s) {
  */
 
 
-class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
+class Stream extends _base__WEBPACK_IMPORTED_MODULE_16__["Music21Object"] {
   constructor() {
     super(); // from music21p's core.py
 
@@ -58807,7 +59078,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_24__["RenderOptions"]();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_25__["RenderOptions"]();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
@@ -58862,7 +59133,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
           foundNote = _this$findNoteForClic2[1];
 
       if (foundNote === undefined) {
-        if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_15__["debug"]) {
           console.log('No note found');
         }
 
@@ -58956,12 +59227,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
   }
 
   get duration() {
-    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_19__["Duration"]) {
+    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_20__["Duration"]) {
       // return new duration.Duration(32.0);
       return this._overriddenDuration;
     }
 
-    return new _duration__WEBPACK_IMPORTED_MODULE_19__["Duration"](this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_20__["Duration"](this.highestTime);
   }
 
   set duration(newDuration) {
@@ -59021,7 +59292,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       // namely, do not set inner streams activeSites to be
       // in things that they won't have later.
       newSt.clear();
-      var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_29__["RecursiveIterator"](this, {
+      var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_30__["RecursiveIterator"](this, {
         restoreActiveSites: false,
         includeSelf: false,
         ignoreSorting: true
@@ -59106,7 +59377,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     var metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
     var highestTime = thisFlat.highestTime;
     var lowestOffset = 0;
-    var mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_25__["MetronomeMark"]({
+    var mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_26__["MetronomeMark"]({
       number: 120
     });
 
@@ -59172,6 +59443,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       return tempo;
     }, 0);
   }
+  /**
+   * Note that .instrument will never return a string, but Typescript requires
+   * that getter and setter are the same.
+   */
+
 
   get instrument() {
     if (this._instrument === undefined && this.activeSite !== undefined) {
@@ -59183,7 +59459,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_20__["Instrument"](newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_21__["Instrument"](newInstrument);
     }
 
     this._instrument = newInstrument;
@@ -59306,7 +59582,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_21__["TimeSignature"](newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_22__["TimeSignature"](newTimeSignature);
     }
 
     var oldTS = this._firstElementContext('timeSignature');
@@ -59327,6 +59603,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
   set autoBeam(ab) {
     this._autoBeam = ab;
   }
+  /**
+   * maxSystemWidth starts at 750.  It can then be changed
+   * by renderOptions.maxSystemWidth, by activeSite's maxSystemWidth
+   * (recursively); and then is scaled by renderOptions.scaleFactor.x
+   *
+   * Smaller scaleFactors lead to LARGER maxSystemWidth
+   */
+
 
   get maxSystemWidth() {
     var baseMaxSystemWidth = 750;
@@ -59339,6 +59623,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
     return baseMaxSystemWidth / this.renderOptions.scaleFactor.x;
   }
+  /**
+   * Sets the renderOptions.maxSystemWidth after accounting for
+   * scaleFactor
+   */
+
 
   set maxSystemWidth(newSW) {
     this.renderOptions.maxSystemWidth = newSW * this.renderOptions.scaleFactor.x;
@@ -59346,7 +59635,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
   get parts() {
     return this.getElementsByClass('Part');
-  }
+  } // TODO -- replace w/ music21p version.
+
 
   get measures() {
     return this.getElementsByClass('Measure');
@@ -59572,14 +59862,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
         skipSelf = _ref2$skipSelf === void 0 ? true : _ref2$skipSelf;
 
     var includeSelf = !skipSelf;
-    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_29__["RecursiveIterator"](this, {
+    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_30__["RecursiveIterator"](this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
 
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_28__["ClassFilter"](classFilter));
+      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_29__["ClassFilter"](classFilter));
     }
 
     return ri;
@@ -59624,8 +59914,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
     var el = elOrElList;
 
-    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"])) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('Can only append a music21 object.');
+    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_16__["Music21Object"])) {
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_14__["Music21Exception"]('Can only append a music21 object.');
     }
 
     try {
@@ -60053,7 +60343,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       bestClef: false,
       inPlace: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_18__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_19__["merge"](params, options);
     var voiceCount;
 
     if (this.hasVoices()) {
@@ -60310,7 +60600,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       }
 
       var restQL = restInfo.endTime - restInfo.offset;
-      var restObj = new _note__WEBPACK_IMPORTED_MODULE_22__["Rest"]();
+      var restObj = new _note__WEBPACK_IMPORTED_MODULE_23__["Rest"]();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
@@ -60527,7 +60817,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
           if (thisBeams !== undefined) {
             n.beams = thisBeams;
           } else {
-            n.beams = new _beam__WEBPACK_IMPORTED_MODULE_16__["Beams"]();
+            n.beams = new _beam__WEBPACK_IMPORTED_MODULE_17__["Beams"]();
           }
         }
       } // returnObj.streamStatus.beams = true;
@@ -60641,7 +60931,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
     if (this.hasVoices()) {
       // TODO(msc) -- remove jQuery each...
-      jquery__WEBPACK_IMPORTED_MODULE_11__["each"](this.getElementsByClass('Voice'), (i, v) => {
+      jquery__WEBPACK_IMPORTED_MODULE_12__["each"](this.getElementsByClass('Voice'), (i, v) => {
         groups.push([v.flat, i]);
       });
     } else {
@@ -60666,7 +60956,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
   }
 
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_29__["StreamIterator"](this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_30__["StreamIterator"](this);
   }
   /**
    * Find all elements with a certain class; if an Array is given, then any
@@ -60769,9 +61059,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
    *  you want, because of some fancy manipulation of
    *  el.activeSite
    *
-   * @param {Music21Object} el - object with an offset and class to search for.
-   * @param {Stream} [elStream] - a place to get el's offset from.
-   * @returns {Music21Object|undefined}
+   *  el is the object with an offset and class to search for.
+   *
+   *  elStream is a place to get el's offset from.  Otherwise activeSite is used
    */
 
 
@@ -60848,7 +61138,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
         var tempAccidental = ks.accidentalByStep(stepName);
 
         if (tempAccidental !== undefined) {
-          stepAlter = tempAccidental.alter; // console.log(stepAlter + " " + stepName);
+          stepAlter = tempAccidental.alter; // console.log(stepAlter + ' ' + stepName);
         }
       }
 
@@ -60942,19 +61232,19 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       newAlter = 0;
     } else {
       newAlter = p.accidental.alter;
-    } // console.log(p.name + " " + lastStepDict[p.step].toString());
+    } // console.log(p.name + ' ' + lastStepDict[p.step].toString());
 
 
     if (lastStepDict[p.step] !== newAlter || lastOctavelessStepDict[p.step] !== newAlter) {
       if (p.accidental === undefined) {
-        p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_23__["Accidental"]('natural');
+        p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_24__["Accidental"]('natural');
       }
 
-      p.accidental.displayStatus = true; // console.log("setting displayStatus to true");
+      p.accidental.displayStatus = true; // console.log('setting displayStatus to true');
     } else if (lastStepDict[p.step] === newAlter && lastOctavelessStepDict[p.step] === newAlter) {
       if (p.accidental !== undefined) {
         p.accidental.displayStatus = false;
-      } // console.log("setting displayStatus to false");
+      } // console.log('setting displayStatus to false');
 
     }
 
@@ -60987,7 +61277,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
   resetRenderOptions(recursive, preserveEvents) {
     var oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_24__["RenderOptions"]();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_25__["RenderOptions"]();
 
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
@@ -61054,7 +61344,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
      */
     var canvasOrSVG;
 
-    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_11__) {
+    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_12__) {
       canvasOrSVG = $canvasOrSVG[0];
     } else {
       canvasOrSVG = $canvasOrSVG;
@@ -61081,7 +61371,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       }
     }
 
-    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_26__["Renderer"](this, canvasOrSVG);
+    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_27__["Renderer"](this, canvasOrSVG);
 
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
@@ -61105,33 +61395,37 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
    *
    * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
    *
-   * @param {boolean} [ignoreSystems=false]
    * @returns {number} height in pixels
    */
 
 
   estimateStreamHeight() {
-    var ignoreSystems = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    var staffHeight = this.renderOptions.naiveHeight;
+    var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref12$ignoreSystems = _ref12.ignoreSystems,
+        ignoreSystems = _ref12$ignoreSystems === void 0 ? false : _ref12$ignoreSystems,
+        _ref12$ignoreMarginBo = _ref12.ignoreMarginBottom,
+        ignoreMarginBottom = _ref12$ignoreMarginBo === void 0 ? false : _ref12$ignoreMarginBo;
+
+    var staffHeight = this.renderOptions.staffAreaHeight;
     var marginBottom = this.renderOptions.marginBottom; // extra at end.
 
-    var systemPadding = 0;
-
-    if (this instanceof Score) {
-      systemPadding = this.systemPadding;
-    }
-
+    var systemPadding = this.renderOptions.systemPadding;
     var numSystems;
 
     if (this instanceof Score) {
       var numParts = this.parts.length;
       numSystems = this.numSystems();
 
-      if (numSystems === undefined || ignoreSystems) {
+      if (ignoreSystems) {
         numSystems = 1;
       }
 
-      var scoreHeight = numSystems * staffHeight * numParts + (numSystems - 1) * systemPadding + marginBottom;
+      var scoreHeight = numSystems * staffHeight * numParts + (numSystems - 1) * systemPadding;
+
+      if (!ignoreMarginBottom) {
+        scoreHeight += marginBottom;
+      } // TODO(msc) -- Fix and Remove
+
 
       if (numSystems > 1) {
         // needs a little extra padding for some reason...
@@ -61147,13 +61441,23 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
         numSystems = this.numSystems();
       }
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_15__["debug"]) {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
 
-      return numSystems * staffHeight + (numSystems - 1) * systemPadding + marginBottom;
+      var partHeight = numSystems * staffHeight + (numSystems - 1) * systemPadding;
+
+      if (!ignoreMarginBottom) {
+        partHeight += marginBottom;
+      }
+
+      return partHeight;
     } else {
-      return staffHeight + marginBottom;
+      if (!ignoreMarginBottom) {
+        return staffHeight + marginBottom;
+      } else {
+        return staffHeight;
+      }
     }
   }
   /**
@@ -61170,7 +61474,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     var totalLength;
 
     if (this.renderOptions.overriddenWidth !== undefined) {
-      // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
+      // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
       return this.renderOptions.overriddenWidth;
     }
 
@@ -61275,7 +61579,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
         if (element) {
           if (element.offset > highestCurrentEndTime) {
-            var gapElement = new _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"]();
+            var gapElement = new _base__WEBPACK_IMPORTED_MODULE_16__["Music21Object"]();
             var gapQuarterLength = element.offset - highestCurrentEndTime;
             gapElement.duration = this.duration;
             gapElement.duration.quarterLength = gapQuarterLength;
@@ -61346,7 +61650,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       done: undefined,
       startNote: undefined
     };
-    _common__WEBPACK_IMPORTED_MODULE_18__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_19__["merge"](params, options);
     var startNoteIndex = params.startNote;
     var currentNoteIndex = 0;
 
@@ -61377,7 +61681,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
         // const tempo = thisStream._averageTempo(el.offset, nextOffset);
         // const milliseconds = playDuration * 1000 * 60 / tempo;
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_15__["debug"]) {
           console.log('playing: ', el, playDuration, milliseconds, params.tempo);
         }
 
@@ -61409,7 +61713,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     this._stopPlaying = true;
 
     for (var i = 0; i < 127; i++) {
-      midicube__WEBPACK_IMPORTED_MODULE_12__["noteOff"](0, i, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_13__["noteOff"](0, i, 0);
     }
 
     return this;
@@ -61460,14 +61764,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       renderElementType = 'canvas';
     }
 
-    var $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_11__('<' + renderElementType + '/>');
+    var $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_12__('<' + renderElementType + '/>');
     $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
 
     $newCanvasOrDIV.css('display', 'inline-block');
 
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common__WEBPACK_IMPORTED_MODULE_18__["stripPx"](width);
+        width = _common__WEBPACK_IMPORTED_MODULE_19__["stripPx"](width);
       }
 
       $newCanvasOrDIV.attr('width', width);
@@ -61570,10 +61874,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     // noinspection JSMismatchedCollectionQueryUpdate
     var $appendElement;
 
-    if (appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_11__) {
+    if (appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_12__) {
       $appendElement = appendElement;
     } else {
-      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_11__(appendElement);
+      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_12__(appendElement);
     } //      if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
     //      var $bodyElement = bodyElement;
     //      if (!(bodyElement instanceof $) {
@@ -61610,15 +61914,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     var preserveSvgSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
-    // if called with no where, replaces all the svgs on the page...
+    // if called with no where, replaces all the svg elements on the page...
     if (where === undefined) {
       where = document.body;
     }
 
     var $where;
 
-    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_11__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_11__(where);
+    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_12__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_12__(where);
     } else {
       $where = where; // where = $where[0];
     }
@@ -61633,13 +61937,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
 
     if ($oldSVGOrCanvas.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('No svg defined for replaceDOM!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_14__["Music21Exception"]('No svg defined for replaceDOM!');
     } else if ($oldSVGOrCanvas.length > 1) {
       // change last svg...
       // replacing each with svgBlock doesn't work
       // anyhow, it just resizes the svg but doesn't
       // draw.
-      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_11__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
+      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_12__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
     }
 
     var svgBlock;
@@ -61669,18 +61973,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
    *                    find the original stream; var s = this; var f = function () { s...}
    *                   )
    *
-   * @param {jQuery|HTMLElement} canvasOrDiv - canvas or the Div surrounding it.
+   * @param {JQuery|HTMLElement} canvasOrDiv - canvas or the Div surrounding it.
    * @returns {this}
    */
 
 
   setRenderInteraction(canvasOrDiv) {
-    var $svg = canvasOrDiv;
+    var $svg;
 
     if (canvasOrDiv === undefined) {
       return this;
-    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_11__)) {
-      $svg = jquery__WEBPACK_IMPORTED_MODULE_11__(canvasOrDiv);
+    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_12__)) {
+      $svg = jquery__WEBPACK_IMPORTED_MODULE_12__(canvasOrDiv);
+    } else {
+      $svg = canvasOrDiv;
     }
 
     var playFunc = () => {
@@ -61699,7 +62005,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       } else if (typeof eventFunction === 'string' && eventType === 'resize' && eventFunction === 'reflow') {
         this.windowReflowStart($svg);
       } else if (eventFunction !== undefined) {
-        $svg.on(eventType, eventFunction);
+        var eventFunctionTyped = eventFunction;
+        $svg.on(eventType, eventFunctionTyped);
       }
     }
 
@@ -61737,9 +62044,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
    * Given a mouse click, or other event with .pageX and .pageY,
    * find the x and y for the svg.
    *
-   * @param {HTMLElement|SVGElement} svg - a canvas or SVG object
-   * @param {MouseEvent|TouchEvent} e
-   * @returns {Array<number>} two-elements, [x, y] in pixels.
+   * returns {Array<number>} two-elements, [x, y] in pixels.
    */
 
 
@@ -61752,20 +62057,25 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
         top: 0
       };
     } else {
-      offset = jquery__WEBPACK_IMPORTED_MODULE_11__(svg).offset();
+      offset = jquery__WEBPACK_IMPORTED_MODULE_12__(svg).offset();
     }
     /*
-     * mouse event handler code from: http://diveintohtml5.org/canvas.html
+     * mouse event handler code originally from: http://diveintohtml5.org/canvas.html
      */
 
 
     var xClick;
     var yClick;
 
-    if (e.pageX !== undefined && e.pageY !== undefined) {
+    if ((e instanceof MouseEvent || e instanceof jquery__WEBPACK_IMPORTED_MODULE_12__["Event"]) && e.pageX !== undefined && e.pageY !== undefined) {
       xClick = e.pageX;
       yClick = e.pageY;
+    } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
+      var touch1 = e.touches[0];
+      xClick = touch1.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+      yClick = touch1.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     } else {
+      console.error("what are you? ".concat(typeof e));
       xClick = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
       yClick = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
@@ -61786,9 +62096,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
    * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
    * x of 1 gives 1.42857...
    *
-   * @param {Node|SVGElement} svg -- a canvas or SVG object
-   * @param {MouseEvent|TouchEvent} e
-   * @returns {Array<number>} [scaledX, scaledY]
    */
 
 
@@ -61810,9 +62117,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
    * searches this.storedVexflowStave
    *
    * Y position must be offset from the start of the stave...
-   *
-   * @param {number} yPxScaled
-   * @returns {number}
    */
 
 
@@ -61822,11 +62126,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     if (storedVexflowStave === undefined) {
       throw new StreamException('Could not find vexflowStave for getting size');
     } // for (var i = -10; i < 10; i++) {
-    //    console.log("line: " + i + " y: " + storedVexflowStave.getYForLine(i));
+    //    console.log('line: ' + i + ' y: ' + storedVexflowStave.getYForLine(i));
     // }
 
 
-    var thisClef = this.clef || this.getContextByClass('Clef');
+    var thisClef = this.clef || this.getContextByClass('Clef'); // TODO: on music21p percussion clef defines no lowest line, but does in music21j...
+
     var lowestLine = thisClef !== undefined ? thisClef.lowestLine : 31;
     var lineSpacing = storedVexflowStave.options.spacing_between_lines_px;
     var linesAboveStaff = storedVexflowStave.options.space_above_staff_ln;
@@ -61879,7 +62184,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common__WEBPACK_IMPORTED_MODULE_18__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_19__["merge"](params, options);
     var foundNote;
     var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
 
@@ -61948,18 +62253,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
    * Return a list of [diatonicNoteNum, closestXNote]
    * for an event (e) called on the svg (svg)
    *
-   * @param {HTMLElement|SVGElement} svg
-   * @param {MouseEvent|TouchEvent} e
-   * @param {number} [x]
-   * @param {number} [y]
    * @returns {Array} [diatonicNoteNum, closestXNote]
    */
 
 
-  findNoteForClick(svg, e) {
-    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-
+  findNoteForClick(svg, e, x, y) {
+    // this is Stream.findNoteForClick.
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD = this.getScaledXYforDOM(svg, e);
 
@@ -61986,7 +62285,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
 
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     var n = foundNote;
-    var p = new _pitch__WEBPACK_IMPORTED_MODULE_23__["Pitch"]('C');
+    var p = new _pitch__WEBPACK_IMPORTED_MODULE_24__["Pitch"]('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -62023,7 +62322,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       this.setSubstreamRenderOptions();
     }
 
-    var $svg = jquery__WEBPACK_IMPORTED_MODULE_11__(svg); // works even if svg is already $jquery
+    var $svg = jquery__WEBPACK_IMPORTED_MODULE_12__(svg); // works even if svg is already $jquery
 
     var $newSvg = this.createNewDOM(svg.width, svg.height);
     this.renderVexflow($newSvg);
@@ -62049,12 +62348,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     /*
      * Create an editable svg with an accidental selection bar.
      */
-    var d = jquery__WEBPACK_IMPORTED_MODULE_11__('<div/>').css('text-align', 'left').css('position', 'relative');
+    var d = jquery__WEBPACK_IMPORTED_MODULE_12__('<div/>').css('text-align', 'left').css('position', 'relative');
     this.renderOptions.events.click = this.DOMChangerFunction;
     var $svgDiv = this.createDOM(width, height);
     var buttonDiv = this.getAccidentalToolbar(undefined, undefined, $svgDiv);
     d.append(buttonDiv);
-    d.append(jquery__WEBPACK_IMPORTED_MODULE_11__("<br style='clear: both;' />"));
+    d.append(jquery__WEBPACK_IMPORTED_MODULE_12__("<br style='clear: both;' />"));
     d.append($svgDiv);
     return d;
   }
@@ -62090,7 +62389,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       var $useSvg = $siblingSvg;
 
       if ($useSvg === undefined) {
-        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_11__(clickEvent.target).parent();
+        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_12__(clickEvent.target).parent();
         var maxSearch = 99;
 
         while (maxSearch > 0 && $searchParent !== undefined && ($useSvg === undefined || $useSvg[0] === undefined)) {
@@ -62105,9 +62404,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
         }
       }
 
-      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_22__["Note"]) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_23__["Note"]) {
         var n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_23__["Accidental"](newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_24__["Accidental"](newAlter);
         /* console.log(n.pitch.name); */
 
         var $newSvg = this.redrawDOM($useSvg[0]);
@@ -62121,11 +62420,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       }
     };
 
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_11__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_12__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
 
     var _loop = function _loop(i) {
-      var acc = new _pitch__WEBPACK_IMPORTED_MODULE_23__["Accidental"](i);
-      var $button = jquery__WEBPACK_IMPORTED_MODULE_11__('<button>' + acc.unicodeModifier + '</button>').click(e => addAccidental(i, e));
+      var acc = new _pitch__WEBPACK_IMPORTED_MODULE_24__["Accidental"](i);
+      var $button = jquery__WEBPACK_IMPORTED_MODULE_12__('<button>' + acc.unicodeModifier + '</button>').on('click', e => addAccidental(i, e));
 
       if (Math.abs(i) > 1) {
         $button.css('font-family', 'Bravura Text');
@@ -62142,20 +62441,19 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
     return $buttonDiv;
   }
   /**
-   *
-   * @returns {jQuery} a Div containing two buttons -- play and stop
+   * get a JQuery div containing two buttons -- play and stop
    */
 
 
   getPlayToolbar() {
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_11__('<div/>').attr('class', 'playToolbar scoreToolbar');
-    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_11__('<button>&#9658</button>');
-    $bPlay.click(() => {
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_12__('<div/>').attr('class', 'playToolbar scoreToolbar');
+    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_12__('<button>&#9658</button>');
+    $bPlay.on('click', () => {
       this.playStream();
     });
     $buttonDiv.append($bPlay);
-    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_11__('<button>&#9724</button>');
-    $bStop.click(() => {
+    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_12__('<button>&#9724</button>');
+    $bStop.on('click', () => {
       this.stopPlayStream();
     });
     $buttonDiv.append($bStop);
@@ -62190,11 +62488,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       this.maxSystemWidth = svgWidth - 40;
       jSvgNow.remove();
       var svgObj = this.appendNewDOM(jSvgParent);
-      jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_11__(svgObj);
+      jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_12__(svgObj);
     };
 
     var resizeTimeout = 0;
-    jquery__WEBPACK_IMPORTED_MODULE_11__(window).on('resize', () => {
+    jquery__WEBPACK_IMPORTED_MODULE_12__(window).on('resize', () => {
       if (resizeTimeout) {
         clearTimeout(resizeTimeout);
       }
@@ -62202,7 +62500,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__["Music21Object"] {
       resizeTimeout = setTimeout(() => resizeEnd(), 200);
     });
     setTimeout(() => {
-      var $window = jquery__WEBPACK_IMPORTED_MODULE_11__(window);
+      var $window = jquery__WEBPACK_IMPORTED_MODULE_12__(window);
       var doResize = $window.data('triggerResizeOnCreateSvg');
 
       if (doResize === undefined || doResize === true) {
@@ -62274,7 +62572,7 @@ class Measure extends Stream {
   }
 
   stringInfo() {
-    var _a; // avoid using "this.offset" to not infinite loops.
+    var _a; // avoid using 'this.offset' to not infinite loops.
 
 
     var offset = (_a = this._activeSiteStoredOffset, _a !== null && _a !== void 0 ? _a : this._naiveOffset);
@@ -62295,14 +62593,16 @@ class Measure extends Stream {
 
 class Part extends Stream {
   constructor() {
-    super();
+    super(...arguments);
     this.recursionType = 'flatten';
-    this.systemHeight = this.renderOptions.naiveHeight;
   }
 
   static get className() {
     return 'music21.stream.Part';
-  }
+  } // constructor() {
+  //     super();
+  // }
+
   /**
    * How many systems does this Part have?
    *
@@ -62335,18 +62635,11 @@ class Part extends Stream {
     var _iteratorError26 = undefined;
 
     try {
-      for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+      for (var _iterator26 = this.getElementsByClass('Measure')[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
         var el = _step26.value;
-
-        if (el.isClassOrSubclass('Measure')) {
-          var elRendOp = el.renderOptions;
-          measureWidths[elRendOp.measureIndex] = elRendOp.width;
-        }
+        var elRendOp = el.renderOptions;
+        measureWidths[elRendOp.measureIndex] = elRendOp.width;
       }
-      /* console.log(measureWidths);
-       *
-       */
-
     } catch (err) {
       _didIteratorError26 = true;
       _iteratorError26 = err;
@@ -62371,7 +62664,7 @@ class Part extends Stream {
 
   estimateStaffLength() {
     if (this.renderOptions.overriddenWidth !== undefined) {
-      // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
+      // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
       return this.renderOptions.overriddenWidth;
     }
 
@@ -62419,37 +62712,10 @@ class Part extends Stream {
     tempM.elements = this;
     return tempM.estimateStaffLength();
   }
-  /**
-   * Divide a part up into systems and fix the measure
-   * widths so that they are all even.
-   *
-   * Note that this is done on the part level even though
-   * the measure widths need to be consistent across parts.
-   *
-   * This is possible because the system is deterministic and
-   * will come to the same result for each part.  Opportunity
-   * for making more efficient through this...
-   *
-   * @param {number} systemHeight
-   * @returns {Array}
-   */
 
-
-  fixSystemInformation(systemHeight) {
-    /*
-     * console.log('system height: ' + systemHeight);
-     */
-    if (systemHeight === undefined) {
-      systemHeight = this.systemHeight;
-      /* part.show() called... */
-    } else if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
-      console.log('overridden systemHeight: ' + systemHeight);
-    }
-
-    var systemPadding = this.renderOptions.systemPadding || this.renderOptions.naiveSystemPadding;
+  systemWidthsAndBreaks() {
     var measureWidths = this.getMeasureWidths();
-    var maxSystemWidth = this.maxSystemWidth;
-    /* of course fix! */
+    var maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
 
     var systemCurrentWidths = [];
     var systemBreakIndexes = [];
@@ -62460,11 +62726,10 @@ class Part extends Stream {
     /* TODO: make it obtained elsewhere */
 
     var currentLeft = startLeft;
-    var i;
 
-    for (i = 0; i < measureWidths.length; i++) {
+    for (var i = 0; i < measureWidths.length; i++) {
       var currentRight = currentLeft + measureWidths[i];
-      /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
+      /* console.log('left: ' + currentLeft + ' ; right: ' + currentRight + ' ; m: ' + i); */
 
       if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
         systemBreakIndexes.push(i - 1);
@@ -62476,86 +62741,133 @@ class Part extends Stream {
       } else {
         currentLeft = currentRight;
       }
-    } // console.log(systemCurrentWidths);
-    // console.log(systemBreakIndexes);
+    }
 
+    return [systemCurrentWidths, systemBreakIndexes];
+  }
+  /**
+   * Divide a part up into systems and fix the measure
+   * widths so that they are all even.
+   *
+   * Note that this is done on the part level even though
+   * the measure widths need to be consistent across parts in a score.
+   * This is possible because the system is deterministic and
+   * will come to the same result for each part.  Opportunity
+   * for making more efficient through this...
+   *
+   * @param {number} systemHeight
+   * @returns {Array}
+   */
+
+
+  fixSystemInformation(systemHeight, systemPadding) {
+    // this is a method on Part!
+    if (systemHeight === undefined) {
+      /* part.show() called... */
+      systemHeight = this.renderOptions.staffAreaHeight;
+    } else if (_debug__WEBPACK_IMPORTED_MODULE_15__["debug"]) {
+      console.log('overridden systemHeight: ' + systemHeight);
+    }
+
+    var _this$systemWidthsAnd = this.systemWidthsAndBreaks(),
+        _this$systemWidthsAnd2 = _slicedToArray(_this$systemWidthsAnd, 2),
+        systemCurrentWidths = _this$systemWidthsAnd2[0],
+        systemBreakIndexes = _this$systemWidthsAnd2[1];
+
+    if (systemPadding === undefined) {
+      systemPadding = this.renderOptions.systemPadding;
+    }
+
+    var maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
 
     var currentSystemIndex = 0;
     var leftSubtract = 0;
     var newLeftSubtract;
+    var _iteratorNormalCompletion28 = true;
+    var _didIteratorError28 = false;
+    var _iteratorError28 = undefined;
 
-    for (i = 0; i < this.length; i++) {
-      var m = this.get(i);
+    try {
+      for (var _iterator28 = Array.from(this.getElementsByClass('Measure')).entries()[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+        var _step28$value = _slicedToArray(_step28.value, 2),
+            i = _step28$value[0],
+            m = _step28$value[1];
 
-      if (!(m instanceof Stream)) {
-        continue;
+        if (i === 0) {
+          m.renderOptions.startNewSystem = true;
+        }
+
+        var currentLeft = m.renderOptions.left;
+
+        if (systemBreakIndexes.indexOf(i - 1) !== -1) {
+          /* first measure of new System */
+          var oldWidth = m.renderOptions.width;
+          var oldEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
+          var offsetFromEstimate = oldWidth - oldEstimate; // we look at the offset from the current estimate to see how much
+          // the staff length may have been adjusted to compensate for other
+          // parts with different lengths.
+          // but setting these options is bound to change something
+
+          m.renderOptions.displayClef = true;
+          m.renderOptions.displayKeySignature = true;
+          m.renderOptions.startNewSystem = true; // so we get a new estimate.
+
+          var newEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding; // and adjust it for the change.
+
+          var newWidth = newEstimate + offsetFromEstimate;
+          m.renderOptions.width = newWidth;
+          leftSubtract = currentLeft - 20; // after this one, we'll have a new left subtract...
+
+          newLeftSubtract = leftSubtract - (newWidth - oldWidth);
+          currentSystemIndex += 1;
+        } else if (i !== 0) {
+          m.renderOptions.startNewSystem = false;
+          m.renderOptions.displayClef = false; // check for changed clef first?
+
+          m.renderOptions.displayKeySignature = false; // check for changed KS first?
+        }
+
+        m.renderOptions.systemIndex = currentSystemIndex;
+        var currentSystemMultiplier = void 0;
+
+        if (currentSystemIndex >= systemCurrentWidths.length) {
+          /* last system... non-justified */
+          currentSystemMultiplier = 1;
+        } else {
+          var currentSystemWidth = systemCurrentWidths[currentSystemIndex];
+          currentSystemMultiplier = maxSystemWidth / currentSystemWidth; // console.log('systemMultiplier: ' + currentSystemMultiplier
+          // + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
+        }
+        /* might make a small gap? fix? */
+
+
+        var newLeft = currentLeft - leftSubtract;
+
+        if (newLeftSubtract !== undefined) {
+          leftSubtract = newLeftSubtract;
+          newLeftSubtract = undefined;
+        } // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
+
+
+        m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
+        m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
+        var newTop = m.renderOptions.top + currentSystemIndex * (systemHeight + systemPadding); // console.log('M: ' + i + '; New top: ' + newTop + ' ; old Top: ' + m.renderOptions.top);
+
+        m.renderOptions.top = newTop;
       }
-
-      if (m.renderOptions === undefined) {
-        continue;
+    } catch (err) {
+      _didIteratorError28 = true;
+      _iteratorError28 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion28 && _iterator28.return != null) {
+          _iterator28.return();
+        }
+      } finally {
+        if (_didIteratorError28) {
+          throw _iteratorError28;
+        }
       }
-
-      if (i === 0) {
-        m.renderOptions.startNewSystem = true;
-      }
-
-      currentLeft = m.renderOptions.left;
-
-      if (systemBreakIndexes.indexOf(i - 1) !== -1) {
-        /* first measure of new System */
-        var oldWidth = m.renderOptions.width;
-        var oldEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
-        var offsetFromEstimate = oldWidth - oldEstimate; // we look at the offset from the current estimate to see how much
-        // the staff length may have been adjusted to compensate for other
-        // parts with different lengths.
-        // but setting these options is bound to change something
-
-        m.renderOptions.displayClef = true;
-        m.renderOptions.displayKeySignature = true;
-        m.renderOptions.startNewSystem = true; // so we get a new estimate.
-
-        var newEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding; // and adjust it for the change.
-
-        var newWidth = newEstimate + offsetFromEstimate;
-        m.renderOptions.width = newWidth;
-        leftSubtract = currentLeft - 20; // after this one, we'll have a new left subtract...
-
-        newLeftSubtract = leftSubtract - (newWidth - oldWidth);
-        currentSystemIndex += 1;
-      } else if (i !== 0) {
-        m.renderOptions.startNewSystem = false;
-        m.renderOptions.displayClef = false; // check for changed clef first?
-
-        m.renderOptions.displayKeySignature = false; // check for changed KS first?
-      }
-
-      m.renderOptions.systemIndex = currentSystemIndex;
-      var currentSystemMultiplier = void 0;
-
-      if (currentSystemIndex >= systemCurrentWidths.length) {
-        /* last system... non-justified */
-        currentSystemMultiplier = 1;
-      } else {
-        var currentSystemWidth = systemCurrentWidths[currentSystemIndex];
-        currentSystemMultiplier = maxSystemWidth / currentSystemWidth; // console.log('systemMultiplier: ' + currentSystemMultiplier
-        // + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
-      }
-      /* might make a small gap? fix? */
-
-
-      var newLeft = currentLeft - leftSubtract;
-
-      if (newLeftSubtract !== undefined) {
-        leftSubtract = newLeftSubtract;
-        newLeftSubtract = undefined;
-      } // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
-
-
-      m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
-      m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
-      var newTop = m.renderOptions.top + currentSystemIndex * (systemHeight + systemPadding); // console.log('M: ' + i + '; New top: ' + newTop + " ; old Top: " + m.renderOptions.top);
-
-      m.renderOptions.top = newTop;
     }
 
     return systemCurrentWidths;
@@ -62577,13 +62889,13 @@ class Part extends Stream {
     var lastTimeSignature;
     var lastKeySignature;
     var lastClef;
-    var _iteratorNormalCompletion28 = true;
-    var _didIteratorError28 = false;
-    var _iteratorError28 = undefined;
+    var _iteratorNormalCompletion29 = true;
+    var _didIteratorError29 = false;
+    var _iteratorError29 = undefined;
 
     try {
-      for (var _iterator28 = this.getElementsByClass('Measure')[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
-        var m = _step28.value;
+      for (var _iterator29 = this.getElementsByClass('Measure')[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+        var m = _step29.value;
         var mRendOp = m.renderOptions;
         mRendOp.measureIndex = currentMeasureIndex;
         mRendOp.top = rendOp.top;
@@ -62631,16 +62943,16 @@ class Part extends Stream {
         currentMeasureIndex += 1;
       }
     } catch (err) {
-      _didIteratorError28 = true;
-      _iteratorError28 = err;
+      _didIteratorError29 = true;
+      _iteratorError29 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion28 && _iterator28.return != null) {
-          _iterator28.return();
+        if (!_iteratorNormalCompletion29 && _iterator29.return != null) {
+          _iterator29.return();
         }
       } finally {
-        if (_didIteratorError28) {
-          throw _iteratorError28;
+        if (_didIteratorError29) {
+          throw _iteratorError29;
         }
       }
     }
@@ -62657,32 +62969,23 @@ class Part extends Stream {
 
 
   systemIndexAndScaledY(y) {
+    // this is Part.systemIndexAndScaledY
+    var systemHeight = this.renderOptions.staffAreaHeight;
     var systemPadding = this.renderOptions.systemPadding;
-
-    if (systemPadding === undefined) {
-      systemPadding = this.renderOptions.naiveSystemPadding;
-    }
-
-    var systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
-    var scaledYRelativeToSystem = y - systemIndex * (this.systemHeight + systemPadding);
+    var systemIndex = Math.floor(y / (systemHeight + systemPadding));
+    var scaledYRelativeToSystem = y - systemIndex * (systemHeight + systemPadding);
     return [systemIndex, scaledYRelativeToSystem];
   }
   /**
    * Overrides the default music21.stream.Stream#findNoteForClick
    * by taking into account systems
    *
-   * @param {HTMLElement|SVGElement} svg
-   * @param {MouseEvent|TouchEvent} e
-   * @param {number} [x]
-   * @param {number} [y]
    * @returns {Array} [clickedDiatonicNoteNum, foundNote]
    */
 
 
-  findNoteForClick(svg, e) {
-    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-
+  findNoteForClick(svg, e, x, y) {
+    // this is Part.FindNoteForClick
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD3 = this.getScaledXYforDOM(svg, e);
 
@@ -62693,13 +62996,10 @@ class Part extends Stream {
     } // debug = true;
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
-      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_11__(svg).height());
+    if (_debug__WEBPACK_IMPORTED_MODULE_15__["debug"]) {
+      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_12__(svg).height());
     } // TODO(msc) -- systemPadding was never used -- should it be?
     // let systemPadding = this.renderOptions.systemPadding;
-    // if (systemPadding === undefined) {
-    //     systemPadding = this.renderOptions.naiveSystemPadding;
-    // }
 
 
     var _this$systemIndexAndS = this.systemIndexAndScaledY(y),
@@ -62725,20 +63025,20 @@ class Part extends Stream {
     var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var gotMeasure;
     var measures = this.measures;
-    var _iteratorNormalCompletion29 = true;
-    var _didIteratorError29 = false;
-    var _iteratorError29 = undefined;
+    var _iteratorNormalCompletion30 = true;
+    var _didIteratorError30 = false;
+    var _iteratorError30 = undefined;
 
     try {
-      for (var _iterator29 = measures[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
-        var m = _step29.value;
+      for (var _iterator30 = measures[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
+        var m = _step30.value;
         var rendOp = m.renderOptions;
         var left = rendOp.left;
         var right = left + rendOp.width;
         var top = rendOp.top;
         var bottom = top + rendOp.height;
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_15__["debug"]) {
           console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
         }
 
@@ -62753,16 +63053,16 @@ class Part extends Stream {
         }
       }
     } catch (err) {
-      _didIteratorError29 = true;
-      _iteratorError29 = err;
+      _didIteratorError30 = true;
+      _iteratorError30 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion29 && _iterator29.return != null) {
-          _iterator29.return();
+        if (!_iteratorNormalCompletion30 && _iterator30.return != null) {
+          _iterator30.return();
         }
       } finally {
-        if (_didIteratorError29) {
-          throw _iteratorError29;
+        if (_didIteratorError30) {
+          throw _iteratorError30;
         }
       }
     }
@@ -62780,7 +63080,7 @@ class Score extends Stream {
     super();
     this.recursionType = 'elementsOnly';
     this.measureWidths = [];
-    this.partSpacing = this.renderOptions.naiveHeight;
+    this.renderOptions.systemPadding = 40;
   }
 
   static get className() {
@@ -62791,7 +63091,7 @@ class Score extends Stream {
     var c = super.clef;
 
     if (c === undefined) {
-      return new _clef__WEBPACK_IMPORTED_MODULE_17__["TrebleClef"]();
+      return new _clef__WEBPACK_IMPORTED_MODULE_18__["TrebleClef"]();
     } else {
       return c;
     }
@@ -62799,21 +63099,6 @@ class Score extends Stream {
 
   set clef(newClef) {
     super.clef = newClef;
-  }
-
-  get systemPadding() {
-    var numParts = this.parts.length;
-    var systemPadding = this.renderOptions.systemPadding;
-
-    if (systemPadding === undefined) {
-      if (numParts === 1) {
-        systemPadding = this.renderOptions.naiveSystemPadding; // fix to 0
-      } else {
-        systemPadding = this.renderOptions.naiveSystemPadding;
-      }
-    }
-
-    return systemPadding;
   }
   /**
    * Override main stream makeBeams to call on each part.
@@ -62823,9 +63108,9 @@ class Score extends Stream {
 
 
   makeBeams() {
-    var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref12$inPlace = _ref12.inPlace,
-        inPlace = _ref12$inPlace === void 0 ? false : _ref12$inPlace;
+    var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref13$inPlace = _ref13.inPlace,
+        inPlace = _ref13$inPlace === void 0 ? false : _ref13$inPlace;
 
     var returnObj = this;
 
@@ -62833,29 +63118,29 @@ class Score extends Stream {
       returnObj = this.clone(true);
     }
 
-    var _iteratorNormalCompletion30 = true;
-    var _didIteratorError30 = false;
-    var _iteratorError30 = undefined;
+    var _iteratorNormalCompletion31 = true;
+    var _didIteratorError31 = false;
+    var _iteratorError31 = undefined;
 
     try {
-      for (var _iterator30 = returnObj.parts[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
-        var p = _step30.value;
+      for (var _iterator31 = returnObj.parts[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
+        var p = _step31.value;
         p.makeBeams({
           inPlace: true
         });
       } // returnObj.streamStatus.beams = true;
 
     } catch (err) {
-      _didIteratorError30 = true;
-      _iteratorError30 = err;
+      _didIteratorError31 = true;
+      _iteratorError31 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion30 && _iterator30.return != null) {
-          _iterator30.return();
+        if (!_iteratorNormalCompletion31 && _iterator31.return != null) {
+          _iterator31.return();
         }
       } finally {
-        if (_didIteratorError30) {
-          throw _iteratorError30;
+        if (_didIteratorError31) {
+          throw _iteratorError31;
         }
       }
     }
@@ -62888,48 +63173,21 @@ class Score extends Stream {
 
   setSubstreamRenderOptions() {
     var currentPartNumber = 0;
-    var currentPartTop = 0;
-    var partSpacing = this.partSpacing;
-    var _iteratorNormalCompletion31 = true;
-    var _didIteratorError31 = false;
-    var _iteratorError31 = undefined;
+    var currentPartTop = 0; // was this.partSpacing.
 
-    try {
-      for (var _iterator31 = this.parts[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
-        var p = _step31.value;
-        p.renderOptions.partIndex = currentPartNumber;
-        p.renderOptions.top = currentPartTop;
-        p.setSubstreamRenderOptions();
-        currentPartTop += partSpacing;
-        currentPartNumber += 1;
-      }
-    } catch (err) {
-      _didIteratorError31 = true;
-      _iteratorError31 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion31 && _iterator31.return != null) {
-          _iterator31.return();
-        }
-      } finally {
-        if (_didIteratorError31) {
-          throw _iteratorError31;
-        }
-      }
-    }
-
-    this.evenPartMeasureSpacing();
-    var ignoreNumSystems = true;
-    var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
+    var partSpacing = this.renderOptions.staffAreaHeight;
     var _iteratorNormalCompletion32 = true;
     var _didIteratorError32 = false;
     var _iteratorError32 = undefined;
 
     try {
       for (var _iterator32 = this.parts[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
-        var _p2 = _step32.value;
-
-        _p2.fixSystemInformation(currentScoreHeight);
+        var p = _step32.value;
+        p.renderOptions.partIndex = currentPartNumber;
+        p.renderOptions.top = currentPartTop;
+        p.setSubstreamRenderOptions();
+        currentPartTop += partSpacing;
+        currentPartNumber += 1;
       }
     } catch (err) {
       _didIteratorError32 = true;
@@ -62942,6 +63200,36 @@ class Score extends Stream {
       } finally {
         if (_didIteratorError32) {
           throw _iteratorError32;
+        }
+      }
+    }
+
+    this.evenPartMeasureSpacing();
+    var currentScoreHeight = this.estimateStreamHeight({
+      ignoreSystems: true,
+      ignoreMarginBottom: true
+    });
+    var _iteratorNormalCompletion33 = true;
+    var _didIteratorError33 = false;
+    var _iteratorError33 = undefined;
+
+    try {
+      for (var _iterator33 = this.parts[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
+        var _p2 = _step33.value;
+
+        _p2.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding);
+      }
+    } catch (err) {
+      _didIteratorError33 = true;
+      _iteratorError33 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion33 && _iterator33.return != null) {
+          _iterator33.return();
+        }
+      } finally {
+        if (_didIteratorError33) {
+          throw _iteratorError33;
         }
       }
     }
@@ -62959,18 +63247,18 @@ class Score extends Stream {
   estimateStaffLength() {
     // override
     if (this.renderOptions.overriddenWidth !== undefined) {
-      // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
+      // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
       return this.renderOptions.overriddenWidth;
     }
 
     var maxWidth = -1;
-    var _iteratorNormalCompletion33 = true;
-    var _didIteratorError33 = false;
-    var _iteratorError33 = undefined;
+    var _iteratorNormalCompletion34 = true;
+    var _didIteratorError34 = false;
+    var _iteratorError34 = undefined;
 
     try {
-      for (var _iterator33 = this.parts[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
-        var p = _step33.value;
+      for (var _iterator34 = this.parts[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
+        var p = _step34.value;
         var pWidth = p.estimateStaffLength();
 
         if (pWidth > maxWidth) {
@@ -62978,16 +63266,16 @@ class Score extends Stream {
         }
       }
     } catch (err) {
-      _didIteratorError33 = true;
-      _iteratorError33 = err;
+      _didIteratorError34 = true;
+      _iteratorError34 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion33 && _iterator33.return != null) {
-          _iterator33.return();
+        if (!_iteratorNormalCompletion34 && _iterator34.return != null) {
+          _iterator34.return();
         }
       } finally {
-        if (_didIteratorError33) {
-          throw _iteratorError33;
+        if (_didIteratorError34) {
+          throw _iteratorError34;
         }
       }
     }
@@ -63007,7 +63295,7 @@ class Score extends Stream {
   /**
    * Overrides the default music21.stream.Stream#playStream
    *
-   * Works crappily -- just starts *n* midi players.
+   * Works poorly -- just starts *n* midi players.
    *
    * Render scrollable score works better...
    *
@@ -63017,41 +63305,6 @@ class Score extends Stream {
 
   playStream(params) {
     // play multiple parts in parallel...
-    var _iteratorNormalCompletion34 = true;
-    var _didIteratorError34 = false;
-    var _iteratorError34 = undefined;
-
-    try {
-      for (var _iterator34 = this[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
-        var el = _step34.value;
-
-        if (el.isClassOrSubclass('Part')) {
-          el.playStream(params);
-        }
-      }
-    } catch (err) {
-      _didIteratorError34 = true;
-      _iteratorError34 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion34 && _iterator34.return != null) {
-          _iterator34.return();
-        }
-      } finally {
-        if (_didIteratorError34) {
-          throw _iteratorError34;
-        }
-      }
-    }
-
-    return this;
-  }
-  /**
-   * Overrides the default music21.stream.Stream#stopPlayScore()
-   */
-
-
-  stopPlayStream() {
     var _iteratorNormalCompletion35 = true;
     var _didIteratorError35 = false;
     var _iteratorError35 = undefined;
@@ -63061,7 +63314,7 @@ class Score extends Stream {
         var el = _step35.value;
 
         if (el.isClassOrSubclass('Part')) {
-          el.stopPlayStream();
+          el.playStream(params);
         }
       }
     } catch (err) {
@@ -63075,6 +63328,41 @@ class Score extends Stream {
       } finally {
         if (_didIteratorError35) {
           throw _iteratorError35;
+        }
+      }
+    }
+
+    return this;
+  }
+  /**
+   * Overrides the default music21.stream.Stream#stopPlayScore()
+   */
+
+
+  stopPlayStream() {
+    var _iteratorNormalCompletion36 = true;
+    var _didIteratorError36 = false;
+    var _iteratorError36 = undefined;
+
+    try {
+      for (var _iterator36 = this[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
+        var el = _step36.value;
+
+        if (el.isClassOrSubclass('Part')) {
+          el.stopPlayStream();
+        }
+      }
+    } catch (err) {
+      _didIteratorError36 = true;
+      _iteratorError36 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion36 && _iterator36.return != null) {
+          _iterator36.return();
+        }
+      } finally {
+        if (_didIteratorError36) {
+          throw _iteratorError36;
         }
       }
     }
@@ -63103,26 +63391,26 @@ class Score extends Stream {
     var measureWidthsArrayOfArrays = [];
     var i; // TODO: Do not crash on not partlike...
 
-    var _iteratorNormalCompletion36 = true;
-    var _didIteratorError36 = false;
-    var _iteratorError36 = undefined;
+    var _iteratorNormalCompletion37 = true;
+    var _didIteratorError37 = false;
+    var _iteratorError37 = undefined;
 
     try {
-      for (var _iterator36 = this.parts[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
-        var p = _step36.value;
+      for (var _iterator37 = this.parts[Symbol.iterator](), _step37; !(_iteratorNormalCompletion37 = (_step37 = _iterator37.next()).done); _iteratorNormalCompletion37 = true) {
+        var p = _step37.value;
         measureWidthsArrayOfArrays.push(p.getMeasureWidths());
       }
     } catch (err) {
-      _didIteratorError36 = true;
-      _iteratorError36 = err;
+      _didIteratorError37 = true;
+      _iteratorError37 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion36 && _iterator36.return != null) {
-          _iterator36.return();
+        if (!_iteratorNormalCompletion37 && _iterator37.return != null) {
+          _iterator37.return();
         }
       } finally {
-        if (_didIteratorError36) {
-          throw _iteratorError36;
+        if (_didIteratorError37) {
+          throw _iteratorError37;
         }
       }
     }
@@ -63152,34 +63440,40 @@ class Score extends Stream {
 
 
   systemIndexAndScaledY(y) {
-    // TODO(msc) -- systemPadding was not being used; should it be?
-    // let systemPadding = this.renderOptions.systemPadding;
-    // if (systemPadding === undefined) {
-    //     systemPadding = this.renderOptions.naiveSystemPadding;
-    // }
+    // this is Score.systemIndexAndScaledY
     var numParts = this.parts.length;
-    var systemHeight = numParts * this.partSpacing + this.systemPadding;
-    var systemIndex = Math.floor(y / systemHeight);
-    var scaledYRelativeToSystem = y - systemIndex * systemHeight;
-    return [systemIndex, scaledYRelativeToSystem];
+    var staffHeight = this.renderOptions.staffAreaHeight;
+    var numSystems = this.numSystems();
+    var endOfLastSystem = 0;
+
+    for (var tryIndex = 0; tryIndex < numSystems; tryIndex++) {
+      var endOfThisSystem = endOfLastSystem + numParts * staffHeight + this.renderOptions.systemPadding;
+
+      if (y > endOfThisSystem && tryIndex !== numSystems - 1) {
+        endOfLastSystem = endOfThisSystem;
+        continue;
+      }
+
+      var scaledYRelativeToSystem = y - endOfLastSystem;
+      return [tryIndex, scaledYRelativeToSystem];
+    }
+
+    console.error('Should not get here!');
+    return [0, 0];
   }
   /**
+   * Score object
+   *
    * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
-   * click event, taking into account that the note will be in different
+   * click or other mouse event, taking into account that the note will be in different
    * Part objects (and different Systems) given the height and possibly different Systems.
    *
-   * @param {HTMLElement|SVGElement} svg
-   * @param {MouseEvent|TouchEvent} e
-   * @param {number} [x]
-   * @param {number} [y]
-   * @returns {Array} [diatonicNoteNum, m21Element]
+   * returns [diatonicNoteNum, m21Element]
    */
 
 
-  findNoteForClick(svg, e) {
-    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-
+  findNoteForClick(svg, e, x, y) {
+    // this is Score.findNoteForClick()
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD5 = this.getScaledXYforDOM(svg, e);
 
@@ -63187,15 +63481,18 @@ class Score extends Stream {
 
       x = _this$getScaledXYforD6[0];
       y = _this$getScaledXYforD6[1];
-    }
+    } // defaults to 120 and includes ledger line area
+
+
+    var staffHeight = this.renderOptions.staffAreaHeight;
 
     var _this$systemIndexAndS3 = this.systemIndexAndScaledY(y),
         _this$systemIndexAndS4 = _slicedToArray(_this$systemIndexAndS3, 2),
         systemIndex = _this$systemIndexAndS4[0],
         scaledYFromSystemTop = _this$systemIndexAndS4[1];
 
-    var partIndex = Math.floor(scaledYFromSystemTop / this.partSpacing);
-    var scaledYinPart = scaledYFromSystemTop - partIndex * this.partSpacing; // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
+    var partIndex = Math.floor(scaledYFromSystemTop / staffHeight);
+    var scaledYinPart = scaledYFromSystemTop - partIndex * staffHeight; // console.log('systemIndex: ' + systemIndex + ' partIndex: ' + partIndex);
 
     var rightPart = this.parts.get(partIndex);
 
@@ -63213,37 +63510,44 @@ class Score extends Stream {
 
 
   numSystems() {
-    return this.getElementsByClass('Part').get(0).numSystems();
+    var pIter = this.getElementsByClass('Part');
+
+    if (!pIter.length) {
+      return 1;
+    }
+
+    return pIter.get(0).numSystems();
   }
   /**
-   * Fixes the part measure spacing for all parts.
+   * Makes the width of every Measure object within a measure stack be the same.
+   * if setLeft is true then also set the renderOptions.left
+   *
+   * This does not even out systems.
    *
    * @param {Object} options
    * @param {boolean} [options.setLeft=true]
-   * @returns {this}
    */
 
 
   evenPartMeasureSpacing() {
-    var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref13$setLeft = _ref13.setLeft,
-        setLeft = _ref13$setLeft === void 0 ? true : _ref13$setLeft;
+    var _ref14 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref14$setLeft = _ref14.setLeft,
+        setLeft = _ref14$setLeft === void 0 ? true : _ref14$setLeft;
 
     var measureStacks = [];
     var currentPartNumber = 0;
     var maxMeasureWidth = []; // the maximum measure width among all parts
 
-    var j;
-    var _iteratorNormalCompletion37 = true;
-    var _didIteratorError37 = false;
-    var _iteratorError37 = undefined;
+    var _iteratorNormalCompletion38 = true;
+    var _didIteratorError38 = false;
+    var _iteratorError38 = undefined;
 
     try {
-      for (var _iterator37 = this.parts[Symbol.iterator](), _step37; !(_iteratorNormalCompletion37 = (_step37 = _iterator37.next()).done); _iteratorNormalCompletion37 = true) {
-        var p = _step37.value;
+      for (var _iterator38 = this.parts[Symbol.iterator](), _step38; !(_iteratorNormalCompletion38 = (_step38 = _iterator38.next()).done); _iteratorNormalCompletion38 = true) {
+        var p = _step38.value;
         var measureWidths = p.getMeasureWidths();
 
-        for (j = 0; j < measureWidths.length; j++) {
+        for (var j = 0; j < measureWidths.length; j++) {
           var thisMeasureWidth = measureWidths[j];
 
           if (measureStacks[j] === undefined) {
@@ -63259,31 +63563,31 @@ class Score extends Stream {
         currentPartNumber += 1;
       }
     } catch (err) {
-      _didIteratorError37 = true;
-      _iteratorError37 = err;
+      _didIteratorError38 = true;
+      _iteratorError38 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion37 && _iterator37.return != null) {
-          _iterator37.return();
+        if (!_iteratorNormalCompletion38 && _iterator38.return != null) {
+          _iterator38.return();
         }
       } finally {
-        if (_didIteratorError37) {
-          throw _iteratorError37;
+        if (_didIteratorError38) {
+          throw _iteratorError38;
         }
       }
     }
 
-    var currentLeft = 20;
+    var currentLeft = 20; // TODO: do not hardcode left start.
 
     for (var i = 0; i < maxMeasureWidth.length; i++) {
       var measureNewWidth = maxMeasureWidth[i];
-      var _iteratorNormalCompletion38 = true;
-      var _didIteratorError38 = false;
-      var _iteratorError38 = undefined;
+      var _iteratorNormalCompletion39 = true;
+      var _didIteratorError39 = false;
+      var _iteratorError39 = undefined;
 
       try {
-        for (var _iterator38 = this.parts[Symbol.iterator](), _step38; !(_iteratorNormalCompletion38 = (_step38 = _iterator38.next()).done); _iteratorNormalCompletion38 = true) {
-          var part = _step38.value;
+        for (var _iterator39 = this.parts[Symbol.iterator](), _step39; !(_iteratorNormalCompletion39 = (_step39 = _iterator39.next()).done); _iteratorNormalCompletion39 = true) {
+          var part = _step39.value;
           var measure = part.getElementsByClass('Measure').get(i);
           var rendOp = measure.renderOptions;
           rendOp.width = measureNewWidth;
@@ -63293,16 +63597,16 @@ class Score extends Stream {
           }
         }
       } catch (err) {
-        _didIteratorError38 = true;
-        _iteratorError38 = err;
+        _didIteratorError39 = true;
+        _iteratorError39 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion38 && _iterator38.return != null) {
-            _iterator38.return();
+          if (!_iteratorNormalCompletion39 && _iterator39.return != null) {
+            _iterator39.return();
           }
         } finally {
-          if (_didIteratorError38) {
-            throw _iteratorError38;
+          if (_didIteratorError39) {
+            throw _iteratorError39;
           }
         }
       }
@@ -65791,6 +66095,8 @@ class Renderer {
       this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_9___default.a.Flow.Renderer(this.div, backend);
 
       if (this.rendererType === 'svg') {
+        // this is NOT NOT NOT a JQuery object.
+        // noinspection JSDeprecatedSymbols
         this._vfRenderer.resize(this.$div.attr('width'), this.$div.attr('height'));
       }
 
@@ -66217,7 +66523,7 @@ class Renderer {
 
     if (s === undefined) {
       s = this.stream;
-    } // gets a group of notes as a voice, but completely unformatted and not drawn.
+    } // gets a group of notes as a voice, but completely un-formatted and not drawn.
 
 
     var notes = this.vexflowNotes(s, stave);
