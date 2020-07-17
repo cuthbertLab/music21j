@@ -653,18 +653,8 @@ export class Note extends NotRest {
         let useStemDirection = this.stemDirection;
 
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
-        if (
-            this.activeSite !== undefined
-            && this.activeSite.renderOptions.stemDirection !== undefined
-            && stemDirectionNames.includes(
-                this.activeSite.renderOptions.stemDirection
-            )
-        ) {
-            useStemDirection = this.activeSite.renderOptions.stemDirection;
-        } else if (
-            [undefined, 'unspecified'].includes(this.stemDirection)
-            && clef !== undefined
-        ) {
+        if ([undefined, 'unspecified'].includes(this.stemDirection)
+                && clef !== undefined) {
             useStemDirection = this.getStemDirectionFromClef(clef);
         }
 

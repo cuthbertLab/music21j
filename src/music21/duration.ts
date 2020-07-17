@@ -88,7 +88,7 @@ export const vexflowDurationArray = [
 ];
 
 /**
- * Duration object; found as the `.duration` attribute on {@link music21.base.Music21Object} instances
+ * Duration object; found as the `.duration` attribute on Music21Object instances
  * such as {@link music21.note.Note}
  *
  * @class Duration

@@ -32,8 +32,6 @@ export function makeLayoutFromScore(
     score,
     containerWidth
 ) {
-    // var systemHeight = score.systemHeight; /* part.show() called... */
-    // var systemPadding = score.systemPadding;
     const parts = score.parts.stream();
     // console.log(parts);
     const numParts = parts.length;

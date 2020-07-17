@@ -1,8 +1,7 @@
 /**
- * audioSearch module. See {@link music21.audioSearch} namespace
+ * audioSearch module. See music21.audioSearch namespace
  *
  * @exports music21/audioSearch
- * @namespace music21.audioSearch
  * @memberof music21
  * @requires music21/pitch
  * @requires music21/common

@@ -16,6 +16,7 @@
  */
 import * as base from './base';
 import * as pitch from './pitch';
+import { Stream } from './stream'; // for typing only
 
 /*  music21.Clef
     must be defined before Stream since Stream subclasses call new music21.Clef...
@@ -75,9 +76,6 @@ export const nameToSign = {
  * Clef name can be one of
  * "treble", "bass", "soprano", "mezzo-soprano", "alto", "tenor", "percussion"
  *
- * @class Clef
- * @memberof music21.clef
- * @extends music21.base.Music21Object
  * @param {string} name - clef name
  * @param {number} [octaveChange=0] - ottava
  * @property {string} [name]
@@ -331,14 +329,8 @@ export const all_clefs = {
  * Looks at the pitches in a Stream and returns the best clef
  * of Treble and Bass
  *
- * @function music21.clef.bestClef
- * @memberof music21.clef
- * @param {music21.stream.Stream} st
- * @param {Object} [options]
- * @param {boolean} [options.recurse=true]
- * @returns {music21.clef.Clef}
  */
-export function bestClef(st, { recurse=true }={}) {
+export function bestClef(st: Stream, { recurse=true }={}): Clef {
     // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
     let stFlat;
     if (recurse) {

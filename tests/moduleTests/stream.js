@@ -278,6 +278,75 @@ export default function tests() {
         );
     });
 
+    test('music21.stream.Stream numSystems', assert => {
+        const p = new music21.stream.Part();
+        for (let i = 0; i < 10; i++) {
+            const m = new music21.stream.Measure();
+            m.number = i + 1;
+            p.append(m);
+        }
+        for (const m of p.getElementsByClass('Measure')) {
+            if ([1, 3, 6, 9].includes(m.number)) {
+                m.renderOptions.startNewSystem = true;
+            }
+        }
+        assert.equal(p.numSystems(), 4);
+        // the first measure is assumed to start a new
+        // system no matter what...
+        p.getElementsByClass('Measure').get(0).renderOptions.startNewSystem = false;
+        assert.equal(p.numSystems(), 4);
+
+        // even an empty_part has a system.
+        const empty_part = new music21.stream.Part();
+        assert.equal(empty_part.numSystems(), 1);
+
+        // numSystems() for a Score is taken from top part.
+        const sc = new music21.stream.Score();
+        sc.insert(0, p);
+        assert.equal(sc.numSystems(), 4);
+
+        const sc_poor = new music21.stream.Score();
+        assert.equal(sc_poor.numSystems(), 1);
+
+        sc_poor.insert(0, empty_part);
+        sc_poor.insert(0, p);
+        assert.equal(sc_poor.numSystems(), 1);
+
+        sc.insert(0, empty_part);
+        assert.equal(sc.numSystems(), 4);
+    });
+
+    test('music21.stream.Stream maxSystemWidth', assert => {
+        // has caused confusion in past...
+        const s = new music21.stream.Stream();
+        s.renderOptions.scaleFactor = {x: 1.0, y: 1.0};
+        assert.equal(s.maxSystemWidth, 750);
+        s.renderOptions.maxSystemWidth = 700;
+        assert.equal(s.maxSystemWidth, 700);
+        s.renderOptions.scaleFactor.x = 1/2;
+        assert.equal(s.maxSystemWidth, 1400);
+
+        const m = new music21.stream.Measure();
+        const p = new music21.stream.Part();
+        const sc = new music21.stream.Score();
+        for (const obj of [m, p, sc]) {
+            obj.renderOptions.scaleFactor = {x: 1.0, y: 1.0};
+        }
+
+        p.append(m);
+        sc.append(p);
+        assert.equal(m.maxSystemWidth, 750);
+        sc.renderOptions.maxSystemWidth = 200;
+        assert.equal(m.maxSystemWidth, 200);
+
+        m.renderOptions.scaleFactor.x = 2;
+        assert.equal(m.maxSystemWidth, 100);
+
+        m.maxSystemWidth = 500;
+        assert.equal(m.maxSystemWidth, 500);
+        assert.equal(m.renderOptions.maxSystemWidth, 1000);
+    });
+
     test('music21.stream.Stream insertAndShift', assert => {
         const s = new music21.stream.Stream();
         s.insert(0, new music21.note.Note('C4'));
