@@ -455,11 +455,11 @@ export default function tests() {
         assert.ok(n.pitch.accidental.displayStatus);
         assert.notOk(n2.pitch.accidental.displayStatus);
         assert.notOk(n3.pitch.accidental.displayStatus);
-        assert.ok(c._notes[0].pitch.accidental);
-        assert.ok(c._notes[0].pitch.accidental.displayStatus);
-        assert.ok(c._notes[1].pitch.accidental.displayStatus);
-        assert.ok(c._notes[2].pitch.accidental.displayStatus);
-        assert.notOk(c._notes[3].pitch.accidental); // perhaps should exist?
+        assert.ok(c.notes[0].pitch.accidental);
+        assert.ok(c.notes[0].pitch.accidental.displayStatus);
+        assert.ok(c.notes[1].pitch.accidental.displayStatus);
+        assert.ok(c.notes[2].pitch.accidental.displayStatus);
+        assert.notOk(c.notes[3].pitch.accidental); // perhaps should exist?
     });
 
     test('music21.stream.Stream.flat', assert => {
@@ -498,5 +498,39 @@ export default function tests() {
         assert.equal(gapStream.length, 2);
         assert.equal(gapStream.get(0).duration.quarterLength, 3);
         assert.equal(gapStream.get(1).duration.quarterLength, 5);
+    });
+
+    test('music21.stream.Stream deepcopy renderOptions', assert => {
+        // test that renderOptions copies everything but remains separate.
+        const testOne = new music21.stream.Score();
+        const one_options = testOne.renderOptions;
+        one_options.staffLines = 4;
+        one_options.scaleFactor.x = 1.5;
+        one_options.staffConnectors = ['double'];
+        one_options.events.click = 'fake_event';
+        one_options.events.dblclick = e => {};
+        const testTwo = testOne.clone(true);  // deepcopy
+        const two_options = testTwo.renderOptions;
+        assert.ok(two_options instanceof music21.renderOptions.RenderOptions);
+        assert.notOk(two_options === one_options);
+        assert.equal(two_options.staffLines, 4);
+        assert.equal(two_options.scaleFactor.x, 1.5);
+        assert.equal(two_options.staffConnectors[0], 'double');
+        assert.equal(two_options.events.click, 'fake_event');
+        assert.ok(two_options.events.dblclick === one_options.events.dblclick);
+
+        // not shared objects
+        one_options.staffLines = 2;
+        assert.equal(two_options.staffLines, 4);
+        one_options.scaleFactor.x = 1.0;
+        assert.equal(two_options.scaleFactor.x, 1.5);
+        one_options.staffConnectors.push('brace');
+        assert.deepEqual(two_options.staffConnectors, ['double']);
+        one_options.events.click = 'faker_event';
+
+        const old_one_dblclick = one_options.events.dblclick;
+        one_options.events.dblclick = e => 5;
+        assert.equal(two_options.events.click, 'fake_event');
+        assert.ok(two_options.events.dblclick === old_one_dblclick);
     });
 }

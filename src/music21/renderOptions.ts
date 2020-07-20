@@ -87,7 +87,23 @@ export class RenderOptions {
     heightBelowStaff: number = 20;
 
     // was naiveHeight
-    get staffAreaHeight() {
+    get staffAreaHeight(): number {
         return this.heightAboveStaff + this.heightOfStaffProper + this.heightBelowStaff;
+    }
+
+    deepClone(): RenderOptions {
+        // TODO(MSC): allow for subclassing...
+        const out = new RenderOptions();
+        for (const [key, value] of Object.entries(this)) {
+            if (['scaleFactor', 'staffConnectors', 'events'].includes(key)) {
+                continue;
+            }
+            out[key] = value;
+        }
+        out.scaleFactor.x = this.scaleFactor.x;
+        out.scaleFactor.y = this.scaleFactor.y;
+        out.staffConnectors = [...this.staffConnectors];
+        out.events = {...this.events};
+        return out;
     }
 }

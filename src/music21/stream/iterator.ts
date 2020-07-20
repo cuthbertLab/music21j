@@ -88,6 +88,8 @@ export class StreamIterator<T = base.Music21Object> {
         this.cleanup();
     }
 
+    // TODO(MSC) 2020-07-20 -- Add .map()
+
     get(k): T {
         const fe = this.matchingElements();
         if (k < 0) {
