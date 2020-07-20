@@ -181,18 +181,15 @@ export class Stream extends base.Music21Object {
         this._cloneCallbacks.renderOptions = function cloneRenderOptions(
             keyName,
             newObj,
-            self,
+            self: Stream,
             deep: boolean,
             memo
         ) {
             if (!deep) {
                 newObj.renderOptions = self.renderOptions;
-                return;
+            } else {
+                newObj.renderOptions = self.renderOptions.deepClone();
             }
-
-            const newRenderOptions = JSON.parse(JSON.stringify(self.renderOptions));
-            newRenderOptions.events = {...self.renderOptions.events};
-            newObj.renderOptions = newRenderOptions;
         };
 
         this._cloneCallbacks._elements = function cloneElements(
@@ -266,7 +263,7 @@ export class Stream extends base.Music21Object {
 
     forEach(
         callback: (el: base.Music21Object, i: number, innerThis: any) => void,
-        thisArg: any
+        thisArg?: any
     ) {
         if (thisArg !== undefined) {
             callback = callback.bind(thisArg);
@@ -278,6 +275,7 @@ export class Stream extends base.Music21Object {
         }
     }
 
+    // TODO(MSC) 2020-07-20 -- Add .map() => stream.iterator.StreamIterator.map()
 
     get duration(): Duration {
         if (this._overriddenDuration instanceof Duration) {
@@ -3033,7 +3031,6 @@ export class Part extends Stream {
      * will come to the same result for each part.  Opportunity
      * for making more efficient through this...
      *
-     * @param {number} systemHeight
      * @returns {Array}
      */
     fixSystemInformation(systemHeight?, systemPadding?) {
