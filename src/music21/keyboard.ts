@@ -54,21 +54,21 @@ import * as pitch from './pitch';
  * @property {number} height - height of key
  */
 export class Key {
-    classes = ['Key']; // name conflict with key.Key
+    classes: string[] = ['Key']; // name conflict with key.Key
     callbacks = {
         click: undefined,
     };
 
-    scaleFactor = 1;
-    parent = undefined;
-    id = 0;
-    width = 23;
-    height = 120;
-    pitchObj = undefined;
-    svgObj = undefined;
-    noteNameSvgObj = undefined;
-    keyStyle = '';
-    keyClass = '';
+    scaleFactor: number = 1;
+    parent: Keyboard;
+    id: number = 0;  // midi number
+    width: number = 23;
+    height: number = 120;
+    pitchObj: pitch.Pitch;
+    svgObj: SVGElement;
+    noteNameSvgObj: SVGElement;
+    keyStyle: string = '';
+    keyClass: string = '';
 
     /**
      * Gets an SVG object for the key
@@ -270,17 +270,17 @@ export class Keyboard {
     _defaultBlackKeyWidth = 13;
     scaleFactor = 1;
     height = 120; // does nothing right now...
-    keyObjects = {};
-    svgObj = undefined;
+    keyObjects = new Map();
+    svgObj: SVGElement;
 
     markC = true;
     showNames = false;
     showOctaves = false;
 
-    startPitch: string|number = 'C3';
-    endPitch: string|number = 'C5';
-    _startDNN = undefined;
-    _endDNN = undefined;
+    startPitch: string|number|pitch.Pitch = 'C3';
+    endPitch: string|number|pitch.Pitch = 'C5';
+    _startDNN: number = 22;
+    _endDNN: number = 36;
 
     hideable = false;
     scrollable = false;
@@ -324,7 +324,7 @@ export class Keyboard {
         }
         const oldSVG = this.svgObj;
         const svgParent = oldSVG.parentNode;
-        this.keyObjects = {};
+        this.keyObjects = new Map();
         const svgDOM = this.createSVG();
         svgParent.replaceChild(svgDOM, oldSVG);
         return svgDOM;
@@ -370,7 +370,7 @@ export class Keyboard {
     clickHandler(keyRect) {
         // to-do : integrate with jazzHighlight...
         const id = keyRect.id;
-        const thisKeyObject = this.keyObjects[id];
+        const thisKeyObject = this.keyObjects.get(id);
         if (thisKeyObject === undefined) {
             return; // not on keyboard;
         }
@@ -396,22 +396,22 @@ export class Keyboard {
         // DNN = pitch.diatonicNoteNum;
         // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
         // 6, 57 gives a standard 88-key keyboard;
-        if (this._startDNN === undefined) {
-            if (typeof this.startPitch === 'string') {
-                const tempP = new pitch.Pitch(this.startPitch);
-                this._startDNN = tempP.diatonicNoteNum;
-            } else {
-                this._startDNN = this.startPitch;
-            }
+        if (typeof this.startPitch === 'string') {
+            const tempP = new pitch.Pitch(this.startPitch);
+            this._startDNN = tempP.diatonicNoteNum;
+        } else if (typeof this.startPitch === 'number') {
+            this._startDNN = this.startPitch;
+        } else if (this.startPitch instanceof pitch.Pitch) {
+            this._startDNN = this.startPitch.diatonicNoteNum;
         }
 
-        if (this._endDNN === undefined) {
-            if (typeof this.endPitch === 'string') {
-                const tempP = new pitch.Pitch(this.endPitch);
-                this._endDNN = tempP.diatonicNoteNum;
-            } else {
-                this._endDNN = this.endPitch;
-            }
+        if (typeof this.endPitch === 'string') {
+            const tempP = new pitch.Pitch(this.endPitch);
+            this._endDNN = tempP.diatonicNoteNum;
+        } else if (typeof this.endPitch === 'number') {
+            this._endDNN = this.endPitch;
+        } else if (this.endPitch instanceof pitch.Pitch) {
+            this._endDNN = this.endPitch.diatonicNoteNum;
         }
 
         let currentIndex = (this._startDNN - 1) % 7; // C = 0
@@ -436,7 +436,7 @@ export class Keyboard {
             const wk = new WhiteKey();
             wk.id = movingPitch.midi;
             wk.parent = this;
-            this.keyObjects[movingPitch.midi] = wk;
+            this.keyObjects.set(movingPitch.midi, wk);
             wk.scaleFactor = this.scaleFactor;
             wk.width = this.whiteKeyWidth;
             wk.callbacks.click = function whitekeyCallbacksClick() {
@@ -459,7 +459,7 @@ export class Keyboard {
                 // create but do not append BlackKey to the right of WhiteKey
                 const bk = new BlackKey();
                 bk.id = movingPitch.midi + 1;
-                this.keyObjects[movingPitch.midi + 1] = bk;
+                this.keyObjects.set(movingPitch.midi + 1, bk);
                 bk.parent = this;
 
                 bk.scaleFactor = this.scaleFactor;
@@ -507,7 +507,7 @@ export class Keyboard {
      * @param {string} [strokeColor='red']
      */
     markMiddleC(strokeColor='red') {
-        const midC = this.keyObjects[60];
+        const midC = this.keyObjects.get(60);
         if (midC !== undefined) {
             midC.addCircle(strokeColor);
         }
@@ -520,11 +520,8 @@ export class Keyboard {
      */
     markNoteNames(labelOctaves) {
         this.removeNoteNames(); // in case...
-        for (const midi in this.keyObjects) {
-            if ({}.hasOwnProperty.call(this.keyObjects, midi)) {
-                const keyObj = this.keyObjects[midi];
-                keyObj.addNoteName(labelOctaves);
-            }
+        for (const keyObj of this.keyObjects.values()) {
+            keyObj.addNoteName(labelOctaves);
         }
     }
 
@@ -534,11 +531,8 @@ export class Keyboard {
      * @returns {this}
      */
     removeNoteNames() {
-        for (const midi in this.keyObjects) {
-            if ({}.hasOwnProperty.call(this.keyObjects, midi)) {
-                const keyObj = this.keyObjects[midi];
-                keyObj.removeNoteName();
-            }
+        for (const keyObj of this.keyObjects.values()) {
+            keyObj.removeNoteName();
         }
         return this;
     }
@@ -552,7 +546,7 @@ export class Keyboard {
      * @param {SVGElement} svgDOM
      * @returns {JQuery}
      */
-    wrapScrollable(svgDOM: SVGElement): JQuery<HTMLElement> {
+    wrapScrollable(svgDOM: SVGElement): JQuery {
         const $wrapper = $(
             "<div class='keyboardScrollableWrapper'></div>"
         ).css({
@@ -562,20 +556,20 @@ export class Keyboard {
             .css({
                 'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
             })
-            .bind('click', () => {
+            .on('click', () => {
                 miditools.config.transposeOctave -= 1;
-                this._startDNN -= 7;
-                this._endDNN -= 7;
+                this.startPitch = this._startDNN - 7;
+                this.endPitch = this._endDNN - 7;
                 this.redrawSVG();
             });
         const $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>")
             .css({
                 'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
             })
-            .bind('click', () => {
+            .on('click', () => {
                 miditools.config.transposeOctave += 1;
-                this._startDNN += 7;
-                this._endDNN += 7;
+                this.startPitch = this._startDNN + 7;
+                this.endPitch = this._endDNN + 7;
                 this.redrawSVG();
             });
         const $kWrapper = $(
@@ -615,7 +609,7 @@ export class Keyboard {
             $container.find('.keyboardSVG').css('display')
         );
         $b.data('state', 'down');
-        $b.click(triggerToggleShow);
+        $b.on('click', triggerToggleShow);
         const $explain = $(
             "<div class='keyboardExplain'>Show keyboard</div>"
         ).css({
@@ -687,9 +681,9 @@ export function jazzHighlight(e) {
         return;
     }
     if (e.noteOn) {
-        const midiNote = e.midiNote;
-        if (this.keyObjects[midiNote] !== undefined) {
-            const keyObj = this.keyObjects[midiNote];
+        const midiNote: number = e.midiNote;
+        if (this.keyObjects.has(midiNote)) {
+            const keyObj = this.keyObjects.get(midiNote);
             const svgObj = keyObj.svgObj;
             let normalizedVelocity = (e.velocity + 25) / 127;
             if (normalizedVelocity > 1) {
@@ -714,8 +708,8 @@ export function jazzHighlight(e) {
         }
     } else if (e.noteOff) {
         const midiNote = e.midiNote;
-        if (this.keyObjects[midiNote] !== undefined) {
-            const keyObj = this.keyObjects[midiNote];
+        if (this.keyObjects.has(midiNote)) {
+            const keyObj = this.keyObjects.get(midiNote);
             const svgObj = keyObj.svgObj;
             svgObj.setAttribute('style', keyObj.keyStyle);
         }
