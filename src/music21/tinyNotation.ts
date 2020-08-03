@@ -42,18 +42,18 @@ const regularExpressions = {
     EDSHARP: /\((#+)\)/,
     EDFLAT: /\((-+)\)/,
     EDNAT: /\(n\)/,
-    SHARP: /^[A-Ga-g]+'*(#+)/, // simple notation finds
-    FLAT: /^[A-Ga-g]+'*(-+)/, //   double accidentals too
-    NAT: /^[A-Ga-g]+'*n/, // explicit naturals
+    SHARP: /^[A-Ga-g]+'*(#+)/,  // simple notation finds
+    FLAT: /^[A-Ga-g]+'*(-+)/,  //   double accidentals too
+    NAT: /^[A-Ga-g]+'*n/,  // explicit naturals
     TYPE: /(\d+)/,
-    TIE: /.~/, // not preceding ties
-    PRECTIE: /~/, // front ties
+    TIE: /.~/,  // not preceding ties
+    PRECTIE: /~/,  // front ties
     ID_EL: /=([A-Za-z0-9]*)/,
     LYRIC: /_(.*)/,
     DOT: /\.+/,
     TIMESIG: /(\d+)\/(\d+)/,
 
-    PARTBREAK: /partBreak/, // nonstandard...fix later...
+    PARTBREAK: /partBreak/,  // nonstandard...fix later...
 
     TRIP: /trip{/,
     QUAD: /quad{/,

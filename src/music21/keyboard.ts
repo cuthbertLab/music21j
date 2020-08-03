@@ -369,7 +369,7 @@ export class Keyboard {
      */
     clickHandler(keyRect) {
         // to-do : integrate with jazzHighlight...
-        const id = keyRect.id;
+        const id = parseInt(keyRect.getAttribute('id'));
         const thisKeyObject = this.keyObjects.get(id);
         if (thisKeyObject === undefined) {
             return; // not on keyboard;
