@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.46 built on 2020-07-29.
+ * music21j 0.9.47 built on 2020-08-03.
  * Copyright (c) 2013-2020 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -50153,7 +50153,7 @@ class Keyboard {
 
   clickHandler(keyRect) {
     // to-do : integrate with jazzHighlight...
-    var id = keyRect.id;
+    var id = parseInt(keyRect.getAttribute('id'));
     var thisKeyObject = this.keyObjects.get(id);
 
     if (thisKeyObject === undefined) {
