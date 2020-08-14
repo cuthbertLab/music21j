@@ -59,7 +59,7 @@ const regularExpressions = {
     CHORD: /chord{/,
     TRIP: /trip{/,
     QUAD: /quad{/,
-    ENDBRAC: /}$/,
+    ENDBRAC: /}($|_)/,
 };
 
 /**
@@ -95,7 +95,7 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
         inTrip: false,
         inQuad: false,
         inChord: false,
-        endBracketAfterNote: false,
+        endStateAfterNote: false,
     };
     let chordObj = null;
     const tnre = regularExpressions; // faster typing
@@ -131,7 +131,7 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
             storedDict.lastNoteTied = false;
             storedDict.inTrip = false;
             storedDict.inQuad = false;
-            storedDict.endBracketAfterNote = false;
+            storedDict.endStateAfterNote = false;
 
             continue;
         }
@@ -149,8 +149,13 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
             storedDict.inChord = true;
         }
         if (tnre.ENDBRAC.exec(token)) {
+            if (chordObj && tnre.LYRIC.exec(token)) {
+                let chordLyric;
+                [token, chordLyric] = token.split('_');
+                chordObj.lyric = chordLyric;
+            }
             token = token.slice(0, -1); // cut...
-            storedDict.endBracketAfterNote = true;
+            storedDict.endStateAfterNote = true;
         }
 
         // Modifiers
@@ -248,11 +253,11 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
                 chordObj = new chord.Chord([noteObj]);
             }
         }
-        if (storedDict.endBracketAfterNote) {
+        if (storedDict.endStateAfterNote) {
             storedDict.inTrip = false;
             storedDict.inQuad = false;
             storedDict.inChord = false;
-            storedDict.endBracketAfterNote = false;
+            storedDict.endStateAfterNote = false;
 
             if (chordObj) {
                 m.append(chordObj);
