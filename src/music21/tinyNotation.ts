@@ -20,6 +20,7 @@
  */
 import * as $ from 'jquery';
 
+import * as chord from './chord';
 import * as clef from './clef';
 import * as duration from './duration';
 import * as pitch from './pitch';
@@ -55,6 +56,7 @@ const regularExpressions = {
 
     PARTBREAK: /partBreak/,  // nonstandard...fix later...
 
+    CHORD: /chord{/,
     TRIP: /trip{/,
     QUAD: /quad{/,
     ENDBRAC: /}$/,
@@ -92,8 +94,10 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
         lastNoteTied: false,
         inTrip: false,
         inQuad: false,
-        endTupletAfterNote: false,
+        inChord: false,
+        endBracketAfterNote: false,
     };
+    let chordObj = null;
     const tnre = regularExpressions; // faster typing
     let measureNumber = 1;
     for (let i = 0; i < tokens.length; i++) {
@@ -127,7 +131,7 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
             storedDict.lastNoteTied = false;
             storedDict.inTrip = false;
             storedDict.inQuad = false;
-            storedDict.endTupletAfterNote = false;
+            storedDict.endBracketAfterNote = false;
 
             continue;
         }
@@ -140,9 +144,13 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
             token = token.slice(5); // cut...
             storedDict.inQuad = true;
         }
+        if (tnre.CHORD.exec(token)) {
+            token = token.slice(6); // cut...
+            storedDict.inChord = true;
+        }
         if (tnre.ENDBRAC.exec(token)) {
             token = token.slice(0, -1); // cut...
-            storedDict.endTupletAfterNote = true;
+            storedDict.endBracketAfterNote = true;
         }
 
         // Modifiers
@@ -233,12 +241,28 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
                 new duration.Tuplet(4, 3, noteObj.duration.quarterLength)
             );
         }
-        if (storedDict.endTupletAfterNote) {
+        if (storedDict.inChord) {
+            if (chordObj) {
+                chordObj.add(noteObj);
+            } else {
+                chordObj = new chord.Chord([noteObj]);
+            }
+        }
+        if (storedDict.endBracketAfterNote) {
             storedDict.inTrip = false;
             storedDict.inQuad = false;
-            storedDict.endTupletAfterNote = false;
+            storedDict.inChord = false;
+            storedDict.endBracketAfterNote = false;
+
+            if (chordObj) {
+                m.append(chordObj);
+                chordObj = null;
+                continue;
+            }
         }
-        m.append(noteObj);
+        if (!storedDict.inChord) {
+            m.append(noteObj);
+        }
     }
 
     if (m.length > 0) {
