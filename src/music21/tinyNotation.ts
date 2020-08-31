@@ -79,7 +79,7 @@ const regularExpressions = {
  * p.duration.quarterLength;
  * // 6.0
  */
-export function TinyNotation(textIn): stream.Part|stream.Measure {
+export function TinyNotation(textIn): stream.Part|stream.Measure|stream.Score {
     textIn = textIn.trim();
     const tokens = textIn.split(' ');
 
@@ -278,7 +278,7 @@ export function TinyNotation(textIn): stream.Part|stream.Measure {
 
     if (optionalScore !== undefined) {
         if (p.length > 0) {
-            optionalScore.append(p);
+            optionalScore.insert(0, p);
         }
         for (let i = 0; i < optionalScore.parts.length; i++) {
             const innerPart = optionalScore.parts.get(i);

@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.47 built on 2020-08-03.
+ * music21j 0.9.48 built on 2020-08-14.
  * Copyright (c) 2013-2020 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -65551,13 +65551,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.ts");
 
 
 
@@ -65602,6 +65603,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
 /**
  * Regular expressions object
  *
@@ -65628,9 +65630,10 @@ var regularExpressions = {
   DOT: /\.+/,
   TIMESIG: /(\d+)\/(\d+)/,
   PARTBREAK: /partBreak/,
+  CHORD: /chord{/,
   TRIP: /trip{/,
   QUAD: /quad{/,
-  ENDBRAC: /}$/
+  ENDBRAC: /}($|_)/
 };
 /**
  * **Function, not class**.
@@ -65654,8 +65657,8 @@ function TinyNotation(textIn) {
   textIn = textIn.trim();
   var tokens = textIn.split(' ');
   var optionalScore;
-  var p = new _stream__WEBPACK_IMPORTED_MODULE_13__["Part"]();
-  var m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+  var p = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
+  var m = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
   m.number = 1;
   var currentTSBarDuration = 4.0;
   var lastDurationQL = 1.0;
@@ -65663,8 +65666,10 @@ function TinyNotation(textIn) {
     lastNoteTied: false,
     inTrip: false,
     inQuad: false,
-    endTupletAfterNote: false
+    inChord: false,
+    endStateAfterNote: false
   };
+  var chordObj = null;
   var tnre = regularExpressions; // faster typing
 
   var measureNumber = 1;
@@ -65675,7 +65680,7 @@ function TinyNotation(textIn) {
     if (m.duration.quarterLength >= currentTSBarDuration || Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001) {
       p.append(m);
       measureNumber += 1;
-      m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+      m = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
       m.number = measureNumber;
     }
 
@@ -65690,19 +65695,19 @@ function TinyNotation(textIn) {
     if (tnre.PARTBREAK.exec(token)) {
       if (m.length > 0) {
         p.append(m);
-        m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+        m = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
       }
 
       if (optionalScore === undefined) {
-        optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_13__["Score"]();
+        optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
       }
 
       optionalScore.insert(0, p);
-      p = new _stream__WEBPACK_IMPORTED_MODULE_13__["Part"]();
+      p = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
       storedDict.lastNoteTied = false;
       storedDict.inTrip = false;
       storedDict.inQuad = false;
-      storedDict.endTupletAfterNote = false;
+      storedDict.endStateAfterNote = false;
       continue;
     }
 
@@ -65718,26 +65723,44 @@ function TinyNotation(textIn) {
       storedDict.inQuad = true;
     }
 
+    if (tnre.CHORD.exec(token)) {
+      token = token.slice(6); // cut...
+
+      storedDict.inChord = true;
+    }
+
     if (tnre.ENDBRAC.exec(token)) {
+      if (chordObj && tnre.LYRIC.exec(token)) {
+        var chordLyric = void 0;
+
+        var _token$split = token.split('_');
+
+        var _token$split2 = _slicedToArray(_token$split, 2);
+
+        token = _token$split2[0];
+        chordLyric = _token$split2[1];
+        chordObj.lyric = chordLyric;
+      }
+
       token = token.slice(0, -1); // cut...
 
-      storedDict.endTupletAfterNote = true;
+      storedDict.endStateAfterNote = true;
     } // Modifiers
 
 
     if (tnre.LYRIC.exec(token)) {
-      var _token$split = token.split('_');
+      var _token$split3 = token.split('_');
 
-      var _token$split2 = _slicedToArray(_token$split, 2);
+      var _token$split4 = _slicedToArray(_token$split3, 2);
 
-      token = _token$split2[0];
-      lyric = _token$split2[1];
+      token = _token$split4[0];
+      lyric = _token$split4[1];
     }
 
     if (tnre.TIMESIG.exec(token)) {
       var _MATCH = tnre.TIMESIG.exec(token);
 
-      var ts = new _meter__WEBPACK_IMPORTED_MODULE_12__["TimeSignature"]();
+      var ts = new _meter__WEBPACK_IMPORTED_MODULE_13__["TimeSignature"]();
       ts.numerator = parseInt(_MATCH[1]);
       ts.denominator = parseInt(_MATCH[2]);
       m.timeSignature = ts;
@@ -65745,27 +65768,27 @@ function TinyNotation(textIn) {
 
       continue;
     } else if (tnre.REST.exec(token)) {
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Rest"](lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Rest"](lastDurationQL);
     } else if (tnre.OCTAVE2.exec(token)) {
       var _MATCH2 = tnre.OCTAVE2.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH2[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH2[1], lastDurationQL);
       noteObj.pitch.octave = 4 - _MATCH2[0].length;
     } else if (tnre.OCTAVE3.exec(token)) {
       var _MATCH3 = tnre.OCTAVE3.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH3[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH3[1], lastDurationQL);
       noteObj.pitch.octave = 3;
     } else if (tnre.OCTAVE5.exec(token)) {
       // must match octave 5 before 4
       var _MATCH4 = tnre.OCTAVE5.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH4[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH4[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 3 + _MATCH4[0].length;
     } else if (tnre.OCTAVE4.exec(token)) {
       var _MATCH5 = tnre.OCTAVE4.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH5[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"](_MATCH5[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 4;
     }
 
@@ -65778,7 +65801,7 @@ function TinyNotation(textIn) {
     }
 
     if (tnre.TIE.exec(token)) {
-      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_14__["Tie"]('start');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_15__["Tie"]('start');
 
       if (storedDict.lastNoteTied) {
         noteObj.tie.type = 'continue';
@@ -65786,7 +65809,7 @@ function TinyNotation(textIn) {
 
       storedDict.lastNoteTied = true;
     } else if (storedDict.lastNoteTied) {
-      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_14__["Tie"]('stop');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_15__["Tie"]('stop');
       storedDict.lastNoteTied = false;
     }
 
@@ -65794,14 +65817,14 @@ function TinyNotation(textIn) {
       var _MATCH6 = tnre.SHARP.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](_MATCH6[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__["Accidental"](_MATCH6[1].length);
     } else if (tnre.FLAT.exec(token)) {
       var _MATCH7 = tnre.FLAT.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](-1 * _MATCH7[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__["Accidental"](-1 * _MATCH7[1].length);
     } else if (tnre.NAT.exec(token)) {
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]('natural');
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__["Accidental"]('natural');
       noteObj.pitch.accidental.displayType = 'always';
     }
 
@@ -65824,20 +65847,37 @@ function TinyNotation(textIn) {
 
     if (storedDict.inTrip) {
       // console.log(noteObj.duration.quarterLength);
-      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](3, 2, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_10__["Tuplet"](3, 2, noteObj.duration.quarterLength));
     }
 
     if (storedDict.inQuad) {
-      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](4, 3, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_10__["Tuplet"](4, 3, noteObj.duration.quarterLength));
     }
 
-    if (storedDict.endTupletAfterNote) {
+    if (storedDict.inChord) {
+      if (chordObj) {
+        chordObj.add(noteObj);
+      } else {
+        chordObj = new _chord__WEBPACK_IMPORTED_MODULE_8__["Chord"]([noteObj]);
+      }
+    }
+
+    if (storedDict.endStateAfterNote) {
       storedDict.inTrip = false;
       storedDict.inQuad = false;
-      storedDict.endTupletAfterNote = false;
+      storedDict.inChord = false;
+      storedDict.endStateAfterNote = false;
+
+      if (chordObj) {
+        m.append(chordObj);
+        chordObj = null;
+        continue;
+      }
     }
 
-    m.append(noteObj);
+    if (!storedDict.inChord) {
+      m.append(noteObj);
+    }
   }
 
   if (m.length > 0) {
@@ -65853,7 +65893,7 @@ function TinyNotation(textIn) {
 
     for (var _i2 = 0; _i2 < optionalScore.parts.length; _i2++) {
       var innerPart = optionalScore.parts.get(_i2);
-      var innerPartClef = _clef__WEBPACK_IMPORTED_MODULE_8__["bestClef"](innerPart);
+      var innerPartClef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](innerPart);
       var innerMeasure = innerPart.getElementsByClass('Measure').get(0);
 
       if (innerMeasure !== undefined) {
@@ -65863,7 +65903,7 @@ function TinyNotation(textIn) {
 
     returnObject = optionalScore;
   } else {
-    var bestClef = _clef__WEBPACK_IMPORTED_MODULE_8__["bestClef"](p);
+    var bestClef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](p);
     p.getElementsByClass('Measure').get(0).insert(0, bestClef);
     returnObject = p;
   }
