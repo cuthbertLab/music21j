@@ -2,7 +2,14 @@
 node_modules/
 node_modules/grunt/package.json
 
+build/*.js
+build/*.map
+
+tests/music21.tests.js
+tests/music21.tests.js.map
+
 *.py[cod]
+.buildpath
 
 # emacs
 .*~
@@ -17,11 +24,10 @@ node_modules/grunt/package.json
 .project
 .pydevproject
 
+
 # OSX
 .DS_Store
 
-<<<<<<< HEAD
-=======
 # C extensions
 *.so
 
@@ -53,11 +59,19 @@ nosetests.xml
 # Mr Developer
 .mr.developer.cfg
 
-
-
-
-
-node_modules/grunt/package.json
+soundfonts/*
 
 node_modules/grunt-contrib-uglify/package.json
->>>>>>> master
+
+# PyCharm
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/music21j.iml
+.idea/vcs.xml
+.idea/workspace.xml
+
+
+# Built tests
+tests/music21.tests.js
+tests/music21.tests.js.map
