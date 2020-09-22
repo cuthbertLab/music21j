@@ -317,7 +317,13 @@ export class Chord extends note.NotRest {
     }
 
     sortPitches() {
-        this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);
+        this._notes.sort((a, b) => {
+            let diff: number = a.pitch.ps - b.pitch.ps;
+            if (diff === 0) {
+                diff = a.pitch.diatonicNoteNum - b.pitch.diatonicNoteNum;
+            }
+            return diff;
+        });
     }
 
     // TODO: add remove
