@@ -31,4 +31,18 @@ export default function tests() {
         assert.equal(pitches[2].nameWithOctave, 'C5');
 
     });
+
+    test('music21.chord.Chord sortPitches', assert => {
+        // Same ps, but diatonicNoteNum is out of order.
+        let c = new music21.chord.Chord(['Bb4', 'A#4']);
+        let [note1, note2] = c.notes;
+        assert.equal(note1.pitch.nameWithOctave, 'A#4');
+        assert.equal(note2.pitch.nameWithOctave, 'B-4');
+
+        // Same diatonicNoteNum, but ps is out of order.
+        c = new music21.chord.Chord(['B4', 'Bb4']);
+        [note1, note2] = c.notes;
+        assert.equal(note1.pitch.nameWithOctave, 'B-4');
+        assert.equal(note2.pitch.nameWithOctave, 'B4');
+    });
 }
