@@ -318,9 +318,9 @@ export class Chord extends note.NotRest {
 
     sortPitches() {
         this._notes.sort((a, b) => {
-            let diff: number = a.pitch.ps - b.pitch.ps;
+            let diff: number = a.pitch.diatonicNoteNum - b.pitch.diatonicNoteNum;
             if (diff === 0) {
-                diff = a.pitch.diatonicNoteNum - b.pitch.diatonicNoteNum;
+                diff = a.pitch.ps - b.pitch.ps;
             }
             return diff;
         });
