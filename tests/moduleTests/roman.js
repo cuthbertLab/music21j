@@ -114,6 +114,17 @@ export default function tests() {
         assert.equal(rn1.third.name, 'E-', 'test third of Cad64');
     });
 
+    test('music21.roman.RomanNumeral - invalid arguments', assert => {
+        // Invalid first char should throw an exception,
+        // even if the chars that follow are valid.
+        assert.throws(() => {
+            return new music21.roman.RomanNumeral('CI');
+        }, /No roman numeral found in CI/);
+        assert.throws(() => {
+            return new music21.roman.RomanNumeral('CIt');
+        }, /No roman numeral found in CIt/);
+    });
+
     test('music21.roman.RomanNumeral - inversions', assert => {
         const t1 = 'IV6';
         let rn1;

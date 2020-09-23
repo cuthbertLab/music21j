@@ -484,9 +484,9 @@ export class RomanNumeral extends harmony.Harmony {
     _parseRNAloneAmidstAug6(workingFigure, useScale) {
         let romanNumeralAlone = '';
         const _romanNumeralAloneRegex = new RegExp(
-            '(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)'
+            '^(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)'
         );
-        const _augmentedSixthRegex = new RegExp('(It|Ger|Fr|Sw)');
+        const _augmentedSixthRegex = new RegExp('^(It|Ger|Fr|Sw)');
         const rm = _romanNumeralAloneRegex.exec(workingFigure);
         const a6match = _augmentedSixthRegex.exec(workingFigure);
         if (rm === null && a6match === null) {
