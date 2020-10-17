@@ -554,6 +554,7 @@ export class Renderer {
         const allTickables = stack.allTickables();
         const vf_voices = stack.voices;
         const measuresOrVoices = stack.streams;
+        const useVexflowAutobeam = measuresOrVoices[0].renderOptions.useVexflowAutobeam;
         if (autoBeam === undefined) {
             autoBeam = measuresOrVoices[0].autoBeam;
         }
@@ -583,7 +584,7 @@ export class Renderer {
         }
         formatter.formatToStave(allTickables, stave);
 
-        if (autoBeam) {
+        if (autoBeam && useVexflowAutobeam) {
             for (let i = 0; i < vf_voices.length; i++) {
                 // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 const vf_voice = vf_voices[i];
@@ -621,7 +622,7 @@ export class Renderer {
                         activeBeamGroupNotes.push(n.activeVexflowNote);
                     }
                     if (eighthNoteBeam.type === 'stop') {
-                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes);
+                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, true);
                         this.beamGroups.push(vfBeam);
                         activeBeamGroupNotes = [];
                     }

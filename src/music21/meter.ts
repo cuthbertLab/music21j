@@ -213,6 +213,12 @@ export class TimeSignature extends base.Music21Object {
             if (!beams) {
                 return;
             }
+
+            if (el.duration.quarterLength >= this.beatDuration.quarterLength) {
+                beamsList[i] = undefined;
+                return;
+            }
+
             const beamNumber = depth + 1;
             if (!(beams.getNumbers().includes(beamNumber))) {
                 return;
@@ -250,9 +256,11 @@ export class TimeSignature extends base.Music21Object {
                     beamType = 'partial-right';
                 }
             } else if (isLast) {
-                beamType = 'start';
+                beamType = 'stop';
                 if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
                     beamType = 'partial-left';
+                } else if (beamPrevious && beamPrevious.getTypeByNumber(beamNumber) === 'stop') {
+                    beamsList[i] = undefined;
                 }
             } else if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
                 if (beamNumber === 1 && beamNext === undefined) {
@@ -289,11 +297,11 @@ export class TimeSignature extends base.Music21Object {
             beams.setByNumber(beamNumber, beamType);
         };
 
+        const elList = Array.from(srcStream);
         for (let depth = 0; depth < beam.beamableDurationTypes.length; depth++) {
-            let i = 0;
-            for (const el of srcStream) {
+            for (let i = 0; i < elList.length; i++) {
+                const el = elList[i];
                 fixBeamsOneElementDepth(i, el, depth);
-                i += 1;
             }
         }
 
