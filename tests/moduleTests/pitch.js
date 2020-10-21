@@ -30,6 +30,33 @@ export default function tests() {
         assert.equal(vfn, 'C#/6', 'Vexflow name set');
     });
 
+    test('music21.pitch.Pitch.updateAccidentalDisplay', assert => {
+        const p1 = new music21.pitch.Pitch('D#5');
+        const p2 = new music21.pitch.Pitch('D#5');
+        p2.updateAccidentalDisplay({pitchPast: [p1]});
+        assert.notOk(p2.accidental.displayStatus, 'Two accidentals in same measure should suppress second');
+
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({pitchPastMeasure: [p1]});
+        assert.ok(p2.accidental.displayStatus, 'Two accidentals not in same measure should show second');
+
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({alteredPitches: [p1]});
+        assert.notOk(p2.accidental.displayStatus, 'Accidental suppressed by key signature');
+
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({pitchPast: [p1], alteredPitches: [p1]});
+        assert.notOk(p2.accidental.displayStatus, 'Accidental suppressed by key signature AND previous pitch');
+
+        const d_natural = new music21.pitch.Pitch('D5');
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({pitchPast: [d_natural], alteredPitches: [p1]});
+        assert.ok(
+            p2.accidental.displayStatus,
+            'Accidental shown after previous contradicts key signature'
+        );
+    });
+
     test('music21.pitch.Pitch enharmonics', assert => {
         const es = new music21.pitch.Pitch('E-5');
         const dis = es.getLowerEnharmonic();
