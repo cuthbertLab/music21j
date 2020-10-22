@@ -820,7 +820,7 @@ export class Pitch extends prebase.ProtoM21Object {
             } else {  // cautionary in terms of pitch space; must match exact
                 pPast = pitchPastAll[i];
             }
-            // if we do not match steps (A and A//), we can continue
+            // if we do not match steps (A and A#), we can continue
             if (pPast.step !== pSelf.step) {
                 continue;
             }

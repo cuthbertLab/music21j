@@ -31,8 +31,8 @@ export default function tests() {
     });
 
     test('music21.pitch.Pitch.updateAccidentalDisplay', assert => {
-        const p1 = new music21.pitch.Pitch('D#5');
-        const p2 = new music21.pitch.Pitch('D#5');
+        let p1 = new music21.pitch.Pitch('D#5');
+        let p2 = new music21.pitch.Pitch('D#5');
         p2.updateAccidentalDisplay({pitchPast: [p1]});
         assert.notOk(p2.accidental.displayStatus, 'Two accidentals in same measure should suppress second');
 
@@ -54,6 +54,43 @@ export default function tests() {
         assert.ok(
             p2.accidental.displayStatus,
             'Accidental shown after previous contradicts key signature'
+        );
+
+        // Test cautionary accidentals
+
+        p1 = new music21.pitch.Pitch('D#3');
+        p2 = new music21.pitch.Pitch('D5');
+
+        p2.updateAccidentalDisplay({pitchPast: [p1]});
+        assert.ok(
+            p2.accidental.displayStatus,
+            'D5 should have a natural, even though it is in a different octave'
+        );
+
+        p2.accidental = undefined;
+        p2.updateAccidentalDisplay({pitchPast: [p1], cautionaryPitchClass: false});
+        assert.notOk(
+            p2.accidental,
+            'When cautionaryPitchClass is false, D5 should not have an accidental'
+        );
+
+        p1 = new music21.pitch.Pitch('D#3');
+        p2 = new music21.pitch.Pitch('E3');
+        const p3 = new music21.pitch.Pitch('D#3');
+        p3.updateAccidentalDisplay({pitchPast: [p1, p2]});
+        assert.ok(
+            p3.accidental.displayStatus,
+            'The second D#3 should display by default'
+        );
+
+        p3.accidental.displayStatus = undefined;
+        p3.updateAccidentalDisplay({
+            pitchPast: [p1, p2],
+            cautionaryNotImmediateRepeat: false,
+        });
+        assert.notOk(
+            p3.accidental.displayStatus,
+            'When cautionaryNotImmediateRepeat is false, the second D#3 should not display'
         );
     });
 
