@@ -30,8 +30,18 @@ export default function tests() {
         renderer.render();
         assert.equal(renderer.beamGroups.length, 3);
 
+        s.autoBeam = true;
+
+        // VexFlow autobeam sets the correct number of beams
+        s.renderOptions.useVexflowAutobeam = true;
         renderer = new music21.vfShow.Renderer(s, svg);
-        s.autoBeam = true;  // sets the correct number of beams
+        renderer.render();
+        assert.equal(renderer.beamGroups.length, 2);
+
+        // Native autobeam also sets the correct number of beams
+        s.renderOptions.useVexflowAutobeam = false;
+        s.makeBeams({ inPlace: true });
+        renderer = new music21.vfShow.Renderer(s, svg);
         renderer.render();
         assert.equal(renderer.beamGroups.length, 2);
     });

@@ -554,7 +554,7 @@ export class Renderer {
         const allTickables = stack.allTickables();
         const vf_voices = stack.voices;
         const measuresOrVoices = stack.streams;
-        const useVexflowAutobeam = measuresOrVoices[0].renderOptions.useVexflowAutobeam;
+        const useVexflowAutobeam = this.stream.renderOptions.useVexflowAutobeam;
         if (autoBeam === undefined) {
             autoBeam = measuresOrVoices[0].autoBeam;
         }
@@ -584,9 +584,9 @@ export class Renderer {
         }
         formatter.formatToStave(allTickables, stave);
 
+        // VexFlow and native autobeam both wipe out stemDirection. worth it usually...
         if (autoBeam && useVexflowAutobeam) {
             for (let i = 0; i < vf_voices.length; i++) {
-                // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 const vf_voice = vf_voices[i];
                 const associatedStream = stack.voiceToStreamMapping.get(vf_voice);
                 let beatGroups;
