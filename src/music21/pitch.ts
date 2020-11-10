@@ -573,44 +573,6 @@ export class Pitch extends prebase.ProtoM21Object {
     }
     /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
 
-
-
-    //  returns pitch
-    _makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict) {
-        if (lastStepDict === undefined) {
-            // octave < 0 or > 10? -- error that appeared sometimes.
-            lastStepDict = {};
-        }
-        let newAlter;
-        if (p.accidental === undefined) {
-            newAlter = 0;
-        } else {
-            newAlter = p.accidental.alter;
-        }
-        // console.log(p.name + ' ' + lastStepDict[p.step].toString());
-        if (
-            lastStepDict[p.step] !== newAlter
-            || lastOctavelessStepDict[p.step] !== newAlter
-        ) {
-            if (p.accidental === undefined) {
-                p.accidental = new Accidental('natural');
-            }
-            p.accidental.displayStatus = true;
-            // console.log('setting displayStatus to true');
-        } else if (
-            lastStepDict[p.step] === newAlter
-            && lastOctavelessStepDict[p.step] === newAlter
-        ) {
-            if (p.accidental !== undefined) {
-                p.accidental.displayStatus = false;
-            }
-            // console.log('setting displayStatus to false');
-        }
-        lastStepDict[p.step] = newAlter;
-        lastOctavelessStepDict[p.step] = newAlter;
-        return p;
-    }
-
     protected _nameInKeySignature(alteredPitches: Pitch[]) : boolean {
         for (const p of alteredPitches) {  // all are altered tones, must have acc
             if (p.step === this.step) {  // A# to A or A# to A-, etc
