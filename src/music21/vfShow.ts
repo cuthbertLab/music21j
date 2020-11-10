@@ -439,7 +439,7 @@ export class Renderer {
      * @param {Stream} p - a Part or similar object
      */
     prepareTies(p: stream.Stream) {
-        const pf = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
+        const pf = <note.GeneralNote[]> Array.from(p.flat.notesAndRests);
         // console.log('newSystemsAt', this.systemBreakOffsets);
         for (let i = 0; i < pf.length - 1; i++) {
             const thisNote = pf[i];
@@ -452,8 +452,8 @@ export class Renderer {
             for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
                 const thisSystemBreak = this.systemBreakOffsets[sbI];
                 if (
-                    thisNote.getOffsetInHierarchy(p) < thisSystemBreak
-                    && nextNote.getOffsetInHierarchy(p) >= thisSystemBreak
+                    thisNote.offset < thisSystemBreak
+                    && nextNote.offset >= thisSystemBreak
                 ) {
                     onSameSystem = false;
                     break;
