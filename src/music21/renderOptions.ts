@@ -77,6 +77,8 @@ export class RenderOptions {
         // resize
     };
 
+    useVexflowAutobeam: boolean = true;
+
     startNewSystem: boolean = false;
     // noinspection JSUnusedGlobalSymbols
     startNewPage: boolean = false;

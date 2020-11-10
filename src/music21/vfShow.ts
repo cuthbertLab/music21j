@@ -439,7 +439,7 @@ export class Renderer {
      * @param {Stream} p - a Part or similar object
      */
     prepareTies(p: stream.Stream) {
-        const pf = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
+        const pf = <note.GeneralNote[]> Array.from(p.flat.notesAndRests);
         // console.log('newSystemsAt', this.systemBreakOffsets);
         for (let i = 0; i < pf.length - 1; i++) {
             const thisNote = pf[i];
@@ -452,8 +452,8 @@ export class Renderer {
             for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
                 const thisSystemBreak = this.systemBreakOffsets[sbI];
                 if (
-                    thisNote.getOffsetInHierarchy(p) < thisSystemBreak
-                    && nextNote.getOffsetInHierarchy(p) >= thisSystemBreak
+                    thisNote.offset < thisSystemBreak
+                    && nextNote.offset >= thisSystemBreak
                 ) {
                     onSameSystem = false;
                     break;
@@ -554,6 +554,7 @@ export class Renderer {
         const allTickables = stack.allTickables();
         const vf_voices = stack.voices;
         const measuresOrVoices = stack.streams;
+        const useVexflowAutobeam = this.stream.renderOptions.useVexflowAutobeam;
         if (autoBeam === undefined) {
             autoBeam = measuresOrVoices[0].autoBeam;
         }
@@ -583,9 +584,9 @@ export class Renderer {
         }
         formatter.formatToStave(allTickables, stave);
 
-        if (autoBeam) {
+        // VexFlow and native autobeam both wipe out stemDirection. worth it usually...
+        if (autoBeam && useVexflowAutobeam) {
             for (let i = 0; i < vf_voices.length; i++) {
-                // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 const vf_voice = vf_voices[i];
                 const associatedStream = stack.voiceToStreamMapping.get(vf_voice);
                 let beatGroups;
@@ -621,7 +622,7 @@ export class Renderer {
                         activeBeamGroupNotes.push(n.activeVexflowNote);
                     }
                     if (eighthNoteBeam.type === 'stop') {
-                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes);
+                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, true);
                         this.beamGroups.push(vfBeam);
                         activeBeamGroupNotes = [];
                     }

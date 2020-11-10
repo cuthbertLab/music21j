@@ -3,7 +3,7 @@ Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-19, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
+Copyright &copy;2013-20, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
@@ -91,7 +91,7 @@ using the python server above).
 
 Version
 --------
-0.9.36 alpha
+0.9.50 beta
 
 
 License
@@ -142,13 +142,13 @@ $ grunt webpack
 Before building, every once in a while run (in the music21j directory)
 
 ```
-npm-check-updates
+node_modules/.bin/npm-check-updates
 ```
 
 and if it looks like something to update, run
 
 ```
-npm-check-updates --upgradeAll
+node_modules/.bin/npm-check-updates --upgradeAll
 npm update
 ```
 
@@ -160,6 +160,6 @@ grunt jsdoc
 
 The template is specified in jsdoc-template/jsdoc.conf.json
 
-These docs will be changing as we are moving from rollup to wepback in preparation
-for v. 1.0 release.
+These docs will be changing in preparation for v. 1.0 release. (on webpack)
+
 

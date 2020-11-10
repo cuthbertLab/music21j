@@ -649,6 +649,7 @@ export class Stream extends base.Music21Object {
                 // append
                 this._elements.push(thisEl);
                 this.setElementOffset(thisEl, highestOffsetSoFar);
+                thisEl.sites.add(this);
                 if (thisEl.duration === undefined) {
                     console.error('No duration for ', thisEl, ' in ', this);
                 }
@@ -2051,19 +2052,22 @@ export class Stream extends base.Music21Object {
         if (startNoteIndex !== undefined) {
             currentNoteIndex = startNoteIndex;
         }
-        const flatEls = this.flat.elements;
+        const thisFlat = this.flat;
+        const flatEls = [];
+        for (const el of thisFlat) {
+            flatEls.push(el);
+        }
         const lastNoteIndex = flatEls.length - 1;
         this._stopPlaying = false;
-        const thisStream = this;
 
-        const playNext = function playNext(elements, params) {
-            if (currentNoteIndex <= lastNoteIndex && !thisStream._stopPlaying) {
+        const playNext = (elements, params) => {
+            if (currentNoteIndex <= lastNoteIndex && !this._stopPlaying) {
                 const el = elements[currentNoteIndex];
                 let nextNote;
                 let playDuration;
                 if (currentNoteIndex < lastNoteIndex) {
                     nextNote = elements[currentNoteIndex + 1];
-                    playDuration = nextNote.offset - el.offset;
+                    playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el);
                 } else {
                     playDuration = el.duration.quarterLength;
                 }
