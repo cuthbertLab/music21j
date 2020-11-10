@@ -649,6 +649,7 @@ export class Stream extends base.Music21Object {
                 // append
                 this._elements.push(thisEl);
                 this.setElementOffset(thisEl, highestOffsetSoFar);
+                thisEl.sites.add(this);
                 if (thisEl.duration === undefined) {
                     console.error('No duration for ', thisEl, ' in ', this);
                 }

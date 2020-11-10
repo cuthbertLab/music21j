@@ -130,6 +130,15 @@ export default function tests() {
         t.elements = s;
         assert.deepEqual(t.get(1), d, 't[1] is d');
         assert.equal(t.get(1).offset, 10, 'd offset retained');
+
+        const p1 = new music21.stream.Part();
+        const m = new music21.stream.Measure();
+        const n = new music21.note.Note('C');
+        m.append(n);
+        p1.append(m);
+        const p2 = new music21.stream.Part();
+        p2.elements = p1;
+        assert.equal(n.getOffsetInHierarchy(p2), 0, 'p2 is in the site hierarchy of n');
     });
 
     test('music21.stream.Stream.duration', assert => {
