@@ -455,20 +455,49 @@ export default function tests() {
         const n = new music21.note.Note('G#3');
         const n2 = new music21.note.Note('G#3');
         const n3 = new music21.note.Note('C#4');
-        const c = new music21.chord.Chord(['C3', 'E-3', 'G3', 'G4']);
+        const c = new music21.chord.Chord(['C3', 'E-3', 'G3', 'G4', 'F#5']);
         const ks = new music21.key.KeySignature(2);
         const s = new music21.stream.Measure();
         s.keySignature = ks;
         s.append([n, n2, n3, c]);
         s.makeAccidentals();
         assert.ok(n.pitch.accidental.displayStatus);
-        assert.notOk(n2.pitch.accidental.displayStatus);
-        assert.notOk(n3.pitch.accidental.displayStatus);
+        assert.notOk(
+            n2.pitch.accidental.displayStatus,
+            `n2.pitch.accidental.displayStatus should be false, not ${n2.pitch.accidental.displayStatus}`
+        );
+        assert.notOk(
+            n3.pitch.accidental.displayStatus,
+            `n3.pitch.accidental.displayStatus should be false, not ${n3.pitch.accidental.displayStatus}`
+        );
         assert.ok(c.notes[0].pitch.accidental);
         assert.ok(c.notes[0].pitch.accidental.displayStatus);
         assert.ok(c.notes[1].pitch.accidental.displayStatus);
         assert.ok(c.notes[2].pitch.accidental.displayStatus);
-        assert.notOk(c.notes[3].pitch.accidental); // perhaps should exist?
+        assert.notOk(c.notes[4].pitch.accidental.displayStatus);  // F# from key signature
+    });
+
+    test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
+        let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
+        p1.makeAccidentals();
+        let p_list = p1.recurse().notes.map(n => n.pitch);
+        assert.notOk(p_list[0].accidental, 'p_list[0].accidental should not exist');
+        assert.notOk(p_list[1].accidental, 'p_list[1].accidental should not exist');
+        assert.ok(p_list[2].accidental.displayStatus);
+        assert.notOk(p_list[3].accidental.displayStatus, '2nd F# accidental should not display');  // same measure
+        assert.notOk(p_list[4].accidental, 'G should not have accidental');
+        assert.ok(p_list[5].accidental.displayStatus);  // B flat
+        assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
+
+        p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
+        const m1 = p1.getElementsByClass('Measure').get(0);
+        const f_maj = new music21.key.Key('F');
+        m1.insert(0, f_maj);
+        p1.makeAccidentals();
+        p_list = p1.recurse().notes.map(n => n.pitch);
+
+        assert.notOk(p_list[5].accidental.displayStatus, 'first b-flat should not display');  // B flat
+        assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
     });
 
     test('music21.stream.Stream.flat', assert => {

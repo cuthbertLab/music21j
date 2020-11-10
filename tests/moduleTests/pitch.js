@@ -30,6 +30,70 @@ export default function tests() {
         assert.equal(vfn, 'C#/6', 'Vexflow name set');
     });
 
+    test('music21.pitch.Pitch.updateAccidentalDisplay', assert => {
+        let p1 = new music21.pitch.Pitch('D#5');
+        let p2 = new music21.pitch.Pitch('D#5');
+        p2.updateAccidentalDisplay({pitchPast: [p1]});
+        assert.notOk(p2.accidental.displayStatus, 'Two accidentals in same measure should suppress second');
+
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({pitchPastMeasure: [p1]});
+        assert.ok(p2.accidental.displayStatus, 'Two accidentals not in same measure should show second');
+
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({alteredPitches: [p1]});
+        assert.notOk(p2.accidental.displayStatus, 'Accidental suppressed by key signature');
+
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({pitchPast: [p1], alteredPitches: [p1]});
+        assert.notOk(p2.accidental.displayStatus, 'Accidental suppressed by key signature AND previous pitch');
+
+        const d_natural = new music21.pitch.Pitch('D5');
+        p2.accidental.displayStatus = undefined;
+        p2.updateAccidentalDisplay({pitchPast: [d_natural], alteredPitches: [p1]});
+        assert.ok(
+            p2.accidental.displayStatus,
+            'Accidental shown after previous contradicts key signature'
+        );
+
+        // Test cautionary accidentals
+
+        p1 = new music21.pitch.Pitch('D#3');
+        p2 = new music21.pitch.Pitch('D5');
+
+        p2.updateAccidentalDisplay({pitchPast: [p1]});
+        assert.ok(
+            p2.accidental.displayStatus,
+            'D5 should have a natural, even though it is in a different octave'
+        );
+
+        p2.accidental = undefined;
+        p2.updateAccidentalDisplay({pitchPast: [p1], cautionaryPitchClass: false});
+        assert.notOk(
+            p2.accidental,
+            'When cautionaryPitchClass is false, D5 should not have an accidental'
+        );
+
+        p1 = new music21.pitch.Pitch('D#3');
+        p2 = new music21.pitch.Pitch('E3');
+        const p3 = new music21.pitch.Pitch('D#3');
+        p3.updateAccidentalDisplay({pitchPast: [p1, p2]});
+        assert.ok(
+            p3.accidental.displayStatus,
+            'The second D#3 should display by default'
+        );
+
+        p3.accidental.displayStatus = undefined;
+        p3.updateAccidentalDisplay({
+            pitchPast: [p1, p2],
+            cautionaryNotImmediateRepeat: false,
+        });
+        assert.notOk(
+            p3.accidental.displayStatus,
+            'When cautionaryNotImmediateRepeat is false, the second D#3 should not display'
+        );
+    });
+
     test('music21.pitch.Pitch enharmonics', assert => {
         const es = new music21.pitch.Pitch('E-5');
         const dis = es.getLowerEnharmonic();

@@ -12,7 +12,7 @@
  * @exports music21/stream
  *
  * Streams are powerful music21 objects that hold Music21Object collections,
- * such as {@link music21.note.Note} or {@link music21.chord.Chord} objects.
+ * such as {@link music21.note.Note} or music21.chord.Chord objects.
  *
  * Understanding the {@link Stream} object is of fundamental
  * importance for using music21.  Definitely read the music21(python) tutorial
@@ -56,7 +56,9 @@ import { GeneralObjectExporter } from './musicxml/m21ToXml';
 
 import * as filters from './stream/filters';
 import * as iterator from './stream/iterator';
-import {chord} from '../music21_modules';
+
+// for typing only
+import {chord, key} from '../music21_modules';
 
 export { filters };
 export { iterator };
@@ -73,6 +75,19 @@ function _exportMusicXMLAsText(s) {
     return gox.parse();
 }
 
+interface MakeAccidentalsParams {
+    pitchPast?: pitch.Pitch[],
+    pitchPastMeasure?: pitch.Pitch[],
+    useKeySignature?: boolean | key.KeySignature,
+    alteredPitches?: pitch.Pitch[],
+    searchKeySignatureByContext?: boolean,
+    cautionaryPitchClass?: boolean,
+    cautionaryAll?: boolean,
+    inPlace?: boolean,
+    overrideStatus?: boolean,
+    cautionaryNotImmediateRepeat?: boolean,
+    tiePitchSet?: Set<string>,
+}
 
 
 /**
@@ -93,7 +108,7 @@ function _exportMusicXMLAsText(s) {
  *     specifying how to render the stream
  * @property {Stream} flat - (readonly) a flattened representation of the Stream
  * @property {StreamIterator} notes - (readonly) the stream with
- *     only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
+ *     only {@link music21.note.Note} and music21.chord.Chord objects included
  * @property {StreamIterator} notesAndRests - (readonly) like notes but
  *     also with {@link music21.note.Rest} objects included
  * @property {StreamIterator} parts - (readonly) a filter on the Stream
@@ -689,6 +704,17 @@ export class Stream extends base.Music21Object {
             console.warn(`Calling special context ${context}!`);
         }
         return special_context;
+    }
+
+    /**
+     * Map as if this were an Array
+     */
+    map(func) {
+        return Array.from(this).map(func);
+    }
+
+    filter(func) {
+        return Array.from(this).filter(func);
     }
 
     clear() {
@@ -1654,99 +1680,141 @@ export class Stream extends base.Music21Object {
 
 
     /**
-     * Sets Pitch.accidental.displayStatus for every element with a
-     * pitch or pitches in the stream. If a natural needs to be displayed
-     * and the Pitch does not have an accidental object yet, adds one.
-     *
-     * Called automatically before appendDOM routines are called.
-     *
-     * @returns {this}
+        A method to set and provide accidentals given various conditions and contexts.
+
+        `pitchPast` is a list of pitches preceding this pitch in this measure.
+
+        `pitchPastMeasure` is a list of pitches preceding this pitch but in a previous measure.
+
+        If `useKeySignature` is True, a :class:`~music21.key.KeySignature` will be searched
+        for in this Stream or this Stream's defined contexts. An alternative KeySignature
+        can be supplied with this object and used for temporary pitch processing.
+
+        If `alteredPitches` is a list of modified pitches (Pitches with Accidentals) that
+        can be directly supplied to Accidental processing. These are the same values obtained
+        from a :class:`music21.key.KeySignature` object using the
+        :attr:`~music21.key.KeySignature.alteredPitches` property.
+
+        If `cautionaryPitchClass` is True, comparisons to past accidentals are made regardless
+        of register. That is, if a past sharp is found two octaves above a present natural,
+        a natural sign is still displayed.
+
+        If `cautionaryAll` is true, all accidentals are shown.
+
+        If `overrideStatus` is true, this method will ignore any current `displayStatus` stetting
+        found on the Accidental. By default this does not happen. If `displayStatus` is set to
+        None, the Accidental's `displayStatus` is set.
+
+        If `cautionaryNotImmediateRepeat` is true, cautionary accidentals will be displayed for
+        an altered pitch even if that pitch had already been displayed as altered.
+
+        If `tiePitchSet` is not None it should be a set of `.nameWithOctave` strings
+        to determine whether following accidentals should be shown because the last
+        note of the same pitch had a start or continue tie.
+
+        If `searchKeySignatureByContext` is true then keySignatures from the context of the
+        stream will be used if none found.  (DOES NOT WORK YET)
+
+        The :meth:`~music21.pitch.Pitch.updateAccidentalDisplay` method is used to determine if
+        an accidental is necessary.
+
+        This will assume that the complete Stream is the context of evaluation. For smaller context
+        ranges, call this on Measure objects.
+
+        If `inPlace` is True, this is done in-place; if `inPlace` is False,
+        this returns a modified deep copy.
+
+        TODO: inPlace default will become False in when music21p v.7 is released.
+
+        Called automatically before appendDOM routines are called.
      */
-    makeAccidentals() {
-        // cheap version of music21p method
-        const extendableStepList = {};
-        const stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-        const ks = this.keySignature || this.getContextByClass('KeySignature');
-        for (const stepName of stepNames) {
-            let stepAlter = 0;
-            if (ks !== undefined) {
-                const tempAccidental = ks.accidentalByStep(
-                    stepName
-                );
-                if (tempAccidental !== undefined) {
-                    stepAlter = tempAccidental.alter;
-                    // console.log(stepAlter + ' ' + stepName);
-                }
-            }
-            extendableStepList[stepName] = stepAlter;
-        }
-        const lastOctaveStepList = [];
-        for (let i = 0; i < 10; i++) {
-            const tempOctaveStepDict = {...extendableStepList};  // clone
-            lastOctaveStepList.push(tempOctaveStepDict);
-        }
-        const lastOctavelessStepDict = {...extendableStepList};  // probably unnecessary, but safe...
-
-        for (const el of this) {
-            if ((el as note.Note).pitch !== undefined) {
-                // note
-                const p = (el as note.Note).pitch;
-                const lastStepDict = lastOctaveStepList[p.octave];
-                this._makeAccidentalForOnePitch(
-                    p,
-                    lastStepDict,
-                    lastOctavelessStepDict
-                );
-            } else if ((el as chord.Chord).notes !== undefined) {
-                // chord
-                for (const chordNote of (el as chord.Chord).notes) {
-                    const p = chordNote.pitch;
-                    const lastStepDict = lastOctaveStepList[p.octave];
-                    this._makeAccidentalForOnePitch(
-                        p,
-                        lastStepDict,
-                        lastOctavelessStepDict
-                    );
-                }
-            }
-        }
-        return this;
-    }
-
-    //  returns pitch
-    _makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict) {
-        if (lastStepDict === undefined) {
-            // octave < 0 or > 10? -- error that appeared sometimes.
-            lastStepDict = {};
-        }
-        let newAlter;
-        if (p.accidental === undefined) {
-            newAlter = 0;
+    makeAccidentals({
+        pitchPast=[],
+        pitchPastMeasure=[],
+        useKeySignature=true,
+        alteredPitches=[],
+        searchKeySignatureByContext=false,  // not yet used.
+        cautionaryPitchClass=true,
+        cautionaryAll=false,
+        inPlace=true,
+        overrideStatus=false,
+        cautionaryNotImmediateRepeat=true,
+        tiePitchSet=new Set(),
+    } : MakeAccidentalsParams = {}) : this {
+        let returnObj: this;
+        if (inPlace) {
+            returnObj = this;
         } else {
-            newAlter = p.accidental.alter;
+            returnObj = this.clone(true);
         }
-        // console.log(p.name + ' ' + lastStepDict[p.step].toString());
-        if (
-            lastStepDict[p.step] !== newAlter
-            || lastOctavelessStepDict[p.step] !== newAlter
-        ) {
-            if (p.accidental === undefined) {
-                p.accidental = new pitch.Accidental('natural');
-            }
-            p.accidental.displayStatus = true;
-            // console.log('setting displayStatus to true');
-        } else if (
-            lastStepDict[p.step] === newAlter
-            && lastOctavelessStepDict[p.step] === newAlter
-        ) {
-            if (p.accidental !== undefined) {
-                p.accidental.displayStatus = false;
-            }
-            // console.log('setting displayStatus to false');
+        let ks: key.KeySignature;
+        if (useKeySignature === true) {
+            ks = this.keySignature ?? this.getContextByClass('KeySignature');
+        } else if (useKeySignature !== false) {
+            ks = useKeySignature as key.KeySignature;
         }
-        lastStepDict[p.step] = newAlter;
-        lastOctavelessStepDict[p.step] = newAlter;
-        return p;
+        if (ks !== undefined) {
+            const addAlterPitches = ks.alteredPitches;
+            alteredPitches.push(...addAlterPitches);
+        }
+
+        const noteIterator = returnObj.recurse().notesAndRests;
+
+        for (const e of noteIterator) {
+            if ((e as base.Music21Object).classes.includes('Note')) {
+                const p = (e as note.Note).pitch;
+                const lastNoteWasTied: boolean = tiePitchSet.has(p.nameWithOctave);
+
+                p.updateAccidentalDisplay({
+                    pitchPast,
+                    pitchPastMeasure,
+                    alteredPitches,
+                    cautionaryPitchClass,
+                    cautionaryAll,
+                    overrideStatus,
+                    cautionaryNotImmediateRepeat,
+                    lastNoteWasTied,
+                });
+                pitchPast.push(p);
+
+                tiePitchSet.clear();
+                const tie = (e as note.Note).tie;
+                if (tie !== undefined && tie.type !== 'stop') {
+                    tiePitchSet.add(p.nameWithOctave);
+                }
+            } else if ((e as base.Music21Object).classes.includes('Chord')) {
+                const chordNotes = (e as chord.Chord).notes;
+                const seenPitchNames: Set<string> = new Set();
+                for (const n of chordNotes) {
+                    const p = n.pitch;
+                    const lastNoteWasTied: boolean = tiePitchSet.has(p.nameWithOctave);
+
+                    p.updateAccidentalDisplay({
+                        pitchPast,
+                        pitchPastMeasure,
+                        alteredPitches,
+                        cautionaryPitchClass,
+                        cautionaryAll,
+                        overrideStatus,
+                        cautionaryNotImmediateRepeat,
+                        lastNoteWasTied,
+                    });
+
+                    if (n.tie !== undefined && n.tie.type !== 'stop') {
+                        seenPitchNames.add(p.nameWithOctave);
+                    }
+                }
+                tiePitchSet.clear();
+                for (const pName of seenPitchNames) {
+                    tiePitchSet.add(pName);
+                }
+                pitchPast.push(...(e as chord.Chord).pitches);
+            } else {
+                tiePitchSet.clear();
+            }
+
+        }
+        return returnObj;
     }
 
     /**
@@ -2596,7 +2664,8 @@ export class Stream extends base.Music21Object {
             note: undefined,
         }; // a backup in case we did not find within allowablePixels
 
-        for (const n of subStream.flat.notesAndRests) {
+        for (const el of subStream.flat.notesAndRests) {
+            const n = el as any; // for missing x and width
             /* should also
              * compensate for accidentals...
              */
@@ -2982,7 +3051,8 @@ export class Part extends Stream {
             // part with Measures underneath
             let totalLength = 0;
             let isFirst = true;
-            for (const m of this.getElementsByClass('Measure')) {
+            for (const el of this.getElementsByClass('Measure')) {
+                const m = el as Measure;
                 // this looks wrong, but actually seems to be right. moving it to
                 // after the break breaks things.
                 totalLength
@@ -3056,7 +3126,8 @@ export class Part extends Stream {
         let leftSubtract = 0;
         let newLeftSubtract;
 
-        for (const [i, m] of Array.from(this.getElementsByClass('Measure')).entries()) {
+        for (const [i, el] of Array.from(this.getElementsByClass('Measure')).entries()) {
+            const m = el as Measure;
             if (i === 0) {
                 m.renderOptions.startNewSystem = true;
             }
@@ -3134,7 +3205,8 @@ export class Part extends Stream {
         let lastKeySignature;
         let lastClef: clef.Clef;
 
-        for (const m of this.getElementsByClass('Measure')) {
+        for (const el of this.getElementsByClass('Measure')) {
+            const m = el as Measure;
             const mRendOp = m.renderOptions;
             mRendOp.measureIndex = currentMeasureIndex;
             mRendOp.top = rendOp.top;
@@ -3610,7 +3682,7 @@ export class Score extends Stream {
         for (let i = 0; i < maxMeasureWidth.length; i++) {
             const measureNewWidth = maxMeasureWidth[i];
             for (const part of this.parts) {
-                const measure = part.getElementsByClass('Measure').get(i);
+                const measure = part.getElementsByClass('Measure').get(i) as Measure;
                 const rendOp = measure.renderOptions;
                 rendOp.width = measureNewWidth;
                 if (setLeft) {

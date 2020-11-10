@@ -11,7 +11,7 @@ export class StreamIteratorException extends StreamException {
 
 }
 
-export class StreamIterator<T = base.Music21Object> {
+class _StreamIteratorBase<T = base.Music21Object> {
     srcStream: stream.Stream;  // should be Stream
     index: number = 0;
     srcStreamElements: base.Music21Object[];
@@ -61,34 +61,16 @@ export class StreamIterator<T = base.Music21Object> {
         }
     }
 
-    * [Symbol.iterator]() {
+    * [Symbol.iterator](): Generator<any, void, void> {
         this.reset();
-        while (this.index < this.streamLength) {
-            // noinspection DuplicatedCode
-            this.index += 1;
-            let e;
-            try {
-                e = this.srcStreamElements[this.index - 1];
-            } catch (exc) {
-                continue;
-            }
-            const matches = this.matchesFilters(e);
-            if (matches === false) {
-                continue;
-            }
-            if (matches === StopIterationSingleton) {
-                break;
-            }
-            if (this.restoreActiveSites) {
-                e.activeSite = this.srcStream;
-            }
-            this.updateActiveInformation();
-            yield e;
+        for (const el of this.srcStreamElements) {
+            yield el;
         }
-        this.cleanup();
     }
 
-    // TODO(MSC) 2020-07-20 -- Add .map()
+    map(func) {
+        return Array.from(this).map(func);
+    }
 
     get(k): T {
         const fe = this.matchingElements();
@@ -260,7 +242,38 @@ export class StreamIterator<T = base.Music21Object> {
     }
 }
 
-export class OffsetIterator<T> extends StreamIterator<T> {
+export class StreamIterator<T = base.Music21Object> extends _StreamIteratorBase<T> {
+
+    * [Symbol.iterator](): Generator<T, void, void> {
+        this.reset();
+        while (this.index < this.streamLength) {
+            // noinspection DuplicatedCode
+            this.index += 1;
+            let e;
+            try {
+                e = this.srcStreamElements[this.index - 1];
+            } catch (exc) {
+                continue;
+            }
+            const matches = this.matchesFilters(e);
+            if (matches === false) {
+                continue;
+            }
+            if (matches === StopIterationSingleton) {
+                break;
+            }
+            if (this.restoreActiveSites) {
+                e.activeSite = this.srcStream;
+            }
+            this.updateActiveInformation();
+            yield e;
+        }
+        this.cleanup();
+    }
+
+}
+
+export class OffsetIterator<T = base.Music21Object> extends _StreamIteratorBase<T> {
     nextToYield: any[];  // should be Music21Object[]
     nextOffsetToYield: number;
 
@@ -269,7 +282,7 @@ export class OffsetIterator<T> extends StreamIterator<T> {
         this.nextToYield = [];
     }
 
-    * [Symbol.iterator]() {
+    * [Symbol.iterator](): Generator<T[], void, void> {
         this.reset();
         // this.sort();
 
@@ -331,7 +344,7 @@ export class OffsetIterator<T> extends StreamIterator<T> {
     }
 }
 
-export class RecursiveIterator<T> extends StreamIterator<T> {
+export class RecursiveIterator<T = base.Music21Object> extends _StreamIteratorBase<T> {
     returnSelf: boolean;
     includeSelf: boolean;
     ignoreSorting: boolean;

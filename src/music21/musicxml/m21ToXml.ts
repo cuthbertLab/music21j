@@ -422,7 +422,7 @@ export class ScoreExporter extends XMLExporterBase {
         const streamOfStreams = s.getElementsByClass('Stream');
         for (const innerStream of streamOfStreams) {
             // innerStream.transferOffsetToElements(); // only needed for appended Parts
-            const ht = innerStream.highestTime;
+            const ht = (innerStream as Stream).highestTime;
             if (ht > this.highestTime) {
                 this.highestTime = ht;
             }
@@ -534,7 +534,7 @@ export class PartExporter extends XMLExporterBase {
         // fixupNotation;
         // setIdLocals on spannerBundle;
         for (const m of measureStream) {
-            this.addDividerComment('Measure ' + m.number.toString());
+            this.addDividerComment('Measure ' + (m as Measure).number.toString());
             const measureExporter = new MeasureExporter(m, { parent: this });
             measureExporter.spannerBundle = this.spannerBundle;
             const mxMeasure = measureExporter.parse();
