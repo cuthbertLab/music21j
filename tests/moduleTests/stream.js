@@ -578,10 +578,29 @@ export default function tests() {
         const s = new music21.stream.Score();
         s.insert(0, p1);
         s.insert(0, p2);
-        s.appendNewDOM();
-        const [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, 10, 20);
+        s.appendNewDOM();  // we need to generate a DOM even if we are not using it.
+        const x = 100;
+        let y = 20;
+        let [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 43);
-        assert.equal(foundNote, 12);
+        assert.strictEqual(foundNote, p1.flat.notes.get(0));
+        y = 100;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, 27);
+        assert.equal(foundNote.pitch.name, p1.flat.notes.get(0).pitch.name);
+
+        // check that we eventually move to p2
+        y = 150;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, 29);
+        assert.equal(foundNote.pitch.name, p2.flat.notes.get(0).pitch.name);
+
+        // check that we never move to another part even if very low
+        y = 300;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, -1);
+        assert.equal(foundNote.pitch.name, p2.flat.notes.get(0).pitch.name);
+
         // assert.equal(foundNote.pitch.name, p1.flat.notes.get(1).pitch.name);
     });
 

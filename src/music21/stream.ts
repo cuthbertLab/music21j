@@ -3636,7 +3636,7 @@ export class Score extends Stream {
 
         const clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
 
-        console.log(rightPart, systemIndex, x);
+        // console.log(rightPart, systemIndex, x);
         const foundNote = rightPart.noteElementFromScaledX(
             x,
             undefined,
