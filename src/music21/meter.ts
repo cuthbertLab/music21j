@@ -250,7 +250,7 @@ export class TimeSignature extends base.Music21Object {
             }
 
             let beamType;
-            if (isFirst) {
+            if (isFirst && measureStartOffset === 0.0) {
                 beamType = 'start';
                 if (beamNext === undefined || !(beamNext.getNumbers().includes(beamNumber))) {
                     beamType = 'partial-right';
