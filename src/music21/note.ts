@@ -429,7 +429,7 @@ export class NotRest extends GeneralNote {
     noteheadFill: string = 'default';
     noteheadColor: string = 'black';
     noteheadParenthesis: boolean = false;
-    volume: number = undefined; // not a real object yet.
+    volume: number = 64; // not a real object yet.
     beams: beam.Beams;
     protected _stemDirection: string = 'unspecified';
 
@@ -794,6 +794,7 @@ export class Rest extends GeneralNote {
     name: string = 'rest';
     lineShift: number = 0;
     color: string = 'black';
+    volume: number = 0;
 
     // this dummy constructor is here for JetBrains typescript linter
     // which otherwise complains that Rests have no durations, etc.
