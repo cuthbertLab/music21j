@@ -2983,6 +2983,8 @@ export class Measure extends Stream {
     isMeasure: boolean = true;
     number: number = 0;
     numberSuffix: string = '';
+    paddingLeft: number = 0;
+    paddingRight: number = 0;
 
     stringInfo(): string {
         // avoid using 'this.offset' to not infinite loops.

@@ -26,7 +26,8 @@ import * as sites from './sites';
 
 // imports for typing only
 import { Stream, Measure } from './stream';
-import { StreamException } from './exceptions21';
+import {Music21Exception, StreamException} from './exceptions21';
+import { TimeSignature } from './meter';
 
 
 declare interface StreamRecursionLike {
@@ -69,7 +70,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     sites: sites.Sites;
     isMusic21Object: boolean = true;
     isStream: boolean = false;
-    // beat, measureNumber, etc.
+    // beat, etc.
     // lots to do...
 
     constructor(keywords={}) {
@@ -190,6 +191,43 @@ export class Music21Object extends prebase.ProtoM21Object {
                 return undefined;
             }
         }
+    }
+
+    /**
+     *  Try to obtain the nearest Measure that contains this object,
+        and return the offset of this object within that Measure.
+
+        If a Measure is found, and that Measure has padding
+        defined as `paddingLeft` (for pickup measures, etc.), padding will be added to the
+        native offset gathered from the object.
+
+     */
+    _getMeasureOffset(
+        {includeMeasurePadding = true}: {includeMeasurePadding?: boolean} = {}
+    ): number {
+        const activeS: Stream = this.activeSite;
+        let offsetLocal: number;
+        if (activeS !== undefined && activeS.isMeasure) {
+            offsetLocal = activeS.elementOffset(this);
+            if (includeMeasurePadding) {
+                offsetLocal += (activeS as Measure).paddingLeft;
+            }
+        } else {
+            const m: Measure = this.getContextByClass('Measure', {sortByCreationTime: true});
+            if (m !== undefined) {
+                try {
+                    offsetLocal = m.elementOffset(this);
+                    if (includeMeasurePadding) {
+                        offsetLocal += m.paddingLeft;
+                    }
+                } catch (e) {
+                    offsetLocal = this.offset;
+                }
+            } else {
+                offsetLocal = this.offset;
+            }
+        }
+        return offsetLocal;
     }
 
     get offset(): number {
@@ -486,6 +524,26 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
+    _getTimeSignatureForBeat(): TimeSignature {
+        // note: getContextByClass does not full support BeforeOffset yet.
+        const ts: TimeSignature = this.getContextByClass(
+            'TimeSignature', {getElementMethod: 'getElementAtOrBeforeOffset'}
+        );
+        if (ts === undefined) {
+            throw new Music21Exception('this object does not have a TimeSignature in Sites');
+        }
+        return ts;
+    }
+
+    get beat(): number {
+        try {
+            const ts = this._getTimeSignatureForBeat();
+            return ts.getBeatProportion(ts.getMeasureOffsetOrMeterModulusOffset(this));
+        } catch (e) {
+            return NaN;
+        }
+    }
+
     /*
         Given an object and a number, run append that many times on
         a deepcopy of the object.
@@ -504,7 +562,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         } catch (AttributeError) {
             throw new StreamException('to put a non Music21Object in a stream, '
             + 'create a music21.ElementWrapper for the item');
-            
+
         }
         for (let i = 0; i < numberOfTimes; i++) {
             this.append(item.clone(true));

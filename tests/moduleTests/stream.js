@@ -223,6 +223,13 @@ export default function tests() {
         assert.equal(s2.duration.quarterLength, 4.0);
     });
 
+    test('music21.stream.Stream.repeatAppend', assert => {
+        const a = new music21.stream.Stream();
+        const n = new music21.note.Note();
+        a.repeatAppend(n, 10);
+        assert.equal(a.notes.length, 10);
+    });
+
     test('music21.stream.Stream.insert and offsets', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
