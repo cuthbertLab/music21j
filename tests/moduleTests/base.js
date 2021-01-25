@@ -77,10 +77,29 @@ export default function tests() {
             'third site is sc'
         );
     });
-    test('music21.base.repeatAppend', assert => {
-        const a = new music21.stream.Stream();
-        const n = new music21.note.Note();
-        a.repeatAppend(n, 10);
-        assert.equal(a.notes.length, 10);
+
+    test('music21.base.beat', assert => {
+        const m = new music21.stream.Measure();
+        m.timeSignature = new music21.meter.TimeSignature('2/2');
+        m.repeatAppend(new music21.note.Note('C', 0.5), 7);  // leave one out
+        for (let i = 0; i < 7; i++) {
+            const n = m.notes.get(i);
+            const expected_beat = 1 + i / 4;
+            assert.equal(
+                n.beat,
+                expected_beat,
+                `Note ${i} (${n + ''}) should be beat ${expected_beat} not ${n.beat}.`
+            );
+        }
+        m.paddingLeft = 0.5;
+        for (let i = 0; i < 7; i++) {
+            const n = m.notes.get(i);
+            const expected_beat = 1 + (i / 4) + 0.25;
+            assert.equal(
+                n.beat,
+                expected_beat,
+                `Pickup Note ${i} (${n + ''}) should be beat ${expected_beat} not ${n.beat}.`
+            );
+        }
     });
 }

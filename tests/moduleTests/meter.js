@@ -20,12 +20,23 @@ export default function tests() {
         assert.equal(m.beatDuration.dots, 0, 'beatDuration has not dots');
     });
 
-    test('music21.meter.TimeSignature beams', assert => {
+    test('music21.meter.TimeSignature.offsetToSpan', assert => {
         const m = new music21.meter.TimeSignature('4/4');
         const [start, end] = m.offsetToSpan(3.2);
         assert.equal(start, 3.0, 'beat starts at 3');
         assert.equal(end, 4.0, 'beat ends at 4');
 
+    });
+
+    test('music21.meter.TimeSignature.offsetToIndex', assert => {
+        // indexes are for now, integer beat numbers - 1.
+        let m = new music21.meter.TimeSignature('4/4');
+        assert.equal(m.offsetToIndex(0.0), 0, '0 gives index 0 in 4/4');
+        assert.equal(m.offsetToIndex(3.2), 3, '3.2 gives index 3 in 4/4');
+
+        m = new music21.meter.TimeSignature('2/2');
+        assert.equal(m.offsetToIndex(0.0), 0, '0 gives index 0 in 2/2');
+        assert.equal(m.offsetToIndex(3.2), 1, '3.2 gives index 1 in 2/2');
     });
 
     test('music21.meter.TimeSignature getBeams', assert => {

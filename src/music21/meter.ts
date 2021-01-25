@@ -24,6 +24,8 @@ import * as duration from './duration';
 
 // imports for typing
 import * as stream from './stream';
+import {Music21Object} from './base';
+import { Music21Exception } from './exceptions21';
 
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
@@ -187,6 +189,23 @@ export class TimeSignature extends base.Music21Object {
         return tempBeatGroups;
     }
 
+    offsetToIndex(
+        qLenPos: number,
+        {includeCoincidentBoundaries = false}: {includeCoincidentBoundaries?: boolean} = {},
+    ): number {
+        // This should be a method on a MeterSequence.
+        if (qLenPos >= this.barDuration.quarterLength || qLenPos < 0) {
+            throw new Music21Exception(
+                `cannot access from qLenPos ${qLenPos} `
+                + `where total duration is ${this.barDuration.quarterLength}`
+            );
+        }
+        // DOES NOT SUPPORT irregular beats yet...
+        const beatDuration = this.beatDuration;
+        // does not support includeCoincidentBoundaries yet.
+        return Math.floor(qLenPos / beatDuration.quarterLength);
+    }
+
     /**
      * Return a span of [start, end] for the current beat/beam grouping
      */
@@ -308,6 +327,40 @@ export class TimeSignature extends base.Music21Object {
         beamsList = beam.Beams.sanitizePartialBeams(beamsList);
         beamsList = beam.Beams.mergeConnectingPartialBeams(beamsList);
         return beamsList;
+    }
+
+    /**
+     *  Return the measure offset based on a Measure, if it exists,
+     *  otherwise based on meter modulus of the TimeSignature.
+     */
+    getMeasureOffsetOrMeterModulusOffset(el: Music21Object) {
+        const mOffset = el._getMeasureOffset();
+        const tsMeasureOffset = this._getMeasureOffset({includeMeasurePadding: false});
+        if ((mOffset + tsMeasureOffset) < this.barDuration.quarterLength) {
+            return mOffset;
+        } else {
+            const post = common.posMod((mOffset - tsMeasureOffset), this.barDuration.quarterLength);
+            return post;
+        }
+    }
+
+    /**
+     *  Given a quarter length position into the meter, return a numerical progress
+        through the beat (where beats count from one) with a floating-point or fractional value
+        between 0 and 1 appended to this value that gives the proportional progress into the beat.
+
+        For faster, integer values, use simply `.getBeat()`
+
+        NOTE: currently returns floats only, no fractions.
+
+        TODO: this does not allow for irregular beat proportions
+     */
+    getBeatProportion(qLenPos: number): number {
+        const beatIndex = this.offsetToIndex(qLenPos);
+        const [start, end] = this.offsetToSpan(qLenPos);
+        const totalRange = end - start;
+        const progress = qLenPos - start;
+        return beatIndex + 1 + (progress / totalRange);
     }
 
     /**
