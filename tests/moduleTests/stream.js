@@ -504,6 +504,8 @@ export default function tests() {
         assert.equal(n2.beams.getByNumber(1).type, 'stop');
         assert.equal(n1.stemDirection, 'up');
         assert.equal(n2.stemDirection, 'up');
+
+        //
     });
 
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {

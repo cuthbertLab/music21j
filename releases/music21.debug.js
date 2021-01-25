@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.54 built on 2021-01-24.
+ * music21j 0.9.56 built on 2021-01-24.
  * Copyright (c) 2013-2021 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -55437,7 +55437,7 @@ class NotRest extends GeneralNote {
     this.noteheadFill = 'default';
     this.noteheadColor = 'black';
     this.noteheadParenthesis = false;
-    this.volume = undefined; // not a real object yet.
+    this.volume = 64; // not a real object yet.
 
     this._stemDirection = 'unspecified';
     this.beams = new _beam__WEBPACK_IMPORTED_MODULE_9__["Beams"]();
@@ -55826,6 +55826,7 @@ class Rest extends GeneralNote {
     this.name = 'rest';
     this.lineShift = 0;
     this.color = 'black';
+    this.volume = 0;
     this.name = 'rest';
   }
 
