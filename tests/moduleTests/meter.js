@@ -65,6 +65,28 @@ export default function tests() {
         }
     });
 
+    test('music21.meter.TimeSignature getBeams 3/4', assert => {
+        const m = new music21.stream.Measure();
+        m.append(new music21.note.Note('C', 0.5));
+        m.append(new music21.note.Note('C', 0.5));
+        m.append(new music21.note.Note('C', 0.5));
+        m.append(new music21.note.Note('C', 0.5));
+        m.append(new music21.note.Note('C', 1.0));
+        const ts = new music21.meter.TimeSignature('3/4');
+        const beamsList = ts.getBeams(m);  // this was not finding 4th beam before.
+
+        for (let i = 0; i <= 3; i++) {
+            assert.ok(beamsList[i] instanceof music21.beam.Beams);
+        }
+        assert.strictEqual(typeof beamsList[4], 'undefined');
+
+        assert.strictEqual(beamsList[0].beamsList[0].type, 'start');
+        assert.strictEqual(beamsList[1].beamsList[0].type, 'stop');
+        assert.strictEqual(beamsList[2].beamsList[0].type, 'start');
+        assert.strictEqual(beamsList[3].beamsList[0].type, 'stop');
+
+    });
+
     test('music21.meter.TimeSignature getBeams incomplete measure', assert => {
         const m = new music21.stream.Measure();
 
