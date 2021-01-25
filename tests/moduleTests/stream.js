@@ -258,10 +258,10 @@ export default function tests() {
         const pf = p.flat;
         assert.equal(pf.get(0).offset, 0.0);
         assert.equal(pf.get(1).offset, 4.0);
-        assert.ok(pf.isFlat, 'flat has no substremes');
+        assert.ok(pf.isFlat, 'flat has no substreams');
 
         const pf2 = p.flat; // repeated calls do not change
-        assert.ok(pf2.isFlat, 'flat has no substremes');
+        assert.ok(pf2.isFlat, 'flat has no substreams');
         assert.equal(
             pf2.get(0).offset,
             0.0,
@@ -571,4 +571,37 @@ export default function tests() {
         assert.equal(two_options.events.click, 'fake_event');
         assert.ok(two_options.events.dblclick === old_one_dblclick);
     });
+
+    test('music21.stream.Score.findNoteForClick', assert => {
+        const p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
+        const p2 = music21.tinyNotation.TinyNotation('4/4 A1    C#1   E#1');
+        const s = new music21.stream.Score();
+        s.insert(0, p1);
+        s.insert(0, p2);
+        s.appendNewDOM();  // we need to generate a DOM even if we are not using it.
+        const x = 100;
+        let y = 20;
+        let [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, 43);
+        assert.strictEqual(foundNote, p1.flat.notes.get(0));
+        y = 100;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, 27);
+        assert.equal(foundNote.pitch.name, p1.flat.notes.get(0).pitch.name);
+
+        // check that we eventually move to p2
+        y = 150;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, 29);
+        assert.equal(foundNote.pitch.name, p2.flat.notes.get(0).pitch.name);
+
+        // check that we never move to another part even if very low
+        y = 300;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, -1);
+        assert.equal(foundNote.pitch.name, p2.flat.notes.get(0).pitch.name);
+
+        // assert.equal(foundNote.pitch.name, p1.flat.notes.get(1).pitch.name);
+    });
+
 }

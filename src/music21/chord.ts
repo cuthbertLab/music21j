@@ -56,7 +56,7 @@ export class Chord extends note.NotRest {
     protected _chordTablesAddress: any = undefined;
     protected _chordTablesAddressNeedsUpdating: boolean = true; // only update when needed
 
-    constructor(notes: string|Array<any> = undefined) {
+    constructor(notes: string|any[] = undefined) {
         super();
         if (typeof notes === 'undefined') {
             notes = [];

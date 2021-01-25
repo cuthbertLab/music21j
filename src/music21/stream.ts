@@ -2709,8 +2709,8 @@ export class Stream extends base.Music21Object {
      * @returns {Array} [diatonicNoteNum, closestXNote]
      */
     findNoteForClick(
-        svg: HTMLElement|SVGElement,
-        e: MouseEvent|TouchEvent|JQuery.MouseEventBase,
+        svg?: HTMLElement|SVGElement,
+        e?: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
     ): [number, base.Music21Object] {
@@ -3301,8 +3301,8 @@ export class Part extends Stream {
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
     findNoteForClick(
-        svg: HTMLElement|SVGElement,
-        e: MouseEvent|TouchEvent|JQuery.MouseEventBase,
+        svg?: HTMLElement|SVGElement,
+        e?: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
     ): [number, base.Music21Object] {
@@ -3311,7 +3311,7 @@ export class Part extends Stream {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
         // debug = true;
-        if (debug) {
+        if (debug && svg !== undefined) {
             console.log(
                 'this.estimateStreamHeight(): '
                     + this.estimateStreamHeight()
@@ -3608,8 +3608,8 @@ export class Score extends Stream {
      * returns [diatonicNoteNum, m21Element]
      */
     findNoteForClick(
-        svg: HTMLElement|SVGElement,
-        e: MouseEvent|TouchEvent|JQuery.MouseEventBase,
+        svg?: HTMLElement|SVGElement,
+        e?: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
     ): [number, base.Music21Object] {
@@ -3621,16 +3621,22 @@ export class Score extends Stream {
         // defaults to 120 and includes ledger line area
         const staffHeight = this.renderOptions.staffAreaHeight;
         const [systemIndex, scaledYFromSystemTop] = this.systemIndexAndScaledY(y);
-        const partIndex = Math.floor(scaledYFromSystemTop / staffHeight);
-        const scaledYinPart = scaledYFromSystemTop - partIndex * staffHeight;
+        let partIndex = Math.floor(scaledYFromSystemTop / staffHeight);
         // console.log('systemIndex: ' + systemIndex + ' partIndex: ' + partIndex);
-        const rightPart = this.parts.get(partIndex);
+        let rightPart = this.parts.get(partIndex);
         if (rightPart === undefined) {
-            return [undefined, undefined]; // may be too low?
+            partIndex = this.parts.length - 1;  // may be too low?
+            rightPart = this.parts.get(partIndex);
+            if (rightPart === undefined) {
+                // degenerate Score with no Part objects
+                return [undefined, undefined];
+            }
         }
+        const scaledYinPart = scaledYFromSystemTop - partIndex * staffHeight;
 
         const clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
 
+        // console.log(rightPart, systemIndex, x);
         const foundNote = rightPart.noteElementFromScaledX(
             x,
             undefined,

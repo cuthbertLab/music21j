@@ -34,6 +34,7 @@
     "@babel/plugin-proposal-export-namespace-from": "^7.12.1",
     "@babel/plugin-transform-object-assign": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
+    "@types/qunit": "^2.11.1",
     "@types/jquery": "^3.5.3",
     "@typescript-eslint/eslint-plugin": "^2.7.0",
     "@typescript-eslint/parser": "^2.7.0",
