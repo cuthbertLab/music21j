@@ -622,7 +622,7 @@ export class Renderer {
                         activeBeamGroupNotes.push(n.activeVexflowNote);
                     }
                     if (eighthNoteBeam.type === 'stop') {
-                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, true);
+                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, false);
                         this.beamGroups.push(vfBeam);
                         activeBeamGroupNotes = [];
                     }

@@ -477,6 +477,28 @@ export default function tests() {
         assert.notOk(c.notes[4].pitch.accidental.displayStatus);  // F# from key signature
     });
 
+    test('music21.stream.Stream makeBeams with stemDirection', assert => {
+        const n1 = new music21.note.Note('C5', 0.5);
+        n1.stemDirection = 'up';
+        const n2 = new music21.note.Note('C5', 0.5);
+        n2.stemDirection = 'up';
+        const n3 = new music21.note.Note('D5');
+        n3.stemDirection = 'up';
+        const m = new music21.stream.Measure();
+        m.renderOptions.useVexflowAutobeam = false;
+        m.timeSignature = new music21.meter.TimeSignature('2/4');
+        m.append(n1);
+        m.append(n2);
+        m.append(n3);
+        m.makeBeams({inPlace: true});
+        assert.ok(n1.beams.getByNumber(1) instanceof music21.beam.Beam);
+        assert.ok(n2.beams.getByNumber(1) instanceof music21.beam.Beam);
+        assert.equal(n1.beams.getByNumber(1).type, 'start');
+        assert.equal(n2.beams.getByNumber(1).type, 'stop');
+        assert.equal(n1.stemDirection, 'up');
+        assert.equal(n2.stemDirection, 'up');
+    });
+
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
         p1.makeAccidentals();
