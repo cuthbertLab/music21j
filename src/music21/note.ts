@@ -440,6 +440,15 @@ export class NotRest extends GeneralNote {
         /* TODO: check notehead, noteheadFill, noteheadParentheses */
     }
 
+    get pitches(): pitch.Pitch[] {
+        return [];
+    }
+
+    set pitches(_value: pitch.Pitch[]) {
+        // purposely does nothing
+    }
+
+
     get stemDirection() {
         return this._stemDirection;
     }
@@ -500,79 +509,57 @@ export class Note extends NotRest {
     constructor(nn: string|pitch.Pitch = 'C4', ql: number=1.0) {
         super(ql);
         if (nn instanceof pitch.Pitch) {
-            this.pitch = nn;
+            this.pitch = nn as pitch.Pitch;
         } else {
-            this.pitch = new pitch.Pitch(nn);
+            this.pitch = new pitch.Pitch(nn as string);
         }
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return this.name;
     }
 
-    /**
-     *
-     * @type {string}
-     */
-    get name() {
+    get name(): string {
         return this.pitch.name;
     }
 
-    set name(nn) {
+    set name(nn: string) {
         this.pitch.name = nn;
     }
 
-    /**
-     *
-     * @type {string}
-     */
-    get nameWithOctave() {
+    get nameWithOctave(): string {
         return this.pitch.nameWithOctave;
     }
 
-    set nameWithOctave(nn) {
+    set nameWithOctave(nn: string) {
         this.pitch.nameWithOctave = nn;
     }
 
-    /**
-     *
-     * @type {string}
-     */
-    get step() {
+    get step(): string {
         return this.pitch.step;
     }
 
-    set step(nn) {
+    set step(nn: string) {
         this.pitch.step = nn;
     }
 
-    /**
-     *
-     * @type {number}
-     */
-    get octave() {
+    get octave(): number {
         return this.pitch.octave;
     }
 
-    set octave(nn) {
+    set octave(nn: number) {
         this.pitch.octave = nn;
     }
 
-    /**
-     *
-     * @returns {music21.pitch.Pitch[]}
-     */
-    get pitches() {
+    get pitches(): pitch.Pitch[] {
         return [this.pitch];
     }
 
-    set pitches(value) {
+    set pitches(value: pitch.Pitch[]) {
+        if (!value.length) {
+            throw new Error('Pitches must be an Array of one (or more) pitches');
+        }
         this.pitch = value[0];
-        // TODO: raise NoteException on index error.
     }
 
 
@@ -585,7 +572,7 @@ export class Note extends NotRest {
      * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
      * @returns {this} Original object, for chaining methods
      */
-    setStemDirectionFromClef(clef) {
+    setStemDirectionFromClef(clef): this {
         if (clef !== undefined) {
             this.stemDirection = this.getStemDirectionFromClef(clef);
         }
@@ -595,14 +582,14 @@ export class Note extends NotRest {
     /**
      * Same as setStemDirectionFromClef, but do not set the note, just return it.
      */
-    getStemDirectionFromClef(clef) {
+    getStemDirectionFromClef(clef): string {
         if (clef === undefined) {
             return undefined;
         }
         const midLine = clef.lowestLine + 4;
-        const DNNFromCenter = this.pitch.diatonicNoteNum - midLine;
-        // console.log(DNNFromCenter, this.pitch.nameWithOctave);
-        if (DNNFromCenter >= 0) {
+        const dnnFromCenter = this.pitch.diatonicNoteNum - midLine;
+        // console.log(dnnFromCenter, this.pitch.nameWithOctave);
+        if (dnnFromCenter >= 0) {
             return 'down';
         } else {
             return 'up';

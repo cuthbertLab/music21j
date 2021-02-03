@@ -124,11 +124,8 @@ export class Clef extends base.Music21Object {
      * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
      * used for Vex.Flow which requires all pitches to be input as if they
      * are in treble clef.
-     *
-     * @param {music21.pitch.Pitch} p
-     * @returns {music21.pitch.Pitch} new pitch
      */
-    convertPitchToTreble(p) {
+    convertPitchToTreble(p: pitch.Pitch): pitch.Pitch {
         if (this.lowestLine === undefined) {
             console.log('no first line defined for clef', this.name, this);
             return p; // error
@@ -139,6 +136,52 @@ export class Clef extends base.Music21Object {
         tempPitch.diatonicNoteNum += lowestLineDifference;
         tempPitch.accidental = p.accidental;
         return tempPitch;
+    }
+
+    getStemDirectionForPitches(
+        pitchList: pitch.Pitch|pitch.Pitch[],
+        {
+            firstLastOnly=true,
+            extremePitchOnly=true,
+        }: {
+            firstLastOnly?: boolean,
+            extremePitchOnly?: boolean,
+        } = {},
+    ): string {
+        let pitchRealList: pitch.Pitch[];
+        if (!(pitchList instanceof Array)) {
+            pitchRealList = [pitchList as pitch.Pitch];
+        } else {
+            pitchRealList = pitchList as pitch.Pitch[];
+        }
+
+        if (!pitchRealList.length) {
+            throw new Error('getStemDirectionForPitches cannot operate on an empty Array');
+        }
+
+        let relevantPitches: pitch.Pitch[] = [];
+        if (extremePitchOnly) {
+            pitchRealList.sort((a, b) => a.diatonicNoteNum - b.diatonicNoteNum);
+            const pitchMin = pitchRealList[0];
+            const pitchMax = pitchRealList[pitchRealList.length - 1];
+            relevantPitches = [pitchMin, pitchMax];
+        } else if (firstLastOnly) {
+            relevantPitches = [pitchRealList[0], pitchRealList[pitchRealList.length - 1]];
+        } else {
+            relevantPitches = pitchRealList;
+        }
+
+        let differenceSum = 0;
+        const midLine = this.lowestLine + 4;
+        for (const p of relevantPitches) {
+            differenceSum += p.diatonicNoteNum - midLine;
+        }
+
+        if (differenceSum >= 0) {
+            return 'down';
+        } else {
+            return 'up';
+        }
     }
 }
 

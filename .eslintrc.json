@@ -26,6 +26,7 @@
         "dot-location": ["error", "property"],
         "dot-notation": ["error"],
         "function-paren-newline": ["warn"],
+        "generator-star-spacing": ["warn", {"before":  true, "after":  true}],
         "indent": ["error", 4, {
             "ignoredNodes": ["TemplateLiteral > *.expressions"]
         }],

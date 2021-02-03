@@ -13,6 +13,9 @@ function get_stream_and_note() {
 }
 
 
+const alla_breve_test = "2/2 c8 d e f   trip{a b c' a b c'}  f' e' d' G  a b c' d'";
+
+
 export default function tests() {
     test('music21.stream.Stream', assert => {
         const [s, n] = get_stream_and_note();
@@ -498,7 +501,7 @@ export default function tests() {
         m.append(n2);
         m.append(n3);
         m.makeBeams({inPlace: true});
-        assert.ok(n1.beams.getByNumber(1) instanceof music21.beam.Beam);
+        assert.ok(n1.beams.getByNumber(1) instanceof music21.beam.Beam, 'one!');
         assert.ok(n2.beams.getByNumber(1) instanceof music21.beam.Beam);
         assert.equal(n1.beams.getByNumber(1).type, 'start');
         assert.equal(n2.beams.getByNumber(1).type, 'stop');
@@ -635,4 +638,87 @@ export default function tests() {
         // assert.equal(foundNote.pitch.name, p1.flat.notes.get(1).pitch.name);
     });
 
+    test('music21.stream.makeNotation setStemDirectionOneGroup', assert => {
+        const p = music21.tinyNotation.TinyNotation(alla_breve_test);
+        p.makeBeams({inPlace: true, setStemDirections: false});
+        const [a, b, c, d] = Array.from(
+            music21.stream.makeNotation.iterateBeamGroups(p)
+        );
+
+        const testDirections = (group, expected) => {
+            assert.equal(group.length, expected.length, `${group.length} in group, not expected ${expected.length}`);
+            for (let j = 0; j < group.length; j++) {
+                assert.equal(group[j].stemDirection, expected[j]);
+            }
+        };
+
+        testDirections(a, ['unspecified', 'unspecified', 'unspecified', 'unspecified']);
+        const setStemDirectionOneGroup = music21.stream.makeNotation.setStemDirectionOneGroup;
+        setStemDirectionOneGroup(a, { setNewStems: false });
+        testDirections(a, ['unspecified', 'unspecified', 'unspecified', 'unspecified']);
+        setStemDirectionOneGroup(a);
+        testDirections(a, ['up', 'up', 'up', 'up']);
+        for (const n of a) {
+            n.stemDirection = 'down';
+        }
+        testDirections(a, ['down', 'down', 'down', 'down']);
+        setStemDirectionOneGroup(a, { overrideConsistentStemDirections: true });
+        testDirections(a, ['up', 'up', 'up', 'up']);
+
+        setStemDirectionOneGroup(b);
+        testDirections(b, ['down', 'down', 'down', 'down', 'down', 'down']);
+
+        setStemDirectionOneGroup(c);
+        testDirections(c, ['up', 'up', 'up', 'up']);
+
+        d[0].stemDirection = 'down';
+        d[1].stemDirection = 'noStem';
+        d[2].stemDirection = 'double';
+        d[3].stemDirection = 'up';
+        setStemDirectionOneGroup(d);
+        testDirections(d, ['down', 'noStem', 'double', 'down']);
+    });
+
+    test('music21.stream.makeNotation setStemDirectionForBeamGroups', assert => {
+        const p = music21.tinyNotation.TinyNotation(alla_breve_test);
+        p.makeBeams({inPlace: true, setStemDirections: false});
+        const d = Array.from(music21.stream.makeNotation.iterateBeamGroups(p))[3];
+        d[0].stemDirection = 'down';
+        d[1].stemDirection = 'noStem';
+        d[2].stemDirection = 'double';
+        d[3].stemDirection = 'up';
+
+        music21.stream.makeNotation.setStemDirectionForBeamGroups(p);
+        const stemDirections = Array.from(p.flat.notes).map(n => n.stemDirection);
+        assert.deepEqual(
+            stemDirections,
+            [
+                'up', 'up', 'up', 'up',
+                'down', 'down', 'down', 'down', 'down', 'down',
+                'up', 'up', 'up', 'up',
+                'down', 'noStem', 'double', 'down',
+            ]
+        );
+    });
+
+    test('music21.stream.makeNotation testMakeBeamsWithStemDirection', assert => {
+        const p = music21.tinyNotation.TinyNotation(alla_breve_test);
+        const pn = Array.from(p.flat.notes);
+        pn[14].stemDirection = 'down';
+        pn[15].stemDirection = 'noStem';
+        pn[16].stemDirection = 'double';
+        pn[17].stemDirection = 'up';
+
+        p.makeBeams({inPlace: true});
+        const stemDirections = Array.from(p.flat.notes).map(n => n.stemDirection);
+        assert.deepEqual(
+            stemDirections,
+            [
+                'up', 'up', 'up', 'up',
+                'down', 'down', 'down', 'down', 'down', 'down',
+                'up', 'up', 'up', 'up',
+                'down', 'noStem', 'double', 'down',
+            ]
+        );
+    });
 }
