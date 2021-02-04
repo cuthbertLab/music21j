@@ -39,7 +39,6 @@ import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
 
 import * as base from './base';
-import * as beam from './beam';
 import * as clef from './clef';
 import * as common from './common';
 import { Duration } from './duration';
@@ -56,12 +55,14 @@ import { GeneralObjectExporter } from './musicxml/m21ToXml';
 
 import * as filters from './stream/filters';
 import * as iterator from './stream/iterator';
+import * as makeNotation from './stream/makeNotation';
 
 // for typing only
 import {chord, key} from '../music21_modules';
 
 export { filters };
 export { iterator };
+export { makeNotation };
 
 export class StreamException extends Music21Exception {}
 
@@ -1421,62 +1422,13 @@ export class Stream extends base.Music21Object {
      *
      * Called from renderVexflow()
      */
-    makeBeams({ inPlace=false }={}): this {
-        let returnObj = this;
-        if (!inPlace) {
-            returnObj = this.clone(true);
-        }
-        let mColl;
-        if (this.classes.includes('Measure')) {
-            mColl = [returnObj];
-        } else {
-            mColl = [];
-            for (const m of returnObj.getElementsByClass('Measure')) {
-                mColl.push(m);
-            }
-        }
-        let lastTimeSignature;
-        for (const m of mColl) {
-            if (m.timeSignature !== undefined) {
-                lastTimeSignature = m.timeSignature;
-            }
-            if (lastTimeSignature === undefined) {
-                throw new StreamException('Need a Time Signature to process beams');
-            }
-            // todo voices!
-            if (m.length <= 1) {
-                continue; // nothing to beam.
-            }
-            const noteStream = m.notesAndRests;
-            const durList = [];
-            for (const n of noteStream) {
-                durList.push(n.duration);
-            }
-            const durSum = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
-            const barQL = lastTimeSignature.barDuration.quarterLength;
-            if (durSum > barQL) {
-                continue;
-            }
-            let offset = 0.0;
-            if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
-                offset = m.paddingLeft;
-            } else if (noteStream.highestTime < barQL) {
-                offset = barQL - noteStream.highestTime;
-            }
-            const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
-            for (let i = 0; i < noteStream.length; i++) {
-                const n = noteStream.get(i);
-                const thisBeams = beamsList[i];
-                if (thisBeams !== undefined) {
-                    n.beams = thisBeams;
-                } else {
-                    n.beams = new beam.Beams();
-                }
-            }
-        }
-
-        // returnObj.streamStatus.beams = true;
-        return returnObj;
+    makeBeams(
+        {
+            inPlace=false,
+            setStemDirections=true,
+        }: makeNotation.MakeBeamsOptions={}
+    ): this {
+        return makeNotation.makeBeams(this, { inPlace, setStemDirections }) as this;
     }
 
     /**
@@ -3411,16 +3363,14 @@ export class Score extends Stream {
 
     /**
      * Override main stream makeBeams to call on each part.
-     *
-     * @param {boolean} [inPlace=false]
      */
-    makeBeams({ inPlace=false }={}) {
+    makeBeams({ inPlace=false, setStemDirections=true }: makeNotation.MakeBeamsOptions = {}) {
         let returnObj = this;
         if (!inPlace) {
             returnObj = this.clone(true);
         }
         for (const p of returnObj.parts) {
-            p.makeBeams({inPlace: true});
+            p.makeBeams({inPlace: true, setStemDirections});
         }
         // returnObj.streamStatus.beams = true;
         return returnObj;

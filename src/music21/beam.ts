@@ -284,7 +284,7 @@ export class Beams extends prebase.ProtoM21Object {
      */
     getByNumber(number: number): Beam|undefined {
         if (!this.getNumbers().includes(number)) {
-            throw new Music21Exception('beam number error: ' + number);
+            throw new Music21Exception('beam number ' + number + ' cannot be accessed');
         }
         for (const thisBeam of this.beamsList) {
             if (thisBeam.number === number) {
