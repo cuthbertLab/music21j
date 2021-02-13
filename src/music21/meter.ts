@@ -41,29 +41,55 @@ import { Music21Exception } from './exceptions21';
 export class TimeSignature extends base.Music21Object {
     static get className() { return 'music21.meter.TimeSignature'; }
 
-    _numerator: number;
-    _denominator: number;
-    _beatGroups: number[][];
+    _numerator: number = 4;
+    _denominator: number = 4;
+    _overwrittenBarDuration;
+    symbol: string = '';
+    symbolizeDenominator: boolean = false;
+
+    // music21j simple attributes;
+    _beatGroups: number[][] = [];
     _overwrittenBeatCount;
     _overwrittenBeatDuration;
 
-    constructor(meterString: string ='4/4') {
+    constructor(value: string = '4/4', divisions?) {
         super();
         this.classSortOrder = 4;
-
-        this._numerator = 4;
-        this._denominator = 4;
-        this._beatGroups = [];
-        this._overwrittenBeatCount = undefined;
-        this._overwrittenBeatDuration = undefined;
-        if (typeof meterString === 'string') {
-            this.ratioString = meterString;
-        }
+        this.resetValues(value, divisions);
     }
 
     stringInfo(): string {
         return this.ratioString;
     }
+
+    resetValues(value: string = '4/4', divisions?) {
+        this.symbol = '';
+        this.symbolizeDenominator = false;
+        this._overwrittenBarDuration = undefined;
+
+        // m21j only, simple functions
+        this._beatGroups = [];
+        this._overwrittenBeatCount = undefined;
+        this._overwrittenBeatDuration = undefined;
+
+        this.load(value, divisions);
+    }
+
+    load(value: string, divisions?) {
+        const valueLower = value.toLowerCase();
+        if (valueLower === 'common' || valueLower === 'c') {
+            value = '4/4';
+            this.symbol = 'common';
+        } else if (valueLower === 'cut' || valueLower === 'allabreve') {
+            value = '2/2';
+            this.symbol = 'cut';
+        }
+        const meterList = value.split('/');
+        this.numerator = parseInt(meterList[0]);
+        this.denominator = parseInt(meterList[1]);
+    }
+
+    // loadRatio is deprecated in m21p so not implemented here.
 
     get numerator(): number {
         return this._numerator;
@@ -86,25 +112,29 @@ export class TimeSignature extends base.Music21Object {
     }
 
     set ratioString(meterString: string) {
-        const meterList = meterString.split('/');
-        this.numerator = parseInt(meterList[0]);
-        this.denominator = parseInt(meterList[1]);
-        this._beatGroups = [];
+        this.resetValues(meterString);
     }
 
     get barDuration(): duration.Duration {
+        if (this._overwrittenBarDuration) {
+            return this._overwrittenBarDuration;
+        }
         const ql = 4.0 * this._numerator / this._denominator;
         return new duration.Duration(ql);
     }
 
-    get beatGroups() {
+    set barDuration(value: duration.Duration) {
+        this._overwrittenBarDuration = value;
+    }
+
+    get beatGroups(): number[][] {
         if (this._beatGroups.length === 0) {
             this._beatGroups = this.computeBeatGroups();
         }
         return this._beatGroups;
     }
 
-    set beatGroups(newGroups) {
+    set beatGroups(newGroups: number[][]) {
         this._beatGroups = newGroups;
     }
 
@@ -116,8 +146,14 @@ export class TimeSignature extends base.Music21Object {
         if (this._overwrittenBeatCount !== undefined) {
             return this._overwrittenBeatCount;
         }
-        if (this.numerator > 3 && this.numerator % 3 === 0) {
-            return this.numerator / 3;
+        if (this.numerator % 3 === 0) {
+            if (this.numerator > 3 || this.denominator >= 8) {
+                // 6/8, 9/8, 12/8, and 6/4, 6/2, 9/2, etc.
+                // and 3/8, 3/16, 3/32 but not 3/4, 3/2, etc.
+                return this.numerator / 3;
+            } else {
+                return this.numerator;
+            }
         } else {
             return this.numerator;
         }
@@ -136,7 +172,7 @@ export class TimeSignature extends base.Music21Object {
      * or, if set manually, it can return a list of Durations For
      * asymmetrical meters.
      */
-    get beatDuration() {
+    get beatDuration(): duration.Duration {
         const dur = this.barDuration;
         dur.quarterLength /= this.beatCount;
         return dur;
@@ -146,14 +182,14 @@ export class TimeSignature extends base.Music21Object {
      * Set beatDuration to a duration.Duration object or
      * if the client can handle it, a list of Duration objects...
      */
-    set beatDuration(overwrite) {
+    set beatDuration(overwrite: duration.Duration) {
         this._overwrittenBeatDuration = overwrite;
     }
 
     /**
      * Compute the Beat Group according to this time signature.
      *
-     * @returns {Array<Array<int>>} a list of numerator and denominators,
+     * returns a list of numerator and denominators,
      *     find a list of beat groups.
      */
     computeBeatGroups(): number[][] {
