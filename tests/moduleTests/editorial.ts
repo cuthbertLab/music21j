@@ -9,7 +9,7 @@ export default function tests() {
         assert.notOk(n.hasEditorialInformation, 'newly created note has no editorialInformation');
         assert.ok(n.editorial instanceof music21.editorial.Editorial);
         assert.ok(n.hasEditorialInformation);
-        const ed = n.editorial;
+        const ed = n.editorial as any;
         ed.hello = true;
         assert.ok(ed.hello);
     });

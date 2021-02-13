@@ -10,6 +10,8 @@ export default function tests() {
     });
     test('music21.scale.AbstractDiatonicScale', assert => {
         const sc = new music21.scale.AbstractDiatonicScale('major');
+        // noinspection TypeScriptUnresolvedVariable
+        // @ts-ignore
         const net = sc._net;
         assert.equal(net.length, 7);
         assert.equal(net[0].name, 'M2');

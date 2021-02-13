@@ -7,14 +7,13 @@ const { test } = QUnit;
 export default function tests() {
     test('music21.voiceLeading.VoiceLeadingQuartet', assert => {
         const VLQ = music21.voiceLeading.VoiceLeadingQuartet;
-        const sc = new VLQ();
-        assert.ok(sc.classes.includes('VoiceLeadingQuartet'));
         const N = music21.note.Note;
         const v1n1 = new N('C4');
         const v1n2 = new N('B3');
         const v2n1 = new N('F3');
         let v2n2 = new N('E3');
         const vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+        assert.ok(vlq1.classes.includes('VoiceLeadingQuartet'));
         assert.equal(vlq1.vIntervals[0].name, 'P5');
         assert.equal(vlq1.vIntervals[1].name, 'P5');
         assert.equal(vlq1.hIntervals[0].name, 'm2');
@@ -43,8 +42,6 @@ export default function tests() {
         'music21.voiceLeading.VoiceLeadingQuartet proper resolution',
         assert => {
             const VLQ = music21.voiceLeading.VoiceLeadingQuartet;
-            const sc = new VLQ();
-            assert.ok(sc.classes.includes('VoiceLeadingQuartet'));
             const N = music21.note.Note;
             let v1n1 = new N('B-4');
             let v1n2 = new N('A4');
@@ -111,7 +108,7 @@ export default function tests() {
             vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
             assert.ok(
                 vlq1.isProperResolution(),
-                'P4 moves down: ' + vlq1.v1n1.ps + vlq1.v1n2.ps
+                'P4 moves down: ' + vlq1.v1n1.pitch.ps + vlq1.v1n2.pitch.ps
             );
         }
     );

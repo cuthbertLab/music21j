@@ -28,6 +28,7 @@ export default function tests() {
         s.add(st);
         assert.equal(s.length, 2, 'should have two sites now');
         assert.ok(s.includes(st));
+        // @ts-ignore
         const first = s._keysByTime()[0];
         assert.equal(first, music21.sites.getId(st));
 

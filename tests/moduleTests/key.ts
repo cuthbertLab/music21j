@@ -31,7 +31,7 @@ export default function tests() {
             const thisTest = testSharps[i];
             const expectedSharps = thisTest[0];
             const expectedMode = thisTest[1];
-            const givenKeyName = thisTest[2];
+            const givenKeyName = thisTest[2] as string;
             const givenMode = thisTest[3];
             const k = new music21.key.Key(givenKeyName, givenMode);
             const foundSharps = k.sharps;

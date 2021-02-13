@@ -97,7 +97,7 @@ export default function tests() {
 
         t2 = '#IV';
         rn1 = new music21.roman.RomanNumeral(t2, 'F');
-        assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F #IV');
+        assert.equal(rn1.scaleDegree, 4, 'test scale degree of F #IV');
         assert.equal(rn1.root().name, 'B', 'test root of F #IV');
         assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
         assert.equal(rn1.pitches.length, 3, 'should be three pitches');
@@ -108,7 +108,7 @@ export default function tests() {
         assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
 
         rn1 = new music21.roman.RomanNumeral('Cad64', 'c');
-        assert.equal(rn1.scaleDegree, 1, 'test scale dgree of Cad64');
+        assert.equal(rn1.scaleDegree, 1, 'test scale degree of Cad64');
         assert.equal(rn1.root().name, 'C', 'test root of Cad64');
         assert.equal(rn1.bass().name, 'G', 'test bass of Cad64');
         assert.equal(rn1.third.name, 'E-', 'test third of Cad64');
