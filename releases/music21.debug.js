@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.57 built on 2021-02-08.
+ * music21j 0.9.59 built on 2021-02-13.
  * Copyright (c) 2013-2021 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -893,6 +893,46 @@ module.exports = {
   // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
   findIndex: createMethod(6)
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/internals/array-last-index-of.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/core-js/internals/array-last-index-of.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js/internals/to-indexed-object.js");
+var toInteger = __webpack_require__(/*! ../internals/to-integer */ "./node_modules/core-js/internals/to-integer.js");
+var toLength = __webpack_require__(/*! ../internals/to-length */ "./node_modules/core-js/internals/to-length.js");
+var arrayMethodIsStrict = __webpack_require__(/*! ../internals/array-method-is-strict */ "./node_modules/core-js/internals/array-method-is-strict.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var min = Math.min;
+var nativeLastIndexOf = [].lastIndexOf;
+var NEGATIVE_ZERO = !!nativeLastIndexOf && 1 / [1].lastIndexOf(1, -0) < 0;
+var STRICT_METHOD = arrayMethodIsStrict('lastIndexOf');
+// For preventing possible almost infinite loop in non-standard implementations, test the forward version of the method
+var USES_TO_LENGTH = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
+var FORCED = NEGATIVE_ZERO || !STRICT_METHOD || !USES_TO_LENGTH;
+
+// `Array.prototype.lastIndexOf` method implementation
+// https://tc39.github.io/ecma262/#sec-array.prototype.lastindexof
+module.exports = FORCED ? function lastIndexOf(searchElement /* , fromIndex = @[*-1] */) {
+  // convert -0 to +0
+  if (NEGATIVE_ZERO) return nativeLastIndexOf.apply(this, arguments) || 0;
+  var O = toIndexedObject(this);
+  var length = toLength(O.length);
+  var index = length - 1;
+  if (arguments.length > 1) index = min(index, toInteger(arguments[1]));
+  if (index < 0) index = length + index;
+  for (;index >= 0; index--) if (index in O && O[index] === searchElement) return index || 0;
+  return -1;
+} : nativeLastIndexOf;
 
 
 /***/ }),
@@ -5219,6 +5259,25 @@ Iterators.Arguments = Iterators.Array;
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/modules/es.array.last-index-of.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/core-js/modules/es.array.last-index-of.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var lastIndexOf = __webpack_require__(/*! ../internals/array-last-index-of */ "./node_modules/core-js/internals/array-last-index-of.js");
+
+// `Array.prototype.lastIndexOf` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.lastindexof
+$({ target: 'Array', proto: true, forced: lastIndexOf !== [].lastIndexOf }, {
+  lastIndexOf: lastIndexOf
+});
 
 
 /***/ }),
@@ -47539,9 +47598,7 @@ class Editorial extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object"] 
 
     this.harmonicInterval = undefined; // noinspection JSUnusedGlobalSymbols
 
-    this.melodicInterval = undefined; // noinspection JSUnusedGlobalSymbols
-
-    this.misc = {};
+    this.melodicInterval = undefined;
   }
 
   static get className() {
@@ -51808,18 +51865,17 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_9__["Music21Object"] {
   constructor() {
-    var meterString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
+    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
+    var divisions = arguments.length > 1 ? arguments[1] : undefined;
     super();
-    this.classSortOrder = 4;
     this._numerator = 4;
     this._denominator = 4;
-    this._beatGroups = [];
-    this._overwrittenBeatCount = undefined;
-    this._overwrittenBeatDuration = undefined;
+    this.symbol = '';
+    this.symbolizeDenominator = false; // music21j simple attributes;
 
-    if (typeof meterString === 'string') {
-      this.ratioString = meterString;
-    }
+    this._beatGroups = [];
+    this.classSortOrder = 4;
+    this.resetValues(value, divisions);
   }
 
   static get className() {
@@ -51829,6 +51885,36 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_9__["Music21Object"] 
   stringInfo() {
     return this.ratioString;
   }
+
+  resetValues() {
+    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
+    var divisions = arguments.length > 1 ? arguments[1] : undefined;
+    this.symbol = '';
+    this.symbolizeDenominator = false;
+    this._overwrittenBarDuration = undefined; // m21j only, simple functions
+
+    this._beatGroups = [];
+    this._overwrittenBeatCount = undefined;
+    this._overwrittenBeatDuration = undefined;
+    this.load(value, divisions);
+  }
+
+  load(value, divisions) {
+    var valueLower = value.toLowerCase();
+
+    if (valueLower === 'common' || valueLower === 'c') {
+      value = '4/4';
+      this.symbol = 'common';
+    } else if (valueLower === 'cut' || valueLower === 'allabreve') {
+      value = '2/2';
+      this.symbol = 'cut';
+    }
+
+    var meterList = value.split('/');
+    this.numerator = parseInt(meterList[0]);
+    this.denominator = parseInt(meterList[1]);
+  } // loadRatio is deprecated in m21p so not implemented here.
+
 
   get numerator() {
     return this._numerator;
@@ -51851,15 +51937,20 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_9__["Music21Object"] 
   }
 
   set ratioString(meterString) {
-    var meterList = meterString.split('/');
-    this.numerator = parseInt(meterList[0]);
-    this.denominator = parseInt(meterList[1]);
-    this._beatGroups = [];
+    this.resetValues(meterString);
   }
 
   get barDuration() {
+    if (this._overwrittenBarDuration) {
+      return this._overwrittenBarDuration;
+    }
+
     var ql = 4.0 * this._numerator / this._denominator;
     return new _duration__WEBPACK_IMPORTED_MODULE_12__["Duration"](ql);
+  }
+
+  set barDuration(value) {
+    this._overwrittenBarDuration = value;
   }
 
   get beatGroups() {
@@ -51884,8 +51975,14 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_9__["Music21Object"] 
       return this._overwrittenBeatCount;
     }
 
-    if (this.numerator > 3 && this.numerator % 3 === 0) {
-      return this.numerator / 3;
+    if (this.numerator % 3 === 0) {
+      if (this.numerator > 3 || this.denominator >= 8) {
+        // 6/8, 9/8, 12/8, and 6/4, 6/2, 9/2, etc.
+        // and 3/8, 3/16, 3/32 but not 3/4, 3/2, etc.
+        return this.numerator / 3;
+      } else {
+        return this.numerator;
+      }
     } else {
       return this.numerator;
     }
@@ -51923,7 +52020,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_9__["Music21Object"] 
   /**
    * Compute the Beat Group according to this time signature.
    *
-   * @returns {Array<Array<int>>} a list of numerator and denominators,
+   * returns a list of numerator and denominators,
    *     find a list of beat groups.
    */
 
@@ -57413,19 +57510,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProtoM21Object", function() { return ProtoM21Object; });
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.set */ "./node_modules/core-js/modules/es.set.js");
-/* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.from */ "./node_modules/core-js/modules/es.array.from.js");
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_last_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.last-index-of */ "./node_modules/core-js/modules/es.array.last-index-of.js");
+/* harmony import */ var core_js_modules_es_array_last_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_last_index_of__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.set */ "./node_modules/core-js/modules/es.set.js");
+/* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__);
 
 
 
 
 
+
+
+
+
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * module for things that all music21-created objects, not just objects that can live in
@@ -57609,16 +57724,19 @@ class ProtoM21Object {
 
 
   isClassOrSubclass(testClass) {
+    var useTestClass;
+
     if (!(testClass instanceof Array)) {
-      testClass = [testClass];
+      useTestClass = [testClass];
+    } else {
+      useTestClass = testClass;
     }
 
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var _iterator = _createForOfIteratorHelper(useTestClass),
+        _step;
 
     try {
-      for (var _iterator = testClass[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var thisTestClass = _step.value;
 
         if (this.classSet.has(thisTestClass)) {
@@ -57626,18 +57744,9 @@ class ProtoM21Object {
         }
       }
     } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
+      _iterator.f();
     }
 
     return false;
