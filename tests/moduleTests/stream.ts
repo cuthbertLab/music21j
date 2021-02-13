@@ -1,9 +1,11 @@
+import $ from 'jquery';
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules';
 
 const { test } = QUnit;
 
-function get_stream_and_note() {
+
+function get_stream_and_note(): [music21.stream.Stream, music21.note.Note] {
     const s = new music21.stream.Stream();
     s.append(new music21.note.Note('C#5'));
     s.append(new music21.note.Note('D#5'));
@@ -24,7 +26,7 @@ export default function tests() {
 
         // test iteration.
         for (const n of s) {
-            const oct = n.pitch.octave;
+            const oct = (n as music21.note.Note).pitch.octave;
             assert.equal(oct, 5, 'all notes are octave 5.');
         }
     });
@@ -41,11 +43,11 @@ export default function tests() {
         assert.ok(t instanceof music21.stream.Stream);
         assert.equal(t.length, 3);
         assert.equal(t.length, s.length, 't.length should equal s.length');
-        const t0 = t.get(0);
+        const t0 = t.get(0) as music21.note.Note;
         assert.equal(t0.pitch.name, 'C#');
         for (let i = 0; i < t.length; i++) {
-            const tEl = t.get(i);
-            const sEl = s.get(i);
+            const tEl = t.get(i) as music21.note.Note;
+            const sEl = s.get(i) as music21.note.Note;
             assert.equal(tEl.offset, sEl.offset);
             assert.equal(tEl.pitch.name, sEl.pitch.name);
         }
@@ -77,7 +79,7 @@ export default function tests() {
         const indexes = [];
         const lengths = [];
         s.forEach((el, i, stream) => {
-            names.push(el.name);
+            names.push((el as music21.note.Note).name);
             indexes.push(i);
             lengths.push(stream.length);
         });
@@ -159,6 +161,8 @@ export default function tests() {
         assert.equal(s.highestTime, 3.0);
         assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
 
+        // noinspection TypeScriptValidateJSTypes
+        // @ts-ignore
         s.duration = new music21.duration.Duration(3.0);
         s.append(new music21.note.Note('D#5'));
         assert.equal(
@@ -242,9 +246,9 @@ export default function tests() {
         let n2 = new music21.note.Note('D#5');
         s.insert(1.0, n2);
 
-        assert.equal(s.get(0).name, 'C#');
-        assert.equal(s.get(1).name, 'D#');
-        assert.equal(s.get(2).name, 'E');
+        assert.equal((s.get(0) as music21.note.Note).name, 'C#');
+        assert.equal((s.get(1) as music21.note.Note).name, 'D#');
+        assert.equal((s.get(2) as music21.note.Note).name, 'E');
         assert.equal(s.get(0).offset, 0.0);
         assert.equal(s.get(1).offset, 1.0);
         assert.equal(s.get(2).offset, 2.0);
@@ -263,7 +267,7 @@ export default function tests() {
         p.append(m1);
         p.append(m2);
 
-        assert.equal(p.get(0).get(0).offset, 0.0);
+        assert.equal((p.get(0) as music21.stream.Stream).get(0).offset, 0.0);
         assert.notOk(p.isFlat, 'part has substreams');
         const pf = p.flat;
         assert.equal(pf.get(0).offset, 0.0);
@@ -304,7 +308,7 @@ export default function tests() {
             m.number = i + 1;
             p.append(m);
         }
-        for (const m of p.getElementsByClass('Measure')) {
+        for (const m of (Array.from(p.getElementsByClass('Measure')) as music21.stream.Measure[])) {
             if ([1, 3, 6, 9].includes(m.number)) {
                 m.renderOptions.startNewSystem = true;
             }
@@ -312,7 +316,8 @@ export default function tests() {
         assert.equal(p.numSystems(), 4);
         // the first measure is assumed to start a new
         // system no matter what...
-        p.getElementsByClass('Measure').get(0).renderOptions.startNewSystem = false;
+        const m0 = p.getElementsByClass('Measure').get(0) as music21.stream.Measure;
+        m0.renderOptions.startNewSystem = false;
         assert.equal(p.numSystems(), 4);
 
         // even an empty_part has a system.
@@ -375,7 +380,7 @@ export default function tests() {
         const outListNames = [];
         const outListOffsets = [];
         for (const n of s) {
-            outListNames.push(n.name);
+            outListNames.push((n as music21.note.Note).name);
             outListOffsets.push(n.offset);
         }
         assert.equal(outListNames[0], 'C');
@@ -459,7 +464,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
-        window.$(document.body).append(div1);
+        $(document.body).append(div1);
     });
     test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');
@@ -514,7 +519,7 @@ export default function tests() {
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
         p1.makeAccidentals();
-        let p_list = p1.recurse().notes.map(n => n.pitch);
+        let p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
         assert.notOk(p_list[0].accidental, 'p_list[0].accidental should not exist');
         assert.notOk(p_list[1].accidental, 'p_list[1].accidental should not exist');
         assert.ok(p_list[2].accidental.displayStatus);
@@ -524,11 +529,11 @@ export default function tests() {
         assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
 
         p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
-        const m1 = p1.getElementsByClass('Measure').get(0);
+        const m1 = p1.getElementsByClass('Measure').get(0) as music21.stream.Measure;
         const f_maj = new music21.key.Key('F');
         m1.insert(0, f_maj);
         p1.makeAccidentals();
-        p_list = p1.recurse().notes.map(n => n.pitch);
+        p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
 
         assert.notOk(p_list[5].accidental.displayStatus, 'first b-flat should not display');  // B flat
         assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
@@ -541,7 +546,7 @@ export default function tests() {
         s.insert(0, p1);
         s.insert(0, p2);
         const sf = s.flat.notes;
-        const sf_names = Array.from(sf).map(n => n.name);
+        const sf_names = (Array.from(sf) as music21.note.Note[]).map(n => n.name);
         assert.deepEqual(sf_names, ['C', 'A', 'D', 'E', 'C#', 'F', 'G', 'E#']);
         const sf_offsets = Array.from(sf).map(n => n.offset);
         assert.deepEqual(sf_offsets, [0, 0, 2, 4, 4, 6, 8, 8]);
@@ -621,21 +626,28 @@ export default function tests() {
         y = 100;
         [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 27);
-        assert.equal(foundNote.pitch.name, p1.flat.notes.get(0).pitch.name);
+        assert.equal(
+            (foundNote as music21.note.Note).pitch.name,
+            (p1.flat.notes.get(0) as music21.note.Note).pitch.name
+        );
 
         // check that we eventually move to p2
         y = 150;
         [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 29);
-        assert.equal(foundNote.pitch.name, p2.flat.notes.get(0).pitch.name);
+        assert.equal(
+            (foundNote as music21.note.Note).pitch.name,
+            (p2.flat.notes.get(0) as music21.note.Note).pitch.name
+        );
 
         // check that we never move to another part even if very low
         y = 300;
         [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, -1);
-        assert.equal(foundNote.pitch.name, p2.flat.notes.get(0).pitch.name);
-
-        // assert.equal(foundNote.pitch.name, p1.flat.notes.get(1).pitch.name);
+        assert.equal(
+            (foundNote as music21.note.Note).pitch.name,
+            (p2.flat.notes.get(0) as music21.note.Note).pitch.name
+        );
     });
 
     test('music21.stream.makeNotation setStemDirectionOneGroup', assert => {
@@ -689,7 +701,8 @@ export default function tests() {
         d[3].stemDirection = 'up';
 
         music21.stream.makeNotation.setStemDirectionForBeamGroups(p);
-        const stemDirections = Array.from(p.flat.notes).map(n => n.stemDirection);
+        const pn2 = Array.from(p.flat.notes) as music21.note.Note[];
+        const stemDirections = pn2.map(n => n.stemDirection);
         assert.deepEqual(
             stemDirections,
             [
@@ -703,14 +716,15 @@ export default function tests() {
 
     test('music21.stream.makeNotation testMakeBeamsWithStemDirection', assert => {
         const p = music21.tinyNotation.TinyNotation(alla_breve_test);
-        const pn = Array.from(p.flat.notes);
+        const pn = Array.from(p.flat.notes) as music21.note.Note[];
         pn[14].stemDirection = 'down';
         pn[15].stemDirection = 'noStem';
         pn[16].stemDirection = 'double';
         pn[17].stemDirection = 'up';
 
         p.makeBeams({inPlace: true});
-        const stemDirections = Array.from(p.flat.notes).map(n => n.stemDirection);
+        const pn2 = Array.from(p.flat.notes) as music21.note.Note[];
+        const stemDirections = pn2.map(n => n.stemDirection);
         assert.deepEqual(
             stemDirections,
             [

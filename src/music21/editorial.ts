@@ -22,8 +22,6 @@ export class Editorial extends ProtoM21Object {
     harmonicInterval: any = undefined;
     // noinspection JSUnusedGlobalSymbols
     melodicInterval: any = undefined;
-    // noinspection JSUnusedGlobalSymbols
-    misc: any = {};
 }
 
 export default Editorial;

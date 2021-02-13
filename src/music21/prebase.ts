@@ -179,11 +179,16 @@ export class ProtoM21Object {
      * n.isClassOrSubclass(['Note', 'Rest']); // true
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
-    isClassOrSubclass(testClass: string|string[]): boolean {
+    isClassOrSubclass(
+        testClass: string|typeof ProtoM21Object|(string | typeof ProtoM21Object)[]
+    ): boolean {
+        let useTestClass: (string | typeof ProtoM21Object)[];
         if (!(testClass instanceof Array)) {
-            testClass = [testClass];
+            useTestClass = [testClass] as (string | typeof ProtoM21Object)[];
+        } else {
+            useTestClass = testClass as (string | typeof ProtoM21Object)[];
         }
-        for (const thisTestClass of testClass) {
+        for (const thisTestClass of useTestClass) {
             if (this.classSet.has(thisTestClass)) {
                 return true;
             }

@@ -135,7 +135,7 @@ export default function tests() {
     });
 
     test('music21.pitch.Pitch Equality', assert => {
-        const pitch_pairs = [
+        const pitch_pairs: [string, string, boolean][] = [
             ['a#', 'a', false],
             ['a#', 'b-', false],
             ['a#', 'a-', false],
@@ -167,7 +167,7 @@ export default function tests() {
     });
 
     /*
-    test('music21.pitch.Update AccidentaDisplaySeries', assert => {
+    test('music21.pitch.Update AccidentalDisplaySeries', assert => {
         const proc = (pList, past) => {
             for (const p of pList) {
                 p.updateAccidentalDisplay(past);
@@ -222,7 +222,7 @@ export default function tests() {
         proc(pList, []);
         compare(pList, result);
 
-        // epeats of the same: show at different registers
+        // repeats of the same: show at different registers
         pList = [
             convertToPitch('a-2'), convertToPitch('a-2'), convertToPitch('a-5'),
             convertToPitch('a#5'), convertToPitch('a#3'), convertToPitch('a3'),
@@ -278,7 +278,7 @@ export default function tests() {
     */
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
-        const convertedNotes = new music21.tinyNotation.TinyNotation(
+        const convertedNotes = music21.tinyNotation.TinyNotation(
             "tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4"
         ).flat;
         // Function does not work, stream.ts 1353
@@ -350,7 +350,7 @@ export default function tests() {
 
         assert.equal(new music21.pitch.Pitch('g4').harmonicString('c3'), '3rdH(-2c)/C3');
 
-        // ssert.equal(str(_convertPsToStep(60.0)), "('C', <accidental natural>, None, 0)")
+        // assert.equal(str(_convertPsToStep(60.0)), "('C', <accidental natural>, None, 0)")
 
         assert.equal(new music21.pitch.Pitch('c4').getHarmonic(1).toString(), 'C4');
         assert.equal(new music21.pitch.Pitch('c3').getHarmonic(2).toString(), 'C4');

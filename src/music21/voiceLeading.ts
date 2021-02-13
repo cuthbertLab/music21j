@@ -47,7 +47,7 @@ export class VoiceLeadingQuartet extends Music21Object {
     hIntervals: interval.Interval[];
     _key: key.Key;
 
-    constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
+    constructor(v1n1, v1n2, v2n1, v2n2, analyticKey?) {
         super();
         if (!intervalCache.length) {
             intervalCache.push(new interval.Interval('P1'));

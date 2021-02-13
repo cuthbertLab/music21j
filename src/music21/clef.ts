@@ -95,7 +95,7 @@ export class Clef extends base.Music21Object {
     lowestLine: number = lowestLines.treble;
     lowestLineTrebleOffset: number = 0;
 
-    constructor(name, octaveChange=0) {
+    constructor(name?: string, octaveChange: number = 0) {
         super();
         this.classSortOrder = 0;
 
