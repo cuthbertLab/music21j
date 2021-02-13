@@ -58,7 +58,7 @@ export default function tests() {
         assert.strictEqual(beamsList[3].beamsList[0].type, 'stop');
     });
 
-    test('music21.meter.TimeSignature getBeams 3/8', assert => {
+    test('music21.meter.TimeSignature getBeams 3/8, 2/8', assert => {
         const m = new music21.stream.Measure();
         m.append(new music21.note.Note('C', 0.5));
         m.append(new music21.note.Note('C', 0.75));
@@ -69,9 +69,24 @@ export default function tests() {
 
         for (const beam of beamsList) {
             assert.strictEqual(
+                beam.classes[0],
+                'Beams',
+                '8th notes in 3/8 get beams.'
+            );
+        }
+
+        const m2 = new music21.stream.Measure();
+        m2.append(new music21.note.Note('C', 0.75));
+        m2.append(new music21.note.Note('C', 0.25));
+
+        const ts2 = new music21.meter.TimeSignature('2/8');
+        const beamsList2 = ts2.getBeams(m2);
+
+        for (const beam of beamsList2) {
+            assert.strictEqual(
                 typeof beam,
                 'undefined',
-                '8th notes should not get beams when the 8th note gets the beat'
+                '8th notes should not get beams in 2/8 or 4/8, etc.'
             );
         }
     });
