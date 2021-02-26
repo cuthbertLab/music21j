@@ -2,13 +2,17 @@
 // Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
 const path = require('path');
 const webpack = require('webpack');
+const ESLintPlugin = require('eslint-webpack-plugin');
+const package_json = require('./package.json');
 
 module.exports = grunt => {
 
     const BANNER
         = '/**\n'
-        + ' * music21j <%= pkg.version %> built on <%= grunt.template.today("yyyy-mm-dd") %>.\n'
-        + ' * Copyright (c) 2013-<%= grunt.template.today("yyyy") %> Michael Scott Cuthbert and cuthbertLab\n'
+        + ' * music21j version ' + package_json.version + ' built on '
+        + (new Date()).toISOString().split('T')[0] + '.\n'
+        + ' * Copyright (c) 2013-' + (new Date()).getFullYear() + ' '
+        + 'Michael Scott Cuthbert and cuthbertLab\n'
         + ' * BSD License, see LICENSE\n'
         + ' *\n'
         + ' * http://github.com/cuthbertLab/music21j\n'
@@ -58,6 +62,7 @@ module.exports = grunt => {
 
 
     const webpackConfig = (target, preset) => {
+        // noinspection JSUnresolvedFunction
         return {
             entry: './src/music21_modules.js',  // MODULE_ENTRY,
             output: {
@@ -67,6 +72,9 @@ module.exports = grunt => {
                 libraryTarget: 'umd',
                 umdNamedDefine: true,
             },
+            cache: {
+                type: 'memory',
+            },
             mode: 'development',
             devtool: 'source-map',
             watch: true,
@@ -75,21 +83,11 @@ module.exports = grunt => {
             },
             module: {
                 rules: [
-                    { // eslint -- + @typescript-eslint in eslintrc.json
-                        enforce: 'pre',
-                        test: /\.(js|ts)$/,
-                        exclude: /(node_modules|bower_components|src\/ext)/,
-                        loader: 'eslint-loader',
-                        options: {
-                            failOnError: true,
-                        },
-                    },
                     {   // typescript --> transpile to es6 using ts-loader,
                         // then babel to our target
                         test: /\.ts$/,
                         exclude: /node_modules/,
                         use: [
-                            'cache-loader',
                             babel_loader(preset),
                             { loader: 'ts-loader' },
                         ],
@@ -98,7 +96,6 @@ module.exports = grunt => {
                         test: /\.js$/,
                         exclude: /(node_modules|src\/ext)/,
                         use: [
-                            'cache-loader',
                             babel_loader(preset)
                         ],
                     },
@@ -110,29 +107,41 @@ module.exports = grunt => {
             },
             plugins: [
                 new webpack.BannerPlugin({banner: BANNER, raw: true}),
+                new ESLintPlugin(
+                    {
+                        failOnError: false,
+                        emitWarning: true,
+                        extensions: ['ts', 'js'],
+                    }
+                ),
             ],
         };
     };
 
-    const babel_preset = [['@babel/preset-env', {
-        debug: false,
-		modules: false,  // do not transform modules; let webpack do it
-		targets: {
-		    browsers: [
-    	        'last 4 years',
-                'not < 0.04% in US',
-                'not firefox < 39',
-                'not safari < 10',
-                'not android < 80', // bug in browserslist
-                'not ios <= 10',
-                'not samsung <= 4',
-                'not ie <= 12', // all versions -- edge is separate
-            ],
-		},
-		useBuiltIns: 'usage',
-		corejs: 3,
-        },
-    ]];
+    const babel_preset = [
+        [
+            '@babel/preset-env',
+            {
+                debug: false,
+                modules: false,  // do not transform modules; let webpack do it
+                targets: {
+                    browsers: [
+                        'last 4 years',
+                        'not < 0.04% in US',
+                        'not firefox < 39',
+                        'not safari < 10',
+                        'not chrome < 49',
+                        'not android < 80',  // bug in browserslist
+                        'not ios <= 10',
+                        'not samsung <= 4',
+                        'not ie <= 12',  // all versions -- edge is separate
+                    ],
+                },
+                useBuiltIns: 'usage',
+                corejs: 3,
+            },
+        ]
+    ];
 
     const webpackCommon = webpackConfig(
         'music21.debug.js',  // TARGET_RAW,
@@ -153,8 +162,12 @@ module.exports = grunt => {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         webpack: {
-            build: webpackCommon,
-            dev: Object.assign({ watch: true }, webpackCommon),
+            build: Object.assign({
+                mode: 'production',
+            }, webpackCommon),
+            dev: Object.assign({
+                mode: 'development',
+            }, webpackCommon),
             test: webpackTests,
         },
         jsdoc: {

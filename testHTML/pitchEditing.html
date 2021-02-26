@@ -12,16 +12,16 @@
 
     <script src="../build/music21.debug.js"></script>
     <script type="application/javascript">
-    var s = music21.tinyNotation.TinyNotation("G2 B4 c4");
+    const s = music21.tinyNotation.TinyNotation("G2 B4 c4");
     s.clef = new music21.clef.Clef('bass');
-    var d = s.editableAccidentalDOM();
-    var editable = $("#editable");
+    const d = s.editableAccidentalDOM();
+    const editable = $("#editable");
     editable.append(d);
     editable.append( $("<br clear='all'/>") );
 
-    var s2 = music21.tinyNotation.TinyNotation("a2 b4 c'4");
+    const s2 = music21.tinyNotation.TinyNotation("2/2 a2 b4 c'4");
     s2.clef = new music21.clef.Clef('treble');
-    var d2 = s2.editableAccidentalDOM();
+    const d2 = s2.editableAccidentalDOM(undefined, undefined, {minAccidental: -2, maxAccidental: 2});
     editable.append(d2);
     </script>
 

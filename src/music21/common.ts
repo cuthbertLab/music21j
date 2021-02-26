@@ -252,13 +252,9 @@ export function toRoman(num) {
  * @memberof music21.common
  * @returns {SVGElement}
  */
-export function makeSVGright(tag='svg', attrs) {
+export function makeSVGright(tag='svg', attrs={}) {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
     // normal JQuery does not work.
-    if (attrs === undefined) {
-        attrs = {};
-    }
-
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const k in attrs) {
         if (!{}.hasOwnProperty.call(attrs, k)) {
@@ -453,7 +449,7 @@ export const pathSimplify = path => {
 };
 
 export function isFloat(num) {
-    return Number(num) === num && num % 1 !== 0; 
+    return Number(num) === num && num % 1 !== 0;
 }
 
 // TODO: implement and test

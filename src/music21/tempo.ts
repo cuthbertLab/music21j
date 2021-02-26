@@ -92,16 +92,16 @@ export class Metronome extends prebase.ProtoM21Object {
     static get className() { return 'music21.tempo.Metronome'; }
 
     _tempo: number = baseTempo;
-    numBeatsPerMeasure = 4;
-    minTempo = 10;
-    maxTempo = 600;
-    beat = 4;
-    chirpTimeout = undefined;
-    silent = false;
-    flash = false;
+    numBeatsPerMeasure: number = 4;
+    minTempo: number = 10;
+    maxTempo: number = 600;
+    beat: number = 4;
+    chirpTimeout: number;
+    silent: boolean = false;
+    flash: boolean = false;
     tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
     tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
-    $metronomeDiv: JQuery<HTMLElement>;
+    $metronomeDiv: JQuery;
 
     constructor(tempoInt: number = baseTempo) {
         super();
@@ -164,7 +164,7 @@ export class Metronome extends prebase.ProtoM21Object {
             }
         }
         const that = this;
-        this.chirpTimeout = setTimeout(() => {
+        this.chirpTimeout = window.setTimeout(() => {
             that.chirp();
         }, 1000 * 60 / this.tempo);
     }
