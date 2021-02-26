@@ -33,9 +33,17 @@ export class ProtoM21Object {
     static get className() { return 'music21.prebase.ProtoM21Object'; }
     protected _storedClasses: string[];
     protected _storedClassSet: Set<any>;
+    _cl: string;
     isProtoM21Object: boolean = true;
     isMusic21Object: boolean = false;
     protected _cloneCallbacks: any = {};
+
+    constructor() {
+        // this exists for looking at Proxies of this object in Javascript
+        // consoles.  Because Chrome prints a stream as:
+        // Proxy {_cl: 'Stream', ... }
+        this._cl = this.classes[0];
+    }
 
     get classSet(): Set<any> {
         if (this._storedClassSet !== undefined) {
@@ -59,6 +67,8 @@ export class ProtoM21Object {
 
     /**
      * Populates the class caches (.classes and .classSet)
+     *
+     * Stored on the individual object, not the class, unlike music21p
      */
     private _populateClassCaches() {
         const classSet = new Set();

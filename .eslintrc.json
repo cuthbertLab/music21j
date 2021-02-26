@@ -103,5 +103,14 @@
         "spaced-comment": ["off"],
         "strict": ["error", "global"],
         "yoda": ["error", "never", { "exceptRange": true }]
-    }
+    },
+    "overrides": [
+        {
+            "files": ["*.ts"],
+            "rules": {
+                "no-undef": "off",
+                "no-unused-vars": "off"
+            }
+        }
+    ]
 }

@@ -91,7 +91,7 @@ using the python server above).
 
 Version
 --------
-0.9.53 beta
+0.10.1 beta
 
 
 License

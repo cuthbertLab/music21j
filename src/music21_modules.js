@@ -78,6 +78,7 @@ import * as roman from './music21/roman';
 import * as scale from './music21/scale';
 import * as sites from './music21/sites';
 import * as stream from './music21/stream';
+import * as svgs from './music21/svgs';
 import * as tempo from './music21/tempo';
 import * as tie from './music21/tie';
 import * as tinyNotation from './music21/tinyNotation';
@@ -132,6 +133,7 @@ export {
     scale,
     sites,
     stream,
+    svgs,
     tempo,
     tie,
     tinyNotation,

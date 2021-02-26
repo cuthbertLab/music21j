@@ -47,6 +47,7 @@ import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
 import * as renderOptions from './renderOptions';
+import { svg_accidentals } from './svgs';
 import * as tempo from './tempo';
 import * as vfShow from './vfShow';
 
@@ -58,7 +59,7 @@ import * as iterator from './stream/iterator';
 import * as makeNotation from './stream/makeNotation';
 
 // for typing only
-import {chord, key} from '../music21_modules';
+import type {chord, key} from '../music21_modules';
 
 export { filters };
 export { iterator };
@@ -261,6 +262,33 @@ export class Stream extends base.Music21Object {
                 canvasOrSVGElement
             );
         };
+        // return new Proxy(this, {
+        //     get(target, n: PropertyKey) {
+        //         let name: PropertyKey;
+        //         name = parseInt(n.toString());  // need toString for Symbol.iterator
+        //         if (Number.isNaN(name)) {
+        //             name = n;
+        //         }
+        //         if (typeof name === 'number') {
+        //             return target.get(name as number);
+        //         } else {
+        //             return target[name];
+        //         }
+        //     },
+        //     set(target, n: PropertyKey, value) {
+        //         let name: PropertyKey;
+        //         name = parseInt(n.toString());  // need toString for Symbol.iterator
+        //         if (Number.isNaN(name)) {
+        //             name = n;
+        //         }
+        //         if (typeof name === 'number') {
+        //             target.set(name, value);
+        //         } else { // if (Object.prototype.hasOwnProperty.call(target, name)) {
+        //             target[name] = value;
+        //         }
+        //         return true;
+        //     },
+        // });
     }
 
     /**
@@ -1808,13 +1836,6 @@ export class Stream extends base.Music21Object {
 
     //  * *********  VexFlow functionality
 
-    renderVexflowOnCanvas(canvasOrSVG) {
-        console.warn(
-            'renderVexflowOnCanvas is deprecated; call renderVexflow instead'
-        );
-        return this.renderVexflow(canvasOrSVG);
-    }
-
     write(format='musicxml') {
         return _exportMusicXMLAsText(this);
     }
@@ -2142,11 +2163,6 @@ export class Stream extends base.Music21Object {
      *
      */
 
-    createNewCanvas(width, height, elementType='svg') {
-        console.warn('createNewCanvas is deprecated, use createNewDOM instead');
-        return this.createNewDOM(width, height, elementType);
-    }
-
     /**
      * Creates and returns a new `&lt;canvas&gt;` or `&lt;svg&gt;` object.
      *
@@ -2154,31 +2170,35 @@ export class Stream extends base.Music21Object {
      *
      * Does not render on the DOM element.
      *
-     * @param {number|string|undefined} width - will use
-     *     `this.estimateStaffLength()`
-     *     + `this.renderOptions.staffPadding` if not given
-     * @param {number|string|undefined} height - if undefined will use
+     * elementType can be `svg` (default) or `canvas`
+     *
+     * returns a $div encompasing either the SVG or Canvas element.
+     *
+     * if width is undefined, will use `this.estimateStaffLength()`
+     *     + `this.renderOptions.staffPadding`
+     *
+     * if height is undefined  will use
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
-     * @param {string} elementType - what type of element, default = svg
-     * @returns {JQuery} svg in jquery.
      */
     createNewDOM(
-        width: number|string|undefined = undefined,
-        height: number|string|undefined = undefined,
+        width?: number|string,
+        height?: number|string,
         elementType='svg'
-    ): JQuery {
+    ): JQuery<HTMLDivElement>|JQuery<HTMLCanvasElement> {
         if (!this.isFlat) {
             this.setSubstreamRenderOptions();
         }
 
-        // we render SVG on a Div for Vexflow
-        let renderElementType = 'div';
-        if (elementType === 'canvas') {
-            renderElementType = 'canvas';
+        let $newCanvasOrDIV;
+
+        if (elementType === 'svg') {
+            // we render SVG on a Div for Vexflow
+            $newCanvasOrDIV = $('<div/>') as JQuery<HTMLDivElement>;
+        } else if (elementType === 'canvas') {
+            $newCanvasOrDIV = $('<canvas/>') as JQuery<HTMLCanvasElement>;
         }
 
-        const $newCanvasOrDIV = $('<' + renderElementType + '/>');
         $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
         $newCanvasOrDIV.css('display', 'inline-block');
 
@@ -2212,13 +2232,6 @@ export class Stream extends base.Music21Object {
         return $newCanvasOrDIV;
     }
 
-    createPlayableCanvas(width, height, elementType = 'svg') {
-        console.warn(
-            'createPlayableCanvas is deprecated, use createPlayableDOM instead'
-        );
-        return this.createPlayableDOM(width, height, elementType);
-    }
-
     /**
      * Creates a rendered, playable svg where clicking plays it.
      *
@@ -2235,11 +2248,6 @@ export class Stream extends base.Music21Object {
         elementType='svg'
     ): JQuery {
         this.renderOptions.events.click = 'play';
-        return this.createDOM(width, height, elementType);
-    }
-
-    createCanvas(width, height, elementType='svg') {
-        console.warn('createCanvas is deprecated, use createDOM');
         return this.createDOM(width, height, elementType);
     }
 
@@ -2263,11 +2271,6 @@ export class Stream extends base.Music21Object {
         return $newSvg;
     }
 
-    appendNewCanvas(appendElement, width, height, elementType='svg') {
-        console.warn('appendNewCanvas is deprecated, use appendNewDOM instead');
-        return this.appendNewDOM(appendElement, width, height, elementType);
-    }
-
     /**
      * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
      *
@@ -2284,7 +2287,7 @@ export class Stream extends base.Music21Object {
         width: number|string = undefined,
         height: number|string = undefined,
         elementType: string = 'svg'
-    ) {
+    ): HTMLElement {
         // noinspection JSMismatchedCollectionQueryUpdate
         let $appendElement: JQuery;
         if (appendElement instanceof $) {
@@ -2304,11 +2307,6 @@ export class Stream extends base.Music21Object {
         const $svgOrCanvasBlock = this.createDOM(width, height, elementType);
         $appendElement.append($svgOrCanvasBlock);
         return $svgOrCanvasBlock[0];
-    }
-
-    replaceCanvas(where, preserveSvgSize?, elementType='svg') {
-        console.warn('replaceCanvas is deprecated, use replaceDOM instead');
-        return this.replaceDOM(where, preserveSvgSize, elementType);
     }
 
     /**
@@ -2437,13 +2435,6 @@ export class Stream extends base.Music21Object {
         return storedVexflowStave;
     }
 
-    getUnscaledXYforCanvas(svg, e) {
-        console.warn(
-            'getUnscaledXYforCanvas is deprecated, use getUnscaledXYforDOM instead'
-        );
-        return this.getUnscaledXYforDOM(svg, e);
-    }
-
     /**
      * Given a mouse click, or other event with .pageX and .pageY,
      * find the x and y for the svg.
@@ -2495,16 +2486,6 @@ export class Stream extends base.Music21Object {
         const xPx = xClick - offset.left;
         const yPx = yClick - offset.top;
         return [xPx, yPx];
-    }
-
-    getScaledXYforCanvas(
-        svg: HTMLElement|SVGElement,
-        e: MouseEvent|TouchEvent|JQuery.MouseEventBase
-    ): [number, number]  {
-        console.warn(
-            'getScaledXYforCanvas is deprecated, use getScaledXYforDOM instead'
-        );
-        return this.getScaledXYforDOM(svg, e);
     }
 
     /**
@@ -2705,63 +2686,54 @@ export class Stream extends base.Music21Object {
         }
     }
 
-    redrawCanvas(svg) {
-        console.warn('redrawCanvas is deprecated, use redrawDOM instead');
-        return this.redrawDOM(svg);
-    }
-
     /**
      * Redraws an svgDiv, keeping the events of the previous svg.
-     *
-     * @param {JQuery|HTMLElement} svg
-     * @returns {JQuery}
      */
-    redrawDOM(svg) {
+    redrawDOM(svg: JQuery|HTMLElement|SVGElement): JQuery {
         // this.resetRenderOptions(true, true); // recursive, preserveEvents
         if (!this.isFlat) {
             this.setSubstreamRenderOptions();
         }
         const $svg = $(svg); // works even if svg is already $jquery
-        const $newSvg = this.createNewDOM(svg.width, svg.height);
+        const $newSvg = this.createNewDOM($svg.width(), $svg.height());
         this.renderVexflow($newSvg);
         $svg.replaceWith($newSvg);
         return $newSvg;
     }
 
-    editableAccidentalCanvas(width?, height?) {
-        console.warn(
-            'editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead'
-        );
-        return this.editableAccidentalDOM(width, height);
-    }
-
     /**
      * Renders a stream on svg with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
-     *
-     * @param {number} [width]
-     * @param {number} [height]
-     * @returns {Node} the div tag around the svg.
      */
-    editableAccidentalDOM(width?, height?) {
+    editableAccidentalDOM(
+        width?: number,
+        height?: number,
+        {
+            minAccidental=-1,
+            maxAccidental=1,
+        }: {minAccidental?: number, maxAccidental?: number} = {}
+    ): JQuery<HTMLDivElement> {
         /*
          * Create an editable svg with an accidental selection bar.
          */
-        const d = $('<div/>')
+        const $d = $('<div/>')
             .css('text-align', 'left')
-            .css('position', 'relative');
+            .css('position', 'relative') as JQuery<HTMLDivElement>;
 
         this.renderOptions.events.click = this.DOMChangerFunction;
+        if (this.changedCallbackFunction === undefined) {
+            this.changedCallbackFunction = this.DOMChangerFunction;
+        }
         const $svgDiv = this.createDOM(width, height);
-        const buttonDiv = this.getAccidentalToolbar(
-            undefined,
-            undefined,
+        const $buttonDiv: JQuery<HTMLDivElement> = this.getAccidentalToolbar(
+            minAccidental,
+            maxAccidental,
             $svgDiv
         );
-        d.append(buttonDiv);
-        d.append($("<br style='clear: both;' />"));
-        d.append($svgDiv);
-        return d;
+        $d.append($buttonDiv);
+        $d.append($("<br style='clear: both;' />"));
+        $d.append($svgDiv);
+        return $d;
     }
 
     /*
@@ -2769,19 +2741,16 @@ export class Stream extends base.Music21Object {
      */
 
     /**
+     * Returns an accidental toolbar from minAccidental to maxAccidental.
      *
-     * @param {int} minAccidental - alter of the min accidental (default -1)
-     * @param {int} maxAccidental - alter of the max accidental (default 1)
-     * @param {jQuery} $siblingSvg - svg to use for redrawing;
-     * @returns {jQuery} the accidental toolbar.
+     * If $siblingSvg is defined then this toolbar alters the notes in that
+     * toolbar.
      */
-    getAccidentalToolbar(minAccidental, maxAccidental, $siblingSvg) {
-        if (minAccidental === undefined) {
-            minAccidental = -1;
-        }
-        if (maxAccidental === undefined) {
-            maxAccidental = 1;
-        }
+    getAccidentalToolbar(
+        minAccidental: number = -1,
+        maxAccidental: number = 1,
+        $siblingSvg?: JQuery
+    ): JQuery<HTMLDivElement> {
         minAccidental = Math.round(minAccidental);
         maxAccidental = Math.round(maxAccidental);
 
@@ -2824,16 +2793,13 @@ export class Stream extends base.Music21Object {
         const $buttonDiv = $('<div/>').attr(
             'class',
             'accidentalToolbar scoreToolbar'
-        );
+        ) as JQuery<HTMLDivElement>;
         for (let i = minAccidental; i <= maxAccidental; i++) {
-            const acc = new pitch.Accidental(i);
+            const svg_acc = svg_accidentals.get(i).cloneNode(true);
             const $button = $(
-                '<button>' + acc.unicodeModifier + '</button>'
+                '<button style="width: 40px; height: 40px;"></button>'
             ).on('click', e => addAccidental(i, e));
-            if (Math.abs(i) > 1) {
-                $button.css('font-family', 'Bravura Text');
-                $button.css('font-size', '20px');
-            }
+            $button[0].appendChild(svg_acc);
             $buttonDiv.append($button);
         }
         return $buttonDiv;
@@ -2842,11 +2808,11 @@ export class Stream extends base.Music21Object {
     /**
      * get a JQuery div containing two buttons -- play and stop
      */
-    getPlayToolbar(): JQuery {
+    getPlayToolbar(): JQuery<HTMLDivElement> {
         const $buttonDiv = $('<div/>').attr(
             'class',
             'playToolbar scoreToolbar'
-        );
+        ) as JQuery<HTMLDivElement>;
         const $bPlay = $('<button>&#9658</button>');
         $bPlay.on('click', () => {
             this.playStream();
@@ -2865,17 +2831,15 @@ export class Stream extends base.Music21Object {
      * Begins a series of bound events to the window that makes it
      * so that on resizing the stream is redrawn and reflowed to the
      * new size.
-     *
-     * @param {JQuery} jSvg
-     * @returns {this}
+     *bt
      */
-    windowReflowStart(jSvg) {
+    windowReflowStart($jSvg: JQuery): this {
         // set up a bunch of windowReflow bindings that affect the svg.
-        let jSvgNow = jSvg;
+        let $jSvgNow = $jSvg;
         const resizeEnd = () => {
             // do something, window hasn't changed size in 500ms
-            const jSvgParent = jSvgNow.parent();
-            const newWidth = jSvgParent.width();
+            const $jSvgParent = $jSvgNow.parent();
+            const newWidth = $jSvgParent.width();
             const svgWidth = newWidth;
             // console.log(svgWidth);
             console.log('resizeEnd triggered', newWidth);
@@ -2883,17 +2847,17 @@ export class Stream extends base.Music21Object {
             this.resetRenderOptions(true, true); // recursive, preserveEvents
             // console.log(callingStream.renderOptions.events.click);
             this.maxSystemWidth = svgWidth - 40;
-            jSvgNow.remove();
-            const svgObj = this.appendNewDOM(jSvgParent);
-            jSvgNow = $(svgObj);
+            $jSvgNow.remove();
+            const svgObj = this.appendNewDOM($jSvgParent);
+            $jSvgNow = $(svgObj);
         };
         let resizeTimeout: number = 0;
 
         $(window).on('resize', () => {
             if (resizeTimeout) {
-                clearTimeout(resizeTimeout);
+                window.clearTimeout(resizeTimeout);
             }
-            resizeTimeout = setTimeout(() => resizeEnd(), 200);
+            resizeTimeout = window.setTimeout(() => resizeEnd(), 200);
         });
         setTimeout(() => {
             const $window = $(window);
@@ -2918,6 +2882,8 @@ export class Stream extends base.Music21Object {
         return false;
     }
 }
+
+
 
 export class Voice extends Stream {
     static get className() { return 'music21.stream.Voice'; }
@@ -3059,9 +3025,9 @@ export class Part extends Stream {
      * will come to the same result for each part.  Opportunity
      * for making more efficient through this...
      *
-     * @returns {Array}
+     * returns an array of all the widths
      */
-    fixSystemInformation(systemHeight?, systemPadding?) {
+    fixSystemInformation(systemHeight?: number, systemPadding?: number): number[] {
         // this is a method on Part!
         if (systemHeight === undefined) {
             /* part.show() called... */
