@@ -31,12 +31,12 @@ import { debug } from './debug';
 import { Music21Exception } from './exceptions21';
 
 // imports just for typechecking
-import * as articulations from './articulations';
-import * as expressions from './expressions';
-
+import type * as articulations from './articulations';
+import type * as expressions from './expressions';
+import type * as instrument from './instrument';
 
 export class NotRestException extends Music21Exception {
-    // no need
+    // thrown in a couple of places.
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -354,7 +354,7 @@ export class GeneralNote extends base.Music21Object {
     }
 
     /**
-     * Sets the vexflow accidentals (if any), the dots, and the stem direction
+     * Sets the vexflow accidentals (if any) and the dots
      *
      * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
      * @param {Object} options -- a set of Vex Flow options
@@ -369,13 +369,10 @@ export class GeneralNote extends base.Music21Object {
 
     /**
      * Return the active channel for the instrument or activeSite's instrument
-     * @param instrument
      */
-    activeChannel(instrument=undefined): number {
-        if (instrument === undefined) {
-            if (this.activeSite !== undefined) {
-                instrument = this.activeSite.instrument;
-            }
+    activeChannel(instrument?: instrument.Instrument): number {
+        if (instrument === undefined && this.activeSite !== undefined) {
+            instrument = this.activeSite.instrument;
         }
         let channel: number = 0;
         if (instrument !== undefined) {
@@ -464,6 +461,65 @@ export class NotRest extends GeneralNote {
         this._stemDirection = direction;
     }
 
+    /**
+     * Returns a `Vex.Flow.StaveNote` that approximates this note.
+     *
+     * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+     * clef to set the stem direction of.
+     * @returns {Vex.Flow.StaveNote}
+     */
+    vexflowNote({ clef=undefined }={}): Vex.Flow.StaveNote {
+        let useStemDirection = this.stemDirection;
+
+        // fixup stem direction -- must happen before Vex.Flow.Note is created...
+        if ([undefined, 'unspecified'].includes(this.stemDirection)
+                && clef !== undefined) {
+            useStemDirection = this.getStemDirectionFromClef(clef);
+        }
+
+        const vfd = this.duration.vexflowDuration;
+        if (vfd === undefined) {
+            return undefined;
+        }
+        const vexflowPitchKeys = [];
+        for (const p of this.pitches) {
+            vexflowPitchKeys.push(p.vexflowName(clef));
+        }
+
+        // Not supported: Double;  None is done elsewhere?
+        const vfnStemDirection = useStemDirection === 'down'
+            ? Vex.Flow.StaveNote.STEM_DOWN
+            : Vex.Flow.StaveNote.STEM_UP;
+
+        const vfn = new Vex.Flow.StaveNote({
+            keys: vexflowPitchKeys,
+            duration: vfd,
+            stem_direction: vfnStemDirection,
+        });
+        this.vexflowAccidentalsAndDisplay(vfn, { clef }); // clean up stuff...
+        for (const [i, p] of this.pitches.entries()) {
+            if (p.accidental !== undefined) {
+                const acc = p.accidental;
+                const vf_accidental = new Vex.Flow.Accidental(acc.vexflowModifier);
+                if (acc.vexflowModifier !== 'n' && acc.displayStatus !== false) {
+                    vfn.addAccidental(i, vf_accidental);
+                } else if (acc.displayType === 'always' || acc.displayStatus === true) {
+                    vfn.addAccidental(i, vf_accidental);
+                }
+            }
+        }
+        for (const art of this.articulations) {
+            vfn.addArticulation(0, art.vexflow());
+        }
+        for (const exp of this.expressions) {
+            vfn.addArticulation(0, exp.vexflow());
+        }
+        if (this.noteheadColor !== undefined) {
+            vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
+        }
+        this.activeVexflowNote = vfn;
+        return vfn;
+    }
 }
 
 /* ------- Note ----------- */
@@ -627,85 +683,6 @@ export class Note extends NotRest {
                 }
             }
         }
-    }
-
-    /**
-     * Returns a `Vex.Flow.StaveNote` that approximates this note.
-     *
-     * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
-     * clef to set the stem direction of.
-     * @returns {Vex.Flow.StaveNote}
-     */
-    vexflowNote({ clef=undefined }={}) {
-        let useStemDirection = this.stemDirection;
-
-        // fixup stem direction -- must happen before Vex.Flow.Note is created...
-        if ([undefined, 'unspecified'].includes(this.stemDirection)
-                && clef !== undefined) {
-            useStemDirection = this.getStemDirectionFromClef(clef);
-        }
-
-        const vfd = this.duration.vexflowDuration;
-        if (vfd === undefined) {
-            return undefined;
-        }
-        const vexflowKey = this.pitch.vexflowName(clef);
-
-        // Not supported: Double;  None is done elsewhere?
-        const vfnStemDirection
-            = useStemDirection === 'down'
-                ? Vex.Flow.StaveNote.STEM_DOWN
-                : Vex.Flow.StaveNote.STEM_UP;
-
-        const vfn = new Vex.Flow.StaveNote({
-            keys: [vexflowKey],
-            duration: vfd,
-            stem_direction: vfnStemDirection,
-        });
-        this.vexflowAccidentalsAndDisplay(vfn, { clef }); // clean up stuff...
-        if (this.pitch.accidental !== undefined) {
-            if (
-                this.pitch.accidental.vexflowModifier !== 'n'
-                && this.pitch.accidental.displayStatus !== false
-            ) {
-                vfn.addAccidental(
-                    0,
-                    new Vex.Flow.Accidental(
-                        this.pitch.accidental.vexflowModifier
-                    )
-                );
-            } else if (
-                this.pitch.accidental.displayType === 'always'
-                || this.pitch.accidental.displayStatus === true
-            ) {
-                vfn.addAccidental(
-                    0,
-                    new Vex.Flow.Accidental(
-                        this.pitch.accidental.vexflowModifier
-                    )
-                );
-            }
-        }
-
-        if (this.articulations[0] !== undefined) {
-            for (let i = 0; i < this.articulations.length; i++) {
-                const art = this.articulations[i];
-                // 0 refers to the first pitch (for chords etc.)...
-                vfn.addArticulation(0, art.vexflow());
-            }
-        }
-        if (this.expressions[0] !== undefined) {
-            for (let j = 0; j < this.expressions.length; j++) {
-                const exp = this.expressions[j];
-                // 0 refers to the first pitch (for chords etc.)...
-                vfn.addArticulation(0, exp.vexflow());
-            }
-        }
-        if (this.noteheadColor !== undefined) {
-            vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
-        }
-        this.activeVexflowNote = vfn;
-        return vfn;
     }
 
     playMidi(

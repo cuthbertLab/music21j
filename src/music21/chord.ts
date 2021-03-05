@@ -15,7 +15,6 @@
  * @requires music21/interval
  * @requires music21/note
  */
-import Vex from 'vexflow';
 import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21';
@@ -24,8 +23,8 @@ import * as note from './note';
 import * as chordTables from './chordTables';
 
 // imports for typing
-import { Pitch } from './pitch';
-import * as prebase from './prebase';
+import type * as clef from './clef';
+import type { Pitch } from './pitch';
 
 export { chordTables };
 
@@ -56,7 +55,7 @@ export class Chord extends note.NotRest {
     protected _chordTablesAddress: any = undefined;
     protected _chordTablesAddressNeedsUpdating: boolean = true; // only update when needed
 
-    constructor(notes: string|any[] = undefined) {
+    constructor(notes?: string|note.Note[]|Pitch[]|string[]) {
         super();
         if (typeof notes === 'undefined') {
             notes = [];
@@ -64,12 +63,16 @@ export class Chord extends note.NotRest {
             notes = notes.split(/\s+/);
         }
 
-        notes.forEach(x => this.add(x, false), this);
-        if (notes.length > 0
-            && notes[0].duration !== undefined
-            && notes[0].duration.quarterLength !== this.duration.quarterLength
-        ) {
-            this.duration = notes[0].duration;
+        for (const n of notes) {
+            this.add(n, false);
+        }
+        if (notes.length > 0) {
+            const n0 = notes[0];
+            if (n0 instanceof note.Note) {
+                if (n0.duration.quarterLength !== this.duration.quarterLength) {
+                    this.duration = n0.duration;
+                }
+            }
         }
         this.sortPitches();
     }
@@ -100,10 +103,10 @@ export class Chord extends note.NotRest {
             let addNote;
             if (typeof tempPitches[i] === 'string') {
                 addNote = new note.Note(tempPitches[i]);
-            } else if ((<prebase.ProtoM21Object> tempPitches[i]).isClassOrSubclass('Pitch')) {
+            } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
                 addNote = new note.Note();
                 addNote.pitch = tempPitches[i];
-            } else if ((<prebase.ProtoM21Object> tempPitches[i]).isClassOrSubclass('Note')) {
+            } else if (tempPitches[i].isClassOrSubclass('Note')) {
                 addNote = tempPitches[i];
             } else {
                 console.warn('bad pitch', tempPitches[i]);
@@ -202,7 +205,7 @@ export class Chord extends note.NotRest {
     }
 
 
-    areZRelations(other) {
+    areZRelations(other): boolean {
         const zRelationAddress = chordTables.addressToZAddress(this.chordTablesAddress);
         if (zRelationAddress === undefined) {
             return false;
@@ -233,7 +236,7 @@ export class Chord extends note.NotRest {
         return new Chord(prime);
     }
 
-    get hasZRelation() {
+    get hasZRelation(): boolean {
         const post = chordTables.addressToZAddress(this.chordTablesAddress);
         if (post !== undefined) {
             return true;
@@ -254,7 +257,7 @@ export class Chord extends note.NotRest {
     //        // needs pitch._convertPitchClassToStr
     //    }
 
-    setStemDirectionFromClef(clef) {
+    setStemDirectionFromClef(clef?: clef.Clef) {
         if (clef === undefined) {
             return this;
         } else {
@@ -316,8 +319,8 @@ export class Chord extends note.NotRest {
         return this;
     }
 
-    sortPitches() {
-        this._notes.sort((a, b) => {
+    sortPitches(): void {
+        this._notes.sort((a: note.Note, b: note.Note) => {
             let diff: number = a.pitch.diatonicNoteNum - b.pitch.diatonicNoteNum;
             if (diff === 0) {
                 diff = a.pitch.ps - b.pitch.ps;
@@ -332,7 +335,7 @@ export class Chord extends note.NotRest {
      * Removes any pitches that appear more than once (in any octave),
      * removing the higher ones, and returns a new Chord.
      *
-     * @returns {Chord} A new Chord object with duplicate pitches removed.
+     * returns A new Chord object with duplicate pitches removed.
      */
     removeDuplicatePitches(): Chord {
         const stepsFound = [];
@@ -350,12 +353,9 @@ export class Chord extends note.NotRest {
     }
 
     /**
-     * Finds the Root of the chord.
-     *
-     * @param {Pitch} [newroot]
-     * @returns {Pitch} the root of the chord.
+     * Finds the Root of the chord, or sets it as an override.
      */
-    root(newroot: Pitch = undefined): Pitch {
+    root(newroot?: Pitch): Pitch {
         if (newroot !== undefined) {
             this._overrides.root = newroot;
             this._cache.root = newroot;
@@ -424,7 +424,7 @@ export class Chord extends note.NotRest {
      * @returns {number|undefined} Number of semitones above the root for this
      *     chord step or undefined if no pitch matches that chord step.
      */
-    semitonesFromChordStep(chordStep: number, testRoot: Pitch = undefined): number|undefined {
+    semitonesFromChordStep(chordStep: number, testRoot?: Pitch): number|undefined {
         if (testRoot === undefined) {
             testRoot = this.root();
         }
@@ -443,9 +443,9 @@ export class Chord extends note.NotRest {
     /**
      * Gets the lowest note (based on .ps not name) in the chord.
      *
-     * @returns {[Pitch]} bass pitch
+     * return bass pitch or undefined
      */
-    bass(newBass=undefined): Pitch|undefined {
+    bass(newBass?: Pitch): Pitch|undefined {
         if (newBass !== undefined) {
             this._overrides.bass = newBass;
             this._cache.bass = newBass;
@@ -479,19 +479,13 @@ export class Chord extends note.NotRest {
      * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
      *
      * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
-     *
-     * @returns {number}
      */
-    cardinality() {
+    cardinality(): number {
         const uniqueChord = this.removeDuplicatePitches();
         return uniqueChord.pitches.length;
     }
 
-    /**
-    *
-    * @returns {Boolean}
-    */
-    isMajorTriad() {
+    isMajorTriad(): boolean {
         if (this.cardinality() !== 3) {
             return false;
         }
@@ -504,11 +498,7 @@ export class Chord extends note.NotRest {
         }
     }
 
-    /**
-    *
-    * @returns {Boolean}
-    */
-    isMinorTriad() {
+    isMinorTriad(): boolean {
         if (this.cardinality() !== 3) {
             return false;
         }
@@ -521,11 +511,7 @@ export class Chord extends note.NotRest {
         }
     }
 
-    /**
-    *
-    * @returns {Boolean}
-    */
-    isDiminishedTriad() {
+    isDiminishedTriad(): boolean {
         if (this.cardinality() !== 3) {
             return false;
         }
@@ -538,11 +524,7 @@ export class Chord extends note.NotRest {
         }
     }
 
-    /**
-    *
-    * @returns {Boolean}
-    */
-    isAugmentedTriad() {
+    isAugmentedTriad(): boolean {
         if (this.cardinality() !== 3) {
             return false;
         }
@@ -556,18 +538,15 @@ export class Chord extends note.NotRest {
     }
 
 
-    isDominantSeventh() {
+    isDominantSeventh(): boolean {
         return this.isSeventhOfType([0, 4, 7, 10]);
     }
 
-    isDiminishedSeventh() {
+    isDiminishedSeventh(): boolean {
         return this.isSeventhOfType([0, 3, 6, 9]);
     }
 
-    isSeventhOfType(intervalArray) {
-        if (intervalArray === undefined) {
-            throw new Music21Exception('intervalArray is required');
-        }
+    isSeventhOfType(intervalArray: number[]): boolean {
         const third = this.third;
         const fifth = this.fifth;
         const seventh = this.seventh;
@@ -587,10 +566,10 @@ export class Chord extends note.NotRest {
             if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
                 return false;
             }
-            //            // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
-            //            if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
-            //                return false;
-            //            }
+            // // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
+            // if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
+            //      return false;
+            // }
         }
         return true;
 
@@ -600,10 +579,8 @@ export class Chord extends note.NotRest {
 
     /**
      * canBeDominantV - Returns true if the chord is a Major Triad or a Dominant Seventh
-     *
-     * @return {Boolean}
      */
-    canBeDominantV() {
+    canBeDominantV(): boolean {
         if (this.isMajorTriad() || this.isDominantSeventh()) {
             return true;
         } else {
@@ -613,10 +590,8 @@ export class Chord extends note.NotRest {
 
     /**
      * Returns true if the chord is a major or minor triad
-     *
-     * @returns {Boolean}
      */
-    canBeTonic() {
+    canBeTonic(): boolean {
         if (this.isMajorTriad() || this.isMinorTriad()) {
             return true;
         } else {
@@ -627,13 +602,11 @@ export class Chord extends note.NotRest {
     /**
      * Returns the inversion of the chord as a number (root-position = 0)
      *
-     * Unlike music21 version, cannot set the inversion, yet.
+     * Unlike music21p version, cannot set the inversion, yet.
      *
      * TODO: add.
-     *
-     * @returns {number}
      */
-    inversion() {
+    inversion(): number {
         const bass = this.bass();
         const root = this.root();
         const chordStepsToInversions = [1, 6, 4, 2, 7, 5, 3];
@@ -646,55 +619,9 @@ export class Chord extends note.NotRest {
         return undefined;
     }
 
-    /**
-     * @param {Object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
-     * @returns {Vex.Flow.StaveNote}
-     */
-    vexflowNote(options={clef: undefined}): Vex.Flow.StaveNote {
-        const clef = options.clef;
-
-        const pitchKeys = [];
-        for (let i = 0; i < this._notes.length; i++) {
-            pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
-        }
-        const vfn = new Vex.Flow.StaveNote({
-            keys: pitchKeys,
-            duration: this.duration.vexflowDuration,
-        });
-        this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
-        for (let i = 0; i < this._notes.length; i++) {
-            const tn = this._notes[i];
-            if (tn.pitch.accidental !== undefined) {
-                if (
-                    tn.pitch.accidental.vexflowModifier !== 'n'
-                    && tn.pitch.accidental.displayStatus !== false
-                ) {
-                    vfn.addAccidental(
-                        i,
-                        new Vex.Flow.Accidental(
-                            tn.pitch.accidental.vexflowModifier
-                        )
-                    );
-                } else if (
-                    tn.pitch.accidental.displayType === 'always'
-                    || tn.pitch.accidental.displayStatus === true
-                ) {
-                    vfn.addAccidental(
-                        i,
-                        new Vex.Flow.Accidental(
-                            tn.pitch.accidental.vexflowModifier
-                        )
-                    );
-                }
-            }
-        }
-        this.activeVexflowNote = vfn;
-        return vfn;
-    }
-
     playMidi(
-        tempo=120,
-        nextElement=undefined,
+        tempo: number = 120,
+        nextElement?,
         {
             instrument=undefined,
             channel=undefined,
@@ -725,12 +652,8 @@ export class Chord extends note.NotRest {
      *
      * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
-     *
-     * @param {number} chordStep a positive integer representing the chord step
-     * @param {Pitch} [testRoot] - the Pitch to use as a temporary root
-     * @returns {Pitch|undefined}
      */
-    getChordStep(chordStep: number, testRoot: Pitch = undefined): Pitch|undefined {
+    getChordStep(chordStep: number, testRoot?: Pitch): Pitch|undefined {
         if (testRoot === undefined) {
             testRoot = this.root();
         }
@@ -753,15 +676,15 @@ export class Chord extends note.NotRest {
         return undefined;
     }
 
-    get third() {
+    get third(): Pitch|undefined {
         return this.getChordStep(3);
     }
 
-    get fifth() {
+    get fifth(): Pitch|undefined {
         return this.getChordStep(5);
     }
 
-    get seventh() {
+    get seventh(): Pitch|undefined {
         return this.getChordStep(7);
     }
 }
