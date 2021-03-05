@@ -1,5 +1,5 @@
 /**
- * music21j version 0.10.1 built on 2021-02-26.
+ * music21j version 0.10.2 built on 2021-03-05.
  * Copyright (c) 2013-2021 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -2546,7 +2546,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "chordTables": () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_13__),
+/* harmony export */   "chordTables": () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_11__),
 /* harmony export */   "Chord": () => (/* binding */ Chord),
 /* harmony export */   "chordDefinitions": () => (/* binding */ chordDefinitions)
 /* harmony export */ });
@@ -2560,21 +2560,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each.js */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.ts");
-
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.ts");
 
 
 
@@ -2612,7 +2607,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
-
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
  *
@@ -2628,9 +2622,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  * @property {Boolean} [isRest=false]
  */
 
-class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
-  constructor() {
-    var notes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
+  constructor(notes) {
     super();
     this._notes = [];
     this.isChord = true; // for speed
@@ -2650,10 +2643,28 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       notes = notes.split(/\s+/);
     }
 
-    notes.forEach(x => this.add(x, false), this);
+    var _iterator = _createForOfIteratorHelper(notes),
+        _step;
 
-    if (notes.length > 0 && notes[0].duration !== undefined && notes[0].duration.quarterLength !== this.duration.quarterLength) {
-      this.duration = notes[0].duration;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var n = _step.value;
+        this.add(n, false);
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    if (notes.length > 0) {
+      var n0 = notes[0];
+
+      if (n0 instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note) {
+        if (n0.duration.quarterLength !== this.duration.quarterLength) {
+          this.duration = n0.duration;
+        }
+      }
     }
 
     this.sortPitches();
@@ -2692,15 +2703,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       var addNote = void 0;
 
       if (typeof tempPitches[i] === 'string') {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_12__.Note(tempPitches[i]);
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(tempPitches[i]);
       } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_12__.Note();
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_10__.Note();
         addNote.pitch = tempPitches[i];
       } else if (tempPitches[i].isClassOrSubclass('Note')) {
         addNote = tempPitches[i];
       } else {
         console.warn('bad pitch', tempPitches[i]);
-        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception('Cannot add pitch from ' + tempPitches[i]);
+        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception('Cannot add pitch from ' + tempPitches[i]);
       }
 
       this._notes.push(addNote);
@@ -2723,12 +2734,12 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   get orderedPitchClasses() {
     var pcGroup = [];
 
-    var _iterator = _createForOfIteratorHelper(this.pitches),
-        _step;
+    var _iterator2 = _createForOfIteratorHelper(this.pitches),
+        _step2;
 
     try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var p = _step.value;
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        var p = _step2.value;
 
         if (pcGroup.includes(p.pitchClass)) {
           continue;
@@ -2737,9 +2748,9 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
         pcGroup.push(p.pitchClass);
       }
     } catch (err) {
-      _iterator.e(err);
+      _iterator2.e(err);
     } finally {
-      _iterator.f();
+      _iterator2.f();
     }
 
     pcGroup.sort((a, b) => a - b);
@@ -2748,7 +2759,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
 
   get chordTablesAddress() {
     if (this._chordTablesAddressNeedsUpdating) {
-      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_13__.seekChordTablesAddress(this);
+      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_11__.seekChordTablesAddress(this);
     }
 
     this._chordTablesAddressNeedsUpdating = false;
@@ -2758,7 +2769,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   get commonName() {
     // TODO: many more exemptions from music21p
     var cta = this.chordTablesAddress;
-    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToCommonNames(cta);
+    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToCommonNames(cta);
     var forteClass = this.forteClass;
     var enharmonicTests = {
       '3-11A': () => this.isMinorTriad(),
@@ -2786,7 +2797,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   }
 
   get forteClass() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToForteName(this.chordTablesAddress, 'tn');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToForteName(this.chordTablesAddress, 'tn');
   }
 
   get forteClassNumber() {
@@ -2794,7 +2805,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   }
 
   get forteClassTnI() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToForteName(this.chordTablesAddress, 'tni');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToForteName(this.chordTablesAddress, 'tni');
   }
 
   get(i) {
@@ -2840,7 +2851,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   }
 
   areZRelations(other) {
-    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToZAddress(this.chordTablesAddress);
+    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToZAddress(this.chordTablesAddress);
 
     if (zRelationAddress === undefined) {
       return false;
@@ -2863,16 +2874,16 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
     }
 
     var chordTablesAddress = this.chordTablesAddress;
-    var v = _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToIntervalVector(chordTablesAddress);
-    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_13__.intervalVectorToAddress(v);
+    var v = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToIntervalVector(chordTablesAddress);
+    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_11__.intervalVectorToAddress(v);
     var other;
 
-    var _iterator2 = _createForOfIteratorHelper(addresses),
-        _step2;
+    var _iterator3 = _createForOfIteratorHelper(addresses),
+        _step3;
 
     try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var thisAddress = _step2.value;
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var thisAddress = _step3.value;
 
         if (thisAddress.forteClass !== chordTablesAddress.forteClass) {
           other = thisAddress;
@@ -2880,17 +2891,17 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       } // other should always be defined;
 
     } catch (err) {
-      _iterator2.e(err);
+      _iterator3.e(err);
     } finally {
-      _iterator2.f();
+      _iterator3.f();
     }
 
-    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToTransposedNormalForm(other);
+    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToTransposedNormalForm(other);
     return new Chord(prime);
   }
 
   get hasZRelation() {
-    var post = _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToZAddress(this.chordTablesAddress);
+    var post = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToZAddress(this.chordTablesAddress);
 
     if (post !== undefined) {
       return true;
@@ -2900,7 +2911,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   }
 
   get intervalVector() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_13__.addressToIntervalVector(this.chordTablesAddress);
+    return _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToIntervalVector(this.chordTablesAddress);
   } //    get intervalVectorString() {
   //
   //    }
@@ -2956,20 +2967,20 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       notes = [notes];
     }
 
-    var _iterator3 = _createForOfIteratorHelper(notes),
-        _step3;
+    var _iterator4 = _createForOfIteratorHelper(notes),
+        _step4;
 
     try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var noteObj_StrOrNote = _step3.value;
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var noteObj_StrOrNote = _step4.value;
         // takes in either a note or a pitch
         var noteObj = void 0;
 
         if (typeof noteObj_StrOrNote === 'string') {
-          noteObj = new _note__WEBPACK_IMPORTED_MODULE_12__.Note(noteObj_StrOrNote);
+          noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(noteObj_StrOrNote);
         } else if (noteObj_StrOrNote.isClassOrSubclass('Pitch')) {
           var pitchObj = noteObj_StrOrNote;
-          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_12__.Note();
+          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_10__.Note();
           noteObj2.pitch = pitchObj;
           noteObj = noteObj2;
         } else {
@@ -2980,9 +2991,9 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       } // inefficient because sorts after each add, but safe and #(p) is small
 
     } catch (err) {
-      _iterator3.e(err);
+      _iterator4.e(err);
     } finally {
-      _iterator3.f();
+      _iterator4.f();
     }
 
     if (runSort === true) {
@@ -3009,7 +3020,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
    * Removes any pitches that appear more than once (in any octave),
    * removing the higher ones, and returns a new Chord.
    *
-   * @returns {Chord} A new Chord object with duplicate pitches removed.
+   * returns A new Chord object with duplicate pitches removed.
    */
 
 
@@ -3031,16 +3042,11 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
     return closedChord;
   }
   /**
-   * Finds the Root of the chord.
-   *
-   * @param {Pitch} [newroot]
-   * @returns {Pitch} the root of the chord.
+   * Finds the Root of the chord, or sets it as an override.
    */
 
 
-  root() {
-    var newroot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  root(newroot) {
     if (newroot !== undefined) {
       this._overrides.root = newroot;
       this._cache.root = newroot;
@@ -3061,7 +3067,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
     var closedPitches = closedChord.pitches;
 
     if (closedPitches.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception('No notes in Chord!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception('No notes in Chord!');
     } else if (closedPitches.length === 1) {
       return this.pitches[0];
     } // const indexOfPitchesWithPerfectlyStackedThirds = [];
@@ -3118,9 +3124,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
    */
 
 
-  semitonesFromChordStep(chordStep) {
-    var testRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+  semitonesFromChordStep(chordStep, testRoot) {
     if (testRoot === undefined) {
       testRoot = this.root();
     }
@@ -3142,13 +3146,11 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   /**
    * Gets the lowest note (based on .ps not name) in the chord.
    *
-   * @returns {[Pitch]} bass pitch
+   * return bass pitch or undefined
    */
 
 
-  bass() {
-    var newBass = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  bass(newBass) {
     if (newBass !== undefined) {
       this._overrides.bass = newBass;
       this._cache.bass = newBass;
@@ -3185,8 +3187,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
    * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
    *
    * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
-   *
-   * @returns {number}
    */
 
 
@@ -3194,11 +3194,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
     var uniqueChord = this.removeDuplicatePitches();
     return uniqueChord.pitches.length;
   }
-  /**
-  *
-  * @returns {Boolean}
-  */
-
 
   isMajorTriad() {
     if (this.cardinality() !== 3) {
@@ -3214,11 +3209,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       return false;
     }
   }
-  /**
-  *
-  * @returns {Boolean}
-  */
-
 
   isMinorTriad() {
     if (this.cardinality() !== 3) {
@@ -3234,11 +3224,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       return false;
     }
   }
-  /**
-  *
-  * @returns {Boolean}
-  */
-
 
   isDiminishedTriad() {
     if (this.cardinality() !== 3) {
@@ -3254,11 +3239,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       return false;
     }
   }
-  /**
-  *
-  * @returns {Boolean}
-  */
-
 
   isAugmentedTriad() {
     if (this.cardinality() !== 3) {
@@ -3284,10 +3264,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   }
 
   isSeventhOfType(intervalArray) {
-    if (intervalArray === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception('intervalArray is required');
-    }
-
     var third = this.third;
     var fifth = this.fifth;
     var seventh = this.seventh;
@@ -3298,34 +3274,32 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
 
     var root = this.root();
 
-    var _iterator4 = _createForOfIteratorHelper(this.pitches),
-        _step4;
+    var _iterator5 = _createForOfIteratorHelper(this.pitches),
+        _step5;
 
     try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var thisPitch = _step4.value;
-        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_11__.Interval(root, thisPitch);
+      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+        var thisPitch = _step5.value;
+        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_9__.Interval(root, thisPitch);
 
         if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
           return false;
-        } //            // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
-        //            if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
-        //                return false;
-        //            }
+        } // // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
+        // if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
+        //      return false;
+        // }
 
       }
     } catch (err) {
-      _iterator4.e(err);
+      _iterator5.e(err);
     } finally {
-      _iterator4.f();
+      _iterator5.f();
     }
 
     return true;
   }
   /**
    * canBeDominantV - Returns true if the chord is a Major Triad or a Dominant Seventh
-   *
-   * @return {Boolean}
    */
 
 
@@ -3338,8 +3312,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   }
   /**
    * Returns true if the chord is a major or minor triad
-   *
-   * @returns {Boolean}
    */
 
 
@@ -3353,11 +3325,9 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
   /**
    * Returns the inversion of the chord as a number (root-position = 0)
    *
-   * Unlike music21 version, cannot set the inversion, yet.
+   * Unlike music21p version, cannot set the inversion, yet.
    *
    * TODO: add.
-   *
-   * @returns {number}
    */
 
 
@@ -3376,48 +3346,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
 
     return undefined;
   }
-  /**
-   * @param {Object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
-   * @returns {Vex.Flow.StaveNote}
-   */
-
-
-  vexflowNote() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-      clef: undefined
-    };
-    var clef = options.clef;
-    var pitchKeys = [];
-
-    for (var i = 0; i < this._notes.length; i++) {
-      pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
-    }
-
-    var vfn = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveNote)({
-      keys: pitchKeys,
-      duration: this.duration.vexflowDuration
-    });
-    this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
-
-    for (var _i2 = 0; _i2 < this._notes.length; _i2++) {
-      var tn = this._notes[_i2];
-
-      if (tn.pitch.accidental !== undefined) {
-        if (tn.pitch.accidental.vexflowModifier !== 'n' && tn.pitch.accidental.displayStatus !== false) {
-          vfn.addAccidental(_i2, new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Accidental)(tn.pitch.accidental.vexflowModifier));
-        } else if (tn.pitch.accidental.displayType === 'always' || tn.pitch.accidental.displayStatus === true) {
-          vfn.addAccidental(_i2, new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Accidental)(tn.pitch.accidental.vexflowModifier));
-        }
-      }
-    }
-
-    this.activeVexflowNote = vfn;
-    return vfn;
-  }
 
   playMidi() {
     var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
-    var nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var nextElement = arguments.length > 1 ? arguments[1] : undefined;
 
     var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
         _ref$instrument = _ref.instrument,
@@ -3441,8 +3373,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
       midNum = this._notes[j].pitch.midi;
 
       try {
-        midicube__WEBPACK_IMPORTED_MODULE_9__.noteOn(channel, midNum, volume, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_9__.noteOff(channel, midNum, milliseconds / 1000);
+        midicube__WEBPACK_IMPORTED_MODULE_7__.noteOn(channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_7__.noteOff(channel, midNum, milliseconds / 1000);
       } catch (e) {// do nothing -- might not have an output channel because of audio not connected
       }
     }
@@ -3455,16 +3387,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_12__.NotRest {
    *
    * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
    * the first one in `.pitches` is returned.
-   *
-   * @param {number} chordStep a positive integer representing the chord step
-   * @param {Pitch} [testRoot] - the Pitch to use as a temporary root
-   * @returns {Pitch|undefined}
    */
 
 
-  getChordStep(chordStep) {
-    var testRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+  getChordStep(chordStep, testRoot) {
     if (testRoot === undefined) {
       testRoot = this.root();
     }
@@ -15698,22 +15624,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Note": () => (/* binding */ Note),
 /* harmony export */   "Rest": () => (/* binding */ Rest)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each.js */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each.js */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
+
+
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -15744,7 +15690,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_9__.Music21Exception {} // noinspection JSUnusedGlobalSymbols
+class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_11__.Music21Exception {} // noinspection JSUnusedGlobalSymbols
 
 var noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
@@ -15770,7 +15716,7 @@ var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up
  * @property {string} rawText - text + any connectors
  */
 
-class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
+class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
   constructor(text) {
     var number = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
     var syllabic = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
@@ -15904,7 +15850,7 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
  * @property {music21.tie.Tie|undefined} [tie=undefined] - a tie object
  */
 
-class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
+class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
   constructor() {
     var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
     super();
@@ -16018,7 +15964,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
     return undefined;
   }
   /**
-   * Sets the vexflow accidentals (if any), the dots, and the stem direction
+   * Sets the vexflow accidentals (if any) and the dots
    *
    * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
    * @param {Object} options -- a set of Vex Flow options
@@ -16036,17 +15982,12 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
   }
   /**
    * Return the active channel for the instrument or activeSite's instrument
-   * @param instrument
    */
 
 
-  activeChannel() {
-    var instrument = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
-    if (instrument === undefined) {
-      if (this.activeSite !== undefined) {
-        instrument = this.activeSite.instrument;
-      }
+  activeChannel(instrument) {
+    if (instrument === undefined && this.activeSite !== undefined) {
+      instrument = this.activeSite.instrument;
     }
 
     var channel = 0;
@@ -16115,7 +16056,7 @@ class NotRest extends GeneralNote {
     this.volume = 64; // not a real object yet.
 
     this._stemDirection = 'unspecified';
-    this.beams = new _beam__WEBPACK_IMPORTED_MODULE_7__.Beams();
+    this.beams = new _beam__WEBPACK_IMPORTED_MODULE_9__.Beams();
     /* TODO: this.duration.linkage -- need durationUnits */
 
     /* TODO: check notehead, noteheadFill, noteheadParentheses */
@@ -16146,6 +16087,123 @@ class NotRest extends GeneralNote {
     }
 
     this._stemDirection = direction;
+  }
+  /**
+   * Returns a `Vex.Flow.StaveNote` that approximates this note.
+   *
+   * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+   * clef to set the stem direction of.
+   * @returns {Vex.Flow.StaveNote}
+   */
+
+
+  vexflowNote() {
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref2$clef = _ref2.clef,
+        clef = _ref2$clef === void 0 ? undefined : _ref2$clef;
+
+    var useStemDirection = this.stemDirection; // fixup stem direction -- must happen before Vex.Flow.Note is created...
+
+    if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
+      useStemDirection = this.getStemDirectionFromClef(clef);
+    }
+
+    var vfd = this.duration.vexflowDuration;
+
+    if (vfd === undefined) {
+      return undefined;
+    }
+
+    var vexflowPitchKeys = [];
+
+    var _iterator = _createForOfIteratorHelper(this.pitches),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var p = _step.value;
+        vexflowPitchKeys.push(p.vexflowName(clef));
+      } // Not supported: Double;  None is done elsewhere?
+
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+
+    var vfnStemDirection = useStemDirection === 'down' ? (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.StaveNote.STEM_DOWN) : (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.StaveNote.STEM_UP);
+    var vfn = new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.StaveNote)({
+      keys: vexflowPitchKeys,
+      duration: vfd,
+      stem_direction: vfnStemDirection
+    });
+    this.vexflowAccidentalsAndDisplay(vfn, {
+      clef
+    }); // clean up stuff...
+
+    var _iterator2 = _createForOfIteratorHelper(this.pitches.entries()),
+        _step2;
+
+    try {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+        var _step2$value = _slicedToArray(_step2.value, 2),
+            i = _step2$value[0],
+            _p = _step2$value[1];
+
+        if (_p.accidental !== undefined) {
+          var acc = _p.accidental;
+          var vf_accidental = new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.Accidental)(acc.vexflowModifier);
+
+          if (acc.vexflowModifier !== 'n' && acc.displayStatus !== false) {
+            vfn.addAccidental(i, vf_accidental);
+          } else if (acc.displayType === 'always' || acc.displayStatus === true) {
+            vfn.addAccidental(i, vf_accidental);
+          }
+        }
+      }
+    } catch (err) {
+      _iterator2.e(err);
+    } finally {
+      _iterator2.f();
+    }
+
+    var _iterator3 = _createForOfIteratorHelper(this.articulations),
+        _step3;
+
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var art = _step3.value;
+        vfn.addArticulation(0, art.vexflow());
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
+    }
+
+    var _iterator4 = _createForOfIteratorHelper(this.expressions),
+        _step4;
+
+    try {
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var exp = _step4.value;
+        vfn.addArticulation(0, exp.vexflow());
+      }
+    } catch (err) {
+      _iterator4.e(err);
+    } finally {
+      _iterator4.f();
+    }
+
+    if (this.noteheadColor !== undefined) {
+      vfn.setStyle({
+        fillStyle: this.noteheadColor,
+        strokeStyle: this.noteheadColor
+      });
+    }
+
+    this.activeVexflowNote = vfn;
+    return vfn;
   }
 
 }
@@ -16192,10 +16250,10 @@ class Note extends NotRest {
     this.isNote = true;
     this.isRest = false;
 
-    if (nn instanceof _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch) {
+    if (nn instanceof _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch) {
       this.pitch = nn;
     } else {
-      this.pitch = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch(nn);
+      this.pitch = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch(nn);
     }
   }
 
@@ -16288,18 +16346,18 @@ class Note extends NotRest {
   }
 
   vexflowAccidentalsAndDisplay(vfn) {
-    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref2$stave = _ref2.stave,
-        stave = _ref2$stave === void 0 ? undefined : _ref2$stave,
-        _ref2$clef = _ref2.clef,
-        clef = _ref2$clef === void 0 ? undefined : _ref2$clef;
+    var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref3$stave = _ref3.stave,
+        stave = _ref3$stave === void 0 ? undefined : _ref3$stave,
+        _ref3$clef = _ref3.clef,
+        clef = _ref3$clef === void 0 ? undefined : _ref3$clef;
 
     super.vexflowAccidentalsAndDisplay(vfn, {
       stave,
       clef
     });
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_10__.debug) {
       console.log(this.stemDirection);
     }
 
@@ -16325,78 +16383,6 @@ class Note extends NotRest {
         }
       }
     }
-  }
-  /**
-   * Returns a `Vex.Flow.StaveNote` that approximates this note.
-   *
-   * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
-   * clef to set the stem direction of.
-   * @returns {Vex.Flow.StaveNote}
-   */
-
-
-  vexflowNote() {
-    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref3$clef = _ref3.clef,
-        clef = _ref3$clef === void 0 ? undefined : _ref3$clef;
-
-    var useStemDirection = this.stemDirection; // fixup stem direction -- must happen before Vex.Flow.Note is created...
-
-    if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
-      useStemDirection = this.getStemDirectionFromClef(clef);
-    }
-
-    var vfd = this.duration.vexflowDuration;
-
-    if (vfd === undefined) {
-      return undefined;
-    }
-
-    var vexflowKey = this.pitch.vexflowName(clef); // Not supported: Double;  None is done elsewhere?
-
-    var vfnStemDirection = useStemDirection === 'down' ? (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.StaveNote.STEM_DOWN) : (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.StaveNote.STEM_UP);
-    var vfn = new (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.StaveNote)({
-      keys: [vexflowKey],
-      duration: vfd,
-      stem_direction: vfnStemDirection
-    });
-    this.vexflowAccidentalsAndDisplay(vfn, {
-      clef
-    }); // clean up stuff...
-
-    if (this.pitch.accidental !== undefined) {
-      if (this.pitch.accidental.vexflowModifier !== 'n' && this.pitch.accidental.displayStatus !== false) {
-        vfn.addAccidental(0, new (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Accidental)(this.pitch.accidental.vexflowModifier));
-      } else if (this.pitch.accidental.displayType === 'always' || this.pitch.accidental.displayStatus === true) {
-        vfn.addAccidental(0, new (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Accidental)(this.pitch.accidental.vexflowModifier));
-      }
-    }
-
-    if (this.articulations[0] !== undefined) {
-      for (var i = 0; i < this.articulations.length; i++) {
-        var art = this.articulations[i]; // 0 refers to the first pitch (for chords etc.)...
-
-        vfn.addArticulation(0, art.vexflow());
-      }
-    }
-
-    if (this.expressions[0] !== undefined) {
-      for (var j = 0; j < this.expressions.length; j++) {
-        var exp = this.expressions[j]; // 0 refers to the first pitch (for chords etc.)...
-
-        vfn.addArticulation(0, exp.vexflow());
-      }
-    }
-
-    if (this.noteheadColor !== undefined) {
-      vfn.setStyle({
-        fillStyle: this.noteheadColor,
-        strokeStyle: this.noteheadColor
-      });
-    }
-
-    this.activeVexflowNote = vfn;
-    return vfn;
   }
 
   playMidi() {
@@ -16442,8 +16428,8 @@ class Note extends NotRest {
     if (this.tie === undefined || this.tie.type === 'start') {
       // console.log(volume);
       try {
-        midicube__WEBPACK_IMPORTED_MODULE_3__.noteOn(channel, midNum, volume, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_3__.noteOff(channel, midNum, stopTime);
+        midicube__WEBPACK_IMPORTED_MODULE_5__.noteOn(channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_5__.noteOff(channel, midNum, stopTime);
       } catch (e) {// do nothing -- might not have an output channel because of audio not connected
       }
     } // else { console.log ('not going to play ', this.nameWithOctave); }
@@ -16517,7 +16503,7 @@ class Rest extends GeneralNote {
     }
 
     if (this.lineShift !== undefined) {
-      var p = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch('B4');
+      var p = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch('B4');
       var ls = this.lineShift;
 
       if (this.duration.type === 'whole') {
@@ -16528,7 +16514,7 @@ class Rest extends GeneralNote {
       keyLine = p.vexflowName(undefined);
     }
 
-    var vfn = new (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.StaveNote)({
+    var vfn = new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.StaveNote)({
       keys: [keyLine],
       duration: this.duration.vexflowDuration + 'r'
     });
