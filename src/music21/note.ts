@@ -509,10 +509,10 @@ export class NotRest extends GeneralNote {
             }
         }
         for (const art of this.articulations) {
-            vfn.addArticulation(0, art.vexflow());
+            vfn.addArticulation(0, art.vexflow({stemDirection: useStemDirection}));
         }
         for (const exp of this.expressions) {
-            vfn.addArticulation(0, exp.vexflow());
+            vfn.addArticulation(0, exp.vexflow({stemDirection: useStemDirection}));
         }
         if (this.noteheadColor !== undefined) {
             vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });

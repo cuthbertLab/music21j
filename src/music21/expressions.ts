@@ -10,6 +10,11 @@
 
 import Vex from 'vexflow';
 import * as base from './base';
+import {
+    ArticulationPlacement,
+    setPlacementOnVexFlowArticulation,
+    VexflowArticulationParams,
+} from './articulations';
 
 /**
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
@@ -26,7 +31,7 @@ export class Expression extends base.Music21Object {
 
     name: string = 'expression';
     vexflowModifier: string = '';
-    setPosition: number = undefined;
+    placement: ArticulationPlacement = ArticulationPlacement.ABOVE;
 
     /**
      * Renders this Expression as a Vex.Flow.Articulation
@@ -35,11 +40,9 @@ export class Expression extends base.Music21Object {
      *
      * @returns {Vex.Flow.Articulation}
      */
-    vexflow() {
+    vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
         const vfe = new Vex.Flow.Articulation(this.vexflowModifier);
-        if (this.setPosition) {
-            vfe.setPosition(this.setPosition);
-        }
+        setPlacementOnVexFlowArticulation(vfe, this.placement, stemDirection);
         return vfe;
     }
 }
@@ -58,6 +61,77 @@ export class Fermata extends Expression {
         super();
         this.name = 'fermata';
         this.vexflowModifier = 'a@a';
-        this.setPosition = 3;
+    }
+}
+
+
+export class Ornament extends Expression {
+    static get className() { return 'music21.expressions.Ornament'; }
+
+    name: string = 'ornament';
+    vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
+        const vfe = new Vex.Flow.Ornament(this.vexflowModifier);
+        setPlacementOnVexFlowArticulation(vfe, this.placement, stemDirection);
+        return vfe;
+    }
+}
+
+
+export class Trill extends Ornament {
+    static get className() { return 'music21.expressions.Trill'; }
+
+    constructor() {
+        super();
+        this.name = 'trill';
+        this.vexflowModifier = 'tr';
+    }
+}
+
+export class Turn extends Ornament {
+    static get className() { return 'music21.expressions.Turn'; }
+
+    constructor() {
+        super();
+        this.name = 'turn';
+        this.vexflowModifier = 'turn';
+    }
+}
+
+export class InvertedTurn extends Turn {
+    static get className() { return 'music21.expressions.InvertedTurn'; }
+
+    constructor() {
+        super();
+        this.name = 'invertedTurn';
+        this.vexflowModifier = 'turn_inverted';
+    }
+}
+
+export class GeneralMordent extends Ornament {
+    static get className() { return 'music21.expressions.GeneralMordent'; }
+}
+
+
+/**
+ * note that Vexflow's definition of mordent/inverted mordent is backwards
+ * from music theory. -- see music21p for more details.
+ */
+export class Mordent extends GeneralMordent {
+    static get className() { return 'music21.expressions.Mordent'; }
+
+    constructor() {
+        super();
+        this.name = 'mordent';
+        this.vexflowModifier = 'mordent_inverted';
+    }
+}
+
+export class InvertedMordent extends GeneralMordent {
+    static get className() { return 'music21.expressions.InvertedMordent'; }
+
+    constructor() {
+        super();
+        this.name = 'invertedMordent';
+        this.vexflowModifier = 'mordent';
     }
 }

@@ -12,6 +12,62 @@ import Vex from 'vexflow';
 import * as common from './common';
 import * as prebase from './prebase';
 
+export enum ArticulationPlacement {
+    ABOVE = 'above',
+    BELOW = 'below',
+    LEFT = 'left',
+    RIGHT = 'right',
+    STEM_SIDE = 'stemSide',
+    NOTE_SIDE = 'noteSide',
+}
+
+export const ArticulationPlacementToVexFlowModifierPosition = new Map(
+    [
+        [ArticulationPlacement.ABOVE, Vex.Flow.Modifier.Position.ABOVE],
+        [ArticulationPlacement.BELOW, Vex.Flow.Modifier.Position.BELOW],
+        [ArticulationPlacement.LEFT, Vex.Flow.Modifier.Position.LEFT],
+        [ArticulationPlacement.RIGHT, Vex.Flow.Modifier.Position.RIGHT],
+    ]
+);
+
+export interface VexflowArticulationParams {
+    stemDirection?: string;
+}
+
+/**
+ * This works the same for music21 Articulations and Expressions
+ */
+export function setPlacementOnVexFlowArticulation(
+    vfa: Vex.Flow.Articulation|Vex.Flow.Ornament,
+    placement: ArticulationPlacement,
+    stemDirection: string,
+) {
+    if (placement === undefined) {
+        return;
+    }
+    if ((!stemDirection || stemDirection === 'none')
+        && (placement === ArticulationPlacement.STEM_SIDE
+            || placement === ArticulationPlacement.NOTE_SIDE)) {
+        placement = ArticulationPlacement.ABOVE;
+    }
+    if (placement === ArticulationPlacement.STEM_SIDE) {
+        if (stemDirection === 'up') {
+            placement = ArticulationPlacement.ABOVE;
+        } else {
+            placement = ArticulationPlacement.BELOW;
+        }
+    } else if (placement === ArticulationPlacement.NOTE_SIDE) {
+        if (stemDirection === 'up') {
+            placement = ArticulationPlacement.BELOW;
+        } else {
+            placement = ArticulationPlacement.ABOVE;
+        }
+    }
+    if (ArticulationPlacementToVexFlowModifierPosition.has(placement)) {
+        vfa.setPosition(ArticulationPlacementToVexFlowModifierPosition.get(placement));
+    }
+}
+
 /**
  * Represents a single articulation, usually in the `.articulations` Array
  * on a {@link music21.note.Note} or something like that.
@@ -28,9 +84,8 @@ export class Articulation extends prebase.ProtoM21Object {
     static get className() { return 'music21.articulation.Articulation'; }
 
     name: string;
-    placement: string = 'above';
+    placement: ArticulationPlacement = ArticulationPlacement.NOTE_SIDE;
     vexflowModifier: string;
-    setPosition;  // ?
     dynamicScale: number = 1.0;
     lengthScale: number = 1.0;
 
@@ -39,11 +94,9 @@ export class Articulation extends prebase.ProtoM21Object {
      *
      * @returns {Vex.Flow.Articulation}
      */
-    vexflow(): Vex.Flow.Articulation {
+    vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
         const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
-        if (this.setPosition) {
-            vfa.setPosition(this.setPosition);
-        }
+        setPlacementOnVexFlowArticulation(vfa, this.placement, stemDirection);
         return vfa;
     }
 }
@@ -194,8 +247,8 @@ export class Spiccato extends Staccato {
  * @class Marcato
  * @memberof music21.articulations
  *
- * is both a DynamicArticulation and a LengthArticulation
- * TODO(msc): check that `.classes` reflects that
+ * should be both a DynamicArticulation and a LengthArticulation
+ * TODO(msc): check that `.classes` reflects that in music21j
  */
 export class Marcato extends DynamicArticulation {
     static get className() { return 'music21.articulation.Marcato'; }

@@ -1,5 +1,5 @@
 /**
- * music21j version 0.10.2 built on 2021-03-05.
+ * music21j version 0.10.2 built on 2021-03-07.
  * Copyright (c) 2013-2021 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -28,6 +28,9 @@ return /******/ (() => { // webpackBootstrap
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ArticulationPlacement": () => (/* binding */ ArticulationPlacement),
+/* harmony export */   "ArticulationPlacementToVexFlowModifierPosition": () => (/* binding */ ArticulationPlacementToVexFlowModifierPosition),
+/* harmony export */   "setPlacementOnVexFlowArticulation": () => (/* binding */ setPlacementOnVexFlowArticulation),
 /* harmony export */   "Articulation": () => (/* binding */ Articulation),
 /* harmony export */   "LengthArticulation": () => (/* binding */ LengthArticulation),
 /* harmony export */   "DynamicArticulation": () => (/* binding */ DynamicArticulation),
@@ -64,6 +67,49 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var ArticulationPlacement;
+
+(function (ArticulationPlacement) {
+  ArticulationPlacement["ABOVE"] = "above";
+  ArticulationPlacement["BELOW"] = "below";
+  ArticulationPlacement["LEFT"] = "left";
+  ArticulationPlacement["RIGHT"] = "right";
+  ArticulationPlacement["STEM_SIDE"] = "stemSide";
+  ArticulationPlacement["NOTE_SIDE"] = "noteSide";
+})(ArticulationPlacement || (ArticulationPlacement = {}));
+
+var ArticulationPlacementToVexFlowModifierPosition = new Map([[ArticulationPlacement.ABOVE, (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Modifier.Position.ABOVE)], [ArticulationPlacement.BELOW, (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Modifier.Position.BELOW)], [ArticulationPlacement.LEFT, (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Modifier.Position.LEFT)], [ArticulationPlacement.RIGHT, (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Modifier.Position.RIGHT)]]);
+/**
+ * This works the same for music21 Articulations and Expressions
+ */
+
+function setPlacementOnVexFlowArticulation(vfa, placement, stemDirection) {
+  if (placement === undefined) {
+    return;
+  }
+
+  if ((!stemDirection || stemDirection === 'none') && (placement === ArticulationPlacement.STEM_SIDE || placement === ArticulationPlacement.NOTE_SIDE)) {
+    placement = ArticulationPlacement.ABOVE;
+  }
+
+  if (placement === ArticulationPlacement.STEM_SIDE) {
+    if (stemDirection === 'up') {
+      placement = ArticulationPlacement.ABOVE;
+    } else {
+      placement = ArticulationPlacement.BELOW;
+    }
+  } else if (placement === ArticulationPlacement.NOTE_SIDE) {
+    if (stemDirection === 'up') {
+      placement = ArticulationPlacement.BELOW;
+    } else {
+      placement = ArticulationPlacement.ABOVE;
+    }
+  }
+
+  if (ArticulationPlacementToVexFlowModifierPosition.has(placement)) {
+    vfa.setPosition(ArticulationPlacementToVexFlowModifierPosition.get(placement));
+  }
+}
 /**
  * Represents a single articulation, usually in the `.articulations` Array
  * on a {@link music21.note.Note} or something like that.
@@ -80,7 +126,7 @@ __webpack_require__.r(__webpack_exports__);
 class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
   constructor() {
     super(...arguments);
-    this.placement = 'above';
+    this.placement = ArticulationPlacement.NOTE_SIDE;
     this.dynamicScale = 1.0;
     this.lengthScale = 1.0;
   }
@@ -95,13 +141,11 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object 
    */
 
 
-  vexflow() {
+  vexflow({
+    stemDirection
+  } = {}) {
     var vfa = new (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Articulation)(this.vexflowModifier);
-
-    if (this.setPosition) {
-      vfa.setPosition(this.setPosition);
-    }
-
+    setPlacementOnVexFlowArticulation(vfa, this.placement, stemDirection);
     return vfa;
   }
 
@@ -279,8 +323,8 @@ class Spiccato extends Staccato {
  * @class Marcato
  * @memberof music21.articulations
  *
- * is both a DynamicArticulation and a LengthArticulation
- * TODO(msc): check that `.classes` reflects that
+ * should be both a DynamicArticulation and a LengthArticulation
+ * TODO(msc): check that `.classes` reflects that in music21j
  */
 
 class Marcato extends DynamicArticulation {
@@ -356,8 +400,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 class Recorder {
-  constructor() {
-    var cfg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor(cfg = {}) {
     this.recording = false;
     var config = cfg || {};
     this.bufferLen = config.bufferLen || 4096;
@@ -587,9 +630,7 @@ class Recorder {
     this.exportWAV(cb, type, true);
   }
 
-  setupDownload(blob) {
-    var filename = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'output.wav';
-    var elementId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'save';
+  setupDownload(blob, filename = 'output.wav', elementId = 'save') {
     var url = (window.URL || window.webkitURL).createObjectURL(blob);
     var link = document.getElementById(elementId);
     link.href = url;
@@ -743,25 +784,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.typed-array.to-locale-string.js */ "./node_modules/core-js/modules/es.typed-array.to-locale-string.js");
 /* harmony import */ var core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 
 
 
 
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * audioSearch module. See music21.audioSearch namespace
@@ -796,8 +828,8 @@ class _ConfigSingletonCreator {
       return this._audioContext;
     } else {
       // AudioContext should be a singleton, but MIDI reports loaded before it is!
-      if (midicube__WEBPACK_IMPORTED_MODULE_4__ !== undefined && midicube__WEBPACK_IMPORTED_MODULE_4__.WebAudio !== undefined && midicube__WEBPACK_IMPORTED_MODULE_4__.WebAudio.getContext() !== undefined) {
-        window.globalAudioContext = midicube__WEBPACK_IMPORTED_MODULE_4__.WebAudio.getContext();
+      if (midicube__WEBPACK_IMPORTED_MODULE_5__ !== undefined && midicube__WEBPACK_IMPORTED_MODULE_5__.WebAudio !== undefined && midicube__WEBPACK_IMPORTED_MODULE_5__.WebAudio.getContext() !== undefined) {
+        window.globalAudioContext = midicube__WEBPACK_IMPORTED_MODULE_5__.WebAudio.getContext();
       } else if (typeof window.globalAudioContext === 'undefined') {
         window.globalAudioContext = new this.AudioContextCaller();
       }
@@ -889,10 +921,7 @@ function smoothPitchExtraction(frequency) {
     config.lastPitchesDetected.shift();
     config.lastCentsDeviationsDetected.shift();
   } else {
-    var _midiNumDiffFromFrequ = midiNumDiffFromFrequency(frequency),
-        _midiNumDiffFromFrequ2 = _slicedToArray(_midiNumDiffFromFrequ, 2),
-        midiNum = _midiNumDiffFromFrequ2[0],
-        _centsOff = _midiNumDiffFromFrequ2[1];
+    var [midiNum, _centsOff] = midiNumDiffFromFrequency(frequency);
 
     if (config.lastPitchClassesDetected.length > config.pitchSmoothingSize) {
       config.lastPitchClassesDetected.shift();
@@ -905,7 +934,7 @@ function smoothPitchExtraction(frequency) {
     config.lastCentsDeviationsDetected.push(_centsOff);
   }
 
-  var mostCommonPitchClass = _common__WEBPACK_IMPORTED_MODULE_5__.statisticalMode(config.lastPitchClassesDetected);
+  var mostCommonPitchClass = _common__WEBPACK_IMPORTED_MODULE_6__.statisticalMode(config.lastPitchClassesDetected);
 
   if (mostCommonPitchClass === null) {
     return [-1, 0];
@@ -921,7 +950,7 @@ function smoothPitchExtraction(frequency) {
     }
   }
 
-  var mostCommonPitch = _common__WEBPACK_IMPORTED_MODULE_5__.statisticalMode(pitchesMatchingClass); // find cents difference; weighing more recent samples more...
+  var mostCommonPitch = _common__WEBPACK_IMPORTED_MODULE_6__.statisticalMode(pitchesMatchingClass); // find cents difference; weighing more recent samples more...
 
   var totalSamplePoints = 0;
   var totalSample = 0;
@@ -937,11 +966,7 @@ function smoothPitchExtraction(frequency) {
 }
 function sampleCallback(frequency) {
   // noinspection JSUnusedLocalSymbols
-  var _smoothPitchExtractio = smoothPitchExtraction(frequency),
-      _smoothPitchExtractio2 = _slicedToArray(_smoothPitchExtractio, 2),
-      unused_midiNum = _smoothPitchExtractio2[0],
-      unused_centsOff = _smoothPitchExtractio2[1];
-
+  var [unused_midiNum, unused_centsOff] = smoothPitchExtraction(frequency);
   return 0;
 } // from Chris Wilson. Replace with Jordi's
 
@@ -989,8 +1014,8 @@ function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
       continue;
     }
 
-    for (var _i2 = 0; _i2 < MAX_SAMPLES; _i2++) {
-      correlation += Math.abs(buf[_i2] - buf[_i2 + offset]);
+    for (var _i = 0; _i < MAX_SAMPLES; _i++) {
+      correlation += Math.abs(buf[_i] - buf[_i + offset]);
     }
 
     correlation = 1 - correlation / MAX_SAMPLES;
@@ -1086,8 +1111,7 @@ function typeToMusicXMLBarStyle(value) {
   }
 }
 
-function standardizeBarType() {
-  var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'regular';
+function standardizeBarType(value = 'regular') {
   value = value.toLowerCase();
 
   if (barTypeList.includes(value)) {
@@ -1102,9 +1126,7 @@ function standardizeBarType() {
 }
 
 class Barline extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
-  constructor() {
-    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'regular';
-    var location = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'right';
+  constructor(type = 'regular', location = 'right') {
     super();
     this.type = type;
     this.location = location; // left, right, middle, None
@@ -1144,43 +1166,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.map.js */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./derivation */ "./src/music21/derivation.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
-/* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./editorial */ "./src/music21/editorial.ts");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./sites */ "./src/music21/sites.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./derivation */ "./src/music21/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./editorial */ "./src/music21/editorial.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./sites */ "./src/music21/sites.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
 
-
-
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -1227,11 +1229,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  *     elements at the same offset. (default 0)
  */
 
-class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Object {
+class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object {
   // beat, etc.
   // lots to do...
-  constructor() {
-    var keywords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor(keywords = {}) {
     super();
     this.classSortOrder = 20; // default;
 
@@ -1243,14 +1244,14 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
 
     this.isMusic21Object = true;
     this.isStream = false;
-    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_8__.Duration(0.0);
-    this.id = _sites__WEBPACK_IMPORTED_MODULE_11__.getId(this);
-    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_11__.Sites();
+    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_6__.Duration(0.0);
+    this.id = _sites__WEBPACK_IMPORTED_MODULE_9__.getId(this);
+    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_9__.Sites();
     this._cloneCallbacks._activeSite = false;
     this._cloneCallbacks._activeSiteStoredOffset = false;
 
     this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(keyName, newObj, self, deep, memo) {
-      var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_7__.Derivation(newObj);
+      var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_5__.Derivation(newObj);
       newDerivation.origin = self;
       newDerivation.method = 'clone';
       newObj[keyName] = newDerivation;
@@ -1258,7 +1259,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
 
 
     this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self, deep, memo) {
-      newObj.sites = new _sites__WEBPACK_IMPORTED_MODULE_11__.Sites();
+      newObj.sites = new _sites__WEBPACK_IMPORTED_MODULE_9__.Sites();
     };
   }
 
@@ -1270,11 +1271,9 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
    */
 
 
-  clone() {
-    var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    var memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  clone(deep = true, memo = undefined) {
     var ret = super.clone(deep, memo);
-    var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_7__.Derivation(ret);
+    var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_5__.Derivation(ret);
     newDerivation.origin = this;
     newDerivation.method = 'clone'; // '__deepcopy__' in m21p
 
@@ -1313,7 +1312,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
       try {
         offset = site.elementOffset(this);
       } catch (e) {
-        throw new _sites__WEBPACK_IMPORTED_MODULE_11__.SitesException('activeSite cannot be set for an object not in the stream');
+        throw new _sites__WEBPACK_IMPORTED_MODULE_9__.SitesException('activeSite cannot be set for an object not in the stream');
       }
 
       this._activeSite = site;
@@ -1323,7 +1322,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
 
   get derivation() {
     if (this._derivation === undefined) {
-      this._derivation = new _derivation__WEBPACK_IMPORTED_MODULE_7__.Derivation(this);
+      this._derivation = new _derivation__WEBPACK_IMPORTED_MODULE_5__.Derivation(this);
     }
 
     return this._derivation;
@@ -1335,7 +1334,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
 
   get editorial() {
     if (this._editorial === undefined) {
-      this._editorial = new _editorial__WEBPACK_IMPORTED_MODULE_9__.Editorial();
+      this._editorial = new _editorial__WEBPACK_IMPORTED_MODULE_7__.Editorial();
     }
 
     return this._editorial;
@@ -1372,11 +1371,9 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
     */
 
 
-  _getMeasureOffset() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$includeMeasurePa = _ref.includeMeasurePadding,
-        includeMeasurePadding = _ref$includeMeasurePa === void 0 ? true : _ref$includeMeasurePa;
-
+  _getMeasureOffset({
+    includeMeasurePadding = true
+  } = {}) {
     var activeS = this.activeSite;
     var offsetLocal;
 
@@ -1474,10 +1471,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
    */
 
 
-  getOffsetBySite() {
-    var site = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+  getOffsetBySite(site = undefined, stringReturns = false) {
     if (site === undefined) {
       return this._naiveOffset;
     }
@@ -1519,37 +1513,22 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
     // noinspection JSUnusedLocalSymbols
 
 
-    var _iterator = _createForOfIteratorHelper(this.contextSites()),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var _step$value = _slicedToArray(_step.value, 3),
-            csSite = _step$value[0],
-            csOffset = _step$value[1],
-            unused_csRecursionType = _step$value[2];
-
-        if (csSite === site) {
-          return csOffset;
-        }
+    for (var [csSite, csOffset, unused_csRecursionType] of this.contextSites()) {
+      if (csSite === site) {
+        return csOffset;
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     throw new Error("Element ".concat(this, " is not in hierarchy of ").concat(site));
   } // ---------- Contexts -------------
 
 
-  getContextByClass(className) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  getContextByClass(className, options = {}) {
     var params = {
       getElementMethod: 'getElementAtOrBefore',
       sortByCreationTime: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_6__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_4__.merge(params, options);
     var getElementMethod = params.getElementMethod;
     var sortByCreationTime = params.sortByCreationTime;
 
@@ -1561,325 +1540,137 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
       return this;
     }
 
-    var _iterator2 = _createForOfIteratorHelper(this.contextSites({
+    for (var [site, positionStart, searchType] of this.contextSites({
       returnSortTuples: true,
       sortByCreationTime
-    })),
-        _step2;
+    })) {
+      if (getElementMethod.includes('At') && site.isClassOrSubclass(className)) {
+        return site;
+      }
 
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var _step2$value = _slicedToArray(_step2.value, 3),
-            site = _step2$value[0],
-            positionStart = _step2$value[1],
-            searchType = _step2$value[2];
+      if (searchType === 'elementsOnly' || searchType === 'elementsFirst') {
+        var contextEl = getContextByClassPayloadExtractor(site, false, positionStart, getElementMethod, className);
 
-        if (getElementMethod.includes('At') && site.isClassOrSubclass(className)) {
-          return site;
+        if (contextEl !== undefined) {
+          return contextEl;
+        }
+      } else if (searchType !== 'elementsOnly') {
+        if (getElementMethod.includes('After') && (className === undefined || site.isClassOrSubclass(className))) {
+          if (!getElementMethod.includes('NotSelf') && this !== site) {
+            return site;
+          }
         }
 
-        if (searchType === 'elementsOnly' || searchType === 'elementsFirst') {
-          var contextEl = getContextByClassPayloadExtractor(site, false, positionStart, getElementMethod, className);
+        var _contextEl = getContextByClassPayloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
 
-          if (contextEl !== undefined) {
-            return contextEl;
-          }
-        } else if (searchType !== 'elementsOnly') {
-          if (getElementMethod.includes('After') && (className === undefined || site.isClassOrSubclass(className))) {
-            if (!getElementMethod.includes('NotSelf') && this !== site) {
-              return site;
-            }
-          }
+        if (_contextEl !== undefined) {
+          return _contextEl;
+        }
 
-          var _contextEl = getContextByClassPayloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
-
-          if (_contextEl !== undefined) {
-            return _contextEl;
-          }
-
-          if (getElementMethod.includes('Before') && (className === undefined || site.isClassOrSubclass(className))) {
-            if (!getElementMethod.includes('NotSelf') || this !== site) {
-              return site;
-            }
+        if (getElementMethod.includes('Before') && (className === undefined || site.isClassOrSubclass(className))) {
+          if (!getElementMethod.includes('NotSelf') || this !== site) {
+            return site;
           }
         }
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
     }
 
     return undefined;
   }
 
-  contextSites() {
-    var _arguments = arguments,
-        _this = this;
+  *contextSites(options = {}) {
+    var params = {
+      callerFirst: undefined,
+      memo: new Map(),
+      offsetAppend: 0.0,
+      sortByCreationTime: false,
+      priorityTarget: undefined,
+      returnSortTuples: false,
+      followDerivation: true
+    };
+    _common__WEBPACK_IMPORTED_MODULE_4__.merge(params, options);
+    var memo = params.memo;
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var options, params, memo, streamThis, recursionType, topLevel, _iterator3, _step3, siteObj, offsetInStream, newOffset, positionInStream, _recursionType, newParams, _iterator6, _step6, _step6$value, topLevelInner, inStreamPos, recurType, inStreamOffset, _iterator4, _step4, derivedObject, _iterator5, _step5, _step5$value, derivedSite, derivedOffset, derivedRecurseType, offsetAdjustedCsTuple;
+    if (params.callerFirst === undefined) {
+      params.callerFirst = this;
 
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              options = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : {};
-              params = {
-                callerFirst: undefined,
-                memo: new Map(),
-                offsetAppend: 0.0,
-                sortByCreationTime: false,
-                priorityTarget: undefined,
-                returnSortTuples: false,
-                followDerivation: true
-              };
-              _common__WEBPACK_IMPORTED_MODULE_6__.merge(params, options);
-              memo = params.memo;
+      if (this.isStream && !memo.has(this)) {
+        var streamThis = this;
+        var recursionType = streamThis.recursionType;
+        yield [this, 0.0, recursionType];
+      }
 
-              if (!(params.callerFirst === undefined)) {
-                _context.next = 12;
-                break;
-              }
+      memo.set(this, true);
+    }
 
-              params.callerFirst = _this;
+    if (params.priorityTarget === undefined && !params.sortByCreationTime) {
+      params.priorityTarget = this.activeSite;
+    }
 
-              if (!(_this.isStream && !memo.has(_this))) {
-                _context.next = 11;
-                break;
-              }
+    var topLevel = this;
 
-              streamThis = _this;
-              recursionType = streamThis.recursionType;
-              _context.next = 11;
-              return [_this, 0.0, recursionType];
+    for (var siteObj of this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
+    )) {
+      if (memo.has(siteObj)) {
+        continue;
+      }
 
-            case 11:
-              memo.set(_this, true);
+      if (siteObj.classes.includes('SpannerStorage')) {
+        continue;
+      } // let offset = this.getOffsetBySite(siteObj);
+      // followDerivation;
 
-            case 12:
-              if (params.priorityTarget === undefined && !params.sortByCreationTime) {
-                params.priorityTarget = _this.activeSite;
-              }
 
-              topLevel = _this;
-              _iterator3 = _createForOfIteratorHelper(_this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
-              ));
-              _context.prev = 15;
+      var offsetInStream = void 0;
 
-              _iterator3.s();
+      try {
+        offsetInStream = siteObj.elementOffset(this);
+      } catch (e) {
+        console.error("".concat(this + '', " is not in ").concat(siteObj + ''));
+        continue;
+      }
 
-            case 17:
-              if ((_step3 = _iterator3.n()).done) {
-                _context.next = 61;
-                break;
-              }
+      var newOffset = offsetInStream + params.offsetAppend;
+      var positionInStream = newOffset;
+      var _recursionType = siteObj.recursionType;
+      yield [siteObj, positionInStream, _recursionType];
+      memo.set(siteObj, true);
+      var newParams = {
+        callerFirst: params.callerFirst,
+        memo,
+        offsetAppend: positionInStream,
+        returnSortTuples: true,
+        sortByCreationTime: params.sortByCreationTime
+      };
 
-              siteObj = _step3.value;
+      for (var [topLevelInner, inStreamPos, recurType] of siteObj.contextSites(newParams)) {
+        var inStreamOffset = inStreamPos; // .offset;
+        // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
 
-              if (!memo.has(siteObj)) {
-                _context.next = 21;
-                break;
-              }
-
-              return _context.abrupt("continue", 59);
-
-            case 21:
-              if (!siteObj.classes.includes('SpannerStorage')) {
-                _context.next = 23;
-                break;
-              }
-
-              return _context.abrupt("continue", 59);
-
-            case 23:
-              // let offset = this.getOffsetBySite(siteObj);
-              // followDerivation;
-              offsetInStream = void 0;
-              _context.prev = 24;
-              offsetInStream = siteObj.elementOffset(_this);
-              _context.next = 32;
-              break;
-
-            case 28:
-              _context.prev = 28;
-              _context.t0 = _context["catch"](24);
-              console.error("".concat(_this + '', " is not in ").concat(siteObj + ''));
-              return _context.abrupt("continue", 59);
-
-            case 32:
-              newOffset = offsetInStream + params.offsetAppend;
-              positionInStream = newOffset;
-              _recursionType = siteObj.recursionType;
-              _context.next = 37;
-              return [siteObj, positionInStream, _recursionType];
-
-            case 37:
-              memo.set(siteObj, true);
-              newParams = {
-                callerFirst: params.callerFirst,
-                memo,
-                offsetAppend: positionInStream,
-                returnSortTuples: true,
-                sortByCreationTime: params.sortByCreationTime
-              };
-              _iterator6 = _createForOfIteratorHelper(siteObj.contextSites(newParams));
-              _context.prev = 40;
-
-              _iterator6.s();
-
-            case 42:
-              if ((_step6 = _iterator6.n()).done) {
-                _context.next = 51;
-                break;
-              }
-
-              _step6$value = _slicedToArray(_step6.value, 3), topLevelInner = _step6$value[0], inStreamPos = _step6$value[1], recurType = _step6$value[2];
-              inStreamOffset = inStreamPos; // .offset;
-              // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
-
-              if (memo.has(topLevelInner)) {
-                _context.next = 49;
-                break;
-              }
-
-              _context.next = 48;
-              return [topLevelInner, inStreamOffset, recurType];
-
-            case 48:
-              memo.set(topLevelInner, true);
-
-            case 49:
-              _context.next = 42;
-              break;
-
-            case 51:
-              _context.next = 56;
-              break;
-
-            case 53:
-              _context.prev = 53;
-              _context.t1 = _context["catch"](40);
-
-              _iterator6.e(_context.t1);
-
-            case 56:
-              _context.prev = 56;
-
-              _iterator6.f();
-
-              return _context.finish(56);
-
-            case 59:
-              _context.next = 17;
-              break;
-
-            case 61:
-              _context.next = 66;
-              break;
-
-            case 63:
-              _context.prev = 63;
-              _context.t2 = _context["catch"](15);
-
-              _iterator3.e(_context.t2);
-
-            case 66:
-              _context.prev = 66;
-
-              _iterator3.f();
-
-              return _context.finish(66);
-
-            case 69:
-              if (!params.followDerivation) {
-                _context.next = 103;
-                break;
-              }
-
-              _iterator4 = _createForOfIteratorHelper(topLevel.derivation.chain());
-              _context.prev = 71;
-
-              _iterator4.s();
-
-            case 73:
-              if ((_step4 = _iterator4.n()).done) {
-                _context.next = 95;
-                break;
-              }
-
-              derivedObject = _step4.value;
-              _iterator5 = _createForOfIteratorHelper(derivedObject.contextSites({
-                callerFirst: undefined,
-                memo,
-                offsetAppend: 0.0,
-                returnSortTuples: true,
-                sortByCreationTime: params.sortByCreationTime
-              }));
-              _context.prev = 76;
-
-              _iterator5.s();
-
-            case 78:
-              if ((_step5 = _iterator5.n()).done) {
-                _context.next = 85;
-                break;
-              }
-
-              _step5$value = _slicedToArray(_step5.value, 3), derivedSite = _step5$value[0], derivedOffset = _step5$value[1], derivedRecurseType = _step5$value[2];
-              offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
-              _context.next = 83;
-              return offsetAdjustedCsTuple;
-
-            case 83:
-              _context.next = 78;
-              break;
-
-            case 85:
-              _context.next = 90;
-              break;
-
-            case 87:
-              _context.prev = 87;
-              _context.t3 = _context["catch"](76);
-
-              _iterator5.e(_context.t3);
-
-            case 90:
-              _context.prev = 90;
-
-              _iterator5.f();
-
-              return _context.finish(90);
-
-            case 93:
-              _context.next = 73;
-              break;
-
-            case 95:
-              _context.next = 100;
-              break;
-
-            case 97:
-              _context.prev = 97;
-              _context.t4 = _context["catch"](71);
-
-              _iterator4.e(_context.t4);
-
-            case 100:
-              _context.prev = 100;
-
-              _iterator4.f();
-
-              return _context.finish(100);
-
-            case 103:
-            case "end":
-              return _context.stop();
-          }
+        if (!memo.has(topLevelInner)) {
+          // if returnSortTuples...
+          // else
+          yield [topLevelInner, inStreamOffset, recurType];
+          memo.set(topLevelInner, true);
         }
-      }, _callee, null, [[15, 63, 66, 69], [24, 28], [40, 53, 56, 59], [71, 97, 100, 103], [76, 87, 90, 93]]);
-    })();
+      }
+    } // if followDerivation...
+
+
+    if (params.followDerivation) {
+      for (var derivedObject of topLevel.derivation.chain()) {
+        for (var [derivedSite, derivedOffset, derivedRecurseType] of derivedObject.contextSites({
+          callerFirst: undefined,
+          memo,
+          offsetAppend: 0.0,
+          returnSortTuples: true,
+          sortByCreationTime: params.sortByCreationTime
+        })) {
+          var offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
+          yield offsetAdjustedCsTuple;
+        }
+      }
+    }
   }
 
   _getTimeSignatureForBeat() {
@@ -1889,7 +1680,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
     });
 
     if (ts === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__.Music21Exception('this object does not have a TimeSignature in Sites');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception('this object does not have a TimeSignature in Sites');
     }
 
     return ts;
@@ -1921,7 +1712,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_10__.ProtoM21Objec
     try {
       unused = item.isStream;
     } catch (AttributeError) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__.StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
     }
 
     for (var i = 0; i < numberOfTimes; i++) {
@@ -2023,12 +1814,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/beam -- Beams and Beam class
@@ -2069,8 +1854,7 @@ var beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_6__.typeFromNumD
  */
 
 class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
-  constructor(type) {
-    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  constructor(type, direction = undefined) {
     super();
     this.type = type;
     this.direction = direction;
@@ -2105,27 +1889,16 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
   static naiveBeams(srcList) {
     var beamsList = [];
 
-    var _iterator = _createForOfIteratorHelper(srcList),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var el = _step.value;
-
-        if (!beamableDurationTypes.includes(el.duration.type)) {
-          beamsList.push(undefined);
-        } else if (el.isRest) {
-          beamsList.push(undefined);
-        } else {
-          var b = new Beams();
-          b.fill(el.duration.type);
-          beamsList.push(b);
-        }
+    for (var el of srcList) {
+      if (!beamableDurationTypes.includes(el.duration.type)) {
+        beamsList.push(undefined);
+      } else if (el.isRest) {
+        beamsList.push(undefined);
+      } else {
+        var b = new Beams();
+        b.fill(el.duration.type);
+        beamsList.push(b);
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     return beamsList;
@@ -2169,33 +1942,22 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
       var hasStart = false;
       var hasStop = false;
 
-      var _iterator2 = _createForOfIteratorHelper(beamsList[i].beamsList),
-          _step2;
-
-      try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var b = _step2.value;
-
-          if (b.type === 'start') {
-            hasStart = true;
-            continue;
-          }
-
-          if (b.type === 'stop') {
-            hasStop = true;
-            continue;
-          }
-
-          if (hasStart && b.type === 'partial' && b.direction === 'left') {
-            b.direction = 'right';
-          } else if (hasStop && b.type === 'partial' && b.direction === 'right') {
-            b.direction = 'left';
-          }
+      for (var b of beamsList[i].beamsList) {
+        if (b.type === 'start') {
+          hasStart = true;
+          continue;
         }
-      } catch (err) {
-        _iterator2.e(err);
-      } finally {
-        _iterator2.f();
+
+        if (b.type === 'stop') {
+          hasStop = true;
+          continue;
+        }
+
+        if (hasStart && b.type === 'partial' && b.direction === 'left') {
+          b.direction = 'right';
+        } else if (hasStop && b.type === 'partial' && b.direction === 'right') {
+          b.direction = 'left';
+        }
       }
     }
 
@@ -2217,48 +1979,38 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
         continue;
       }
 
-      var _iterator3 = _createForOfIteratorHelper(bThisNum),
-          _step3;
+      for (var thisNum of bThisNum) {
+        var thisBeam = bThis.getByNumber(thisNum);
 
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var thisNum = _step3.value;
-          var thisBeam = bThis.getByNumber(thisNum);
-
-          if (thisBeam.type !== 'partial' || thisBeam.direction !== 'right') {
-            continue;
-          }
-
-          if (!bNext.getNumbers().includes(thisNum)) {
-            continue;
-          }
-
-          var nextBeam = bNext.getByNumber(thisNum);
-
-          if (nextBeam.type === 'partial' || nextBeam.direction === 'right') {
-            continue;
-          }
-
-          if (nextBeam.type === 'continue' || nextBeam.type === 'stop') {
-            // should not happen.
-            continue;
-          }
-
-          thisBeam.type = 'start';
-          thisBeam.direction = undefined;
-
-          if (nextBeam.type === 'partial') {
-            nextBeam.type = 'stop';
-          } else if (nextBeam.type === 'start') {
-            nextBeam.type = 'continue';
-          }
-
-          nextBeam.direction = undefined;
+        if (thisBeam.type !== 'partial' || thisBeam.direction !== 'right') {
+          continue;
         }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
+
+        if (!bNext.getNumbers().includes(thisNum)) {
+          continue;
+        }
+
+        var nextBeam = bNext.getByNumber(thisNum);
+
+        if (nextBeam.type === 'partial' || nextBeam.direction === 'right') {
+          continue;
+        }
+
+        if (nextBeam.type === 'continue' || nextBeam.type === 'stop') {
+          // should not happen.
+          continue;
+        }
+
+        thisBeam.type = 'start';
+        thisBeam.direction = undefined;
+
+        if (nextBeam.type === 'partial') {
+          nextBeam.type = 'stop';
+        } else if (nextBeam.type === 'start') {
+          nextBeam.type = 'continue';
+        }
+
+        nextBeam.direction = undefined;
       }
     } // now fix partial-lefts that follow stops:
 
@@ -2277,37 +2029,26 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
         continue;
       }
 
-      var _iterator4 = _createForOfIteratorHelper(_bThisNum),
-          _step4;
+      for (var _thisNum of _bThisNum) {
+        var _thisBeam = _bThis.getByNumber(_thisNum);
 
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var _thisNum = _step4.value;
-
-          var _thisBeam = _bThis.getByNumber(_thisNum);
-
-          if (_thisBeam.type !== 'partial' || _thisBeam.direction !== 'left') {
-            continue;
-          }
-
-          if (!bPrev.getNumbers().includes(_thisNum)) {
-            continue;
-          }
-
-          var prevBeam = bPrev.getByNumber(_thisNum);
-
-          if (prevBeam.type !== 'stop') {
-            continue;
-          }
-
-          _thisBeam.type = 'stop';
-          _thisBeam.direction = undefined;
-          prevBeam.type = 'continue';
+        if (_thisBeam.type !== 'partial' || _thisBeam.direction !== 'left') {
+          continue;
         }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
+
+        if (!bPrev.getNumbers().includes(_thisNum)) {
+          continue;
+        }
+
+        var prevBeam = bPrev.getByNumber(_thisNum);
+
+        if (prevBeam.type !== 'stop') {
+          continue;
+        }
+
+        _thisBeam.type = 'stop';
+        _thisBeam.direction = undefined;
+        prevBeam.type = 'continue';
       }
     }
 
@@ -2327,8 +2068,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
    */
 
 
-  append(type) {
-    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  append(type, direction = undefined) {
     var obj = new Beam(type, direction);
     obj.number = this.beamsList.length + 1;
     this.beamsList.push(obj);
@@ -2350,8 +2090,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
    */
 
 
-  fill(level) {
-    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  fill(level, type = undefined) {
     this.beamsList = [];
     var count = 1;
 
@@ -2392,21 +2131,10 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_4__.Music21Exception('beam number ' + number + ' cannot be accessed');
     }
 
-    var _iterator5 = _createForOfIteratorHelper(this.beamsList),
-        _step5;
-
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var thisBeam = _step5.value;
-
-        if (thisBeam.number === number) {
-          return thisBeam;
-        }
+    for (var thisBeam of this.beamsList) {
+      if (thisBeam.number === number) {
+        return thisBeam;
       }
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
     }
 
     return undefined;
@@ -2421,18 +2149,8 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
   getNumbers() {
     var numbers = [];
 
-    var _iterator6 = _createForOfIteratorHelper(this.beamsList),
-        _step6;
-
-    try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var thisBeam = _step6.value;
-        numbers.push(thisBeam.number);
-      }
-    } catch (err) {
-      _iterator6.e(err);
-    } finally {
-      _iterator6.f();
+    for (var thisBeam of this.beamsList) {
+      numbers.push(thisBeam.number);
     }
 
     return numbers;
@@ -2485,9 +2203,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
    */
 
 
-  setAll(type) {
-    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+  setAll(type, direction = undefined) {
     if (validBeamTypes[type] === undefined) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_4__.Music21Exception('invalid beam type: ' + type);
     }
@@ -2510,9 +2226,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
    */
 
 
-  setByNumber(number, type) {
-    var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-
+  setByNumber(number, type, direction = undefined) {
     if (direction === undefined) {
       var splitIt = type.split('-');
       type = splitIt[0];
@@ -2546,7 +2260,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "chordTables": () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_11__),
+/* harmony export */   "chordTables": () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_10__),
 /* harmony export */   "Chord": () => (/* binding */ Chord),
 /* harmony export */   "chordDefinitions": () => (/* binding */ chordDefinitions)
 /* harmony export */ });
@@ -2562,27 +2276,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.ts");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.ts");
 
 
 
 
 
 
-
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -2622,7 +2327,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  * @property {Boolean} [isRest=false]
  */
 
-class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
+class Chord extends _note__WEBPACK_IMPORTED_MODULE_9__.NotRest {
   constructor(notes) {
     super();
     this._notes = [];
@@ -2643,24 +2348,14 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
       notes = notes.split(/\s+/);
     }
 
-    var _iterator = _createForOfIteratorHelper(notes),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var n = _step.value;
-        this.add(n, false);
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+    for (var n of notes) {
+      this.add(n, false);
     }
 
     if (notes.length > 0) {
       var n0 = notes[0];
 
-      if (n0 instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note) {
+      if (n0 instanceof _note__WEBPACK_IMPORTED_MODULE_9__.Note) {
         if (n0.duration.quarterLength !== this.duration.quarterLength) {
           this.duration = n0.duration;
         }
@@ -2703,15 +2398,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
       var addNote = void 0;
 
       if (typeof tempPitches[i] === 'string') {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(tempPitches[i]);
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_9__.Note(tempPitches[i]);
       } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_10__.Note();
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_9__.Note();
         addNote.pitch = tempPitches[i];
       } else if (tempPitches[i].isClassOrSubclass('Note')) {
         addNote = tempPitches[i];
       } else {
         console.warn('bad pitch', tempPitches[i]);
-        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception('Cannot add pitch from ' + tempPitches[i]);
+        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception('Cannot add pitch from ' + tempPitches[i]);
       }
 
       this._notes.push(addNote);
@@ -2734,23 +2429,12 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
   get orderedPitchClasses() {
     var pcGroup = [];
 
-    var _iterator2 = _createForOfIteratorHelper(this.pitches),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var p = _step2.value;
-
-        if (pcGroup.includes(p.pitchClass)) {
-          continue;
-        }
-
-        pcGroup.push(p.pitchClass);
+    for (var p of this.pitches) {
+      if (pcGroup.includes(p.pitchClass)) {
+        continue;
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
+
+      pcGroup.push(p.pitchClass);
     }
 
     pcGroup.sort((a, b) => a - b);
@@ -2759,7 +2443,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
 
   get chordTablesAddress() {
     if (this._chordTablesAddressNeedsUpdating) {
-      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_11__.seekChordTablesAddress(this);
+      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_10__.seekChordTablesAddress(this);
     }
 
     this._chordTablesAddressNeedsUpdating = false;
@@ -2769,7 +2453,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
   get commonName() {
     // TODO: many more exemptions from music21p
     var cta = this.chordTablesAddress;
-    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToCommonNames(cta);
+    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToCommonNames(cta);
     var forteClass = this.forteClass;
     var enharmonicTests = {
       '3-11A': () => this.isMinorTriad(),
@@ -2797,7 +2481,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
   }
 
   get forteClass() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToForteName(this.chordTablesAddress, 'tn');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToForteName(this.chordTablesAddress, 'tn');
   }
 
   get forteClassNumber() {
@@ -2805,7 +2489,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
   }
 
   get forteClassTnI() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToForteName(this.chordTablesAddress, 'tni');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToForteName(this.chordTablesAddress, 'tni');
   }
 
   get(i) {
@@ -2816,50 +2500,20 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
     }
   }
 
-  [Symbol.iterator]() {
-    var _this = this;
-
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var i;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              i = 0;
-
-            case 1:
-              if (!(i < _this.length)) {
-                _context.next = 7;
-                break;
-              }
-
-              _context.next = 4;
-              return _this.get(i);
-
-            case 4:
-              i++;
-              _context.next = 1;
-              break;
-
-            case 7:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    })();
+  *[Symbol.iterator]() {
+    for (var i = 0; i < this.length; i++) {
+      yield this.get(i);
+    }
   }
 
   areZRelations(other) {
-    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToZAddress(this.chordTablesAddress);
+    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToZAddress(this.chordTablesAddress);
 
     if (zRelationAddress === undefined) {
       return false;
     }
 
-    for (var _i = 0, _arr = ['cardinality', 'forteClass', 'inversion']; _i < _arr.length; _i++) {
-      var key = _arr[_i];
-
+    for (var key of ['cardinality', 'forteClass', 'inversion']) {
       if (other.chordTablesAddress[key] !== zRelationAddress[key]) {
         return false;
       }
@@ -2874,34 +2528,23 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
     }
 
     var chordTablesAddress = this.chordTablesAddress;
-    var v = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToIntervalVector(chordTablesAddress);
-    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_11__.intervalVectorToAddress(v);
+    var v = _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToIntervalVector(chordTablesAddress);
+    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_10__.intervalVectorToAddress(v);
     var other;
 
-    var _iterator3 = _createForOfIteratorHelper(addresses),
-        _step3;
+    for (var thisAddress of addresses) {
+      if (thisAddress.forteClass !== chordTablesAddress.forteClass) {
+        other = thisAddress;
+      }
+    } // other should always be defined;
 
-    try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var thisAddress = _step3.value;
 
-        if (thisAddress.forteClass !== chordTablesAddress.forteClass) {
-          other = thisAddress;
-        }
-      } // other should always be defined;
-
-    } catch (err) {
-      _iterator3.e(err);
-    } finally {
-      _iterator3.f();
-    }
-
-    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToTransposedNormalForm(other);
+    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToTransposedNormalForm(other);
     return new Chord(prime);
   }
 
   get hasZRelation() {
-    var post = _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToZAddress(this.chordTablesAddress);
+    var post = _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToZAddress(this.chordTablesAddress);
 
     if (post !== undefined) {
       return true;
@@ -2911,7 +2554,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
   }
 
   get intervalVector() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_11__.addressToIntervalVector(this.chordTablesAddress);
+    return _chordTables__WEBPACK_IMPORTED_MODULE_10__.addressToIntervalVector(this.chordTablesAddress);
   } //    get intervalVectorString() {
   //
   //    }
@@ -2960,41 +2603,29 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
    */
 
 
-  add(notes) {
-    var runSort = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
+  add(notes, runSort = true) {
     if (!(notes instanceof Array)) {
       notes = [notes];
     }
 
-    var _iterator4 = _createForOfIteratorHelper(notes),
-        _step4;
+    for (var noteObj_StrOrNote of notes) {
+      // takes in either a note or a pitch
+      var noteObj = void 0;
 
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var noteObj_StrOrNote = _step4.value;
-        // takes in either a note or a pitch
-        var noteObj = void 0;
+      if (typeof noteObj_StrOrNote === 'string') {
+        noteObj = new _note__WEBPACK_IMPORTED_MODULE_9__.Note(noteObj_StrOrNote);
+      } else if (noteObj_StrOrNote.isClassOrSubclass('Pitch')) {
+        var pitchObj = noteObj_StrOrNote;
+        var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_9__.Note();
+        noteObj2.pitch = pitchObj;
+        noteObj = noteObj2;
+      } else {
+        noteObj = noteObj_StrOrNote;
+      }
 
-        if (typeof noteObj_StrOrNote === 'string') {
-          noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(noteObj_StrOrNote);
-        } else if (noteObj_StrOrNote.isClassOrSubclass('Pitch')) {
-          var pitchObj = noteObj_StrOrNote;
-          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_10__.Note();
-          noteObj2.pitch = pitchObj;
-          noteObj = noteObj2;
-        } else {
-          noteObj = noteObj_StrOrNote;
-        }
+      this._notes.push(noteObj);
+    } // inefficient because sorts after each add, but safe and #(p) is small
 
-        this._notes.push(noteObj);
-      } // inefficient because sorts after each add, but safe and #(p) is small
-
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
-    }
 
     if (runSort === true) {
       this.sortPitches();
@@ -3067,7 +2698,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
     var closedPitches = closedChord.pitches;
 
     if (closedPitches.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception('No notes in Chord!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception('No notes in Chord!');
     } else if (closedPitches.length === 1) {
       return this.pitches[0];
     } // const indexOfPitchesWithPerfectlyStackedThirds = [];
@@ -3274,26 +2905,16 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
 
     var root = this.root();
 
-    var _iterator5 = _createForOfIteratorHelper(this.pitches),
-        _step5;
+    for (var thisPitch of this.pitches) {
+      var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_8__.Interval(root, thisPitch);
 
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var thisPitch = _step5.value;
-        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_9__.Interval(root, thisPitch);
+      if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
+        return false;
+      } // // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
+      // if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
+      //      return false;
+      // }
 
-        if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
-          return false;
-        } // // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
-        // if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
-        //      return false;
-        // }
-
-      }
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
     }
 
     return true;
@@ -3347,16 +2968,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
     return undefined;
   }
 
-  playMidi() {
-    var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
-    var nextElement = arguments.length > 1 ? arguments[1] : undefined;
-
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref$instrument = _ref.instrument,
-        instrument = _ref$instrument === void 0 ? undefined : _ref$instrument,
-        _ref$channel = _ref.channel,
-        channel = _ref$channel === void 0 ? undefined : _ref$channel;
-
+  playMidi(tempo = 120, nextElement, {
+    instrument = undefined,
+    channel = undefined
+  } = {}) {
     var milliseconds = super.playMidi(tempo, nextElement, {
       instrument,
       channel
@@ -3373,8 +2988,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_10__.NotRest {
       midNum = this._notes[j].pitch.midi;
 
       try {
-        midicube__WEBPACK_IMPORTED_MODULE_7__.noteOn(channel, midNum, volume, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_7__.noteOff(channel, midNum, milliseconds / 1000);
+        midicube__WEBPACK_IMPORTED_MODULE_6__.noteOn(channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_6__.noteOff(channel, midNum, milliseconds / 1000);
       } catch (e) {// do nothing -- might not have an output channel because of audio not connected
       }
     }
@@ -3470,27 +3085,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addressToForteName": () => (/* binding */ addressToForteName),
 /* harmony export */   "seekChordTablesAddress": () => (/* binding */ seekChordTablesAddress)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.reverse.js */ "./node_modules/core-js/modules/es.array.reverse.js");
-/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.reverse.js */ "./node_modules/core-js/modules/es.array.reverse.js");
+/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 var t1;
@@ -5626,9 +5232,7 @@ function forteIndexToInversionsAvailable(card, index) {
   }
 }
 
-function _chordTableAddress(cardinality, forteClass) {
-  var inversion = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-  var pcOriginal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+function _chordTableAddress(cardinality, forteClass, inversion = undefined, pcOriginal = undefined) {
   return {
     cardinality,
     forteClass,
@@ -5644,11 +5248,7 @@ function _validateAddress(address) {
   } // noinspection JSObjectNullOrUndefined
 
 
-  var _address$slice = address.slice(0, 2),
-      _address$slice2 = _slicedToArray(_address$slice, 2),
-      card = _address$slice2[0],
-      index = _address$slice2[1];
-
+  var [card, index] = address.slice(0, 2);
   var inversion;
 
   if (address.length >= 3 && address[2] !== undefined) {
@@ -5685,31 +5285,19 @@ function _validateAddress(address) {
 }
 
 function addressToTransposedNormalForm(address) {
-  var _validateAddress2 = _validateAddress(address),
-      _validateAddress3 = _slicedToArray(_validateAddress2, 3),
-      card = _validateAddress3[0],
-      index = _validateAddress3[1],
-      inversion = _validateAddress3[2];
+  var [card, index, inversion] = _validateAddress(address);
 
   var i2 = String([index, inversion]);
   return SCDICT[card][i2][0];
 }
 function addressToPrimeForm(address) {
-  var _validateAddress4 = _validateAddress(address.slice(0, 2)),
-      _validateAddress5 = _slicedToArray(_validateAddress4, 3),
-      card = _validateAddress5[0],
-      index = _validateAddress5[1],
-      inversion = _validateAddress5[2];
+  var [card, index, inversion] = _validateAddress(address.slice(0, 2));
 
   var i2 = String([index, inversion]);
   return SCDICT[card][i2][0];
 }
 function addressToIntervalVector(address) {
-  var _validateAddress6 = _validateAddress(address),
-      _validateAddress7 = _slicedToArray(_validateAddress6, 3),
-      card = _validateAddress7[0],
-      index = _validateAddress7[1],
-      inversion = _validateAddress7[2];
+  var [card, index, inversion] = _validateAddress(address);
 
   var i2 = String([index, inversion]);
   return SCDICT[card][i2][2];
@@ -5720,29 +5308,18 @@ function intervalVectorToAddress(vector) {
   for (var card = 1; card < 13; card++) {
     var num = 0;
 
-    var _iterator = _createForOfIteratorHelper(FORTE[card]),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var sc = _step.value;
-
-        if (sc === undefined) {
-          num += 1;
-          continue; // first, used for spacing
-        } // index 1 is vector
-
-
-        if ((0,_common__WEBPACK_IMPORTED_MODULE_2__.arrayEquals)(sc[1], vector)) {
-          post.push(_chordTableAddress(card, num));
-        }
-
+    for (var sc of FORTE[card]) {
+      if (sc === undefined) {
         num += 1;
+        continue; // first, used for spacing
+      } // index 1 is vector
+
+
+      if ((0,_common__WEBPACK_IMPORTED_MODULE_4__.arrayEquals)(sc[1], vector)) {
+        post.push(_chordTableAddress(card, num));
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+
+      num += 1;
     }
   }
 
@@ -5750,11 +5327,7 @@ function intervalVectorToAddress(vector) {
 }
 function addressToZAddress(address) {
   // noinspection JSUnusedLocalSymbols
-  var _validateAddress8 = _validateAddress(address),
-      _validateAddress9 = _slicedToArray(_validateAddress8, 3),
-      card = _validateAddress9[0],
-      index = _validateAddress9[1],
-      unused_inversion = _validateAddress9[2];
+  var [card, index, unused_inversion] = _validateAddress(address);
 
   var z = FORTE[card][index][3];
 
@@ -5778,14 +5351,8 @@ function addressToCommonNames(address) {
   var refDict = SCREF[String(addressNew)];
   return refDict.name;
 }
-function addressToForteName(address) {
-  var classification = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'tn';
-
-  var _validateAddress10 = _validateAddress(address),
-      _validateAddress11 = _slicedToArray(_validateAddress10, 3),
-      card = _validateAddress11[0],
-      index = _validateAddress11[1],
-      inversion = _validateAddress11[2];
+function addressToForteName(address, classification = 'tn') {
+  var [card, index, inversion] = _validateAddress(address);
 
   var iStr;
 
@@ -5835,27 +5402,16 @@ function seekChordTablesAddress(c) {
     var testSetOriginalPC = testSetOrig[0];
     var testSet = [];
 
-    var _iterator2 = _createForOfIteratorHelper(testSetOrig),
-        _step2;
+    for (var x of testSetOrig) {
+      var zeroTransposed = (0,_common__WEBPACK_IMPORTED_MODULE_4__.posMod)(x - testSetOriginalPC, 12);
+      testSet.push(zeroTransposed);
+    } // create inversion; first take difference from 12 mod 12
 
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var _x = _step2.value;
-        var zeroTransposed = (0,_common__WEBPACK_IMPORTED_MODULE_2__.posMod)(_x - testSetOriginalPC, 12);
-        testSet.push(zeroTransposed);
-      } // create inversion; first take difference from 12 mod 12
-
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
-    }
 
     var testSetInvert = [];
 
-    for (var _i2 = 0, _testSet = testSet; _i2 < _testSet.length; _i2++) {
-      var x = _testSet[_i2];
-      testSetInvert.push((0,_common__WEBPACK_IMPORTED_MODULE_2__.posMod)(12 - x, 12));
+    for (var _x of testSet) {
+      testSetInvert.push((0,_common__WEBPACK_IMPORTED_MODULE_4__.posMod)(12 - _x, 12));
     }
 
     testSetInvert.reverse(); // reverse order (first steps now last)
@@ -5864,7 +5420,7 @@ function seekChordTablesAddress(c) {
     var testSetInvertOriginalPC = testSetInvert[0];
 
     for (var i = 0; i < testSetInvert.length; i++) {
-      testSetInvert[i] = (0,_common__WEBPACK_IMPORTED_MODULE_2__.posMod)(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
+      testSetInvert[i] = (0,_common__WEBPACK_IMPORTED_MODULE_4__.posMod)(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
     }
 
     var candidateTuple = [testSet, testSetInvert, testSetOriginalPC];
@@ -5887,46 +5443,32 @@ function seekChordTablesAddress(c) {
     var dataLinePcs = dataLine[0];
     var inversionsAvailable = forteIndexToInversionsAvailable(card, indexCandidate);
 
-    var _iterator3 = _createForOfIteratorHelper(candidates),
-        _step3;
+    for (var [candidate, candidateInversion, candidateOriginalPC] of candidates) {
+      if ((0,_common__WEBPACK_IMPORTED_MODULE_4__.arrayEquals)(dataLinePcs, candidate)) {
+        index = indexCandidate;
 
-    try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var _step3$value = _slicedToArray(_step3.value, 3),
-            candidate = _step3$value[0],
-            candidateInversion = _step3$value[1],
-            candidateOriginalPC = _step3$value[2];
-
-        if ((0,_common__WEBPACK_IMPORTED_MODULE_2__.arrayEquals)(dataLinePcs, candidate)) {
-          index = indexCandidate;
-
-          if (inversionsAvailable.includes(0)) {
-            inversion = 0;
-          } else {
-            inversion = 1;
-          }
-
-          matchedPCOriginal = candidateOriginalPC;
-          match = true;
-          break;
-        } else if ((0,_common__WEBPACK_IMPORTED_MODULE_2__.arrayEquals)(dataLinePcs, candidateInversion)) {
-          index = indexCandidate;
-
-          if (inversionsAvailable.includes(0)) {
-            inversion = 0;
-          } else {
-            inversion = -1;
-          }
-
-          matchedPCOriginal = candidateOriginalPC;
-          match = true;
-          break;
+        if (inversionsAvailable.includes(0)) {
+          inversion = 0;
+        } else {
+          inversion = 1;
         }
+
+        matchedPCOriginal = candidateOriginalPC;
+        match = true;
+        break;
+      } else if ((0,_common__WEBPACK_IMPORTED_MODULE_4__.arrayEquals)(dataLinePcs, candidateInversion)) {
+        index = indexCandidate;
+
+        if (inversionsAvailable.includes(0)) {
+          inversion = 0;
+        } else {
+          inversion = -1;
+        }
+
+        matchedPCOriginal = candidateOriginalPC;
+        match = true;
+        break;
       }
-    } catch (err) {
-      _iterator3.e(err);
-    } finally {
-      _iterator3.f();
     }
   }
 
@@ -5968,24 +5510,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.flat.js */ "./node_modules/core-js/modules/es.array.flat.js");
 /* harmony import */ var core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
+/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -6072,9 +5614,8 @@ var nameToSign = {
  * @property {number} octaveChange
  */
 
-class Clef extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
-  constructor(name) {
-    var octaveChange = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+class Clef extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
+  constructor(name, octaveChange = 0) {
     super();
     this.name = undefined;
     this.sign = undefined;
@@ -6120,20 +5661,17 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     }
 
     var lowestLineDifference = this.lowestLineTrebleOffset;
-    var tempPitch = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(p.step);
+    var tempPitch = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch(p.step);
     tempPitch.octave = p.octave;
     tempPitch.diatonicNoteNum += lowestLineDifference;
     tempPitch.accidental = p.accidental;
     return tempPitch;
   }
 
-  getStemDirectionForPitches(pitchList) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$firstLastOnly = _ref.firstLastOnly,
-        firstLastOnly = _ref$firstLastOnly === void 0 ? true : _ref$firstLastOnly,
-        _ref$extremePitchOnly = _ref.extremePitchOnly,
-        extremePitchOnly = _ref$extremePitchOnly === void 0 ? true : _ref$extremePitchOnly;
-
+  getStemDirectionForPitches(pitchList, {
+    firstLastOnly = true,
+    extremePitchOnly = true
+  } = {}) {
     var pitchRealList;
 
     if (!(pitchList instanceof Array)) {
@@ -6162,18 +5700,8 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     var differenceSum = 0;
     var midLine = this.lowestLine + 4;
 
-    var _iterator = _createForOfIteratorHelper(relevantPitches),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var p = _step.value;
-        differenceSum += p.diatonicNoteNum - midLine;
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+    for (var p of relevantPitches) {
+      differenceSum += p.diatonicNoteNum - midLine;
     }
 
     if (differenceSum >= 0) {
@@ -6402,11 +5930,9 @@ var all_clefs = {
  *
  */
 
-function bestClef(st) {
-  var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      _ref2$recurse = _ref2.recurse,
-      recurse = _ref2$recurse === void 0 ? true : _ref2$recurse;
-
+function bestClef(st, {
+  recurse = true
+} = {}) {
   // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
   var stFlat;
 
@@ -6456,8 +5982,7 @@ function bestClef(st) {
  * @returns {music21.clef.Clef}
  */
 
-function clefFromString(clefString) {
-  var octaveShift = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+function clefFromString(clefString, octaveShift = 0) {
   var xnStr = clefString.trim();
   var thisType;
   var lineNum;
@@ -6486,8 +6011,7 @@ function clefFromString(clefString) {
     // try to get any clef in the module
     var searchLower = xnStr.toLowerCase();
 
-    for (var _i = 0, _Object$keys = Object.keys(all_clefs); _i < _Object$keys.length; _i++) {
-      var clefKey = _Object$keys[_i];
+    for (var clefKey of Object.keys(all_clefs)) {
       var clefLower = clefKey.toLowerCase();
       var potentialClass = all_clefs[clefKey];
 
@@ -6557,27 +6081,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "pathSimplify": () => (/* binding */ pathSimplify),
 /* harmony export */   "isFloat": () => (/* binding */ isFloat)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor.js */ "./node_modules/core-js/modules/es.regexp.constructor.js");
-/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.search.js */ "./node_modules/core-js/modules/es.string.search.js");
-/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor.js */ "./node_modules/core-js/modules/es.regexp.constructor.js");
+/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.search.js */ "./node_modules/core-js/modules/es.string.search.js");
+/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * common functions
@@ -6770,26 +6294,15 @@ function fromRoman(num) {
   var ints = [1000, 500, 100, 50, 10, 5, 1];
   var places = [];
 
-  var _iterator = _createForOfIteratorHelper(inputRoman),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var _c = _step.value;
-
-      if (!nums.includes(_c)) {
-        throw new Error('Value is not a valid roman numeral: ' + inputRoman);
-      }
+  for (var c of inputRoman) {
+    if (!nums.includes(c)) {
+      throw new Error('Value is not a valid roman numeral: ' + inputRoman);
     }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
   }
 
   for (var i = 0; i < inputRoman.length; i++) {
-    var c = inputRoman[i];
-    var value = ints[nums.indexOf(c)];
+    var _c = inputRoman[i];
+    var value = ints[nums.indexOf(_c)];
 
     if (i < inputRoman.length - 1) {
       var nextValue = ints[nums.indexOf(inputRoman[i + 1])];
@@ -6804,8 +6317,7 @@ function fromRoman(num) {
 
   var summation = 0;
 
-  for (var _i = 0, _places = places; _i < _places.length; _i++) {
-    var n = _places[_i];
+  for (var n of places) {
     summation += n;
   }
 
@@ -6849,9 +6361,7 @@ function toRoman(num) {
  * @returns {SVGElement}
  */
 
-function makeSVGright() {
-  var tag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'svg';
-  var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function makeSVGright(tag = 'svg', attrs = {}) {
   // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
   // normal JQuery does not work.
   var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -6876,8 +6386,7 @@ function makeSVGright() {
  * @return {string}
  */
 
-function ordinalAbbreviation(value) {
-  var plural = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+function ordinalAbbreviation(value, plural = false) {
   var post;
   var valueHundredths = value % 100;
 
@@ -6913,10 +6422,7 @@ function ordinalAbbreviation(value) {
  * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
  */
 
-function rationalize(ql) {
-  var epsilon = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.001;
-  var maxDenominator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 50;
-
+function rationalize(ql, epsilon = 0.001, maxDenominator = 50) {
   for (var i = 2; i < maxDenominator; i++) {
     if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
       var numerator = Math.round(ql * i);
@@ -7036,31 +6542,20 @@ var pathSimplify = path => {
   var addSlash = path.slice(path.length - 1, path.length) === '/';
   var pout = [];
 
-  var _iterator2 = _createForOfIteratorHelper(ps),
-      _step2;
-
-  try {
-    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var el = _step2.value;
-
-      if (el === '..') {
-        if (pout.length > 0) {
-          if (pout[pout.length - 1] !== '..') {
-            pout.pop();
-          } else {
-            pout.push('..');
-          }
+  for (var el of ps) {
+    if (el === '..') {
+      if (pout.length > 0) {
+        if (pout[pout.length - 1] !== '..') {
+          pout.pop();
         } else {
           pout.push('..');
         }
       } else {
-        pout.push(el);
+        pout.push('..');
       }
+    } else {
+      pout.push(el);
     }
-  } catch (err) {
-    _iterator2.e(err);
-  } finally {
-    _iterator2.f();
   }
 
   var pNew = pout.join('/');
@@ -7145,12 +6640,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Derivation": () => (/* binding */ Derivation),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_1__);
-
-
 class Derivation {
   constructor(client) {
     this.client = client;
@@ -7163,38 +6652,13 @@ class Derivation {
     return newThing;
   }
 
-  chain() {
-    var _this = this;
+  *chain() {
+    var origin = this.origin;
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var origin;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              origin = _this.origin;
-
-            case 1:
-              if (!(origin !== undefined)) {
-                _context.next = 7;
-                break;
-              }
-
-              _context.next = 4;
-              return origin;
-
-            case 4:
-              origin = origin.derivation.origin;
-              _context.next = 1;
-              break;
-
-            case 7:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    })();
+    while (origin !== undefined) {
+      yield origin;
+      origin = origin.derivation.origin;
+    }
   }
 
   rootDerivation() {
@@ -7302,8 +6766,7 @@ var vexflowDurationArray = [undefined, undefined, undefined, '1/2', 'w', 'h', 'q
  */
 
 class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
-  constructor() {
-    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0.0;
+  constructor(ql = 0.0) {
     super();
     this.isGrace = false;
     this._quarterLength = 0.0;
@@ -7559,8 +7022,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
    */
 
 
-  appendTuplet(newTuplet) {
-    var skipUpdateQl = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  appendTuplet(newTuplet, skipUpdateQl = false) {
     newTuplet.frozen = true;
 
     this._tuplets.push(newTuplet);
@@ -7586,11 +7048,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
  */
 
 class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
-  constructor() {
-    var numberNotesActual = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3;
-    var numberNotesNormal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-    var durationActual = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var durationNormal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  constructor(numberNotesActual = 3, numberNotesNormal = 2, durationActual = undefined, durationNormal = undefined) {
     super();
     this.frozen = false;
     this.bracket = true;
@@ -7984,7 +7442,14 @@ class StreamException extends Music21Exception {}
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Expression": () => (/* binding */ Expression),
-/* harmony export */   "Fermata": () => (/* binding */ Fermata)
+/* harmony export */   "Fermata": () => (/* binding */ Fermata),
+/* harmony export */   "Ornament": () => (/* binding */ Ornament),
+/* harmony export */   "Trill": () => (/* binding */ Trill),
+/* harmony export */   "Turn": () => (/* binding */ Turn),
+/* harmony export */   "InvertedTurn": () => (/* binding */ InvertedTurn),
+/* harmony export */   "GeneralMordent": () => (/* binding */ GeneralMordent),
+/* harmony export */   "Mordent": () => (/* binding */ Mordent),
+/* harmony export */   "InvertedMordent": () => (/* binding */ InvertedMordent)
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
@@ -7993,6 +7458,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _articulations__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./articulations */ "./src/music21/articulations.ts");
 
 
 
@@ -8005,6 +7471,7 @@ __webpack_require__.r(__webpack_exports__);
  * @memberof music21
  * @requires music21/expressions
  */
+
 
 
 /**
@@ -8023,7 +7490,7 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     super(...arguments);
     this.name = 'expression';
     this.vexflowModifier = '';
-    this.setPosition = undefined;
+    this.placement = _articulations__WEBPACK_IMPORTED_MODULE_4__.ArticulationPlacement.ABOVE;
   }
 
   static get className() {
@@ -8038,13 +7505,11 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    */
 
 
-  vexflow() {
+  vexflow({
+    stemDirection
+  } = {}) {
     var vfe = new (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Articulation)(this.vexflowModifier);
-
-    if (this.setPosition) {
-      vfe.setPosition(this.setPosition);
-    }
-
+    (0,_articulations__WEBPACK_IMPORTED_MODULE_4__.setPlacementOnVexFlowArticulation)(vfe, this.placement, stemDirection);
     return vfe;
   }
 
@@ -8066,7 +7531,96 @@ class Fermata extends Expression {
     super();
     this.name = 'fermata';
     this.vexflowModifier = 'a@a';
-    this.setPosition = 3;
+  }
+
+}
+class Ornament extends Expression {
+  constructor() {
+    super(...arguments);
+    this.name = 'ornament';
+  }
+
+  static get className() {
+    return 'music21.expressions.Ornament';
+  }
+
+  vexflow({
+    stemDirection
+  } = {}) {
+    var vfe = new (vexflow__WEBPACK_IMPORTED_MODULE_2___default().Flow.Ornament)(this.vexflowModifier);
+    (0,_articulations__WEBPACK_IMPORTED_MODULE_4__.setPlacementOnVexFlowArticulation)(vfe, this.placement, stemDirection);
+    return vfe;
+  }
+
+}
+class Trill extends Ornament {
+  static get className() {
+    return 'music21.expressions.Trill';
+  }
+
+  constructor() {
+    super();
+    this.name = 'trill';
+    this.vexflowModifier = 'tr';
+  }
+
+}
+class Turn extends Ornament {
+  static get className() {
+    return 'music21.expressions.Turn';
+  }
+
+  constructor() {
+    super();
+    this.name = 'turn';
+    this.vexflowModifier = 'turn';
+  }
+
+}
+class InvertedTurn extends Turn {
+  static get className() {
+    return 'music21.expressions.InvertedTurn';
+  }
+
+  constructor() {
+    super();
+    this.name = 'invertedTurn';
+    this.vexflowModifier = 'turn_inverted';
+  }
+
+}
+class GeneralMordent extends Ornament {
+  static get className() {
+    return 'music21.expressions.GeneralMordent';
+  }
+
+}
+/**
+ * note that Vexflow's definition of mordent/inverted mordent is backwards
+ * from music theory.
+ */
+
+class Mordent extends GeneralMordent {
+  static get className() {
+    return 'music21.expressions.Mordent';
+  }
+
+  constructor() {
+    super();
+    this.name = 'mordent';
+    this.vexflowModifier = 'mordent_inverted';
+  }
+
+}
+class InvertedMordent extends GeneralMordent {
+  static get className() {
+    return 'music21.expressions.InvertedMordent';
+  }
+
+  constructor() {
+    super();
+    this.name = 'invertedMordent';
+    this.vexflowModifier = 'mordent';
   }
 
 }
@@ -8086,28 +7640,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Figure": () => (/* binding */ Figure),
 /* harmony export */   "Modifier": () => (/* binding */ Modifier)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.match.js */ "./node_modules/core-js/modules/es.string.match.js");
-/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.match.js */ "./node_modules/core-js/modules/es.string.match.js");
+/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * @namespace music21.figuredBass
@@ -8146,8 +7700,7 @@ class Notation {
    * @property {Modifier[]} modifiers
    * @property {Figure[]} figures
    */
-  constructor() {
-    var notationColumn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  constructor(notationColumn = '') {
     this.figureStrings = undefined;
     this.origNumbers = undefined;
     this.origModStrings = undefined;
@@ -8183,54 +7736,33 @@ class Notation {
     var modifierStrings = [];
     var figureStrings = [];
 
-    var _iterator = _createForOfIteratorHelper(figures),
-        _step;
+    for (var figure of figures) {
+      figure = figure.trim();
+      figureStrings.push(figure);
+      var numberString = '';
+      var modifierString = '';
 
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var figure = _step.value;
-        figure = figure.trim();
-        figureStrings.push(figure);
-        var numberString = '';
-        var modifierString = '';
-
-        var _iterator2 = _createForOfIteratorHelper(figure),
-            _step2;
-
-        try {
-          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-            var c = _step2.value;
-
-            if (c.match(/\d/)) {
-              numberString += c;
-            } else {
-              modifierString += c;
-            }
-          }
-        } catch (err) {
-          _iterator2.e(err);
-        } finally {
-          _iterator2.f();
+      for (var c of figure) {
+        if (c.match(/\d/)) {
+          numberString += c;
+        } else {
+          modifierString += c;
         }
-
-        var number = void 0;
-
-        if (numberString !== '') {
-          number = parseInt(numberString);
-        }
-
-        numbers.push(number);
-
-        if (modifierString === '') {
-          modifierString = undefined;
-        }
-
-        modifierStrings.push(modifierString);
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+
+      var number = void 0;
+
+      if (numberString !== '') {
+        number = parseInt(numberString);
+      }
+
+      numbers.push(number);
+
+      if (modifierString === '') {
+        modifierString = undefined;
+      }
+
+      modifierStrings.push(modifierString);
     }
 
     this.origNumbers = numbers;
@@ -8251,67 +7783,35 @@ class Notation {
       newModifierStrings = [];
       var temp = [];
 
-      var _iterator3 = _createForOfIteratorHelper(oldNumbers),
-          _step3;
-
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var number = _step3.value;
-
-          if (number === undefined) {
-            temp.push(3);
-          } else {
-            temp.push(number);
-          }
+      for (var number of oldNumbers) {
+        if (number === undefined) {
+          temp.push(3);
+        } else {
+          temp.push(number);
         }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
       }
 
       oldNumbers = temp;
 
-      var _iterator4 = _createForOfIteratorHelper(newNumbers),
-          _step4;
+      for (var _number of newNumbers) {
+        var newModifierString = void 0;
 
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var _number = _step4.value;
-          var newModifierString = void 0;
-
-          if (oldNumbers.includes(_number)) {
-            var modifierStringIndex = oldNumbers.indexOf(_number);
-            newModifierString = oldModifierStrings[modifierStringIndex];
-          }
-
-          newModifierStrings.push(newModifierString);
+        if (oldNumbers.includes(_number)) {
+          var modifierStringIndex = oldNumbers.indexOf(_number);
+          newModifierString = oldModifierStrings[modifierStringIndex];
         }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
+
+        newModifierStrings.push(newModifierString);
       }
     } else {
       var _temp = [];
 
-      var _iterator5 = _createForOfIteratorHelper(oldNumbers),
-          _step5;
-
-      try {
-        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-          var _number2 = _step5.value;
-
-          if (_number2 === undefined) {
-            _temp.push(3);
-          } else {
-            _temp.push(_number2);
-          }
+      for (var _number2 of oldNumbers) {
+        if (_number2 === undefined) {
+          _temp.push(3);
+        } else {
+          _temp.push(_number2);
         }
-      } catch (err) {
-        _iterator5.e(err);
-      } finally {
-        _iterator5.f();
       }
 
       newNumbers = _temp;
@@ -8392,12 +7892,12 @@ class Modifier {
       modStr = specialModifiers[modStr];
     }
 
-    var a = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Accidental(modStr);
+    var a = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(modStr);
     return a;
   }
 
   modifyPitchName(pitchNameToAlter) {
-    var pitchToAlter = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(pitchNameToAlter);
+    var pitchToAlter = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch(pitchNameToAlter);
     this.modifyPitch(pitchToAlter, true);
     return pitchToAlter.name;
   }
@@ -8415,7 +7915,7 @@ class Modifier {
       pitchToAlter.accidental = this.accidental.clone();
     } else {
       var newAlter = pitchToAlter.accidental.alter + this.accidental.alter;
-      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Accidental(newAlter);
+      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(newAlter);
       pitchToAlter.accidental = newAccidental;
     }
 
@@ -8655,13 +8155,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_1__.Chord {
-  constructor(figure) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$parseFigure = _ref.parseFigure,
-        parseFigure = _ref$parseFigure === void 0 ? true : _ref$parseFigure,
-        _ref$updatePitches = _ref.updatePitches,
-        updatePitches = _ref$updatePitches === void 0 ? false : _ref$updatePitches;
-
+  constructor(figure, {
+    parseFigure = true,
+    updatePitches = false
+  } = {}) {
     super();
     this._writeAsChord = false;
     this.chordStepModifications = [];
@@ -8748,12 +8245,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Instrument": () => (/* binding */ Instrument),
 /* harmony export */   "find": () => (/* binding */ find)
 /* harmony export */ });
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -9319,9 +8817,8 @@ var info = [{
  * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
  */
 
-class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
-  constructor() {
-    var instrumentName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+class Instrument extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
+  constructor(instrumentName = '') {
     super();
     this.partId = undefined;
     this.partName = undefined;
@@ -9359,9 +8856,7 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
    */
 
 
-  autoAssignMidiChannel() {
-    var usedChannels = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  autoAssignMidiChannel(usedChannels = undefined) {
     if (usedChannels === undefined) {
       usedChannels = global_usedChannels;
     }
@@ -9420,31 +8915,18 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
  * @returns {music21.instrument.Instrument|undefined}
  */
 
-function find(fn) {
-  var inst = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+function find(fn, inst = undefined) {
   if (inst === undefined) {
     inst = new Instrument();
   }
 
-  var _iterator = _createForOfIteratorHelper(info),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var innerInfo = _step.value;
-
-      if (innerInfo.fn === fn || innerInfo.name === fn) {
-        inst.soundfontFn = innerInfo.fn;
-        inst.instrumentName = innerInfo.name;
-        inst.midiProgram = innerInfo.midiNumber;
-        return inst;
-      }
+  for (var innerInfo of info) {
+    if (innerInfo.fn === fn || innerInfo.name === fn) {
+      inst.soundfontFn = innerInfo.fn;
+      inst.instrumentName = innerInfo.name;
+      inst.midiProgram = innerInfo.midiNumber;
+      return inst;
     }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
   }
 
   return undefined;
@@ -9490,37 +8972,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "_getSpecifierFromGenericChromatic": () => (/* binding */ _getSpecifierFromGenericChromatic),
 /* harmony export */   "add": () => (/* binding */ add)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.reverse.js */ "./node_modules/core-js/modules/es.array.reverse.js");
-/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.reverse.js */ "./node_modules/core-js/modules/es.array.reverse.js");
+/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -9642,7 +9116,7 @@ var MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth', 'Fifth', 
  *
  */
 
-class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
+class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
   constructor(gi) {
     super();
 
@@ -9684,7 +9158,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Obje
       this.isUnison = false;
     }
 
-    var tempSteps = _common__WEBPACK_IMPORTED_MODULE_5__.posMod(this.undirected, 7);
+    var tempSteps = _common__WEBPACK_IMPORTED_MODULE_7__.posMod(this.undirected, 7);
     var tempOctaves = Math.floor(this.undirected / 7);
 
     if (tempSteps === 0) {
@@ -9799,24 +9273,19 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Obje
 
 
   transposePitch(p) {
-    var pitch2 = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch();
+    var pitch2 = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Pitch();
     pitch2.step = p.step;
     pitch2.octave = p.octave;
     var oldDiatonicNum = p.diatonicNoteNum;
     var distanceToMove = this.staffDistance; // if not reverse...
 
     var newDiatonicNumber = oldDiatonicNum + distanceToMove;
-
-    var _convertDiatonicNumbe = convertDiatonicNumberToStep(newDiatonicNumber),
-        _convertDiatonicNumbe2 = _slicedToArray(_convertDiatonicNumbe, 2),
-        newStep = _convertDiatonicNumbe2[0],
-        newOctave = _convertDiatonicNumbe2[1];
-
+    var [newStep, newOctave] = convertDiatonicNumberToStep(newDiatonicNumber);
     pitch2.step = newStep;
     pitch2.octave = newOctave;
 
     if (p.accidental !== undefined) {
-      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(p.accidental.name);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Accidental(p.accidental.name);
     }
 
     return pitch2;
@@ -9902,7 +9371,7 @@ var IntervalAdjustImperf = {
  * // See music21p for more possibilities.
  */
 
-class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
+class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
   constructor(specifier, generic) {
     super();
 
@@ -10001,7 +9470,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Obj
       semitones *= -1;
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_4__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_6__.debug) {
       console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
       console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
       console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
@@ -10054,9 +9523,8 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Obj
  *
  */
 
-class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
-  constructor() {
-    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
+  constructor(value = 0) {
     super();
     this.semitones = value;
     this.cents = Math.round(value * 100.0);
@@ -10071,8 +9539,8 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Ob
       this.direction = Direction.DESCENDING;
     }
 
-    this.mod12 = _common__WEBPACK_IMPORTED_MODULE_5__.posMod(this.semitones, 12);
-    this.simpleUndirected = _common__WEBPACK_IMPORTED_MODULE_5__.posMod(this.undirected, 12);
+    this.mod12 = _common__WEBPACK_IMPORTED_MODULE_7__.posMod(this.semitones, 12);
+    this.simpleUndirected = _common__WEBPACK_IMPORTED_MODULE_7__.posMod(this.undirected, 12);
 
     if (this.direction === Direction.DESCENDING) {
       this.simpleDirected = -1 * this.simpleUndirected;
@@ -10123,7 +9591,7 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Ob
     }
 
     var pps = p.ps;
-    var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch();
+    var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Pitch();
     newPitch.ps = pps + this.semitones;
 
     if (useImplicitOctave) {
@@ -10181,16 +9649,12 @@ function convertDiatonicNumberToStep(dn) {
  * // "Augmented Eleventh"
  */
 
-class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
-  constructor() {
+class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
+  constructor(...restArgs) {
     super(); // todo: allow full range of ways of specifying as in m21p
 
     var noteStart;
     var noteEnd;
-
-    for (var _len = arguments.length, restArgs = new Array(_len), _key = 0; _key < _len; _key++) {
-      restArgs[_key] = arguments[_key];
-    }
 
     if (restArgs.length === 1) {
       var arg0 = restArgs[0];
@@ -10225,13 +9689,13 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
 
         if (n1.classes !== undefined && n1.classes.includes('Pitch')) {
           var p1 = n1;
-          n1 = new _note__WEBPACK_IMPORTED_MODULE_6__.Note();
+          n1 = new _note__WEBPACK_IMPORTED_MODULE_8__.Note();
           n1.pitch = p1;
         }
 
         if (n2.classes !== undefined && n2.classes.includes('Pitch')) {
           var p2 = n2;
-          n2 = new _note__WEBPACK_IMPORTED_MODULE_6__.Note();
+          n2 = new _note__WEBPACK_IMPORTED_MODULE_8__.Note();
           n2.pitch = p2;
         }
 
@@ -10351,13 +9815,10 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
    */
 
 
-  transposePitch(p) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$reverse = _ref.reverse,
-        reverse = _ref$reverse === void 0 ? false : _ref$reverse,
-        _ref$maxAccidental = _ref.maxAccidental,
-        maxAccidental = _ref$maxAccidental === void 0 ? 4 : _ref$maxAccidental;
-
+  transposePitch(p, {
+    reverse = false,
+    maxAccidental = 4
+  } = {}) {
     /*
     var useImplicitOctave = false;
     if (p.octave === undefined) {
@@ -10376,10 +9837,10 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
     }
 
     if (halfStepsToFix !== 0) {
-      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(halfStepsToFix);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Accidental(halfStepsToFix);
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_4__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_6__.debug) {
       console.log('Interval.transposePitch -- new step ' + pitch2.step);
       console.log('Interval.transposePitch -- new octave ' + pitch2.octave);
       console.log('Interval.transposePitch -- fixing half steps for ' + halfStepsToFix);
@@ -10488,21 +9949,11 @@ function _getSpecifierFromGenericChromatic(gInt, cInt) {
  */
 
 function add(intervalList) {
-  var p1 = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch('C4');
-  var p2 = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch('C4');
+  var p1 = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Pitch('C4');
+  var p2 = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Pitch('C4');
 
-  var _iterator = _createForOfIteratorHelper(intervalList),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var i = _step.value;
-      p2 = i.transposePitch(p2);
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
+  for (var i of intervalList) {
+    p2 = i.transposePitch(p2);
   }
 
   return new Interval(p1, p2);
@@ -10619,8 +10070,7 @@ function convertKeyStringToMusic21KeyString(textString) {
  */
 
 class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
-  constructor() {
-    var sharps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  constructor(sharps = 0) {
     super();
     this._sharps = 0; // 12 flats/sharps enough for now...
 
@@ -10845,10 +10295,7 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
  */
 
 class Key extends KeySignature {
-  constructor() {
-    var keyName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
-    var mode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+  constructor(keyName = 'C', mode = undefined) {
     if (keyName === undefined) {
       keyName = 'C';
     }
@@ -10911,9 +10358,7 @@ class Key extends KeySignature {
    */
 
 
-  getScale() {
-    var scaleType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  getScale(scaleType = undefined) {
     if (scaleType === undefined) {
       scaleType = this.mode;
     }
@@ -10939,23 +10384,15 @@ class Key extends KeySignature {
     return this._scale.isConcrete;
   }
 
-  getPitches() {
-    return this._scale.getPitches(...arguments);
+  getPitches(...args) {
+    return this._scale.getPitches(...args);
   }
 
-  pitchFromDegree(degree) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
+  pitchFromDegree(degree, ...args) {
     return this._scale.pitchFromDegree(degree, ...args);
   }
 
-  getScaleDegreeFromPitch(pitchTarget) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
-
+  getScaleDegreeFromPitch(pitchTarget, ...args) {
     return this._scale.getScaleDegreeFromPitch(pitchTarget, ...args);
   }
 
@@ -10981,29 +10418,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.map.js */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
-
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -11094,7 +10522,7 @@ class Key {
       rx: 3,
       ry: 3
     };
-    var keyDOM = _common__WEBPACK_IMPORTED_MODULE_6__.makeSVGright('rect', keyAttrs);
+    var keyDOM = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('rect', keyAttrs);
 
     for (var x in this.callbacks) {
       if ({}.hasOwnProperty.call(this.callbacks, x)) {
@@ -11134,7 +10562,7 @@ class Key {
       class: 'keyboardkeyannotation',
       r: this.width * this.parent.scaleFactor / 4
     };
-    var circleDom = _common__WEBPACK_IMPORTED_MODULE_6__.makeSVGright('circle', keyattrs);
+    var circleDom = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('circle', keyattrs);
     this.parent.svgObj.appendChild(circleDom); // console.log(circleDom);
 
     return circleDom;
@@ -11155,7 +10583,7 @@ class Key {
     if (this.id === 0 && this.pitchObj === undefined) {
       return this;
     } else if (this.pitchObj === undefined) {
-      this.pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch();
+      this.pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch();
       this.pitchObj.ps = this.id;
     }
 
@@ -11187,7 +10615,7 @@ class Key {
       class: 'keyboardkeyname',
       'font-size': fontSize
     };
-    var textDom = _common__WEBPACK_IMPORTED_MODULE_6__.makeSVGright('text', textattrs);
+    var textDom = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('text', textattrs);
     var textNode = document.createTextNode(idStr);
     textDom.appendChild(textNode);
     this.noteNameSvgObj = textDom; // store for removing...
@@ -11395,9 +10823,9 @@ class Keyboard {
     }
 
     keyRect.setAttribute('style', 'fill:' + fillColor + ';stroke:black');
-    _miditools__WEBPACK_IMPORTED_MODULE_7__.loadSoundfont('acoustic_grand_piano', i => {
-      midicube__WEBPACK_IMPORTED_MODULE_5__.noteOn(i.midiChannel, id, 100, 0);
-      midicube__WEBPACK_IMPORTED_MODULE_5__.noteOff(i.midiChannel, id, 500);
+    _miditools__WEBPACK_IMPORTED_MODULE_6__.loadSoundfont('acoustic_grand_piano', i => {
+      midicube__WEBPACK_IMPORTED_MODULE_4__.noteOn(i.midiChannel, id, 100, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_4__.noteOff(i.midiChannel, id, 500);
     });
     setTimeout(() => {
       keyRect.setAttribute('style', storedStyle);
@@ -11413,21 +10841,21 @@ class Keyboard {
     // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
     // 6, 57 gives a standard 88-key keyboard;
     if (typeof this.startPitch === 'string') {
-      var tempP = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch(this.startPitch);
+      var tempP = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch(this.startPitch);
       this._startDNN = tempP.diatonicNoteNum;
     } else if (typeof this.startPitch === 'number') {
       this._startDNN = this.startPitch;
-    } else if (this.startPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch) {
+    } else if (this.startPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch) {
       this._startDNN = this.startPitch.diatonicNoteNum;
     }
 
     if (typeof this.endPitch === 'string') {
-      var _tempP = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch(this.endPitch);
+      var _tempP = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch(this.endPitch);
 
       this._endDNN = _tempP.diatonicNoteNum;
     } else if (typeof this.endPitch === 'number') {
       this._endDNN = this.endPitch;
-    } else if (this.endPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch) {
+    } else if (this.endPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch) {
       this._endDNN = this.endPitch.diatonicNoteNum;
     }
 
@@ -11437,13 +10865,13 @@ class Keyboard {
     var totalWidth = this.whiteKeyWidth * this.scaleFactor * keyboardDiatonicLength;
     var height = 120 * this.scaleFactor;
     var heightString = height.toString() + 'px';
-    var svgDOM = _common__WEBPACK_IMPORTED_MODULE_6__.makeSVGright('svg', {
+    var svgDOM = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('svg', {
       'xml:space': 'preserve',
       height: heightString,
       width: totalWidth.toString() + 'px',
       class: 'keyboardSVG'
     });
-    var movingPitch = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch('C4');
+    var movingPitch = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch('C4');
     var blackKeys = [];
     var thisKeyboardObject = this;
 
@@ -11510,8 +10938,7 @@ class Keyboard {
    */
 
 
-  markMiddleC() {
-    var strokeColor = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'red';
+  markMiddleC(strokeColor = 'red') {
     var midC = this.keyObjects.get(60);
 
     if (midC !== undefined) {
@@ -11528,18 +10955,8 @@ class Keyboard {
   markNoteNames(labelOctaves) {
     this.removeNoteNames(); // in case...
 
-    var _iterator = _createForOfIteratorHelper(this.keyObjects.values()),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var keyObj = _step.value;
-        keyObj.addNoteName(labelOctaves);
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+    for (var keyObj of this.keyObjects.values()) {
+      keyObj.addNoteName(labelOctaves);
     }
   }
   /**
@@ -11550,18 +10967,8 @@ class Keyboard {
 
 
   removeNoteNames() {
-    var _iterator2 = _createForOfIteratorHelper(this.keyObjects.values()),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var keyObj = _step2.value;
-        keyObj.removeNoteName();
-      }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
+    for (var keyObj of this.keyObjects.values()) {
+      keyObj.removeNoteName();
     }
 
     return this;
@@ -11578,26 +10985,26 @@ class Keyboard {
 
 
   wrapScrollable(svgDOM) {
-    var $wrapper = jquery__WEBPACK_IMPORTED_MODULE_4__("<div class='keyboardScrollableWrapper'></div>").css({
+    var $wrapper = jquery__WEBPACK_IMPORTED_MODULE_3__("<div class='keyboardScrollableWrapper'></div>").css({
       display: 'inline-block'
     });
-    var $bDown = jquery__WEBPACK_IMPORTED_MODULE_4__("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
+    var $bDown = jquery__WEBPACK_IMPORTED_MODULE_3__("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
       'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
     }).on('click', () => {
-      _miditools__WEBPACK_IMPORTED_MODULE_7__.config.transposeOctave -= 1;
+      _miditools__WEBPACK_IMPORTED_MODULE_6__.config.transposeOctave -= 1;
       this.startPitch = this._startDNN - 7;
       this.endPitch = this._endDNN - 7;
       this.redrawSVG();
     });
-    var $bUp = jquery__WEBPACK_IMPORTED_MODULE_4__("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
+    var $bUp = jquery__WEBPACK_IMPORTED_MODULE_3__("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
       'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
     }).on('click', () => {
-      _miditools__WEBPACK_IMPORTED_MODULE_7__.config.transposeOctave += 1;
+      _miditools__WEBPACK_IMPORTED_MODULE_6__.config.transposeOctave += 1;
       this.startPitch = this._startDNN + 7;
       this.endPitch = this._endDNN + 7;
       this.redrawSVG();
     });
-    var $kWrapper = jquery__WEBPACK_IMPORTED_MODULE_4__("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+    var $kWrapper = jquery__WEBPACK_IMPORTED_MODULE_3__("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
     $kWrapper[0].appendChild(svgDOM);
     $wrapper.append($bDown);
     $wrapper.append($kWrapper);
@@ -11616,13 +11023,13 @@ class Keyboard {
 
 
   appendHideableKeyboard(where, keyboardSVG) {
-    var $container = jquery__WEBPACK_IMPORTED_MODULE_4__("<div class='keyboardHideableContainer'/>");
-    var $bInside = jquery__WEBPACK_IMPORTED_MODULE_4__("<div class='keyboardToggleInside'>↥</div>").css({
+    var $container = jquery__WEBPACK_IMPORTED_MODULE_3__("<div class='keyboardHideableContainer'/>");
+    var $bInside = jquery__WEBPACK_IMPORTED_MODULE_3__("<div class='keyboardToggleInside'>↥</div>").css({
       display: 'inline-block',
       'padding-top': '40px',
       'font-size': '40px'
     });
-    var $b = jquery__WEBPACK_IMPORTED_MODULE_4__("<div class='keyboardToggleOutside'/>").css({
+    var $b = jquery__WEBPACK_IMPORTED_MODULE_3__("<div class='keyboardToggleOutside'/>").css({
       display: 'inline-block',
       'vertical-align': 'top',
       background: 'white'
@@ -11631,7 +11038,7 @@ class Keyboard {
     $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
     $b.data('state', 'down');
     $b.on('click', triggerToggleShow);
-    var $explain = jquery__WEBPACK_IMPORTED_MODULE_4__("<div class='keyboardExplain'>Show keyboard</div>").css({
+    var $explain = jquery__WEBPACK_IMPORTED_MODULE_3__("<div class='keyboardExplain'>Show keyboard</div>").css({
       display: 'none',
       'background-color': 'white',
       padding: '10px 10px 10px 10px',
@@ -11641,7 +11048,7 @@ class Keyboard {
     $container.append($b);
     $container[0].appendChild(keyboardSVG); // svg must use appendChild, not $.append.
 
-    jquery__WEBPACK_IMPORTED_MODULE_4__(where).append($container);
+    jquery__WEBPACK_IMPORTED_MODULE_3__(where).append($container);
     return $container;
   }
 
@@ -11657,7 +11064,7 @@ class Keyboard {
 var triggerToggleShow = e => {
   // "this" refers to the object clicked
   // e -- event is not used.
-  var $t = jquery__WEBPACK_IMPORTED_MODULE_4__(undefined);
+  var $t = jquery__WEBPACK_IMPORTED_MODULE_3__(undefined);
   var state = $t.data('state');
   var $parent = $t.parent();
   var $k = $parent.find('.keyboardScrollableWrapper');
@@ -12053,37 +11460,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TimeSignature": () => (/* binding */ TimeSignature)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
 /* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
 /* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
 /* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
 
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -12120,10 +11518,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  *     representing the expressed total length of the TimeSignature.
  */
 
-class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
-  constructor() {
-    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
-    var divisions = arguments.length > 1 ? arguments[1] : undefined;
+class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
+  constructor(value = '4/4', divisions) {
     super();
     this._numerator = 4;
     this._denominator = 4;
@@ -12143,9 +11539,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
     return this.ratioString;
   }
 
-  resetValues() {
-    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
-    var divisions = arguments.length > 1 ? arguments[1] : undefined;
+  resetValues(value = '4/4', divisions) {
     this.symbol = '';
     this.symbolizeDenominator = false;
     this._overwrittenBarDuration = undefined; // m21j only, simple functions
@@ -12203,7 +11597,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
     }
 
     var ql = 4.0 * this._numerator / this._denominator;
-    return new _duration__WEBPACK_IMPORTED_MODULE_8__.Duration(ql);
+    return new _duration__WEBPACK_IMPORTED_MODULE_9__.Duration(ql);
   }
 
   set barDuration(value) {
@@ -12318,14 +11712,12 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
     return tempBeatGroups;
   }
 
-  offsetToIndex(qLenPos) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$includeCoinciden = _ref.includeCoincidentBoundaries,
-        includeCoincidentBoundaries = _ref$includeCoinciden === void 0 ? false : _ref$includeCoinciden;
-
+  offsetToIndex(qLenPos, {
+    includeCoincidentBoundaries = false
+  } = {}) {
     // This should be a method on a MeterSequence.
     if (qLenPos >= this.barDuration.quarterLength || qLenPos < 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_9__.Music21Exception("cannot access from qLenPos ".concat(qLenPos, " ") + "where total duration is ".concat(this.barDuration.quarterLength));
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception("cannot access from qLenPos ".concat(qLenPos, " ") + "where total duration is ".concat(this.barDuration.quarterLength));
     } // DOES NOT SUPPORT irregular beats yet...
 
 
@@ -12351,15 +11743,14 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
    */
 
 
-  getBeams(srcStream) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  getBeams(srcStream, options = {}) {
     var params = {
       measureStartOffset: 0.0
     };
-    _common__WEBPACK_IMPORTED_MODULE_7__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_8__.merge(params, options);
     var measureStartOffset = params.measureStartOffset;
-    var beamsList = _beam__WEBPACK_IMPORTED_MODULE_6__.Beams.naiveBeams(srcStream);
-    beamsList = _beam__WEBPACK_IMPORTED_MODULE_6__.Beams.removeSandwichedUnbeamables(beamsList);
+    var beamsList = _beam__WEBPACK_IMPORTED_MODULE_7__.Beams.naiveBeams(srcStream);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_7__.Beams.removeSandwichedUnbeamables(beamsList);
 
     var fixBeamsOneElementDepth = (i, el, depth) => {
       var beams = beamsList[i];
@@ -12399,11 +11790,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
         beamNext = beamsList[i + 1];
       }
 
-      var _this$offsetToSpan = this.offsetToSpan(start),
-          _this$offsetToSpan2 = _slicedToArray(_this$offsetToSpan, 2),
-          archetypeSpanStart = _this$offsetToSpan2[0],
-          archetypeSpanEnd = _this$offsetToSpan2[1];
-
+      var [archetypeSpanStart, archetypeSpanEnd] = this.offsetToSpan(start);
       var archetypeSpanNextStart = 0.0;
 
       if (beamNext !== undefined) {
@@ -12466,15 +11853,15 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
 
     var elList = Array.from(srcStream);
 
-    for (var depth = 0; depth < _beam__WEBPACK_IMPORTED_MODULE_6__.beamableDurationTypes.length; depth++) {
+    for (var depth = 0; depth < _beam__WEBPACK_IMPORTED_MODULE_7__.beamableDurationTypes.length; depth++) {
       for (var i = 0; i < elList.length; i++) {
         var el = elList[i];
         fixBeamsOneElementDepth(i, el, depth);
       }
     }
 
-    beamsList = _beam__WEBPACK_IMPORTED_MODULE_6__.Beams.sanitizePartialBeams(beamsList);
-    beamsList = _beam__WEBPACK_IMPORTED_MODULE_6__.Beams.mergeConnectingPartialBeams(beamsList);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_7__.Beams.sanitizePartialBeams(beamsList);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_7__.Beams.mergeConnectingPartialBeams(beamsList);
     return beamsList;
   }
   /**
@@ -12493,7 +11880,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
     if (mOffset + tsMeasureOffset < this.barDuration.quarterLength) {
       return mOffset;
     } else {
-      var post = _common__WEBPACK_IMPORTED_MODULE_7__.posMod(mOffset - tsMeasureOffset, this.barDuration.quarterLength);
+      var post = _common__WEBPACK_IMPORTED_MODULE_8__.posMod(mOffset - tsMeasureOffset, this.barDuration.quarterLength);
       return post;
     }
   }
@@ -12509,12 +11896,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
 
   getBeatProportion(qLenPos) {
     var beatIndex = this.offsetToIndex(qLenPos);
-
-    var _this$offsetToSpan3 = this.offsetToSpan(qLenPos),
-        _this$offsetToSpan4 = _slicedToArray(_this$offsetToSpan3, 2),
-        start = _this$offsetToSpan4[0],
-        end = _this$offsetToSpan4[1];
-
+    var [start, end] = this.offsetToSpan(qLenPos);
     var totalRange = end - start;
     var progress = qLenPos - start;
     return beatIndex + 1 + progress / totalRange;
@@ -12531,11 +11913,8 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
     var vfBeatGroups = [];
 
     for (var i = 0; i < tempBeatGroups.length; i++) {
-      var _tempBeatGroups$i = _slicedToArray(tempBeatGroups[i], 2),
-          bg_numerator = _tempBeatGroups$i[0],
-          bg_denominator = _tempBeatGroups$i[1];
-
-      vfBeatGroups.push(new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.Fraction)(bg_numerator, bg_denominator));
+      var [bg_numerator, bg_denominator] = tempBeatGroups[i];
+      vfBeatGroups.push(new (vexflow__WEBPACK_IMPORTED_MODULE_5___default().Flow.Fraction)(bg_numerator, bg_denominator));
     }
 
     return vfBeatGroups; //  if (numBeats % 3 == 0 && beatValue < 4) {
@@ -12850,9 +12229,7 @@ function sendOutChord(chordNoteList) {
  * duration quantized
  */
 
-function quantizeLastNote() {
-  var lastElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+function quantizeLastNote(lastElement = undefined) {
   if (lastElement === undefined) {
     lastElement = config.lastElement;
   }
@@ -12973,9 +12350,7 @@ function postLoadCallback(soundfont, callback) {
  * });
  */
 
-function loadSoundfont(soundfont) {
-  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+function loadSoundfont(soundfont, callback = undefined) {
   if (loadedSoundfonts[soundfont] === true) {
     // this soundfont has already been loaded once, so just call the callback.
     if (callback !== undefined) {
@@ -13158,8 +12533,7 @@ class MidiPlayer {
     return _common__WEBPACK_IMPORTED_MODULE_5__.urls.midiPlayer + '/stop.png';
   }
 
-  pausePlayStop() {
-    var stop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'no';
+  pausePlayStop(stop = 'no') {
     var d;
 
     if (this.$playDiv === undefined) {
@@ -13339,43 +12713,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "PartExporter": () => (/* binding */ PartExporter),
 /* harmony export */   "MeasureExporter": () => (/* binding */ MeasureExporter)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.starts-with.js */ "./node_modules/core-js/modules/es.string.starts-with.js");
-/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.starts-with.js */ "./node_modules/core-js/modules/es.string.starts-with.js");
+/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
 
 
 
 
 
-
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * @namespace music21.musicxml.m21ToXml
@@ -13386,7 +12743,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
-class MusicXMLExportException extends _exceptions21__WEBPACK_IMPORTED_MODULE_9__.Music21Exception {}
+class MusicXMLExportException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception {}
 
 function typeToMusicXMLType(value) {
   if (value === 'longa') {
@@ -13558,9 +12915,7 @@ class GeneralObjectExporter {
     this.generalObj = obj;
   }
 
-  parse() {
-    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  parse(obj = undefined) {
     if (obj === undefined) {
       obj = this.generalObj;
     }
@@ -13579,23 +12934,12 @@ class GeneralObjectExporter {
     var classes = obj.classes;
     var outObj;
 
-    var _iterator = _createForOfIteratorHelper(_classMapping),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var cM = _step.value;
-
-        if (classes.includes(cM)) {
-          var methName = 'from' + cM;
-          outObj = this[methName](obj);
-          break;
-        }
+    for (var cM of _classMapping) {
+      if (classes.includes(cM)) {
+        var methName = 'from' + cM;
+        outObj = this[methName](obj);
+        break;
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     if (outObj === undefined) {
@@ -13617,7 +12961,7 @@ class GeneralObjectExporter {
       p = p.makeMeasures();
     }
 
-    var s = new _stream__WEBPACK_IMPORTED_MODULE_8__.Score();
+    var s = new _stream__WEBPACK_IMPORTED_MODULE_7__.Score();
     s.insert(0, p); // metadata...;
 
     return this.fromScore(s);
@@ -13627,19 +12971,19 @@ class GeneralObjectExporter {
     var mCopy = m.makeNotation();
 
     if (m.clef === undefined) {
-      mCopy.clef = _clef__WEBPACK_IMPORTED_MODULE_6__.bestClef(mCopy, {
+      mCopy.clef = _clef__WEBPACK_IMPORTED_MODULE_5__.bestClef(mCopy, {
         recurse: true
       });
     }
 
-    var p = new _stream__WEBPACK_IMPORTED_MODULE_8__.Part();
+    var p = new _stream__WEBPACK_IMPORTED_MODULE_7__.Part();
     p.append(mCopy); // TODO(msc): metadata;
 
     return this.fromPart(p);
   }
 
   fromVoice(v) {
-    var m = new _stream__WEBPACK_IMPORTED_MODULE_8__.Measure();
+    var m = new _stream__WEBPACK_IMPORTED_MODULE_7__.Measure();
     m.number = 1;
     m.insert(0, v);
     return this.fromMeasure(m);
@@ -13654,7 +12998,7 @@ class GeneralObjectExporter {
   fromGeneralNote(n) {
     var nCopy = n.clone(true); // makeTupletBrackets;
 
-    var out = new _stream__WEBPACK_IMPORTED_MODULE_8__.Measure();
+    var out = new _stream__WEBPACK_IMPORTED_MODULE_7__.Measure();
     out.number = 1;
     out.append(nCopy);
     return this.fromMeasure(out);
@@ -13672,11 +13016,9 @@ class XMLExporterBase {
     this.xmlRoot = undefined;
   }
 
-  asBytes() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$noCopy = _ref.noCopy,
-        noCopy = _ref$noCopy === void 0 ? true : _ref$noCopy;
-
+  asBytes({
+    noCopy = true
+  } = {}) {
     var out = this.xmlHeader();
     var oSerializer = new XMLSerializer();
     out += oSerializer.serializeToString(this.xmlRoot);
@@ -13692,17 +13034,12 @@ class XMLExporterBase {
    */
 
 
-  _setTagTextFromAttribute(m21El, xmlEl, tag) {
-    var attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-
-    var _ref2 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
-        _ref2$transform = _ref2.transform,
-        transform = _ref2$transform === void 0 ? undefined : _ref2$transform,
-        _ref2$forceEmpty = _ref2.forceEmpty,
-        forceEmpty = _ref2$forceEmpty === void 0 ? false : _ref2$forceEmpty;
-
+  _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName = undefined, {
+    transform = undefined,
+    forceEmpty = false
+  } = {}) {
     if (attributeName === undefined) {
-      attributeName = _common__WEBPACK_IMPORTED_MODULE_7__.hyphenToCamelCase(tag);
+      attributeName = _common__WEBPACK_IMPORTED_MODULE_6__.hyphenToCamelCase(tag);
     }
 
     var value = m21El[attributeName];
@@ -13724,20 +13061,16 @@ class XMLExporterBase {
     return subElement;
   }
 
-  seta(m21El, xmlEl, tag) {
-    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  seta(m21El, xmlEl, tag, options = {}) {
     return this._setTagTextFromAttribute(m21El, xmlEl, tag, undefined, options);
   }
 
-  _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName) {
-    var _ref3 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        _ref3$attributeName = _ref3.attributeName,
-        attributeName = _ref3$attributeName === void 0 ? undefined : _ref3$attributeName,
-        _ref3$transform = _ref3.transform,
-        transform = _ref3$transform === void 0 ? undefined : _ref3$transform;
-
+  _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, {
+    attributeName = undefined,
+    transform = undefined
+  } = {}) {
     if (attributeName === undefined) {
-      attributeName = _common__WEBPACK_IMPORTED_MODULE_7__.hyphenToCamelCase(xmlAttributeName);
+      attributeName = _common__WEBPACK_IMPORTED_MODULE_6__.hyphenToCamelCase(xmlAttributeName);
     }
 
     var value = m21El[attributeName];
@@ -13753,16 +13086,14 @@ class XMLExporterBase {
     xmlEl.setAttribute(xmlAttributeName, value.toString());
   }
 
-  setb(m21El, xmlEl, xmlAttributeName) {
-    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  setb(m21El, xmlEl, xmlAttributeName, options = {}) {
     return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
   } // TODO(msc): _synchronizeIds;
 
 
   _synchronizeIds(element, m21Object) {}
 
-  addDividerComment() {
-    var comment = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  addDividerComment(comment = '') {
     var commentLength = comment.length;
 
     if (commentLength > 60) {
@@ -13861,7 +13192,7 @@ class ScoreExporter extends XMLExporterBase {
     this.parts = [];
 
     if (score === undefined) {
-      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_8__.Score();
+      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_7__.Score();
     } else {
       this.stream = score;
     }
@@ -13902,25 +13233,15 @@ class ScoreExporter extends XMLExporterBase {
     var s = this.stream;
     var streamOfStreams = s.getElementsByClass('Stream');
 
-    var _iterator2 = _createForOfIteratorHelper(streamOfStreams),
-        _step2;
+    for (var innerStream of streamOfStreams) {
+      // innerStream.transferOffsetToElements(); // only needed for appended Parts
+      var ht = innerStream.highestTime;
 
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var innerStream = _step2.value;
-        // innerStream.transferOffsetToElements(); // only needed for appended Parts
-        var ht = innerStream.highestTime;
-
-        if (ht > this.highestTime) {
-          this.highestTime = ht;
-        }
-
-        this.refStreamOrTimeRange = [0.0, this.highestTime];
+      if (ht > this.highestTime) {
+        this.highestTime = ht;
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
+
+      this.refStreamOrTimeRange = [0.0, this.highestTime];
     }
 
     this.parts = Array.from(streamOfStreams.stream());
@@ -13930,23 +13251,13 @@ class ScoreExporter extends XMLExporterBase {
 
   parsePartlikeScore() {
     // makeRests
-    var _iterator3 = _createForOfIteratorHelper(this.parts),
-        _step3;
+    for (var innerStream of this.parts) {
+      var pp = new PartExporter(innerStream, {
+        parent: this
+      }); // spanner bundle.
 
-    try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var innerStream = _step3.value;
-        var pp = new PartExporter(innerStream, {
-          parent: this
-        }); // spanner bundle.
-
-        pp.parse();
-        this.partExporterList.push(pp);
-      }
-    } catch (err) {
-      _iterator3.e(err);
-    } finally {
-      _iterator3.f();
+      pp.parse();
+      this.partExporterList.push(pp);
     }
   } // TODO(msc): parseFlatScore
 
@@ -13979,20 +13290,10 @@ class ScoreExporter extends XMLExporterBase {
     // const spannerBundle = this.spannerBundle; // for now, always undefined;
     var mxPartList = this.subElement(this.xmlRoot, 'part-list'); // staffGroups are non-existent
 
-    var _iterator4 = _createForOfIteratorHelper(this.partExporterList),
-        _step4;
-
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var pex = _step4.value;
-        // const p = pex.stream;
-        var mxScorePart = pex.getXmlScorePart();
-        mxPartList.appendChild(mxScorePart);
-      }
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
+    for (var pex of this.partExporterList) {
+      // const p = pex.stream;
+      var mxScorePart = pex.getXmlScorePart();
+      mxPartList.appendChild(mxScorePart);
     }
 
     return mxPartList;
@@ -14004,18 +13305,16 @@ class ScoreExporter extends XMLExporterBase {
  */
 
 class PartExporter extends XMLExporterBase {
-  constructor(partObj) {
-    var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref4$parent = _ref4.parent,
-        parent = _ref4$parent === void 0 ? undefined : _ref4$parent;
-
+  constructor(partObj, {
+    parent = undefined
+  } = {}) {
     super();
     this.stream = partObj;
     this.parent = parent;
     this.xmlRoot = this.doc.createElement('part');
 
     if (parent === undefined) {
-      this.meterStream = new _stream__WEBPACK_IMPORTED_MODULE_8__.Stream();
+      this.meterStream = new _stream__WEBPACK_IMPORTED_MODULE_7__.Stream();
       this.refStreamOrTimeRange = [0.0, 0.0];
       this.midiChannelList = [];
     } else {
@@ -14037,24 +13336,14 @@ class PartExporter extends XMLExporterBase {
     var measureStream = this.stream.getElementsByClass('Stream'); // fixupNotation;
     // setIdLocals on spannerBundle;
 
-    var _iterator5 = _createForOfIteratorHelper(measureStream),
-        _step5;
-
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var m = _step5.value;
-        this.addDividerComment('Measure ' + m.number.toString());
-        var measureExporter = new MeasureExporter(m, {
-          parent: this
-        });
-        measureExporter.spannerBundle = this.spannerBundle;
-        var mxMeasure = measureExporter.parse();
-        this.xmlRoot.appendChild(mxMeasure);
-      }
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
+    for (var m of measureStream) {
+      this.addDividerComment('Measure ' + m.number.toString());
+      var measureExporter = new MeasureExporter(m, {
+        parent: this
+      });
+      measureExporter.spannerBundle = this.spannerBundle;
+      var mxMeasure = measureExporter.parse();
+      this.xmlRoot.appendChild(mxMeasure);
     }
 
     return this.xmlRoot;
@@ -14087,11 +13376,9 @@ var divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
  */
 
 class MeasureExporter extends XMLExporterBase {
-  constructor(measureObj) {
-    var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref5$parent = _ref5.parent,
-        parent = _ref5$parent === void 0 ? undefined : _ref5$parent;
-
+  constructor(measureObj, {
+    parent = undefined
+  } = {}) {
     super();
     this.currentDivisions = divisionsPerQuarter;
     this.transpositionInterval = undefined;
@@ -14133,37 +13420,22 @@ class MeasureExporter extends XMLExporterBase {
 
     var allVoices = Array.from(m.voices);
 
-    var _iterator6 = _createForOfIteratorHelper(allVoices.entries()),
-        _step6;
+    for (var [i, v] of allVoices.entries()) {
+      var backupAfterwards = true;
 
-    try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var _step6$value = _slicedToArray(_step6.value, 2),
-            i = _step6$value[0],
-            v = _step6$value[1];
-
-        var backupAfterwards = true;
-
-        if (i === allVoices.length - 1) {
-          backupAfterwards = false;
-        }
-
-        this.parseFlatElements(v, {
-          backupAfterwards
-        });
+      if (i === allVoices.length - 1) {
+        backupAfterwards = false;
       }
-    } catch (err) {
-      _iterator6.e(err);
-    } finally {
-      _iterator6.f();
+
+      this.parseFlatElements(v, {
+        backupAfterwards
+      });
     }
   }
 
-  parseFlatElements(m) {
-    var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref6$backupAfterward = _ref6.backupAfterwards,
-        backupAfterwards = _ref6$backupAfterward === void 0 ? false : _ref6$backupAfterward;
-
+  parseFlatElements(m, {
+    backupAfterwards = false
+  } = {}) {
     var root = this.xmlRoot;
     var divisions = this.currentDivisions;
     this.offsetInMeasure = 0.0;
@@ -14179,18 +13451,8 @@ class MeasureExporter extends XMLExporterBase {
 
     this.currentVoiceId = voiceId;
 
-    var _iterator7 = _createForOfIteratorHelper(m),
-        _step7;
-
-    try {
-      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-        var el = _step7.value;
-        this.parseOneElement(el);
-      }
-    } catch (err) {
-      _iterator7.e(err);
-    } finally {
-      _iterator7.f();
+    for (var el of m) {
+      this.parseOneElement(el);
     }
 
     if (backupAfterwards) {
@@ -14221,57 +13483,31 @@ class MeasureExporter extends XMLExporterBase {
 
     var parsedObject = false;
 
-    var _iterator8 = _createForOfIteratorHelper(_classesToMeasureMethods),
-        _step8;
-
-    try {
-      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-        var _step8$value = _slicedToArray(_step8.value, 2),
-            className = _step8$value[0],
-            methName = _step8$value[1];
-
-        if (classes.includes(className)) {
-          this[methName](obj);
-          parsedObject = true;
-          break;
-        }
+    for (var [className, methName] of _classesToMeasureMethods) {
+      if (classes.includes(className)) {
+        this[methName](obj);
+        parsedObject = true;
+        break;
       }
-    } catch (err) {
-      _iterator8.e(err);
-    } finally {
-      _iterator8.f();
     }
 
-    var _iterator9 = _createForOfIteratorHelper(_wrapAttributeMethodClasses),
-        _step9;
+    var _loop = function _loop(_className, _methName) {
+      if (classes.includes(_className)) {
+        var meth = o => _this[_methName](o);
 
-    try {
-      var _loop = function _loop() {
-        var _step9$value = _slicedToArray(_step9.value, 2),
-            className = _step9$value[0],
-            methName = _step9$value[1];
+        _this.wrapObjectInAttributes(obj, meth);
 
-        if (classes.includes(className)) {
-          var meth = o => _this[methName](o);
+        parsedObject = true;
+        return "break";
+      }
+    };
 
-          _this.wrapObjectInAttributes(obj, meth);
+    for (var [_className, _methName] of _wrapAttributeMethodClasses) {
+      var _ret = _loop(_className, _methName);
 
-          parsedObject = true;
-          return "break";
-        }
-      };
+      if (_ret === "break") break;
+    } // deal with skipped objects.
 
-      for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-        var _ret = _loop();
-
-        if (_ret === "break") break;
-      } // deal with skipped objects.
-
-    } catch (err) {
-      _iterator9.e(err);
-    } finally {
-      _iterator9.f();
-    }
 
     if (!parsedObject && !_ignoreOnParseClasses.includes(obj.classes[0])) {
       console.warn('skipped object of class ' + obj.classes[0]);
@@ -14291,13 +13527,10 @@ class MeasureExporter extends XMLExporterBase {
    */
 
 
-  noteToXml(n) {
-    var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref7$noteIndexInChor = _ref7.noteIndexInChord,
-        noteIndexInChord = _ref7$noteIndexInChor === void 0 ? 0 : _ref7$noteIndexInChor,
-        _ref7$chordParent = _ref7.chordParent,
-        chordParent = _ref7$chordParent === void 0 ? undefined : _ref7$chordParent;
-
+  noteToXml(n, {
+    noteIndexInChord = 0,
+    chordParent = undefined
+  } = {}) {
     var addChordTag = noteIndexInChord !== 0;
     var chordOrN;
 
@@ -14337,18 +13570,8 @@ class MeasureExporter extends XMLExporterBase {
     if (n.tie !== undefined) {
       var mxTieList = this.tieToXmlTie(n.tie);
 
-      var _iterator10 = _createForOfIteratorHelper(mxTieList),
-          _step10;
-
-      try {
-        for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-          var t = _step10.value;
-          mxNote.appendChild(t);
-        }
-      } catch (err) {
-        _iterator10.e(err);
-      } finally {
-        _iterator10.f();
+      for (var t of mxTieList) {
+        mxNote.appendChild(t);
       }
     } // instrument
 
@@ -14378,7 +13601,7 @@ class MeasureExporter extends XMLExporterBase {
     } // components.
 
 
-    if (n instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
+    if (n instanceof _note__WEBPACK_IMPORTED_MODULE_9__.Note && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
       var mxAccidental = this.accidentalToMx(n.pitch.accidental);
       mxNote.appendChild(mxAccidental);
     }
@@ -14393,7 +13616,7 @@ class MeasureExporter extends XMLExporterBase {
 
     if (!addChordTag && ![undefined, 'unspecified'].includes(chordOrN.stemDirection)) {
       stemDirection = chordOrN.stemDirection;
-    } else if (chordOrN !== n && n instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note && ![undefined, 'unspecified'].includes(n.stemDirection)) {
+    } else if (chordOrN !== n && n instanceof _note__WEBPACK_IMPORTED_MODULE_9__.Note && ![undefined, 'unspecified'].includes(n.stemDirection)) {
       stemDirection = n.stemDirection;
     }
 
@@ -14415,24 +13638,13 @@ class MeasureExporter extends XMLExporterBase {
 
 
     if (!addChordTag) {
-      var _iterator11 = _createForOfIteratorHelper(chordOrN.lyrics),
-          _step11;
-
-      try {
-        for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-          var lyricObj = _step11.value;
-
-          if (lyricObj.text === undefined) {
-            continue;
-          }
-
-          var mxLyric = this.lyricToXml(lyricObj);
-          mxNote.appendChild(mxLyric);
+      for (var lyricObj of chordOrN.lyrics) {
+        if (lyricObj.text === undefined) {
+          continue;
         }
-      } catch (err) {
-        _iterator11.e(err);
-      } finally {
-        _iterator11.f();
+
+        var mxLyric = this.lyricToXml(lyricObj);
+        mxNote.appendChild(mxLyric);
       }
     }
 
@@ -14448,25 +13660,12 @@ class MeasureExporter extends XMLExporterBase {
   chordToXml(c) {
     var mxNoteList = [];
 
-    var _iterator12 = _createForOfIteratorHelper(Array.from(c).entries()),
-        _step12;
-
-    try {
-      for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-        var _step12$value = _slicedToArray(_step12.value, 2),
-            i = _step12$value[0],
-            n = _step12$value[1];
-
-        var mxNote = this.noteToXml(n, {
-          noteIndexInChord: i,
-          chordParent: c
-        });
-        mxNoteList.push(mxNote);
-      }
-    } catch (err) {
-      _iterator12.e(err);
-    } finally {
-      _iterator12.f();
+    for (var [i, n] of Array.from(c).entries()) {
+      var mxNote = this.noteToXml(n, {
+        noteIndexInChord: i,
+        chordParent: c
+      });
+      mxNoteList.push(mxNote);
     }
 
     return mxNoteList;
@@ -14485,7 +13684,7 @@ class MeasureExporter extends XMLExporterBase {
 
     if (p.accidental !== undefined) {
       var mxAlter = this.subElement(mxPitch, 'alter');
-      mxAlter.innerHTML = _common__WEBPACK_IMPORTED_MODULE_7__.numToIntOrFloat(p.accidental.alter).toString();
+      mxAlter.innerHTML = _common__WEBPACK_IMPORTED_MODULE_6__.numToIntOrFloat(p.accidental.alter).toString();
     }
 
     this._setTagTextFromAttribute(p, mxPitch, 'octave', 'implicitOctave');
@@ -14722,34 +13921,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.set.js */ "./node_modules/core-js/modules/es.set.js");
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../chord */ "./src/music21/chord.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../duration */ "./src/music21/duration.ts");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../key */ "./src/music21/key.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../meter */ "./src/music21/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../pitch */ "./src/music21/pitch.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../tie */ "./src/music21/tie.ts");
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../chord */ "./src/music21/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../duration */ "./src/music21/duration.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../key */ "./src/music21/key.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../meter */ "./src/music21/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../tie */ "./src/music21/tie.ts");
 
 
-
-
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
 
@@ -14766,10 +13955,8 @@ var DEFAULTS = {
   divisionsPerQuarter: 32 * 3 * 3 * 5 * 7
 };
 
-function seta(m21El, xmlEl, tag) {
-  var attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-  var transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
-  var $matchEl = jquery__WEBPACK_IMPORTED_MODULE_4__(xmlEl).children(tag);
+function seta(m21El, xmlEl, tag, attributeName = undefined, transform = undefined) {
+  var $matchEl = jquery__WEBPACK_IMPORTED_MODULE_3__(xmlEl).children(tag);
 
   if (!$matchEl) {
     return;
@@ -14786,7 +13973,7 @@ function seta(m21El, xmlEl, tag) {
   }
 
   if (attributeName === undefined) {
-    attributeName = (0,_common__WEBPACK_IMPORTED_MODULE_5__.hyphenToCamelCase)(tag);
+    attributeName = (0,_common__WEBPACK_IMPORTED_MODULE_4__.hyphenToCamelCase)(tag);
   }
 
   m21El[attributeName] = value;
@@ -14801,25 +13988,25 @@ class ScoreParser {
     this.partGroupList = [];
     this.parts = [];
     this.musicXmlVersion = '1.0';
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_13__.Score();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_12__.Score();
   }
 
   scoreFromUrl(url) {
     this.xmlUrl = url; // noinspection JSUnusedLocalSymbols
 
-    return jquery__WEBPACK_IMPORTED_MODULE_4__.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
+    return jquery__WEBPACK_IMPORTED_MODULE_3__.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
   }
 
   scoreFromText(xmlText) {
     this.xmlText = xmlText; // Not sure why this is not being found in jQuery
     // noinspection JSUnresolvedFunction
 
-    var xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_4__.parseXML(xmlText);
+    var xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_3__.parseXML(xmlText);
     return this.scoreFromDOMTree(xmlDoc);
   }
 
   scoreFromDOMTree(xmlDoc) {
-    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_4__(jquery__WEBPACK_IMPORTED_MODULE_4__(xmlDoc).children('score-partwise'));
+    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_3__(jquery__WEBPACK_IMPORTED_MODULE_3__(xmlDoc).children('score-partwise'));
     this.xmlRootToScore(this.$xmlRoot, this.stream);
     return this.stream;
   }
@@ -14828,7 +14015,7 @@ class ScoreParser {
     var s = inputM21;
 
     if (inputM21 === undefined) {
-      s = new _stream__WEBPACK_IMPORTED_MODULE_13__.Score();
+      s = new _stream__WEBPACK_IMPORTED_MODULE_12__.Score();
     } // version
     // defaults
     // credit
@@ -14836,36 +14023,26 @@ class ScoreParser {
 
     this.parsePartList($mxScore);
 
-    var _iterator = _createForOfIteratorHelper($mxScore.children('part')),
-        _step;
+    for (var p of $mxScore.children('part')) {
+      var $p = jquery__WEBPACK_IMPORTED_MODULE_3__(p);
+      var partId = $p.attr('id'); // if (partId === undefined) {
+      //     partId = //something
+      // }
 
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var p = _step.value;
-        var $p = jquery__WEBPACK_IMPORTED_MODULE_4__(p);
-        var partId = $p.attr('id'); // if (partId === undefined) {
-        //     partId = //something
-        // }
+      var $mxScorePart = this.mxScorePartDict[partId];
+      var part = this.xmlPartToPart($p, $mxScorePart);
 
-        var $mxScorePart = this.mxScorePartDict[partId];
-        var part = this.xmlPartToPart($p, $mxScorePart);
+      if (part !== undefined) {
+        // partStreams are undefined
+        s.insert(0.0, part);
+        this.m21PartObjectsById[partId] = part;
+        this.parts.push(part);
+      }
+    } // partGroups;
+    // spanners;
+    // definesExplicitSystemBreaks, etc.
+    // sort
 
-        if (part !== undefined) {
-          // partStreams are undefined
-          s.insert(0.0, part);
-          this.m21PartObjectsById[partId] = part;
-          this.parts.push(part);
-        }
-      } // partGroups;
-      // spanners;
-      // definesExplicitSystemBreaks, etc.
-      // sort
-
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
-    }
 
     return s;
   }
@@ -14885,22 +14062,12 @@ class ScoreParser {
     } // const openPartGroups = [];
 
 
-    var _iterator2 = _createForOfIteratorHelper(mxPartList),
-        _step2;
+    for (var partListElement of mxPartList) {
+      var $partListElement = jquery__WEBPACK_IMPORTED_MODULE_3__(partListElement);
+      var partId = $partListElement.attr('id');
+      this.mxScorePartDict[partId] = $partListElement;
+    } // deal with part-groups
 
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var partListElement = _step2.value;
-        var $partListElement = jquery__WEBPACK_IMPORTED_MODULE_4__(partListElement);
-        var partId = $partListElement.attr('id');
-        this.mxScorePartDict[partId] = $partListElement;
-      } // deal with part-groups
-
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
-    }
   }
 
 }
@@ -14911,8 +14078,7 @@ class ScoreParser {
  */
 
 class PartParser {
-  constructor($mxPart, $mxScorePart) {
-    var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  constructor($mxPart, $mxScorePart, parent = undefined) {
     this.atSoundingPitch = true;
     this.staffReferenceList = [];
     this.lastTimeSignature = undefined;
@@ -14939,9 +14105,9 @@ class PartParser {
     } // TODO(msc): spannerBundles
 
 
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_13__.Part();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_12__.Part();
     this.lastClefs = {
-      0: new _clef__WEBPACK_IMPORTED_MODULE_7__.TrebleClef()
+      0: new _clef__WEBPACK_IMPORTED_MODULE_6__.TrebleClef()
     };
   }
 
@@ -14963,19 +14129,9 @@ class PartParser {
   }
 
   parseMeasures() {
-    var _iterator3 = _createForOfIteratorHelper(this.$mxPart.children('measure')),
-        _step3;
-
-    try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var mxMeasure = _step3.value;
-        var $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_4__(mxMeasure);
-        this.xmlMeasureToMeasure($mxMeasure);
-      }
-    } catch (err) {
-      _iterator3.e(err);
-    } finally {
-      _iterator3.f();
+    for (var mxMeasure of this.$mxPart.children('measure')) {
+      var $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_3__(mxMeasure);
+      this.xmlMeasureToMeasure($mxMeasure);
     }
 
     if (this.lastMeasureParser !== undefined) {
@@ -15014,7 +14170,7 @@ class PartParser {
     if (m.timeSignature !== undefined) {
       this.lastTimeSignature = m.timeSignature;
     } else if (this.lastTimeSignature === undefined) {
-      this.lastTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_10__.TimeSignature('4/4');
+      this.lastTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_9__.TimeSignature('4/4');
     }
   }
 
@@ -15034,8 +14190,7 @@ class MeasureParser {
    * @property {music21.note.GeneralNote|undefined} nLast
    * @property {jQuery|undefined} $activeAttributes
    */
-  constructor($mxMeasure) {
-    var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  constructor($mxMeasure, parent = undefined) {
     this.$mxMeasureElements = [];
     this.divisions = undefined;
     this.transposition = undefined; // spannerBundles
@@ -15079,7 +14234,7 @@ class MeasureParser {
     };
     this.$mxMeasure = $mxMeasure;
     this.parent = parent;
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_13__.Measure();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_12__.Measure();
     this.voiceIndices = new Set();
     this.staves = 1;
     this.$activeAttributes = undefined;
@@ -15099,46 +14254,26 @@ class MeasureParser {
     var children = this.$mxMeasure.children();
     this.$mxMeasureElements = [];
 
-    var _iterator4 = _createForOfIteratorHelper(children),
-        _step4;
-
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var c = _step4.value;
-        var $c = jquery__WEBPACK_IMPORTED_MODULE_4__(c);
-        this.$mxMeasureElements.push($c);
-      }
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
+    for (var c of children) {
+      var $c = jquery__WEBPACK_IMPORTED_MODULE_3__(c);
+      this.$mxMeasureElements.push($c);
     }
 
     var i = 0;
 
-    var _iterator5 = _createForOfIteratorHelper(this.$mxMeasureElements),
-        _step5;
+    for (var $mxObj of this.$mxMeasureElements) {
+      var tag = $mxObj[0].tagName;
+      this.parseIndex = i;
+      var methName = this.musicDataMethods[tag];
 
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var $mxObj = _step5.value;
-        var tag = $mxObj[0].tagName;
-        this.parseIndex = i;
-        var methName = this.musicDataMethods[tag];
+      if (methName !== undefined) {
+        this[methName]($mxObj);
+      }
 
-        if (methName !== undefined) {
-          this[methName]($mxObj);
-        }
+      i += 1;
+    } // useVoices
+    // fullMeasureRest
 
-        i += 1;
-      } // useVoices
-      // fullMeasureRest
-
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
-    }
   }
 
   insertInMeasureOrVoice($mxObj, el) {
@@ -15213,22 +14348,12 @@ class MeasureParser {
   xmlToChord($mxNoteList) {
     var notes = [];
 
-    var _iterator6 = _createForOfIteratorHelper($mxNoteList),
-        _step6;
-
-    try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var $mxNote = _step6.value;
-        var freeSpanners = false;
-        notes.push(this.xmlToSimpleNote($mxNote, freeSpanners));
-      }
-    } catch (err) {
-      _iterator6.e(err);
-    } finally {
-      _iterator6.f();
+    for (var $mxNote of $mxNoteList) {
+      var freeSpanners = false;
+      notes.push(this.xmlToSimpleNote($mxNote, freeSpanners));
     }
 
-    var c = new _chord__WEBPACK_IMPORTED_MODULE_6__.Chord(notes); // move beams from first note;
+    var c = new _chord__WEBPACK_IMPORTED_MODULE_5__.Chord(notes); // move beams from first note;
     // move articulations;
     // move expressions;
     // move spanners;
@@ -15236,9 +14361,8 @@ class MeasureParser {
     return c;
   }
 
-  xmlToSimpleNote($mxNote) {
-    var freeSpanners = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-    var n = new _note__WEBPACK_IMPORTED_MODULE_11__.Note();
+  xmlToSimpleNote($mxNote, freeSpanners = true) {
+    var n = new _note__WEBPACK_IMPORTED_MODULE_10__.Note();
     this.xmlToPitch($mxNote, n.pitch); // beams;
     // stems;
     // noteheads
@@ -15253,7 +14377,7 @@ class MeasureParser {
     var p = inputM21;
 
     if (inputM21 === undefined) {
-      p = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Pitch();
+      p = new _pitch__WEBPACK_IMPORTED_MODULE_11__.Pitch();
     }
 
     var $mxPitch;
@@ -15261,7 +14385,7 @@ class MeasureParser {
     if ($mxNote[0].tagName === 'pitch') {
       $mxPitch = $mxNote;
     } else {
-      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_4__($mxNote.children('pitch')[0]);
+      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_3__($mxNote.children('pitch')[0]);
 
       if ($mxPitch.length === 0) {
         // whoops!
@@ -15285,7 +14409,7 @@ class MeasureParser {
       p.accidental = accObj;
       p.accidental.displayStatus = true; // independent accidental from alter
     } else if (accAlter !== undefined && !Number.isNaN(Number(accAlter))) {
-      p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Accidental(accAlter);
+      p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__.Accidental(accAlter);
       p.accidental.displayStatus = false;
     }
 
@@ -15293,9 +14417,9 @@ class MeasureParser {
   }
 
   xmlToAccidental($mxAccidental) {
-    var acc = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Accidental(0); // to-do m21/musicxml accidental name differences;
+    var acc = new _pitch__WEBPACK_IMPORTED_MODULE_11__.Accidental(0); // to-do m21/musicxml accidental name differences;
 
-    var name = jquery__WEBPACK_IMPORTED_MODULE_4__($mxAccidental[0]).text().trim().toLowerCase();
+    var name = jquery__WEBPACK_IMPORTED_MODULE_3__($mxAccidental[0]).text().trim().toLowerCase();
 
     if (name === 'flat-flat') {
       name = 'double-flat';
@@ -15310,7 +14434,7 @@ class MeasureParser {
   }
 
   xmlToRest($mxRest) {
-    var r = new _note__WEBPACK_IMPORTED_MODULE_11__.Rest(); // full measure rest
+    var r = new _note__WEBPACK_IMPORTED_MODULE_10__.Rest(); // full measure rest
     // apply multi-measure rest
     // display-step, octave, etc.
 
@@ -15318,8 +14442,7 @@ class MeasureParser {
   } // noinspection JSUnusedLocalSymbols
 
 
-  xmlNoteToGeneralNoteHelper(n, $mxNote) {
-    var freeSpanners = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners = true) {
     // spanners
     // setPrintStyle
     // print-object
@@ -15344,7 +14467,7 @@ class MeasureParser {
     var d = inputM21;
 
     if (inputM21 === undefined) {
-      d = new _duration__WEBPACK_IMPORTED_MODULE_8__.Duration();
+      d = new _duration__WEBPACK_IMPORTED_MODULE_7__.Duration();
     }
 
     var divisions = this.divisions;
@@ -15352,7 +14475,7 @@ class MeasureParser {
     var qLen = 0.0;
 
     if (mxDuration) {
-      var noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_4__(mxDuration).text().trim());
+      var noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_3__(mxDuration).text().trim());
       qLen = noteDivisions / divisions;
     }
 
@@ -15360,7 +14483,7 @@ class MeasureParser {
 
     if (mxType) {
       // long vs longa todo
-      var durationType = jquery__WEBPACK_IMPORTED_MODULE_4__(mxType).text().trim();
+      var durationType = jquery__WEBPACK_IMPORTED_MODULE_3__(mxType).text().trim();
       var numDots = $mxNote.children('dot').length; // tuplets!!!! big to-do!
 
       d.type = durationType;
@@ -15390,13 +14513,13 @@ class MeasureParser {
 
 
   xmlToTie($mxNote) {
-    var t = new _tie__WEBPACK_IMPORTED_MODULE_14__.Tie();
+    var t = new _tie__WEBPACK_IMPORTED_MODULE_13__.Tie();
     var allTies = $mxNote.children('tie');
 
     if (allTies.length > 1) {
       t.type = 'continue';
     } else {
-      var $t0 = jquery__WEBPACK_IMPORTED_MODULE_4__(allTies[0]);
+      var $t0 = jquery__WEBPACK_IMPORTED_MODULE_3__(allTies[0]);
       t.type = $t0.attr('type');
     } // style
 
@@ -15408,29 +14531,19 @@ class MeasureParser {
   updateLyricsFromList(n, lyricList) {
     var currentLyricNumber = 1;
 
-    var _iterator7 = _createForOfIteratorHelper(lyricList),
-        _step7;
+    for (var mxLyric of lyricList) {
+      var lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_3__(mxLyric));
 
-    try {
-      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-        var mxLyric = _step7.value;
-        var lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_4__(mxLyric));
-
-        if (lyricObj === undefined) {
-          continue;
-        }
-
-        if (lyricObj.number === 0) {
-          lyricObj.number = currentLyricNumber;
-        }
-
-        n.lyrics.push(lyricObj);
-        currentLyricNumber += 1;
+      if (lyricObj === undefined) {
+        continue;
       }
-    } catch (err) {
-      _iterator7.e(err);
-    } finally {
-      _iterator7.f();
+
+      if (lyricObj.number === 0) {
+        lyricObj.number = currentLyricNumber;
+      }
+
+      n.lyrics.push(lyricObj);
+      currentLyricNumber += 1;
     }
   }
   /**
@@ -15441,12 +14554,11 @@ class MeasureParser {
    */
 
 
-  xmlToLyric($mxLyric) {
-    var inputM21 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  xmlToLyric($mxLyric, inputM21 = undefined) {
     var l = inputM21;
 
     if (inputM21 === undefined) {
-      l = new _note__WEBPACK_IMPORTED_MODULE_11__.Lyric('');
+      l = new _note__WEBPACK_IMPORTED_MODULE_10__.Lyric('');
     }
 
     try {
@@ -15515,29 +14627,19 @@ class MeasureParser {
     this.attributesAreInternal = false;
     this.$activeAttributes = $mxAttributes;
 
-    var _iterator8 = _createForOfIteratorHelper($mxAttributes.children()),
-        _step8;
+    for (var mxSub of $mxAttributes.children()) {
+      var tag = mxSub.tagName;
+      var $mxSub = jquery__WEBPACK_IMPORTED_MODULE_3__(mxSub);
+      var methName = this.attributeTagsToMethods[tag];
 
-    try {
-      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-        var mxSub = _step8.value;
-        var tag = mxSub.tagName;
-        var $mxSub = jquery__WEBPACK_IMPORTED_MODULE_4__(mxSub);
-        var methName = this.attributeTagsToMethods[tag];
+      if (methName !== undefined) {
+        this[methName]($mxSub);
+      } else if (tag === 'staves') {
+        this.staves = parseInt($mxSub.text());
+      } else if (tag === 'divisions') {
+        this.divisions = parseFloat($mxSub.text());
+      } // transpose;
 
-        if (methName !== undefined) {
-          this[methName]($mxSub);
-        } else if (tag === 'staves') {
-          this.staves = parseInt($mxSub.text());
-        } else if (tag === 'divisions') {
-          this.divisions = parseFloat($mxSub.text());
-        } // transpose;
-
-      }
-    } catch (err) {
-      _iterator8.e(err);
-    } finally {
-      _iterator8.f();
     }
 
     if (this.parent !== undefined) {
@@ -15555,9 +14657,9 @@ class MeasureParser {
   xmlToTimeSignature($mxTime) {
     // senza-misura
     // simple time signature only;
-    var numerator = jquery__WEBPACK_IMPORTED_MODULE_4__($mxTime.children('beats')[0]).text().trim();
-    var denominator = jquery__WEBPACK_IMPORTED_MODULE_4__($mxTime.children('beat-type')[0]).text().trim();
-    return new _meter__WEBPACK_IMPORTED_MODULE_10__.TimeSignature(numerator + '/' + denominator); // symbol
+    var numerator = jquery__WEBPACK_IMPORTED_MODULE_3__($mxTime.children('beats')[0]).text().trim();
+    var denominator = jquery__WEBPACK_IMPORTED_MODULE_3__($mxTime.children('beat-type')[0]).text().trim();
+    return new _meter__WEBPACK_IMPORTED_MODULE_9__.TimeSignature(numerator + '/' + denominator); // symbol
   }
 
   handleClef($mxClef) {
@@ -15570,17 +14672,17 @@ class MeasureParser {
   }
 
   xmlToClef($mxClef) {
-    var sign = jquery__WEBPACK_IMPORTED_MODULE_4__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
+    var sign = jquery__WEBPACK_IMPORTED_MODULE_3__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
 
-    var line = jquery__WEBPACK_IMPORTED_MODULE_4__($mxClef.children('line')[0]).text().trim();
+    var line = jquery__WEBPACK_IMPORTED_MODULE_3__($mxClef.children('line')[0]).text().trim();
     var clefOctaveChange = 0;
     var $coc = $mxClef.children('clef-octave-change');
 
     if ($coc.length > 0) {
-      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_4__($coc[0]).text().trim());
+      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_3__($coc[0]).text().trim());
     }
 
-    return _clef__WEBPACK_IMPORTED_MODULE_7__.clefFromString(sign + line, clefOctaveChange);
+    return _clef__WEBPACK_IMPORTED_MODULE_6__.clefFromString(sign + line, clefOctaveChange);
   }
 
   handleKeySignature($mxKey) {
@@ -15589,7 +14691,7 @@ class MeasureParser {
   }
 
   xmlToKeySignature($mxKey) {
-    var ks = new _key__WEBPACK_IMPORTED_MODULE_9__.KeySignature();
+    var ks = new _key__WEBPACK_IMPORTED_MODULE_8__.KeySignature();
     seta(ks, $mxKey, 'fifths', 'sharps', parseInt); // mode!
     // non-standard and key-octaves
 
@@ -15647,20 +14749,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/note -- Note, Rest, NotRest, GeneralNote
@@ -15717,11 +14805,7 @@ var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up
  */
 
 class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
-  constructor(text) {
-    var number = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-    var syllabic = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var applyRaw = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    var identifier = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  constructor(text, number = 1, syllabic = undefined, applyRaw = undefined, identifier = undefined) {
     super();
     this.lyricConnector = '-'; // override to place something else between two notes...
 
@@ -15794,9 +14878,7 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
    */
 
 
-  setTextAndSyllabic(rawText) {
-    var applyRaw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+  setTextAndSyllabic(rawText, applyRaw = false) {
     if (rawText === undefined) {
       this.text = undefined;
       return this;
@@ -15851,8 +14933,7 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
  */
 
 class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
-  constructor() {
-    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+  constructor(ql = 1.0) {
     super();
     this.isNote = false;
     this.isRest = false;
@@ -15920,10 +15001,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
    */
 
 
-  addLyric(text, lyricNumber) {
-    var applyRaw = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    var lyricIdentifier = arguments.length > 3 ? arguments[3] : undefined;
-
+  addLyric(text, lyricNumber, applyRaw = false, lyricIdentifier) {
     if (lyricNumber === undefined) {
       var maxLyrics = this.lyrics.length + 1;
       var newLyric = new Lyric(text, maxLyrics, undefined, applyRaw, lyricIdentifier);
@@ -15971,9 +15049,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
    */
 
 
-  vexflowAccidentalsAndDisplay(vfn) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+  vexflowAccidentalsAndDisplay(vfn, options = {}) {
     if (this.duration.dots > 0) {
       for (var i = 0; i < this.duration.dots; i++) {
         vfn.addDotToAll();
@@ -16012,16 +15088,10 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
    */
 
 
-  playMidi() {
-    var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
-    var nextElement = arguments.length > 1 ? arguments[1] : undefined;
-
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref$instrument = _ref.instrument,
-        instrument = _ref$instrument === void 0 ? undefined : _ref$instrument,
-        _ref$channel = _ref.channel,
-        channel = _ref$channel === void 0 ? undefined : _ref$channel;
-
+  playMidi(tempo = 120, nextElement, {
+    instrument = undefined,
+    channel = undefined
+  } = {}) {
     // returns the number of milliseconds to the next element in
     // case that can't be determined otherwise.
     var ql = this.duration.quarterLength;
@@ -16044,8 +15114,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
  */
 
 class NotRest extends GeneralNote {
-  constructor() {
-    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+  constructor(ql = 1.0) {
     super(ql); // noinspection JSUnusedGlobalSymbols
 
     this.notehead = 'normal'; // noinspection JSUnusedGlobalSymbols
@@ -16097,11 +15166,9 @@ class NotRest extends GeneralNote {
    */
 
 
-  vexflowNote() {
-    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref2$clef = _ref2.clef,
-        clef = _ref2$clef === void 0 ? undefined : _ref2$clef;
-
+  vexflowNote({
+    clef = undefined
+  } = {}) {
     var useStemDirection = this.stemDirection; // fixup stem direction -- must happen before Vex.Flow.Note is created...
 
     if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
@@ -16116,20 +15183,10 @@ class NotRest extends GeneralNote {
 
     var vexflowPitchKeys = [];
 
-    var _iterator = _createForOfIteratorHelper(this.pitches),
-        _step;
+    for (var p of this.pitches) {
+      vexflowPitchKeys.push(p.vexflowName(clef));
+    } // Not supported: Double;  None is done elsewhere?
 
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var p = _step.value;
-        vexflowPitchKeys.push(p.vexflowName(clef));
-      } // Not supported: Double;  None is done elsewhere?
-
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
-    }
 
     var vfnStemDirection = useStemDirection === 'down' ? (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.StaveNote.STEM_DOWN) : (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.StaveNote.STEM_UP);
     var vfn = new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.StaveNote)({
@@ -16141,58 +15198,29 @@ class NotRest extends GeneralNote {
       clef
     }); // clean up stuff...
 
-    var _iterator2 = _createForOfIteratorHelper(this.pitches.entries()),
-        _step2;
+    for (var [i, _p] of this.pitches.entries()) {
+      if (_p.accidental !== undefined) {
+        var acc = _p.accidental;
+        var vf_accidental = new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.Accidental)(acc.vexflowModifier);
 
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var _step2$value = _slicedToArray(_step2.value, 2),
-            i = _step2$value[0],
-            _p = _step2$value[1];
-
-        if (_p.accidental !== undefined) {
-          var acc = _p.accidental;
-          var vf_accidental = new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.Accidental)(acc.vexflowModifier);
-
-          if (acc.vexflowModifier !== 'n' && acc.displayStatus !== false) {
-            vfn.addAccidental(i, vf_accidental);
-          } else if (acc.displayType === 'always' || acc.displayStatus === true) {
-            vfn.addAccidental(i, vf_accidental);
-          }
+        if (acc.vexflowModifier !== 'n' && acc.displayStatus !== false) {
+          vfn.addAccidental(i, vf_accidental);
+        } else if (acc.displayType === 'always' || acc.displayStatus === true) {
+          vfn.addAccidental(i, vf_accidental);
         }
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
     }
 
-    var _iterator3 = _createForOfIteratorHelper(this.articulations),
-        _step3;
-
-    try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var art = _step3.value;
-        vfn.addArticulation(0, art.vexflow());
-      }
-    } catch (err) {
-      _iterator3.e(err);
-    } finally {
-      _iterator3.f();
+    for (var art of this.articulations) {
+      vfn.addArticulation(0, art.vexflow({
+        stemDirection: useStemDirection
+      }));
     }
 
-    var _iterator4 = _createForOfIteratorHelper(this.expressions),
-        _step4;
-
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var exp = _step4.value;
-        vfn.addArticulation(0, exp.vexflow());
-      }
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
+    for (var exp of this.expressions) {
+      vfn.addArticulation(0, exp.vexflow({
+        stemDirection: useStemDirection
+      }));
     }
 
     if (this.noteheadColor !== undefined) {
@@ -16242,9 +15270,7 @@ class Note extends NotRest {
    * @property {string} step - shortcut to `.pitch.step`
    * @property {number} octave - shortcut to `.pitch.octave`
    */
-  constructor() {
-    var nn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C4';
-    var ql = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
+  constructor(nn = 'C4', ql = 1.0) {
     super(ql); // noinspection JSUnusedGlobalSymbols
 
     this.isNote = true;
@@ -16345,13 +15371,10 @@ class Note extends NotRest {
     }
   }
 
-  vexflowAccidentalsAndDisplay(vfn) {
-    var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref3$stave = _ref3.stave,
-        stave = _ref3$stave === void 0 ? undefined : _ref3$stave,
-        _ref3$clef = _ref3.clef,
-        clef = _ref3$clef === void 0 ? undefined : _ref3$clef;
-
+  vexflowAccidentalsAndDisplay(vfn, {
+    stave = undefined,
+    clef = undefined
+  } = {}) {
     super.vexflowAccidentalsAndDisplay(vfn, {
       stave,
       clef
@@ -16385,18 +15408,11 @@ class Note extends NotRest {
     }
   }
 
-  playMidi() {
-    var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
-    var nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-    var _ref4 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref4$instrument = _ref4.instrument,
-        instrument = _ref4$instrument === void 0 ? undefined : _ref4$instrument,
-        _ref4$channel = _ref4.channel,
-        channel = _ref4$channel === void 0 ? undefined : _ref4$channel,
-        _ref4$playLegato = _ref4.playLegato,
-        playLegato = _ref4$playLegato === void 0 ? true : _ref4$playLegato;
-
+  playMidi(tempo = 120, nextElement = undefined, {
+    instrument = undefined,
+    channel = undefined,
+    playLegato = true
+  } = {}) {
     var milliseconds = super.playMidi(tempo, nextElement, {
       instrument,
       channel
@@ -16459,8 +15475,7 @@ class Note extends NotRest {
 class Rest extends GeneralNote {
   // this dummy constructor is here for JetBrains typescript linter
   // which otherwise complains that Rests have no durations, etc.
-  constructor() {
-    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+  constructor(ql = 1.0) {
     super(ql); // noinspection JSUnusedGlobalSymbols
 
     this.isNote = false;
@@ -16559,14 +15574,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getM21attribute": () => (/* binding */ getM21attribute),
 /* harmony export */   "warnBanner": () => (/* binding */ warnBanner)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
 /* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
-/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./tinyNotation */ "./src/music21/tinyNotation.ts");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tinyNotation */ "./src/music21/tinyNotation.ts");
+
 
 
 
@@ -16608,9 +15626,9 @@ function getBasePath() {
     m21jsPath = getM21attribute('src');
   }
 
-  var m21basePath = _common__WEBPACK_IMPORTED_MODULE_3__.pathSimplify(m21jsPath + '/../..');
+  var m21basePath = _common__WEBPACK_IMPORTED_MODULE_4__.pathSimplify(m21jsPath + '/../..');
 
-  if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
+  if (_debug__WEBPACK_IMPORTED_MODULE_3__.debug) {
     console.log('Music21 paths: base: ', m21basePath, '; js: ', m21jsPath);
   }
 
@@ -16621,9 +15639,8 @@ function fixUrls(conf) {
     return;
   }
 
-  for (var _i = 0, _Object$keys = Object.keys(_common__WEBPACK_IMPORTED_MODULE_3__.urls); _i < _Object$keys.length; _i++) {
-    var u = _Object$keys[_i];
-    _common__WEBPACK_IMPORTED_MODULE_3__.urls[u] = _common__WEBPACK_IMPORTED_MODULE_3__.pathSimplify(conf.m21basePath + _common__WEBPACK_IMPORTED_MODULE_3__.urls[u]);
+  for (var u of Object.keys(_common__WEBPACK_IMPORTED_MODULE_4__.urls)) {
+    _common__WEBPACK_IMPORTED_MODULE_4__.urls[u] = _common__WEBPACK_IMPORTED_MODULE_4__.pathSimplify(conf.m21basePath + _common__WEBPACK_IMPORTED_MODULE_4__.urls[u]);
   }
 }
 /**
@@ -16636,10 +15653,10 @@ function renderHTML() {
   }
 
   if (document.readyState === 'complete') {
-    _tinyNotation__WEBPACK_IMPORTED_MODULE_5__.renderNotationDivs();
+    _tinyNotation__WEBPACK_IMPORTED_MODULE_6__.renderNotationDivs();
   } else {
     window.addEventListener('load', () => {
-      _tinyNotation__WEBPACK_IMPORTED_MODULE_5__.renderNotationDivs();
+      _tinyNotation__WEBPACK_IMPORTED_MODULE_6__.renderNotationDivs();
     });
   }
 }
@@ -16656,7 +15673,7 @@ function loadDefaultSoundfont(conf) {
     instrument = conf.loadSoundfont;
   }
 
-  return _miditools__WEBPACK_IMPORTED_MODULE_4__.loadSoundfont(instrument);
+  return _miditools__WEBPACK_IMPORTED_MODULE_5__.loadSoundfont(instrument);
 }
 /**
  *
@@ -16687,13 +15704,11 @@ function loadConfiguration() {
  * @returns {undefined|*|string}
  */
 
-function getM21attribute() {
-  var attribute = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'm21conf';
+function getM21attribute(attribute = 'm21conf') {
   // this is case insensitive.
   var scripts = document.getElementsByTagName('script');
 
-  for (var _i2 = 0, _Array$from = Array.from(scripts); _i2 < _Array$from.length; _i2++) {
-    var s = _Array$from[_i2];
+  for (var s of Array.from(scripts)) {
     var scriptName = s.getAttribute('data-main') || s.getAttribute('src');
 
     if (scriptName && /music21/.test(scriptName)) {
@@ -16752,12 +15767,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21 features.
@@ -17038,8 +16047,7 @@ var midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B
  */
 
 class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
-  constructor() {
-    var pn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
+  constructor(pn = 'C') {
     super();
     this._step = 'C';
     this._octave = 4;
@@ -17257,9 +16265,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
    */
 
 
-  _getEnharmonicHelper() {
-    var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    var directionInt = arguments.length > 1 ? arguments[1] : undefined;
+  _getEnharmonicHelper(inPlace = false, directionInt) {
     // differs from Python version because
     // cannot import interval here.
     var octaveStored = true;
@@ -17308,8 +16314,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
    */
 
 
-  getHigherEnharmonic() {
-    var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  getHigherEnharmonic(inPlace = false) {
     return this._getEnharmonicHelper(inPlace, 1);
   }
   /**
@@ -17319,81 +16324,49 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
    */
 
 
-  getLowerEnharmonic() {
-    var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  getLowerEnharmonic(inPlace = false) {
     return this._getEnharmonicHelper(inPlace, -1);
   }
   /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
 
 
   _nameInKeySignature(alteredPitches) {
-    var _iterator = _createForOfIteratorHelper(alteredPitches),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var p = _step.value;
-
-        // all are altered tones, must have acc
-        if (p.step === this.step) {
-          // A# to A or A# to A-, etc
-          if (p.accidental.name === this.accidental.name) {
-            return true;
-          }
+    for (var p of alteredPitches) {
+      // all are altered tones, must have acc
+      if (p.step === this.step) {
+        // A# to A or A# to A-, etc
+        if (p.accidental.name === this.accidental.name) {
+          return true;
         }
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     return false;
   }
 
   _stepInKeySignature(alteredPitches) {
-    var _iterator2 = _createForOfIteratorHelper(alteredPitches),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var p = _step2.value;
-
-        // all are altered tones, must have acc
-        if (p.step === this.step) {
-          // A# to A or A# to A-, etc
-          return true;
-        }
+    for (var p of alteredPitches) {
+      // all are altered tones, must have acc
+      if (p.step === this.step) {
+        // A# to A or A# to A-, etc
+        return true;
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
     }
 
     return false;
   } // noinspection PointlessBooleanExpressionJS
 
 
-  updateAccidentalDisplay() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$pitchPast = _ref.pitchPast,
-        pitchPast = _ref$pitchPast === void 0 ? [] : _ref$pitchPast,
-        _ref$pitchPastMeasure = _ref.pitchPastMeasure,
-        pitchPastMeasure = _ref$pitchPastMeasure === void 0 ? [] : _ref$pitchPastMeasure,
-        _ref$alteredPitches = _ref.alteredPitches,
-        alteredPitches = _ref$alteredPitches === void 0 ? [] : _ref$alteredPitches,
-        _ref$cautionaryPitchC = _ref.cautionaryPitchClass,
-        cautionaryPitchClass = _ref$cautionaryPitchC === void 0 ? true : _ref$cautionaryPitchC,
-        _ref$cautionaryAll = _ref.cautionaryAll,
-        cautionaryAll = _ref$cautionaryAll === void 0 ? false : _ref$cautionaryAll,
-        _ref$overrideStatus = _ref.overrideStatus,
-        overrideStatus = _ref$overrideStatus === void 0 ? false : _ref$overrideStatus,
-        _ref$cautionaryNotImm = _ref.cautionaryNotImmediateRepeat,
-        cautionaryNotImmediateRepeat = _ref$cautionaryNotImm === void 0 ? true : _ref$cautionaryNotImm,
-        _ref$lastNoteWasTied = _ref.lastNoteWasTied,
-        lastNoteWasTied = _ref$lastNoteWasTied === void 0 ? false : _ref$lastNoteWasTied;
-
+  updateAccidentalDisplay({
+    pitchPast = [],
+    pitchPastMeasure = [],
+    alteredPitches = [],
+    cautionaryPitchClass = true,
+    cautionaryAll = false,
+    overrideStatus = false,
+    cautionaryNotImmediateRepeat = true,
+    lastNoteWasTied = false
+  } = {}) {
     // TODO: this presently deals with chords as simply a list
     //   we might permit pitchPast to contain a list of pitches, to represent
     //    a simultaneity?
@@ -17759,8 +16732,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
    */
 
 
-  vexflowName() {
-    var clefObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  vexflowName(clefObj = undefined) {
     // returns a vexflow Key name for this pitch.
     var tempPitch = this;
 
@@ -17803,22 +16775,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.set.js */ "./node_modules/core-js/modules/es.set.js");
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.weak-map.js */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
 
 
-
-
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * module for things that all music21-created objects, not just objects that can live in
@@ -17934,9 +16894,7 @@ class ProtoM21Object {
    */
 
 
-  clone() {
-    var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    var memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  clone(deep = true, memo = undefined) {
     // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
     var classConstructor = this.constructor;
     var ret = new classConstructor();
@@ -18016,21 +16974,10 @@ class ProtoM21Object {
       useTestClass = testClass;
     }
 
-    var _iterator = _createForOfIteratorHelper(useTestClass),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var thisTestClass = _step.value;
-
-        if (this.classSet.has(thisTestClass)) {
-          return true;
-        }
+    for (var thisTestClass of useTestClass) {
+      if (this.classSet.has(thisTestClass)) {
+        return true;
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     return false;
@@ -18077,24 +17024,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.assign.js */ "./node_modules/core-js/modules/es.object.assign.js");
+/* harmony import */ var core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_assign_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -18175,11 +17113,7 @@ class RenderOptions {
     // TODO(MSC): allow for subclassing...
     var out = new RenderOptions();
 
-    for (var _i = 0, _Object$entries = Object.entries(this); _i < _Object$entries.length; _i++) {
-      var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-          key = _Object$entries$_i[0],
-          value = _Object$entries$_i[1];
-
+    for (var [key, value] of Object.entries(this)) {
       if (['scaleFactor', 'staffConnectors', 'events'].includes(key)) {
         continue;
       }
@@ -18214,27 +17148,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "romanToNumber": () => (/* binding */ romanToNumber),
 /* harmony export */   "RomanNumeral": () => (/* binding */ RomanNumeral)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor.js */ "./node_modules/core-js/modules/es.regexp.constructor.js");
-/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_string_ends_with_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.ends-with.js */ "./node_modules/core-js/modules/es.string.ends-with.js");
-/* harmony import */ var core_js_modules_es_string_ends_with_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_ends_with_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.match.js */ "./node_modules/core-js/modules/es.string.match.js");
-/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.starts-with.js */ "./node_modules/core-js/modules/es.string.starts-with.js");
-/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./figuredBass */ "./src/music21/figuredBass.ts");
-/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./harmony */ "./src/music21/harmony.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./key */ "./src/music21/key.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor.js */ "./node_modules/core-js/modules/es.regexp.constructor.js");
+/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_ends_with_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.ends-with.js */ "./node_modules/core-js/modules/es.string.ends-with.js");
+/* harmony import */ var core_js_modules_es_string_ends_with_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_ends_with_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.match.js */ "./node_modules/core-js/modules/es.string.match.js");
+/* harmony import */ var core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.starts-with.js */ "./node_modules/core-js/modules/es.string.starts-with.js");
+/* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./figuredBass */ "./src/music21/figuredBass.ts");
+/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./harmony */ "./src/music21/harmony.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./key */ "./src/music21/key.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.ts");
 
 
 
@@ -18242,19 +17180,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -18389,8 +17315,7 @@ function expandShortHand(shorthand) {
 
   var shGroupOut = [];
 
-  for (var _i = 0, _shorthandGroups = shorthandGroups; _i < _shorthandGroups.length; _i++) {
-    var sh = _shorthandGroups[_i];
+  for (var sh of shorthandGroups) {
     var sh2 = sh.replace('x', '11');
     sh2 = sh2.replace('y', '13');
     sh2 = sh2.replace('z', '15');
@@ -18478,17 +17403,11 @@ var romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  *     are Chord objects, so .pitches will work for them also.
  */
 
-class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
-  constructor() {
-    var figure = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var keyStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref$parseFigure = _ref.parseFigure,
-        parseFigure = _ref$parseFigure === void 0 ? false : _ref$parseFigure,
-        _ref$updatePitches = _ref.updatePitches,
-        updatePitches = _ref$updatePitches === void 0 ? false : _ref$updatePitches;
-
+class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_12__.Harmony {
+  constructor(figure = '', keyStr = undefined, {
+    parseFigure = false,
+    updatePitches = false
+  } = {}) {
     super(figure, {
       updatePitches,
       parseFigure
@@ -18531,7 +17450,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
     this.figure = figure;
 
     if (typeof keyStr === 'string') {
-      this.key = new _key__WEBPACK_IMPORTED_MODULE_12__.Key(keyStr);
+      this.key = new _key__WEBPACK_IMPORTED_MODULE_14__.Key(keyStr);
     } else {
       this.key = keyStr;
     } // to remove...
@@ -18564,12 +17483,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
       useScale = this.key;
     }
 
-    var _this$_correctForSeco = this._correctForSecondaryRomanNumeral(useScale);
-
-    var _this$_correctForSeco2 = _slicedToArray(_this$_correctForSeco, 2);
-
-    workingFigure = _this$_correctForSeco2[0];
-    useScale = _this$_correctForSeco2[1];
+    [workingFigure, useScale] = this._correctForSecondaryRomanNumeral(useScale);
 
     if (workingFigure === 'Cad64') {
       if (useScale.mode === 'minor') {
@@ -18585,20 +17499,14 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
     workingFigure = workingFigure.replace(/^N6/, 'bII6');
     workingFigure = workingFigure.replace(/^N/, 'bII6');
     workingFigure = this._parseFrontAlterations(workingFigure);
-
-    var _this$_parseRNAloneAm = this._parseRNAloneAmidstAug6(workingFigure, useScale);
-
-    var _this$_parseRNAloneAm2 = _slicedToArray(_this$_parseRNAloneAm, 2);
-
-    workingFigure = _this$_parseRNAloneAm2[0];
-    useScale = _this$_parseRNAloneAm2[1];
+    [workingFigure, useScale] = this._parseRNAloneAmidstAug6(workingFigure, useScale);
     workingFigure = this._setImpliedQualityFromString(workingFigure);
     this._tempRoot = useScale.pitchFromDegree(this.scaleDegree);
 
     this._fixMinorVIandVII(useScale);
 
     var expandedFigure = expandShortHand(workingFigure);
-    this.figuresNotationObj = new _figuredBass__WEBPACK_IMPORTED_MODULE_9__.Notation(expandedFigure.toString());
+    this.figuresNotationObj = new _figuredBass__WEBPACK_IMPORTED_MODULE_11__.Notation(expandedFigure.toString());
     var numbersArr = workingFigure.match(/\d+/);
 
     if (numbersArr != null) {
@@ -18625,8 +17533,8 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
         alteration *= -1;
       }
 
-      frontAlterationTransposeInterval = _interval__WEBPACK_IMPORTED_MODULE_11__.intervalFromGenericAndChromatic(1, alteration);
-      frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Accidental(alteration);
+      frontAlterationTransposeInterval = _interval__WEBPACK_IMPORTED_MODULE_13__.intervalFromGenericAndChromatic(1, alteration);
+      frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_15__.Accidental(alteration);
       frontAlterationString = group;
       workingFigure = workingFigure.replace(_alterationRegex, '');
     }
@@ -18638,35 +17546,21 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
   }
 
   _correctBracketedPitches() {
-    var _iterator = _createForOfIteratorHelper(this.bracketedAlterations),
-        _step;
+    for (var innerAlteration of this.bracketedAlterations) {
+      var [alterNotation, chordStep] = innerAlteration;
+      var alterPitch = this.getChordStep(chordStep);
 
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var innerAlteration = _step.value;
-
-        var _innerAlteration = _slicedToArray(innerAlteration, 2),
-            alterNotation = _innerAlteration[0],
-            chordStep = _innerAlteration[1];
-
-        var alterPitch = this.getChordStep(chordStep);
-
-        if (alterPitch === undefined) {
-          continue;
-        }
-
-        var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Accidental(alterNotation);
-
-        if (alterPitch.accidental === undefined) {
-          alterPitch.accidental = newAccidental;
-        } else {
-          alterPitch.accidental.set(alterPitch.accidental.alter + newAccidental.alter);
-        }
+      if (alterPitch === undefined) {
+        continue;
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+
+      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_15__.Accidental(alterNotation);
+
+      if (alterPitch.accidental === undefined) {
+        alterPitch.accidental = newAccidental;
+      } else {
+        alterPitch.accidental.set(alterPitch.accidental.alter + newAccidental.alter);
+      }
     }
   }
 
@@ -18718,12 +17612,12 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
     var fati = this.frontAlterationTransposeInterval;
 
     if (fati !== undefined) {
-      var newFati = _interval__WEBPACK_IMPORTED_MODULE_11__.add([fati, new _interval__WEBPACK_IMPORTED_MODULE_11__.Interval('A1')]);
+      var newFati = _interval__WEBPACK_IMPORTED_MODULE_13__.add([fati, new _interval__WEBPACK_IMPORTED_MODULE_13__.Interval('A1')]);
       this.frontAlterationTransposeInterval = newFati;
       this.frontAlterationAccidental.alter += 1;
     } else {
-      this.frontAlterationTransposeInterval = new _interval__WEBPACK_IMPORTED_MODULE_11__.Interval('A1');
-      this.frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Accidental(1);
+      this.frontAlterationTransposeInterval = new _interval__WEBPACK_IMPORTED_MODULE_13__.Interval('A1');
+      this.frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_15__.Accidental(1);
     }
 
     this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(this._tempRoot);
@@ -18741,12 +17635,12 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
     var a6match = _augmentedSixthRegex.exec(workingFigure);
 
     if (rm === null && a6match === null) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__.Music21Exception("No roman numeral found in ".concat(workingFigure));
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception("No roman numeral found in ".concat(workingFigure));
     }
 
     if (a6match !== null) {
       if (useScale.mode === 'major') {
-        useScale = new _key__WEBPACK_IMPORTED_MODULE_12__.Key(useScale.tonic.name, 'minor');
+        useScale = new _key__WEBPACK_IMPORTED_MODULE_14__.Key(useScale.tonic.name, 'minor');
         this.impliedScale = useScale;
         this.useImpliedScale = true;
       }
@@ -18771,7 +17665,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
       }
     } else {
       romanNumeralAlone = rm[1];
-      this.scaleDegree = _common__WEBPACK_IMPORTED_MODULE_8__.fromRoman(romanNumeralAlone);
+      this.scaleDegree = _common__WEBPACK_IMPORTED_MODULE_10__.fromRoman(romanNumeralAlone);
       workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
       this.romanNumeralAlone = romanNumeralAlone;
     }
@@ -18808,16 +17702,16 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
 
   set key(keyOrScale) {
     if (typeof keyOrScale === 'string') {
-      this._key = new _key__WEBPACK_IMPORTED_MODULE_12__.Key(keyOrScale);
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_14__.Key(keyOrScale);
     } else if (typeof keyOrScale === 'undefined') {
-      this._key = new _key__WEBPACK_IMPORTED_MODULE_12__.Key('C');
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_14__.Key('C');
     } else {
       this._key = keyOrScale;
     }
 
     if (keyOrScale === undefined) {
       this.useImpliedScale = true;
-      this.impliedScale = new _scale__WEBPACK_IMPORTED_MODULE_14__.MajorScale('C');
+      this.impliedScale = new _scale__WEBPACK_IMPORTED_MODULE_16__.MajorScale('C');
     } else {
       this.useImpliedScale = false;
       this.impliedScale = false;
@@ -18907,7 +17801,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
       var thisScaleDegree = bassScaleDegree + this.figuresNotationObj.numbers[i] - 1;
       var newPitch = useScale.pitchFromDegree(thisScaleDegree, 'ascending');
       var pitchName = this.figuresNotationObj.modifiers[i].modifyPitchName(newPitch.name);
-      var newNewPitch = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Pitch(pitchName);
+      var newNewPitch = new _pitch__WEBPACK_IMPORTED_MODULE_15__.Pitch(pitchName);
       newNewPitch.octave = newPitch.octave;
 
       if (newNewPitch.ps < lastPitch.ps) {
@@ -18921,21 +17815,10 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
     if (this.frontAlterationTransposeInterval !== undefined) {
       var newPitches = [];
 
-      var _iterator2 = _createForOfIteratorHelper(pitches),
-          _step2;
+      for (var thisPitch of pitches) {
+        var _newPitch = this.frontAlterationTransposeInterval.transposePitch(thisPitch);
 
-      try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var thisPitch = _step2.value;
-
-          var _newPitch = this.frontAlterationTransposeInterval.transposePitch(thisPitch);
-
-          newPitches.push(_newPitch);
-        }
-      } catch (err) {
-        _iterator2.e(err);
-      } finally {
-        _iterator2.f();
+        newPitches.push(_newPitch);
       }
 
       this.pitches = newPitches;
@@ -18950,41 +17833,20 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
     if (this.omittedSteps.length) {
       var omittedPitches = [];
 
-      var _iterator3 = _createForOfIteratorHelper(this.omittedSteps),
-          _step3;
+      for (var thisCS of this.omittedSteps) {
+        var p = this.getChordStep(thisCS);
 
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var thisCS = _step3.value;
-          var p = this.getChordStep(thisCS);
-
-          if (p !== undefined) {
-            omittedPitches.push(p.name);
-          }
+        if (p !== undefined) {
+          omittedPitches.push(p.name);
         }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
       }
 
       var _newPitches = [];
 
-      var _iterator4 = _createForOfIteratorHelper(pitches),
-          _step4;
-
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var _thisPitch = _step4.value;
-
-          if (!omittedPitches.includes(_thisPitch.name)) {
-            _newPitches.push(_thisPitch);
-          }
+      for (var _thisPitch of pitches) {
+        if (!omittedPitches.includes(_thisPitch.name)) {
+          _newPitches.push(_thisPitch);
         }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
       }
 
       this.pitches = _newPitches; // do something...
@@ -18994,40 +17856,25 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
   }
 
   bassScaleDegreeFromNotation(notationObject) {
-    var c = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Pitch('C3');
+    var c = new _pitch__WEBPACK_IMPORTED_MODULE_15__.Pitch('C3');
     var cDNN = c.diatonicNoteNum; // always 22
 
     var pitches = [c];
 
-    var _iterator5 = _createForOfIteratorHelper(notationObject.numbers),
-        _step5;
-
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var i = _step5.value;
-        var distanceToMove = i - 1;
-        var newDiatonicNumber = cDNN + distanceToMove;
-
-        var _interval$convertDiat = _interval__WEBPACK_IMPORTED_MODULE_11__.convertDiatonicNumberToStep(newDiatonicNumber),
-            _interval$convertDiat2 = _slicedToArray(_interval$convertDiat, 2),
-            newStep = _interval$convertDiat2[0],
-            newOctave = _interval$convertDiat2[1];
-
-        var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Pitch('C3');
-        newPitch.step = newStep;
-        newPitch.octave = newOctave;
-        pitches.push(newPitch);
-      }
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
+    for (var i of notationObject.numbers) {
+      var distanceToMove = i - 1;
+      var newDiatonicNumber = cDNN + distanceToMove;
+      var [newStep, newOctave] = _interval__WEBPACK_IMPORTED_MODULE_13__.convertDiatonicNumberToStep(newDiatonicNumber);
+      var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_15__.Pitch('C3');
+      newPitch.step = newStep;
+      newPitch.octave = newOctave;
+      pitches.push(newPitch);
     }
 
-    var tempChord = new _chord__WEBPACK_IMPORTED_MODULE_7__.Chord(pitches);
+    var tempChord = new _chord__WEBPACK_IMPORTED_MODULE_9__.Chord(pitches);
     var rootDNN = tempChord.root().diatonicNoteNum;
     var staffDistanceFromBassToRoot = rootDNN - cDNN;
-    var bassSD = _common__WEBPACK_IMPORTED_MODULE_8__.posMod(this.scaleDegree - staffDistanceFromBassToRoot, 7);
+    var bassSD = _common__WEBPACK_IMPORTED_MODULE_10__.posMod(this.scaleDegree - staffDistanceFromBassToRoot, 7);
 
     if (bassSD === 0) {
       bassSD = 7;
@@ -19069,7 +17916,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
       var faultyPitch = this.getChordStep(thisChordStep); // TODO: check for faultyPitch is undefined
 
       if (faultyPitch.accidental === undefined) {
-        faultyPitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Accidental(correctedSemis);
+        faultyPitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_15__.Accidental(correctedSemis);
       } else {
         var acc = faultyPitch.accidental;
         correctedSemis += acc.alter;
@@ -19085,9 +17932,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
     }
   }
 
-  _correctForSecondaryRomanNumeral(useScale) {
-    var figure = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+  _correctForSecondaryRomanNumeral(useScale, figure = undefined) {
     if (figure === undefined) {
       figure = this._figure;
     }
@@ -19113,7 +17958,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
         secondaryMode = 'major';
       }
 
-      this.secondaryRomanNumeralKey = new _key__WEBPACK_IMPORTED_MODULE_12__.Key(secondaryRomanNumeral.root().name, secondaryMode);
+      this.secondaryRomanNumeralKey = new _key__WEBPACK_IMPORTED_MODULE_14__.Key(secondaryRomanNumeral.root().name, secondaryMode);
       useScale = this.secondaryRomanNumeralKey;
       workingFigure = primaryFigure;
     }
@@ -19188,8 +18033,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_10__.Harmony {
    */
 
 
-  asString(displayType) {
-    var inversion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  asString(displayType, inversion = 0) {
     var keyObj = this.key;
     var tonicName = keyObj.tonic.name;
     var mode = keyObj.mode; // specifying inversion is for backwards compatibility only.
@@ -19294,12 +18138,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 /**
  * Scale module. See {@link music21.scale} namespace
  * @module music21/scale
@@ -19385,8 +18223,7 @@ class AbstractScale extends Scale {
    */
 
 
-  buildNetwork() {
-    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  buildNetwork(mode = undefined) {
     this._net = [];
   }
   /**
@@ -19408,44 +18245,33 @@ class AbstractScale extends Scale {
   buildNetworkFromPitches(pitchList) {
     var pitchListReal = [];
 
-    var _iterator = _createForOfIteratorHelper(pitchList),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var _p = _step.value;
-
-        if (typeof _p === 'string') {
-          pitchListReal.push(new _pitch__WEBPACK_IMPORTED_MODULE_9__.Pitch(_p));
-        } else if (_p.classes.includes('Note')) {
-          pitchListReal.push(_p.pitch);
-        } else {
-          pitchListReal.push(_p);
-        }
+    for (var p of pitchList) {
+      if (typeof p === 'string') {
+        pitchListReal.push(new _pitch__WEBPACK_IMPORTED_MODULE_9__.Pitch(p));
+      } else if (p.classes.includes('Note')) {
+        pitchListReal.push(p.pitch);
+      } else {
+        pitchListReal.push(p);
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     var pLast = pitchListReal[pitchListReal.length - 1];
 
     if (pLast.name === pitchListReal[0].name) {
-      var p = pitchListReal[0].clone();
+      var _p = pitchListReal[0].clone();
 
       if (pLast.ps > pitchListReal[0]) {
         // ascending;
-        while (p.ps < pLast.ps) {
-          p.octave += 1;
+        while (_p.ps < pLast.ps) {
+          _p.octave += 1;
         }
       } else {
-        while (p.ps < pLast.ps) {
-          p.octave += -1;
+        while (_p.ps < pLast.ps) {
+          _p.octave += -1;
         }
       }
 
-      pitchListReal.push(p);
+      pitchListReal.push(_p);
     }
 
     var intervalList = [];
@@ -19463,13 +18289,7 @@ class AbstractScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  getRealization(pitchObj) {
-    var unused_stepOfPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var unused_minPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var unused_maxPitch = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    var unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
-    var unused_reverse = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : undefined;
-
+  getRealization(pitchObj, unused_stepOfPitch = undefined, unused_minPitch = undefined, unused_maxPitch = undefined, unused_direction = undefined, unused_reverse = undefined) {
     // if (direction === undefined) {
     //     direction = DIRECTION_ASCENDING;
     // }
@@ -19484,19 +18304,9 @@ class AbstractScale extends Scale {
 
     var post = [pitchObj];
 
-    var _iterator2 = _createForOfIteratorHelper(this._net),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var intV = _step2.value;
-        pitchObj = intV.transposePitch(pitchObj);
-        post.push(pitchObj);
-      }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
+    for (var intV of this._net) {
+      pitchObj = intV.transposePitch(pitchObj);
+      post.push(pitchObj);
     }
 
     return post;
@@ -19514,10 +18324,7 @@ class AbstractScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget) {
-    var unused_comparisonAttribute = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    var unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
-
+  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget, unused_comparisonAttribute = undefined, unused_direction = undefined) {
     if (typeof pitchTarget === 'string') {
       pitchTarget = new _pitch__WEBPACK_IMPORTED_MODULE_9__.Pitch(pitchTarget);
     }
@@ -19533,18 +18340,8 @@ class AbstractScale extends Scale {
 
     var realizedNames = [];
 
-    var _iterator3 = _createForOfIteratorHelper(realizedPitches),
-        _step3;
-
-    try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var p = _step3.value;
-        realizedNames.push(p.name);
-      }
-    } catch (err) {
-      _iterator3.e(err);
-    } finally {
-      _iterator3.f();
+    for (var p of realizedPitches) {
+      realizedNames.push(p.name);
     }
 
     var realizedIndex = realizedNames.indexOf(pitchTarget.name);
@@ -19571,8 +18368,7 @@ class AbstractDiatonicScale extends AbstractScale {
    * @property {number|undefined} dominantDegree
    * @property {boolean} octaveDuplicating
    */
-  constructor() {
-    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'major';
+  constructor(mode = 'major') {
     super();
     this.type = 'Abstract diatonic';
     this.tonicDegree = undefined;
@@ -19604,19 +18400,8 @@ class AbstractDiatonicScale extends AbstractScale {
 
     this._net = [];
 
-    var _iterator4 = _createForOfIteratorHelper(intervalList),
-        _step4;
-
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var intVStr = _step4.value;
-
-        this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_8__.Interval(intVStr));
-      }
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
+    for (var intVStr of intervalList) {
+      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_8__.Interval(intVStr));
     }
   }
 
@@ -19642,9 +18427,7 @@ class AbstractHarmonicMinorScale extends AbstractScale {
     var intervalList = ['M2', 'm2', 'M2', 'M2', 'm2', 'A2', 'm2'];
     this._net = [];
 
-    for (var _i = 0, _intervalList = intervalList; _i < _intervalList.length; _i++) {
-      var intVStr = _intervalList[_i];
-
+    for (var intVStr of intervalList) {
       this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_8__.Interval(intVStr));
     }
   }
@@ -19672,9 +18455,7 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
     var intervalList = ['M2', 'm2', 'M2', 'M2', 'M2', 'M2', 'm2'];
     this._net = [];
 
-    for (var _i2 = 0, _intervalList2 = intervalList; _i2 < _intervalList2.length; _i2++) {
-      var intVStr = _intervalList2[_i2];
-
+    for (var intVStr of intervalList) {
       this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_8__.Interval(intVStr));
     }
   }
@@ -19720,10 +18501,7 @@ class ConcreteScale extends Scale {
   // noinspection JSUnusedLocalSymbols
 
 
-  getPitches() {
-    var unused_minPitch = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    var unused_maxPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var unused_direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  getPitches(unused_minPitch = undefined, unused_maxPitch = undefined, unused_direction = undefined) {
     var pitchObj;
 
     if (this.tonic === undefined) {
@@ -19736,18 +18514,12 @@ class ConcreteScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  pitchFromDegree(degree) {
-    var unused_minPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var unused_maxPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var unused_direction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    var unused_equateTermini = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  pitchFromDegree(degree, unused_minPitch = undefined, unused_maxPitch = undefined, unused_direction = undefined, unused_equateTermini = undefined) {
     return this.abstract.getPitchFromNodeDegree(this.tonic, this.abstract.tonicDegree, degree);
   } // noinspection JSUnusedLocalSymbols
 
 
-  getScaleDegreeFromPitch(pitchTarget) {
-    var unused_direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var unused_comparisonAttribute = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  getScaleDegreeFromPitch(pitchTarget, unused_direction = undefined, unused_comparisonAttribute = undefined) {
     return this.abstract.getRelativeNodeDegree(this.tonic, this.abstract.tonicDegree, pitchTarget);
   }
 
@@ -19938,49 +18710,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getId": () => (/* binding */ getId),
 /* harmony export */   "Sites": () => (/* binding */ Sites)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.reverse.js */ "./node_modules/core-js/modules/es.array.reverse.js");
-/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.map.js */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.weak-map.js */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.reverse.js */ "./node_modules/core-js/modules/es.array.reverse.js");
+/* harmony import */ var core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reverse_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
 
 
-
-
-
-
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
@@ -19997,7 +18743,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 /**
  */
 
-class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception {}
+class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_6__.Music21Exception {}
 /**
  * SiteRef.site is held strongly in Javascript.  This is
  * actually NOT a problem because of the difference between
@@ -20024,7 +18770,7 @@ var _NoneSiteRef = new SiteRef();
 _NoneSiteRef.globalSiteIndex = -2;
 _NoneSiteRef.siteIndex = -2;
 
-var _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_9__.SingletonCounter();
+var _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_5__.SingletonCounter();
 
 var GLOBAL_SITE_STATE_DICT = new WeakMap();
 /**
@@ -20060,23 +18806,10 @@ class Sites {
 
   includes(checkSite) {
     // noinspection JSUnusedLocalSymbols
-    var _iterator = _createForOfIteratorHelper(this.siteDict),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var _step$value = _slicedToArray(_step.value, 2),
-            unused_key = _step$value[0],
-            siteRef = _step$value[1];
-
-        if (siteRef.site === checkSite) {
-          return true;
-        }
+    for (var [unused_key, siteRef] of this.siteDict) {
+      if (siteRef.site === checkSite) {
+        return true;
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     return false;
@@ -20087,26 +18820,12 @@ class Sites {
    */
 
 
-  _keysByTime() {
-    var newFirst = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+  _keysByTime(newFirst = true) {
     var post = [];
 
-    var _iterator2 = _createForOfIteratorHelper(this.siteDict),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var _step2$value = _slicedToArray(_step2.value, 2),
-            key = _step2$value[0],
-            siteRef = _step2$value[1];
-
-        var keyVal = [siteRef.siteIndex, key];
-        post.push(keyVal);
-      }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
+    for (var [key, siteRef] of this.siteDict) {
+      var keyVal = [siteRef.siteIndex, key];
+      post.push(keyVal);
     }
 
     post.sort();
@@ -20118,10 +18837,7 @@ class Sites {
     return post.map(innerList => innerList[1]);
   }
 
-  add(obj) {
-    var idKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var classString = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-
+  add(obj, idKey = undefined, classString = undefined) {
     if (idKey === undefined && obj !== undefined) {
       idKey = getId(obj);
     }
@@ -20184,120 +18900,47 @@ class Sites {
    */
 
 
-  yieldSites() {
-    var _arguments = arguments,
-        _this = this;
+  *yieldSites(sortByCreationTime = false, priorityTarget = undefined, excludeNone = false) {
+    var keyRepository;
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var sortByCreationTime, priorityTarget, excludeNone, keyRepository, priorityId, priorityIndex, _iterator3, _step3, key, siteRef, obj;
+    if (sortByCreationTime === true) {
+      keyRepository = this._keysByTime(false);
+    } else if (sortByCreationTime === 'reverse') {
+      keyRepository = this._keysByTime(true);
+    } else {
+      keyRepository = Array.from(this.siteDict.keys());
+    }
 
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              sortByCreationTime = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : false;
-              priorityTarget = _arguments.length > 1 && _arguments[1] !== undefined ? _arguments[1] : undefined;
-              excludeNone = _arguments.length > 2 && _arguments[2] !== undefined ? _arguments[2] : false;
+    if (priorityTarget !== undefined) {
+      var priorityId = getId(priorityTarget);
 
-              if (sortByCreationTime === true) {
-                keyRepository = _this._keysByTime(false);
-              } else if (sortByCreationTime === 'reverse') {
-                keyRepository = _this._keysByTime(true);
-              } else {
-                keyRepository = Array.from(_this.siteDict.keys());
-              }
+      if (keyRepository.includes(priorityId)) {
+        var priorityIndex = keyRepository.indexOf(priorityId);
+        keyRepository.splice(priorityIndex, 1);
+        keyRepository.unshift(priorityId);
+      }
+    }
 
-              if (priorityTarget !== undefined) {
-                priorityId = getId(priorityTarget);
+    for (var key of keyRepository) {
+      var siteRef = this.siteDict.get(key);
 
-                if (keyRepository.includes(priorityId)) {
-                  priorityIndex = keyRepository.indexOf(priorityId);
-                  keyRepository.splice(priorityIndex, 1);
-                  keyRepository.unshift(priorityId);
-                }
-              }
-
-              _iterator3 = _createForOfIteratorHelper(keyRepository);
-              _context.prev = 6;
-
-              _iterator3.s();
-
-            case 8:
-              if ((_step3 = _iterator3.n()).done) {
-                _context.next = 26;
-                break;
-              }
-
-              key = _step3.value;
-              siteRef = _this.siteDict.get(key);
-
-              if (!(siteRef === _NoneSiteRef)) {
-                _context.next = 17;
-                break;
-              }
-
-              if (excludeNone) {
-                _context.next = 15;
-                break;
-              }
-
-              _context.next = 15;
-              return siteRef.site;
-
-            case 15:
-              _context.next = 24;
-              break;
-
-            case 17:
-              obj = siteRef.site;
-
-              if (!(obj === undefined)) {
-                _context.next = 22;
-                break;
-              }
-
-              siteRef.isDead = true;
-              _context.next = 24;
-              break;
-
-            case 22:
-              _context.next = 24;
-              return obj;
-
-            case 24:
-              _context.next = 8;
-              break;
-
-            case 26:
-              _context.next = 31;
-              break;
-
-            case 28:
-              _context.prev = 28;
-              _context.t0 = _context["catch"](6);
-
-              _iterator3.e(_context.t0);
-
-            case 31:
-              _context.prev = 31;
-
-              _iterator3.f();
-
-              return _context.finish(31);
-
-            case 34:
-            case "end":
-              return _context.stop();
-          }
+      if (siteRef === _NoneSiteRef) {
+        if (!excludeNone) {
+          yield siteRef.site;
         }
-      }, _callee, null, [[6, 28, 31, 34]]);
-    })();
+      } else {
+        var obj = siteRef.site;
+
+        if (obj === undefined) {
+          siteRef.isDead = true;
+        } else {
+          yield obj;
+        }
+      }
+    }
   }
 
-  get() {
-    var sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    var priorityTarget = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  get(sortByCreationTime = false, priorityTarget = undefined, excludeNone = false) {
     var post = Array.from(this.yieldSites(sortByCreationTime, priorityTarget, excludeNone)); // we do this resorting again, because the priority target might not match id and we
     // want to be extra safe.  If you want fast, use .yieldSites
 
@@ -20319,25 +18962,14 @@ class Sites {
 
 
   getAttrByName(attrName) {
-    var _iterator4 = _createForOfIteratorHelper(this.yieldSites('reverse')),
-        _step4;
-
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var obj = _step4.value;
-
-        if (obj === undefined) {
-          continue;
-        }
-
-        if (attrName in obj) {
-          return obj[attrName];
-        }
+    for (var obj of this.yieldSites('reverse')) {
+      if (obj === undefined) {
+        continue;
       }
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
+
+      if (attrName in obj) {
+        return obj[attrName];
+      }
     }
 
     return undefined;
@@ -20350,8 +18982,7 @@ class Sites {
    */
 
 
-  getObjByClass(className) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  getObjByClass(className, options = {}) {
     var params = {
       callerFirst: this,
       sortByCreationTime: false,
@@ -20359,15 +18990,13 @@ class Sites {
       getElementMethod: 'getElementAtOrBefore',
       memo: {}
     };
-    _common__WEBPACK_IMPORTED_MODULE_9__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_5__.merge(params, options);
     var memo = params.memo;
     var post;
     var objs = Array.from(this.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
     ));
 
-    for (var _i2 = 0, _objs = objs; _i2 < _objs.length; _i2++) {
-      var obj = _objs[_i2];
-
+    for (var obj of objs) {
       if (obj.isClassOrSubclass(className)) {
         post = obj;
         break;
@@ -20378,8 +19007,7 @@ class Sites {
       return post;
     }
 
-    for (var _i3 = 0, _objs2 = objs; _i3 < _objs2.length; _i3++) {
-      var _obj = _objs2[_i3];
+    for (var _obj of objs) {
       // TODO: check inside object... perhaps should not be done in m21p
       var objId = getId(_obj);
 
@@ -20410,9 +19038,9 @@ class Sites {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "filters": () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_31__),
-/* harmony export */   "iterator": () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_32__),
-/* harmony export */   "makeNotation": () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_33__),
+/* harmony export */   "filters": () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_27__),
+/* harmony export */   "iterator": () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_28__),
+/* harmony export */   "makeNotation": () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_29__),
 /* harmony export */   "StreamException": () => (/* binding */ StreamException),
 /* harmony export */   "Stream": () => (/* binding */ Stream),
 /* harmony export */   "Voice": () => (/* binding */ Voice),
@@ -20425,52 +19053,44 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_symbol_description_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.flat.js */ "./node_modules/core-js/modules/es.array.flat.js");
 /* harmony import */ var core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.reduce.js */ "./node_modules/core-js/modules/es.array.reduce.js");
-/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.set.js */ "./node_modules/core-js/modules/es.set.js");
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.weak-map.js */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map_js__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./svgs */ "./src/music21/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./tempo */ "./src/music21/tempo.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.ts");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.ts");
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.ts");
-/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/music21/stream/makeNotation.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.reduce.js */ "./node_modules/core-js/modules/es.array.reduce.js");
+/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
+/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./svgs */ "./src/music21/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./tempo */ "./src/music21/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.ts");
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.ts");
+/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/music21/stream/makeNotation.ts");
 
 
 
@@ -20481,24 +19101,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e3) { throw _e3; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e4) { didErr = true; err = _e4; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -20557,10 +19159,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_16__.Music21Exception {}
+class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_12__.Music21Exception {}
 
 function _exportMusicXMLAsText(s) {
-  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_30__.GeneralObjectExporter(s);
+  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_26__.GeneralObjectExporter(s);
   return gox.parse();
 }
 /**
@@ -20605,7 +19207,7 @@ function _exportMusicXMLAsText(s) {
  */
 
 
-class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
+class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
   constructor() {
     super(); // from music21p's core.py
 
@@ -20647,7 +19249,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_26__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_22__.RenderOptions();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
@@ -20693,13 +19295,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
         return undefined;
       }
 
-      var _this$findNoteForClic = this.findNoteForClick(canvasOrSVGElement, e),
-          _this$findNoteForClic2 = _slicedToArray(_this$findNoteForClic, 2),
-          clickedDiatonicNoteNum = _this$findNoteForClic2[0],
-          foundNote = _this$findNoteForClic2[1];
+      var [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(canvasOrSVGElement, e);
 
       if (foundNote === undefined) {
-        if (_debug__WEBPACK_IMPORTED_MODULE_17__.debug) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_13__.debug) {
           console.log('No note found');
         }
 
@@ -20746,42 +19345,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  [Symbol.iterator]() {
-    var _this = this;
+  *[Symbol.iterator]() {
+    if (this.autoSort && !this.isSorted) {
+      this.sort();
+    }
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var i;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (_this.autoSort && !_this.isSorted) {
-                _this.sort();
-              }
-
-              i = 0;
-
-            case 2:
-              if (!(i < _this.length)) {
-                _context.next = 8;
-                break;
-              }
-
-              _context.next = 5;
-              return _this.get(i);
-
-            case 5:
-              i++;
-              _context.next = 2;
-              break;
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    })();
+    for (var i = 0; i < this.length; i++) {
+      yield this.get(i);
+    }
   }
 
   forEach(callback, thisArg) {
@@ -20791,30 +19362,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     var i = 0;
 
-    var _iterator = _createForOfIteratorHelper(this),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var el = _step.value;
-        callback(el, i, this);
-        i += 1;
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+    for (var el of this) {
+      callback(el, i, this);
+      i += 1;
     }
   } // TODO(MSC) 2020-07-20 -- Add .map() => stream.iterator.StreamIterator.map()
 
 
   get duration() {
-    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_21__.Duration) {
+    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_17__.Duration) {
       // return new duration.Duration(32.0);
       return this._overriddenDuration;
     }
 
-    return new _duration__WEBPACK_IMPORTED_MODULE_21__.Duration(this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_17__.Duration(this.highestTime);
   }
 
   set duration(newDuration) {
@@ -20824,26 +19385,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
   get highestTime() {
     var highestTime = 0.0;
 
-    var _iterator2 = _createForOfIteratorHelper(this),
-        _step2;
+    for (var el of this) {
+      var endTime = el.offset;
 
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var el = _step2.value;
-        var endTime = el.offset;
-
-        if (el.duration !== undefined) {
-          endTime += el.duration.quarterLength;
-        }
-
-        if (endTime > highestTime) {
-          highestTime = endTime;
-        }
+      if (el.duration !== undefined) {
+        endTime += el.duration.quarterLength;
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
+
+      if (endTime > highestTime) {
+        highestTime = endTime;
+      }
     }
 
     return highestTime;
@@ -20865,32 +19416,21 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       // namely, do not set inner streams activeSites to be
       // in things that they won't have later.
       newSt.clear();
-      var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_32__.RecursiveIterator(this, {
+      var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_28__.RecursiveIterator(this, {
         restoreActiveSites: false,
         includeSelf: false,
         ignoreSorting: true
       });
 
-      var _iterator3 = _createForOfIteratorHelper(ri),
-          _step3;
-
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var e = _step3.value;
-
-          if (e.isStream && !retainContainers) {
-            continue;
-          }
-
-          newSt.insert(ri.currentHierarchyOffset(), e, {
-            setActiveSite: false,
-            ignoreSort: true
-          });
+      for (var e of ri) {
+        if (e.isStream && !retainContainers) {
+          continue;
         }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
+
+        newSt.insert(ri.currentHierarchyOffset(), e, {
+          setActiveSite: false,
+          ignoreSort: true
+        });
       }
     }
 
@@ -20941,7 +19481,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     var metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
     var highestTime = thisFlat.highestTime;
     var lowestOffset = 0;
-    var mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_28__.MetronomeMark({
+    var mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_24__.MetronomeMark({
       number: 120
     });
 
@@ -21023,7 +19563,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_22__.Instrument(newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_18__.Instrument(newInstrument);
     }
 
     this._instrument = newInstrument;
@@ -21050,31 +19590,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     //        }
 
 
-    var _iterator4 = _createForOfIteratorHelper(this.sites.yieldSites()),
-        _step4;
-
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var site = _step4.value;
-
-        if (site === undefined) {
-          continue;
-        }
-
-        var contextObj = site._firstElementContext(attr);
-
-        if (contextObj === undefined) {
-          contextObj = site._specialContext(attr);
-        }
-
-        if (contextObj !== undefined) {
-          return contextObj;
-        }
+    for (var site of this.sites.yieldSites()) {
+      if (site === undefined) {
+        continue;
       }
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
+
+      var contextObj = site._firstElementContext(attr);
+
+      if (contextObj === undefined) {
+        contextObj = site._specialContext(attr);
+      }
+
+      if (contextObj !== undefined) {
+        return contextObj;
+      }
     }
 
     return undefined;
@@ -21136,7 +19665,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_23__.TimeSignature(newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_19__.TimeSignature(newTimeSignature);
     }
 
     var oldTS = this._firstElementContext('timeSignature');
@@ -21232,19 +19761,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     if (newElements instanceof Stream) {
       // iterate to set active site;
-      var _iterator5 = _createForOfIteratorHelper(newElements),
-          _step5;
+      for (var unused of newElements) {} // eslint-disable-line no-empty
 
-      try {
-        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-          var unused = _step5.value;
-        } // eslint-disable-line no-empty
-
-      } catch (err) {
-        _iterator5.e(err);
-      } finally {
-        _iterator5.f();
-      }
 
       newElements = newElements.elements;
     }
@@ -21290,9 +19808,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  getSpecialContext(context) {
-    var warnOnCall = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+  getSpecialContext(context, warnOnCall = false) {
     var first_el = this._firstElementContext(context);
 
     if (first_el !== undefined) {
@@ -21325,23 +19841,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
   }
 
   clear() {
-    var _iterator6 = _createForOfIteratorHelper(this._elements),
-        _step6;
-
-    try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var e = _step6.value;
-
-        if (e.activeSite === this) {
-          e.activeSite = undefined;
-        }
-
-        e.sites.remove(this);
+    for (var e of this._elements) {
+      if (e.activeSite === this) {
+        e.activeSite = undefined;
       }
-    } catch (err) {
-      _iterator6.e(err);
-    } finally {
-      _iterator6.f();
+
+      e.sites.remove(this);
     }
 
     this._elements = [];
@@ -21350,17 +19855,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     this.isSorted = true;
   }
 
-  coreElementsChanged() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$updateIsFlat = _ref.updateIsFlat,
-        updateIsFlat = _ref$updateIsFlat === void 0 ? true : _ref$updateIsFlat,
-        _ref$clearIsSorted = _ref.clearIsSorted,
-        clearIsSorted = _ref$clearIsSorted === void 0 ? true : _ref$clearIsSorted,
-        _ref$memo = _ref.memo,
-        memo = _ref$memo === void 0 ? undefined : _ref$memo,
-        _ref$keepIndex = _ref.keepIndex,
-        keepIndex = _ref$keepIndex === void 0 ? false : _ref$keepIndex;
-
+  coreElementsChanged({
+    updateIsFlat = true,
+    clearIsSorted = true,
+    memo = undefined,
+    // unused
+    keepIndex = false
+  } = {}) {
     if (clearIsSorted) {
       this.isSorted = false;
     }
@@ -21368,46 +19869,30 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     if (updateIsFlat) {
       this.isFlat = true;
 
-      var _iterator7 = _createForOfIteratorHelper(this._elements),
-          _step7;
-
-      try {
-        for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-          var e = _step7.value;
-
-          if (e.isStream) {
-            this.isFlat = false;
-            break;
-          }
+      for (var e of this._elements) {
+        if (e.isStream) {
+          this.isFlat = false;
+          break;
         }
-      } catch (err) {
-        _iterator7.e(err);
-      } finally {
-        _iterator7.f();
       }
     }
   }
 
-  recurse() {
-    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref2$streamsOnly = _ref2.streamsOnly,
-        streamsOnly = _ref2$streamsOnly === void 0 ? false : _ref2$streamsOnly,
-        _ref2$restoreActiveSi = _ref2.restoreActiveSites,
-        restoreActiveSites = _ref2$restoreActiveSi === void 0 ? true : _ref2$restoreActiveSi,
-        _ref2$classFilter = _ref2.classFilter,
-        classFilter = _ref2$classFilter === void 0 ? undefined : _ref2$classFilter,
-        _ref2$skipSelf = _ref2.skipSelf,
-        skipSelf = _ref2$skipSelf === void 0 ? true : _ref2$skipSelf;
-
+  recurse({
+    streamsOnly = false,
+    restoreActiveSites = true,
+    classFilter = undefined,
+    skipSelf = true
+  } = {}) {
     var includeSelf = !skipSelf;
-    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_32__.RecursiveIterator(this, {
+    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_28__.RecursiveIterator(this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
 
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_31__.ClassFilter(classFilter));
+      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_27__.ClassFilter(classFilter));
     }
 
     return ri;
@@ -21423,18 +19908,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
   append(elOrElList) {
     if (Array.isArray(elOrElList)) {
-      var _iterator8 = _createForOfIteratorHelper(elOrElList),
-          _step8;
-
-      try {
-        for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-          var _el = _step8.value;
-          this.append(_el);
-        }
-      } catch (err) {
-        _iterator8.e(err);
-      } finally {
-        _iterator8.f();
+      for (var _el of elOrElList) {
+        this.append(_el);
       }
 
       return this;
@@ -21442,8 +19917,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     var el = elOrElList;
 
-    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object)) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_16__.Music21Exception('Can only append a music21 object.');
+    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object)) {
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__.Music21Exception('Can only append a music21 object.');
     }
 
     try {
@@ -21490,13 +19965,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  insert(offset, el) {
-    var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref3$ignoreSort = _ref3.ignoreSort,
-        ignoreSort = _ref3$ignoreSort === void 0 ? false : _ref3$ignoreSort,
-        _ref3$setActiveSite = _ref3.setActiveSite,
-        setActiveSite = _ref3$setActiveSite === void 0 ? true : _ref3$setActiveSite;
-
+  insert(offset, el, {
+    ignoreSort = false,
+    setActiveSite = true
+  } = {}) {
     if (el === undefined) {
       throw new StreamException('Cannot insert without an element.');
     }
@@ -21625,13 +20097,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  remove(targetOrList) {
-    var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref4$shiftOffsets = _ref4.shiftOffsets,
-        shiftOffsets = _ref4$shiftOffsets === void 0 ? false : _ref4$shiftOffsets,
-        _ref4$recurse = _ref4.recurse,
-        recurse = _ref4$recurse === void 0 ? false : _ref4$recurse;
-
+  remove(targetOrList, {
+    shiftOffsets = false,
+    recurse = false
+  } = {}) {
     if (shiftOffsets === true) {
       throw new StreamException('sorry cannot shiftOffsets yet');
     }
@@ -21654,71 +20123,61 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     var i = -1;
 
-    var _iterator9 = _createForOfIteratorHelper(targetList),
-        _step9;
+    for (var target of targetList) {
+      i += 1;
+      var indexInStream = void 0;
 
-    try {
-      for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-        var target = _step9.value;
-        i += 1;
-        var indexInStream = void 0;
-
-        try {
-          indexInStream = this.index(target);
-        } catch (err) {
-          if (err instanceof StreamException) {
-            if (recurse) {// do something
-            }
-
-            continue;
+      try {
+        indexInStream = this.index(target);
+      } catch (err) {
+        if (err instanceof StreamException) {
+          if (recurse) {// do something
           }
 
-          throw err;
-        } // const matchOffset = this._offsetDict[indexInStream];
-        // let match;
-        // handle _endElements
-        // let matchedEndElement = false;
-        // let baseElementCount = this._elements.length;
+          continue;
+        }
+
+        throw err;
+      } // const matchOffset = this._offsetDict[indexInStream];
+      // let match;
+      // handle _endElements
+      // let matchedEndElement = false;
+      // let baseElementCount = this._elements.length;
 
 
-        this._elements.splice(indexInStream, 1);
+      this._elements.splice(indexInStream, 1);
 
-        this._offsetDict.delete(target);
+      this._offsetDict.delete(target);
 
-        target.activeSite = undefined;
-        target.sites.remove(this); // remove from sites if needed.
-        //            if (shiftOffsets) {
-        //                const matchDuration = target.duration.quarterLength;
-        //                const shiftedRegionStart = matchOffset + matchDuration;
-        //                shiftDur += matchDuration;
-        //                let shiftedRegionEnd;
-        //                if ((i + 1) < targetList.length) {
-        //                    const nextElIndex = this.index(targetList[i + 1]);
-        //                    const nextElOffset = this._offsetDict[nextElIndex];
-        //                    shiftedRegionEnd = nextElOffset;
-        //                } else {
-        //                    shiftedRegionEnd = this.duration.quarterLength;
-        //                }
-        //                if (shiftDur !== 0.0) {
-        //                    for (const e of this.getElementsByOffset(
-        //                       shiftedRegionStart,
-        //                       shiftedRegionEnd,
-        //                       {
-        //                           includeEndBoundary: false,
-        //                           mustFinishInSpan: false,
-        //                           mustBeginInSpan: false,
-        //                       }
-        //                    )) {
-        //                        const elementOffset = this.elementOffset(e);
-        //                        this.setElementOffset(e, elementOffset - shiftDur);
-        //                    }
-        //                }
-        //            }
-      }
-    } catch (err) {
-      _iterator9.e(err);
-    } finally {
-      _iterator9.f();
+      target.activeSite = undefined;
+      target.sites.remove(this); // remove from sites if needed.
+      //            if (shiftOffsets) {
+      //                const matchDuration = target.duration.quarterLength;
+      //                const shiftedRegionStart = matchOffset + matchDuration;
+      //                shiftDur += matchDuration;
+      //                let shiftedRegionEnd;
+      //                if ((i + 1) < targetList.length) {
+      //                    const nextElIndex = this.index(targetList[i + 1]);
+      //                    const nextElOffset = this._offsetDict[nextElIndex];
+      //                    shiftedRegionEnd = nextElOffset;
+      //                } else {
+      //                    shiftedRegionEnd = this.duration.quarterLength;
+      //                }
+      //                if (shiftDur !== 0.0) {
+      //                    for (const e of this.getElementsByOffset(
+      //                       shiftedRegionStart,
+      //                       shiftedRegionEnd,
+      //                       {
+      //                           includeEndBoundary: false,
+      //                           mustFinishInSpan: false,
+      //                           mustBeginInSpan: false,
+      //                       }
+      //                    )) {
+      //                        const elementOffset = this.elementOffset(e);
+      //                        this.setElementOffset(e, elementOffset - shiftDur);
+      //                    }
+      //                }
+      //            }
     }
 
     this.coreElementsChanged({
@@ -21735,13 +20194,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  replace(target, replacement) {
-    var _ref5 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref5$recurse = _ref5.recurse,
-        recurse = _ref5$recurse === void 0 ? false : _ref5$recurse,
-        _ref5$allDerived = _ref5.allDerived,
-        allDerived = _ref5$allDerived === void 0 ? true : _ref5$allDerived;
-
+  replace(target, replacement, {
+    recurse = false,
+    allDerived = true
+  } = {}) {
     try {
       this.index(target);
     } catch (err) {
@@ -21810,9 +20266,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     return this;
   }
 
-  setElementOffset(el, value) {
-    var addElement = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
+  setElementOffset(el, value, addElement = false) {
     if (!this._elements.includes(el)) {
       if (addElement) {
         this.insert(value, el);
@@ -21827,9 +20281,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     el.activeSite = this;
   }
 
-  elementOffset(element) {
-    var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+  elementOffset(element, stringReturns = false) {
     if (!this._offsetDict.has(element)) {
       throw new StreamException('An entry for this object ' + element.toString() + ' is not stored in this Stream.');
     } else {
@@ -21862,7 +20314,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       bestClef: false,
       inPlace: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_20__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_16__.merge(params, options);
     var voiceCount;
 
     if (this.hasVoices()) {
@@ -21932,8 +20384,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       lastTimeSignature = thisTimeSignature;
     }
 
-    for (var _i2 = 0; _i2 < offsetMap.length; _i2++) {
-      var ob = offsetMap[_i2];
+    for (var _i = 0; _i < offsetMap.length; _i++) {
+      var ob = offsetMap[_i];
       var e = ob.element;
       var start = ob.offset;
       var _voiceIndex = ob.voiceIndex; // if 'Spanner' in e.classes;
@@ -21990,54 +20442,31 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       this.elements = []; // endElements
       // elementsChanged;
 
-      var _iterator10 = _createForOfIteratorHelper(post),
-          _step10;
-
-      try {
-        for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-          var _e2 = _step10.value;
-          this.insert(_e2.offset, _e2);
-        }
-      } catch (err) {
-        _iterator10.e(err);
-      } finally {
-        _iterator10.f();
+      for (var _e of post) {
+        this.insert(_e.offset, _e);
       }
 
       return this; // javascript style;
     }
   }
 
-  containerInHierarchy(el) {
-    var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref6$setActiveSite = _ref6.setActiveSite,
-        setActiveSite = _ref6$setActiveSite === void 0 ? true : _ref6$setActiveSite;
-
+  containerInHierarchy(el, {
+    setActiveSite = true
+  } = {}) {
     var elSites = el.sites;
 
-    var _iterator11 = _createForOfIteratorHelper(this.recurse({
+    for (var s of this.recurse({
       skipSelf: false,
       streamsOnly: true,
       restoreActiveSites: false
-    })),
-        _step11;
-
-    try {
-      for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-        var s = _step11.value;
-
-        if (elSites.includes(s)) {
-          if (setActiveSite) {
-            el.activeSite = s;
-          }
-
-          return s;
+    })) {
+      if (elSites.includes(s)) {
+        if (setActiveSite) {
+          el.activeSite = s;
         }
+
+        return s;
       }
-    } catch (err) {
-      _iterator11.e(err);
-    } finally {
-      _iterator11.f();
     }
 
     return undefined;
@@ -22047,17 +20476,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  chordify() {
-    var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref7$addTies = _ref7.addTies,
-        addTies = _ref7$addTies === void 0 ? true : _ref7$addTies,
-        _ref7$addPartIdAsGrou = _ref7.addPartIdAsGroup,
-        addPartIdAsGroup = _ref7$addPartIdAsGrou === void 0 ? true : _ref7$addPartIdAsGrou,
-        _ref7$removeRedundant = _ref7.removeRedundantPitches,
-        removeRedundantPitches = _ref7$removeRedundant === void 0 ? true : _ref7$removeRedundant,
-        _ref7$toSoundingPitch = _ref7.toSoundingPitch,
-        toSoundingPitch = _ref7$toSoundingPitch === void 0 ? true : _ref7$toSoundingPitch;
-
+  chordify({
+    addTies = true,
+    addPartIdAsGroup = true,
+    removeRedundantPitches = true,
+    toSoundingPitch = true
+  } = {}) {
     var workObj = this;
     var templateStream;
 
@@ -22075,15 +20499,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     return template;
   }
 
-  template() {
-    var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref8$fillWithRests = _ref8.fillWithRests,
-        fillWithRests = _ref8$fillWithRests === void 0 ? true : _ref8$fillWithRests,
-        _ref8$removeClasses = _ref8.removeClasses,
-        removeClasses = _ref8$removeClasses === void 0 ? [] : _ref8$removeClasses,
-        _ref8$retainVoices = _ref8.retainVoices,
-        retainVoices = _ref8$retainVoices === void 0 ? true : _ref8$retainVoices;
-
+  template({
+    fillWithRests = true,
+    removeClasses = [],
+    retainVoices = true
+  } = {}) {
     var out = this.cloneEmpty('template');
     var restInfo = {
       offset: undefined,
@@ -22100,34 +20520,23 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       }
 
       var restQL = restInfo.endTime - restInfo.offset;
-      var restObj = new _note__WEBPACK_IMPORTED_MODULE_24__.Rest();
+      var restObj = new _note__WEBPACK_IMPORTED_MODULE_20__.Rest();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
       restInfo.endTime = undefined;
     };
 
-    var _iterator12 = _createForOfIteratorHelper(this),
-        _step12;
-
-    try {
-      for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-        var el = _step12.value;
-
-        if (el.isStream && (retainVoices || el.classes.includes('Voice'))) {
-          optionalAddRest();
-          var outEl = el.template({
-            fillWithRests,
-            removeClasses,
-            retainVoices
-          });
-          out.insert(el.offset, outEl);
-        }
+    for (var el of this) {
+      if (el.isStream && (retainVoices || el.classes.includes('Voice'))) {
+        optionalAddRest();
+        var outEl = el.template({
+          fillWithRests,
+          removeClasses,
+          retainVoices
+        });
+        out.insert(el.offset, outEl);
       }
-    } catch (err) {
-      _iterator12.e(err);
-    } finally {
-      _iterator12.f();
     }
 
     return out;
@@ -22149,9 +20558,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
   mergeAttributes(other) {
     super.mergeAttributes(other);
 
-    for (var _i3 = 0, _arr2 = ['autoSort', 'isSorted', 'definesExplicitSystemBreaks', 'definesExplicitPageBreaks', '_atSoundingPitch', '_mutable']; _i3 < _arr2.length; _i3++) {
-      var attr = _arr2[_i3];
-
+    for (var attr of ['autoSort', 'isSorted', 'definesExplicitSystemBreaks', 'definesExplicitPageBreaks', '_atSoundingPitch', '_mutable']) {
       if (Object.prototype.hasOwnProperty.call(other, attr)) {
         this[attr] = other[attr];
       }
@@ -22167,11 +20574,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  makeNotation() {
-    var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref9$inPlace = _ref9.inPlace,
-        inPlace = _ref9$inPlace === void 0 ? true : _ref9$inPlace;
-
+  makeNotation({
+    inPlace = true
+  } = {}) {
     var out;
 
     if (inPlace) {
@@ -22191,14 +20596,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  makeBeams() {
-    var _ref10 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref10$inPlace = _ref10.inPlace,
-        inPlace = _ref10$inPlace === void 0 ? false : _ref10$inPlace,
-        _ref10$setStemDirecti = _ref10.setStemDirections,
-        setStemDirections = _ref10$setStemDirecti === void 0 ? true : _ref10$setStemDirecti;
-
-    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_33__.makeBeams(this, {
+  makeBeams({
+    inPlace = false,
+    setStemDirections = true
+  } = {}) {
+    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_29__.makeBeams(this, {
       inPlace,
       setStemDirections
     });
@@ -22218,21 +20620,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
 
   hasPartLikeStreams() {
-    var _iterator13 = _createForOfIteratorHelper(this),
-        _step13;
-
-    try {
-      for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
-        var el = _step13.value;
-
-        if (el.classes.includes('Part')) {
-          return true;
-        }
+    for (var el of this) {
+      if (el.classes.includes('Part')) {
+        return true;
       }
-    } catch (err) {
-      _iterator13.e(err);
-    } finally {
-      _iterator13.f();
     }
 
     return false;
@@ -22245,21 +20636,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
 
   hasLyrics() {
-    var _iterator14 = _createForOfIteratorHelper(this),
-        _step14;
-
-    try {
-      for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-        var el = _step14.value;
-
-        if (el.lyric !== undefined) {
-          return true;
-        }
+    for (var el of this) {
+      if (el.lyric !== undefined) {
+        return true;
       }
-    } catch (err) {
-      _iterator14.e(err);
-    } finally {
-      _iterator14.f();
     }
 
     return false;
@@ -22275,7 +20655,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     if (this.hasVoices()) {
       // TODO(msc) -- remove jQuery each...
-      jquery__WEBPACK_IMPORTED_MODULE_14__.each(this.getElementsByClass('Voice'), (i, v) => {
+      jquery__WEBPACK_IMPORTED_MODULE_10__.each(this.getElementsByClass('Voice'), (i, v) => {
         groups.push([v.flat, i]);
       });
     } else {
@@ -22300,7 +20680,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
   }
 
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_32__.StreamIterator(this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_28__.StreamIterator(this);
   }
   /**
    * Find all elements with a certain class; if an Array is given, then any
@@ -22352,21 +20732,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  getElementsByOffset(offsetStart) {
-    var offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-    var _ref11 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref11$includeEndBoun = _ref11.includeEndBoundary,
-        includeEndBoundary = _ref11$includeEndBoun === void 0 ? true : _ref11$includeEndBoun,
-        _ref11$mustFinishInSp = _ref11.mustFinishInSpan,
-        mustFinishInSpan = _ref11$mustFinishInSp === void 0 ? false : _ref11$mustFinishInSp,
-        _ref11$mustBeginInSpa = _ref11.mustBeginInSpan,
-        mustBeginInSpan = _ref11$mustBeginInSpa === void 0 ? true : _ref11$mustBeginInSpa,
-        _ref11$includeElement = _ref11.includeElementsThatEndAtStart,
-        includeElementsThatEndAtStart = _ref11$includeElement === void 0 ? true : _ref11$includeElement,
-        _ref11$classList = _ref11.classList,
-        classList = _ref11$classList === void 0 ? undefined : _ref11$classList;
-
+  getElementsByOffset(offsetStart, offsetEnd = undefined, {
+    includeEndBoundary = true,
+    mustFinishInSpan = false,
+    mustBeginInSpan = true,
+    includeElementsThatEndAtStart = true,
+    classList = undefined
+  } = {}) {
     var s;
 
     if (classList !== undefined) {
@@ -22427,21 +20799,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     } else if (otherElements.length === 1) {
       return otherElements.get(0);
     } else {
-      var _iterator15 = _createForOfIteratorHelper(otherElements),
-          _step15;
-
-      try {
-        for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
-          var thisEl = _step15.value;
-
-          if (el.constructor === thisEl.constructor) {
-            return thisEl;
-          }
+      for (var thisEl of otherElements) {
+        if (el.constructor === thisEl.constructor) {
+          return thisEl;
         }
-      } catch (err) {
-        _iterator15.e(err);
-      } finally {
-        _iterator15.f();
       }
 
       return otherElements.get(0);
@@ -22483,31 +20844,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  makeAccidentals() {
-    var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref12$pitchPast = _ref12.pitchPast,
-        pitchPast = _ref12$pitchPast === void 0 ? [] : _ref12$pitchPast,
-        _ref12$pitchPastMeasu = _ref12.pitchPastMeasure,
-        pitchPastMeasure = _ref12$pitchPastMeasu === void 0 ? [] : _ref12$pitchPastMeasu,
-        _ref12$useKeySignatur = _ref12.useKeySignature,
-        useKeySignature = _ref12$useKeySignatur === void 0 ? true : _ref12$useKeySignatur,
-        _ref12$alteredPitches = _ref12.alteredPitches,
-        alteredPitches = _ref12$alteredPitches === void 0 ? [] : _ref12$alteredPitches,
-        _ref12$searchKeySigna = _ref12.searchKeySignatureByContext,
-        searchKeySignatureByContext = _ref12$searchKeySigna === void 0 ? false : _ref12$searchKeySigna,
-        _ref12$cautionaryPitc = _ref12.cautionaryPitchClass,
-        cautionaryPitchClass = _ref12$cautionaryPitc === void 0 ? true : _ref12$cautionaryPitc,
-        _ref12$cautionaryAll = _ref12.cautionaryAll,
-        cautionaryAll = _ref12$cautionaryAll === void 0 ? false : _ref12$cautionaryAll,
-        _ref12$inPlace = _ref12.inPlace,
-        inPlace = _ref12$inPlace === void 0 ? true : _ref12$inPlace,
-        _ref12$overrideStatus = _ref12.overrideStatus,
-        overrideStatus = _ref12$overrideStatus === void 0 ? false : _ref12$overrideStatus,
-        _ref12$cautionaryNotI = _ref12.cautionaryNotImmediateRepeat,
-        cautionaryNotImmediateRepeat = _ref12$cautionaryNotI === void 0 ? true : _ref12$cautionaryNotI,
-        _ref12$tiePitchSet = _ref12.tiePitchSet,
-        tiePitchSet = _ref12$tiePitchSet === void 0 ? new Set() : _ref12$tiePitchSet;
-
+  makeAccidentals({
+    pitchPast = [],
+    pitchPastMeasure = [],
+    useKeySignature = true,
+    alteredPitches = [],
+    searchKeySignatureByContext = false,
+    // not yet used.
+    cautionaryPitchClass = true,
+    cautionaryAll = false,
+    inPlace = true,
+    overrideStatus = false,
+    cautionaryNotImmediateRepeat = true,
+    tiePitchSet = new Set()
+  } = {}) {
     var _a;
 
     var returnObj;
@@ -22533,17 +20883,37 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     var noteIterator = returnObj.recurse().notesAndRests;
 
-    var _iterator16 = _createForOfIteratorHelper(noteIterator),
-        _step16;
+    for (var e of noteIterator) {
+      if (e.classes.includes('Note')) {
+        var p = e.pitch;
+        var lastNoteWasTied = tiePitchSet.has(p.nameWithOctave);
+        p.updateAccidentalDisplay({
+          pitchPast,
+          pitchPastMeasure,
+          alteredPitches,
+          cautionaryPitchClass,
+          cautionaryAll,
+          overrideStatus,
+          cautionaryNotImmediateRepeat,
+          lastNoteWasTied
+        });
+        pitchPast.push(p);
+        tiePitchSet.clear();
+        var tie = e.tie;
 
-    try {
-      for (_iterator16.s(); !(_step16 = _iterator16.n()).done;) {
-        var e = _step16.value;
+        if (tie !== undefined && tie.type !== 'stop') {
+          tiePitchSet.add(p.nameWithOctave);
+        }
+      } else if (e.classes.includes('Chord')) {
+        var chordNotes = e.notes;
+        var seenPitchNames = new Set();
 
-        if (e.classes.includes('Note')) {
-          var p = e.pitch;
-          var lastNoteWasTied = tiePitchSet.has(p.nameWithOctave);
-          p.updateAccidentalDisplay({
+        for (var n of chordNotes) {
+          var _p = n.pitch;
+
+          var _lastNoteWasTied = tiePitchSet.has(_p.nameWithOctave);
+
+          _p.updateAccidentalDisplay({
             pitchPast,
             pitchPastMeasure,
             alteredPitches,
@@ -22551,75 +20921,24 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
             cautionaryAll,
             overrideStatus,
             cautionaryNotImmediateRepeat,
-            lastNoteWasTied
+            lastNoteWasTied: _lastNoteWasTied
           });
-          pitchPast.push(p);
-          tiePitchSet.clear();
-          var tie = e.tie;
 
-          if (tie !== undefined && tie.type !== 'stop') {
-            tiePitchSet.add(p.nameWithOctave);
+          if (n.tie !== undefined && n.tie.type !== 'stop') {
+            seenPitchNames.add(_p.nameWithOctave);
           }
-        } else if (e.classes.includes('Chord')) {
-          var chordNotes = e.notes;
-          var seenPitchNames = new Set();
-
-          var _iterator17 = _createForOfIteratorHelper(chordNotes),
-              _step17;
-
-          try {
-            for (_iterator17.s(); !(_step17 = _iterator17.n()).done;) {
-              var n = _step17.value;
-              var _p = n.pitch;
-
-              var _lastNoteWasTied = tiePitchSet.has(_p.nameWithOctave);
-
-              _p.updateAccidentalDisplay({
-                pitchPast,
-                pitchPastMeasure,
-                alteredPitches,
-                cautionaryPitchClass,
-                cautionaryAll,
-                overrideStatus,
-                cautionaryNotImmediateRepeat,
-                lastNoteWasTied: _lastNoteWasTied
-              });
-
-              if (n.tie !== undefined && n.tie.type !== 'stop') {
-                seenPitchNames.add(_p.nameWithOctave);
-              }
-            }
-          } catch (err) {
-            _iterator17.e(err);
-          } finally {
-            _iterator17.f();
-          }
-
-          tiePitchSet.clear();
-
-          var _iterator18 = _createForOfIteratorHelper(seenPitchNames),
-              _step18;
-
-          try {
-            for (_iterator18.s(); !(_step18 = _iterator18.n()).done;) {
-              var pName = _step18.value;
-              tiePitchSet.add(pName);
-            }
-          } catch (err) {
-            _iterator18.e(err);
-          } finally {
-            _iterator18.f();
-          }
-
-          pitchPast.push(...e.pitches);
-        } else {
-          tiePitchSet.clear();
         }
+
+        tiePitchSet.clear();
+
+        for (var pName of seenPitchNames) {
+          tiePitchSet.add(pName);
+        }
+
+        pitchPast.push(...e.pitches);
+      } else {
+        tiePitchSet.clear();
       }
-    } catch (err) {
-      _iterator16.e(err);
-    } finally {
-      _iterator16.f();
     }
 
     return returnObj;
@@ -22649,28 +20968,17 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
   resetRenderOptions(recursive, preserveEvents) {
     var oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_26__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_22__.RenderOptions();
 
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
     }
 
     if (recursive) {
-      var _iterator19 = _createForOfIteratorHelper(this),
-          _step19;
-
-      try {
-        for (_iterator19.s(); !(_step19 = _iterator19.n()).done;) {
-          var el = _step19.value;
-
-          if (el.isClassOrSubclass('Stream')) {
-            el.resetRenderOptions(recursive, preserveEvents);
-          }
+      for (var el of this) {
+        if (el.isClassOrSubclass('Stream')) {
+          el.resetRenderOptions(recursive, preserveEvents);
         }
-      } catch (err) {
-        _iterator19.e(err);
-      } finally {
-        _iterator19.f();
       }
     }
 
@@ -22678,8 +20986,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
   } //  * *********  VexFlow functionality
 
 
-  write() {
-    var format = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'musicxml';
+  write(format = 'musicxml') {
     return _exportMusicXMLAsText(this);
   }
   /**
@@ -22701,7 +21008,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
      */
     var canvasOrSVG;
 
-    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_14__) {
+    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_10__) {
       canvasOrSVG = $canvasOrSVG[0];
     } else {
       canvasOrSVG = $canvasOrSVG;
@@ -22728,7 +21035,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       }
     }
 
-    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_29__.Renderer(this, canvasOrSVG);
+    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_25__.Renderer(this, canvasOrSVG);
 
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
@@ -22756,13 +21063,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  estimateStreamHeight() {
-    var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref13$ignoreSystems = _ref13.ignoreSystems,
-        ignoreSystems = _ref13$ignoreSystems === void 0 ? false : _ref13$ignoreSystems,
-        _ref13$ignoreMarginBo = _ref13.ignoreMarginBottom,
-        ignoreMarginBottom = _ref13$ignoreMarginBo === void 0 ? false : _ref13$ignoreMarginBo;
-
+  estimateStreamHeight({
+    ignoreSystems = false,
+    ignoreMarginBottom = false
+  } = {}) {
     var staffHeight = this.renderOptions.staffAreaHeight;
     var marginBottom = this.renderOptions.marginBottom; // extra at end.
 
@@ -22798,7 +21102,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
         numSystems = this.numSystems();
       }
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_17__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_13__.debug) {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
 
@@ -22838,25 +21142,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     if (this.hasVoices()) {
       var maxLength = 0;
 
-      var _iterator20 = _createForOfIteratorHelper(this),
-          _step20;
+      for (var v of this) {
+        if (v instanceof Stream) {
+          var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
 
-      try {
-        for (_iterator20.s(); !(_step20 = _iterator20.n()).done;) {
-          var v = _step20.value;
-
-          if (v instanceof Stream) {
-            var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
-
-            if (thisLength > maxLength) {
-              maxLength = thisLength;
-            }
+          if (thisLength > maxLength) {
+            maxLength = thisLength;
           }
         }
-      } catch (err) {
-        _iterator20.e(err);
-      } finally {
-        _iterator20.f();
       }
 
       return maxLength;
@@ -22918,35 +21211,24 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     var highestCurrentEndTime = 0.0;
 
-    var _iterator21 = _createForOfIteratorHelper(sortedElements),
-        _step21;
-
-    try {
-      for (_iterator21.s(); !(_step21 = _iterator21.n()).done;) {
-        var element = _step21.value;
-
-        if (element) {
-          if (element.offset > highestCurrentEndTime) {
-            var gapElement = new _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object();
-            var gapQuarterLength = element.offset - highestCurrentEndTime;
-            gapElement.duration = this.duration;
-            gapElement.duration.quarterLength = gapQuarterLength;
-            gapStream.insert(highestCurrentEndTime, gapElement);
-          }
-
-          if ('duration' in element && element.duration !== null) {
-            elementDuration = element.duration.quarterLength;
-          } else {
-            elementDuration = 0;
-          }
-
-          highestCurrentEndTime = Math.max(highestCurrentEndTime, element.offset + elementDuration);
+    for (var element of sortedElements) {
+      if (element) {
+        if (element.offset > highestCurrentEndTime) {
+          var gapElement = new _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object();
+          var gapQuarterLength = element.offset - highestCurrentEndTime;
+          gapElement.duration = this.duration;
+          gapElement.duration.quarterLength = gapQuarterLength;
+          gapStream.insert(highestCurrentEndTime, gapElement);
         }
+
+        if ('duration' in element && element.duration !== null) {
+          elementDuration = element.duration.quarterLength;
+        } else {
+          elementDuration = 0;
+        }
+
+        highestCurrentEndTime = Math.max(highestCurrentEndTime, element.offset + elementDuration);
       }
-    } catch (err) {
-      _iterator21.e(err);
-    } finally {
-      _iterator21.f();
     }
 
     gapStream.sort();
@@ -22981,15 +21263,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  playStream() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  playStream(options = {}) {
     var params = {
       instrument: this.instrument,
       tempo: this.tempo,
       done: undefined,
       startNote: undefined
     };
-    _common__WEBPACK_IMPORTED_MODULE_20__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_16__.merge(params, options);
     var startNoteIndex = params.startNote;
     var currentNoteIndex = 0;
 
@@ -23000,18 +21281,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     var thisFlat = this.flat;
     var flatEls = [];
 
-    var _iterator22 = _createForOfIteratorHelper(thisFlat),
-        _step22;
-
-    try {
-      for (_iterator22.s(); !(_step22 = _iterator22.n()).done;) {
-        var el = _step22.value;
-        flatEls.push(el);
-      }
-    } catch (err) {
-      _iterator22.e(err);
-    } finally {
-      _iterator22.f();
+    for (var el of thisFlat) {
+      flatEls.push(el);
     }
 
     var lastNoteIndex = flatEls.length - 1;
@@ -23019,15 +21290,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     var playNext = (elements, params) => {
       if (currentNoteIndex <= lastNoteIndex && !this._stopPlaying) {
-        var el = elements[currentNoteIndex];
+        var _el2 = elements[currentNoteIndex];
         var nextNote;
         var playDuration;
 
         if (currentNoteIndex < lastNoteIndex) {
           nextNote = elements[currentNoteIndex + 1];
-          playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el);
+          playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(_el2);
         } else {
-          playDuration = el.duration.quarterLength;
+          playDuration = _el2.duration.quarterLength;
         }
 
         var milliseconds = playDuration * 1000 * 60 / params.tempo; // when we're ready to do full-on tempo marks:  from JV.
@@ -23035,12 +21306,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
         // const tempo = thisStream._averageTempo(el.offset, nextOffset);
         // const milliseconds = playDuration * 1000 * 60 / tempo;
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_17__.debug) {
-          console.log('playing: ', el, playDuration, milliseconds, params.tempo);
+        if (_debug__WEBPACK_IMPORTED_MODULE_13__.debug) {
+          console.log('playing: ', _el2, playDuration, milliseconds, params.tempo);
         }
 
-        if (el.playMidi !== undefined) {
-          el.playMidi(params.tempo, nextNote, params);
+        if (_el2.playMidi !== undefined) {
+          _el2.playMidi(params.tempo, nextNote, params);
         }
 
         currentNoteIndex += 1;
@@ -23067,7 +21338,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     this._stopPlaying = true;
 
     for (var i = 0; i < 127; i++) {
-      midicube__WEBPACK_IMPORTED_MODULE_15__.noteOff(0, i, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_11__.noteOff(0, i, 0);
     }
 
     return this;
@@ -23098,9 +21369,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  createNewDOM(width, height) {
-    var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
-
+  createNewDOM(width, height, elementType = 'svg') {
     if (!this.isFlat) {
       this.setSubstreamRenderOptions();
     }
@@ -23109,9 +21378,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     if (elementType === 'svg') {
       // we render SVG on a Div for Vexflow
-      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_14__('<div/>');
+      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_10__('<div/>');
     } else if (elementType === 'canvas') {
-      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_14__('<canvas/>');
+      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_10__('<canvas/>');
     }
 
     $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
@@ -23120,7 +21389,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common__WEBPACK_IMPORTED_MODULE_20__.stripPx(width);
+        width = _common__WEBPACK_IMPORTED_MODULE_16__.stripPx(width);
       }
 
       $newCanvasOrDIV.attr('width', width);
@@ -23157,10 +21426,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  createPlayableDOM() {
-    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+  createPlayableDOM(width = undefined, height = undefined, elementType = 'svg') {
     this.renderOptions.events.click = 'play';
     return this.createDOM(width, height, elementType);
   }
@@ -23174,10 +21440,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  createDOM() {
-    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+  createDOM(width = undefined, height = undefined, elementType = 'svg') {
     var $newSvg = this.createNewDOM(width, height, elementType); // temporarily append the SVG to the document to fix a Firefox bug
     // where nothing can be measured unless is it in the document.
 
@@ -23197,18 +21460,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  appendNewDOM() {
-    var appendElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document.body;
-    var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
+  appendNewDOM(appendElement = document.body, width = undefined, height = undefined, elementType = 'svg') {
     // noinspection JSMismatchedCollectionQueryUpdate
     var $appendElement;
 
-    if (appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_14__) {
+    if (appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_10__) {
       $appendElement = appendElement;
     } else {
-      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_14__(appendElement);
+      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_10__(appendElement);
     } //      if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
     //      var $bodyElement = bodyElement;
     //      if (!(bodyElement instanceof $) {
@@ -23235,10 +21494,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  replaceDOM(where) {
-    var preserveSvgSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
-
+  replaceDOM(where, preserveSvgSize = false, elementType = 'svg') {
     // if called with no where, replaces all the svg elements on the page...
     if (where === undefined) {
       where = document.body;
@@ -23246,8 +21502,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     var $where;
 
-    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_14__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_14__(where);
+    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_10__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_10__(where);
     } else {
       $where = where; // where = $where[0];
     }
@@ -23262,13 +21518,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
 
     if ($oldSVGOrCanvas.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_16__.Music21Exception('No svg defined for replaceDOM!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__.Music21Exception('No svg defined for replaceDOM!');
     } else if ($oldSVGOrCanvas.length > 1) {
       // change last svg...
       // replacing each with svgBlock doesn't work
       // anyhow, it just resizes the svg but doesn't
       // draw.
-      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_14__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
+      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_10__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
     }
 
     var svgBlock;
@@ -23308,8 +21564,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
     if (canvasOrDiv === undefined) {
       return this;
-    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_14__)) {
-      $svg = jquery__WEBPACK_IMPORTED_MODULE_14__(canvasOrDiv);
+    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_10__)) {
+      $svg = jquery__WEBPACK_IMPORTED_MODULE_10__(canvasOrDiv);
     } else {
       $svg = canvasOrDiv;
     }
@@ -23318,11 +21574,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       this.playStream();
     };
 
-    for (var _i4 = 0, _Object$entries = Object.entries(this.renderOptions.events); _i4 < _Object$entries.length; _i4++) {
-      var _Object$entries$_i = _slicedToArray(_Object$entries[_i4], 2),
-          eventType = _Object$entries$_i[0],
-          eventFunction = _Object$entries$_i[1];
-
+    for (var [eventType, eventFunction] of Object.entries(this.renderOptions.events)) {
       $svg.off(eventType);
 
       if (typeof eventFunction === 'string' && eventFunction === 'play') {
@@ -23377,7 +21629,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
         top: 0
       };
     } else {
-      offset = jquery__WEBPACK_IMPORTED_MODULE_14__(svg).offset();
+      offset = jquery__WEBPACK_IMPORTED_MODULE_10__(svg).offset();
     }
     /*
      * mouse event handler code originally from: http://diveintohtml5.org/canvas.html
@@ -23387,7 +21639,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     var xClick;
     var yClick;
 
-    if ((e instanceof MouseEvent || e instanceof jquery__WEBPACK_IMPORTED_MODULE_14__.Event) && e.pageX !== undefined && e.pageY !== undefined) {
+    if ((e instanceof MouseEvent || e instanceof jquery__WEBPACK_IMPORTED_MODULE_10__.Event) && e.pageX !== undefined && e.pageY !== undefined) {
       xClick = e.pageX;
       yClick = e.pageY;
     } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
@@ -23415,11 +21667,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
 
   getScaledXYforDOM(svg, e) {
-    var _this$getUnscaledXYfo = this.getUnscaledXYforDOM(svg, e),
-        _this$getUnscaledXYfo2 = _slicedToArray(_this$getUnscaledXYfo, 2),
-        xPx = _this$getUnscaledXYfo2[0],
-        yPx = _this$getUnscaledXYfo2[1];
-
+    var [xPx, yPx] = this.getUnscaledXYforDOM(svg, e);
     var pixelScaling = this.renderOptions.scaleFactor;
     var yPxScaled = yPx / pixelScaling.y;
     var xPxScaled = xPx / pixelScaling.x;
@@ -23467,8 +21715,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled) {
-    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex = 0) {
     return this;
   }
   /**
@@ -23491,15 +21738,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  noteElementFromScaledX(xPxScaled) {
-    var allowablePixels = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
-    var systemIndex = arguments.length > 2 ? arguments[2] : undefined;
-    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  noteElementFromScaledX(xPxScaled, allowablePixels = 10, systemIndex, options = {}) {
     var params = {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common__WEBPACK_IMPORTED_MODULE_20__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_16__.merge(params, options);
     var foundNote;
     var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
 
@@ -23512,37 +21756,27 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       note: undefined
     }; // a backup in case we did not find within allowablePixels
 
-    var _iterator23 = _createForOfIteratorHelper(subStream.flat.notesAndRests),
-        _step23;
+    for (var el of subStream.flat.notesAndRests) {
+      var n = el; // for missing x and width
 
-    try {
-      for (_iterator23.s(); !(_step23 = _iterator23.n()).done;) {
-        var el = _step23.value;
-        var n = el; // for missing x and width
+      /* should also
+       * compensate for accidentals...
+       */
 
-        /* should also
-         * compensate for accidentals...
-         */
+      var leftDistance = Math.abs(n.x - xPxScaled);
+      var rightDistance = Math.abs(n.x + n.width - xPxScaled);
+      var minDistance = Math.min(leftDistance, rightDistance);
 
-        var leftDistance = Math.abs(n.x - xPxScaled);
-        var rightDistance = Math.abs(n.x + n.width - xPxScaled);
-        var minDistance = Math.min(leftDistance, rightDistance);
+      if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
+        foundNote = n;
+        break;
+        /* O(n); can be made O(log n) */
+      } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
+        backup.note = n;
+        backup.minDistanceSoFar = minDistance;
+      }
+    } // console.log('note here is: ', foundNote);
 
-        if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
-          foundNote = n;
-          break;
-          /* O(n); can be made O(log n) */
-        } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
-          backup.note = n;
-          backup.minDistanceSoFar = minDistance;
-        }
-      } // console.log('note here is: ', foundNote);
-
-    } catch (err) {
-      _iterator23.e(err);
-    } finally {
-      _iterator23.f();
-    }
 
     if (params.allowBackup && foundNote === undefined) {
       foundNote = backup.note; // console.log('used backup: closest was: ', backup.minDistanceSoFar);
@@ -23567,12 +21801,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
   findNoteForClick(svg, e, x, y) {
     // this is Stream.findNoteForClick.
     if (x === undefined || y === undefined) {
-      var _this$getScaledXYforD = this.getScaledXYforDOM(svg, e);
-
-      var _this$getScaledXYforD2 = _slicedToArray(_this$getScaledXYforD, 2);
-
-      x = _this$getScaledXYforD2[0];
-      y = _this$getScaledXYforD2[1];
+      [x, y] = this.getScaledXYforDOM(svg, e);
     }
 
     var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
@@ -23592,7 +21821,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     var n = foundNote;
-    var p = new _pitch__WEBPACK_IMPORTED_MODULE_25__.Pitch('C');
+    var p = new _pitch__WEBPACK_IMPORTED_MODULE_21__.Pitch('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -23621,7 +21850,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       this.setSubstreamRenderOptions();
     }
 
-    var $svg = jquery__WEBPACK_IMPORTED_MODULE_14__(svg); // works even if svg is already $jquery
+    var $svg = jquery__WEBPACK_IMPORTED_MODULE_10__(svg); // works even if svg is already $jquery
 
     var $newSvg = this.createNewDOM($svg.width(), $svg.height());
     this.renderVexflow($newSvg);
@@ -23634,17 +21863,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  editableAccidentalDOM(width, height) {
-    var _ref14 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref14$minAccidental = _ref14.minAccidental,
-        minAccidental = _ref14$minAccidental === void 0 ? -1 : _ref14$minAccidental,
-        _ref14$maxAccidental = _ref14.maxAccidental,
-        maxAccidental = _ref14$maxAccidental === void 0 ? 1 : _ref14$maxAccidental;
-
+  editableAccidentalDOM(width, height, {
+    minAccidental = -1,
+    maxAccidental = 1
+  } = {}) {
     /*
      * Create an editable svg with an accidental selection bar.
      */
-    var $d = jquery__WEBPACK_IMPORTED_MODULE_14__('<div/>').css('text-align', 'left').css('position', 'relative');
+    var $d = jquery__WEBPACK_IMPORTED_MODULE_10__('<div/>').css('text-align', 'left').css('position', 'relative');
     this.renderOptions.events.click = this.DOMChangerFunction;
 
     if (this.changedCallbackFunction === undefined) {
@@ -23654,7 +21880,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
     var $svgDiv = this.createDOM(width, height);
     var $buttonDiv = this.getAccidentalToolbar(minAccidental, maxAccidental, $svgDiv);
     $d.append($buttonDiv);
-    $d.append(jquery__WEBPACK_IMPORTED_MODULE_14__("<br style='clear: both;' />"));
+    $d.append(jquery__WEBPACK_IMPORTED_MODULE_10__("<br style='clear: both;' />"));
     $d.append($svgDiv);
     return $d;
   }
@@ -23670,10 +21896,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
    */
 
 
-  getAccidentalToolbar() {
-    var minAccidental = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
-    var maxAccidental = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-    var $siblingSvg = arguments.length > 2 ? arguments[2] : undefined;
+  getAccidentalToolbar(minAccidental = -1, maxAccidental = 1, $siblingSvg) {
     minAccidental = Math.round(minAccidental);
     maxAccidental = Math.round(maxAccidental);
 
@@ -23684,7 +21907,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       var $useSvg = $siblingSvg;
 
       if ($useSvg === undefined) {
-        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_14__(clickEvent.target).parent();
+        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_10__(clickEvent.target).parent();
         var maxSearch = 99;
 
         while (maxSearch > 0 && $searchParent !== undefined && ($useSvg === undefined || $useSvg[0] === undefined)) {
@@ -23699,9 +21922,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
         }
       }
 
-      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_24__.Note) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_20__.Note) {
         var n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_25__.Accidental(newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_21__.Accidental(newAlter);
         /* console.log(n.pitch.name); */
 
         var $newSvg = this.redrawDOM($useSvg[0]);
@@ -23715,11 +21938,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       }
     };
 
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_14__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_10__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
 
     var _loop = function _loop(i) {
-      var svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_27__.svg_accidentals.get(i).cloneNode(true);
-      var $button = jquery__WEBPACK_IMPORTED_MODULE_14__('<button style="width: 40px; height: 40px;"></button>').on('click', e => addAccidental(i, e));
+      var svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_23__.svg_accidentals.get(i).cloneNode(true);
+      var $button = jquery__WEBPACK_IMPORTED_MODULE_10__('<button style="width: 40px; height: 40px;"></button>').on('click', e => addAccidental(i, e));
       $button[0].appendChild(svg_acc);
       $buttonDiv.append($button);
     };
@@ -23736,13 +21959,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
 
   getPlayToolbar() {
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_14__('<div/>').attr('class', 'playToolbar scoreToolbar');
-    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_14__('<button>&#9658</button>');
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_10__('<div/>').attr('class', 'playToolbar scoreToolbar');
+    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_10__('<button>&#9658</button>');
     $bPlay.on('click', () => {
       this.playStream();
     });
     $buttonDiv.append($bPlay);
-    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_14__('<button>&#9724</button>');
+    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_10__('<button>&#9724</button>');
     $bStop.on('click', () => {
       this.stopPlayStream();
     });
@@ -23776,11 +21999,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       this.maxSystemWidth = svgWidth - 40;
       $jSvgNow.remove();
       var svgObj = this.appendNewDOM($jSvgParent);
-      $jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_14__(svgObj);
+      $jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_10__(svgObj);
     };
 
     var resizeTimeout = 0;
-    jquery__WEBPACK_IMPORTED_MODULE_14__(window).on('resize', () => {
+    jquery__WEBPACK_IMPORTED_MODULE_10__(window).on('resize', () => {
       if (resizeTimeout) {
         window.clearTimeout(resizeTimeout);
       }
@@ -23788,7 +22011,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
       resizeTimeout = window.setTimeout(() => resizeEnd(), 200);
     });
     setTimeout(() => {
-      var $window = jquery__WEBPACK_IMPORTED_MODULE_14__(window);
+      var $window = jquery__WEBPACK_IMPORTED_MODULE_10__(window);
       var doResize = $window.data('triggerResizeOnCreateSvg');
 
       if (doResize === undefined || doResize === true) {
@@ -23804,21 +22027,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_18__.Music21Object {
 
 
   hasVoices() {
-    var _iterator24 = _createForOfIteratorHelper(this),
-        _step24;
-
-    try {
-      for (_iterator24.s(); !(_step24 = _iterator24.n()).done;) {
-        var el = _step24.value;
-
-        if (el.isClassOrSubclass('Voice')) {
-          return true;
-        }
+    for (var el of this) {
+      if (el.isClassOrSubclass('Voice')) {
+        return true;
       }
-    } catch (err) {
-      _iterator24.e(err);
-    } finally {
-      _iterator24.f();
     }
 
     return false;
@@ -23911,19 +22123,9 @@ class Part extends Stream {
     /* call after setSubstreamRenderOptions */
     var measureWidths = [];
 
-    var _iterator25 = _createForOfIteratorHelper(this.getElementsByClass('Measure')),
-        _step25;
-
-    try {
-      for (_iterator25.s(); !(_step25 = _iterator25.n()).done;) {
-        var el = _step25.value;
-        var elRendOp = el.renderOptions;
-        measureWidths[elRendOp.measureIndex] = elRendOp.width;
-      }
-    } catch (err) {
-      _iterator25.e(err);
-    } finally {
-      _iterator25.f();
+    for (var el of this.getElementsByClass('Measure')) {
+      var elRendOp = el.renderOptions;
+      measureWidths[elRendOp.measureIndex] = elRendOp.width;
     }
 
     return measureWidths;
@@ -23944,27 +22146,17 @@ class Part extends Stream {
       var totalLength = 0;
       var isFirst = true;
 
-      var _iterator26 = _createForOfIteratorHelper(this.getElementsByClass('Measure')),
-          _step26;
+      for (var el of this.getElementsByClass('Measure')) {
+        var m = el; // this looks wrong, but actually seems to be right. moving it to
+        // after the break breaks things.
 
-      try {
-        for (_iterator26.s(); !(_step26 = _iterator26.n()).done;) {
-          var el = _step26.value;
-          var m = el; // this looks wrong, but actually seems to be right. moving it to
-          // after the break breaks things.
+        totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
 
-          totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
-
-          if (!isFirst && m.renderOptions.startNewSystem === true) {
-            break;
-          }
-
-          isFirst = false;
+        if (!isFirst && m.renderOptions.startNewSystem === true) {
+          break;
         }
-      } catch (err) {
-        _iterator26.e(err);
-      } finally {
-        _iterator26.f();
+
+        isFirst = false;
       }
 
       return totalLength;
@@ -24027,14 +22219,11 @@ class Part extends Stream {
     if (systemHeight === undefined) {
       /* part.show() called... */
       systemHeight = this.renderOptions.staffAreaHeight;
-    } else if (_debug__WEBPACK_IMPORTED_MODULE_17__.debug) {
+    } else if (_debug__WEBPACK_IMPORTED_MODULE_13__.debug) {
       console.log('overridden systemHeight: ' + systemHeight);
     }
 
-    var _this$systemWidthsAnd = this.systemWidthsAndBreaks(),
-        _this$systemWidthsAnd2 = _slicedToArray(_this$systemWidthsAnd, 2),
-        systemCurrentWidths = _this$systemWidthsAnd2[0],
-        systemBreakIndexes = _this$systemWidthsAnd2[1];
+    var [systemCurrentWidths, systemBreakIndexes] = this.systemWidthsAndBreaks();
 
     if (systemPadding === undefined) {
       systemPadding = this.renderOptions.systemPadding;
@@ -24046,83 +22235,70 @@ class Part extends Stream {
     var leftSubtract = 0;
     var newLeftSubtract;
 
-    var _iterator27 = _createForOfIteratorHelper(Array.from(this.getElementsByClass('Measure')).entries()),
-        _step27;
+    for (var [i, el] of Array.from(this.getElementsByClass('Measure')).entries()) {
+      var m = el;
 
-    try {
-      for (_iterator27.s(); !(_step27 = _iterator27.n()).done;) {
-        var _step27$value = _slicedToArray(_step27.value, 2),
-            i = _step27$value[0],
-            el = _step27$value[1];
-
-        var m = el;
-
-        if (i === 0) {
-          m.renderOptions.startNewSystem = true;
-        }
-
-        var currentLeft = m.renderOptions.left;
-
-        if (systemBreakIndexes.indexOf(i - 1) !== -1) {
-          /* first measure of new System */
-          var oldWidth = m.renderOptions.width;
-          var oldEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
-          var offsetFromEstimate = oldWidth - oldEstimate; // we look at the offset from the current estimate to see how much
-          // the staff length may have been adjusted to compensate for other
-          // parts with different lengths.
-          // but setting these options is bound to change something
-
-          m.renderOptions.displayClef = true;
-          m.renderOptions.displayKeySignature = true;
-          m.renderOptions.startNewSystem = true; // so we get a new estimate.
-
-          var newEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding; // and adjust it for the change.
-
-          var newWidth = newEstimate + offsetFromEstimate;
-          m.renderOptions.width = newWidth;
-          leftSubtract = currentLeft - 20; // after this one, we'll have a new left subtract...
-
-          newLeftSubtract = leftSubtract - (newWidth - oldWidth);
-          currentSystemIndex += 1;
-        } else if (i !== 0) {
-          m.renderOptions.startNewSystem = false;
-          m.renderOptions.displayClef = false; // check for changed clef first?
-
-          m.renderOptions.displayKeySignature = false; // check for changed KS first?
-        }
-
-        m.renderOptions.systemIndex = currentSystemIndex;
-        var currentSystemMultiplier = void 0;
-
-        if (currentSystemIndex >= systemCurrentWidths.length) {
-          /* last system... non-justified */
-          currentSystemMultiplier = 1;
-        } else {
-          var currentSystemWidth = systemCurrentWidths[currentSystemIndex];
-          currentSystemMultiplier = maxSystemWidth / currentSystemWidth; // console.log('systemMultiplier: ' + currentSystemMultiplier
-          // + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
-        }
-        /* might make a small gap? fix? */
-
-
-        var newLeft = currentLeft - leftSubtract;
-
-        if (newLeftSubtract !== undefined) {
-          leftSubtract = newLeftSubtract;
-          newLeftSubtract = undefined;
-        } // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
-
-
-        m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
-        m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
-        var newTop = m.renderOptions.top + currentSystemIndex * (systemHeight + systemPadding); // console.log('M: ' + i + '; New top: ' + newTop + ' ; old Top: ' + m.renderOptions.top);
-
-        m.renderOptions.top = newTop;
+      if (i === 0) {
+        m.renderOptions.startNewSystem = true;
       }
-    } catch (err) {
-      _iterator27.e(err);
-    } finally {
-      _iterator27.f();
+
+      var currentLeft = m.renderOptions.left;
+
+      if (systemBreakIndexes.indexOf(i - 1) !== -1) {
+        /* first measure of new System */
+        var oldWidth = m.renderOptions.width;
+        var oldEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
+        var offsetFromEstimate = oldWidth - oldEstimate; // we look at the offset from the current estimate to see how much
+        // the staff length may have been adjusted to compensate for other
+        // parts with different lengths.
+        // but setting these options is bound to change something
+
+        m.renderOptions.displayClef = true;
+        m.renderOptions.displayKeySignature = true;
+        m.renderOptions.startNewSystem = true; // so we get a new estimate.
+
+        var newEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding; // and adjust it for the change.
+
+        var newWidth = newEstimate + offsetFromEstimate;
+        m.renderOptions.width = newWidth;
+        leftSubtract = currentLeft - 20; // after this one, we'll have a new left subtract...
+
+        newLeftSubtract = leftSubtract - (newWidth - oldWidth);
+        currentSystemIndex += 1;
+      } else if (i !== 0) {
+        m.renderOptions.startNewSystem = false;
+        m.renderOptions.displayClef = false; // check for changed clef first?
+
+        m.renderOptions.displayKeySignature = false; // check for changed KS first?
+      }
+
+      m.renderOptions.systemIndex = currentSystemIndex;
+      var currentSystemMultiplier = void 0;
+
+      if (currentSystemIndex >= systemCurrentWidths.length) {
+        /* last system... non-justified */
+        currentSystemMultiplier = 1;
+      } else {
+        var currentSystemWidth = systemCurrentWidths[currentSystemIndex];
+        currentSystemMultiplier = maxSystemWidth / currentSystemWidth; // console.log('systemMultiplier: ' + currentSystemMultiplier
+        // + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
+      }
+      /* might make a small gap? fix? */
+
+
+      var newLeft = currentLeft - leftSubtract;
+
+      if (newLeftSubtract !== undefined) {
+        leftSubtract = newLeftSubtract;
+        newLeftSubtract = undefined;
+      } // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
+
+
+      m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
+      m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
+      var newTop = m.renderOptions.top + currentSystemIndex * (systemHeight + systemPadding); // console.log('M: ' + i + '; New top: ' + newTop + ' ; old Top: ' + m.renderOptions.top);
+
+      m.renderOptions.top = newTop;
     }
 
     return systemCurrentWidths;
@@ -24145,63 +22321,53 @@ class Part extends Stream {
     var lastKeySignature;
     var lastClef;
 
-    var _iterator28 = _createForOfIteratorHelper(this.getElementsByClass('Measure')),
-        _step28;
+    for (var el of this.getElementsByClass('Measure')) {
+      var m = el;
+      var mRendOp = m.renderOptions;
+      mRendOp.measureIndex = currentMeasureIndex;
+      mRendOp.top = rendOp.top;
+      mRendOp.partIndex = rendOp.partIndex;
+      mRendOp.left = currentMeasureLeft;
 
-    try {
-      for (_iterator28.s(); !(_step28 = _iterator28.n()).done;) {
-        var el = _step28.value;
-        var m = el;
-        var mRendOp = m.renderOptions;
-        mRendOp.measureIndex = currentMeasureIndex;
-        mRendOp.top = rendOp.top;
-        mRendOp.partIndex = rendOp.partIndex;
-        mRendOp.left = currentMeasureLeft;
-
-        if (currentMeasureIndex === 0) {
+      if (currentMeasureIndex === 0) {
+        lastClef = m._clef;
+        lastTimeSignature = m._timeSignature;
+        lastKeySignature = m._keySignature;
+        mRendOp.displayClef = true;
+        mRendOp.displayKeySignature = true;
+        mRendOp.displayTimeSignature = true;
+      } else {
+        // noinspection JSUnusedAssignment
+        if (m._clef !== undefined && lastClef !== undefined && m._clef.name !== lastClef.name) {
+          // noinspection JSUnusedAssignment
+          console.log('changing clefs for ', mRendOp.measureIndex, ' from ', lastClef.name, ' to ', m._clef.name);
           lastClef = m._clef;
-          lastTimeSignature = m._timeSignature;
-          lastKeySignature = m._keySignature;
           mRendOp.displayClef = true;
+        } else {
+          mRendOp.displayClef = false;
+        } // noinspection JSUnusedAssignment
+
+
+        if (m._keySignature !== undefined && lastKeySignature !== undefined && m._keySignature.sharps !== lastKeySignature.sharps) {
+          lastKeySignature = m._keySignature;
           mRendOp.displayKeySignature = true;
+        } else {
+          mRendOp.displayKeySignature = false;
+        } // noinspection JSUnusedAssignment
+
+
+        if (m._timeSignature !== undefined && lastTimeSignature !== undefined && m._timeSignature.ratioString !== lastTimeSignature.ratioString) {
+          lastTimeSignature = m._timeSignature;
           mRendOp.displayTimeSignature = true;
         } else {
-          // noinspection JSUnusedAssignment
-          if (m._clef !== undefined && lastClef !== undefined && m._clef.name !== lastClef.name) {
-            // noinspection JSUnusedAssignment
-            console.log('changing clefs for ', mRendOp.measureIndex, ' from ', lastClef.name, ' to ', m._clef.name);
-            lastClef = m._clef;
-            mRendOp.displayClef = true;
-          } else {
-            mRendOp.displayClef = false;
-          } // noinspection JSUnusedAssignment
-
-
-          if (m._keySignature !== undefined && lastKeySignature !== undefined && m._keySignature.sharps !== lastKeySignature.sharps) {
-            lastKeySignature = m._keySignature;
-            mRendOp.displayKeySignature = true;
-          } else {
-            mRendOp.displayKeySignature = false;
-          } // noinspection JSUnusedAssignment
-
-
-          if (m._timeSignature !== undefined && lastTimeSignature !== undefined && m._timeSignature.ratioString !== lastTimeSignature.ratioString) {
-            lastTimeSignature = m._timeSignature;
-            mRendOp.displayTimeSignature = true;
-          } else {
-            mRendOp.displayTimeSignature = false;
-          }
+          mRendOp.displayTimeSignature = false;
         }
-
-        mRendOp.width = m.estimateStaffLength() + mRendOp.staffPadding;
-        mRendOp.height = m.estimateStreamHeight();
-        currentMeasureLeft += mRendOp.width;
-        currentMeasureIndex += 1;
       }
-    } catch (err) {
-      _iterator28.e(err);
-    } finally {
-      _iterator28.f();
+
+      mRendOp.width = m.estimateStaffLength() + mRendOp.staffPadding;
+      mRendOp.height = m.estimateStreamHeight();
+      currentMeasureLeft += mRendOp.width;
+      currentMeasureIndex += 1;
     }
 
     return this;
@@ -24234,26 +22400,17 @@ class Part extends Stream {
   findNoteForClick(svg, e, x, y) {
     // this is Part.FindNoteForClick
     if (x === undefined || y === undefined) {
-      var _this$getScaledXYforD3 = this.getScaledXYforDOM(svg, e);
-
-      var _this$getScaledXYforD4 = _slicedToArray(_this$getScaledXYforD3, 2);
-
-      x = _this$getScaledXYforD4[0];
-      y = _this$getScaledXYforD4[1];
+      [x, y] = this.getScaledXYforDOM(svg, e);
     } // debug = true;
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_17__.debug && svg !== undefined) {
-      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_14__(svg).height());
+    if (_debug__WEBPACK_IMPORTED_MODULE_13__.debug && svg !== undefined) {
+      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_10__(svg).height());
     } // TODO(msc) -- systemPadding was never used -- should it be?
     // let systemPadding = this.renderOptions.systemPadding;
 
 
-    var _this$systemIndexAndS = this.systemIndexAndScaledY(y),
-        _this$systemIndexAndS2 = _slicedToArray(_this$systemIndexAndS, 2),
-        systemIndex = _this$systemIndexAndS2[0],
-        scaledYRelativeToSystem = _this$systemIndexAndS2[1];
-
+    var [systemIndex, scaledYRelativeToSystem] = this.systemIndexAndScaledY(y);
     var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(scaledYRelativeToSystem);
     var foundNote = this.noteElementFromScaledX(x, undefined, systemIndex);
     return [clickedDiatonicNoteNum, foundNote];
@@ -24268,41 +22425,30 @@ class Part extends Stream {
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled) {
-    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex = undefined) {
     var gotMeasure;
     var measures = this.measures;
 
-    var _iterator29 = _createForOfIteratorHelper(measures),
-        _step29;
+    for (var m of measures) {
+      var rendOp = m.renderOptions;
+      var left = rendOp.left;
+      var right = left + rendOp.width;
+      var top = rendOp.top;
+      var bottom = top + rendOp.height;
 
-    try {
-      for (_iterator29.s(); !(_step29 = _iterator29.n()).done;) {
-        var m = _step29.value;
-        var rendOp = m.renderOptions;
-        var left = rendOp.left;
-        var right = left + rendOp.width;
-        var top = rendOp.top;
-        var bottom = top + rendOp.height;
+      if (_debug__WEBPACK_IMPORTED_MODULE_13__.debug) {
+        console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
+      }
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_17__.debug) {
-          console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
-        }
-
-        if (xPxScaled >= left && xPxScaled <= right) {
-          if (systemIndex === undefined) {
-            gotMeasure = m;
-            break;
-          } else if (rendOp.systemIndex === systemIndex) {
-            gotMeasure = m;
-            break;
-          }
+      if (xPxScaled >= left && xPxScaled <= right) {
+        if (systemIndex === undefined) {
+          gotMeasure = m;
+          break;
+        } else if (rendOp.systemIndex === systemIndex) {
+          gotMeasure = m;
+          break;
         }
       }
-    } catch (err) {
-      _iterator29.e(err);
-    } finally {
-      _iterator29.f();
     }
 
     return gotMeasure;
@@ -24329,7 +22475,7 @@ class Score extends Stream {
     var c = super.clef;
 
     if (c === undefined) {
-      return new _clef__WEBPACK_IMPORTED_MODULE_19__.TrebleClef();
+      return new _clef__WEBPACK_IMPORTED_MODULE_15__.TrebleClef();
     } else {
       return c;
     }
@@ -24343,36 +22489,23 @@ class Score extends Stream {
    */
 
 
-  makeBeams() {
-    var _ref15 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref15$inPlace = _ref15.inPlace,
-        inPlace = _ref15$inPlace === void 0 ? false : _ref15$inPlace,
-        _ref15$setStemDirecti = _ref15.setStemDirections,
-        setStemDirections = _ref15$setStemDirecti === void 0 ? true : _ref15$setStemDirecti;
-
+  makeBeams({
+    inPlace = false,
+    setStemDirections = true
+  } = {}) {
     var returnObj = this;
 
     if (!inPlace) {
       returnObj = this.clone(true);
     }
 
-    var _iterator30 = _createForOfIteratorHelper(returnObj.parts),
-        _step30;
+    for (var p of returnObj.parts) {
+      p.makeBeams({
+        inPlace: true,
+        setStemDirections
+      });
+    } // returnObj.streamStatus.beams = true;
 
-    try {
-      for (_iterator30.s(); !(_step30 = _iterator30.n()).done;) {
-        var p = _step30.value;
-        p.makeBeams({
-          inPlace: true,
-          setStemDirections
-        });
-      } // returnObj.streamStatus.beams = true;
-
-    } catch (err) {
-      _iterator30.e(err);
-    } finally {
-      _iterator30.f();
-    }
 
     return returnObj;
   }
@@ -24388,8 +22521,7 @@ class Score extends Stream {
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled) {
-    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex = undefined) {
     var parts = this.parts;
     return parts.get(0).getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
   }
@@ -24406,22 +22538,12 @@ class Score extends Stream {
 
     var partSpacing = this.renderOptions.staffAreaHeight;
 
-    var _iterator31 = _createForOfIteratorHelper(this.parts),
-        _step31;
-
-    try {
-      for (_iterator31.s(); !(_step31 = _iterator31.n()).done;) {
-        var p = _step31.value;
-        p.renderOptions.partIndex = currentPartNumber;
-        p.renderOptions.top = currentPartTop;
-        p.setSubstreamRenderOptions();
-        currentPartTop += partSpacing;
-        currentPartNumber += 1;
-      }
-    } catch (err) {
-      _iterator31.e(err);
-    } finally {
-      _iterator31.f();
+    for (var p of this.parts) {
+      p.renderOptions.partIndex = currentPartNumber;
+      p.renderOptions.top = currentPartTop;
+      p.setSubstreamRenderOptions();
+      currentPartTop += partSpacing;
+      currentPartNumber += 1;
     }
 
     this.evenPartMeasureSpacing();
@@ -24430,19 +22552,8 @@ class Score extends Stream {
       ignoreMarginBottom: true
     });
 
-    var _iterator32 = _createForOfIteratorHelper(this.parts),
-        _step32;
-
-    try {
-      for (_iterator32.s(); !(_step32 = _iterator32.n()).done;) {
-        var _p2 = _step32.value;
-
-        _p2.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding);
-      }
-    } catch (err) {
-      _iterator32.e(err);
-    } finally {
-      _iterator32.f();
+    for (var _p2 of this.parts) {
+      _p2.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding);
     }
 
     this.renderOptions.height = this.estimateStreamHeight();
@@ -24464,22 +22575,12 @@ class Score extends Stream {
 
     var maxWidth = -1;
 
-    var _iterator33 = _createForOfIteratorHelper(this.parts),
-        _step33;
+    for (var p of this.parts) {
+      var pWidth = p.estimateStaffLength();
 
-    try {
-      for (_iterator33.s(); !(_step33 = _iterator33.n()).done;) {
-        var p = _step33.value;
-        var pWidth = p.estimateStaffLength();
-
-        if (pWidth > maxWidth) {
-          maxWidth = pWidth;
-        }
+      if (pWidth > maxWidth) {
+        maxWidth = pWidth;
       }
-    } catch (err) {
-      _iterator33.e(err);
-    } finally {
-      _iterator33.f();
     }
 
     if (maxWidth > -1) {
@@ -24507,21 +22608,10 @@ class Score extends Stream {
 
   playStream(params) {
     // play multiple parts in parallel...
-    var _iterator34 = _createForOfIteratorHelper(this),
-        _step34;
-
-    try {
-      for (_iterator34.s(); !(_step34 = _iterator34.n()).done;) {
-        var el = _step34.value;
-
-        if (el.isClassOrSubclass('Part')) {
-          el.playStream(params);
-        }
+    for (var el of this) {
+      if (el.isClassOrSubclass('Part')) {
+        el.playStream(params);
       }
-    } catch (err) {
-      _iterator34.e(err);
-    } finally {
-      _iterator34.f();
     }
 
     return this;
@@ -24532,21 +22622,10 @@ class Score extends Stream {
 
 
   stopPlayStream() {
-    var _iterator35 = _createForOfIteratorHelper(this),
-        _step35;
-
-    try {
-      for (_iterator35.s(); !(_step35 = _iterator35.n()).done;) {
-        var el = _step35.value;
-
-        if (el.isClassOrSubclass('Part')) {
-          el.stopPlayStream();
-        }
+    for (var el of this) {
+      if (el.isClassOrSubclass('Part')) {
+        el.stopPlayStream();
       }
-    } catch (err) {
-      _iterator35.e(err);
-    } finally {
-      _iterator35.f();
     }
 
     return this;
@@ -24573,18 +22652,8 @@ class Score extends Stream {
     var measureWidthsArrayOfArrays = [];
     var i; // TODO: Do not crash on not partlike...
 
-    var _iterator36 = _createForOfIteratorHelper(this.parts),
-        _step36;
-
-    try {
-      for (_iterator36.s(); !(_step36 = _iterator36.n()).done;) {
-        var p = _step36.value;
-        measureWidthsArrayOfArrays.push(p.getMeasureWidths());
-      }
-    } catch (err) {
-      _iterator36.e(err);
-    } finally {
-      _iterator36.f();
+    for (var p of this.parts) {
+      measureWidthsArrayOfArrays.push(p.getMeasureWidths());
     }
 
     for (i = 0; i < measureWidthsArrayOfArrays[0].length; i++) {
@@ -24647,22 +22716,12 @@ class Score extends Stream {
   findNoteForClick(svg, e, x, y) {
     // this is Score.findNoteForClick()
     if (x === undefined || y === undefined) {
-      var _this$getScaledXYforD5 = this.getScaledXYforDOM(svg, e);
-
-      var _this$getScaledXYforD6 = _slicedToArray(_this$getScaledXYforD5, 2);
-
-      x = _this$getScaledXYforD6[0];
-      y = _this$getScaledXYforD6[1];
+      [x, y] = this.getScaledXYforDOM(svg, e);
     } // defaults to 120 and includes ledger line area
 
 
     var staffHeight = this.renderOptions.staffAreaHeight;
-
-    var _this$systemIndexAndS3 = this.systemIndexAndScaledY(y),
-        _this$systemIndexAndS4 = _slicedToArray(_this$systemIndexAndS3, 2),
-        systemIndex = _this$systemIndexAndS4[0],
-        scaledYFromSystemTop = _this$systemIndexAndS4[1];
-
+    var [systemIndex, scaledYFromSystemTop] = this.systemIndexAndScaledY(y);
     var partIndex = Math.floor(scaledYFromSystemTop / staffHeight); // console.log('systemIndex: ' + systemIndex + ' partIndex: ' + partIndex);
 
     var rightPart = this.parts.get(partIndex);
@@ -24709,42 +22768,30 @@ class Score extends Stream {
    */
 
 
-  evenPartMeasureSpacing() {
-    var _ref16 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref16$setLeft = _ref16.setLeft,
-        setLeft = _ref16$setLeft === void 0 ? true : _ref16$setLeft;
-
+  evenPartMeasureSpacing({
+    setLeft = true
+  } = {}) {
     var measureStacks = [];
     var currentPartNumber = 0;
     var maxMeasureWidth = []; // the maximum measure width among all parts
 
-    var _iterator37 = _createForOfIteratorHelper(this.parts),
-        _step37;
+    for (var p of this.parts) {
+      var measureWidths = p.getMeasureWidths();
 
-    try {
-      for (_iterator37.s(); !(_step37 = _iterator37.n()).done;) {
-        var p = _step37.value;
-        var measureWidths = p.getMeasureWidths();
+      for (var j = 0; j < measureWidths.length; j++) {
+        var thisMeasureWidth = measureWidths[j];
 
-        for (var j = 0; j < measureWidths.length; j++) {
-          var thisMeasureWidth = measureWidths[j];
-
-          if (measureStacks[j] === undefined) {
-            measureStacks[j] = [];
-            maxMeasureWidth[j] = thisMeasureWidth;
-          } else if (thisMeasureWidth > maxMeasureWidth[j]) {
-            maxMeasureWidth[j] = thisMeasureWidth;
-          }
-
-          measureStacks[j][currentPartNumber] = thisMeasureWidth;
+        if (measureStacks[j] === undefined) {
+          measureStacks[j] = [];
+          maxMeasureWidth[j] = thisMeasureWidth;
+        } else if (thisMeasureWidth > maxMeasureWidth[j]) {
+          maxMeasureWidth[j] = thisMeasureWidth;
         }
 
-        currentPartNumber += 1;
+        measureStacks[j][currentPartNumber] = thisMeasureWidth;
       }
-    } catch (err) {
-      _iterator37.e(err);
-    } finally {
-      _iterator37.f();
+
+      currentPartNumber += 1;
     }
 
     var currentLeft = 20; // TODO: do not hardcode left start.
@@ -24752,24 +22799,14 @@ class Score extends Stream {
     for (var i = 0; i < maxMeasureWidth.length; i++) {
       var measureNewWidth = maxMeasureWidth[i];
 
-      var _iterator38 = _createForOfIteratorHelper(this.parts),
-          _step38;
+      for (var part of this.parts) {
+        var measure = part.getElementsByClass('Measure').get(i);
+        var rendOp = measure.renderOptions;
+        rendOp.width = measureNewWidth;
 
-      try {
-        for (_iterator38.s(); !(_step38 = _iterator38.n()).done;) {
-          var part = _step38.value;
-          var measure = part.getElementsByClass('Measure').get(i);
-          var rendOp = measure.renderOptions;
-          rendOp.width = measureNewWidth;
-
-          if (setLeft) {
-            rendOp.left = currentLeft;
-          }
+        if (setLeft) {
+          rendOp.left = currentLeft;
         }
-      } catch (err) {
-        _iterator38.e(err);
-      } finally {
-        _iterator38.f();
       }
 
       currentLeft += measureNewWidth;
@@ -24839,8 +22876,7 @@ class StreamFilter {
 
 }
 class IsFilter extends StreamFilter {
-  constructor() {
-    var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  constructor(target = []) {
     super();
 
     if (!Array.isArray(target)) {
@@ -24898,8 +22934,7 @@ class IsNotFilter extends IsFilter {
 } // TODO(msc): IdFilter
 
 class ClassFilter extends StreamFilter {
-  constructor() {
-    var classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  constructor(classList = []) {
     super();
 
     if (!Array.isArray(classList)) {
@@ -24931,19 +22966,12 @@ class ClassNotFilter extends ClassFilter {
 } // TODO: GroupFilter
 
 class OffsetFilter extends StreamFilter {
-  constructor(offsetStart) {
-    var offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref$includeEndBounda = _ref.includeEndBoundary,
-        includeEndBoundary = _ref$includeEndBounda === void 0 ? true : _ref$includeEndBounda,
-        _ref$mustFinishInSpan = _ref.mustFinishInSpan,
-        mustFinishInSpan = _ref$mustFinishInSpan === void 0 ? false : _ref$mustFinishInSpan,
-        _ref$mustBeginInSpan = _ref.mustBeginInSpan,
-        mustBeginInSpan = _ref$mustBeginInSpan === void 0 ? true : _ref$mustBeginInSpan,
-        _ref$includeElementsT = _ref.includeElementsThatEndAtStart,
-        includeElementsThatEndAtStart = _ref$includeElementsT === void 0 ? true : _ref$includeElementsT;
-
+  constructor(offsetStart, offsetEnd = undefined, {
+    includeEndBoundary = true,
+    mustFinishInSpan = false,
+    mustBeginInSpan = true,
+    includeElementsThatEndAtStart = true
+  } = {}) {
     super();
     this.zeroLengthSearch = false;
     this.offsetStart = offsetStart;
@@ -25049,49 +23077,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_symbol_description_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description.js */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./filters */ "./src/music21/stream/filters.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.sort.js */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./filters */ "./src/music21/stream/filters.ts");
 
 
 
 
 
 
+var StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_5__.StopIterationSingleton; // noinspection JSUnusedGlobalSymbols
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-
-
-var StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_7__.StopIterationSingleton; // noinspection JSUnusedGlobalSymbols
-
-class StreamIteratorException extends _exceptions21__WEBPACK_IMPORTED_MODULE_6__.StreamException {}
+class StreamIteratorException extends _exceptions21__WEBPACK_IMPORTED_MODULE_4__.StreamException {}
 
 class _StreamIteratorBase {
-  constructor(srcStream) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$filterList = _ref.filterList,
-        filterList = _ref$filterList === void 0 ? [] : _ref$filterList,
-        _ref$restoreActiveSit = _ref.restoreActiveSites,
-        restoreActiveSites = _ref$restoreActiveSit === void 0 ? true : _ref$restoreActiveSit,
-        _ref$activeInformatio = _ref.activeInformation,
-        activeInformation = _ref$activeInformatio === void 0 ? undefined : _ref$activeInformatio,
-        _ref$ignoreSorting = _ref.ignoreSorting,
-        ignoreSorting = _ref$ignoreSorting === void 0 ? false : _ref$ignoreSorting;
-
+  constructor(srcStream, {
+    filterList = [],
+    restoreActiveSites = true,
+    activeInformation = undefined,
+    ignoreSorting = false
+  } = {}) {
     this.index = 0;
     this.iterSection = '_elements';
     this.cleanupOnStop = false;
@@ -25122,61 +23132,12 @@ class _StreamIteratorBase {
     }
   }
 
-  [Symbol.iterator]() {
-    var _this = this;
+  *[Symbol.iterator]() {
+    this.reset();
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var _iterator, _step, el;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _this.reset();
-
-              _iterator = _createForOfIteratorHelper(_this.srcStreamElements);
-              _context.prev = 2;
-
-              _iterator.s();
-
-            case 4:
-              if ((_step = _iterator.n()).done) {
-                _context.next = 10;
-                break;
-              }
-
-              el = _step.value;
-              _context.next = 8;
-              return el;
-
-            case 8:
-              _context.next = 4;
-              break;
-
-            case 10:
-              _context.next = 15;
-              break;
-
-            case 12:
-              _context.prev = 12;
-              _context.t0 = _context["catch"](2);
-
-              _iterator.e(_context.t0);
-
-            case 15:
-              _context.prev = 15;
-
-              _iterator.f();
-
-              return _context.finish(15);
-
-            case 18:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, null, [[2, 12, 15, 18]]);
-    })();
+    for (var el of this.srcStreamElements) {
+      yield el;
+    }
   }
 
   map(func) {
@@ -25216,21 +23177,10 @@ class _StreamIteratorBase {
     this.iterSection = '_elements';
     this.updateActiveInformation();
 
-    var _iterator2 = _createForOfIteratorHelper(this.filters),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var f = _step2.value;
-
-        if (f.reset !== undefined) {
-          f.reset();
-        }
+    for (var f of this.filters) {
+      if (f.reset !== undefined) {
+        f.reset();
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
     }
   }
 
@@ -25257,18 +23207,8 @@ class _StreamIteratorBase {
     this.restoreActiveSites = true;
     var me = []; // matching elements
 
-    var _iterator3 = _createForOfIteratorHelper(this),
-        _step3;
-
-    try {
-      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var e = _step3.value;
-        me.push(e);
-      }
-    } catch (err) {
-      _iterator3.e(err);
-    } finally {
-      _iterator3.f();
+    for (var e of this) {
+      me.push(e);
     }
 
     this.reset();
@@ -25279,26 +23219,16 @@ class _StreamIteratorBase {
   }
 
   matchesFilters(e) {
-    var _iterator4 = _createForOfIteratorHelper(this.filters),
-        _step4;
+    for (var f of this.filters) {
+      var ret = f.call(e, this);
 
-    try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var f = _step4.value;
-        var ret = f.call(e, this);
-
-        if (ret === false) {
-          return false; // must === false;
-        }
-
-        if (ret === StopIterationSingleton) {
-          return ret;
-        }
+      if (ret === false) {
+        return false; // must === false;
       }
-    } catch (err) {
-      _iterator4.e(err);
-    } finally {
-      _iterator4.f();
+
+      if (ret === StopIterationSingleton) {
+        return ret;
+      }
     }
 
     return true;
@@ -25312,26 +23242,16 @@ class _StreamIteratorBase {
 
     var fe = this.matchingElements();
 
-    var _iterator5 = _createForOfIteratorHelper(fe),
-        _step5;
+    for (var e of fe) {
+      var stringReturns = true;
+      var o = ss.elementOffset(e, stringReturns); // try: getOffsetInHierarchy...
+      // string returns;
 
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var e = _step5.value;
-        var stringReturns = true;
-        var o = ss.elementOffset(e, stringReturns); // try: getOffsetInHierarchy...
-        // string returns;
+      found.insert(o, e);
+    } // if (fe.length) {
+    //     found.coreElementsChanged()
+    // }
 
-        found.insert(o, e);
-      } // if (fe.length) {
-      //     found.coreElementsChanged()
-      // }
-
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
-    }
 
     return found;
   } // noinspection JSUnusedGlobalSymbols
@@ -25342,21 +23262,10 @@ class _StreamIteratorBase {
   }
 
   addFilter(newFilter) {
-    var _iterator6 = _createForOfIteratorHelper(this.filters),
-        _step6;
-
-    try {
-      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-        var f = _step6.value;
-
-        if (newFilter === f) {
-          return this; // will not work... because == overrides.
-        }
+    for (var f of this.filters) {
+      if (newFilter === f) {
+        return this; // will not work... because == overrides.
       }
-    } catch (err) {
-      _iterator6.e(err);
-    } finally {
-      _iterator6.f();
     }
 
     this.filters.push(newFilter);
@@ -25380,265 +23289,148 @@ class _StreamIteratorBase {
 
 
   getElementsByClass(classFilterList) {
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassFilter(classFilterList));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassFilter(classFilterList));
   }
 
   getElementsNotOfClass(classFilterList) {
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassNotFilter(classFilterList));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassNotFilter(classFilterList));
   } // getElementsByGroup;
   // getElementsByOffset;
 
 
-  getElementsByOffset(offsetStart) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.OffsetFilter(offsetStart, ...args));
+  getElementsByOffset(offsetStart, ...args) {
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.OffsetFilter(offsetStart, ...args));
   }
 
   get notes() {
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassFilter('NotRest'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassFilter('NotRest'));
   }
 
   get notesAndRests() {
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassFilter('GeneralNote'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassFilter('GeneralNote'));
   }
 
   get parts() {
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassFilter('Part'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassFilter('Part'));
   } // noinspection JSUnusedGlobalSymbols
 
 
   get spanners() {
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassFilter('Spanner'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassFilter('Spanner'));
   }
 
   get voices() {
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassFilter('Voice'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassFilter('Voice'));
   }
 
 }
 
 class StreamIterator extends _StreamIteratorBase {
-  [Symbol.iterator]() {
-    var _this2 = this;
+  *[Symbol.iterator]() {
+    this.reset();
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var e, matches;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              _this2.reset();
+    while (this.index < this.streamLength) {
+      // noinspection DuplicatedCode
+      this.index += 1;
+      var e = void 0;
 
-            case 1:
-              if (!(_this2.index < _this2.streamLength)) {
-                _context2.next = 22;
-                break;
-              }
+      try {
+        e = this.srcStreamElements[this.index - 1];
+      } catch (exc) {
+        continue;
+      }
 
-              // noinspection DuplicatedCode
-              _this2.index += 1;
-              e = void 0;
-              _context2.prev = 4;
-              e = _this2.srcStreamElements[_this2.index - 1];
-              _context2.next = 11;
-              break;
+      var matches = this.matchesFilters(e);
 
-            case 8:
-              _context2.prev = 8;
-              _context2.t0 = _context2["catch"](4);
-              return _context2.abrupt("continue", 1);
+      if (matches === false) {
+        continue;
+      }
 
-            case 11:
-              matches = _this2.matchesFilters(e);
+      if (matches === StopIterationSingleton) {
+        break;
+      }
 
-              if (!(matches === false)) {
-                _context2.next = 14;
-                break;
-              }
+      if (this.restoreActiveSites) {
+        e.activeSite = this.srcStream;
+      }
 
-              return _context2.abrupt("continue", 1);
+      this.updateActiveInformation();
+      yield e;
+    }
 
-            case 14:
-              if (!(matches === StopIterationSingleton)) {
-                _context2.next = 16;
-                break;
-              }
-
-              return _context2.abrupt("break", 22);
-
-            case 16:
-              if (_this2.restoreActiveSites) {
-                e.activeSite = _this2.srcStream;
-              }
-
-              _this2.updateActiveInformation();
-
-              _context2.next = 20;
-              return e;
-
-            case 20:
-              _context2.next = 1;
-              break;
-
-            case 22:
-              _this2.cleanup();
-
-            case 23:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, null, [[4, 8]]);
-    })();
+    this.cleanup();
   }
 
 }
 class OffsetIterator extends _StreamIteratorBase {
-  constructor(srcStream) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  constructor(srcStream, options = {}) {
     super(srcStream, options);
     this.nextToYield = [];
   }
 
-  [Symbol.iterator]() {
-    var _this3 = this;
+  *[Symbol.iterator]() {
+    this.reset(); // this.sort();
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-      var e, matches, yieldEls, eOffset, forwardIndex, nextE, nextOffset, _iterator7, _step7, el;
+    while (this.index < this.streamLength) {
+      // noinspection DuplicatedCode
+      this.index += 1;
+      var e = void 0;
 
-      return regeneratorRuntime.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _this3.reset(); // this.sort();
+      try {
+        e = this.srcStreamElements[this.index - 1];
+      } catch (exc) {
+        continue;
+      }
 
+      var matches = this.matchesFilters(e);
 
-            case 1:
-              if (!(_this3.index < _this3.streamLength)) {
-                _context3.next = 46;
-                break;
-              }
+      if (matches === false) {
+        continue;
+      }
 
-              // noinspection DuplicatedCode
-              _this3.index += 1;
-              e = void 0;
-              _context3.prev = 4;
-              e = _this3.srcStreamElements[_this3.index - 1];
-              _context3.next = 11;
-              break;
+      if (matches === StopIterationSingleton) {
+        break;
+      }
 
-            case 8:
-              _context3.prev = 8;
-              _context3.t0 = _context3["catch"](4);
-              return _context3.abrupt("continue", 1);
+      var yieldEls = [e];
+      var eOffset = this.srcStream.elementOffset(e);
 
-            case 11:
-              matches = _this3.matchesFilters(e);
+      for (var forwardIndex = this.index; forwardIndex < this.streamLength; forwardIndex++) {
+        var nextE = void 0;
 
-              if (!(matches === false)) {
-                _context3.next = 14;
-                break;
-              }
-
-              return _context3.abrupt("continue", 1);
-
-            case 14:
-              if (!(matches === StopIterationSingleton)) {
-                _context3.next = 16;
-                break;
-              }
-
-              return _context3.abrupt("break", 46);
-
-            case 16:
-              yieldEls = [e];
-              eOffset = _this3.srcStream.elementOffset(e);
-              forwardIndex = _this3.index;
-
-            case 19:
-              if (!(forwardIndex < _this3.streamLength)) {
-                _context3.next = 40;
-                break;
-              }
-
-              nextE = void 0;
-              _context3.prev = 21;
-              nextE = _this3.srcStreamElements[_this3.index - 1];
-              _context3.next = 28;
-              break;
-
-            case 25:
-              _context3.prev = 25;
-              _context3.t1 = _context3["catch"](21);
-              return _context3.abrupt("continue", 37);
-
-            case 28:
-              nextOffset = _this3.srcStream.elementOffset(nextE);
-
-              if (!(nextOffset !== eOffset)) {
-                _context3.next = 33;
-                break;
-              }
-
-              _this3.nextToYield = [nextE];
-              _this3.nextOffsetToYield = nextOffset;
-              return _context3.abrupt("break", 40);
-
-            case 33:
-              if (_this3.matchesFilters(nextE)) {
-                _context3.next = 35;
-                break;
-              }
-
-              return _context3.abrupt("continue", 37);
-
-            case 35:
-              yieldEls.push(e);
-              _this3.index = forwardIndex;
-
-            case 37:
-              forwardIndex++;
-              _context3.next = 19;
-              break;
-
-            case 40:
-              if (_this3.restoreActiveSites) {
-                _iterator7 = _createForOfIteratorHelper(yieldEls);
-
-                try {
-                  for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-                    el = _step7.value;
-                    el.activeSite = _this3.srcStream;
-                  }
-                } catch (err) {
-                  _iterator7.e(err);
-                } finally {
-                  _iterator7.f();
-                }
-              }
-
-              _this3.updateActiveInformation();
-
-              _context3.next = 44;
-              return yieldEls;
-
-            case 44:
-              _context3.next = 1;
-              break;
-
-            case 46:
-              _this3.cleanup();
-
-            case 47:
-            case "end":
-              return _context3.stop();
-          }
+        try {
+          nextE = this.srcStreamElements[this.index - 1];
+        } catch (exc) {
+          continue;
         }
-      }, _callee3, null, [[4, 8], [21, 25]]);
-    })();
+
+        var nextOffset = this.srcStream.elementOffset(nextE);
+
+        if (nextOffset !== eOffset) {
+          this.nextToYield = [nextE];
+          this.nextOffsetToYield = nextOffset;
+          break;
+        }
+
+        if (!this.matchesFilters(nextE)) {
+          continue;
+        }
+
+        yieldEls.push(e);
+        this.index = forwardIndex;
+      }
+
+      if (this.restoreActiveSites) {
+        for (var el of yieldEls) {
+          el.activeSite = this.srcStream;
+        }
+      }
+
+      this.updateActiveInformation();
+      yield yieldEls;
+    }
+
+    this.cleanup();
   }
 
   reset() {
@@ -25649,21 +23441,14 @@ class OffsetIterator extends _StreamIteratorBase {
 
 }
 class RecursiveIterator extends _StreamIteratorBase {
-  constructor(srcStream) {
-    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref2$filterList = _ref2.filterList,
-        filterList = _ref2$filterList === void 0 ? [] : _ref2$filterList,
-        _ref2$restoreActiveSi = _ref2.restoreActiveSites,
-        restoreActiveSites = _ref2$restoreActiveSi === void 0 ? true : _ref2$restoreActiveSi,
-        _ref2$activeInformati = _ref2.activeInformation,
-        activeInformation = _ref2$activeInformati === void 0 ? undefined : _ref2$activeInformati,
-        _ref2$streamsOnly = _ref2.streamsOnly,
-        streamsOnly = _ref2$streamsOnly === void 0 ? false : _ref2$streamsOnly,
-        _ref2$includeSelf = _ref2.includeSelf,
-        includeSelf = _ref2$includeSelf === void 0 ? false : _ref2$includeSelf,
-        _ref2$ignoreSorting = _ref2.ignoreSorting,
-        ignoreSorting = _ref2$ignoreSorting === void 0 ? false : _ref2$ignoreSorting;
-
+  constructor(srcStream, {
+    filterList = [],
+    restoreActiveSites = true,
+    activeInformation = undefined,
+    streamsOnly = false,
+    includeSelf = false,
+    ignoreSorting = false
+  } = {}) {
     super(srcStream, {
       filterList,
       restoreActiveSites,
@@ -25676,7 +23461,7 @@ class RecursiveIterator extends _StreamIteratorBase {
     this.ignoreSorting = ignoreSorting;
 
     if (streamsOnly) {
-      this.filters.push(new _filters__WEBPACK_IMPORTED_MODULE_7__.ClassFilter('Stream'));
+      this.filters.push(new _filters__WEBPACK_IMPORTED_MODULE_5__.ClassFilter('Stream'));
     }
 
     this.childRecursiveIterator = undefined;
@@ -25689,143 +23474,60 @@ class RecursiveIterator extends _StreamIteratorBase {
     super.reset();
   }
 
-  [Symbol.iterator]() {
-    var _this4 = this;
+  *[Symbol.iterator]() {
+    this.reset(); // in __iter__.
 
-    return /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-      var e, newStartOffset, _iterator8, _step8, _e;
+    if (this.returnSelf && this.matchesFilters(this.srcStream)) {
+      this.activeInformation.stream = undefined;
+      this.activeInformation.index = -1;
+      this.activeInformation.lastYielded = this.srcStream;
+      this.returnSelf = false;
+      yield this.srcStream;
+    } else if (this.returnSelf) {
+      // did not match filters...
+      this.returnSelf = false;
+    }
 
-      return regeneratorRuntime.wrap(function _callee4$(_context4) {
-        while (1) {
-          switch (_context4.prev = _context4.next) {
-            case 0:
-              _this4.reset(); // in __iter__.
+    while (this.index < this.streamLength) {
+      this.index += 1;
+      var e = this.srcStreamElements[this.index - 1];
 
+      if (e === undefined) {
+        // maybe can happen if elements changed.
+        continue;
+      }
 
-              if (!(_this4.returnSelf && _this4.matchesFilters(_this4.srcStream))) {
-                _context4.next = 10;
-                break;
-              }
-
-              _this4.activeInformation.stream = undefined;
-              _this4.activeInformation.index = -1;
-              _this4.activeInformation.lastYielded = _this4.srcStream;
-              _this4.returnSelf = false;
-              _context4.next = 8;
-              return _this4.srcStream;
-
-            case 8:
-              _context4.next = 11;
-              break;
-
-            case 10:
-              if (_this4.returnSelf) {
-                // did not match filters...
-                _this4.returnSelf = false;
-              }
-
-            case 11:
-              if (!(_this4.index < _this4.streamLength)) {
-                _context4.next = 46;
-                break;
-              }
-
-              _this4.index += 1;
-              e = _this4.srcStreamElements[_this4.index - 1];
-
-              if (!(e === undefined)) {
-                _context4.next = 16;
-                break;
-              }
-
-              return _context4.abrupt("continue", 11);
-
-            case 16:
-              if (!_this4.matchesFilters(e)) {
-                _context4.next = 22;
-                break;
-              }
-
-              if (_this4.restoreActiveSites) {
-                e.activeSite = _this4.srcStream;
-              }
-
-              _this4.updateActiveInformation();
-
-              _this4.activeInformation.lastYielded = e;
-              _context4.next = 22;
-              return e;
-
-            case 22:
-              if (!e.isStream) {
-                _context4.next = 44;
-                break;
-              }
-
-              _this4.childRecursiveIterator = new RecursiveIterator(e, {
-                restoreActiveSites: _this4.restoreActiveSites,
-                filterList: _this4.filters,
-                activeInformation: _this4.activeInformation,
-                includeSelf: false,
-                ignoreSorting: _this4.ignoreSorting
-              });
-              newStartOffset = _this4.iteratorStartOffsetInHierarchy + _this4.srcStream.elementOffset(e);
-              _this4.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
-              _iterator8 = _createForOfIteratorHelper(_this4.childRecursiveIterator);
-              _context4.prev = 27;
-
-              _iterator8.s();
-
-            case 29:
-              if ((_step8 = _iterator8.n()).done) {
-                _context4.next = 35;
-                break;
-              }
-
-              _e = _step8.value;
-              _context4.next = 33;
-              return _e;
-
-            case 33:
-              _context4.next = 29;
-              break;
-
-            case 35:
-              _context4.next = 40;
-              break;
-
-            case 37:
-              _context4.prev = 37;
-              _context4.t0 = _context4["catch"](27);
-
-              _iterator8.e(_context4.t0);
-
-            case 40:
-              _context4.prev = 40;
-
-              _iterator8.f();
-
-              return _context4.finish(40);
-
-            case 43:
-              _this4.childRecursiveIterator = undefined;
-
-            case 44:
-              _context4.next = 11;
-              break;
-
-            case 46:
-              _this4.activeInformation.lastYielded = undefined;
-
-              _this4.cleanup();
-
-            case 48:
-            case "end":
-              return _context4.stop();
-          }
+      if (this.matchesFilters(e)) {
+        if (this.restoreActiveSites) {
+          e.activeSite = this.srcStream;
         }
-      }, _callee4, null, [[27, 37, 40, 43]]);
-    })();
+
+        this.updateActiveInformation();
+        this.activeInformation.lastYielded = e;
+        yield e;
+      }
+
+      if (e.isStream) {
+        this.childRecursiveIterator = new RecursiveIterator(e, {
+          restoreActiveSites: this.restoreActiveSites,
+          filterList: this.filters,
+          activeInformation: this.activeInformation,
+          includeSelf: false,
+          ignoreSorting: this.ignoreSorting
+        });
+        var newStartOffset = this.iteratorStartOffsetInHierarchy + this.srcStream.elementOffset(e);
+        this.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
+
+        for (var _e of this.childRecursiveIterator) {
+          yield _e;
+        }
+
+        this.childRecursiveIterator = undefined;
+      }
+    }
+
+    this.activeInformation.lastYielded = undefined;
+    this.cleanup();
   }
 
   matchingElements() {
@@ -25912,32 +23614,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_number_to_fixed_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.number.to-fixed.js */ "./node_modules/core-js/modules/es.number.to-fixed.js");
 /* harmony import */ var core_js_modules_es_number_to_fixed_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_number_to_fixed_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.set.js */ "./node_modules/core-js/modules/es.set.js");
-/* harmony import */ var core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! regenerator-runtime/runtime.js */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../beam */ "./src/music21/beam.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../beam */ "./src/music21/beam.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
 
 
 
 
 
-
-
-
-var _marked = /*#__PURE__*/regeneratorRuntime.mark(iterateBeamGroups);
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -25947,13 +23635,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
  // for typing only -- circular import otherwise
 
-function makeBeams(s) {
-  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      _ref$inPlace = _ref.inPlace,
-      inPlace = _ref$inPlace === void 0 ? false : _ref$inPlace,
-      _ref$setStemDirection = _ref.setStemDirections,
-      setStemDirections = _ref$setStemDirection === void 0 ? true : _ref$setStemDirection;
-
+function makeBeams(s, {
+  inPlace = false,
+  setStemDirections = true
+} = {}) {
   var returnObj = s;
 
   if (!inPlace) {
@@ -25967,96 +23652,66 @@ function makeBeams(s) {
   } else {
     mColl = [];
 
-    var _iterator = _createForOfIteratorHelper(returnObj.getElementsByClass('Measure')),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var m = _step.value;
-        mColl.push(m);
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+    for (var m of returnObj.getElementsByClass('Measure')) {
+      mColl.push(m);
     }
   }
 
   var lastTimeSignature;
 
-  var _iterator2 = _createForOfIteratorHelper(mColl),
-      _step2;
+  for (var _m of mColl) {
+    if (_m.timeSignature !== undefined) {
+      lastTimeSignature = _m.timeSignature;
+    }
 
-  try {
-    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var _m = _step2.value;
-
-      if (_m.timeSignature !== undefined) {
-        lastTimeSignature = _m.timeSignature;
-      }
-
-      if (lastTimeSignature === undefined) {
-        throw new _stream__WEBPACK_IMPORTED_MODULE_9__.StreamException('Need a Time Signature to process beams');
-      } // todo voices!
+    if (lastTimeSignature === undefined) {
+      throw new _stream__WEBPACK_IMPORTED_MODULE_7__.StreamException('Need a Time Signature to process beams');
+    } // todo voices!
 
 
-      if (_m.length <= 1) {
-        continue; // nothing to beam.
-      }
+    if (_m.length <= 1) {
+      continue; // nothing to beam.
+    }
 
-      var noteStream = _m.notesAndRests;
-      var durList = [];
+    var noteStream = _m.notesAndRests;
+    var durList = [];
 
-      var _iterator3 = _createForOfIteratorHelper(noteStream),
-          _step3;
+    for (var n of noteStream) {
+      durList.push(n.duration);
+    }
 
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var _n = _step3.value;
-          durList.push(_n.duration);
-        }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
-      }
+    var durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
+    var durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
 
-      var durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
-      var durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
+    var barQL = lastTimeSignature.barDuration.quarterLength;
 
-      var barQL = lastTimeSignature.barDuration.quarterLength;
+    if (durSum > barQL) {
+      continue;
+    }
 
-      if (durSum > barQL) {
-        continue;
-      }
+    var offset = 0.0;
 
-      var offset = 0.0;
+    if (_m.paddingLeft !== 0.0 && _m.paddingLeft !== undefined) {
+      offset = _m.paddingLeft;
+    } else if (noteStream.highestTime < barQL) {
+      offset = barQL - noteStream.highestTime;
+    }
 
-      if (_m.paddingLeft !== 0.0 && _m.paddingLeft !== undefined) {
-        offset = _m.paddingLeft;
-      } else if (noteStream.highestTime < barQL) {
-        offset = barQL - noteStream.highestTime;
-      }
+    var beamsList = lastTimeSignature.getBeams(noteStream, {
+      measureStartOffset: offset
+    });
 
-      var beamsList = lastTimeSignature.getBeams(noteStream, {
-        measureStartOffset: offset
-      });
+    for (var i = 0; i < noteStream.length; i++) {
+      var _n = noteStream.get(i);
 
-      for (var i = 0; i < noteStream.length; i++) {
-        var n = noteStream.get(i);
-        var thisBeams = beamsList[i];
+      var thisBeams = beamsList[i];
 
-        if (thisBeams !== undefined) {
-          n.beams = thisBeams;
-        } else {
-          n.beams = new _beam__WEBPACK_IMPORTED_MODULE_7__.Beams();
-        }
+      if (thisBeams !== undefined) {
+        _n.beams = thisBeams;
+      } else {
+        _n.beams = new _beam__WEBPACK_IMPORTED_MODULE_5__.Beams();
       }
     }
-  } catch (err) {
-    _iterator2.e(err);
-  } finally {
-    _iterator2.f();
   }
 
   if (setStemDirections) {
@@ -26066,180 +23721,80 @@ function makeBeams(s) {
 
   return returnObj;
 }
-function iterateBeamGroups(s) {
-  var _ref2,
-      _ref2$skipNoBeams,
-      skipNoBeams,
-      _ref2$recurse,
-      recurse,
-      iterator,
-      current_beam_group,
-      in_beam_group,
-      _iterator4,
-      _step4,
-      untyped_el,
-      el,
-      first_el_type,
-      _args = arguments;
+function* iterateBeamGroups(s, {
+  skipNoBeams = true,
+  recurse = true
+} = {}) {
+  var iterator;
 
-  return regeneratorRuntime.wrap(function iterateBeamGroups$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _ref2 = _args.length > 1 && _args[1] !== undefined ? _args[1] : {}, _ref2$skipNoBeams = _ref2.skipNoBeams, skipNoBeams = _ref2$skipNoBeams === void 0 ? true : _ref2$skipNoBeams, _ref2$recurse = _ref2.recurse, recurse = _ref2$recurse === void 0 ? true : _ref2$recurse;
+  if (recurse) {
+    iterator = s.recurse();
+  } else {
+    iterator = s.iter;
+  }
 
-          if (recurse) {
-            iterator = s.recurse();
-          } else {
-            iterator = s.iter;
-          }
+  var current_beam_group = [];
+  var in_beam_group = false;
 
-          current_beam_group = [];
-          in_beam_group = false;
-          _iterator4 = _createForOfIteratorHelper(iterator.getElementsByClass('NotRest'));
-          _context.prev = 5;
+  for (var untyped_el of iterator.getElementsByClass('NotRest')) {
+    var el = untyped_el;
+    var first_el_type = void 0;
 
-          _iterator4.s();
-
-        case 7:
-          if ((_step4 = _iterator4.n()).done) {
-            _context.next = 26;
-            break;
-          }
-
-          untyped_el = _step4.value;
-          el = untyped_el;
-          first_el_type = void 0;
-
-          if (el.beams !== undefined && el.beams.getNumbers().includes(1)) {
-            first_el_type = el.beams.getTypeByNumber(1);
-          }
-
-          if (first_el_type === 'start') {
-            in_beam_group = true;
-          }
-
-          if (in_beam_group) {
-            current_beam_group.push(el);
-          }
-
-          if (!(first_el_type === 'stop')) {
-            _context.next = 21;
-            break;
-          }
-
-          _context.next = 17;
-          return current_beam_group;
-
-        case 17:
-          current_beam_group = [];
-          in_beam_group = false;
-          _context.next = 24;
-          break;
-
-        case 21:
-          if (!(!skipNoBeams && !in_beam_group)) {
-            _context.next = 24;
-            break;
-          }
-
-          _context.next = 24;
-          return [el];
-
-        case 24:
-          _context.next = 7;
-          break;
-
-        case 26:
-          _context.next = 31;
-          break;
-
-        case 28:
-          _context.prev = 28;
-          _context.t0 = _context["catch"](5);
-
-          _iterator4.e(_context.t0);
-
-        case 31:
-          _context.prev = 31;
-
-          _iterator4.f();
-
-          return _context.finish(31);
-
-        case 34:
-          if (!current_beam_group.length) {
-            _context.next = 37;
-            break;
-          }
-
-          _context.next = 37;
-          return current_beam_group;
-
-        case 37:
-        case "end":
-          return _context.stop();
-      }
+    if (el.beams !== undefined && el.beams.getNumbers().includes(1)) {
+      first_el_type = el.beams.getTypeByNumber(1);
     }
-  }, _marked, null, [[5, 28, 31, 34]]);
-}
-function setStemDirectionForBeamGroups(s) {
-  var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      _ref3$setNewStems = _ref3.setNewStems,
-      setNewStems = _ref3$setNewStems === void 0 ? true : _ref3$setNewStems,
-      _ref3$overrideConsist = _ref3.overrideConsistentStemDirections,
-      overrideConsistentStemDirections = _ref3$overrideConsist === void 0 ? false : _ref3$overrideConsist;
 
-  var _iterator5 = _createForOfIteratorHelper(iterateBeamGroups(s, {
+    if (first_el_type === 'start') {
+      in_beam_group = true;
+    }
+
+    if (in_beam_group) {
+      current_beam_group.push(el);
+    }
+
+    if (first_el_type === 'stop') {
+      yield current_beam_group;
+      current_beam_group = [];
+      in_beam_group = false;
+    } else if (!skipNoBeams && !in_beam_group) {
+      yield [el];
+    }
+  }
+
+  if (current_beam_group.length) {
+    yield current_beam_group;
+  }
+}
+function setStemDirectionForBeamGroups(s, {
+  setNewStems = true,
+  overrideConsistentStemDirections = false
+} = {}) {
+  for (var beamGroup of iterateBeamGroups(s, {
     skipNoBeams: true,
     recurse: true
-  })),
-      _step5;
-
-  try {
-    for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-      var beamGroup = _step5.value;
-      setStemDirectionOneGroup(beamGroup, {
-        setNewStems,
-        overrideConsistentStemDirections
-      });
-    }
-  } catch (err) {
-    _iterator5.e(err);
-  } finally {
-    _iterator5.f();
+  })) {
+    setStemDirectionOneGroup(beamGroup, {
+      setNewStems,
+      overrideConsistentStemDirections
+    });
   }
 }
 var _up_down = ['up', 'down'];
 var _up_down_unspecified = ['up', 'down', 'unspecified'];
-function setStemDirectionOneGroup(group) {
-  var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      _ref4$setNewStems = _ref4.setNewStems,
-      setNewStems = _ref4$setNewStems === void 0 ? true : _ref4$setNewStems,
-      _ref4$overrideConsist = _ref4.overrideConsistentStemDirections,
-      overrideConsistentStemDirections = _ref4$overrideConsist === void 0 ? false : _ref4$overrideConsist;
-
+function setStemDirectionOneGroup(group, {
+  setNewStems = true,
+  overrideConsistentStemDirections = false
+} = {}) {
   if (!group.length) {
     return; // should not happen
   }
 
   var up_down_stem_direction = new Set();
 
-  var _iterator6 = _createForOfIteratorHelper(group),
-      _step6;
-
-  try {
-    for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-      var n = _step6.value;
-
-      if (_up_down.includes(n.stemDirection)) {
-        up_down_stem_direction.add(n.stemDirection);
-      }
+  for (var n of group) {
+    if (_up_down.includes(n.stemDirection)) {
+      up_down_stem_direction.add(n.stemDirection);
     }
-  } catch (err) {
-    _iterator6.e(err);
-  } finally {
-    _iterator6.f();
   }
 
   var has_consistent_stem_directions = false;
@@ -26248,7 +23803,7 @@ function setStemDirectionOneGroup(group) {
     has_consistent_stem_directions = true;
   }
 
-  var clef_context = group[0].getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_8__.Clef);
+  var clef_context = group[0].getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_6__.Clef);
 
   if (clef_context === undefined) {
     return;
@@ -26256,40 +23811,20 @@ function setStemDirectionOneGroup(group) {
 
   var pitchList = [];
 
-  var _iterator7 = _createForOfIteratorHelper(group),
-      _step7;
-
-  try {
-    for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-      var _n2 = _step7.value;
-      pitchList.push(..._n2.pitches);
-    }
-  } catch (err) {
-    _iterator7.e(err);
-  } finally {
-    _iterator7.f();
+  for (var _n2 of group) {
+    pitchList.push(..._n2.pitches);
   }
 
   var groupStemDirection = clef_context.getStemDirectionForPitches(pitchList);
 
-  var _iterator8 = _createForOfIteratorHelper(group),
-      _step8;
+  for (var _n3 of group) {
+    var noteDirection = _n3.stemDirection;
 
-  try {
-    for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-      var _n3 = _step8.value;
-      var noteDirection = _n3.stemDirection;
-
-      if (noteDirection === 'unspecified' && !setNewStems) {// continue
-      } else if (_up_down.includes(noteDirection) && !overrideConsistentStemDirections && has_consistent_stem_directions) {// continue
-      } else if (_up_down_unspecified.includes(noteDirection)) {
-        _n3.stemDirection = groupStemDirection;
-      }
+    if (noteDirection === 'unspecified' && !setNewStems) {// continue
+    } else if (_up_down.includes(noteDirection) && !overrideConsistentStemDirections && has_consistent_stem_directions) {// continue
+    } else if (_up_down_unspecified.includes(noteDirection)) {
+      _n3.stemDirection = groupStemDirection;
     }
-  } catch (err) {
-    _iterator8.e(err);
-  } finally {
-    _iterator8.f();
   }
 }
 
@@ -26313,12 +23848,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.map.js */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
-
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 
 
 
@@ -26328,7 +23860,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function make_accidental(path) {
-  var acc = (0,_common__WEBPACK_IMPORTED_MODULE_3__.makeSVGright)();
+  var acc = (0,_common__WEBPACK_IMPORTED_MODULE_2__.makeSVGright)();
   acc.setAttribute('viewBox', '0 0 1000 1000');
   var acc_path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   acc_path.setAttribute('fill', '#000');
@@ -26371,29 +23903,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Metronome": () => (/* binding */ Metronome),
 /* harmony export */   "MetronomeMark": () => (/* binding */ MetronomeMark)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21 features.
@@ -26419,7 +23951,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
-class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception {} // noinspection JSNonASCIINames,NonAsciiCharacters
+class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception {} // noinspection JSNonASCIINames,NonAsciiCharacters
 
 /**
  * Object mapping names to tempo values
@@ -26482,9 +24014,8 @@ var baseTempo = 60;
  * @property {number} chirpTimeout - an index of a timeout object for chirping
  */
 
-class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
-  constructor() {
-    var tempoInt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : baseTempo;
+class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
+  constructor(tempoInt = baseTempo) {
     super();
     this._tempo = baseTempo;
     this.numBeatsPerMeasure = 4;
@@ -26527,7 +24058,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
 
   _silentFlash(flashColor) {
     this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 / 4, function silentFadeOut() {
-      jquery__WEBPACK_IMPORTED_MODULE_3__(this).css('background-color', '#ffffff').fadeIn(1);
+      jquery__WEBPACK_IMPORTED_MODULE_5__(this).css('background-color', '#ffffff').fadeIn(1);
     });
   }
   /**
@@ -26542,8 +24073,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
       this.beat = 1;
 
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_4__.noteOn(0, 96, 100, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_4__.noteOff(0, 96, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_6__.noteOn(0, 96, 100, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_6__.noteOff(0, 96, 0.1);
       }
 
       if (this.flash === true) {
@@ -26551,8 +24082,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
       }
     } else {
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_4__.noteOn(0, 84, 70, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_4__.noteOff(0, 84, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_6__.noteOn(0, 84, 70, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_6__.noteOff(0, 84, 0.1);
       }
 
       if (this.flash === true) {
@@ -26588,9 +24119,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
    */
 
 
-  increaseSpeed() {
-    var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-
+  increaseSpeed(n = 1) {
     // increase by one metronome 'click' for every n
     for (var i = 0; i < n; i++) {
       var t = this.tempo;
@@ -26622,9 +24151,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
    */
 
 
-  decreaseSpeed() {
-    var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-
+  decreaseSpeed(n = 1) {
     for (var i = 0; i < n; i++) {
       var t = this.tempo;
       var trL = this.tempoRanges.length;
@@ -26660,12 +24187,12 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
      */
     var $where;
 
-    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_3__) {
+    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_5__) {
       $where = where;
-    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_3__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_3__(where);
+    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_5__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_5__(where);
     } else {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_3__('body');
+      $where = jquery__WEBPACK_IMPORTED_MODULE_5__('body');
     }
 
     var metroThis = this;
@@ -26674,7 +24201,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
      * @type {jQuery}
      */
 
-    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_3__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_5__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
     $tempoHolder.css({
       'font-size': '24px',
       'padding-left': '10px',
@@ -26685,14 +24212,14 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
      * @type {jQuery}
      */
 
-    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_3__('<div class="metronomeRendered"></div>');
+    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_5__('<div class="metronomeRendered"></div>');
     $newDiv.append($tempoHolder);
     /**
      *
      * @type {jQuery}
      */
 
-    var b1 = jquery__WEBPACK_IMPORTED_MODULE_3__('<button>start</button>');
+    var b1 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>start</button>');
     b1.on('click', () => {
       metroThis.chirp();
     });
@@ -26701,7 +24228,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
      * @type {jQuery}
      */
 
-    var b2 = jquery__WEBPACK_IMPORTED_MODULE_3__('<button>stop</button>');
+    var b2 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>stop</button>');
     b2.on('click', () => {
       metroThis.stopChirp();
     });
@@ -26712,20 +24239,20 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
      * @type {jQuery}
      */
 
-    var b3 = jquery__WEBPACK_IMPORTED_MODULE_3__('<button>up</button>');
+    var b3 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>up</button>');
     b3.on('click', function increaseSpeedButton() {
       metroThis.increaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_3__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_5__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     /**
      *
      * @type {jQuery}
      */
 
-    var b4 = jquery__WEBPACK_IMPORTED_MODULE_3__('<button>down</button>');
+    var b4 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>down</button>');
     b4.on('click', function decreaseSpeedButton() {
       metroThis.decreaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_3__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_5__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     $newDiv.append(b3);
     $newDiv.append(b4);
@@ -26734,7 +24261,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
      * @type {jQuery}
      */
 
-    var $flash = jquery__WEBPACK_IMPORTED_MODULE_3__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+    var $flash = jquery__WEBPACK_IMPORTED_MODULE_5__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     $flash.css('margin-left', '40px');
     $flash.css('height', '40px');
     $newDiv.append($flash);
@@ -26746,8 +24273,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
 }
 
 class TempoText {
-  constructor() {
-    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  constructor(text = '') {
     this.text = text;
   }
 
@@ -26768,18 +24294,13 @@ class TempoText {
  */
 
 
-class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
-  constructor() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$text = _ref.text,
-        text = _ref$text === void 0 ? undefined : _ref$text,
-        _ref$number = _ref.number,
-        number = _ref$number === void 0 ? undefined : _ref$number,
-        _ref$referent = _ref.referent,
-        referent = _ref$referent === void 0 ? undefined : _ref$referent,
-        _ref$parentheses = _ref.parentheses,
-        parentheses = _ref$parentheses === void 0 ? false : _ref$parentheses;
-
+class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
+  constructor({
+    text = undefined,
+    number = undefined,
+    referent = undefined,
+    parentheses = false
+  } = {}) {
     super();
     this.parentheses = false;
     this._number = number;
@@ -26869,9 +24390,9 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
 
   set referent(value) {
     if (value === undefined) {
-      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_7__.Duration(1);
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_9__.Duration(1);
     } else if (['number', 'string'].includes(typeof value)) {
-      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_7__.Duration(value);
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_9__.Duration(value);
     } else if (value.classes.includes('Duration')) {
       this._referent = value;
     } else if (value.duration) {
@@ -26891,29 +24412,17 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
     } else if (tempoNames.includes(tempoStr)) {
       post = defaultTempoValues[tempoStr];
     } else {
-      var _iterator = _createForOfIteratorHelper(tempoStr.split(' ')),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var word = _step.value;
-
-          if (tempoNames.includes(word.toLowerCase())) {
-            post = defaultTempoValues[tempoStr.toLowerCase()];
-          }
+      for (var word of tempoStr.split(' ')) {
+        if (tempoNames.includes(word.toLowerCase())) {
+          post = defaultTempoValues[tempoStr.toLowerCase()];
         }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
       }
     }
 
     return post;
   }
 
-  _getDefaultText(number) {
-    var spread = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  _getDefaultText(number, spread = 2) {
     var tempoNumber = typeof number === 'number' ? number : parseFloat(number);
     return Object.keys(defaultTempoValues).find(tempoName => {
       var tempoValue = defaultTempoValues[tempoName];
@@ -26979,8 +24488,7 @@ var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-ri
  */
 
 class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_0__.ProtoM21Object {
-  constructor() {
-    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'start';
+  constructor(type = 'start') {
     super();
     this.style = 'normal';
     this.type = type;
@@ -27022,37 +24530,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "TinyNotation": () => (/* binding */ TinyNotation),
 /* harmony export */   "renderNotationDivs": () => (/* binding */ renderNotationDivs)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.ts");
 
 
 
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -27136,8 +24638,8 @@ function TinyNotation(textIn) {
   textIn = textIn.trim();
   var tokens = textIn.split(' ');
   var optionalScore;
-  var p = new _stream__WEBPACK_IMPORTED_MODULE_10__.Part();
-  var m = new _stream__WEBPACK_IMPORTED_MODULE_10__.Measure();
+  var p = new _stream__WEBPACK_IMPORTED_MODULE_12__.Part();
+  var m = new _stream__WEBPACK_IMPORTED_MODULE_12__.Measure();
   m.number = 1;
   var currentTSBarDuration = 4.0;
   var lastDurationQL = 1.0;
@@ -27159,7 +24661,7 @@ function TinyNotation(textIn) {
     if (m.duration.quarterLength >= currentTSBarDuration || Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001) {
       p.append(m);
       measureNumber += 1;
-      m = new _stream__WEBPACK_IMPORTED_MODULE_10__.Measure();
+      m = new _stream__WEBPACK_IMPORTED_MODULE_12__.Measure();
       m.number = measureNumber;
     }
 
@@ -27174,15 +24676,15 @@ function TinyNotation(textIn) {
     if (tnre.PARTBREAK.exec(token)) {
       if (m.length > 0) {
         p.append(m);
-        m = new _stream__WEBPACK_IMPORTED_MODULE_10__.Measure();
+        m = new _stream__WEBPACK_IMPORTED_MODULE_12__.Measure();
       }
 
       if (optionalScore === undefined) {
-        optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_10__.Score();
+        optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_12__.Score();
       }
 
       optionalScore.insert(0, p);
-      p = new _stream__WEBPACK_IMPORTED_MODULE_10__.Part();
+      p = new _stream__WEBPACK_IMPORTED_MODULE_12__.Part();
       storedDict.lastNoteTied = false;
       storedDict.inTrip = false;
       storedDict.inQuad = false;
@@ -27211,13 +24713,7 @@ function TinyNotation(textIn) {
     if (tnre.ENDBRAC.exec(token)) {
       if (chordObj && tnre.LYRIC.exec(token)) {
         var chordLyric = void 0;
-
-        var _token$split = token.split('_');
-
-        var _token$split2 = _slicedToArray(_token$split, 2);
-
-        token = _token$split2[0];
-        chordLyric = _token$split2[1];
+        [token, chordLyric] = token.split('_');
         chordObj.lyric = chordLyric;
       }
 
@@ -27228,18 +24724,13 @@ function TinyNotation(textIn) {
 
 
     if (tnre.LYRIC.exec(token)) {
-      var _token$split3 = token.split('_');
-
-      var _token$split4 = _slicedToArray(_token$split3, 2);
-
-      token = _token$split4[0];
-      lyric = _token$split4[1];
+      [token, lyric] = token.split('_');
     }
 
     if (tnre.TIMESIG.exec(token)) {
       var _MATCH = tnre.TIMESIG.exec(token);
 
-      var ts = new _meter__WEBPACK_IMPORTED_MODULE_9__.TimeSignature();
+      var ts = new _meter__WEBPACK_IMPORTED_MODULE_11__.TimeSignature();
       ts.numerator = parseInt(_MATCH[1]);
       ts.denominator = parseInt(_MATCH[2]);
       m.timeSignature = ts;
@@ -27247,27 +24738,27 @@ function TinyNotation(textIn) {
 
       continue;
     } else if (tnre.REST.exec(token)) {
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_8__.Rest(lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Rest(lastDurationQL);
     } else if (tnre.OCTAVE2.exec(token)) {
       var _MATCH2 = tnre.OCTAVE2.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_8__.Note(_MATCH2[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(_MATCH2[1], lastDurationQL);
       noteObj.pitch.octave = 4 - _MATCH2[0].length;
     } else if (tnre.OCTAVE3.exec(token)) {
       var _MATCH3 = tnre.OCTAVE3.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_8__.Note(_MATCH3[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(_MATCH3[1], lastDurationQL);
       noteObj.pitch.octave = 3;
     } else if (tnre.OCTAVE5.exec(token)) {
       // must match octave 5 before 4
       var _MATCH4 = tnre.OCTAVE5.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_8__.Note(_MATCH4[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(_MATCH4[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 3 + _MATCH4[0].length;
     } else if (tnre.OCTAVE4.exec(token)) {
       var _MATCH5 = tnre.OCTAVE4.exec(token);
 
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_8__.Note(_MATCH5[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(_MATCH5[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 4;
     }
 
@@ -27280,7 +24771,7 @@ function TinyNotation(textIn) {
     }
 
     if (tnre.TIE.exec(token)) {
-      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_11__.Tie('start');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_13__.Tie('start');
 
       if (storedDict.lastNoteTied) {
         noteObj.tie.type = 'continue';
@@ -27288,7 +24779,7 @@ function TinyNotation(textIn) {
 
       storedDict.lastNoteTied = true;
     } else if (storedDict.lastNoteTied) {
-      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_11__.Tie('stop');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_13__.Tie('stop');
       storedDict.lastNoteTied = false;
     }
 
@@ -27296,14 +24787,14 @@ function TinyNotation(textIn) {
       var _MATCH6 = tnre.SHARP.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(_MATCH6[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_9__.Accidental(_MATCH6[1].length);
     } else if (tnre.FLAT.exec(token)) {
       var _MATCH7 = tnre.FLAT.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(-1 * _MATCH7[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_9__.Accidental(-1 * _MATCH7[1].length);
     } else if (tnre.NAT.exec(token)) {
-      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental('natural');
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_9__.Accidental('natural');
       noteObj.pitch.accidental.displayType = 'always';
     }
 
@@ -27326,18 +24817,18 @@ function TinyNotation(textIn) {
 
     if (storedDict.inTrip) {
       // console.log(noteObj.duration.quarterLength);
-      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_6__.Tuplet(3, 2, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_8__.Tuplet(3, 2, noteObj.duration.quarterLength));
     }
 
     if (storedDict.inQuad) {
-      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_6__.Tuplet(4, 3, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_8__.Tuplet(4, 3, noteObj.duration.quarterLength));
     }
 
     if (storedDict.inChord) {
       if (chordObj) {
         chordObj.add(noteObj);
       } else {
-        chordObj = new _chord__WEBPACK_IMPORTED_MODULE_4__.Chord([noteObj]);
+        chordObj = new _chord__WEBPACK_IMPORTED_MODULE_6__.Chord([noteObj]);
       }
     }
 
@@ -27370,9 +24861,9 @@ function TinyNotation(textIn) {
       optionalScore.insert(0, p);
     }
 
-    for (var _i2 = 0; _i2 < optionalScore.parts.length; _i2++) {
-      var innerPart = optionalScore.parts.get(_i2);
-      var innerPartClef = _clef__WEBPACK_IMPORTED_MODULE_5__.bestClef(innerPart);
+    for (var _i = 0; _i < optionalScore.parts.length; _i++) {
+      var innerPart = optionalScore.parts.get(_i);
+      var innerPartClef = _clef__WEBPACK_IMPORTED_MODULE_7__.bestClef(innerPart);
       var innerMeasure = innerPart.getElementsByClass('Measure').get(0);
 
       if (innerMeasure !== undefined) {
@@ -27382,7 +24873,7 @@ function TinyNotation(textIn) {
 
     returnObject = optionalScore;
   } else {
-    var bestClef = _clef__WEBPACK_IMPORTED_MODULE_5__.bestClef(p);
+    var bestClef = _clef__WEBPACK_IMPORTED_MODULE_7__.bestClef(p);
     p.getElementsByClass('Measure').get(0).insert(0, bestClef);
     returnObject = p;
   }
@@ -27400,21 +24891,19 @@ function TinyNotation(textIn) {
  * @param {HTMLElement|jQuery} [selector]
  */
 
-function renderNotationDivs() {
-  var classTypes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '.music21.tinyNotation';
-  var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+function renderNotationDivs(classTypes = '.music21.tinyNotation', selector = undefined) {
   var $allRender;
 
   if (selector === undefined) {
-    $allRender = jquery__WEBPACK_IMPORTED_MODULE_3__(classTypes);
+    $allRender = jquery__WEBPACK_IMPORTED_MODULE_5__(classTypes);
   } else {
     /**
      * @type {jQuery}
      */
     var $selector;
 
-    if (!(selector instanceof jquery__WEBPACK_IMPORTED_MODULE_3__)) {
-      $selector = jquery__WEBPACK_IMPORTED_MODULE_3__(selector);
+    if (!(selector instanceof jquery__WEBPACK_IMPORTED_MODULE_5__)) {
+      $selector = jquery__WEBPACK_IMPORTED_MODULE_5__(selector);
     } else {
       $selector = selector;
     }
@@ -27424,7 +24913,7 @@ function renderNotationDivs() {
 
   for (var i = 0; i < $allRender.length; i++) {
     var thisTN = $allRender[i];
-    var $thisTN = jquery__WEBPACK_IMPORTED_MODULE_3__(thisTN);
+    var $thisTN = jquery__WEBPACK_IMPORTED_MODULE_5__(thisTN);
     var thisTNContents = void 0;
 
     if ($thisTN.attr('tinynotationcontents') !== undefined) {
@@ -27470,31 +24959,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.flat.js */ "./node_modules/core-js/modules/es.array.flat.js");
 /* harmony import */ var core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.from.js */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.map.js */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each.js */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
+/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each.js */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 
 
 
@@ -27503,22 +24988,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -27543,7 +25012,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
-var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_13__.TrebleClef();
+var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_11__.TrebleClef();
 /**
  * Represents a stack of objects that need to be rendered together.
  *
@@ -27587,29 +25056,19 @@ class RenderStack {
 
     var knownStaves = []; // a list of Vex.Flow.Stave objects...
 
-    var _iterator = _createForOfIteratorHelper(this.allTickables()),
-        _step;
+    for (var t of this.allTickables()) {
+      var thisStaveIndex = knownStaves.indexOf(t.stave);
+      var currentStaveHolder = void 0;
 
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var t = _step.value;
-        var thisStaveIndex = knownStaves.indexOf(t.stave);
-        var currentStaveHolder = void 0;
-
-        if (thisStaveIndex === -1) {
-          knownStaves.push(t.stave);
-          currentStaveHolder = [];
-          tickablesByStave.push(currentStaveHolder);
-        } else {
-          currentStaveHolder = tickablesByStave[thisStaveIndex];
-        }
-
-        currentStaveHolder.push(t);
+      if (thisStaveIndex === -1) {
+        knownStaves.push(t.stave);
+        currentStaveHolder = [];
+        tickablesByStave.push(currentStaveHolder);
+      } else {
+        currentStaveHolder = tickablesByStave[thisStaveIndex];
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
+
+      currentStaveHolder.push(t);
     }
 
     return tickablesByStave;
@@ -27651,9 +25110,7 @@ class RenderStack {
 
 class Renderer {
   // measureFormatters = [];
-  constructor(s) {
-    var div = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    var where = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  constructor(s, div = undefined, where = undefined) {
     this.rendererType = 'svg';
     this.div = undefined;
     this.$div = undefined;
@@ -27676,7 +25133,7 @@ class Renderer {
         this.div = div[0];
       } else {
         this.div = div;
-        this.$div = jquery__WEBPACK_IMPORTED_MODULE_10__(div);
+        this.$div = jquery__WEBPACK_IMPORTED_MODULE_8__(div);
       }
     }
 
@@ -27684,7 +25141,7 @@ class Renderer {
       if (where.jquery !== undefined) {
         this.$where = where;
       } else {
-        this.$where = jquery__WEBPACK_IMPORTED_MODULE_10__(where);
+        this.$where = jquery__WEBPACK_IMPORTED_MODULE_8__(where);
       }
     }
   }
@@ -27693,15 +25150,15 @@ class Renderer {
     var backend;
 
     if (this.rendererType === 'canvas') {
-      backend = (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Renderer.Backends.CANVAS);
+      backend = (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Renderer.Backends.CANVAS);
     } else {
-      backend = (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Renderer.Backends.SVG);
+      backend = (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Renderer.Backends.SVG);
     }
 
     if (this._vfRenderer !== undefined) {
       return this._vfRenderer;
     } else {
-      this._vfRenderer = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Renderer)(this.div, backend);
+      this._vfRenderer = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Renderer)(this.div, backend);
 
       if (this.rendererType === 'svg') {
         // this is NOT NOT NOT a JQuery object.
@@ -27745,9 +25202,7 @@ class Renderer {
    */
 
 
-  render() {
-    var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  render(s = undefined) {
     if (s === undefined) {
       s = this.stream;
     }
@@ -27793,18 +25248,8 @@ class Renderer {
     //
     var parts = s.parts;
 
-    var _iterator2 = _createForOfIteratorHelper(parts),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var subStream = _step2.value;
-        this.preparePartlike(subStream);
-      }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
+    for (var subStream of parts) {
+      this.preparePartlike(subStream);
     }
 
     this.addStaffConnectors(s);
@@ -27877,51 +25322,28 @@ class Renderer {
       // get elements outside of voices;
       var firstVoiceCopy = m.getElementsByClass('Voice').get(0).clone(false);
 
-      var _iterator3 = _createForOfIteratorHelper(m.getElementsNotOfClass('Voice')),
-          _step3;
-
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var el = _step3.value;
-          firstVoiceCopy.insert(el.offset, el);
-        }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
+      for (var el of m.getElementsNotOfClass('Voice')) {
+        firstVoiceCopy.insert(el.offset, el);
       }
 
       var rendOp = m.renderOptions; // get render options from Measure;
 
       var stave;
 
-      var _iterator4 = _createForOfIteratorHelper(Array.from(m.getElementsByClass('Voice')).entries()),
-          _step4;
+      for (var [i, voiceStream] of Array.from(m.getElementsByClass('Voice')).entries()) {
+        var voiceToRender = voiceStream;
 
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var _step4$value = _slicedToArray(_step4.value, 2),
-              i = _step4$value[0],
-              voiceStream = _step4$value[1];
-
-          var voiceToRender = voiceStream;
-
-          if (i === 0) {
-            voiceToRender = firstVoiceCopy;
-          } // noinspection JSUnusedAssignment
+        if (i === 0) {
+          voiceToRender = firstVoiceCopy;
+        } // noinspection JSUnusedAssignment
 
 
-          stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
+        stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
 
-          if (i === 0) {
-            voiceStream.activeVFStave = voiceToRender.activeVFStave;
-            voiceStream.storedVexflowStave = voiceToRender.activeVFStave;
-          }
+        if (i === 0) {
+          voiceStream.activeVFStave = voiceToRender.activeVFStave;
+          voiceStream.storedVexflowStave = voiceToRender.activeVFStave;
         }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
       }
     }
 
@@ -27940,9 +25362,7 @@ class Renderer {
    */
 
 
-  prepareFlat(s, stack) {
-    var optionalStave = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    var optional_renderOp = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  prepareFlat(s, stack, optionalStave = undefined, optional_renderOp = undefined) {
     s.makeNotation();
     var stave;
 
@@ -27976,10 +25396,7 @@ class Renderer {
    */
 
 
-  renderStave() {
-    var m = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    var optional_rendOp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
+  renderStave(m = undefined, optional_rendOp = undefined) {
     if (m === undefined) {
       m = this.stream;
     }
@@ -28066,7 +25483,7 @@ class Renderer {
       }
 
       if (onSameSystem) {
-        var vfTie = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveTie)({
+        var vfTie = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveTie)({
           first_note: thisNote.activeVexflowNote,
           last_note: nextNote.activeVexflowNote,
           first_indices: [0],
@@ -28075,12 +25492,12 @@ class Renderer {
         this.vfTies.push(vfTie);
       } else {
         // console.log('got me a tie across systemBreaks!');
-        var vfTie1 = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveTie)({
+        var vfTie1 = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveTie)({
           first_note: thisNote.activeVexflowNote,
           first_indices: [0]
         });
         this.vfTies.push(vfTie1);
-        var vfTie2 = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveTie)({
+        var vfTie2 = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveTie)({
           last_note: nextNote.activeVexflowNote,
           first_indices: [0]
         });
@@ -28099,10 +25516,7 @@ class Renderer {
    */
 
 
-  getVoice() {
-    var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    var stave = arguments.length > 1 ? arguments[1] : undefined;
-
+  getVoice(s = undefined, stave) {
     if (s === undefined) {
       s = this.stream;
     } // gets a group of notes as a voice, but completely un-formatted and not drawn.
@@ -28160,8 +25574,7 @@ class Renderer {
    */
 
 
-  formatVoiceGroup(stack) {
-    var autoBeam = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  formatVoiceGroup(stack, autoBeam = undefined) {
     // formats a group of voices to use the same formatter; returns the formatter
     // if autoBeam is true then it will apply beams for each voice and put them in
     // this.beamGroups;
@@ -28174,7 +25587,7 @@ class Renderer {
       autoBeam = measuresOrVoices[0].autoBeam;
     }
 
-    var formatter = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Formatter)(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
+    var formatter = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Formatter)(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
     // console.log(minLength);
 
     if (vf_voices.length === 0) {
@@ -28190,8 +25603,8 @@ class Renderer {
       }
     }
 
-    for (var _i2 = 0; _i2 < allTickables.length; _i2++) {
-      allTickables[_i2].stave.setNoteStartX(maxGlyphStart); // corrected!
+    for (var _i = 0; _i < allTickables.length; _i++) {
+      allTickables[_i].stave.setNoteStartX(maxGlyphStart); // corrected!
 
     } // TODO: should do the same for end_x -- for key sig changes, etc...
 
@@ -28200,25 +25613,15 @@ class Renderer {
 
     var tickablesByStave = stack.tickablesByStave();
 
-    var _iterator5 = _createForOfIteratorHelper(tickablesByStave),
-        _step5;
-
-    try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var staveTickables = _step5.value;
-        formatter.joinVoices(staveTickables);
-      }
-    } catch (err) {
-      _iterator5.e(err);
-    } finally {
-      _iterator5.f();
+    for (var staveTickables of tickablesByStave) {
+      formatter.joinVoices(staveTickables);
     }
 
     formatter.formatToStave(allTickables, stave); // VexFlow and native autobeam both wipe out stemDirection. worth it usually...
 
     if (autoBeam && useVexflowAutobeam) {
-      for (var _i3 = 0; _i3 < vf_voices.length; _i3++) {
-        var vf_voice = vf_voices[_i3];
+      for (var _i2 = 0; _i2 < vf_voices.length; _i2++) {
+        var vf_voice = vf_voices[_i2];
         var associatedStream = stack.voiceToStreamMapping.get(vf_voice);
         var beatGroups = void 0;
 
@@ -28226,57 +25629,36 @@ class Renderer {
           beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(); // TODO: getContextByClass...
           // console.log(beatGroups);
         } else {
-          beatGroups = [new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Fraction)(2, 8)]; // default beam groups
+          beatGroups = [new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Fraction)(2, 8)]; // default beam groups
         }
 
-        var beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
+        var beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
         this.beamGroups.push(...beamGroups);
       }
     } else {
-      var _iterator6 = _createForOfIteratorHelper(stack.streams),
-          _step6;
+      for (var s of stack.streams) {
+        var notes = s.flat.notes;
+        var activeBeamGroupNotes = [];
 
-      try {
-        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-          var s = _step6.value;
-          var notes = s.flat.notes;
-          var activeBeamGroupNotes = [];
+        for (var n of notes) {
+          if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+            continue;
+          }
 
-          var _iterator7 = _createForOfIteratorHelper(notes),
-              _step7;
+          var eighthNoteBeam = n.beams.getByNumber(1);
 
-          try {
-            for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-              var n = _step7.value;
+          if (eighthNoteBeam.type === 'start') {
+            activeBeamGroupNotes = [n.activeVexflowNote];
+          } else {
+            activeBeamGroupNotes.push(n.activeVexflowNote);
+          }
 
-              if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
-                continue;
-              }
-
-              var eighthNoteBeam = n.beams.getByNumber(1);
-
-              if (eighthNoteBeam.type === 'start') {
-                activeBeamGroupNotes = [n.activeVexflowNote];
-              } else {
-                activeBeamGroupNotes.push(n.activeVexflowNote);
-              }
-
-              if (eighthNoteBeam.type === 'stop') {
-                var vfBeam = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Beam)(activeBeamGroupNotes, false);
-                this.beamGroups.push(vfBeam);
-                activeBeamGroupNotes = [];
-              }
-            }
-          } catch (err) {
-            _iterator7.e(err);
-          } finally {
-            _iterator7.f();
+          if (eighthNoteBeam.type === 'stop') {
+            var vfBeam = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Beam)(activeBeamGroupNotes, false);
+            this.beamGroups.push(vfBeam);
+            activeBeamGroupNotes = [];
           }
         }
-      } catch (err) {
-        _iterator6.e(err);
-      } finally {
-        _iterator6.f();
       }
     }
 
@@ -28334,11 +25716,11 @@ class Renderer {
     } // console.log('streamLength: ' + streamLength);
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_12__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_10__.debug) {
       console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
     }
 
-    var stave = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Stave)(left, top, width);
+    var stave = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Stave)(left, top, width);
     return stave;
   }
   /**
@@ -28411,7 +25793,7 @@ class Renderer {
       var vxBL = barlineMap[bl];
 
       if (vxBL !== undefined) {
-        stave.setEndBarType((vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Barline.type)[vxBL]);
+        stave.setEndBarType((vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Barline.type)[vxBL]);
       }
     }
   }
@@ -28516,65 +25898,54 @@ class Renderer {
       stave
     };
 
-    var _iterator8 = _createForOfIteratorHelper(s),
-        _step8;
+    for (var thisEl of s) {
+      if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
+        // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
+        var vfn = thisEl.vexflowNote(options);
 
-    try {
-      for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-        var thisEl = _step8.value;
+        if (vfn === undefined) {
+          console.error('Cannot create a vexflowNote from: ', thisEl);
+          continue;
+        }
 
-        if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
-          // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
-          var vfn = thisEl.vexflowNote(options);
+        if (stave !== undefined) {
+          // noinspection TypeScriptValidateJSTypes
+          vfn.setStave(stave);
+        }
 
-          if (vfn === undefined) {
-            console.error('Cannot create a vexflowNote from: ', thisEl);
-            continue;
+        notes.push(vfn); // account for tuplets...
+
+        if (thisEl.duration.tuplets.length > 0) {
+          // only support one tuplet per note -- like vexflow
+          if (activeTuplet === undefined) {
+            activeTuplet = thisEl.duration.tuplets[0];
           }
 
-          if (stave !== undefined) {
-            // noinspection TypeScriptValidateJSTypes
-            vfn.setStave(stave);
-          }
+          activeTupletVexflowNotes.push(vfn);
+          activeTupletLength += thisEl.duration.quarterLength; // console.log(activeTupletLength, activeTuplet.totalTupletLength());
+          //
+          // Add tuplet when complete.
 
-          notes.push(vfn); // account for tuplets...
+          if (activeTupletLength >= activeTuplet.totalTupletLength() || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
+            // console.log(activeTupletVexflowNotes);
+            var tupletOptions = {
+              num_notes: activeTuplet.numberNotesActual,
+              notes_occupied: activeTuplet.numberNotesNormal
+            }; // console.log('tupletOptions', tupletOptions);
 
-          if (thisEl.duration.tuplets.length > 0) {
-            // only support one tuplet per note -- like vexflow
-            if (activeTuplet === undefined) {
-              activeTuplet = thisEl.duration.tuplets[0];
+            var vfTuplet = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Tuplet)(activeTupletVexflowNotes, tupletOptions);
+
+            if (activeTuplet.tupletNormalShow === 'ratio') {
+              vfTuplet.setRatioed(true);
             }
 
-            activeTupletVexflowNotes.push(vfn);
-            activeTupletLength += thisEl.duration.quarterLength; // console.log(activeTupletLength, activeTuplet.totalTupletLength());
-            //
-            // Add tuplet when complete.
-
-            if (activeTupletLength >= activeTuplet.totalTupletLength() || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
-              // console.log(activeTupletVexflowNotes);
-              var tupletOptions = {
-                num_notes: activeTuplet.numberNotesActual,
-                notes_occupied: activeTuplet.numberNotesNormal
-              }; // console.log('tupletOptions', tupletOptions);
-
-              var vfTuplet = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Tuplet)(activeTupletVexflowNotes, tupletOptions);
-
-              if (activeTuplet.tupletNormalShow === 'ratio') {
-                vfTuplet.setRatioed(true);
-              }
-
-              vfTuplets.push(vfTuplet);
-              activeTupletLength = 0.0;
-              activeTuplet = undefined;
-              activeTupletVexflowNotes = [];
-            }
+            vfTuplets.push(vfTuplet);
+            activeTupletLength = 0.0;
+            activeTuplet = undefined;
+            activeTupletVexflowNotes = [];
           }
         }
       }
-    } catch (err) {
-      _iterator8.e(err);
-    } finally {
-      _iterator8.f();
     }
 
     if (activeTuplet !== undefined) {
@@ -28597,15 +25968,14 @@ class Renderer {
 
 
   vexflowLyrics(s, stave) {
-    var getTextNote = function getTextNote(text, font, d) {
-      var lyricObj = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var getTextNote = (text, font, d, lyricObj = undefined) => {
       // console.log(text, font, d);
       // noinspection TypeScriptValidateJSTypes
-      var t1 = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.TextNote)({
+      var t1 = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.TextNote)({
         text,
         font,
         duration: d.vexflowDuration
-      }).setLine(11).setStave(stave).setJustification((vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.TextNote.Justification.LEFT));
+      }).setLine(11).setStave(stave).setJustification((vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.TextNote.Justification.LEFT));
 
       if (lyricObj) {
         t1.setStyle(lyricObj.style);
@@ -28625,69 +25995,59 @@ class Renderer {
 
     var lyricsObjects = [];
 
-    var _iterator9 = _createForOfIteratorHelper(s),
-        _step9;
+    for (var el of s) {
+      var lyricsArray = el.lyrics;
 
-    try {
-      for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-        var el = _step9.value;
-        var lyricsArray = el.lyrics;
+      if (lyricsArray === undefined) {
+        continue;
+      }
 
-        if (lyricsArray === undefined) {
-          continue;
-        }
+      var text = void 0;
+      var d = el.duration;
+      var addConnector = false;
+      var firstLyric = void 0;
+      var font = {
+        family: 'Serif',
+        size: 12,
+        weight: ''
+      };
 
-        var text = void 0;
-        var d = el.duration;
-        var addConnector = false;
-        var firstLyric = void 0;
-        var font = {
-          family: 'Serif',
-          size: 12,
-          weight: ''
-        };
+      if (lyricsArray.length === 0) {
+        text = '';
+      } else {
+        firstLyric = lyricsArray[0];
+        text = firstLyric.text;
 
-        if (lyricsArray.length === 0) {
+        if (text === undefined) {
           text = '';
-        } else {
-          firstLyric = lyricsArray[0];
-          text = firstLyric.text;
-
-          if (text === undefined) {
-            text = '';
-          }
-
-          if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
-            addConnector = ' ' + firstLyric.lyricConnector;
-            var tempQl = el.duration.quarterLength / 2.0;
-            d = new _duration__WEBPACK_IMPORTED_MODULE_14__.Duration(tempQl);
-          }
-
-          if (firstLyric.style.fontFamily) {
-            font.family = firstLyric.style.fontFamily;
-          }
-
-          if (firstLyric.style.fontSize) {
-            font.size = firstLyric.style.fontSize;
-          }
-
-          if (firstLyric.style.fontWeight) {
-            font.weight = firstLyric.style.fontWeight;
-          }
         }
 
-        var t1 = getTextNote(text, font, d, firstLyric);
-        lyricsObjects.push(t1);
+        if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
+          addConnector = ' ' + firstLyric.lyricConnector;
+          var tempQl = el.duration.quarterLength / 2.0;
+          d = new _duration__WEBPACK_IMPORTED_MODULE_12__.Duration(tempQl);
+        }
 
-        if (addConnector !== false) {
-          var connector = getTextNote(addConnector, font, d);
-          lyricsObjects.push(connector);
+        if (firstLyric.style.fontFamily) {
+          font.family = firstLyric.style.fontFamily;
+        }
+
+        if (firstLyric.style.fontSize) {
+          font.size = firstLyric.style.fontSize;
+        }
+
+        if (firstLyric.style.fontWeight) {
+          font.weight = firstLyric.style.fontWeight;
         }
       }
-    } catch (err) {
-      _iterator9.e(err);
-    } finally {
-      _iterator9.f();
+
+      var t1 = getTextNote(text, font, d, firstLyric);
+      lyricsObjects.push(t1);
+
+      if (addConnector !== false) {
+        var connector = getTextNote(addConnector, font, d);
+        lyricsObjects.push(connector);
+      }
     }
 
     return lyricsObjects;
@@ -28732,14 +26092,14 @@ class Renderer {
     } // console.log('creating voice');
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_12__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_10__.debug) {
       console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
     }
 
-    var vfv = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Voice)({
+    var vfv = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Voice)({
       num_beats: num1024,
       beat_value: beatValue,
-      resolution: (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.RESOLUTION)
+      resolution: (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.RESOLUTION)
     }); // from vexflow/src/voice.js
     //
     // Modes allow the addition of ticks in three different ways:
@@ -28750,16 +26110,16 @@ class Renderer {
     //         tick length.
     // noinspection TypeScriptValidateJSTypes
 
-    vfv.setMode((vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.Voice.Mode.SOFT));
+    vfv.setMode((vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.Voice.Mode.SOFT));
     return vfv;
   }
 
   staffConnectorsMap(connectorType) {
     var connectorMap = {
-      brace: (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveConnector.type.BRACE),
-      single: (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveConnector.type.SINGLE),
-      double: (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveConnector.type.DOUBLE),
-      bracket: (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveConnector.type.BRACKET)
+      brace: (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveConnector.type.BRACE),
+      single: (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveConnector.type.SINGLE),
+      double: (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveConnector.type.DOUBLE),
+      bracket: (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveConnector.type.BRACKET)
     };
     return connectorMap[connectorType];
   }
@@ -28823,7 +26183,7 @@ class Renderer {
         }
 
         for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-          var sc = new (vexflow__WEBPACK_IMPORTED_MODULE_11___default().Flow.StaveConnector)(topVFStaff, bottomVFStaff);
+          var sc = new (vexflow__WEBPACK_IMPORTED_MODULE_9___default().Flow.StaveConnector)(topVFStaff, bottomVFStaff);
           var scTypeM21 = s.renderOptions.staffConnectors[i];
           var scTypeVF = this.staffConnectorsMap(scTypeM21); // noinspection TypeScriptValidateJSTypes
 
@@ -28846,30 +26206,19 @@ class Renderer {
    */
 
 
-  removeFormatterInformation(s) {
-    var recursive = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  removeFormatterInformation(s, recursive = false) {
     s.storedVexflowStave = undefined;
 
-    var _iterator10 = _createForOfIteratorHelper(s),
-        _step10;
+    for (var el of s) {
+      el.x = undefined;
+      el.y = undefined;
+      el.width = undefined;
+      el.systemIndex = undefined;
+      el.activeVexflowNote = undefined;
 
-    try {
-      for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-        var el = _step10.value;
-        el.x = undefined;
-        el.y = undefined;
-        el.width = undefined;
-        el.systemIndex = undefined;
-        el.activeVexflowNote = undefined;
-
-        if (recursive && el.isClassOrSubclass('Stream')) {
-          this.removeFormatterInformation(el, recursive);
-        }
+      if (recursive && el.isClassOrSubclass('Stream')) {
+        this.removeFormatterInformation(el, recursive);
       }
-    } catch (err) {
-      _iterator10.e(err);
-    } finally {
-      _iterator10.f();
     }
   }
   /**
@@ -28903,7 +26252,7 @@ class Renderer {
     if (stave !== undefined) {
       noteOffsetLeft = stave.start_x + stave.glyph_start_x;
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_12__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_10__.debug) {
         console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
         console.log('Bottom y: ' + stave.getBottomY());
       } // staveHeight = stave.height;
@@ -28912,63 +26261,42 @@ class Renderer {
 
     var nextTicks = 0;
 
-    var _iterator11 = _createForOfIteratorHelper(s),
-        _step11;
+    for (var ee of s) {
+      var el = ee; // TODO: get rid of the hacky el.x, el.systemIndex, el.width.
 
-    try {
-      for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-        var ee = _step11.value;
-        var el = ee; // TODO: get rid of the hacky el.x, el.systemIndex, el.width.
+      if (el.isClassOrSubclass('GeneralNote')) {
+        var vfn = el.activeVexflowNote;
 
-        if (el.isClassOrSubclass('GeneralNote')) {
-          var vfn = el.activeVexflowNote;
+        if (vfn === undefined) {
+          continue;
+        }
 
-          if (vfn === undefined) {
-            continue;
-          }
+        var nTicks = parseInt(vfn.ticks);
+        var formatterNote = formatter.tickContexts.map[String(nextTicks)];
+        nextTicks += nTicks;
+        el.x = vfn.getAbsoluteX(); // these are a bit hacky...
 
-          var nTicks = parseInt(vfn.ticks);
-          var formatterNote = formatter.tickContexts.map[String(nextTicks)];
-          nextTicks += nTicks;
-          el.x = vfn.getAbsoluteX(); // these are a bit hacky...
+        el.systemIndex = s.renderOptions.systemIndex; // console.log(el.x + " " + formatterNote.x + " " + noteOffsetLeft);
 
-          el.systemIndex = s.renderOptions.systemIndex; // console.log(el.x + " " + formatterNote.x + " " + noteOffsetLeft);
+        if (formatterNote === undefined) {
+          continue;
+        }
 
-          if (formatterNote === undefined) {
-            continue;
-          }
+        el.width = formatterNote.width;
 
-          el.width = formatterNote.width;
-
-          if (el.pitch !== undefined && stave !== undefined) {
-            // note only...
-            el.y = stave.getBottomY() - (sClef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px; // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
-          }
+        if (el.pitch !== undefined && stave !== undefined) {
+          // note only...
+          el.y = stave.getBottomY() - (sClef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px; // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
         }
       }
-    } catch (err) {
-      _iterator11.e(err);
-    } finally {
-      _iterator11.f();
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_12__.debug) {
-      var _iterator12 = _createForOfIteratorHelper(s),
-          _step12;
-
-      try {
-        for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-          var n = _step12.value;
-
-          if (n.pitch !== undefined) {
-            var nn = n;
-            console.log(nn.pitch.diatonicNoteNum + ' ' + nn.x + ' ' + (nn.x + nn.width));
-          }
+    if (_debug__WEBPACK_IMPORTED_MODULE_10__.debug) {
+      for (var n of s) {
+        if (n.pitch !== undefined) {
+          var nn = n;
+          console.log(nn.pitch.diatonicNoteNum + ' ' + nn.x + ' ' + (nn.x + nn.width));
         }
-      } catch (err) {
-        _iterator12.e(err);
-      } finally {
-        _iterator12.f();
       }
     }
 
@@ -28991,18 +26319,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "MotionType": () => (/* binding */ MotionType),
 /* harmony export */   "VoiceLeadingQuartet": () => (/* binding */ VoiceLeadingQuartet)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.includes.js */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 /**
  * music21j -- Javascript reimplementation of Core music21 features.
@@ -29030,14 +26358,14 @@ var MotionType = {
  * @extends Music21Object
  */
 
-class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
+class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
   constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
     super();
 
     if (!intervalCache.length) {
-      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval('P1'));
-      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval('P5'));
-      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval('P8'));
+      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval('P1'));
+      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval('P5'));
+      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval('P8'));
     }
 
     this.unison = intervalCache[0];
@@ -29072,11 +26400,11 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
     if (value === undefined) {
       this[which] = value;
     } else if (typeof value === 'string') {
-      this[which] = new _note__WEBPACK_IMPORTED_MODULE_2__.Note(value);
+      this[which] = new _note__WEBPACK_IMPORTED_MODULE_4__.Note(value);
     } else if (value.classes.includes('Note')) {
       this[which] = value;
     } else {
-      var n = new _note__WEBPACK_IMPORTED_MODULE_2__.Note(value.nameWithOctave);
+      var n = new _note__WEBPACK_IMPORTED_MODULE_4__.Note(value.nameWithOctave);
       n.duration.quarterLength = 0.0;
       this[which] = n;
     }
@@ -29129,10 +26457,10 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
   }
 
   _findIntervals() {
-    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval(this.v1n1, this.v2n1));
-    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval(this.v1n2, this.v2n2));
-    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval(this.v1n1, this.v1n2));
-    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval(this.v2n1, this.v2n2));
+    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(this.v1n1, this.v2n1));
+    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(this.v1n2, this.v2n2));
+    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(this.v1n1, this.v1n2));
+    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(this.v2n1, this.v2n2));
   }
 
   motionType() {
@@ -29154,21 +26482,10 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
   }
 
   noMotion() {
-    var _iterator = _createForOfIteratorHelper(this.hIntervals),
-        _step;
-
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var iV = _step.value;
-
-        if (iV.name !== 'P1') {
-          return false;
-        }
+    for (var iV of this.hIntervals) {
+      if (iV.name !== 'P1') {
+        return false;
       }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
     }
 
     return true;
@@ -29179,21 +26496,10 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
       return false;
     }
 
-    var _iterator2 = _createForOfIteratorHelper(this.hIntervals),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var iH = _step2.value;
-
-        if (iH.name === 'P1') {
-          return true;
-        }
+    for (var iH of this.hIntervals) {
+      if (iH.name === 'P1') {
+        return true;
       }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
     }
 
     return false;
@@ -29211,9 +26517,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
     }
   }
 
-  parallelMotion() {
-    var requiredInterval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  parallelMotion(requiredInterval = undefined) {
     if (!this.similarMotion()) {
       return false;
     }
@@ -29227,7 +26531,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
     }
 
     if (typeof requiredInterval === 'string') {
-      requiredInterval = new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval(requiredInterval);
+      requiredInterval = new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(requiredInterval);
     }
 
     if (this.vIntervals[0].simpleName === requiredInterval.simpleName) {
@@ -29254,16 +26558,14 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
   }
 
   outwardContraryMotion() {
-    return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_1__.Direction.ASCENDING;
+    return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_3__.Direction.ASCENDING;
   }
 
   inwardContraryMotion() {
-    return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_1__.Direction.DESCENDING;
+    return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_3__.Direction.DESCENDING;
   }
 
-  antiParallelMotion() {
-    var simpleName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
+  antiParallelMotion(simpleName = undefined) {
     if (!this.contraryMotion()) {
       return false;
     }
@@ -29295,7 +26597,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
     }
 
     if (typeof thisInterval === 'string') {
-      thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval(thisInterval);
+      thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(thisInterval);
     }
 
     if (this.vIntervals[0].semiSimpleName === thisInterval.semiSimpleName) {
@@ -29331,7 +26633,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Obje
     }
 
     if (typeof thisInterval === 'string') {
-      thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_1__.Interval(thisInterval);
+      thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(thisInterval);
     }
 
     if (this.vIntervals[1].simpleName === thisInterval.simpleName) {
@@ -29644,10 +26946,7 @@ function midiInArrived(midiMessageEvent) {
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
 
-function createPlugin() {
-  var appendElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-  var override = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+function createPlugin(appendElement = undefined, override = false) {
   if (webmidi.storedPlugin && !override) {
     return webmidi.storedPlugin;
   }
@@ -29687,8 +26986,7 @@ function createPlugin() {
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 
-function createJazzSelector($newSelect) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function createJazzSelector($newSelect, options = {}) {
   var params = {
     onsuccess: undefined,
     oninputsuccess: undefined,
@@ -30892,449 +28190,6 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 
 /***/ }),
 
-/***/ "./node_modules/core-js/internals/collection-strong.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/collection-strong.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var defineProperty = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js").f;
-var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js/internals/object-create.js");
-var redefineAll = __webpack_require__(/*! ../internals/redefine-all */ "./node_modules/core-js/internals/redefine-all.js");
-var bind = __webpack_require__(/*! ../internals/function-bind-context */ "./node_modules/core-js/internals/function-bind-context.js");
-var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js/internals/an-instance.js");
-var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js/internals/iterate.js");
-var defineIterator = __webpack_require__(/*! ../internals/define-iterator */ "./node_modules/core-js/internals/define-iterator.js");
-var setSpecies = __webpack_require__(/*! ../internals/set-species */ "./node_modules/core-js/internals/set-species.js");
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var fastKey = __webpack_require__(/*! ../internals/internal-metadata */ "./node_modules/core-js/internals/internal-metadata.js").fastKey;
-var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js/internals/internal-state.js");
-
-var setInternalState = InternalStateModule.set;
-var internalStateGetterFor = InternalStateModule.getterFor;
-
-module.exports = {
-  getConstructor: function (wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER) {
-    var C = wrapper(function (that, iterable) {
-      anInstance(that, C, CONSTRUCTOR_NAME);
-      setInternalState(that, {
-        type: CONSTRUCTOR_NAME,
-        index: create(null),
-        first: undefined,
-        last: undefined,
-        size: 0
-      });
-      if (!DESCRIPTORS) that.size = 0;
-      if (iterable != undefined) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
-    });
-
-    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
-
-    var define = function (that, key, value) {
-      var state = getInternalState(that);
-      var entry = getEntry(that, key);
-      var previous, index;
-      // change existing entry
-      if (entry) {
-        entry.value = value;
-      // create new entry
-      } else {
-        state.last = entry = {
-          index: index = fastKey(key, true),
-          key: key,
-          value: value,
-          previous: previous = state.last,
-          next: undefined,
-          removed: false
-        };
-        if (!state.first) state.first = entry;
-        if (previous) previous.next = entry;
-        if (DESCRIPTORS) state.size++;
-        else that.size++;
-        // add to index
-        if (index !== 'F') state.index[index] = entry;
-      } return that;
-    };
-
-    var getEntry = function (that, key) {
-      var state = getInternalState(that);
-      // fast case
-      var index = fastKey(key);
-      var entry;
-      if (index !== 'F') return state.index[index];
-      // frozen object case
-      for (entry = state.first; entry; entry = entry.next) {
-        if (entry.key == key) return entry;
-      }
-    };
-
-    redefineAll(C.prototype, {
-      // 23.1.3.1 Map.prototype.clear()
-      // 23.2.3.2 Set.prototype.clear()
-      clear: function clear() {
-        var that = this;
-        var state = getInternalState(that);
-        var data = state.index;
-        var entry = state.first;
-        while (entry) {
-          entry.removed = true;
-          if (entry.previous) entry.previous = entry.previous.next = undefined;
-          delete data[entry.index];
-          entry = entry.next;
-        }
-        state.first = state.last = undefined;
-        if (DESCRIPTORS) state.size = 0;
-        else that.size = 0;
-      },
-      // 23.1.3.3 Map.prototype.delete(key)
-      // 23.2.3.4 Set.prototype.delete(value)
-      'delete': function (key) {
-        var that = this;
-        var state = getInternalState(that);
-        var entry = getEntry(that, key);
-        if (entry) {
-          var next = entry.next;
-          var prev = entry.previous;
-          delete state.index[entry.index];
-          entry.removed = true;
-          if (prev) prev.next = next;
-          if (next) next.previous = prev;
-          if (state.first == entry) state.first = next;
-          if (state.last == entry) state.last = prev;
-          if (DESCRIPTORS) state.size--;
-          else that.size--;
-        } return !!entry;
-      },
-      // 23.2.3.6 Set.prototype.forEach(callbackfn, thisArg = undefined)
-      // 23.1.3.5 Map.prototype.forEach(callbackfn, thisArg = undefined)
-      forEach: function forEach(callbackfn /* , that = undefined */) {
-        var state = getInternalState(this);
-        var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-        var entry;
-        while (entry = entry ? entry.next : state.first) {
-          boundFunction(entry.value, entry.key, this);
-          // revert to the last existing entry
-          while (entry && entry.removed) entry = entry.previous;
-        }
-      },
-      // 23.1.3.7 Map.prototype.has(key)
-      // 23.2.3.7 Set.prototype.has(value)
-      has: function has(key) {
-        return !!getEntry(this, key);
-      }
-    });
-
-    redefineAll(C.prototype, IS_MAP ? {
-      // 23.1.3.6 Map.prototype.get(key)
-      get: function get(key) {
-        var entry = getEntry(this, key);
-        return entry && entry.value;
-      },
-      // 23.1.3.9 Map.prototype.set(key, value)
-      set: function set(key, value) {
-        return define(this, key === 0 ? 0 : key, value);
-      }
-    } : {
-      // 23.2.3.1 Set.prototype.add(value)
-      add: function add(value) {
-        return define(this, value = value === 0 ? 0 : value, value);
-      }
-    });
-    if (DESCRIPTORS) defineProperty(C.prototype, 'size', {
-      get: function () {
-        return getInternalState(this).size;
-      }
-    });
-    return C;
-  },
-  setStrong: function (C, CONSTRUCTOR_NAME, IS_MAP) {
-    var ITERATOR_NAME = CONSTRUCTOR_NAME + ' Iterator';
-    var getInternalCollectionState = internalStateGetterFor(CONSTRUCTOR_NAME);
-    var getInternalIteratorState = internalStateGetterFor(ITERATOR_NAME);
-    // add .keys, .values, .entries, [@@iterator]
-    // 23.1.3.4, 23.1.3.8, 23.1.3.11, 23.1.3.12, 23.2.3.5, 23.2.3.8, 23.2.3.10, 23.2.3.11
-    defineIterator(C, CONSTRUCTOR_NAME, function (iterated, kind) {
-      setInternalState(this, {
-        type: ITERATOR_NAME,
-        target: iterated,
-        state: getInternalCollectionState(iterated),
-        kind: kind,
-        last: undefined
-      });
-    }, function () {
-      var state = getInternalIteratorState(this);
-      var kind = state.kind;
-      var entry = state.last;
-      // revert to the last existing entry
-      while (entry && entry.removed) entry = entry.previous;
-      // get next entry
-      if (!state.target || !(state.last = entry = entry ? entry.next : state.state.first)) {
-        // or finish the iteration
-        state.target = undefined;
-        return { value: undefined, done: true };
-      }
-      // return step by kind
-      if (kind == 'keys') return { value: entry.key, done: false };
-      if (kind == 'values') return { value: entry.value, done: false };
-      return { value: [entry.key, entry.value], done: false };
-    }, IS_MAP ? 'entries' : 'values', !IS_MAP, true);
-
-    // add [@@species], 23.1.2.2, 23.2.2.2
-    setSpecies(CONSTRUCTOR_NAME);
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/collection-weak.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/core-js/internals/collection-weak.js ***!
-  \***********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var redefineAll = __webpack_require__(/*! ../internals/redefine-all */ "./node_modules/core-js/internals/redefine-all.js");
-var getWeakData = __webpack_require__(/*! ../internals/internal-metadata */ "./node_modules/core-js/internals/internal-metadata.js").getWeakData;
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js/internals/an-instance.js");
-var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js/internals/iterate.js");
-var ArrayIterationModule = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js");
-var $has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
-var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js/internals/internal-state.js");
-
-var setInternalState = InternalStateModule.set;
-var internalStateGetterFor = InternalStateModule.getterFor;
-var find = ArrayIterationModule.find;
-var findIndex = ArrayIterationModule.findIndex;
-var id = 0;
-
-// fallback for uncaught frozen keys
-var uncaughtFrozenStore = function (store) {
-  return store.frozen || (store.frozen = new UncaughtFrozenStore());
-};
-
-var UncaughtFrozenStore = function () {
-  this.entries = [];
-};
-
-var findUncaughtFrozen = function (store, key) {
-  return find(store.entries, function (it) {
-    return it[0] === key;
-  });
-};
-
-UncaughtFrozenStore.prototype = {
-  get: function (key) {
-    var entry = findUncaughtFrozen(this, key);
-    if (entry) return entry[1];
-  },
-  has: function (key) {
-    return !!findUncaughtFrozen(this, key);
-  },
-  set: function (key, value) {
-    var entry = findUncaughtFrozen(this, key);
-    if (entry) entry[1] = value;
-    else this.entries.push([key, value]);
-  },
-  'delete': function (key) {
-    var index = findIndex(this.entries, function (it) {
-      return it[0] === key;
-    });
-    if (~index) this.entries.splice(index, 1);
-    return !!~index;
-  }
-};
-
-module.exports = {
-  getConstructor: function (wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER) {
-    var C = wrapper(function (that, iterable) {
-      anInstance(that, C, CONSTRUCTOR_NAME);
-      setInternalState(that, {
-        type: CONSTRUCTOR_NAME,
-        id: id++,
-        frozen: undefined
-      });
-      if (iterable != undefined) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
-    });
-
-    var getInternalState = internalStateGetterFor(CONSTRUCTOR_NAME);
-
-    var define = function (that, key, value) {
-      var state = getInternalState(that);
-      var data = getWeakData(anObject(key), true);
-      if (data === true) uncaughtFrozenStore(state).set(key, value);
-      else data[state.id] = value;
-      return that;
-    };
-
-    redefineAll(C.prototype, {
-      // 23.3.3.2 WeakMap.prototype.delete(key)
-      // 23.4.3.3 WeakSet.prototype.delete(value)
-      'delete': function (key) {
-        var state = getInternalState(this);
-        if (!isObject(key)) return false;
-        var data = getWeakData(key);
-        if (data === true) return uncaughtFrozenStore(state)['delete'](key);
-        return data && $has(data, state.id) && delete data[state.id];
-      },
-      // 23.3.3.4 WeakMap.prototype.has(key)
-      // 23.4.3.4 WeakSet.prototype.has(value)
-      has: function has(key) {
-        var state = getInternalState(this);
-        if (!isObject(key)) return false;
-        var data = getWeakData(key);
-        if (data === true) return uncaughtFrozenStore(state).has(key);
-        return data && $has(data, state.id);
-      }
-    });
-
-    redefineAll(C.prototype, IS_MAP ? {
-      // 23.3.3.3 WeakMap.prototype.get(key)
-      get: function get(key) {
-        var state = getInternalState(this);
-        if (isObject(key)) {
-          var data = getWeakData(key);
-          if (data === true) return uncaughtFrozenStore(state).get(key);
-          return data ? data[state.id] : undefined;
-        }
-      },
-      // 23.3.3.5 WeakMap.prototype.set(key, value)
-      set: function set(key, value) {
-        return define(this, key, value);
-      }
-    } : {
-      // 23.4.3.1 WeakSet.prototype.add(value)
-      add: function add(value) {
-        return define(this, value, true);
-      }
-    });
-
-    return C;
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/collection.js":
-/*!******************************************************!*\
-  !*** ./node_modules/core-js/internals/collection.js ***!
-  \******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var isForced = __webpack_require__(/*! ../internals/is-forced */ "./node_modules/core-js/internals/is-forced.js");
-var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
-var InternalMetadataModule = __webpack_require__(/*! ../internals/internal-metadata */ "./node_modules/core-js/internals/internal-metadata.js");
-var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js/internals/iterate.js");
-var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js/internals/an-instance.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-var checkCorrectnessOfIteration = __webpack_require__(/*! ../internals/check-correctness-of-iteration */ "./node_modules/core-js/internals/check-correctness-of-iteration.js");
-var setToStringTag = __webpack_require__(/*! ../internals/set-to-string-tag */ "./node_modules/core-js/internals/set-to-string-tag.js");
-var inheritIfRequired = __webpack_require__(/*! ../internals/inherit-if-required */ "./node_modules/core-js/internals/inherit-if-required.js");
-
-module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
-  var IS_MAP = CONSTRUCTOR_NAME.indexOf('Map') !== -1;
-  var IS_WEAK = CONSTRUCTOR_NAME.indexOf('Weak') !== -1;
-  var ADDER = IS_MAP ? 'set' : 'add';
-  var NativeConstructor = global[CONSTRUCTOR_NAME];
-  var NativePrototype = NativeConstructor && NativeConstructor.prototype;
-  var Constructor = NativeConstructor;
-  var exported = {};
-
-  var fixMethod = function (KEY) {
-    var nativeMethod = NativePrototype[KEY];
-    redefine(NativePrototype, KEY,
-      KEY == 'add' ? function add(value) {
-        nativeMethod.call(this, value === 0 ? 0 : value);
-        return this;
-      } : KEY == 'delete' ? function (key) {
-        return IS_WEAK && !isObject(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
-      } : KEY == 'get' ? function get(key) {
-        return IS_WEAK && !isObject(key) ? undefined : nativeMethod.call(this, key === 0 ? 0 : key);
-      } : KEY == 'has' ? function has(key) {
-        return IS_WEAK && !isObject(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
-      } : function set(key, value) {
-        nativeMethod.call(this, key === 0 ? 0 : key, value);
-        return this;
-      }
-    );
-  };
-
-  var REPLACE = isForced(
-    CONSTRUCTOR_NAME,
-    typeof NativeConstructor != 'function' || !(IS_WEAK || NativePrototype.forEach && !fails(function () {
-      new NativeConstructor().entries().next();
-    }))
-  );
-
-  if (REPLACE) {
-    // create collection constructor
-    Constructor = common.getConstructor(wrapper, CONSTRUCTOR_NAME, IS_MAP, ADDER);
-    InternalMetadataModule.REQUIRED = true;
-  } else if (isForced(CONSTRUCTOR_NAME, true)) {
-    var instance = new Constructor();
-    // early implementations not supports chaining
-    var HASNT_CHAINING = instance[ADDER](IS_WEAK ? {} : -0, 1) != instance;
-    // V8 ~ Chromium 40- weak-collections throws on primitives, but should return false
-    var THROWS_ON_PRIMITIVES = fails(function () { instance.has(1); });
-    // most early implementations doesn't supports iterables, most modern - not close it correctly
-    // eslint-disable-next-line no-new -- required for testing
-    var ACCEPT_ITERABLES = checkCorrectnessOfIteration(function (iterable) { new NativeConstructor(iterable); });
-    // for early implementations -0 and +0 not the same
-    var BUGGY_ZERO = !IS_WEAK && fails(function () {
-      // V8 ~ Chromium 42- fails only with 5+ elements
-      var $instance = new NativeConstructor();
-      var index = 5;
-      while (index--) $instance[ADDER](index, index);
-      return !$instance.has(-0);
-    });
-
-    if (!ACCEPT_ITERABLES) {
-      Constructor = wrapper(function (dummy, iterable) {
-        anInstance(dummy, Constructor, CONSTRUCTOR_NAME);
-        var that = inheritIfRequired(new NativeConstructor(), dummy, Constructor);
-        if (iterable != undefined) iterate(iterable, that[ADDER], { that: that, AS_ENTRIES: IS_MAP });
-        return that;
-      });
-      Constructor.prototype = NativePrototype;
-      NativePrototype.constructor = Constructor;
-    }
-
-    if (THROWS_ON_PRIMITIVES || BUGGY_ZERO) {
-      fixMethod('delete');
-      fixMethod('has');
-      IS_MAP && fixMethod('get');
-    }
-
-    if (BUGGY_ZERO || HASNT_CHAINING) fixMethod(ADDER);
-
-    // weak collections should not contains .clear method
-    if (IS_WEAK && NativePrototype.clear) delete NativePrototype.clear;
-  }
-
-  exported[CONSTRUCTOR_NAME] = Constructor;
-  $({ global: true, forced: Constructor != NativeConstructor }, exported);
-
-  setToStringTag(Constructor, CONSTRUCTOR_NAME);
-
-  if (!IS_WEAK) common.setStrong(Constructor, CONSTRUCTOR_NAME, IS_MAP);
-
-  return Constructor;
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js/internals/copy-constructor-properties.js":
 /*!***********************************************************************!*\
   !*** ./node_modules/core-js/internals/copy-constructor-properties.js ***!
@@ -32007,21 +28862,6 @@ module.exports = flattenIntoArray;
 
 /***/ }),
 
-/***/ "./node_modules/core-js/internals/freezing.js":
-/*!****************************************************!*\
-  !*** ./node_modules/core-js/internals/freezing.js ***!
-  \****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-
-module.exports = !fails(function () {
-  return Object.isExtensible(Object.preventExtensions({}));
-});
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js/internals/function-bind-context.js":
 /*!*****************************************************************!*\
   !*** ./node_modules/core-js/internals/function-bind-context.js ***!
@@ -32417,77 +29257,6 @@ module.exports = store.inspectSource;
 
 /***/ }),
 
-/***/ "./node_modules/core-js/internals/internal-metadata.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/internal-metadata.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js/internals/hidden-keys.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
-var defineProperty = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js").f;
-var uid = __webpack_require__(/*! ../internals/uid */ "./node_modules/core-js/internals/uid.js");
-var FREEZING = __webpack_require__(/*! ../internals/freezing */ "./node_modules/core-js/internals/freezing.js");
-
-var METADATA = uid('meta');
-var id = 0;
-
-var isExtensible = Object.isExtensible || function () {
-  return true;
-};
-
-var setMetadata = function (it) {
-  defineProperty(it, METADATA, { value: {
-    objectID: 'O' + ++id, // object ID
-    weakData: {}          // weak collections IDs
-  } });
-};
-
-var fastKey = function (it, create) {
-  // return a primitive with prefix
-  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
-  if (!has(it, METADATA)) {
-    // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return 'F';
-    // not necessary to add metadata
-    if (!create) return 'E';
-    // add missing metadata
-    setMetadata(it);
-  // return object ID
-  } return it[METADATA].objectID;
-};
-
-var getWeakData = function (it, create) {
-  if (!has(it, METADATA)) {
-    // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return true;
-    // not necessary to add metadata
-    if (!create) return false;
-    // add missing metadata
-    setMetadata(it);
-  // return the store of weak collections IDs
-  } return it[METADATA].weakData;
-};
-
-// add metadata on freeze-family methods calling
-var onFreeze = function (it) {
-  if (FREEZING && meta.REQUIRED && isExtensible(it) && !has(it, METADATA)) setMetadata(it);
-  return it;
-};
-
-var meta = module.exports = {
-  REQUIRED: false,
-  fastKey: fastKey,
-  getWeakData: getWeakData,
-  onFreeze: onFreeze
-};
-
-hiddenKeys[METADATA] = true;
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js/internals/internal-state.js":
 /*!**********************************************************!*\
   !*** ./node_modules/core-js/internals/internal-state.js ***!
@@ -32671,74 +29440,6 @@ var MATCH = wellKnownSymbol('match');
 module.exports = function (it) {
   var isRegExp;
   return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classof(it) == 'RegExp');
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/iterate.js":
-/*!***************************************************!*\
-  !*** ./node_modules/core-js/internals/iterate.js ***!
-  \***************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
-var isArrayIteratorMethod = __webpack_require__(/*! ../internals/is-array-iterator-method */ "./node_modules/core-js/internals/is-array-iterator-method.js");
-var toLength = __webpack_require__(/*! ../internals/to-length */ "./node_modules/core-js/internals/to-length.js");
-var bind = __webpack_require__(/*! ../internals/function-bind-context */ "./node_modules/core-js/internals/function-bind-context.js");
-var getIteratorMethod = __webpack_require__(/*! ../internals/get-iterator-method */ "./node_modules/core-js/internals/get-iterator-method.js");
-var iteratorClose = __webpack_require__(/*! ../internals/iterator-close */ "./node_modules/core-js/internals/iterator-close.js");
-
-var Result = function (stopped, result) {
-  this.stopped = stopped;
-  this.result = result;
-};
-
-module.exports = function (iterable, unboundFunction, options) {
-  var that = options && options.that;
-  var AS_ENTRIES = !!(options && options.AS_ENTRIES);
-  var IS_ITERATOR = !!(options && options.IS_ITERATOR);
-  var INTERRUPTED = !!(options && options.INTERRUPTED);
-  var fn = bind(unboundFunction, that, 1 + AS_ENTRIES + INTERRUPTED);
-  var iterator, iterFn, index, length, result, next, step;
-
-  var stop = function (condition) {
-    if (iterator) iteratorClose(iterator);
-    return new Result(true, condition);
-  };
-
-  var callFn = function (value) {
-    if (AS_ENTRIES) {
-      anObject(value);
-      return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
-    } return INTERRUPTED ? fn(value, stop) : fn(value);
-  };
-
-  if (IS_ITERATOR) {
-    iterator = iterable;
-  } else {
-    iterFn = getIteratorMethod(iterable);
-    if (typeof iterFn != 'function') throw TypeError('Target is not iterable');
-    // optimisation for array iterators
-    if (isArrayIteratorMethod(iterFn)) {
-      for (index = 0, length = toLength(iterable.length); length > index; index++) {
-        result = callFn(iterable[index]);
-        if (result && result instanceof Result) return result;
-      } return new Result(false);
-    }
-    iterator = iterFn.call(iterable);
-  }
-
-  next = iterator.next;
-  while (!(step = next.call(iterator)).done) {
-    try {
-      result = callFn(step.value);
-    } catch (error) {
-      iteratorClose(iterator);
-      throw error;
-    }
-    if (typeof result == 'object' && result && result instanceof Result) return result;
-  } return new Result(false);
 };
 
 
@@ -34769,29 +31470,6 @@ $({ target: 'Array', proto: true }, {
 
 /***/ }),
 
-/***/ "./node_modules/core-js/modules/es.array.from.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/core-js/modules/es.array.from.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
-var from = __webpack_require__(/*! ../internals/array-from */ "./node_modules/core-js/internals/array-from.js");
-var checkCorrectnessOfIteration = __webpack_require__(/*! ../internals/check-correctness-of-iteration */ "./node_modules/core-js/internals/check-correctness-of-iteration.js");
-
-var INCORRECT_ITERATION = !checkCorrectnessOfIteration(function (iterable) {
-  Array.from(iterable);
-});
-
-// `Array.from` method
-// https://tc39.es/ecma262/#sec-array.from
-$({ target: 'Array', stat: true, forced: INCORRECT_ITERATION }, {
-  from: from
-});
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js/modules/es.array.iterator.js":
 /*!***********************************************************!*\
   !*** ./node_modules/core-js/modules/es.array.iterator.js ***!
@@ -34974,26 +31652,6 @@ addToUnscopables('flat');
 
 /***/ }),
 
-/***/ "./node_modules/core-js/modules/es.map.js":
-/*!************************************************!*\
-  !*** ./node_modules/core-js/modules/es.map.js ***!
-  \************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var collection = __webpack_require__(/*! ../internals/collection */ "./node_modules/core-js/internals/collection.js");
-var collectionStrong = __webpack_require__(/*! ../internals/collection-strong */ "./node_modules/core-js/internals/collection-strong.js");
-
-// `Map` constructor
-// https://tc39.es/ecma262/#sec-map-objects
-module.exports = collection('Map', function (init) {
-  return function Map() { return init(this, arguments.length ? arguments[0] : undefined); };
-}, collectionStrong);
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js/modules/es.number.to-fixed.js":
 /*!************************************************************!*\
   !*** ./node_modules/core-js/modules/es.number.to-fixed.js ***!
@@ -35125,6 +31783,24 @@ $({ target: 'Number', proto: true, forced: FORCED }, {
       result = sign + result;
     } return result;
   }
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/modules/es.object.assign.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.object.assign.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var assign = __webpack_require__(/*! ../internals/object-assign */ "./node_modules/core-js/internals/object-assign.js");
+
+// `Object.assign` method
+// https://tc39.es/ecma262/#sec-object.assign
+$({ target: 'Object', stat: true, forced: Object.assign !== assign }, {
+  assign: assign
 });
 
 
@@ -35276,26 +31952,6 @@ if (NOT_GENERIC || INCORRECT_NAME) {
     return '/' + p + '/' + f;
   }, { unsafe: true });
 }
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/modules/es.set.js":
-/*!************************************************!*\
-  !*** ./node_modules/core-js/modules/es.set.js ***!
-  \************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var collection = __webpack_require__(/*! ../internals/collection */ "./node_modules/core-js/internals/collection.js");
-var collectionStrong = __webpack_require__(/*! ../internals/collection-strong */ "./node_modules/core-js/internals/collection-strong.js");
-
-// `Set` constructor
-// https://tc39.es/ecma262/#sec-set-objects
-module.exports = collection('Set', function (init) {
-  return function Set() { return init(this, arguments.length ? arguments[0] : undefined); };
-}, collectionStrong);
 
 
 /***/ }),
@@ -35965,84 +32621,6 @@ createTypedArrayConstructor('Uint8', function (init) {
     return init(this, data, byteOffset, length);
   };
 });
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/modules/es.weak-map.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/core-js/modules/es.weak-map.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var redefineAll = __webpack_require__(/*! ../internals/redefine-all */ "./node_modules/core-js/internals/redefine-all.js");
-var InternalMetadataModule = __webpack_require__(/*! ../internals/internal-metadata */ "./node_modules/core-js/internals/internal-metadata.js");
-var collection = __webpack_require__(/*! ../internals/collection */ "./node_modules/core-js/internals/collection.js");
-var collectionWeak = __webpack_require__(/*! ../internals/collection-weak */ "./node_modules/core-js/internals/collection-weak.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var enforceIternalState = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js/internals/internal-state.js").enforce;
-var NATIVE_WEAK_MAP = __webpack_require__(/*! ../internals/native-weak-map */ "./node_modules/core-js/internals/native-weak-map.js");
-
-var IS_IE11 = !global.ActiveXObject && 'ActiveXObject' in global;
-var isExtensible = Object.isExtensible;
-var InternalWeakMap;
-
-var wrapper = function (init) {
-  return function WeakMap() {
-    return init(this, arguments.length ? arguments[0] : undefined);
-  };
-};
-
-// `WeakMap` constructor
-// https://tc39.es/ecma262/#sec-weakmap-constructor
-var $WeakMap = module.exports = collection('WeakMap', wrapper, collectionWeak);
-
-// IE11 WeakMap frozen keys fix
-// We can't use feature detection because it crash some old IE builds
-// https://github.com/zloirock/core-js/issues/485
-if (NATIVE_WEAK_MAP && IS_IE11) {
-  InternalWeakMap = collectionWeak.getConstructor(wrapper, 'WeakMap', true);
-  InternalMetadataModule.REQUIRED = true;
-  var WeakMapPrototype = $WeakMap.prototype;
-  var nativeDelete = WeakMapPrototype['delete'];
-  var nativeHas = WeakMapPrototype.has;
-  var nativeGet = WeakMapPrototype.get;
-  var nativeSet = WeakMapPrototype.set;
-  redefineAll(WeakMapPrototype, {
-    'delete': function (key) {
-      if (isObject(key) && !isExtensible(key)) {
-        var state = enforceIternalState(this);
-        if (!state.frozen) state.frozen = new InternalWeakMap();
-        return nativeDelete.call(this, key) || state.frozen['delete'](key);
-      } return nativeDelete.call(this, key);
-    },
-    has: function has(key) {
-      if (isObject(key) && !isExtensible(key)) {
-        var state = enforceIternalState(this);
-        if (!state.frozen) state.frozen = new InternalWeakMap();
-        return nativeHas.call(this, key) || state.frozen.has(key);
-      } return nativeHas.call(this, key);
-    },
-    get: function get(key) {
-      if (isObject(key) && !isExtensible(key)) {
-        var state = enforceIternalState(this);
-        if (!state.frozen) state.frozen = new InternalWeakMap();
-        return nativeHas.call(this, key) ? nativeGet.call(this, key) : state.frozen.get(key);
-      } return nativeGet.call(this, key);
-    },
-    set: function set(key, value) {
-      if (isObject(key) && !isExtensible(key)) {
-        var state = enforceIternalState(this);
-        if (!state.frozen) state.frozen = new InternalWeakMap();
-        nativeHas.call(this, key) ? nativeSet.call(this, key, value) : state.frozen.set(key, value);
-      } else nativeSet.call(this, key, value);
-      return this;
-    }
-  });
-}
 
 
 /***/ }),
