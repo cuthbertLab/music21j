@@ -516,6 +516,37 @@ export default function tests() {
         //
     });
 
+    /**
+     * Note that the output here differs slightly from music21 beams, to take
+     * into account showing of partial beam measures.
+     */
+    test('music21.stream.Measure makeBeams with incomplete measure', assert => {
+        const ts = new music21.meter.TimeSignature('3/4');
+        const n1 = new music21.note.Note('C5', 1.5);
+        const n2 = new music21.note.Note('C5', 0.5);
+        const n3 = new music21.note.Note('C5', 0.5);
+        const m = new music21.stream.Measure();
+        m.renderOptions.useVexflowAutobeam = false;
+        m.append([ts, n1, n2, n3]);
+        m.makeBeams({inPlace: true});
+        assert.equal(n1.beams.beamsList.length, 0);
+        assert.equal(n2.beams.beamsList.length, 1);
+        assert.equal(n3.beams.beamsList.length, 1);
+        assert.equal(n2.beams.beamsList[0].type, 'start');
+        assert.equal(n3.beams.beamsList[0].type, 'stop');
+
+        // complete the measure
+        const n4 = new music21.note.Note('C5', 0.5);
+        m.append(n4);
+        m.makeBeams({inPlace: true});
+        assert.equal(n1.beams.beamsList.length, 0);
+        assert.equal(n2.beams.beamsList.length, 0);
+        assert.equal(n3.beams.beamsList.length, 1);
+        assert.equal(n4.beams.beamsList.length, 1);
+        assert.equal(n3.beams.beamsList[0].type, 'start');
+        assert.equal(n4.beams.beamsList[0].type, 'stop');
+    });
+
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
         p1.makeAccidentals();

@@ -142,7 +142,7 @@ export const animateLoop = () => {
     }
 };
 
-export function smoothPitchExtraction(frequency) {
+export function smoothPitchExtraction(frequency: number): [number, number] {
     if (frequency === -1) {
         config.lastPitchClassesDetected.shift();
         config.lastPitchesDetected.shift();
@@ -191,7 +191,7 @@ export function smoothPitchExtraction(frequency) {
     return [mostCommonPitch, centsOff];
 }
 
-export function sampleCallback(frequency) {
+export function sampleCallback(frequency: number): number {
     // noinspection JSUnusedLocalSymbols
     const [unused_midiNum, unused_centsOff] = smoothPitchExtraction(
         frequency
@@ -202,15 +202,12 @@ export function sampleCallback(frequency) {
 // from Chris Wilson. Replace with Jordi's
 export function autoCorrelate(
     buf,
-    sampleRate,
-    minFrequency,
-    maxFrequency
+    sampleRate: number,
+    minFrequency: number = 0,
+    maxFrequency?: number
 ) {
     const SIZE = buf.length;
     const MAX_SAMPLES = Math.floor(SIZE / 2);
-    if (minFrequency === undefined) {
-        minFrequency = 0;
-    }
     if (maxFrequency === undefined) {
         maxFrequency = sampleRate;
     }
@@ -278,16 +275,10 @@ export function autoCorrelate(
     //  var best_frequency = sampleRate/best_offset;
 }
 
-/**
- *
- * @function midiNumDiffFromFrequency
- * @param {Number} frequency
- * @returns {Array<int>} [miniNumber, centsOff]
- */
 export function midiNumDiffFromFrequency(
-    frequency
-) {
-    const midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
+    frequency: number
+): [number, number] {
+    const midiNumFloat = 12 * (Math.log2(frequency / 440)) + 69;
     const midiNum = Math.round(midiNumFloat);
     const centsOff = Math.round(100 * (midiNumFloat - midiNum));
     return [midiNum, centsOff];

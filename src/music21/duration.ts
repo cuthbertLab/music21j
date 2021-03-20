@@ -163,6 +163,7 @@ export class Duration extends prebase.ProtoM21Object {
         if (ql === undefined) {
             ql = 1.0;
         }
+        ql = common.opFrac(ql);
         this._quarterLength = ql;
         this.updateFeaturesFromQl();
     }
@@ -285,7 +286,7 @@ export class Duration extends prebase.ProtoM21Object {
         this._tuplets.forEach(tuplet => {
             tupletCorrectedQl *= tuplet.tupletMultiplier();
         });
-        this._quarterLength = tupletCorrectedQl;
+        this._quarterLength = common.opFrac(tupletCorrectedQl);
     }
 
     updateFeaturesFromQl() {
@@ -296,7 +297,7 @@ export class Duration extends prebase.ProtoM21Object {
             this._dots = 0;
             return;
         }
-        const powerOfTwo = Math.floor(Math.log(ql + 0.00001) / Math.log(2));
+        const powerOfTwo = Math.floor(Math.log2(ql + 0.00001));
         let typeNumber = quarterTypeIndex - powerOfTwo;
         this._type = ordinalTypeFromNum[typeNumber];
         // console.log(this._findDots);

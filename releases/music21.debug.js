@@ -1,5 +1,5 @@
 /**
- * music21j version 0.10.2 built on 2021-03-07.
+ * music21j version 0.10.4 built on 2021-03-20.
  * Copyright (c) 2013-2021 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -970,13 +970,9 @@ function sampleCallback(frequency) {
   return 0;
 } // from Chris Wilson. Replace with Jordi's
 
-function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
+function autoCorrelate(buf, sampleRate, minFrequency = 0, maxFrequency) {
   var SIZE = buf.length;
   var MAX_SAMPLES = Math.floor(SIZE / 2);
-
-  if (minFrequency === undefined) {
-    minFrequency = 0;
-  }
 
   if (maxFrequency === undefined) {
     maxFrequency = sampleRate;
@@ -1051,15 +1047,8 @@ function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
 
   return -1; //  var best_frequency = sampleRate/best_offset;
 }
-/**
- *
- * @function midiNumDiffFromFrequency
- * @param {Number} frequency
- * @returns {Array<int>} [miniNumber, centsOff]
- */
-
 function midiNumDiffFromFrequency(frequency) {
-  var midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
+  var midiNumFloat = 12 * Math.log2(frequency / 440) + 69;
   var midiNum = Math.round(midiNumFloat);
   var centsOff = Math.round(100 * (midiNumFloat - midiNum));
   return [midiNum, centsOff];
@@ -1415,6 +1404,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
   }
 
   set offset(newOffset) {
+    newOffset = _common__WEBPACK_IMPORTED_MODULE_4__.opFrac(newOffset);
+
     if (this.activeSite === undefined) {
       this._naiveOffset = newOffset;
     } else {
@@ -6079,22 +6070,38 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "hyphenToCamelCase": () => (/* binding */ hyphenToCamelCase),
 /* harmony export */   "numToIntOrFloat": () => (/* binding */ numToIntOrFloat),
 /* harmony export */   "pathSimplify": () => (/* binding */ pathSimplify),
-/* harmony export */   "isFloat": () => (/* binding */ isFloat)
+/* harmony export */   "isFloat": () => (/* binding */ isFloat),
+/* harmony export */   "opFrac": () => (/* binding */ opFrac)
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor.js */ "./node_modules/core-js/modules/es.regexp.constructor.js");
-/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.search.js */ "./node_modules/core-js/modules/es.string.search.js");
-/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_array_buffer_constructor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array-buffer.constructor.js */ "./node_modules/core-js/modules/es.array-buffer.constructor.js");
+/* harmony import */ var core_js_modules_es_array_buffer_constructor_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_buffer_constructor_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_buffer_slice_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array-buffer.slice.js */ "./node_modules/core-js/modules/es.array-buffer.slice.js");
+/* harmony import */ var core_js_modules_es_array_buffer_slice_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_buffer_slice_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor.js */ "./node_modules/core-js/modules/es.regexp.constructor.js");
+/* harmony import */ var core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.search.js */ "./node_modules/core-js/modules/es.string.search.js");
+/* harmony import */ var core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.split.js */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.typed-array.float32-array.js */ "./node_modules/core-js/modules/es.typed-array.float32-array.js");
+/* harmony import */ var core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.typed-array.int32-array.js */ "./node_modules/core-js/modules/es.typed-array.int32-array.js");
+/* harmony import */ var core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.typed-array.to-locale-string.js */ "./node_modules/core-js/modules/es.typed-array.to-locale-string.js");
+/* harmony import */ var core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_11__);
+
+
+
+
+
 
 
 
@@ -6569,27 +6576,61 @@ var pathSimplify = path => {
 };
 function isFloat(num) {
   return Number(num) === num && num % 1 !== 0;
-} // TODO: implement and test
-// export function opFrac(num) {
-//
-//     //const DENOM_LIMIT = 65535; // move to another location
-//     if (isFloat(num)) { // no builtin isFloat function exists
-//         // no fraction support yet
-//         return num;
-//     }
-//     else if (Number.isInteger(num)) {
-//         return num; // number, no int's
-//     }
-//     else if (num === 'Fraction') { // Replace with fraction object
-//         return num; // no fraction support yet
-//     }
-//     else if (num === null) {
-//         return null;
-//     }
-//     else {
-//         return null;
-//     }
-// }
+}
+var shared_buffer = new ArrayBuffer(4); // just enough bytes for 32-bit Array
+
+var int_view = new Int32Array(shared_buffer);
+var float_view = new Float32Array(shared_buffer);
+
+function byte_2_relevant_bits(num) {
+  // extract bits 24 to 28 of the floating point number.
+  // if all 1s or all 0s then it's close enough to a
+  // float expressible as fraction with power of 2 denominator
+  var out = '';
+
+  for (var i = 10; i >= 4; i -= 1) {
+    // noinspection JSBitwiseOperatorUsage
+    out += num & 1 << i ? '1' : '0'; // eslint-disable-line no-bitwise
+  }
+
+  return out;
+}
+
+function is_power_of_2_denominator(num) {
+  float_view[0] = num;
+  var float_as_int = int_view[0]; // magic conversion
+
+  var out_bits = byte_2_relevant_bits(float_as_int);
+
+  if (out_bits === '1111111' || out_bits === '0000000') {
+    return true;
+  }
+
+  return false;
+}
+/**
+ * Returns either the original number (never a fraction, since js does not have them)
+ * or the slightly rounded, correct representation.
+ *
+ * Uses a shared memory buffer to give the conversion.
+ */
+
+
+function opFrac(num) {
+  if (num === Math.floor(num)) {
+    return num;
+  }
+
+  if (num * 1024 === Math.floor(num * 1024)) {
+    return num;
+  }
+
+  if (is_power_of_2_denominator(num)) {
+    return parseFloat(num.toPrecision(6));
+  } else {
+    return num;
+  }
+}
 
 /***/ }),
 
@@ -6839,6 +6880,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
       ql = 1.0;
     }
 
+    ql = _common__WEBPACK_IMPORTED_MODULE_3__.opFrac(ql);
     this._quarterLength = ql;
     this.updateFeaturesFromQl();
   }
@@ -6975,7 +7017,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
       tupletCorrectedQl *= tuplet.tupletMultiplier();
     });
 
-    this._quarterLength = tupletCorrectedQl;
+    this._quarterLength = _common__WEBPACK_IMPORTED_MODULE_3__.opFrac(tupletCorrectedQl);
   }
 
   updateFeaturesFromQl() {
@@ -6988,7 +7030,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
       return;
     }
 
-    var powerOfTwo = Math.floor(Math.log(ql + 0.00001) / Math.log(2));
+    var powerOfTwo = Math.floor(Math.log2(ql + 0.00001));
     var typeNumber = quarterTypeIndex - powerOfTwo;
     this._type = ordinalTypeFromNum[typeNumber]; // console.log(this._findDots);
 
@@ -7597,7 +7639,7 @@ class GeneralMordent extends Ornament {
 }
 /**
  * note that Vexflow's definition of mordent/inverted mordent is backwards
- * from music theory.
+ * from music theory. -- see music21p for more details.
  */
 
 class Mordent extends GeneralMordent {
@@ -19366,8 +19408,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
       callback(el, i, this);
       i += 1;
     }
-  } // TODO(MSC) 2020-07-20 -- Add .map() => stream.iterator.StreamIterator.map()
-
+  }
 
   get duration() {
     if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_17__.Duration) {
@@ -19470,8 +19511,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
   /**
    * Return an array of the outer bounds of each MetronomeMark in the stream.
    * [offsetStart, offsetEnd, tempo.MetronomeMark]
-   *
-   * @returns {Array<number|music21.tempo.MetronomeMark>}
    */
 
 
@@ -21358,7 +21397,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
    *
    * elementType can be `svg` (default) or `canvas`
    *
-   * returns a $div encompasing either the SVG or Canvas element.
+   * returns a $div encompassing either the SVG or Canvas element.
    *
    * if width is undefined, will use `this.estimateStaffLength()`
    *     + `this.renderOptions.staffPadding`
@@ -21419,10 +21458,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
    *
    * Called from appendNewDOM() etc.
    *
-   * @param {number|string|undefined} [width]
-   * @param {number|string|undefined} [height]
-   * @param {string} [elementType='svg'] - what type of element, default = svg
-   * @returns {JQuery} canvas or svg
    */
 
 
@@ -23673,13 +23708,14 @@ function makeBeams(s, {
       continue; // nothing to beam.
     }
 
-    var noteStream = _m.notesAndRests;
+    var noteStreamIterator = _m.notesAndRests;
     var durList = [];
 
-    for (var n of noteStream) {
+    for (var n of noteStreamIterator) {
       durList.push(n.duration);
     }
 
+    var noteStream = noteStreamIterator.stream();
     var durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
     var durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
 
@@ -24624,9 +24660,10 @@ var regularExpressions = {
  * See music21p for examples of what can go into tinyNotation. It's an
  * adaptation of Lilypond format, by design Extremely simple!
  *
- * @memberof music21.tinyNotation
- * @param {string} textIn - a valid tinyNotation string
- * @returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+ * * textIn - a valid tinyNotation string
+ *
+ * * returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+ *
  * @example
  * var t = "3/4 c4 B8 c d4 e2.";
  * var p = music21.tinyNotation.TinyNotation(t);
@@ -24651,7 +24688,7 @@ function TinyNotation(textIn) {
     endStateAfterNote: false
   };
   var chordObj = null;
-  var tnre = regularExpressions; // faster typing
+  var tnre = regularExpressions; // for ease in writing
 
   var measureNumber = 1;
 
@@ -31392,6 +31429,34 @@ module.exports = '\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u2000\u2001\u
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.array-buffer.constructor.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/core-js/modules/es.array-buffer.constructor.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+var arrayBufferModule = __webpack_require__(/*! ../internals/array-buffer */ "./node_modules/core-js/internals/array-buffer.js");
+var setSpecies = __webpack_require__(/*! ../internals/set-species */ "./node_modules/core-js/internals/set-species.js");
+
+var ARRAY_BUFFER = 'ArrayBuffer';
+var ArrayBuffer = arrayBufferModule[ARRAY_BUFFER];
+var NativeArrayBuffer = global[ARRAY_BUFFER];
+
+// `ArrayBuffer` constructor
+// https://tc39.es/ecma262/#sec-arraybuffer-constructor
+$({ global: true, forced: NativeArrayBuffer !== ArrayBuffer }, {
+  ArrayBuffer: ArrayBuffer
+});
+
+setSpecies(ARRAY_BUFFER);
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.array-buffer.slice.js":
 /*!***************************************************************!*\
   !*** ./node_modules/core-js/modules/es.array-buffer.slice.js ***!
@@ -32561,6 +32626,25 @@ var createTypedArrayConstructor = __webpack_require__(/*! ../internals/typed-arr
 // https://tc39.es/ecma262/#sec-typedarray-objects
 createTypedArrayConstructor('Float32', function (init) {
   return function Float32Array(data, byteOffset, length) {
+    return init(this, data, byteOffset, length);
+  };
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/modules/es.typed-array.int32-array.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/core-js/modules/es.typed-array.int32-array.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+var createTypedArrayConstructor = __webpack_require__(/*! ../internals/typed-array-constructor */ "./node_modules/core-js/internals/typed-array-constructor.js");
+
+// `Int32Array` constructor
+// https://tc39.es/ecma262/#sec-typedarray-objects
+createTypedArrayConstructor('Int32', function (init) {
+  return function Int32Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });

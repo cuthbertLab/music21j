@@ -189,7 +189,7 @@ export class Metronome extends prebase.ProtoM21Object {
      * @param {int} [n=1 - number of clicks to the right
      * @returns {number} new tempo
      */
-    increaseSpeed(n=1) {
+    increaseSpeed(n: number = 1) {
         // increase by one metronome 'click' for every n
         for (let i = 0; i < n; i++) {
             let t = this.tempo;
@@ -216,7 +216,7 @@ export class Metronome extends prebase.ProtoM21Object {
      * @param {int} [n=1] - number of clicks to the left
      * @returns {number} new tempo
      */
-    decreaseSpeed(n=1) {
+    decreaseSpeed(n: number = 1) {
         for (let i = 0; i < n; i++) {
             let t = this.tempo;
             const trL = this.tempoRanges.length;

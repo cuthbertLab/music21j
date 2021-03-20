@@ -32,4 +32,16 @@ export default function tests() {
         assert.equal(common.toRoman(7), 'VII', '7 passed');
         assert.equal(common.toRoman(1999), 'MCMXCIX', '1999 passed');
     });
+
+    test('music21.common.opFrac', assert => {
+        assert.equal(common.opFrac(1), 1);
+        assert.equal(common.opFrac((1/5 + 1/5 + 1/5) * 5), 3, 'this is not true w/o opFrac');
+        assert.notEqual(common.opFrac(0.3333), 1/3);
+        const n = new music21.note.Note();
+        n.offset = 0;
+        for (let i = 0; i < 3; i++) {
+            n.offset += 0.333333333333;
+        }
+        assert.equal(n.offset, 1, 'offset uses opFrac');
+    });
 }

@@ -34,7 +34,7 @@ import * as tie from './tie';
  *
  * @memberof music21.tinyNotation
  */
-const regularExpressions = {
+const regularExpressions: { [k: string]: RegExp } = {
     REST: /r/,
     OCTAVE2: /([A-G])[A-G]+/,
     OCTAVE3: /([A-G])/,
@@ -70,20 +70,21 @@ const regularExpressions = {
  * See music21p for examples of what can go into tinyNotation. It's an
  * adaptation of Lilypond format, by design Extremely simple!
  *
- * @memberof music21.tinyNotation
- * @param {string} textIn - a valid tinyNotation string
- * @returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+ * * textIn - a valid tinyNotation string
+ *
+ * * returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+ *
  * @example
  * var t = "3/4 c4 B8 c d4 e2.";
  * var p = music21.tinyNotation.TinyNotation(t);
  * p.duration.quarterLength;
  * // 6.0
  */
-export function TinyNotation(textIn): stream.Part|stream.Measure|stream.Score {
+export function TinyNotation(textIn: string): stream.Part|stream.Measure|stream.Score {
     textIn = textIn.trim();
-    const tokens = textIn.split(' ');
+    const tokens: string[] = textIn.split(' ');
 
-    let optionalScore;
+    let optionalScore: stream.Score;
 
     let p = new stream.Part();
     let m = new stream.Measure();
@@ -98,7 +99,7 @@ export function TinyNotation(textIn): stream.Part|stream.Measure|stream.Score {
         endStateAfterNote: false,
     };
     let chordObj = null;
-    const tnre = regularExpressions; // faster typing
+    const tnre = regularExpressions; // for ease in writing
     let measureNumber = 1;
     for (let i = 0; i < tokens.length; i++) {
         // check at first so that a full measure but not over full
@@ -283,7 +284,7 @@ export function TinyNotation(textIn): stream.Part|stream.Measure|stream.Score {
         for (let i = 0; i < optionalScore.parts.length; i++) {
             const innerPart = optionalScore.parts.get(i);
             const innerPartClef = clef.bestClef(innerPart);
-            const innerMeasure = innerPart.getElementsByClass('Measure').get(0);
+            const innerMeasure = innerPart.getElementsByClass('Measure').get(0) as stream.Measure;
             if (innerMeasure !== undefined) {
                 innerMeasure.insert(0, innerPartClef);
             }
