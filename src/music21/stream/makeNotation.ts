@@ -10,26 +10,36 @@ import * as pitch from '../pitch';  // for typing only
 import * as stream from '../stream';
 import {StreamException} from '../stream';  // for typing only -- circular import otherwise
 
-export declare interface MakeBeamsOptions {
+export interface MakeBeamsOptions {
     inPlace?: boolean,
     setStemDirections?: boolean,
 }
 
-export function makeBeams(s, {
+export interface StemDirectionBeatGroupOptions {
+    setNewStems?: boolean,
+    overrideConsistentStemDirections?: boolean,
+}
+
+export interface IterateBeamGroupsOptions {
+    skipNoBeams?: boolean,
+    recurse?: boolean,
+}
+
+export function makeBeams(s: stream.Stream, {
     inPlace=false,
     setStemDirections=true,
 }: MakeBeamsOptions = {}): stream.Stream {
-    let returnObj = s;
+    let returnObj: stream.Stream = s;
     if (!inPlace) {
         returnObj = s.clone(true);
     }
-    let mColl;
+    let mColl: stream.Measure[];
     if (s.classes.includes('Measure')) {
-        mColl = [returnObj];
+        mColl = [returnObj as stream.Measure];
     } else {
         mColl = [];
         for (const m of returnObj.getElementsByClass('Measure')) {
-            mColl.push(m);
+            mColl.push(m as stream.Measure);
         }
     }
     let lastTimeSignature;
@@ -44,11 +54,13 @@ export function makeBeams(s, {
         if (m.length <= 1) {
             continue; // nothing to beam.
         }
-        const noteStream = m.notesAndRests;
+        const noteStreamIterator = m.notesAndRests;
         const durList = [];
-        for (const n of noteStream) {
+        for (const n of noteStreamIterator) {
             durList.push(n.duration);
         }
+        const noteStream = noteStreamIterator.stream();
+
         const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
         const durSum = parseFloat(durSumErr.toFixed(8));  // remove fraction errors
         const barQL = lastTimeSignature.barDuration.quarterLength;
@@ -63,7 +75,7 @@ export function makeBeams(s, {
         }
         const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
         for (let i = 0; i < noteStream.length; i++) {
-            const n = noteStream.get(i);
+            const n = noteStream.get(i) as note.NotRest;
             const thisBeams = beamsList[i];
             if (thisBeams !== undefined) {
                 n.beams = thisBeams;
@@ -86,7 +98,7 @@ export function * iterateBeamGroups(
     {
         skipNoBeams=true,
         recurse=true,
-    }: {skipNoBeams?: boolean, recurse?: boolean} = {}
+    }: IterateBeamGroupsOptions = {}
 ): Generator<note.NotRest[], void, void> {
     let iterator: stream.iterator.StreamIterator;
     if (recurse) {
@@ -129,7 +141,7 @@ export function setStemDirectionForBeamGroups(
     {
         setNewStems=true,
         overrideConsistentStemDirections=false,
-    }: {setNewStems?: boolean, overrideConsistentStemDirections?: boolean} = {}
+    }: StemDirectionBeatGroupOptions = {}
 ): void {
     for (const beamGroup of iterateBeamGroups(s, {skipNoBeams: true, recurse: true})) {
         setStemDirectionOneGroup(
@@ -147,7 +159,7 @@ export function setStemDirectionOneGroup(
     {
         setNewStems=true,
         overrideConsistentStemDirections=false,
-    }: {setNewStems?: boolean, overrideConsistentStemDirections?: boolean} = {}
+    }: StemDirectionBeatGroupOptions = {}
 ): void {
     if (!group.length) {
         return;  // should not happen

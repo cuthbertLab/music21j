@@ -319,8 +319,6 @@ export class Stream extends base.Music21Object {
         }
     }
 
-    // TODO(MSC) 2020-07-20 -- Add .map() => stream.iterator.StreamIterator.map()
-
     get duration(): Duration {
         if (this._overriddenDuration instanceof Duration) {
             // return new duration.Duration(32.0);
@@ -417,11 +415,9 @@ export class Stream extends base.Music21Object {
     /**
      * Return an array of the outer bounds of each MetronomeMark in the stream.
      * [offsetStart, offsetEnd, tempo.MetronomeMark]
-     *
-     * @returns {Array<number|music21.tempo.MetronomeMark>}
      */
-    _metronomeMarkBoundaries() {
-        const mmBoundaries = [];
+    _metronomeMarkBoundaries(): [number, number, tempo.MetronomeMark][] {
+        const mmBoundaries: [number, number, tempo.MetronomeMark][] = [];
         const thisFlat = this.flat;
         const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
 
@@ -433,8 +429,8 @@ export class Stream extends base.Music21Object {
         if (!metronomeMarks.length) {
             mmBoundaries.push([lowestOffset, highestTime, mmDefault]);
         } else if (metronomeMarks.length === 1) {
-            const metronomeMark = metronomeMarks.get(0);
-            const offset = metronomeMark.getOffsetBySite(thisFlat);
+            const metronomeMark = metronomeMarks.get(0) as tempo.MetronomeMark;
+            const offset = metronomeMark.getOffsetBySite(thisFlat) as number;
             if (offset > lowestOffset) {
                 mmBoundaries.push([lowestOffset, offset, mmDefault]);
                 mmBoundaries.push([offset, highestTime, metronomeMark]);
@@ -572,11 +568,11 @@ export class Stream extends base.Music21Object {
         this._clef = newClef;
     }
 
-    get keySignature() {
+    get keySignature(): key.KeySignature {
         return this.getSpecialContext('keySignature', false);
     }
 
-    set keySignature(newKeySignature) {
+    set keySignature(newKeySignature: key.KeySignature) {
         const oldKS = this._firstElementContext('keySignature');
         if (oldKS !== undefined) {
             this.replace(oldKS, newKeySignature);
@@ -586,11 +582,11 @@ export class Stream extends base.Music21Object {
         this._keySignature = newKeySignature;
     }
 
-    get timeSignature() {
+    get timeSignature(): meter.TimeSignature {
         return this.getSpecialContext('timeSignature', false);
     }
 
-    set timeSignature(newTimeSignature) {
+    set timeSignature(newTimeSignature: meter.TimeSignature) {
         if (typeof newTimeSignature === 'string') {
             newTimeSignature = new meter.TimeSignature(newTimeSignature);
         }
@@ -2172,7 +2168,7 @@ export class Stream extends base.Music21Object {
      *
      * elementType can be `svg` (default) or `canvas`
      *
-     * returns a $div encompasing either the SVG or Canvas element.
+     * returns a $div encompassing either the SVG or Canvas element.
      *
      * if width is undefined, will use `this.estimateStaffLength()`
      *     + `this.renderOptions.staffPadding`
@@ -2237,10 +2233,6 @@ export class Stream extends base.Music21Object {
      *
      * Called from appendNewDOM() etc.
      *
-     * @param {number|string|undefined} [width]
-     * @param {number|string|undefined} [height]
-     * @param {string} [elementType='svg'] - what type of element, default = svg
-     * @returns {JQuery} canvas or svg
      */
     createPlayableDOM(
         width: number|string|undefined = undefined,
@@ -2320,7 +2312,11 @@ export class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element, default = svg
      * @returns {JQuery} the svg
      */
-    replaceDOM(where, preserveSvgSize: boolean=false, elementType: string='svg') {
+    replaceDOM(
+        where,
+        preserveSvgSize: boolean=false,
+        elementType: string='svg'
+    ): JQuery {
         // if called with no where, replaces all the svg elements on the page...
         if (where === undefined) {
             where = document.body;

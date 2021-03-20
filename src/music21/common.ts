@@ -452,24 +452,48 @@ export function isFloat(num) {
     return Number(num) === num && num % 1 !== 0;
 }
 
-// TODO: implement and test
-// export function opFrac(num) {
-//
-//     //const DENOM_LIMIT = 65535; // move to another location
-//     if (isFloat(num)) { // no builtin isFloat function exists
-//         // no fraction support yet
-//         return num;
-//     }
-//     else if (Number.isInteger(num)) {
-//         return num; // number, no int's
-//     }
-//     else if (num === 'Fraction') { // Replace with fraction object
-//         return num; // no fraction support yet
-//     }
-//     else if (num === null) {
-//         return null;
-//     }
-//     else {
-//         return null;
-//     }
-// }
+const shared_buffer = new ArrayBuffer(4);  // just enough bytes for 32-bit Array
+const int_view = new Int32Array(shared_buffer);
+const float_view = new Float32Array(shared_buffer);
+
+function byte_2_relevant_bits(num) {
+    // extract bits 24 to 28 of the floating point number.
+    // if all 1s or all 0s then it's close enough to a
+    // float expressible as fraction with power of 2 denominator
+    let out = '';
+    for (let i = 10; i >= 4; i -= 1) {
+        // noinspection JSBitwiseOperatorUsage
+        out += (num & (1 << i)) ? '1' : '0';  // eslint-disable-line no-bitwise
+    }
+    return out;
+}
+
+function is_power_of_2_denominator(num) {
+    float_view[0] = num;
+    const float_as_int = int_view[0];  // magic conversion
+    const out_bits = byte_2_relevant_bits(float_as_int);
+    if (out_bits === '1111111' || out_bits === '0000000') {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Returns either the original number (never a fraction, since js does not have them)
+ * or the slightly rounded, correct representation.
+ *
+ * Uses a shared memory buffer to give the conversion.
+ */
+export function opFrac(num) {
+    if (num === Math.floor(num)) {
+        return num;
+    }
+    if (num * 1024 === Math.floor(num * 1024)) {
+        return num;
+    }
+    if (is_power_of_2_denominator(num)) {
+        return parseFloat(num.toPrecision(6));
+    } else {
+        return num;
+    }
+}

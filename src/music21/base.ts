@@ -239,6 +239,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     }
 
     set offset(newOffset: number) {
+        newOffset = common.opFrac(newOffset);
         if (this.activeSite === undefined) {
             this._naiveOffset = newOffset;
         } else {
