@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/music21_modules';
+import * as music21 from '../../src/main';
 
 const { test } = QUnit;
 
