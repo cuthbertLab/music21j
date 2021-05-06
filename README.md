@@ -60,9 +60,9 @@ webserver (rather than using `file:///...` links). We've
 included a small script to start you up:
 
 ```sh
-% cd ~/git/music21j
-% grunt webpack
-% python start_python_server.py
+$ cd ~/git/music21j
+$ grunt webpack
+$ python start_python_server.py
 ```
 
 Then navigate to http://localhost:8000/testHTML/ for some demos.
@@ -88,10 +88,21 @@ using the python server above).
 </html>
 ```
 
+or use it in your own Javascript/Typescript project:
+
+```sh
+$ npm install --save music21j
+```
+```javascript
+import * as music21 from 'music21j';
+
+const n = new music21.note.Note('F#');
+// etc.
+```
 
 Version
 --------
-0.10.1 beta
+0.11.1 beta
 
 
 License
@@ -137,6 +148,10 @@ Build with
 
 ```sh
 $ grunt webpack
+
+or
+
+$ grunt webpack watch
 ```
 
 Before building, every once in a while run (in the music21j directory)

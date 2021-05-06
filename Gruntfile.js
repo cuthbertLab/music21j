@@ -64,7 +64,7 @@ module.exports = grunt => {
     const webpackConfig = (target, preset) => {
         // noinspection JSUnresolvedFunction
         return {
-            entry: './src/music21_modules.js',  // MODULE_ENTRY,
+            entry: './src/main.ts',  // MODULE_ENTRY,
             output: {
                 path: BUILD_DIR,
                 filename: target,
