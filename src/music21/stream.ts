@@ -619,7 +619,10 @@ export class Stream extends base.Music21Object {
         let baseMaxSystemWidth = 750;
         if (this.renderOptions.maxSystemWidth === undefined
                && this.activeSite !== undefined) {
-            baseMaxSystemWidth = this.activeSite.maxSystemWidth;
+            baseMaxSystemWidth = (
+                this.activeSite.maxSystemWidth
+                * this.activeSite.renderOptions.scaleFactor.x
+            );
         } else if (this.renderOptions.maxSystemWidth !== undefined) {
             baseMaxSystemWidth = this.renderOptions.maxSystemWidth;
         }
@@ -2988,7 +2991,7 @@ export class Part extends Stream {
 
     systemWidthsAndBreaks(): [number[], number[]] {
         const measureWidths = this.getMeasureWidths();
-        const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
+        const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'? maybe was applying scaleFactor recursively.
         const systemCurrentWidths = [];
         const systemBreakIndexes = [];
         let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
