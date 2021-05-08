@@ -47,7 +47,7 @@ export class Tie extends prebase.ProtoM21Object {
     style: string = 'normal';
     placement: string;
 
-    constructor(type='start') {
+    constructor(type: string = 'start') {
         super();
         this.type = type;
     }

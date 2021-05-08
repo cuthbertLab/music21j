@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/main';
+import music21 from '../../src/music21';
 
 const { test } = QUnit;
 
@@ -8,6 +8,7 @@ export default function tests() {
         const sc = new music21.scale.Scale();
         assert.ok(sc.classes.includes('Scale'));
     });
+
     test('music21.scale.AbstractDiatonicScale', assert => {
         const sc = new music21.scale.AbstractDiatonicScale('major');
         // noinspection TypeScriptUnresolvedVariable

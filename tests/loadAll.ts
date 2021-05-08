@@ -24,7 +24,8 @@ import tempo from './moduleTests/tempo';
 import tie from './moduleTests/tie';
 import vfShow from './moduleTests/vfShow';
 import voiceLeading from './moduleTests/voiceLeading';
-import * as music21 from '../src/main';
+
+import music21 from '../src/music21';
 
 const allTests = {
     articulations,

@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
-        "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "lib": ["es6", "dom", "es2018"],
         "experimentalDecorators": true,
+        "lib": ["es6", "dom", "es2018"],
         "moduleResolution": "node",
         "sourceMap": true,
         "target": "es6"

@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/main';
+import music21 from '../../src/music21';
 
 const { test } = QUnit;
 
@@ -38,8 +38,7 @@ export default function tests() {
         assert.equal(outGroups.toString(), '6');
     });
     test('music21.roman.correctSuffixForChordQuality', assert => {
-        let c;
-        c = new music21.chord.Chord('E3 C4 G4');
+        let c = new music21.chord.Chord('E3 C4 G4');
         assert.equal(music21.roman.correctSuffixForChordQuality(c, '6'), '6');
         c = new music21.chord.Chord('E3 C4 G-4');
         assert.equal(music21.roman.correctSuffixForChordQuality(c, '6'), 'o6');

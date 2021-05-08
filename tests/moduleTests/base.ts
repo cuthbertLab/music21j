@@ -1,8 +1,7 @@
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/main';
+import music21 from '../../src/music21';
 
 const { test } = QUnit;
-
 
 export default function tests() {
     test('music21.base.Music21Object', assert => {

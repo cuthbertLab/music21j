@@ -34,8 +34,6 @@ import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 import 'jquery-ui-bundle';
 
-// TODO: add attrchange
-
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
 // alphabetical.
@@ -88,8 +86,7 @@ import * as webmidi from './webmidi';
 
 import { debug } from './debug';
 
-
-export {
+export const music21 = {
     MIDI,
     Vex,
 
@@ -142,7 +139,7 @@ export {
     webmidi,
 };
 
-export const VERSION = '0.11.1';
+export const VERSION = '0.11.7';
 
 if (typeof window !== 'undefined') {
     (window as any).$ = $;
@@ -150,3 +147,6 @@ if (typeof window !== 'undefined') {
 }
 
 parseLoader.runConfiguration();
+
+export default music21;
+

@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/main';
+import music21 from '../../src/music21';
 
 const key = music21.key;
 const { test } = QUnit;

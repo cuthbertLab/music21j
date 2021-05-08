@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/main';
+import music21 from '../../src/music21';
 
 const { test } = QUnit;
 

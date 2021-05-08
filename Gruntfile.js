@@ -36,11 +36,9 @@ module.exports = grunt => {
     ];
     const WATCH_SOURCES = SOURCES.concat(['Gruntfile.js']);
 
-    const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
+    const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.ts');
     const TEST_SOURCES = [
-        'tests/loadAll.js',
-        'tests/moduleTests/*.js',
-        'tests/moduleTests/*/*.js',
+        'tests/loadAll.ts',
         'tests/moduleTests/*.ts',
         'tests/moduleTests/*/*.ts',
     ];
@@ -64,7 +62,7 @@ module.exports = grunt => {
     const webpackConfig = (target, preset) => {
         // noinspection JSUnresolvedFunction
         return {
-            entry: './src/main.ts',  // MODULE_ENTRY,
+            entry: './src/music21.ts',  // MODULE_ENTRY,
             output: {
                 path: BUILD_DIR,
                 filename: target,

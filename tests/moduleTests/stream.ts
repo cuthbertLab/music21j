@@ -1,11 +1,11 @@
 import $ from 'jquery';
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/main';
+import music21 from '../../src/music21';
 
 const { test } = QUnit;
 
 
-function get_stream_and_note(): [music21.stream.Stream, music21.note.Note] {
+function get_stream_and_note(): {
     const s = new music21.stream.Stream();
     s.append(new music21.note.Note('C#5'));
     s.append(new music21.note.Note('D#5'));
@@ -26,7 +26,7 @@ export default function tests() {
 
         // test iteration.
         for (const n of s) {
-            const oct = (n as music21.note.Note).pitch.octave;
+            const oct = n.pitch.octave;
             assert.equal(oct, 5, 'all notes are octave 5.');
         }
     });
@@ -43,11 +43,11 @@ export default function tests() {
         assert.ok(t instanceof music21.stream.Stream);
         assert.equal(t.length, 3);
         assert.equal(t.length, s.length, 't.length should equal s.length');
-        const t0 = t.get(0) as music21.note.Note;
+        const t0 = t.get(0);
         assert.equal(t0.pitch.name, 'C#');
         for (let i = 0; i < t.length; i++) {
-            const tEl = t.get(i) as music21.note.Note;
-            const sEl = s.get(i) as music21.note.Note;
+            const tEl = t.get(i);
+            const sEl = s.get(i);
             assert.equal(tEl.offset, sEl.offset);
             assert.equal(tEl.pitch.name, sEl.pitch.name);
         }
