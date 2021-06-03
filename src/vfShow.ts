@@ -278,7 +278,7 @@ export class Renderer {
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
             }
-            if (i === p.length - 1) {
+            if (i === p.length - 1 && subStream.renderOptions.rightBarline === undefined) {
                 subStream.renderOptions.rightBarline = 'end';
             }
             if (this.stacks[i] === undefined) {
