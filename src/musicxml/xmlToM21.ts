@@ -66,8 +66,9 @@ export class ScoreParser {
 
     scoreFromUrl(url) {
         this.xmlUrl = url;
+        const dataType = 'xml';
         // noinspection JSUnusedLocalSymbols
-        return $.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
+        return $.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc), dataType);
     }
 
     scoreFromText(xmlText) {
