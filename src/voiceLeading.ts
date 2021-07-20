@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/voiceLeading -- voiceLeading objects
  *
- * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * @namespace music21.voiceLeading
  */

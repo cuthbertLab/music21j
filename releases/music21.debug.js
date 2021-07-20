@@ -1,5 +1,5 @@
 /**
- * music21j version 0.10.4 built on 2021-05-06.
+ * music21j version 0.11.2 built on 2021-07-20.
  * Copyright (c) 2013-2021 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -1075,8 +1075,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/bar -- Barline objects
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  */
 
@@ -1179,8 +1179,8 @@ __webpack_require__.r(__webpack_exports__);
  *
  * does not load the other modules.
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * module for Music21Objects, see {@link music21.base}
  *
@@ -1809,8 +1809,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/beam -- Beams and Beam class
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * Module holding beam materials. See {@link music21.beam} namespace.
  * {@link music21.beam.Beam} and {music21.beam.Beams} objects
@@ -2284,8 +2284,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/chord -- Chord
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * chord Module. See {@link music21.chord} namespace for more details.
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
@@ -5524,8 +5524,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/clef -- Clef objects
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * Clef module, see {@link music21.clef} for namespace
  * Clef related objects and properties
@@ -6745,8 +6745,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/duration -- duration routines
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * Module that holds **music21** classes and
  * tools for dealing with durations, especially
@@ -7237,8 +7237,8 @@ __webpack_require__.r(__webpack_exports__);
  * note that Vex.Flow does not support Dynamics yet and we do not support MIDI dynamics,
  *  so currently of limited value...
  *
- * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  * dynamics Module. See {@link music21.dynamics} for namespace
  *
  * Dynamics related objects.
@@ -7407,8 +7407,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/editorial -- Representations of editorial information
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  */
 
 class Editorial extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
@@ -7982,8 +7982,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/fromPython -- Conversion from music21p jsonpickle streams
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * fromPython module -- see {@link music21.fromPython}
  *
@@ -8296,8 +8296,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/instrument -- instrument objects
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * Instrument module, see {@link music21.instrument}
  * Looking for the {@link music21.instrument.Instrument} object? :-)
@@ -9039,8 +9039,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/interval -- Interval routines
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * interval module. See {@link music21.interval} for namespace
  * Interval related objects
@@ -10043,8 +10043,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/key -- KeySignature and Key objects
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * key and key signature module. See {@link music21.key} namespace for details
  * Key and KeySignature related objects and methods
@@ -10476,8 +10476,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/keyboard -- PianoKeyboard rendering and display objects
  *
- * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * Keyboard module, see {@link music21.keyboard} namespace
  *
@@ -11522,8 +11522,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * meter module. See {@link music21.meter} namespace for details.
  * Meter and TimeSignature Classes (esp. {@link music21.meter.TimeSignature} ) and methods.
@@ -12001,10 +12001,10 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi.
  *
- * Copyright (c) 2014-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * @author Michael Scott Cuthbert
+ * @author Michael Scott Asato Cuthbert
  *
  * A collection of tools for midi. See the namespace.
  *
@@ -14015,9 +14015,10 @@ class ScoreParser {
   }
 
   scoreFromUrl(url) {
-    this.xmlUrl = url; // noinspection JSUnusedLocalSymbols
+    this.xmlUrl = url;
+    const dataType = 'xml'; // noinspection JSUnusedLocalSymbols
 
-    return jquery__WEBPACK_IMPORTED_MODULE_3__.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
+    return jquery__WEBPACK_IMPORTED_MODULE_3__.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc), dataType);
   }
 
   scoreFromText(xmlText) {
@@ -14773,8 +14774,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/note -- Note, Rest, NotRest, GeneralNote
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * Module for note classes. See the namespace {@link music21.note}
  *
@@ -15791,8 +15792,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/pitch -- pitch routines
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * pitch module.  See {@link music21.pitch} namespace
  * Pitch related objects and methods
@@ -16802,7 +16803,7 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit. See the {@link music21.prebase} namespace.
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  *
  * @exports music21/prebase
  * @namespace music21.prebase
@@ -17059,8 +17060,8 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
  *
  * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * renderOptions module, see {@link music21.renderOptions}
  * Options for rendering a stream
@@ -17205,8 +17206,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/roman -- roman.RomanNumeral -- Chord subclass
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * Roman numeral module. See  namespace
  * music21.roman -- namespace for dealing with RomanNumeral analysis.
@@ -18167,8 +18168,8 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Does not implement the full range of scales from music21p
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  *
  *
@@ -18749,7 +18750,7 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
  *
- * Copyright 2017-2019, Michael Scott Cuthbert and cuthbertLab
+ * Copyright 2017-2019, Michael Scott Asato Cuthbert
  * License: BSD
  *
  * @namespace music21.sites
@@ -19126,9 +19127,8 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Does not implement the full features of music21p Streams by a long shot...
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert
- *     and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * powerful stream module, See {@link music21.stream} namespace
  * @exports music21/stream
@@ -23934,8 +23934,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/tempo -- tempo and (not in music21p) metronome objects
  *
- * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * tempo module, see {@link music21.tempo}
  *
@@ -24454,8 +24454,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tie -- ties!
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  */
 
@@ -24563,8 +24563,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tinyNotation -- TinyNotation implementation
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * TinyNotation module
  *
@@ -24987,8 +24987,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  *
@@ -26329,8 +26329,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/voiceLeading -- voiceLeading objects
  *
- * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * @namespace music21.voiceLeading
  */
@@ -26776,8 +26776,8 @@ __webpack_require__.r(__webpack_exports__);
  * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
  * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
  *
- * Copyright (c) 2014-18, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2014-18, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  */
 
@@ -65129,29 +65129,27 @@ __webpack_require__.r(__webpack_exports__);
  *
  * See http://web.mit.edu/music21/ for more details.
  *
- * Copyright (c) 2013-20, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 
 /**
  *
- * Based on music21, Copyright (c) 2006-20, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
  *
- * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. IE 11 or any recent
+ * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. Any recent
  * version of Firefox, Safari, Edge,  Chrome, etc. will do.
  *
- * All interfaces are alpha and may change radically from day to day and release to release.
+ * All interfaces are beta and may change radically from day to day and release to release.
  * Do not use this in production code yet.
  *
- * music21j acknowledges VexFlow, MIDI.js in particular for their great efforts without which
+ * music21j acknowledges VexFlow and MIDI.js in particular for their great efforts without which
  * this module would not be possible.
  *
- * @namespace music21
- * @exports music21
  */
 // webpack loader for music21j.
 
@@ -65159,8 +65157,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // TODO: add attrchange
-// order below doesn't matter, but good to give a sense
+ // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
 // alphabetical.
 
@@ -65210,7 +65207,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.11.1';
+const VERSION = '0.11.10';
 
 if (typeof window !== 'undefined') {
   window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;

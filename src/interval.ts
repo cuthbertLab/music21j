@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/interval -- Interval routines
  *
- * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * interval module. See {@link music21.interval} for namespace
  * Interval related objects
