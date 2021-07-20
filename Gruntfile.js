@@ -1,5 +1,5 @@
 // Gruntfile for music21j
-// Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
+// Copyright Michael Scott Asato Cuthbert (cuthbert@mit.edu), BSD License
 const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -12,7 +12,7 @@ module.exports = grunt => {
         + ' * music21j version ' + package_json.version + ' built on '
         + (new Date()).toISOString().split('T')[0] + '.\n'
         + ' * Copyright (c) 2013-' + (new Date()).getFullYear() + ' '
-        + 'Michael Scott Cuthbert and cuthbertLab\n'
+        + 'Michael Scott Asato Cuthbert\n'
         + ' * BSD License, see LICENSE\n'
         + ' *\n'
         + ' * http://github.com/cuthbertLab/music21j\n'

@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/tempo -- tempo and (not in music21p) metronome objects
  *
- * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * tempo module, see {@link music21.tempo}
  *

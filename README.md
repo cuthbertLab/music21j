@@ -3,21 +3,21 @@ Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-20, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
+Copyright &copy;2013-21, Michael Scott Asato Cuthbert, some rights reserved (BSD).
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
-interfaces. Some of the things music21j offers are:
+interfaces. Some things music21j offers are:
 
   - The ability to visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
   - Connections (via Web Midi or [JazzSoft] plugin) to MIDI devices.
-  - Music theory and analysis modules at the level of music21 ca. 2012
+  - Music theory and analysis modules at the level of music21 ca. 2014
   - A repository of modules such as metronomes, keyboards, and automatic transcribers.
 
 Though it does not have all the power of [Music21 Python], music21j can help with
 a number of research problems in music history and theory. The introduction to the
 Python package will say more about it (it's better documented). The "namespaces"
-tab above will give introductions to some of the features of music21j. At this
+tab above will give introductions to some features of music21j. At this
 point we're focusing on documenting usage; developer docs will come
 later.
 

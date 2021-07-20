@@ -1,7 +1,7 @@
 /**
  * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
  *
- * Copyright 2017-2019, Michael Scott Cuthbert and cuthbertLab
+ * Copyright 2017-2019, Michael Scott Asato Cuthbert
  * License: BSD
  *
  * @namespace music21.sites
