@@ -3,28 +3,26 @@
  *
  * See http://web.mit.edu/music21/ for more details.
  *
- * Copyright (c) 2013-20, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-20, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
  *
- * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. IE 11 or any recent
+ * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. Any recent
  * version of Firefox, Safari, Edge,  Chrome, etc. will do.
  *
- * All interfaces are alpha and may change radically from day to day and release to release.
+ * All interfaces are beta and may change radically from day to day and release to release.
  * Do not use this in production code yet.
  *
- * music21j acknowledges VexFlow, MIDI.js in particular for their great efforts without which
+ * music21j acknowledges VexFlow and MIDI.js in particular for their great efforts without which
  * this module would not be possible.
  *
- * @namespace music21
- * @exports music21
  */
 
 // webpack loader for music21j.
@@ -139,7 +137,7 @@ export const music21 = {
     webmidi,
 };
 
-export const VERSION = '0.11.7';
+export const VERSION = '0.11.10';
 
 if (typeof window !== 'undefined') {
     (window as any).$ = $;
@@ -149,4 +147,3 @@ if (typeof window !== 'undefined') {
 parseLoader.runConfiguration();
 
 export default music21;
-
