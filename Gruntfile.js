@@ -36,11 +36,9 @@ module.exports = grunt => {
     ];
     const WATCH_SOURCES = SOURCES.concat(['Gruntfile.js']);
 
-    const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
+    const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.ts');
     const TEST_SOURCES = [
-        'tests/loadAll.js',
-        'tests/moduleTests/*.js',
-        'tests/moduleTests/*/*.js',
+        'tests/loadAll.ts',
         'tests/moduleTests/*.ts',
         'tests/moduleTests/*/*.ts',
     ];
@@ -103,7 +101,7 @@ module.exports = grunt => {
                         test: /\.css$/i,
                         use: ['style-loader', 'css-loader'],
                     },
-                 ],
+                ],
             },
             plugins: [
                 new webpack.BannerPlugin({banner: BANNER, raw: true}),
@@ -195,7 +193,7 @@ module.exports = grunt => {
             },
         },
         qunit: {
-            files: ['tests/gruntTest.html']
+            files: ['tests/gruntTest.html'],
         },
         watch: {
             scripts: {
