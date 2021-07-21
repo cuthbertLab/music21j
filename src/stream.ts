@@ -389,9 +389,9 @@ export class Stream extends base.Music21Object {
         return newSt as this;
     }
 
-    get notes(): iterator.StreamIterator<note.GeneralNote> {
+    get notes(): iterator.StreamIterator<note.NotRest> {
         return this.getElementsByClass(['Note', 'Chord']) as
-            iterator.StreamIterator<note.GeneralNote>;
+            iterator.StreamIterator<note.NotRest>;
     }
 
     get notesAndRests(): iterator.StreamIterator<note.GeneralNote> {
