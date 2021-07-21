@@ -164,16 +164,16 @@ export function setStemDirectionOneGroup(
     if (!group.length) {
         return;  // should not happen
     }
-    const up_down_stem_direction: Set<string> = new Set();
+    const stem_directions_found: Set<string> = new Set();
     for (const n of group) {
         if (_up_down_unspecified.includes(n.stemDirection)) {
-            up_down_stem_direction.add(n.stemDirection);
+            stem_directions_found.add(n.stemDirection);
         }
     }
     let has_consistent_stem_directions: boolean = false;
-    if (_up_down_unspecified.includes('unspecified')) {
+    if (stem_directions_found.has('unspecified')) {
         has_consistent_stem_directions = false;
-    } else if (up_down_stem_direction.size < 2) {
+    } else if (stem_directions_found.size < 2) {
         has_consistent_stem_directions = true;
     }
 
