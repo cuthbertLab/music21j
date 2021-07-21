@@ -745,6 +745,20 @@ export default function tests() {
         );
     });
 
+    test('music21.stream.makeNotation testSetStemDirectionConsistency', assert => {
+        const p = music21.tinyNotation.TinyNotation('2/4 b8 f8 a8 b8');
+        p.makeBeams({inPlace: true, setStemDirections: false});
+        const note_array = Array.from(p.flat.notes) as music21.note.Note[];
+        note_array[0].stemDirection = 'down';
+        note_array[1].stemDirection = 'unspecified';
+        note_array[2].stemDirection = 'down';
+        note_array[3].stemDirection = 'down';
+
+        music21.stream.makeNotation.setStemDirectionForBeamGroups(p);
+        const stemDirections = note_array.map(n => n.stemDirection);
+        assert.deepEqual(stemDirections, ['up', 'up', 'down', 'down']);
+    });
+
     test('music21.stream.makeNotation testMakeBeamsWithStemDirection', assert => {
         const p = music21.tinyNotation.TinyNotation(alla_breve_test);
         const pn = Array.from(p.flat.notes) as music21.note.Note[];

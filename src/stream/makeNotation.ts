@@ -166,12 +166,14 @@ export function setStemDirectionOneGroup(
     }
     const up_down_stem_direction: Set<string> = new Set();
     for (const n of group) {
-        if (_up_down.includes(n.stemDirection)) {
+        if (_up_down_unspecified.includes(n.stemDirection)) {
             up_down_stem_direction.add(n.stemDirection);
         }
     }
     let has_consistent_stem_directions: boolean = false;
-    if (up_down_stem_direction.size < 2) {
+    if (_up_down_unspecified.includes('unspecified')) {
+        has_consistent_stem_directions = false;
+    } else if (up_down_stem_direction.size < 2) {
         has_consistent_stem_directions = true;
     }
 
