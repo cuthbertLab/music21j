@@ -299,7 +299,8 @@ export class TimeSignature extends base.Music21Object {
             if (beamNext !== undefined) {
                 archetypeSpanNextStart = this.offsetToSpan(startNext)[0];
             }
-            if (start === archetypeSpanStart && end === archetypeSpanEnd) {
+            if (end === archetypeSpanEnd && (
+                start === archetypeSpanStart || (beamPrevious === undefined && beamNumber === 1))) {
                 beamsList[i] = undefined;
                 return;
             }
