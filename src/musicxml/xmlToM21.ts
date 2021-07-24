@@ -183,9 +183,7 @@ export class PartParser {
         }
         // TODO(msc): spannerBundles
         this.stream = new stream.Part();
-        this.lastClefs = {
-            0: new clef.TrebleClef(),
-        };
+        this.lastClefs = {};
     }
 
     parse() {
@@ -194,7 +192,9 @@ export class PartParser {
         // atSoundingPitch;
         // spannerBundles
         // partStaves;
-        this.stream.clef = this.lastClefs[0];
+        if (this.lastClefs.length > 0) {
+            this.stream.clef = this.lastClefs[0];
+        }
     }
 
     parseXmlScorePart() {
