@@ -1,6 +1,6 @@
 /**
- * music21j version 0.11.2 built on 2021-07-20.
- * Copyright (c) 2013-2021 Michael Scott Cuthbert and cuthbertLab
+ * music21j version 0.11.11 built on 2021-07-24.
+ * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
  * http://github.com/cuthbertLab/music21j
@@ -11832,7 +11832,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
         archetypeSpanNextStart = this.offsetToSpan(startNext)[0];
       }
 
-      if (start === archetypeSpanStart && end === archetypeSpanEnd) {
+      if (end === archetypeSpanEnd && (start === archetypeSpanStart || beamPrevious === undefined && beamNumber === 1)) {
         beamsList[i] = undefined;
         return;
       }
@@ -14130,9 +14130,7 @@ class PartParser {
 
 
     this.stream = new _stream__WEBPACK_IMPORTED_MODULE_12__.Part();
-    this.lastClefs = {
-      0: new _clef__WEBPACK_IMPORTED_MODULE_6__.TrebleClef()
-    };
+    this.lastClefs = {};
   }
 
   parse() {
@@ -14141,7 +14139,9 @@ class PartParser {
     // spannerBundles
     // partStaves;
 
-    this.stream.clef = this.lastClefs[0];
+    if (this.lastClefs.length > 0) {
+      this.stream.clef = this.lastClefs[0];
+    }
   }
 
   parseXmlScorePart() {
@@ -23697,7 +23697,7 @@ function makeBeams(s, {
 
     if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
       offset = m.paddingLeft;
-    } else if (noteStream.highestTime < barQL) {
+    } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
       offset = barQL - noteStream.highestTime;
     }
 
@@ -23792,17 +23792,19 @@ function setStemDirectionOneGroup(group, {
     return; // should not happen
   }
 
-  const up_down_stem_direction = new Set();
+  const stem_directions_found = new Set();
 
   for (const n of group) {
-    if (_up_down.includes(n.stemDirection)) {
-      up_down_stem_direction.add(n.stemDirection);
+    if (_up_down_unspecified.includes(n.stemDirection)) {
+      stem_directions_found.add(n.stemDirection);
     }
   }
 
   let has_consistent_stem_directions = false;
 
-  if (up_down_stem_direction.size < 2) {
+  if (stem_directions_found.has('unspecified')) {
+    has_consistent_stem_directions = false;
+  } else if (stem_directions_found.size < 2) {
     has_consistent_stem_directions = true;
   }
 
@@ -25270,7 +25272,7 @@ class Renderer {
         this.systemBreakOffsets.push(subStream.offset);
       }
 
-      if (i === p.length - 1) {
+      if (i === p.length - 1 && subStream.renderOptions.rightBarline === undefined) {
         subStream.renderOptions.rightBarline = 'end';
       }
 
@@ -65207,7 +65209,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.11.10';
+const VERSION = '0.11.11';
 
 if (typeof window !== 'undefined') {
   window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;

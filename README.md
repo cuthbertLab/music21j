@@ -102,7 +102,7 @@ const n = new music21.note.Note('F#');
 
 Version
 --------
-0.11.10 beta
+0.11 beta
 
 
 License
