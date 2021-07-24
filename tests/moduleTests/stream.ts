@@ -547,6 +547,40 @@ export default function tests() {
         assert.equal(n4.beams.beamsList[0].type, 'stop');
     });
 
+    test('music21.stream.Measure makeBeams with incomplete 6/8 measure', assert => {
+        const ts = new music21.meter.TimeSignature('6/8');
+        const n1 = new music21.note.Note('C4', 1.0);
+        const n2 = new music21.note.Note('C4', 0.5);
+        const n3 = new music21.note.Note('C4', 0.5);
+        const m = new music21.stream.Measure();
+        m.paddingRight = 1.0;
+        m.renderOptions.useVexflowAutobeam = false;
+        m.append([ts, n1, n2, n3]);
+        m.makeBeams({inPlace: true});
+        assert.equal(n1.beams.beamsList.length, 0);
+        assert.equal(n2.beams.beamsList.length, 0);
+        assert.equal(n3.beams.beamsList.length, 0);
+
+        // complete the measure with a quarter
+        const n4 = new music21.note.Note('C4', 1.0);
+        m.append(n4);
+        m.paddingRight = 0;
+        m.makeBeams({inPlace: true});
+        assert.equal(n1.beams.beamsList.length, 0);
+        assert.equal(n2.beams.beamsList.length, 0);
+        assert.equal(n3.beams.beamsList.length, 0);
+        assert.equal(n4.beams.beamsList.length, 0);
+
+        // make incomplete again by changing last quarter to eighth
+        n4.quarterLength = 0.5;
+        m.paddingRight = 0.5;
+        m.makeBeams({inPlace: true});
+        assert.equal(n1.beams.beamsList.length, 0);
+        assert.equal(n2.beams.beamsList.length, 0);
+        assert.equal(n3.beams.beamsList[0].type, 'start');
+        assert.equal(n4.beams.beamsList[0].type, 'stop');
+    });
+
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
         p1.makeAccidentals();

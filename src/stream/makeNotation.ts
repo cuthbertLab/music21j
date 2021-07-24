@@ -70,7 +70,7 @@ export function makeBeams(s: stream.Stream, {
         let offset = 0.0;
         if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
             offset = m.paddingLeft;
-        } else if (noteStream.highestTime < barQL) {
+        } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
             offset = barQL - noteStream.highestTime;
         }
         const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
