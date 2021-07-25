@@ -2,8 +2,7 @@
 node_modules/
 node_modules/grunt/package.json
 
-build/*.js
-build/*.map
+build/
 
 tests/music21.tests.js
 tests/music21.tests.js.map

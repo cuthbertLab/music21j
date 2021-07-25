@@ -28,9 +28,6 @@ module.exports = grunt => {
     // const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
 
     const SOURCES = [
-        'src/music21_modules.js',
-        'src/music21/*.js',
-        'src/music21/*/*.js',
         'src/music21/*.ts',
         'src/music21/*/*.ts',
     ];
@@ -171,9 +168,6 @@ module.exports = grunt => {
         jsdoc: {
             dist: {
                 src: [
-                    'src/music21_modules.js',
-                    'src/music21/*.js',
-                    'src/music21/*/*.js',
                     'src/music21/*.ts',
                     'src/music21/*/*.ts',
                     'README.md',

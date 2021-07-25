@@ -2,7 +2,7 @@
   "name": "music21j",
   "version": "0.11.11",
   "description": "A toolkit for computer-aided musicology, Javascript version",
-  "main": "src/music21_modules.js",
+  "main": "releases/main.js",
   "files": [
     ".editorconfig",
     ".eslintignore",
@@ -10,6 +10,7 @@
     ".gitignore",
     ".jshintrc",
     "Gruntfile.js",
+    "tsconfig.json",
     "/css",
     "/ext",
     "/releases",

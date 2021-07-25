@@ -6,6 +6,9 @@
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        "declarationDir": "build",
         "target": "es6"
     },
     "include": [
