@@ -15,8 +15,7 @@
     "/ext",
     "/releases",
     "/scripts",
-    "/src/music21",
-    "/src/*.js",
+    "/src",
     "/testHTML",
     "/tests",
     "/webResources"
