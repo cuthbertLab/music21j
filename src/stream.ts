@@ -1435,7 +1435,8 @@ export class Stream extends base.Music21Object {
         } else {
             out = this.clone(true);
         }
-        this.makeAccidentals();
+        // already made a copy
+        this.makeAccidentals({ inPlace: true });
         return out;
     }
 
@@ -1700,8 +1701,6 @@ export class Stream extends base.Music21Object {
         If `inPlace` is True, this is done in-place; if `inPlace` is False,
         this returns a modified deep copy.
 
-        TODO: inPlace default will become False in when music21p v.7 is released.
-
         Called automatically before appendDOM routines are called.
      */
     makeAccidentals({
@@ -1712,7 +1711,7 @@ export class Stream extends base.Music21Object {
         searchKeySignatureByContext=false,  // not yet used.
         cautionaryPitchClass=true,
         cautionaryAll=false,
-        inPlace=true,
+        inPlace=false,
         overrideStatus=false,
         cautionaryNotImmediateRepeat=true,
         tiePitchSet=new Set(),
