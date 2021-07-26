@@ -3,7 +3,8 @@ import * as filters from './filters';
 
 // just for declaration
 import type { Music21Object } from '../base';
-import type { Stream } from '../stream';
+import type { GeneralNote, NotRest } from '../note';
+import type { Part, Stream, Voice } from '../stream';
 
 const StopIterationSingleton = filters.StopIterationSingleton;
 
@@ -222,15 +223,15 @@ class _StreamIteratorBase<T = Music21Object> {
 
 
     get notes() {
-        return this.addFilter(new filters.ClassFilter('NotRest'));
+        return this.addFilter(new filters.ClassFilter('NotRest')) as unknown as _StreamIteratorBase<NotRest>;
     }
 
     get notesAndRests() {
-        return this.addFilter(new filters.ClassFilter('GeneralNote'));
+        return this.addFilter(new filters.ClassFilter('GeneralNote')) as unknown as _StreamIteratorBase<GeneralNote>;
     }
 
     get parts() {
-        return this.addFilter(new filters.ClassFilter('Part'));
+        return this.addFilter(new filters.ClassFilter('Part')) as unknown as _StreamIteratorBase<Part>;
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -239,7 +240,7 @@ class _StreamIteratorBase<T = Music21Object> {
     }
 
     get voices() {
-        return this.addFilter(new filters.ClassFilter('Voice'));
+        return this.addFilter(new filters.ClassFilter('Voice')) as unknown as _StreamIteratorBase<Voice>;
     }
 }
 
@@ -275,7 +276,7 @@ export class StreamIterator<T = Music21Object> extends _StreamIteratorBase<T> {
 }
 
 export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
-    nextToYield: any[];  // should be Music21Object[]
+    nextToYield: T[];
     nextOffsetToYield: number;
 
     constructor(srcStream, options={}) {
