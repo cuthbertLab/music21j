@@ -2574,13 +2574,13 @@ export class Stream extends base.Music21Object {
         allowablePixels: number = 10,
         systemIndex?: number,
         options={},
-    ): base.Music21Object {
+    ): note.GeneralNote {
         const params = {
             allowBackup: true,
             backupMaximum: 70,
         };
         common.merge(params, options);
-        let foundNote;
+        let foundNote: note.GeneralNote;
         const subStream = this.getStreamFromScaledXandSystemIndex(
             xPxScaled,
             systemIndex
@@ -2642,7 +2642,7 @@ export class Stream extends base.Music21Object {
         e?: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
-    ): [number, base.Music21Object] {
+    ): [number, note.GeneralNote] {
         // this is Stream.findNoteForClick.
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
@@ -3221,7 +3221,7 @@ export class Part extends Stream {
         e?: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
-    ): [number, base.Music21Object] {
+    ): [number, note.GeneralNote] {
         // this is Part.FindNoteForClick
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
@@ -3526,7 +3526,7 @@ export class Score extends Stream {
         e?: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,
-    ): [number, base.Music21Object] {
+    ): [number, note.GeneralNote] {
         // this is Score.findNoteForClick()
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
