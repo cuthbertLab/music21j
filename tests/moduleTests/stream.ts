@@ -475,7 +475,7 @@ export default function tests() {
         const s = new music21.stream.Measure();
         s.keySignature = ks;
         s.append([n, n2, n3, c]);
-        s.makeAccidentals();
+        s.makeAccidentals({ inPlace: true });
         assert.ok(n.pitch.accidental.displayStatus);
         assert.notOk(
             n2.pitch.accidental.displayStatus,
@@ -583,7 +583,7 @@ export default function tests() {
 
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
-        p1.makeAccidentals();
+        p1.makeAccidentals({ inPlace: true });
         let p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
         assert.notOk(p_list[0].accidental, 'p_list[0].accidental should not exist');
         assert.notOk(p_list[1].accidental, 'p_list[1].accidental should not exist');
@@ -597,7 +597,7 @@ export default function tests() {
         const m1 = p1.getElementsByClass('Measure').get(0) as music21.stream.Measure;
         const f_maj = new music21.key.Key('F');
         m1.insert(0, f_maj);
-        p1.makeAccidentals();
+        p1.makeAccidentals({ inPlace: true });
         p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
 
         assert.notOk(p_list[5].accidental.displayStatus, 'first b-flat should not display');  // B flat
