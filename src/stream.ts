@@ -794,6 +794,9 @@ export class Stream extends base.Music21Object {
         if (classFilter !== undefined) {
             ri.addFilter(new filters.ClassFilter(classFilter));
         }
+        if (streamsOnly) {
+            return ri as iterator.RecursiveIterator<Stream>;
+        }
         return ri;
     }
 
@@ -1312,7 +1315,7 @@ export class Stream extends base.Music21Object {
         }
     }
 
-    containerInHierarchy(el, { setActiveSite=true }={}) {
+    containerInHierarchy(el: base.Music21Object, { setActiveSite=true }={}): Stream|undefined {
         const elSites = el.sites;
         for (const s of this.recurse({
             skipSelf: false,
