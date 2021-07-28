@@ -1326,7 +1326,7 @@ export class Stream extends base.Music21Object {
                 if (setActiveSite) {
                     el.activeSite = s;
                 }
-                return s;
+                return s as Stream;
             }
         }
         return undefined;
@@ -2495,7 +2495,7 @@ export class Stream extends base.Music21Object {
      *
      */
     getScaledXYforDOM(
-        svg: HTMLElement|SVGElement,
+        svg: HTMLElement|SVGElement|JQuery<HTMLElement>,
         e: MouseEvent|TouchEvent|JQuery.MouseEventBase
     ): [number, number] {
         const [xPx, yPx] = this.getUnscaledXYforDOM(svg, e);
@@ -2640,7 +2640,7 @@ export class Stream extends base.Music21Object {
      * @returns {Array} [diatonicNoteNum, closestXNote]
      */
     findNoteForClick(
-        svg?: HTMLElement|SVGElement,
+        svg?: HTMLElement|SVGElement|JQuery<HTMLElement>,
         e?: MouseEvent|TouchEvent|JQuery.MouseEventBase,
         x?: number,
         y?: number,

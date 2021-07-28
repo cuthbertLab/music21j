@@ -334,7 +334,7 @@ export function selectionChanged() {
  * @param {boolean} options.existingMidiSelect -- is there already a select tag for MIDI?
  * @returns {jQuery|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-export function createSelector(midiSelectDiv, options) {
+export function createSelector(midiSelectDiv, options={}) {
     const params = {
         autoUpdate: true,
         existingMidiSelect: false,
