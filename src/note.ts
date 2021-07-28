@@ -819,5 +819,3 @@ export class Rest extends GeneralNote {
         return vfn;
     }
 }
-
-/* ------ TODO(msc): SpacerRest  or remove from music21p ------ */
