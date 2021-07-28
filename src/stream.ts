@@ -1326,7 +1326,7 @@ export class Stream extends base.Music21Object {
                 if (setActiveSite) {
                     el.activeSite = s;
                 }
-                return s;
+                return s as Stream;
             }
         }
         return undefined;
