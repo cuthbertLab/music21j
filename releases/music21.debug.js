@@ -1,5 +1,5 @@
 /**
- * music21j version 0.11.11 built on 2021-07-24.
+ * music21j version 0.11.13 built on 2021-07-28.
  * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -15572,7 +15572,6 @@ class Rest extends GeneralNote {
   }
 
 }
-/* ------ TODO(msc): SpacerRest  or remove from music21p ------ */
 
 /***/ }),
 
@@ -19908,6 +19907,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
       ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_27__.ClassFilter(classFilter));
     }
 
+    if (streamsOnly) {
+      return ri;
+    }
+
     return ri;
   }
   /**
@@ -20596,9 +20599,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
       out = this;
     } else {
       out = this.clone(true);
-    }
+    } // already made a copy
 
-    this.makeAccidentals();
+
+    this.makeAccidentals({
+      inPlace: true
+    });
     return out;
   }
   /**
@@ -20852,7 +20858,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
       ranges, call this on Measure objects.
        If `inPlace` is True, this is done in-place; if `inPlace` is False,
       this returns a modified deep copy.
-       TODO: inPlace default will become False in when music21p v.7 is released.
        Called automatically before appendDOM routines are called.
    */
 
@@ -20866,7 +20871,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
     // not yet used.
     cautionaryPitchClass = true,
     cautionaryAll = false,
-    inPlace = true,
+    inPlace = false,
     overrideStatus = false,
     cautionaryNotImmediateRepeat = true,
     tiePitchSet = new Set()
@@ -27091,7 +27096,7 @@ function selectionChanged() {
  * @returns {jQuery|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 
-function createSelector(midiSelectDiv, options) {
+function createSelector(midiSelectDiv, options = {}) {
   const params = {
     autoUpdate: true,
     existingMidiSelect: false,
@@ -65209,7 +65214,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.11.11';
+const VERSION = '0.11.13';
 
 if (typeof window !== 'undefined') {
   window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;

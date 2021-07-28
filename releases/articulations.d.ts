@@ -1,0 +1,163 @@
+/**
+ * articulations module. See {@link music21.articulations} namespace
+ *
+ * @namespace music21.articulations
+ * @memberof music21
+ * @requires music21/prebase
+ * @requires vexflow
+ * @requires music21/common
+ */
+import Vex from 'vexflow';
+import * as prebase from './prebase';
+export declare enum ArticulationPlacement {
+    ABOVE = "above",
+    BELOW = "below",
+    LEFT = "left",
+    RIGHT = "right",
+    STEM_SIDE = "stemSide",
+    NOTE_SIDE = "noteSide"
+}
+export declare const ArticulationPlacementToVexFlowModifierPosition: Map<ArticulationPlacement, any>;
+export interface VexflowArticulationParams {
+    stemDirection?: string;
+}
+/**
+ * This works the same for music21 Articulations and Expressions
+ */
+export declare function setPlacementOnVexFlowArticulation(vfa: Vex.Flow.Articulation | Vex.Flow.Ornament, placement: ArticulationPlacement, stemDirection: string): void;
+/**
+ * Represents a single articulation, usually in the `.articulations` Array
+ * on a {@link music21.note.Note} or something like that.
+ *
+ * @class Articulation
+ * @memberof music21.articulations
+ * @property {string} name
+ * @property {string} [placement='above']
+ * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
+ * @property {number} [dynamicScale=1.0] - multiplier for the dynamic of a note that this is attached to
+ * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
+ */
+export declare class Articulation extends prebase.ProtoM21Object {
+    static get className(): string;
+    name: string;
+    placement: ArticulationPlacement;
+    vexflowModifier: string;
+    dynamicScale: number;
+    lengthScale: number;
+    /**
+     * Generates a Vex.Flow.Articulation for this articulation.
+     *
+     * @returns {Vex.Flow.Articulation}
+     */
+    vexflow({ stemDirection }?: VexflowArticulationParams): Vex.Flow.Articulation;
+}
+/**
+ * base class for articulations that change the length of a note...
+ *
+ * @class LengthArticulation
+ * @memberof music21.articulations
+ */
+export declare class LengthArticulation extends Articulation {
+    static get className(): string;
+    constructor();
+}
+/**
+ * base class for articulations that change the dynamic of a note...
+ *
+ * @class DynamicArticulation
+ * @memberof music21.articulations
+ */
+export declare class DynamicArticulation extends Articulation {
+    static get className(): string;
+    constructor();
+}
+/**
+ * base class for articulations that change the pitch of a note...
+ *
+ * @class PitchArticulation
+ * @memberof music21.articulations
+ */
+export declare class PitchArticulation extends Articulation {
+    static get className(): string;
+    constructor();
+}
+/**
+ * base class for articulations that change the timbre of a note...
+ *
+ * @class TimbreArticulation
+ * @memberof music21.articulations
+ */
+export declare class TimbreArticulation extends Articulation {
+    static get className(): string;
+    constructor();
+}
+/**
+ * 50% louder than usual
+ *
+ * @class Accent
+ * @memberof music21.articulations
+ */
+export declare class Accent extends DynamicArticulation {
+    static get className(): string;
+    constructor();
+}
+/**
+ * 100% louder than usual
+ *
+ * @class StrongAccent
+ * @memberof music21.articulations
+ */
+export declare class StrongAccent extends Accent {
+    static get className(): string;
+    constructor();
+}
+/**
+ * no playback for now.
+ *
+ * @class Staccato
+ * @memberof music21.articulations
+ */
+export declare class Staccato extends LengthArticulation {
+    static get className(): string;
+    constructor();
+}
+/**
+ * no playback for now.
+ *
+ * @class Staccatissimo
+ * @memberof music21.articulations
+ */
+export declare class Staccatissimo extends Staccato {
+    static get className(): string;
+    constructor();
+}
+/**
+ * no playback or display for now.
+ *
+ * @class Spiccato
+ * @memberof music21.articulations
+ */
+export declare class Spiccato extends Staccato {
+    static get className(): string;
+    constructor();
+}
+/**
+ * @class Marcato
+ * @memberof music21.articulations
+ *
+ * should be both a DynamicArticulation and a LengthArticulation
+ * TODO(msc): check that `.classes` reflects that in music21j
+ */
+export declare class Marcato extends DynamicArticulation {
+    static get className(): string;
+    constructor();
+}
+/**
+ * @class Tenuto
+ * @memberof music21.articulations
+ */
+export declare class Tenuto extends LengthArticulation {
+    static get className(): string;
+    constructor();
+}
+//# sourceMappingURL=articulations.d.ts.map

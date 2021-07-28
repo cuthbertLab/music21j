@@ -24,23 +24,14 @@
  * this module would not be possible.
  *
  */
-
-// webpack loader for music21j.
 import 'regenerator-runtime/runtime';
-import * as MIDI from 'midicube';  // to be removed when export * from is okay.
-import * as $ from 'jquery';
+import * as MIDI from 'midicube';
 import * as Vex from 'vexflow';
 import 'jquery-ui-bundle';
-
-// order below doesn't matter, but good to give a sense
-// of what will be needed by almost everyone, and then
-// alphabetical.
-
 import * as exceptions21 from './exceptions21';
 import * as prebase from './prebase';
 import * as base from './base';
 import * as common from './common';
-
 import * as articulations from './articulations';
 import * as audioRecording from './audioRecording';
 import * as audioSearch from './audioSearch';
@@ -81,68 +72,7 @@ import * as tinyNotation from './tinyNotation';
 import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
-
 import { debug } from './debug';
-
-
-export {
-    MIDI,
-    Vex,
-
-    exceptions21,
-    base,
-    prebase,
-    common,
-
-    debug,
-
-    articulations,
-    audioRecording,
-    audioSearch,
-    bar,
-    beam,
-    chord,
-    chordTables,
-    clef,
-    converter,
-    derivation,
-    duration,
-    dynamics,
-    editorial,
-    expressions,
-    figuredBass,
-    fromPython,
-    harmony,
-    instrument,
-    interval,
-    key,
-    keyboard,
-    layout,
-    meter,
-    miditools,
-    musicxml,
-    note,
-    parseLoader,
-    pitch,
-    renderOptions,
-    roman,
-    scale,
-    sites,
-    stream,
-    svgs,
-    tempo,
-    tie,
-    tinyNotation,
-    vfShow,
-    voiceLeading,
-    webmidi,
-};
-
-export const VERSION = '0.11.13';
-
-if (typeof window !== 'undefined') {
-    (window as any).$ = $;
-    (window as any).jQuery = $;
-}
-
-parseLoader.runConfiguration();
+export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, svgs, tempo, tie, tinyNotation, vfShow, voiceLeading, webmidi, };
+export declare const VERSION = "0.11.13";
+//# sourceMappingURL=main.d.ts.map

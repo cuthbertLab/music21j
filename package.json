@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.11.11",
+  "version": "0.11.13",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "releases/music21.debug.js",
   "typings": "releases/main.d.ts",
@@ -13,7 +13,6 @@
     "Gruntfile.js",
     "tsconfig.json",
     "/css",
-    "/ext",
     "/releases",
     "/scripts",
     "/src",
@@ -71,7 +70,7 @@
     "test": "tests"
   },
   "scripts": {
-    "prepublishOnly": "cp build/* releases/",
+    "prepublishOnly": "cp -rp build/* releases/",
     "postinstall": "sh scripts/postinstall.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
