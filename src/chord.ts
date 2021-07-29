@@ -53,7 +53,9 @@ export class Chord extends note.NotRest {
         } else if (typeof notes === 'string') {
             arrayNotes = notes.split(/\s+/);
         } else if (!(notes instanceof Array)) {
-            arrayNotes = [(notes as (note.Note|pitch.Pitch))];
+            arrayNotes = [notes as (note.Note|pitch.Pitch)];
+        } else {
+            arrayNotes = notes;
         }
 
         for (const n of arrayNotes) {
