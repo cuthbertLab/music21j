@@ -5,18 +5,14 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * pitch module.  See {@link music21.pitch} namespace
  * Pitch related objects and methods
- *
- * @exports music21/pitch
- * @namespace music21.pitch
- * @memberof music21
- * @requires music21/prebase
  */
 import { Music21Exception } from './exceptions21';
 
 import * as prebase from './prebase';
 import * as common from './common';
+
+import type * as clef from './clef';
 
 
 interface UpdateAccidentalDisplayParams {
@@ -33,8 +29,6 @@ interface UpdateAccidentalDisplayParams {
 
 
 /**
- * @class Accidental
- * @memberof music21.pitch
  * @param {string|number} accName - an accidental name
  * @property {number} alter
  * @property {string} displayType
@@ -283,9 +277,9 @@ export const midiToName = [
 ];
 
 /**
- * Pitch objects are found in {@link music21.note.Note} objects, and many other places.
+ * Pitch objects are found in music21.note.Note objects, and many other places.
  *
- * They do not have a {@link music21.duration.Duration} associated with them, so they
+ * They do not have a music21.duration.Duration associated with them, so they
  * cannot be placed inside music21.stream.Stream objects.
  *
  * Valid pitch name formats are
@@ -298,8 +292,6 @@ export const midiToName = [
  *     adjust according to context. If you do not like this behavior, give an octave always.
  * - Microtones are not supported in music21j (they are in music21p)
  *
- * @class Pitch
- * @memberof music21.pitch
  * @param {string|number} pn - name of the pitch, with or without octave, see above.
  * @property {Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch,
@@ -995,12 +987,11 @@ export class Pitch extends prebase.ProtoM21Object {
      *
      * if clefObj is undefined, then the clef is treated as TrebleClef.
      *
-     * @param {music21.clef.Clef} [clefObj] - the active {@link music21.clef.Clef} object
-     * @returns {string} - representation in vexflow
+     * [clefObj] - the active music21.clef.Clef object
      */
-    vexflowName(clefObj=undefined) {
+    vexflowName(clefObj?: clef.Clef): string {
         // returns a vexflow Key name for this pitch.
-        let tempPitch = this;
+        let tempPitch: Pitch = this;
         if (clefObj !== undefined) {
             try {
                 tempPitch = clefObj.convertPitchToTreble(this);

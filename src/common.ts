@@ -1,23 +1,53 @@
 /**
  * common functions
  * functions that are useful everywhere...
- *
- * @exports music21/common
- * @memberof music21
  */
+
+
+import * as $ from 'jquery';
+
+/**
+ *  Many music21j functions take either JQuery or HTMLElement, but
+ *  "el instanceof $" is not a good way of checking, because the copy of
+ *  JQuery imported into music21j might not be the same copy loaded by a calling
+ *  library or script tag.  Hence these three little functions that coerce in one
+ *  direction or another.
+ */
+export function jQueryAndHTMLVersion(el?: JQuery|HTMLElement): [JQuery, HTMLElement] {
+    let $jq: JQuery;
+    let htmlElement: HTMLElement;
+    if (el !== undefined && (el as JQuery).jquery !== undefined) {
+        $jq = (el as JQuery);
+        htmlElement = (el as JQuery)[0];
+    } else if (el instanceof HTMLElement) {
+        htmlElement = el;
+        $jq = $(el);
+    } else {
+        $jq = $('body');
+        htmlElement = $jq[0];
+    }
+    return [$jq, htmlElement];
+}
+
+export function coerceJQuery(el?: JQuery|HTMLElement): JQuery {
+    return jQueryAndHTMLVersion(el)[0];
+}
+
+export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
+    return jQueryAndHTMLVersion(el)[1];
+}
+
 
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
  * http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
  * recursive parts used in .clone()
  *
- * @function music21.common.merge
  * @param {Object} destination - object to have attributes placed into
  * @param {Object} source - object to take attributes from.
- * @memberof music21.common
  * @returns {Object} destination
  */
-export function merge(destination, source) {
+export function merge(destination: object, source?: object): object {
     if (source === undefined || source === null) {
         return destination;
     }
@@ -141,9 +171,8 @@ export function posMod(a, b) {
  * In case of tie, returns the first element to reach the maximum
  * number of occurrences.
  *
- * @function music21.common.statisticalMode
  * @param {Array<*>} a - an array to analyze
- * @returns {Object} element with the highest frequency in a
+ * @returns {Object} element with the highest frequency in an array.
  */
 export function statisticalMode(a) {
     if (a.length === 0) {
@@ -246,13 +275,10 @@ export function toRoman(num) {
 /**
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
  *
- * @function music21.common.makeSVGright
  * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
  * @param {Object} [attrs] - attributes to pass to the tag.
- * @memberof music21.common
- * @returns {SVGElement}
  */
-export function makeSVGright(tag='svg', attrs={}) {
+export function makeSVGright(tag='svg', attrs={}): SVGElement {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
     // normal JQuery does not work.
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -269,12 +295,9 @@ export function makeSVGright(tag='svg', attrs={}) {
  * Take a number such as 32 and return a string such as "nd"
  * (for "32nd") etc.
  *
- * @function music21.common.ordinalAbbreviation
- * @param {number} value
- * @param {boolean} [plural=false] - make plural (note that "21st" plural is "21st")
- * @return {string}
+ * [plural=false] - make plural (note that "21st" plural is "21st")
  */
-export function ordinalAbbreviation(value: number, plural: boolean = false) {
+export function ordinalAbbreviation(value: number, plural: boolean = false): string {
     let post: string;
     const valueHundredths = value % 100;
     if (
@@ -304,7 +327,6 @@ export function ordinalAbbreviation(value: number, plural: boolean = false) {
 /**
  * Find a rational number approximation of this floating point.
  *
- * @function music21.common.rationalize
  * @param {number} ql - number to rationalize
  * @param {number} [epsilon=0.001] - how close to get
  * @param {int} [maxDenominator=50] - maximum denominator
@@ -327,11 +349,9 @@ export function rationalize(ql: number, epsilon=0.001, maxDenominator=50) {
  *
  * "400px" -> 400
  *
- * @function music21.common.stripPx
- * @param {number|string} str -- string that might have 'px' at the end or not
- * @returns {number} a number to use
+ * str -- string that might have 'px' at the end or not
  */
-export function stripPx(str) {
+export function stripPx(str: number|string): number {
     if (typeof str === 'string') {
         const pxIndex = str.indexOf('px');
         str = str.slice(0, pxIndex);
@@ -344,11 +364,10 @@ export function stripPx(str) {
 /**
  * Find name in the query string (?name=value) and return value.
  *
- * @function music21.common.urlParam
- * @param {string} name - url parameter to find
- * @returns {string} may be "" if empty.
+ * name - url parameter to find
+ * Return may be '' if empty.
  */
-export function urlParam(name) {
+export function urlParam(name: string): string {
     name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     const results = regex.exec(window.location.search);

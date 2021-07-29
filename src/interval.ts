@@ -5,15 +5,8 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * interval module. See {@link music21.interval} for namespace
  * Interval related objects
  *
- * @exports music21/interval
- *
- * @namespace music21.interval
- * @memberof music21
- * @requires music21/prebase
- * @requires music21/pitch
  */
 import { debug } from './debug';
 
@@ -25,7 +18,6 @@ import * as pitch from './pitch';
 /**
  * Interval Directions as an Object/map
  *
- * @memberof music21.interval
  * @example
  * if (music21.interval.Direction.OBLIQUE >
  *     music21.interval.Direction.ASCENDING ) {
@@ -42,7 +34,6 @@ export const Direction = {
 /**
  * N.B. a dict in music21p -- the indexes here let Direction call them + 1
  *
- * @memberof music21.interval
  * @example
  * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.Direction.OBLIQUE + 1])
  * // "Oblique"
@@ -52,7 +43,6 @@ export const IntervalDirectionTerms = ['Descending', 'Oblique', 'Ascending'];
 /**
  * ordinals for music terms...
  *
- * @memberof music21.interval
  * @example
  * for (var i = 1; // N.B. 0 = undefined
  *      i < music21.interval.MusicOrdinals.length;
@@ -91,8 +81,6 @@ export const MusicOrdinals = [
  *
  * Properties are demonstrated below.
  *
- * @class GenericInterval
- * @memberof music21.interval
  * @param {number} [gi=1] - generic interval (1 or higher, or -2 or lower)
  * @example
  * var gi = new music21.interval.GenericInterval(-14)
@@ -266,20 +254,16 @@ export class GenericInterval extends prebase.ProtoM21Object {
 
     /**
      * Returns a new GenericInterval which is the mod7inversion; 3rds (and 10ths etc.) to 6ths, etc.
-     *
-     * @returns {music21.interval.GenericInterval}
      */
-    complement() {
+    complement(): GenericInterval {
         return new GenericInterval(this.mod7inversion);
     }
 
     /**
      * Returns a new GenericInterval which has the opposite direction
      * (descending becomes ascending, etc.)
-     *
-     * @returns {music21.interval.GenericInterval}
      */
-    reverse() {
+    reverse(): GenericInterval {
         if (this.undirected === 1) {
             return new GenericInterval(1);
         } else {
@@ -292,18 +276,14 @@ export class GenericInterval extends prebase.ProtoM21Object {
     /**
      * Given a specifier, return a new DiatonicInterval with this generic.
      *
-     * @param {string|number} specifier - a specifier such as "P", "m", "M", "A", "dd" etc.
-     * @returns {music21.interval.DiatonicInterval}
+     * specifier - a specifier such as "P", "m", "M", "A", "dd" etc.
      */
-    getDiatonic(specifier: string|number) {
+    getDiatonic(specifier: string|number): DiatonicInterval {
         return new DiatonicInterval(specifier, this);
     }
 
     /**
      * Transpose a pitch by this generic interval, maintaining accidentals
-     *
-     * @param {music21.pitch.Pitch} p
-     * @returns {music21.pitch.Pitch}
      */
     transposePitch(p: pitch.Pitch): pitch.Pitch {
         const pitch2 = new pitch.Pitch();
@@ -462,10 +442,8 @@ export const IntervalAdjustImperf = {
 /**
  * Represents a Diatonic interval.  See example for usage.
  *
- * @class DiatonicInterval
- * @memberof music21.interval
- * @param {string|number|undefined} [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
- * @param {music21.interval.GenericInterval|number} [generic=1] - a `GenericInterval`
+ * [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
+ * [generic=1] - a `GenericInterval`
  *              object or a number to be converted to one
  * @example
  * var di = new music21.interval.DiatonicInterval("M", 10);
@@ -510,7 +488,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
     invertedOrderedSpecifier: string;  // this is messed up -- should be number...
     mod7inversion: string;
 
-    constructor(specifier: string|number, generic) {
+    constructor(specifier: string|number, generic: number|GenericInterval) {
         super();
 
         if (specifier === undefined) {
@@ -632,8 +610,6 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
 
     /**
      * Returns a ChromaticInterval object of the same size.
-     *
-     * @returns {music21.interval.ChromaticInterval}
      */
     getChromatic(): ChromaticInterval {
         const octaveOffset = Math.floor(
@@ -679,44 +655,20 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
         return new ChromaticInterval(semitones);
     }
 
-    /**
-     *
-     * @param {music21.pitch.Pitch} p
-     * @returns {music21.pitch.Pitch}
-     */
     transposePitch(p: pitch.Pitch): pitch.Pitch {
         const fullIntervalObject = new Interval(this, this.getChromatic());
         return fullIntervalObject.transposePitch(p);
     }
 
-    /**
-     *
-     * @type {string}
-     */
     get specifierAbbreviation(): string {
         return IntervalPrefixSpecs[this.specifier];
     }
 
-    /**
-     *
-     * @returns {number}
-     */
     get cents(): number {
         return this.getChromatic().cents;
     }
 }
 
-/**
- * @class ChromaticInterval
- * @memberof music21.interval
- * @param {number} value - number of semitones (positive or negative)
- * @property {number} cents
- * @property {number} value
- * @property {number} undirected - absolute value of value
- * @property {number} mod12 - reduction to one octave
- * @property {number} intervalClass - reduction to within a tritone (11 = 1, etc.)
- *
- */
 export class ChromaticInterval extends prebase.ProtoM21Object {
     static get className() { return 'music21.interval.ChromaticInterval'; }
 
@@ -767,10 +719,6 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
         }
     }
 
-    /**
-     *
-     * @returns {music21.interval.ChromaticInterval}
-     */
     reverse(): ChromaticInterval {
         return new ChromaticInterval(
             this.undirected * (-1 * this.direction)
@@ -781,9 +729,6 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
 
     /**
      * Transposes pitches but does not maintain accidentals, etc.
-     *
-     * @property {music21.pitch.Pitch} p - pitch to transpose
-     * @returns {music21.pitch.Pitch}
      */
     transposePitch(p: pitch.Pitch): pitch.Pitch {
         let useImplicitOctave = false;
@@ -804,8 +749,6 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
 export const IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 /**
- * @function music21.interval.convertDiatonicNumberToStep
- * @memberof music21.interval
  * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
  * @returns {Array} two element array of {string} stepName and {number} octave
  */
@@ -831,12 +774,10 @@ export function convertDiatonicNumberToStep(
 /**
  * This is the main, powerful Interval class.
  *
- * Instantiate with either a string ("M3") or two {@link music21.pitch.Pitch} or two {@link music21.note.Note}
+ * Instantiate with either a string ("M3") or two music21.pitch.Pitch or two music21.note.Note objects.
  *
  * See music21p instructions for usage.
  *
- * @class Interval
- * @memberof music21.interval
  * @example
  * var n1 = new music21.note.Note("C4");
  * var n2 = new music21.note.Note("F#5");
@@ -936,11 +877,7 @@ export class Interval extends prebase.ProtoM21Object {
         this.reinit();
     }
 
-    /**
-     *
-     * @returns {music21.interval.Interval}
-     */
-    get complement() {
+    get complement(): Interval {
         return new Interval(this.diatonic.mod7inversion);
     }
 
@@ -974,11 +911,7 @@ export class Interval extends prebase.ProtoM21Object {
         this.isSkip = this.diatonic.isSkip;
     }
 
-    /**
-     *
-     * @type {music21.note.Note|undefined}
-     */
-    get noteStart() {
+    get noteStart(): note.Note {
         return this._noteStart;
     }
 
@@ -990,15 +923,11 @@ export class Interval extends prebase.ProtoM21Object {
         this._noteEnd.pitch = p2;
     }
 
-    /**
-     *
-     * @type {music21.note.Note|undefined}
-     */
-    get noteEnd() {
+    get noteEnd(): note.Note {
         return this._noteEnd;
     }
 
-    set noteEnd(n) {
+    set noteEnd(n: note.Note) {
         this._noteEnd = n;
         const p1 = n.pitch;
         const p2 = this.transposePitch(p1, {reverse: true});
@@ -1023,15 +952,13 @@ export class Interval extends prebase.ProtoM21Object {
     //  todo general: microtones
     // noinspection JSUnusedLocalSymbols
     /**
-     * TODO: maxAccidental
-     *
-     * @param {music21.pitch.Pitch} p - pitch to transpose
-     * @param {Object} config - configuration
-     * @param {boolean} [config.reverse=false] -- reverse direction
-     * @param {number} [config.maxAccidental=4] -- maximum accidentals to retain (unused)
-     * @returns {music21.pitch.Pitch}
+     * [config.reverse=false] -- reverse direction
+     * [config.maxAccidental=4] -- maximum accidentals to retain (unused/ TODO)
      */
-    transposePitch(p, { reverse=false, maxAccidental=4 }={}) {
+    transposePitch(
+        p: pitch.Pitch,
+        { reverse=false, maxAccidental=4 }={}
+    ): pitch.Pitch {
         /*
         var useImplicitOctave = false;
         if (p.octave === undefined) {
@@ -1133,7 +1060,7 @@ export function _getSpecifierFromGenericChromatic(
     const noteVals = [undefined, 0, 2, 4, 5, 7, 9, 11];
     const normalSemis
         = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
-    let theseSemis = 0;
+    let theseSemis;
     if (
         gInt.direction !== cInt.direction
         && gInt.direction !== Direction.OBLIQUE
@@ -1164,12 +1091,7 @@ export function _getSpecifierFromGenericChromatic(
     return specifier;
 }
 
-/**
- *
- * @param {music21.interval.Interval[]} intervalList
- * @returns {music21.interval.Interval}
- */
-export function add(intervalList) {
+export function add(intervalList: Interval[]): Interval {
     const p1 = new pitch.Pitch('C4');
     let p2 = new pitch.Pitch('C4');
     for (const i of intervalList) {

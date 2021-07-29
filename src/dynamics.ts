@@ -7,16 +7,10 @@
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- * dynamics Module. See {@link music21.dynamics} for namespace
  *
  * Dynamics related objects.
  *
  * Currently do not export to Vexflow.  :-(
- *
- * @exports music21/dynamics
- * @namespace music21.dynamics
- * @memberof music21
- * @requires music21/base
  */
 import * as base from './base';
 
@@ -85,9 +79,6 @@ export const dynamicStrToScalar = {
 /**
  * A representation of a dynamic.
  *
- * @class Dynamic
- * @memberof music21.dynamics
- * @extends music21.base.Music21Object
  * @param {number|string} value - either a number between 0 and 1 or a dynamic mark such as "ff" or "mp"
  * @property {string|undefined} value - a name such as "pp" etc.
  * @property {string|undefined} longName - a longer name such as "pianissimo"

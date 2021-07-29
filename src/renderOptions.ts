@@ -7,12 +7,8 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * renderOptions module, see {@link music21.renderOptions}
  * Options for rendering a stream
  *
- * @exports music21/renderOptions
- * @namespace music21.renderOptions
- * @memberof music21
  */
 
 interface EventInterface {
@@ -31,8 +27,6 @@ interface ScaleFactor {
  * An object that contains information on rendering the current stream
  *
  * Found on every Stream as `.renderOptions`
- *
- * @memberof music21.renderOptions
  */
 export class RenderOptions {
     displayClef: boolean = true;

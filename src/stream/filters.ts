@@ -1,4 +1,5 @@
 import { Music21Exception } from '../exceptions21';
+import {Music21Object} from '../base';
 
 // noinspection JSUnusedGlobalSymbols
 export class FilterException extends Music21Exception {}
@@ -7,9 +8,6 @@ class _StopIteration {}
 
 export const StopIterationSingleton = new _StopIteration();
 
-/**
- * @memberof music21.stream.filters
- */
 export class StreamFilter {
     static get derivationStr() {
         return 'streamFilter';
@@ -85,14 +83,17 @@ export class ClassFilter extends StreamFilter {
         return 'getElementsByClass';
     }
 
-    classList: string[];
+    classList: string[]|(typeof Music21Object)[];
 
-    constructor(classList: string|string[] =[]) {
+    constructor(classList: string|string[]|typeof Music21Object|(typeof Music21Object)[] =[]) {
         super();
+        let classListArray: string[]|typeof Music21Object[];
         if (!Array.isArray(classList)) {
-            classList = [classList];
+            classListArray = <string[]|(typeof Music21Object)[]> [classList];
+        } else {
+            classListArray = classList;
         }
-        this.classList = classList;
+        this.classList = classListArray;
     }
     // TODO: __eq__
 

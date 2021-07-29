@@ -5,14 +5,8 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Module holding beam materials. See {@link music21.beam} namespace.
- * {@link music21.beam.Beam} and {music21.beam.Beams} objects
+ * Module holding beam materials.
  *
- * @exports music21/beam
- * @namespace music21.beam
- * @memberof music21
- * @requires music21/prebase
- * @requires music21/duration
  */
 import { Music21Exception } from './exceptions21';
 
@@ -37,8 +31,6 @@ export const beamableDurationTypes = [
 /**
  * Object representing a single beam (e.g., a 16th note that is beamed needs two)
  *
- * @class Beam
- * @memberof music21.beam
  * @param {string} type - "start", "stop", "continue", "partial"
  * @param {string} direction - only needed for partial beams: "left" or "right"
  * @property {number|undefined} number - which beam line does this refer to;
@@ -63,8 +55,6 @@ export class Beam extends prebase.ProtoM21Object {
 /**
  * Object representing a collection of Beams
  *
- * @class Beams
- * @memberof music21.beam
  * @property {Beam[]} beamsList - a list of Beam objects
  * @property {boolean} [feathered=false] - is this a feathered beam.
  * @property {number} length - length of beamsList

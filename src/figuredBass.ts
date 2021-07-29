@@ -1,7 +1,3 @@
-/**
- * @namespace music21.figuredBass
- * @exports music21/figuredBass
- */
 import * as pitch from './pitch';
 
 const shorthandNotation = {
@@ -22,9 +18,6 @@ const shorthandNotation = {
  */
 
 
-/**
- * @memberof music21.figuredBass
- */
 export class Notation {
     notationColumn: string;
     figureStrings: string[] = undefined;
@@ -61,19 +54,16 @@ export class Notation {
      *    and this.modifierStrings, which provide the intervals above the
      *    bass and (if necessary) how to modify the corresponding pitches
      *    accordingly.
-     *
-     * @return {undefined}
      */
-
-    _parseNotationColumn() {
+    _parseNotationColumn(): void {
         const nc = this.notationColumn;
         const figures = nc.split(/,/);
         const numbers = [];
         const modifierStrings = [];
         const figureStrings = [];
 
-        for (let figure of figures) {
-            figure = figure.trim();
+        for (const fig of figures) {
+            const figure = fig.trim();
             figureStrings.push(figure);
             let numberString = '';
             let modifierString = '';
@@ -102,7 +92,7 @@ export class Notation {
 
     _translateToLonghand() {
         let oldNumbers = this.numbers;
-        let newNumbers = oldNumbers;
+        let newNumbers;
         const oldModifierStrings = this.modifierStrings;
         let newModifierStrings = oldModifierStrings;
         const oldNumbersString = oldNumbers.toString();
@@ -165,9 +155,6 @@ export class Notation {
     }
 }
 
-/**
- * @memberOf music21.figuredBass
- */
 export class Figure {
     number: number;
     modifierString: string;
@@ -193,9 +180,6 @@ const specialModifiers = {
     '++++': '####',
 };
 
-/**
- * @memberOf music21.figuredBass
- */
 export class Modifier {
     modifierString: string;
     accidental: pitch.Accidental;

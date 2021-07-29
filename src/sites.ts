@@ -1,12 +1,8 @@
 /**
- * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
+ * Objects for keeping track of relationships among Music21Objects.
  *
- * Copyright 2017-2019, Michael Scott Asato Cuthbert
+ * Copyright (c) 2017-2021, Michael Scott Asato Cuthbert
  * License: BSD
- *
- * @namespace music21.sites
- * @memberof music21
- * @requires music21/common
  */
 
 import * as common from './common';
@@ -46,12 +42,7 @@ const _singletonCounter = new common.SingletonCounter();
 
 const GLOBAL_SITE_STATE_DICT = new WeakMap();
 
-/**
- * @memberOf music21.sites
- * @param {*} obj
- * @returns {number|string}
- */
-export function getId(obj) {
+export function getId(obj: any): number|string {
     if (!GLOBAL_SITE_STATE_DICT.has(obj)) {
         const newId = _singletonCounter.call();
         GLOBAL_SITE_STATE_DICT.set(obj, newId);
@@ -59,9 +50,6 @@ export function getId(obj) {
     return GLOBAL_SITE_STATE_DICT.get(obj);
 }
 
-/**
- * @memberOf music21.sites
- */
 export class Sites {
     siteDict;
     protected _siteIndex: number = 0;

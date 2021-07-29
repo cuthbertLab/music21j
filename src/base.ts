@@ -7,15 +7,7 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * module for Music21Objects, see {@link music21.base}
- *
- * @requires music21/common
- * @requires music21/duration
- * @requires music21/prebase
- * @requires music21/sites
- * @exports music21/base
- * @namespace music21.base
- * @memberof music21
+ * module for Music21Objects
  */
 import * as common from './common';
 import * as derivation from './derivation';
@@ -42,8 +34,6 @@ declare interface StreamRecursionLike {
  * @property {number} classSortOrder - Default sort order for this class
  *     (default 20; override in other classes). Lower numbered objects will sort
  *     before other objects in the staff if priority and offset are the same.
- * @property {music21.duration.Duration} duration - the duration (object) for
- *     the element. (can be set with a quarterLength also)
  * @property {string[]} groups - An Array of strings representing group
  *     (equivalent to css classes) to assign to the object. (default [])
  * @property {boolean} isMusic21Object - true
@@ -559,6 +549,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     repeatAppend(this, item, numberOfTimes) {
         let unused = null;
         try {
+            // noinspection JSUnusedAssignment
             unused = item.isStream;
         } catch (AttributeError) {
             throw new StreamException('to put a non Music21Object in a stream, '

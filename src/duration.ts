@@ -5,18 +5,8 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Module that holds **music21** classes and
- * tools for dealing with durations, especially
- * the {@link music21.duration.Duration} class.
+ * Duration module.
  *
- * Duration module. See {@link music21.duration}
- *
- * @module music21/duration
- * @namespace music21.duration
- * @memberof music21
- * @requires music21/common
- * @requires music21/prebase
- * @exports music21/duration
  */
 import { Music21Exception } from './exceptions21';
 
@@ -26,9 +16,6 @@ import * as prebase from './prebase';
 
 /**
  * Object mapping int to name, as in `{1: 'whole'}` etc.
- *
- * @memberof music21.duration
- * @type {Object}
  */
 export const typeFromNumDict = {
     1: 'whole',
@@ -89,11 +76,7 @@ export const vexflowDurationArray = [
 
 /**
  * Duration object; found as the `.duration` attribute on Music21Object instances
- * such as {@link music21.note.Note}
- *
- * @class Duration
- * @memberof music21.duration
- * @param {(number|undefined)} ql - quarterLength (default 1.0)
+ * such as music21.note.Note
  */
 export class Duration extends prebase.ProtoM21Object {
     static get className() { return 'music21.duration.Duration'; }
@@ -202,11 +185,8 @@ export class Duration extends prebase.ProtoM21Object {
      * Reads the tuplet Array for the duration.
      *
      * The tuplet array should be considered Read Only.
-     * Use {@link music21.duration.Duration#appendTuplet} to
+     * Use music21.duration.Duration#appendTuplet to
      * add a tuplet (no way to remove yet)
-     *
-     * @type {Tuplet[]}
-     * @default []
      */
     get tuplets(): Tuplet[] {
         return this._tuplets;
@@ -347,14 +327,13 @@ export class Duration extends prebase.ProtoM21Object {
 }
 
 /**
- * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
+ * Represents a Tuplet; found in music21.duration.Duration#tuplets
  *
- * @memberof music21.duration
- * @param {number} [numberNotesActual=3] - numerator of the tuplet
- * @param {number} [numberNotesNormal=2] - denominator of the tuplet
- * @param {(music21.duration.Duration|number)} [durationActual] - duration or
+ * [numberNotesActual=3] - numerator of the tuplet
+ * [numberNotesNormal=2] - denominator of the tuplet
+ * [durationActual] - duration or
  *     quarterLength of duration type, default music21.duration.Duration(0.5)
- * @param {(music21.duration.Duration|number)} [durationNormal] - unused;
+ * [durationNormal] - unused;
  *     see music21p for description
  */
 export class Tuplet extends prebase.ProtoM21Object {
@@ -371,17 +350,20 @@ export class Tuplet extends prebase.ProtoM21Object {
     tupletNormalShow: string;
 
     constructor(
-        numberNotesActual=3,
-        numberNotesNormal=2,
-        durationActual=undefined,
-        durationNormal=undefined
+        numberNotesActual: number = 3,
+        numberNotesNormal: number = 2,
+        durationActual?: Duration|number,
+        durationNormal?: Duration|number
     ) {
         super();
         this.numberNotesActual = numberNotesActual;
         this.numberNotesNormal = numberNotesNormal;
+        if (typeof durationActual === 'number') {
+            durationActual = new Duration(durationActual);
+        }
         this.durationActual = durationActual || new Duration(0.5);
-        if (typeof this.durationActual === 'number') {
-            this.durationActual = new Duration(this.durationActual);
+        if (typeof durationNormal === 'number') {
+            durationNormal = new Duration(durationNormal);
         }
         this.durationNormal = durationNormal || this.durationActual;
 
@@ -437,10 +419,10 @@ export class Tuplet extends prebase.ProtoM21Object {
     /**
      * Set both durationActual and durationNormal for the tuplet.
      *
-     * @param {string} type - a duration type, such as `half`, `quarter`
-     * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
+     * type - a duration type, such as `half`, `quarter`
+     * returns A converted music21.duration.Duration matching `type`
      */
-    setDurationType(type) {
+    setDurationType(type: string): Duration {
         if (this.frozen === true) {
             throw new Music21Exception(
                 'A frozen tuplet (or one attached to a duration) is immutable'

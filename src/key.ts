@@ -5,17 +5,6 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * key and key signature module. See {@link music21.key} namespace for details
- * Key and KeySignature related objects and methods
- *
- * @exports music21/key
- *
- * @namespace music21.key
- * @memberof music21
- * @requires music21/base
- * @requires music21/pitch
- * @requires music21/interval
- * @requires music21/scale
  */
 import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
@@ -35,12 +24,7 @@ export const modeSharpsAlter = {
     locrian: -5,
 };
 
-/**
- *
- * @param {string} textString
- * @returns {string}
- */
-export function convertKeyStringToMusic21KeyString(textString) {
+export function convertKeyStringToMusic21KeyString(textString: string): string {
     if (textString === 'bb') {
         textString = 'b-';
     } else if (textString === 'Bb') {
@@ -52,14 +36,11 @@ export function convertKeyStringToMusic21KeyString(textString) {
 }
 
 /**
- * @class KeySignature
- * @memberof music21.key
  * @description Represents a key signature
  * @param {int} [sharps=0] -- the number of sharps (negative for flats)
  * @property {int} [sharps=0] -- number of sharps (negative for flats)
  * @property {string[]} flatMapping -- flat signatures 0-12 flats
  * @property {string[]} sharpMapping -- sharp signatures 0-12 sharps
- * @extends music21.base.Music21Object
  * @example
  * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
  * var s = new music21.stream.Stream();
@@ -133,7 +114,6 @@ export class KeySignature extends base.Music21Object {
     /**
      * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
      *
-     * @type {music21.pitch.Pitch[]}
      * @readonly
      * @example
      * var ks = new music21.key.KeySignature(3)
@@ -214,8 +194,7 @@ export class KeySignature extends base.Music21Object {
     /**
      * Returns the accidental associated with a step in this key, or undefined if none.
      *
-     * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
-     * @returns {(music21.pitch.Accidental|undefined)}
+     * step - a valid step name such as "C","D", etc., but not "C#" etc.
      */
     accidentalByStep(step: string): pitch.Accidental|undefined {
         const aps = this.alteredPitches;
@@ -237,7 +216,6 @@ export class KeySignature extends base.Music21Object {
      *
      * Does not support inPlace unlike music21p v6.
      *
-     * @returns {music21.pitch.Pitch}
      * @example
      * var ks = new music21.key.KeySignature(-3)
      * var p1 = new music21.pitch.Pitch('B')
@@ -274,12 +252,9 @@ export class KeySignature extends base.Music21Object {
 /**
  * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
  *
- * TODO: allow keyName to be a {@link music21.pitch.Pitch}
+ * TODO: allow keyName to be a music21.pitch.Pitch
  * TODO: Scale mixin.
  *
- * @class Key
- * @memberof music21.key
- * @extends music21.key.KeySignature
  * @param {string} keyName -- a pitch name representing the key (w/ "-" for flat)
  * @param {string} [mode] -- if not given then the CASE of the keyName will be used ("C" => "major", "c" => "minor")
  */
@@ -337,13 +312,13 @@ export class Key extends KeySignature {
     }
 
     /**
-     * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
+     * returns a music21.scale.MajorScale or music21.scale.MinorScale
+     * or another similar scale
      * object from the pitch object.
      *
-     * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
-     * @returns {Object} A music21.scale.Scale subclass.
+     * [scaleType=this.mode] - the type of scale, or the mode.
      */
-    getScale(scaleType=undefined) {
+    getScale(scaleType?: string): scale.ConcreteScale {
         if (scaleType === undefined) {
             scaleType = this.mode;
         }

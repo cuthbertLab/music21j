@@ -1,11 +1,6 @@
 /**
- * Expressions module.  See {@link music21.expressions}
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
  *
- * @exports music21/expressions
- * @namespace music21.expressions
- * @memberof music21
- * @requires music21/expressions
  */
 
 import Vex from 'vexflow';
@@ -19,9 +14,6 @@ import {
 /**
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
  *
- * @class Expression
- * @memberof music21.expressions
- * @extends music21.base.Music21Object
  * @property {string} name
  * @property {string} vexflowModifier
  * @property {number} setPosition
@@ -37,8 +29,6 @@ export class Expression extends base.Music21Object {
      * Renders this Expression as a Vex.Flow.Articulation
      *
      * (this is not right for all cases)
-     *
-     * @returns {Vex.Flow.Articulation}
      */
     vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
         const vfe = new Vex.Flow.Articulation(this.vexflowModifier);
@@ -50,9 +40,6 @@ export class Expression extends base.Music21Object {
 /**
  * A fermata...
  *
- * @class Fermata
- * @memberof music21.expressions
- * @extends music21.expressions.Expression
  */
 export class Fermata extends Expression {
     static get className() { return 'music21.expressions.Fermata'; }

@@ -4,8 +4,6 @@
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * @namespace music21.voiceLeading
  */
 
 import * as interval from './interval';
@@ -29,10 +27,6 @@ export const MotionType = {
     similar: 'Similar',
 };
 
-/**
- * @memberOf music21.voiceLeading
- * @extends Music21Object
- */
 export class VoiceLeadingQuartet extends Music21Object {
     static get className() { return 'music21.voiceLeading.VoiceLeadingQuartet'; }
 

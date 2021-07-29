@@ -5,16 +5,8 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * tempo module, see {@link music21.tempo}
+ * tempo module,
  *
- * @exports music21/tempo
- * @namespace music21.tempo
- * @memberof music21
- * @requires music21/duration
- * @requires music21/prebase
- * @requires music21/base
- * @requires MIDI
- * @property {number} [baseTempo=60] - basic tempo
  */
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
@@ -24,6 +16,7 @@ import * as base from './base';
 import * as duration from './duration';
 
 import { Music21Exception } from './exceptions21';
+import {common} from './main';
 
 export class TempoException extends Music21Exception {}
 
@@ -31,13 +24,10 @@ export class TempoException extends Music21Exception {}
 /**
  * Object mapping names to tempo values
  *
- * @name music21.tempo.defaultTempoValues
- * @memberof music21.tempo
- * @example
- * music21.tempo.defaultTempoValues.grave
- * // 40
+ * x = music21.tempo.defaultTempoValues.grave
+ * // x = 40
  */
-export const defaultTempoValues = {
+export const defaultTempoValues: Record<string, number> = {
     larghissimo: 16,
     largamente: 32,
     grave: 40,
@@ -72,21 +62,8 @@ export const defaultTempoValues = {
 
 export const baseTempo = 60;
 
-/* --------- metronome ---------- */
 /**
- *
- * @class Metronome
- * @memberof music21.tempo
- * @extends music21.prebase.ProtoM21Object
- * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
- * @property {number} tempo
- * @property {number} [numBeatsPerMeasure=4]
- * @property {number} [minTempo=10]
- * @property {number} [maxTempo=600]
- * @property {boolean} [flash=false] - flash the tempo
- * @property {boolean} [silent=false] - play silently
- * @property {number} beat - current beat number
- * @property {number} chirpTimeout - an index of a timeout object for chirping
+ * Metronome object
  */
 export class Metronome extends prebase.ProtoM21Object {
     static get className() { return 'music21.tempo.Metronome'; }
@@ -96,8 +73,20 @@ export class Metronome extends prebase.ProtoM21Object {
     minTempo: number = 10;
     maxTempo: number = 600;
     beat: number = 4;
+
+    /**
+     * index of a window.SetTimeout object for chirping
+     */
     chirpTimeout: number;
+
+    /**
+     * if true, counts silently
+     */
     silent: boolean = false;
+
+    /**
+     * should the tempo flash
+     */
     flash: boolean = false;
     tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
     tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
@@ -105,11 +94,7 @@ export class Metronome extends prebase.ProtoM21Object {
 
     constructor(tempoInt: number = baseTempo) {
         super();
-        if (tempoInt === undefined) {
-            this.tempo = baseTempo;
-        } else {
-            this.tempo = tempoInt;
-        }
+        this.tempo = tempoInt;
     }
 
     get tempo(): number {
@@ -180,16 +165,17 @@ export class Metronome extends prebase.ProtoM21Object {
     }
 
     /**
-     * Increase the metronome tempo one "click".
+     * Increase the metronome tempo one or more "clicks".
      *
      * Value changes depending on the current tempo.  Uses standard metronome guidelines.
      *
+     * n is the number of clicks to the right
+     *
      * To change the tempo, just set this.tempo = n
      *
-     * @param {int} [n=1 - number of clicks to the right
-     * @returns {number} new tempo
+     * returns new tempo
      */
-    increaseSpeed(n: number = 1) {
+    increaseSpeed(n: number = 1): number {
         // increase by one metronome 'click' for every n
         for (let i = 0; i < n; i++) {
             let t = this.tempo;
@@ -209,14 +195,15 @@ export class Metronome extends prebase.ProtoM21Object {
     }
 
     /**
-     * Decrease the metronome tempo one "click"
+     * Decrease the metronome tempo one or more "clicks"
      *
      * To change the tempo, just set this.tempo = n
      *
-     * @param {int} [n=1] - number of clicks to the left
-     * @returns {number} new tempo
+     * n is the number of clicks to the left
+     *
+     * returns new tempo
      */
-    decreaseSpeed(n: number = 1) {
+    decreaseSpeed(n: number = 1): number {
         for (let i = 0; i < n; i++) {
             let t = this.tempo;
             const trL = this.tempoRanges.length;
@@ -237,28 +224,12 @@ export class Metronome extends prebase.ProtoM21Object {
 
     /**
      * add a Metronome interface onto the DOM at where
-     *
-     * @param {jQuery|HTMLElement} [where]
-     * @returns {jQuery} - a div holding the metronome.
+     * returns a JQuery div holding the metronome.
      */
-    addDiv(where) {
-        /**
-         * @type {jQuery}
-         */
-        let $where;
-        if (where !== undefined && where instanceof $) {
-            $where = where;
-        } else if (where !== undefined && !(where instanceof $)) {
-            $where = $(where);
-        } else {
-            $where = $('body');
-        }
+    addDiv(where?: JQuery|HTMLElement): JQuery {
+        const $where: JQuery = common.coerceJQuery(where);
         const metroThis = this;
-        /**
-         *
-         * @type {jQuery}
-         */
-        const $tempoHolder = $(
+        const $tempoHolder: JQuery = $(
             '<span class="tempoHolder">' + this.tempo.toString() + '</span>'
         );
         $tempoHolder.css({
@@ -266,61 +237,38 @@ export class Metronome extends prebase.ProtoM21Object {
             'padding-left': '10px',
             'padding-right': '10px',
         });
-        /**
-         *
-         * @type {jQuery}
-         */
-        const $newDiv = $('<div class="metronomeRendered"></div>');
+        const $newDiv: JQuery = $('<div class="metronomeRendered"></div>');
         $newDiv.append($tempoHolder);
 
-        /**
-         *
-         * @type {jQuery}
-         */
-        const b1 = $('<button>start</button>');
-        b1.on('click', () => {
+        const $b1: JQuery = $('<button>start</button>');
+        $b1.on('click', () => {
             metroThis.chirp();
         });
 
-        /**
-         *
-         * @type {jQuery}
-         */
-        const b2 = $('<button>stop</button>');
-        b2.on('click', () => {
+        const $b2: JQuery = $('<button>stop</button>');
+        $b2.on('click', () => {
             metroThis.stopChirp();
         });
-        $newDiv.prepend(b2);
-        $newDiv.prepend(b1);
-        /**
-         *
-         * @type {jQuery}
-         */
-        const b3 = $('<button>up</button>');
-        b3.on('click', function increaseSpeedButton() {
-            metroThis.increaseSpeed();
-            $(this)
+        $newDiv.prepend($b2);
+        $newDiv.prepend($b1);
+
+        const $b3: JQuery = $('<button>up</button>');
+        $b3.on('click', () => {
+            this.increaseSpeed();
+            $b3
                 .prevAll('.tempoHolder')
-                .html(metroThis.tempo.toString());
+                .html(this.tempo.toString());
         });
-        /**
-         *
-         * @type {jQuery}
-         */
-        const b4 = $('<button>down</button>');
-        b4.on('click', function decreaseSpeedButton() {
-            metroThis.decreaseSpeed();
-            $(this)
+        const $b4: JQuery = $('<button>down</button>');
+        $b4.on('click', () => {
+            this.decreaseSpeed();
+            $b4
                 .prevAll('.tempoHolder')
-                .html(metroThis.tempo.toString());
+                .html(this.tempo.toString());
         });
-        $newDiv.append(b3);
-        $newDiv.append(b4);
-        /**
-         *
-         * @type {jQuery}
-         */
-        const $flash = $(
+        $newDiv.append($b3);
+        $newDiv.append($b4);
+        const $flash: JQuery = $(
             '<span class="metroFlash">'
                 + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'
         );
@@ -343,20 +291,13 @@ class TempoText {
     }
 }
 
-/**
- *
- * @class MetronomeMark
- * @memberof music21.tempo
- * @extends base.Music21Object
- * @param {Object} metronome - metronome
- * @param {string} metronome.text - tempo text
- * @param {number} metronome.number - beats per minute
- * @param {number|music21.duration.Duration} metronome.referent - duration value of tempo
- * @param {boolean} metronome.parentheses - ???
- * @property {string} text - tempo text
- * @property {number} number - beats per minute
- * @property {music21.duration.Duration} referent - duration value of tempo
- */
+interface MetronomeMarkOptions {
+    text?: string;
+    number?: number;  // beats per minute
+    referent?: duration.Duration;
+    parentheses?: boolean;
+}
+
 export class MetronomeMark extends base.Music21Object {
     static get className() { return 'music21.tempo.MetronomeMark'; }
 
@@ -372,7 +313,7 @@ export class MetronomeMark extends base.Music21Object {
         number=undefined,
         referent=undefined,
         parentheses=false,
-    } = {}) {
+    }: MetronomeMarkOptions = {}) {
         super();
 
         this._number = number;
@@ -436,11 +377,14 @@ export class MetronomeMark extends base.Music21Object {
         }
     }
 
-    get number() {
+    /**
+     * Tempo in beats per minute.
+     */
+    get number(): number {
         return this._number;
     }
 
-    set number(value) {
+    set number(value: number) {
         if (typeof value !== 'number') {
             throw new TempoException('cannot set number to a string');
         }
@@ -484,8 +428,8 @@ export class MetronomeMark extends base.Music21Object {
         return post;
     }
 
-    _getDefaultText(number, spread=2) {
-        const tempoNumber = typeof number === 'number' ? number : parseFloat(number);
+    _getDefaultText(n: number|string, spread: number = 2) {
+        const tempoNumber = typeof n === 'number' ? n : parseFloat(n);
         return Object.keys(defaultTempoValues).find(tempoName => {
             const tempoValue = defaultTempoValues[tempoName];
             return ((tempoValue - spread) <= tempoNumber
