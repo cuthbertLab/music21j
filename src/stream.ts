@@ -771,7 +771,7 @@ export class Stream extends base.Music21Object {
         restoreActiveSites=true,
         classFilter=undefined,
         skipSelf=true,
-    }={}) {
+    }={}): iterator.RecursiveIterator {
         const includeSelf = !skipSelf;
         const ri = new iterator.RecursiveIterator(
             this,

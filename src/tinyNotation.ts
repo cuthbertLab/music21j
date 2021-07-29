@@ -60,7 +60,7 @@ const regularExpressions: { [k: string]: RegExp } = {
  *
  * * textIn - a valid tinyNotation string
  *
- * * returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+ * * returns {music21.stream.Part|music21.stream.Score} - a Part object or Score (if multiple parts)
  *
  * @example
  * var t = "3/4 c4 B8 c d4 e2.";
@@ -68,7 +68,7 @@ const regularExpressions: { [k: string]: RegExp } = {
  * p.duration.quarterLength;
  * // 6.0
  */
-export function TinyNotation(textIn: string): stream.Part|stream.Measure|stream.Score {
+export function TinyNotation(textIn: string): stream.Part|stream.Score {
     textIn = textIn.trim();
     const tokens: string[] = textIn.split(' ');
 

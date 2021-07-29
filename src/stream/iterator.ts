@@ -207,7 +207,7 @@ class _StreamIteratorBase<T = Music21Object> {
     //
     // }
 
-    getElementsByClass(classFilterList) {
+    getElementsByClass(classFilterList: string|string[]|typeof Music21Object|(typeof Music21Object)[]) {
         return this.addFilter(new filters.ClassFilter(classFilterList));
     }
 
@@ -497,4 +497,24 @@ export class RecursiveIterator<T = Music21Object> extends _StreamIteratorBase<T>
         }
     }
     // TODO(msc): getElementsByOffsetInHierarchy
+
+
+    // until we can figure out how to do this in pure typescript:
+    get notes() {
+        return super.notes as RecursiveIterator<NotRest>;
+    }
+
+    get notesAndRests() {
+        return super.notesAndRests as RecursiveIterator<GeneralNote>;
+    }
+
+    get parts() {
+        return super.parts as RecursiveIterator<Part>;
+    }
+
+    get voices() {
+        return super.voices as RecursiveIterator<Voice>;
+    }
+
+
 }
