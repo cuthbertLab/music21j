@@ -246,8 +246,6 @@ export class BlackKey extends Key {
 /**
  * A Class representing a whole Keyboard full of keys.
  *
- * @class Keyboard
- * @memberof music21.keyboard
  * @property {number} whiteKeyWidth - default 23
  * @property {number} scaleFactor - default 1
  * @property {Object} keyObjects - a mapping of id to `music21.keyboard.Key` objects
@@ -609,7 +607,6 @@ export class Keyboard {
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.
  *
- * @function music21.keyboard.triggerToggleShow
  * @param {Event} [e]
  */
 export const triggerToggleShow = e => {

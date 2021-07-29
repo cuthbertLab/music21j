@@ -29,8 +29,6 @@ interface UpdateAccidentalDisplayParams {
 
 
 /**
- * @class Accidental
- * @memberof music21.pitch
  * @param {string|number} accName - an accidental name
  * @property {number} alter
  * @property {string} displayType
@@ -294,8 +292,6 @@ export const midiToName = [
  *     adjust according to context. If you do not like this behavior, give an octave always.
  * - Microtones are not supported in music21j (they are in music21p)
  *
- * @class Pitch
- * @memberof music21.pitch
  * @param {string|number} pn - name of the pitch, with or without octave, see above.
  * @property {Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch,

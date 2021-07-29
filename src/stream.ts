@@ -2843,9 +2843,6 @@ export class Measure extends Stream {
 
 /**
  * Part -- specialized to handle Measures inside it
- *
- * @class Part
- * @memberof music21.stream
  */
 export class Part extends Stream {
     static get className() { return 'music21.stream.Part'; }

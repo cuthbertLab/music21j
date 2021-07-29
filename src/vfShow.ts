@@ -83,8 +83,6 @@ export class RenderStack {
  * "div" and "where" can be either a DOM
  * element or a jQuery object.
  *
- * @class Renderer
- * @memberof music21.vfShow
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
  * @param {Node|jQuery} [where=document.body] - where to render the stream

@@ -280,7 +280,8 @@ export class Chord extends note.NotRest {
      *
      * runSort - Sort after running (default true)
      */
-    add(n: string|string[]|note.Note|note.Note[]|pitch.Pitch|pitch.Pitch[],
+    add(
+        n: string|string[]|note.Note|note.Note[]|pitch.Pitch|pitch.Pitch[],
         runSort: boolean = true
     ): this {
         let notes: Array<string|note.Note|pitch.Pitch>;

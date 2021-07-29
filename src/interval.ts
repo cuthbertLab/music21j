@@ -18,7 +18,6 @@ import * as pitch from './pitch';
 /**
  * Interval Directions as an Object/map
  *
- * @memberof music21.interval
  * @example
  * if (music21.interval.Direction.OBLIQUE >
  *     music21.interval.Direction.ASCENDING ) {
@@ -35,7 +34,6 @@ export const Direction = {
 /**
  * N.B. a dict in music21p -- the indexes here let Direction call them + 1
  *
- * @memberof music21.interval
  * @example
  * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.Direction.OBLIQUE + 1])
  * // "Oblique"
@@ -45,7 +43,6 @@ export const IntervalDirectionTerms = ['Descending', 'Oblique', 'Ascending'];
 /**
  * ordinals for music terms...
  *
- * @memberof music21.interval
  * @example
  * for (var i = 1; // N.B. 0 = undefined
  *      i < music21.interval.MusicOrdinals.length;
@@ -84,8 +81,6 @@ export const MusicOrdinals = [
  *
  * Properties are demonstrated below.
  *
- * @class GenericInterval
- * @memberof music21.interval
  * @param {number} [gi=1] - generic interval (1 or higher, or -2 or lower)
  * @example
  * var gi = new music21.interval.GenericInterval(-14)
@@ -754,8 +749,6 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
 export const IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 /**
- * @function music21.interval.convertDiatonicNumberToStep
- * @memberof music21.interval
  * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
  * @returns {Array} two element array of {string} stepName and {number} octave
  */

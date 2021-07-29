@@ -95,7 +95,6 @@ export const functionalityScores = {
  *
  * N.B. this is NOT where abbreviations get expanded
  *
- * @memberof music21.roman
  * @param  {string} shorthand string of a figure w/o roman to parse
  * @return {Array<string>}           array of shorthands
  */
@@ -131,7 +130,6 @@ export function expandShortHand(shorthand) {
  * correctSuffixForChordQuality - Correct a given inversionString suffix given a
  *     chord of various qualities.
  *
- * @memberof music21.roman
  * @param  {chord.Chord} chordObj
  * @param  {string} inversionString a string like '6' to fix.
  * @return {string}           corrected inversionString
@@ -176,7 +174,6 @@ export function correctSuffixForChordQuality(
 /**
  * maps an index number to a roman numeral in lowercase
  *
- * @memberof music21.roman
  * @example
  * music21.roman.romanToNumber[4]
  * // 'iv'
@@ -187,8 +184,6 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
  * Represents a RomanNumeral.  By default, capital Roman Numerals are
  * major chords; lowercase are minor.
  *
- * @class RomanNumeral
- * @memberof music21.roman
  * figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
  * [keyStr='C']
  * @property scale - (readonly) returns the scale

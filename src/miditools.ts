@@ -11,10 +11,6 @@
  *
  * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
  * events from the Jazz plugin or the WebMIDI protocol.
- *
- *
- * @exports music21/miditools
- * @memberof music21
  */
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
@@ -43,7 +39,7 @@ export interface CallbackInterface {
 
 
 // expose midicube version of MIDI to the window for soundfonts to load.
-if (typeof window !== undefined) {
+if (typeof window !== 'undefined') {
     (<MIDIWindow> window).MIDI = MIDI;
 }
 
@@ -107,8 +103,6 @@ export const config = new _ConfigSingletonClass();
 
 
 /**
- * @class Event
- * @memberof music21.miditools
  * @param {number} t - timing information
  * @param {number} a - midi data 1 (N.B. a >> 4 = midiCommand )
  * @param {number} b - midi data 2
@@ -177,9 +171,6 @@ export class Event {
 
 /**
  * a mapping of soundfont text names to true, false, or "loading".
- *
- * @memberof music21.miditools
- * @type {Object}
  */
 export const loadedSoundfonts = {};
 
@@ -191,8 +182,6 @@ export const loadedSoundfonts = {};
  *
  *  Runs a setTimeout on itself.
  *  Calls miditools.sendOutChord
- *
- *  @memberof music21.miditools
  */
 export function clearOldChords() {
     // clear out notes that may be a chord...
@@ -314,12 +303,13 @@ export const sendToMIDIjs = (midiEvent: Event): void => {
  * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
  * rather than overriding this important method.
  *
- * @memberof music21.miditools
- * @param {string} soundfont The name of the soundfont that was just loaded
- * @param {function} callback A function to be called after the soundfont is loaded.
+ * soundfont -- The name of the soundfont that was just loaded
+ * callback -- A function to be called after the soundfont is loaded.
  */
-export function postLoadCallback(soundfont: string,
-                                 callback?: (instrumentObj?: instrument.Instrument) => any) {
+export function postLoadCallback(
+    soundfont: string,
+    callback?: (instrumentObj?: instrument.Instrument) => any
+): void {
     // this should be bound to MIDI
     if (debug) {
         console.log('soundfont loaded about to execute callback.');
@@ -365,7 +355,6 @@ export function postLoadCallback(soundfont: string,
  * method to load soundfonts while waiting for other processes that need them
  * to load first.
  *
- * @memberof music21.miditools
  * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} [callback] A function to be called after the soundfont is loaded.
  * @example

@@ -634,7 +634,7 @@ export class MeasureParser {
         } catch (exc) {
             return undefined; // sometimes there are empty lyrics.
         }
-        let number = $mxLyric.attr('number');
+        const number = $mxLyric.attr('number');
         try {
             const num = parseInt(number);
             l.number = num;

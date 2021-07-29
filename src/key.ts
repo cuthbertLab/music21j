@@ -36,8 +36,6 @@ export function convertKeyStringToMusic21KeyString(textString: string): string {
 }
 
 /**
- * @class KeySignature
- * @memberof music21.key
  * @description Represents a key signature
  * @param {int} [sharps=0] -- the number of sharps (negative for flats)
  * @property {int} [sharps=0] -- number of sharps (negative for flats)
@@ -257,8 +255,6 @@ export class KeySignature extends base.Music21Object {
  * TODO: allow keyName to be a music21.pitch.Pitch
  * TODO: Scale mixin.
  *
- * @class Key
- * @memberof music21.key
  * @param {string} keyName -- a pitch name representing the key (w/ "-" for flat)
  * @param {string} [mode] -- if not given then the CASE of the keyName will be used ("C" => "major", "c" => "minor")
  */

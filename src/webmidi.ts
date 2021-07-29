@@ -139,7 +139,6 @@ export function jazzMidiInArrived(t: number, a: number, b: number, c: number) {
  *
  * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
  *
- * @memberof music21.webmidi
  * @param {Object} midiMessageEvent - midi Information
  */
 export function midiInArrived(midiMessageEvent) {
@@ -170,7 +169,6 @@ export function midiInArrived(midiMessageEvent) {
  *
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
- * @function music21.webmidi.createPlugin
  * @param {HTMLElement} [appendElement=document.body] - where to place this hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called
  *     successfully before return the storedPlugin unless override is true.
@@ -212,7 +210,6 @@ export function createPlugin(
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * @function music21.webmidi.createJazzSelector
  * @param {jQuery|HTMLElement} [$newSelect=document.body] - object to append the select to
  * @param {Object} [options] - see createSelector for details
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.

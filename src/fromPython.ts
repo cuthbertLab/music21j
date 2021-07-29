@@ -25,16 +25,14 @@
  *
  */
 import * as jsonpickle from 'jsonpickle';
+import type * as stream from './stream';
 
 const jp = jsonpickle;
 const unpickler = jp.unpickler;
 
-import type * as stream from './stream';
 
 /**
  *
- * @class Converter
- * @memberof music21.fromPython
  * @property {boolean} debug
  * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
  * @property {Object} handlers - object mapping string names of classes to a set of

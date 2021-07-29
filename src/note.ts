@@ -76,7 +76,6 @@ export const stemDirectionNames: string[] = [
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
  *
- * @class Lyric
  * @param {string} text - the text of the lyric
  * @param {number} number=1 - the lyric number
  * @param {string} syllabic=undefined - placement of the syllable
@@ -209,8 +208,6 @@ export class Lyric extends prebase.ProtoM21Object {
 /**
  * Superclass for all Note values
  *
- * @class GeneralNote
- * @memberof music21.note
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
@@ -385,7 +382,7 @@ export class GeneralNote extends base.Music21Object {
      * @param {base.Music21Object} [nextElement] - for determining
      *     the length to play in case of tied notes, etc.
      * @param {Object} [options] - other options (currently just
-     *     `{instrument: {@link music21.instrument.Instrument} }`)
+     *     `{instrument: music21.instrument.Instrument}` and channel[unused])
      * @returns {number} - delay time in milliseconds until the next element (may be ignored)
      */
     playMidi(
@@ -453,7 +450,7 @@ export class NotRest extends GeneralNote {
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
-     * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+     * @param {Object} [options={}] - `{clef: music21.clef.Clef}`
      * clef to set the stem direction of.
      */
     vexflowNote({ clef=undefined }={}): Vex.Flow.StaveNote {
@@ -525,9 +522,6 @@ export class NotRest extends GeneralNote {
  * things you can do with a `Note` object.
  *
  * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
- *
- * @class Note
- * @memberof music21.note
  */
 export class Note extends NotRest {
     static get className() { return 'music21.note.Note'; }
@@ -716,8 +710,6 @@ export class Note extends NotRest {
 /**
  * Represents a musical rest.
  *
- * @class Rest
- * @memberof music21.note
  * @param {number} [ql=1.0] - length in number of quarterNotes
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]

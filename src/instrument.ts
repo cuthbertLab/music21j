@@ -6,11 +6,10 @@
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  */
 import * as base from './base';
+import type * as interval from './interval';
 
 export const global_usedChannels: number[] = []; // differs from m21p -- stored midiProgram numbers
 export const maxMidi: number = 16;
-
-import type * as interval from './interval';
 
 interface InstrumentFileInfo {
     fn: string,
@@ -184,8 +183,6 @@ export const info: InstrumentFileInfo[] = [
  * See music21.miditools and esp. `loadSoundfont` for a way of loading soundfonts into
  * instruments.
  *
- * @class Instrument
- * @memberof music21.instrument
  * @param {string} instrumentName
  * @property {string|undefined} partId
  * @property {string|undefined} partName

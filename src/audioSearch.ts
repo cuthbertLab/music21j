@@ -57,8 +57,6 @@ export const config = new _ConfigSingletonCreator();
  * Note: audioRecording uses the newer getUserMedia routines, so
  * this should be ported to be similar to there.
  *
- * @function music21.audioSearch.getUserMedia
- * @memberof music21.audioSearch
  * @param {Object} dictionary - optional dictionary to fill
  * @param {function} callback - callback on success
  * @param {function} error - callback on error
