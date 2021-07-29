@@ -784,9 +784,6 @@ export class Stream extends base.Music21Object {
         if (classFilter !== undefined) {
             ri.addFilter(new filters.ClassFilter(classFilter));
         }
-        if (streamsOnly) {
-            return ri as iterator.RecursiveIterator<Stream>;
-        }
         return ri;
     }
 
@@ -1312,7 +1309,7 @@ export class Stream extends base.Music21Object {
             streamsOnly: true,
             restoreActiveSites: false,
         })) {
-            if (elSites.includes(s)) {
+            if (elSites.includes(s as Stream)) {
                 if (setActiveSite) {
                     el.activeSite = s;
                 }
