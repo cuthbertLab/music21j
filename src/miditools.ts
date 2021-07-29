@@ -29,6 +29,7 @@ import * as note from './note';
 
 // imports for typechecking only
 import * as tempo from './tempo';
+import {coerceJQuery} from './common';
 
 declare interface MIDIWindow extends Window {
     MIDI?: MIDI,
@@ -41,8 +42,10 @@ export interface CallbackInterface {
 }
 
 
-// expose midicube's MIDI to window for soundfonts to load.
-(<MIDIWindow> window).MIDI = MIDI;
+// expose midicube version of MIDI to the window for soundfonts to load.
+if (typeof window !== undefined) {
+    (<MIDIWindow> window).MIDI = MIDI;
+}
 
 class _ConfigSingletonClass {
     /**
@@ -208,12 +211,8 @@ export function clearOldChords() {
  *  Take a series of jEvent noteOn objects and convert them to a single Chord object
  *  so long as they are all sounded within miditools.maxDelay milliseconds of each other.
  *  this method stores notes in miditools.heldChordNotes (Array).
- *
- *  @param {music21.miditools.Event} jEvent
- *  @memberof music21.miditools
- *  @returns undefined
  */
-export function makeChords(jEvent) {
+export function makeChords(jEvent: Event): void {
     // jEvent is a miditools.Event object
     if (jEvent.noteOn) {
         const m21n = jEvent.music21Note();
@@ -233,14 +232,9 @@ export function makeChords(jEvent) {
 
 /**
  * Take the list of Notes and makes a chord out of it, if appropriate and call
- * {@link music21.miditools.callbacks.sendOutChord} callback with the Chord or Note as a parameter.
- *
- * @memberof music21.miditools
- * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
- * @returns {(music21.note.Note|music21.chord.Chord|undefined)} A {@link music21.chord.Chord} object,
- * most likely, but maybe a {@link music21.note.Note} object)
+ * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
-export function sendOutChord(chordNoteList) {
+export function sendOutChord(chordNoteList: note.Note[]): note.Note|chord.Chord|undefined {
     let appendObject;
     if (chordNoteList.length > 1) {
         // console.log(chordNoteList[0].name, chordNoteList[1].name);
@@ -267,12 +261,10 @@ export function sendOutChord(chordNoteList) {
 /**
  * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
  *
- * @memberof music21.miditools
- * @param {music21.note.GeneralNote} [lastElement] - A {@link music21.note.Note} to be quantized
- * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with
+ * returns the same note.Note object passed in with
  * duration quantized
  */
-export function quantizeLastNote(lastElement=undefined) {
+export function quantizeLastNote(lastElement?: note.GeneralNote): note.GeneralNote|undefined {
     if (lastElement === undefined) {
         lastElement = config.lastElement;
     }
@@ -310,15 +302,13 @@ export function quantizeLastNote(lastElement=undefined) {
 /**
  * Callback to midiEvent.sendToMIDIjs.
  *
- * @memberof music21.miditools
- * @param {music21.miditools.Event} midiEvent - event to send out.
- * @returns undefined
+ * sends a MIDIEvent to midicube
  */
-export const sendToMIDIjs = midiEvent => {
+export const sendToMIDIjs = (midiEvent: Event): void => {
     midiEvent.sendToMIDIjs();
 };
 
-/* ------------ MIDI.js ----------- */
+/* ------------ midicube interface ----------- */
 
 /**
  * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
@@ -328,7 +318,8 @@ export const sendToMIDIjs = midiEvent => {
  * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} callback A function to be called after the soundfont is loaded.
  */
-export function postLoadCallback(soundfont, callback) {
+export function postLoadCallback(soundfont: string,
+                                 callback?: (instrumentObj?: instrument.Instrument) => any) {
     // this should be bound to MIDI
     if (debug) {
         console.log('soundfont loaded about to execute callback.');
@@ -388,7 +379,7 @@ export function postLoadCallback(soundfont, callback) {
  */
 export function loadSoundfont(
     soundfont: string,
-    callback=undefined
+    callback?: (instrumentObj?: instrument.Instrument) => any,
 ) {
     if (loadedSoundfonts[soundfont] === true) {
         // this soundfont has already been loaded once, so just call the callback.
@@ -425,13 +416,13 @@ export function loadSoundfont(
         if (debug) {
             console.log('waiting for document ready');
         }
-        $(document).ready(() => {
+        $(document).on('ready', () => {
             if (debug) {
                 console.log('document ready, waiting to load soundfont');
             }
             $(document.body).append(
                 $(
-                    "<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: "
+                    "<div class='loadingSoundfont'><b>Loading Instrument</b>: "
                         + 'audio will begin when this message disappears.</div>'
                 )
             );
@@ -451,14 +442,13 @@ export function loadSoundfont(
 /**
  * MidiPlayer -- an embedded midi player including the ability to create a
  * playback device.
- *
- * @class MidiPlayer
- * @memberOf music21.miditools
- * @property {number} speed - playback speed scaling (1=default).
- * @property {JQuery|undefined} $playDiv - div holding the player,
  */
 export class MidiPlayer {
     player: MIDI.Player;
+
+    /**
+     * playback speed scaling (1=default)
+     */
     speed: number = 1.0;
     $playDiv: JQuery;
     state: string = '';  // up, down, or empty...
@@ -467,46 +457,17 @@ export class MidiPlayer {
         this.player = new MIDI.Player();
     }
 
-    /**
-     * @param {jQuery|HTMLElement} [where]
-     * @returns {jQuery}
-     */
-    addPlayer(where) {
-        let $where;
-        if (where === undefined) {
-            where = document.body;
-        }
+    addPlayer(where: JQuery|HTMLElement): JQuery {
+        const $where = coerceJQuery(where);
 
-        if (!(where instanceof $)) {
-            $where = $(where);
-        } else {
-            $where = where;
-        }
-
-        /**
-         *
-         * @type {jQuery}
-         */
-        const $playDiv = $('<div class="midiPlayer">');
-        /**
-         *
-         * @type {jQuery}
-         */
+        const $playDiv: JQuery = $('<div class="midiPlayer">');
         const $controls = $('<div class="positionControls">');
-        /**
-         *
-         * @type {jQuery}
-         */
         const $playPause = $(
             '<input type="image" alt="play" src="'
                 + this.playPng()
                 + '" value="play" class="playPause">'
         );
 
-        /**
-         *
-         * @type {jQuery}
-         */
         const $stop = $(
             '<input type="image" alt="stop" src="'
                 + this.stopPng()
@@ -519,27 +480,11 @@ export class MidiPlayer {
         $controls.append($stop);
         $playDiv.append($controls);
 
-        /**
-         *
-         * @type {jQuery}
-         */
         const $time = $('<div class="timeControls">');
-        /**
-         *
-         * @type {jQuery}
-         */
         const $timePlayed = $('<span class="timePlayed">0:00</span>');
-        /**
-         *
-         * @type {jQuery}
-         */
         const $capsule = $(
             '<span class="capsule"><span class="cursor"></span></span>'
         );
-        /**
-         *
-         * @type {jQuery}
-         */
         const $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
         $time.append($timePlayed);
         $time.append($capsule);
@@ -555,27 +500,15 @@ export class MidiPlayer {
         this.pausePlayStop('yes');
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    playPng() {
+    playPng(): string {
         return common.urls.midiPlayer + '/play.png';
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    pausePng() {
+    pausePng(): string {
         return common.urls.midiPlayer + '/pause.png';
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stopPng() {
+    stopPng(): string {
         return common.urls.midiPlayer + '/stop.png';
     }
 
@@ -700,8 +633,6 @@ export class MidiPlayer {
  * but I hope to change that for sendOutChord also.
  *
  * "general" is usually the callback list to play around with.
- *
- * @memberof music21.miditools
  */
 export const callbacks: CallbackInterface = {
     raw: (t, a, b, c) => new Event(t, a, b, c),

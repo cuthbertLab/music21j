@@ -1,10 +1,5 @@
 /**
  * audioSearch module. See music21.audioSearch namespace
- *
- * @exports music21/audioSearch
- * @memberof music21
- * @requires music21/pitch
- * @requires music21/common
  */
 import * as MIDI from 'midicube';
 import * as common from './common';

@@ -7,16 +7,6 @@
  *
  * Roman numeral module. See  namespace
  * music21.roman -- namespace for dealing with RomanNumeral analysis.
- *
- * @exports music21/roman
- * @memberof music21
- * @requires music21/chord
- * @requires music21/common
- * @requires music21/figuredBass
- * @requires music21/harmony
- * @requires music21/key
- * @requires music21/pitch
- * @requires music21/interval
  */
 import { Music21Exception } from './exceptions21';
 
@@ -199,11 +189,11 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
  *
  * @class RomanNumeral
  * @memberof music21.roman
- * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
- * @param {string|music21.key.Key} [keyStr='C']
- * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale
+ * figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
+ * [keyStr='C']
+ * @property scale - (readonly) returns the scale
  *     associated with the roman numeral
- * @property {music21.key.Key} key - the key associated with the
+ * @property key - the key associated with the
  *     RomanNumeral (not allowed to be undefined yet)
  * @property {string} figure - the figure as passed in
  * @property {string} degreeName - the name associated with the scale degree,
@@ -211,16 +201,8 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
  *     "subtonic" appropriately
  * @property {int} scaleDegree
  * @property {string|undefined} impliedQuality - "major", "minor", "diminished", "augmented"
- * @property {music21.roman.RomanNumeral|undefined} secondaryRomanNumeral
- * @property {music21.key.Key|undefined} secondaryRomanNumeralKey
  * @property {string|undefined} frontAlterationString
- * @property {music21.interval.Interval|undefined} frontAlterationTransposeInterval
- * @property {music21.pitch.Accidental|undefined} frontAlterationAccidental
  * @property {string|undefined} romanNumeralAlone
- * @property {scale.Scale|boolean|undefined} impliedScale
- * @property {music21.interval.Interval|undefined} scaleOffset
- * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals
- *     are Chord objects, so .pitches will work for them also.
  */
 export class RomanNumeral extends harmony.Harmony {
     static get className() { return 'music21.roman.RomanNumeral'; }
@@ -241,8 +223,8 @@ export class RomanNumeral extends harmony.Harmony {
     romanNumeralAlone;
     quality;
     impliedQuality;
-    impliedScale;
-    scaleOffset;
+    impliedScale: key.Key;
+    scaleOffset: interval.Interval;
     useImpliedScale: boolean;
     bracketedAlterations;
     omittedSteps;
@@ -337,7 +319,8 @@ export class RomanNumeral extends harmony.Harmony {
         );
 
         if (workingFigure === 'Cad64') {
-            if (useScale.mode === 'minor') {
+            // useScale might be a Scale, not Key. TODO: NO!
+            if ((useScale as key.Key).mode === 'minor') {
                 workingFigure = 'i64';
             } else {
                 workingFigure = 'I64';
@@ -562,10 +545,10 @@ export class RomanNumeral extends harmony.Harmony {
         }
         if (keyOrScale === undefined) {
             this.useImpliedScale = true;
-            this.impliedScale = new scale.MajorScale('C');
+            this.impliedScale = new key.Key('C');
         } else {
             this.useImpliedScale = false;
-            this.impliedScale = false;
+            this.impliedScale = undefined;
         }
         if (this._parsingComplete) {
             this._updatePitches();

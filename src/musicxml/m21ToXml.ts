@@ -1,6 +1,3 @@
-/**
- * @namespace music21.musicxml.m21ToXml
- */
 import * as clef from '../clef';
 import * as common from '../common';
 import {  // eslint-disable-line import/no-cycle
@@ -198,9 +195,6 @@ export class GeneralObjectExporter {
 
 const _musicxmlVersion = '3.0';
 
-/**
- * @memberOf music21.musicxml.m21ToXml
- */
 export class XMLExporterBase {
     doc: XMLDocument;
     xmlRoot;
@@ -362,9 +356,6 @@ export class XMLExporterBase {
 
 }
 
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
 export class ScoreExporter extends XMLExporterBase {
     stream: Score;
     xmIdentification = undefined;
@@ -490,9 +481,6 @@ export class ScoreExporter extends XMLExporterBase {
     // TODO(msc): contributorToXmlCreator
 }
 
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
 export class PartExporter extends XMLExporterBase {
     stream: Part;
     parent: ScoreExporter;
@@ -581,9 +569,6 @@ const _ignoreOnParseClasses = ['LayoutBase', 'Barline'];
 
 const divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
 
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
 export class MeasureExporter extends XMLExporterBase {
     stream: Measure;
     parent: PartExporter;
@@ -713,12 +698,8 @@ export class MeasureExporter extends XMLExporterBase {
 
     /**
      *
-     * @param {music21.note.GeneralNote} n
-     * @param noteIndexInChord
-     * @param chordParent
-     * @returns {Node}
      */
-    noteToXml(n: GeneralNote, { noteIndexInChord=0, chordParent=undefined }={}) {
+    noteToXml(n: GeneralNote, { noteIndexInChord=0, chordParent=undefined }={}): Node {
         const addChordTag = (noteIndexInChord !== 0);
         let chordOrN;
         if (chordParent === undefined) {

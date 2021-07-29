@@ -5,8 +5,6 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * fromPython module -- see {@link music21.fromPython}
- *
  * Converter for taking a Python-encoded jsonpickle music21p stream
  * and loading it into music21j
  *
@@ -14,9 +12,6 @@
  *
  * Requires Cuthbert's jsonpickle.js port.
  *
- * @namespace music21.fromPython
- * @extends music21
- * @requires jsonpickle
  * @example
  * in python:
  *
@@ -33,6 +28,8 @@ import * as jsonpickle from 'jsonpickle';
 
 const jp = jsonpickle;
 const unpickler = jp.unpickler;
+
+import type * as stream from './stream';
 
 /**
  *
@@ -109,11 +106,10 @@ export class Converter {
     /**
      * Fixes up some references that cannot be unpacked from jsonpickle.
      *
-     * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
-     * @returns {music21.stream.Stream}
+     * s - stream after unpacking from jsonpickle
      */
-    streamPostRestore(s) {
-        const st = s._storedElementOffsetTuples;
+    streamPostRestore(s: stream.Stream): stream.Stream {
+        const st = (s as any)._storedElementOffsetTuples;
 
         s._clef = this.lastClef;
         s._keySignature = this.lastKeySignature;
@@ -191,9 +187,6 @@ export class Converter {
 
     /**
      * Run the main decoder
-     *
-     * @param {string} jss - stream encoded as JSON
-     * @returns {music21.stream.Stream}
      */
     run(jss) {
         const outStruct = unpickler.decode(jss, this.handlers);

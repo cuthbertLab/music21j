@@ -6,17 +6,6 @@
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * TinyNotation module
- *
- * @exports music21.tinyNotation
- * @memberof music21
- * @requires music21/base
- * @requires music21/clef
- * @requires music21/duration
- * @requires music21/pitch
- * @requires music21/note
- * @requires music21/meter
- * @requires music21/stream
- * @requires music21/tie
  */
 import * as $ from 'jquery';
 
@@ -28,11 +17,10 @@ import * as note from './note';
 import * as meter from './meter';
 import * as stream from './stream';
 import * as tie from './tie';
+import {common} from './main';
 
 /**
  * Regular expressions object
- *
- * @memberof music21.tinyNotation
  */
 const regularExpressions: { [k: string]: RegExp } = {
     REST: /r/,
@@ -113,10 +101,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Measure|stream.
         }
 
         let token = tokens[i];
-        /**
-         * @type {music21.note.GeneralNote|undefined}
-         */
-        let noteObj;
+        let noteObj: note.GeneralNote|note.Note|note.Rest;
         let lyric;
         if (tnre.PARTBREAK.exec(token)) {
             if (m.length > 0) {
@@ -177,21 +162,25 @@ export function TinyNotation(textIn: string): stream.Part|stream.Measure|stream.
             noteObj = new note.Rest(lastDurationQL);
         } else if (tnre.OCTAVE2.exec(token)) {
             const MATCH = tnre.OCTAVE2.exec(token);
-            noteObj = new note.Note(MATCH[1], lastDurationQL);
-            noteObj.pitch.octave = 4 - MATCH[0].length;
+            const n = new note.Note(MATCH[1], lastDurationQL);
+            n.pitch.octave = 4 - MATCH[0].length;
+            noteObj = n;
         } else if (tnre.OCTAVE3.exec(token)) {
             const MATCH = tnre.OCTAVE3.exec(token);
-            noteObj = new note.Note(MATCH[1], lastDurationQL);
-            noteObj.pitch.octave = 3;
+            const n = new note.Note(MATCH[1], lastDurationQL);
+            n.pitch.octave = 3;
+            noteObj = n;
         } else if (tnre.OCTAVE5.exec(token)) {
             // must match octave 5 before 4
             const MATCH = tnre.OCTAVE5.exec(token);
-            noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
-            noteObj.pitch.octave = 3 + MATCH[0].length;
+            const n = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+            n.pitch.octave = 3 + MATCH[0].length;
+            noteObj = n;
         } else if (tnre.OCTAVE4.exec(token)) {
             const MATCH = tnre.OCTAVE4.exec(token);
-            noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
-            noteObj.pitch.octave = 4;
+            const n = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+            n.pitch.octave = 4;
+            noteObj = n;
         }
 
         if (noteObj === undefined) {
@@ -212,13 +201,13 @@ export function TinyNotation(textIn: string): stream.Part|stream.Measure|stream.
             noteObj.tie = new tie.Tie('stop');
             storedDict.lastNoteTied = false;
         }
-        if (tnre.SHARP.exec(token)) {
+        if (tnre.SHARP.exec(token) && noteObj instanceof note.Note) {
             const MATCH = tnre.SHARP.exec(token); // sharp
             noteObj.pitch.accidental = new pitch.Accidental(MATCH[1].length);
-        } else if (tnre.FLAT.exec(token)) {
+        } else if (tnre.FLAT.exec(token) && noteObj instanceof note.Note) {
             const MATCH = tnre.FLAT.exec(token); // sharp
             noteObj.pitch.accidental = new pitch.Accidental(-1 * MATCH[1].length);
-        } else if (tnre.NAT.exec(token)) {
+        } else if (tnre.NAT.exec(token) && noteObj instanceof note.Note) {
             noteObj.pitch.accidental = new pitch.Accidental('natural');
             noteObj.pitch.accidental.displayType = 'always';
         }
@@ -247,7 +236,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Measure|stream.
                 new duration.Tuplet(4, 3, noteObj.duration.quarterLength)
             );
         }
-        if (storedDict.inChord) {
+        if (storedDict.inChord && noteObj instanceof note.Note) {
             if (chordObj) {
                 chordObj.add(noteObj);
             } else {
@@ -302,30 +291,21 @@ export function TinyNotation(textIn: string): stream.Part|stream.Measure|stream.
 /**
  * Render all the TinyNotation classes in the DOM as notation
  *
- * Called automatically when music21 is loaded.
+ * Called automatically when music21 is loaded.  TODO -- stop that!
  *
- * @memberof music21.tinyNotation
  * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {HTMLElement|jQuery} [selector]
  */
 export function renderNotationDivs(
     classTypes: string = '.music21.tinyNotation',
-    selector=undefined
+    selector?: HTMLElement|JQuery
 ) {
     let $allRender: JQuery;
 
     if (selector === undefined) {
         $allRender = $(classTypes);
     } else {
-        /**
-         * @type {jQuery}
-         */
-        let $selector;
-        if (!(selector instanceof $)) {
-            $selector = $(selector);
-        } else {
-            $selector = selector;
-        }
+        const $selector = common.coerceJQuery(selector);
         $allRender = $selector.find(classTypes);
     }
 

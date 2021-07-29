@@ -5,19 +5,7 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Keyboard module, see {@link music21.keyboard} namespace
- *
- * @exports music21/keyboard
- *
- * keyboard namespace -- tools for creating an onscreen keyboard and interacting with it.
- *
- * @namespace music21.keyboard
- * @memberof music21
- * @requires music21/pitch
- * @requires music21/common
- * @requires music21/miditools
- * @requires jquery
- * @requires MIDI
+ * Keyboard module
  *
  * @example Minimum usage:
  * const kd = document.getElementById('keyboardDiv');
@@ -35,48 +23,71 @@ import * as MIDI from 'midicube';
 import * as common from './common';
 import * as miditools from './miditools';
 import * as pitch from './pitch';
+import {coerceHTMLElement} from './common';
 
 /**
  * Represents a single Key
- *
- * @class Key
- * @memberof music21.keyboard
- * @property {Array<function>} callbacks - called when key is clicked/selected
- * @property {number} [scaleFactor=1]
- * @property {music21.keyboard.Keyboard|undefined} parent
- * @property {int} id - midi number associated with the key.
- * @property {music21.pitch.Pitch|undefined} pitchObj
- * @property {SVGElement|undefined} svgObj - SVG representing the drawing of the key
- * @property {SVGElement|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
- * @property {string} keyStyle='' - css style information for the key
- * @property {string} keyClass='' - css class information for the key ("keyboardkey" + this is the class)
- * @property {number} width - width of key
- * @property {number} height - height of key
  */
 export class Key {
-    classes: string[] = ['Key']; // name conflict with key.Key
+    classes: string[] = ['Key']; // TODO(msc): resolve name conflict with key.Key
+
+    /**
+     *     called when key is clicked/selected
+     */
     callbacks = {
         click: undefined,
     };
 
     scaleFactor: number = 1;
     parent: Keyboard;
-    id: number = 0;  // midi number
+
+    /**
+     * MIDI number associated with the key.
+     */
+    id: number = 0;
+
+    /**
+     * Width in pixels
+     */
     width: number = 23;
+
+    /**
+     * Height in pixels.
+     */
     height: number = 120;
+
+    /**
+     * A pitch object associated with the key
+     */
     pitchObj: pitch.Pitch;
-    svgObj: SVGElement;
-    noteNameSvgObj: SVGElement;
+
+    /**
+     * The SVG representing the drawing of the key
+     */
+    svgObj: SVGElement|undefined;
+
+    /**
+     * The SVG representing the note name drawn on the key.
+     */
+    noteNameSvgObj: SVGElement|undefined;
+
+    /**
+     * CSS Style information for the key
+     */
     keyStyle: string = '';
+
+    /**
+     * CSS class with `keyboardkey${keyClass}` for the key.
+     */
     keyClass: string = '';
 
     /**
      * Gets an SVG object for the key
      *
-     * @param {number} startX - X position in pixels from left of keyboard to draw key at
-     * @returns {SVGElement} a SVG rectangle for the key
+     * * startX - X position in pixels from left of keyboard to draw key at
+     * * returns an SVG rectangle for the key
      */
-    makeKey(startX) {
+    makeKey(startX: number): SVGElement {
         const keyAttrs = {
             style: this.keyStyle,
             x: startX,
@@ -100,11 +111,8 @@ export class Key {
 
     /**
      * Adds a circle (red) on the key (to mark middle C etc.)
-     *
-     * @param {string} [strokeColor='red']
-     * @returns {SVGElement}
      */
-    addCircle(strokeColor) {
+    addCircle(strokeColor: string = 'red'): SVGElement {
         if (
             this.svgObj === undefined
             || this.parent === undefined
@@ -112,13 +120,10 @@ export class Key {
         ) {
             return undefined;
         }
-        if (strokeColor === undefined) {
-            strokeColor = 'red';
-        }
         const x = parseInt(this.svgObj.getAttribute('x'));
         const cx = x + this.parent.scaleFactor * this.width / 2;
         // console.log('cx', cx);
-        const keyattrs = {
+        const keyAttrs = {
             stroke: strokeColor,
             'stroke-width': 3,
             fill: 'none',
@@ -128,7 +133,7 @@ export class Key {
             r: this.width * this.parent.scaleFactor / 4,
         };
 
-        const circleDom = common.makeSVGright('circle', keyattrs);
+        const circleDom = common.makeSVGright('circle', keyAttrs);
         this.parent.svgObj.appendChild(circleDom);
         // console.log(circleDom);
         return circleDom;
@@ -137,10 +142,9 @@ export class Key {
     /**
      * Adds the note name on the key
      *
-     * @param {Boolean} [labelOctaves=false] - use octave numbers too?
-     * @returns {this}
+     * if labelOctaves then octave numbers will also appear
      */
-    addNoteName(labelOctaves) {
+    addNoteName(labelOctaves: boolean = false): this {
         if (
             this.svgObj === undefined
             || this.parent === undefined
@@ -163,26 +167,26 @@ export class Key {
         let x = parseInt(this.svgObj.getAttribute('x'));
         let idStr = this.pitchObj.name;
         let fontSize = 14;
-        if (labelOctaves === true) {
+        if (labelOctaves) {
             idStr = this.pitchObj.nameWithOctave;
             fontSize = 12;
             x -= 2;
         }
         fontSize = Math.floor(fontSize * this.parent.scaleFactor);
 
-        let textfill = 'white';
+        let textFill = 'white';
         if (this.keyClass === 'whitekey') {
-            textfill = 'black';
+            textFill = 'black';
         }
-        const textattrs = {
-            fill: textfill,
+        const textAttrs = {
+            fill: textFill,
             x: x + this.parent.scaleFactor * (this.width / 2 - 5),
             y: this.parent.scaleFactor * (this.height - 20),
             class: 'keyboardkeyname',
             'font-size': fontSize,
         };
 
-        const textDom = common.makeSVGright('text', textattrs);
+        const textDom = common.makeSVGright('text', textAttrs);
         const textNode = document.createTextNode(idStr);
         textDom.appendChild(textNode);
         this.noteNameSvgObj = textDom; // store for removing...
@@ -215,10 +219,6 @@ export class Key {
 
 /**
  * Defaults for a WhiteKey (width, height, keyStyle, keyClass)
- *
- * @class WhiteKey
- * @memberof music21.keyboard
- * @extends music21.keyboard.Key
  */
 export class WhiteKey extends Key {
     constructor() {
@@ -232,10 +232,6 @@ export class WhiteKey extends Key {
 
 /**
  * Defaults for a BlackKey (width, height, keyStyle, keyClass)
- *
- * @class BlackKey
- * @memberof music21.keyboard
- * @extends music21.keyboard.Key
  */
 export class BlackKey extends Key {
     constructor() {
@@ -254,7 +250,7 @@ export class BlackKey extends Key {
  * @memberof music21.keyboard
  * @property {number} whiteKeyWidth - default 23
  * @property {number} scaleFactor - default 1
- * @property {Object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
+ * @property {Object} keyObjects - a mapping of id to `music21.keyboard.Key` objects
  * @property {SVGElement} svgObj - the SVG object of the keyboard
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
@@ -331,19 +327,10 @@ export class Keyboard {
     }
 
     /**
-     * Appends a keyboard to the `where` parameter
-     *
-     * @param {jQuery|Node} [where]
-     * @returns {music21.keyboard.Keyboard} this
+     * Appends a keyboard to the where parameter
      */
-    appendKeyboard(where) {
-        if (where === undefined) {
-            where = document.body;
-        } else { // noinspection JSUnresolvedVariable
-            if (typeof where.jquery !== 'undefined') {
-                where = where[0];
-            }
-        }
+    appendKeyboard(where?: JQuery|HTMLElement): this {
+        const svg_holder = coerceHTMLElement(where);
 
         let svgDOM: HTMLElement|SVGElement = this.createSVG();
 
@@ -353,9 +340,9 @@ export class Keyboard {
 
         if (this.hideable) {
             // make it so the keyboard can be shown or hidden...
-            this.appendHideableKeyboard(where, svgDOM);
+            this.appendHideableKeyboard(svg_holder, svgDOM);
         } else {
-            where.appendChild(svgDOM); // svg must use appendChild, not append.
+            svg_holder.appendChild(svgDOM); // svg must use appendChild, not append.
         }
         return this;
     }
@@ -485,7 +472,7 @@ export class Keyboard {
             currentIndex += 1;
             currentIndex %= 7;
         }
-        // append blackkeys later since they overlap white keys;
+        // append black keys later since they overlap white keys;
         for (let bki = 0; bki < blackKeys.length; bki++) {
             svgDOM.appendChild(blackKeys[bki]);
         }
@@ -503,10 +490,8 @@ export class Keyboard {
 
     /**
      * Puts a circle on middle c.
-     *
-     * @param {string} [strokeColor='red']
      */
-    markMiddleC(strokeColor='red') {
+    markMiddleC(strokeColor: string = 'red') {
         const midC = this.keyObjects.get(60);
         if (midC !== undefined) {
             midC.addCircle(strokeColor);
@@ -515,10 +500,8 @@ export class Keyboard {
 
     /**
      * Puts note names on every white key.
-     *
-     * @param {Boolean} [labelOctaves=false]
      */
-    markNoteNames(labelOctaves) {
+    markNoteNames(labelOctaves: boolean = false) {
         this.removeNoteNames(); // in case...
         for (const keyObj of this.keyObjects.values()) {
             keyObj.addNoteName(labelOctaves);
@@ -527,10 +510,8 @@ export class Keyboard {
 
     /**
      * Remove note names on the keys, if they exist
-     *
-     * @returns {this}
      */
-    removeNoteNames() {
+    removeNoteNames(): this {
         for (const keyObj of this.keyObjects.values()) {
             keyObj.removeNoteName();
         }
@@ -542,9 +523,6 @@ export class Keyboard {
      *
      * Do not call this directly, just use createSVG after changing the
      * scrollable property on the keyboard to True.
-     *
-     * @param {SVGElement} svgDOM
-     * @returns {JQuery}
      */
     wrapScrollable(svgDOM: SVGElement): JQuery {
         const $wrapper = $(
@@ -575,7 +553,8 @@ export class Keyboard {
         const $kWrapper = $(
             "<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>"
         );
-        $kWrapper[0].appendChild(svgDOM);
+        const kWrapperDiv = $kWrapper[0];
+        kWrapperDiv.appendChild(svgDOM);  // cannot use jquery append with SVG.
         $wrapper.append($bDown);
         $wrapper.append($kWrapper);
         $wrapper.append($bUp);
@@ -668,14 +647,12 @@ export const triggerToggleShow = e => {
 /**
  * highlight the keyboard stored in "this" appropriately
  *
- * @function music21.keyboard.jazzHighlight
- * @param {music21.miditools.Event} e
  * @example
  * var midiCallbacksPlay = [music21.miditools.makeChords,
  *                          music21.miditools.sendToMIDIjs,
  *                          music21.keyboard.jazzHighlight.bind(k)];
  */
-export function jazzHighlight(e) {
+export function jazzHighlight(e: miditools.Event) {
     // e is a miditools.event object -- call with this = keyboard.Keyboard object via bind...
     if (e === undefined) {
         return;

@@ -138,11 +138,6 @@ export class ScoreParser {
     }
 }
 
-/**
- * @property {MeasureParser|undefined} lastMeasureParser
- * @property {music21.meter.TimeSignature|undefined} lastTimeSignature
- * @property {jQuery|undefined} $activeAttributes
- */
 export class PartParser {
     parent: ScoreParser;
     $mxPart;
@@ -152,25 +147,25 @@ export class PartParser {
     atSoundingPitch = true;
     staffReferenceList = [];
 
-    lastTimeSignature = undefined;
+    lastTimeSignature: meter.TimeSignature;
     lastMeasureWasShort = false;
     lastMeasureOffset = 0.0;
     lastClefs;
     activeTuplets = [undefined, undefined, undefined, undefined, undefined, undefined, undefined];
     maxStaves = 1;
     lastMeasureNumber = 0;
-    lastNumberSuffix = undefined;
+    lastNumberSuffix;
 
     multiMeasureRestsToCapture = 0;
-    activeMultimeasureRestSpanner = undefined;
+    activeMultimeasureRestSpanner;
 
-    activeInstrument = undefined;
+    activeInstrument;
     firstMeasureParsed = false;
-    $activeAttributes = undefined;
+    $activeAttributes: JQuery;
     lastDivisions = DEFAULTS.divisionsPerQuarter;
 
     appendToScoreAfterParse = true;
-    lastMeasureParser = undefined;
+    lastMeasureParser: MeasureParser;
 
     constructor($mxPart, $mxScorePart, parent=undefined) {
         this.parent = parent;
@@ -283,7 +278,7 @@ export class MeasureParser {
 
     $mxNoteList = [];
     $mxLyricList = [];
-    nLast = undefined;
+    nLast: note.GeneralNote;
     chordVoice = undefined;
     fullMeasureRest = false;
     restAndNoteCount = {
@@ -324,21 +319,13 @@ export class MeasureParser {
         // Note: <print> is handled separately...
     };
 
-    /**
-     *
-     * @param {jQuery} $mxMeasure
-     * @param {PartParser} [parent]
-     * @property {music21.note.GeneralNote|undefined} nLast
-     * @property {jQuery|undefined} $activeAttributes
-     */
-    constructor($mxMeasure, parent: PartParser = undefined) {
+    constructor($mxMeasure: JQuery, parent: PartParser = undefined) {
         this.$mxMeasure = $mxMeasure;
         this.parent = parent;
         this.stream = new stream.Measure();
 
         this.voiceIndices = new Set();
         this.staves = 1;
-        this.$activeAttributes = undefined;
         this.attributesAreInternal = true;
 
         if (parent !== undefined) {
@@ -608,12 +595,7 @@ export class MeasureParser {
     // xmlToTremolo
     // xmlOneSpanner
 
-    /**
-     *
-     * @param {jQuery} $mxNote
-     * @returns {music21.tie.Tie}
-     */
-    xmlToTie($mxNote) {
+    xmlToTie($mxNote: JQuery): tie.Tie {
         const t = new tie.Tie();
         const allTies = $mxNote.children('tie');
         if (allTies.length > 1) {
@@ -642,13 +624,7 @@ export class MeasureParser {
         }
     }
 
-    /**
-     *
-     * @param {jQuery} $mxLyric
-     * @param {music21.note.Lyric} [inputM21]
-     * @returns {*|music21.note.Lyric|undefined}
-     */
-    xmlToLyric($mxLyric, inputM21=undefined) {
+    xmlToLyric($mxLyric: JQuery, inputM21?: note.Lyric): note.Lyric {
         let l = inputM21;
         if (inputM21 === undefined) {
             l = new note.Lyric('');
@@ -660,15 +636,15 @@ export class MeasureParser {
         }
         let number = $mxLyric.attr('number');
         try {
-            number = parseInt(number);
-            l.number = number;
+            const num = parseInt(number);
+            l.number = num;
         } catch (exc) {
             l.number = 0;
             if (number !== undefined) {
-                l.identifier = number;
+                l.identifier = number.toString();
             }
         }
-        const identifier = $mxLyric.get('name');
+        const identifier: string = $mxLyric.attr('name');
         if (identifier !== undefined) {
             l.identifier = identifier;
         }

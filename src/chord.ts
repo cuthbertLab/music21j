@@ -5,15 +5,8 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * chord Module. See {@link music21.chord} namespace for more details.
- * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
+ * Chord related objects (esp. music21.chord.Chord) and methods.
  *
- * @exports music21/chord
- * @namespace music21.chord
- * @memberof music21
- * @requires vexflow
- * @requires music21/interval
- * @requires music21/note
  */
 import * as MIDI from 'midicube';
 
@@ -24,17 +17,14 @@ import * as chordTables from './chordTables';
 
 // imports for typing
 import type * as clef from './clef';
-import type { Pitch } from './pitch';
+import type * as pitch from './pitch';
 
 export { chordTables };
 
 
 /**
- * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
- *
- * @param {Array<string|note.Note|Pitch>} [notes] -
+ * @param {Array<string|note.Note|pitch.Pitch>} [notes] -
  *     an Array of strings
- *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
  * @property {number} length - the number of pitches in the Chord (readonly)
  * @property {Pitch[]} pitches - an Array of Pitch objects in the
@@ -55,19 +45,22 @@ export class Chord extends note.NotRest {
     protected _chordTablesAddress: any = undefined;
     protected _chordTablesAddressNeedsUpdating: boolean = true; // only update when needed
 
-    constructor(notes?: string|note.Note[]|Pitch[]|string[]) {
+    constructor(notes?: string|string[]|note.Note|note.Note[]|pitch.Pitch|pitch.Pitch[]) {
         super();
+        let arrayNotes: Array<string|note.Note|pitch.Pitch>;
         if (typeof notes === 'undefined') {
-            notes = [];
+            arrayNotes = [];
         } else if (typeof notes === 'string') {
-            notes = notes.split(/\s+/);
+            arrayNotes = notes.split(/\s+/);
+        } else if (!(notes instanceof Array)) {
+            arrayNotes = [(notes as (note.Note|pitch.Pitch))];
         }
 
-        for (const n of notes) {
+        for (const n of arrayNotes) {
             this.add(n, false);
         }
-        if (notes.length > 0) {
-            const n0 = notes[0];
+        if (arrayNotes.length > 0) {
+            const n0 = arrayNotes[0];
             if (n0 instanceof note.Note) {
                 if (n0.duration.quarterLength !== this.duration.quarterLength) {
                     this.duration = n0.duration;
@@ -89,7 +82,7 @@ export class Chord extends note.NotRest {
     // Typescript restriction... preventing full allowing of set pitches()
     // to take string[] or Note[].
     // https://github.com/microsoft/TypeScript/issues/2521
-    get pitches(): Pitch[] {
+    get pitches(): pitch.Pitch[] {
         const tempPitches = [];
         for (let i = 0; i < this._notes.length; i++) {
             tempPitches.push(this._notes[i].pitch);
@@ -97,7 +90,7 @@ export class Chord extends note.NotRest {
         return tempPitches;
     }
 
-    set pitches(tempPitches: Pitch[]) {
+    set pitches(tempPitches: pitch.Pitch[]) {
         this._notes = [];
         for (let i = 0; i < tempPitches.length; i++) {
             let addNote;
@@ -283,18 +276,18 @@ export class Chord extends note.NotRest {
     }
 
     /**
-     * Adds a note to the chord, sorting the note array
+     * Adds a note or Array of notes to the chord, sorting the note array
      *
-     * @param {
-     *     string|string[]|note.Note|Pitch|
-     *     music21.note.Note[]|Pitch[]} notes - the
-     *     Note or Pitch to be added or a string defining a pitch.
-     * @param {boolean} runSort - Sort after running (default true)
-     * @returns {music21.chord.Chord} the original chord.
+     * runSort - Sort after running (default true)
      */
-    add(notes, runSort: boolean = true) {
-        if (!(notes instanceof Array)) {
-            notes = [notes];
+    add(n: string|string[]|note.Note|note.Note[]|pitch.Pitch|pitch.Pitch[],
+        runSort: boolean = true
+    ): this {
+        let notes: Array<string|note.Note|pitch.Pitch>;
+        if (!(n instanceof Array)) {
+            notes = [<string|note.Note|pitch.Pitch> n];
+        } else {
+            notes = n;
         }
         for (const noteObj_StrOrNote of notes) {
             // takes in either a note or a pitch
@@ -304,10 +297,10 @@ export class Chord extends note.NotRest {
             } else if (noteObj_StrOrNote.isClassOrSubclass('Pitch')) {
                 const pitchObj = noteObj_StrOrNote;
                 const noteObj2 = new note.Note();
-                noteObj2.pitch = pitchObj;
+                noteObj2.pitch = pitchObj as pitch.Pitch;
                 noteObj = noteObj2;
             } else {
-                noteObj = noteObj_StrOrNote;
+                noteObj = noteObj_StrOrNote as note.Note;
             }
             this._notes.push(noteObj);
         }
@@ -355,7 +348,7 @@ export class Chord extends note.NotRest {
     /**
      * Finds the Root of the chord, or sets it as an override.
      */
-    root(newroot?: Pitch): Pitch {
+    root(newroot?: pitch.Pitch): pitch.Pitch {
         if (newroot !== undefined) {
             this._overrides.root = newroot;
             this._cache.root = newroot;
@@ -419,12 +412,12 @@ export class Chord extends note.NotRest {
      * For instance, in a G dominant 7th chord (G, B, D, F), would
      * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
      *
-     * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-     * @param {Pitch} [testRoot] - the pitch to temporarily consider the root.
-     * @returns {number|undefined} Number of semitones above the root for this
+     * chordStep - the step to find, e.g., 1, 2, 3, etc.
+     * [testRoot] - the pitch to temporarily consider the root.
+     * returns Number of semitones above the root for this
      *     chord step or undefined if no pitch matches that chord step.
      */
-    semitonesFromChordStep(chordStep: number, testRoot?: Pitch): number|undefined {
+    semitonesFromChordStep(chordStep: number, testRoot?: pitch.Pitch): number|undefined {
         if (testRoot === undefined) {
             testRoot = this.root();
         }
@@ -445,7 +438,7 @@ export class Chord extends note.NotRest {
      *
      * return bass pitch or undefined
      */
-    bass(newBass?: Pitch): Pitch|undefined {
+    bass(newBass?: pitch.Pitch): pitch.Pitch|undefined {
         if (newBass !== undefined) {
             this._overrides.bass = newBass;
             this._cache.bass = newBass;
@@ -653,7 +646,7 @@ export class Chord extends note.NotRest {
      * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      */
-    getChordStep(chordStep: number, testRoot?: Pitch): Pitch|undefined {
+    getChordStep(chordStep: number, testRoot?: pitch.Pitch): pitch.Pitch|undefined {
         if (testRoot === undefined) {
             testRoot = this.root();
         }
@@ -676,15 +669,15 @@ export class Chord extends note.NotRest {
         return undefined;
     }
 
-    get third(): Pitch|undefined {
+    get third(): pitch.Pitch|undefined {
         return this.getChordStep(3);
     }
 
-    get fifth(): Pitch|undefined {
+    get fifth(): pitch.Pitch|undefined {
         return this.getChordStep(5);
     }
 
-    get seventh(): Pitch|undefined {
+    get seventh(): pitch.Pitch|undefined {
         return this.getChordStep(7);
     }
 }

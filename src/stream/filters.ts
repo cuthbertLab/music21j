@@ -7,9 +7,6 @@ class _StopIteration {}
 
 export const StopIterationSingleton = new _StopIteration();
 
-/**
- * @memberof music21.stream.filters
- */
 export class StreamFilter {
     static get derivationStr() {
         return 'streamFilter';

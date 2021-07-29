@@ -5,14 +5,8 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Module holding beam materials. See {@link music21.beam} namespace.
- * {@link music21.beam.Beam} and {music21.beam.Beams} objects
+ * Module holding beam materials.
  *
- * @exports music21/beam
- * @namespace music21.beam
- * @memberof music21
- * @requires music21/prebase
- * @requires music21/duration
  */
 import { Music21Exception } from './exceptions21';
 

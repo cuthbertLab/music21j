@@ -1,11 +1,5 @@
 /**
- * articulations module. See {@link music21.articulations} namespace
- *
- * @namespace music21.articulations
- * @memberof music21
- * @requires music21/prebase
- * @requires vexflow
- * @requires music21/common
+ * articulations module.
  */
 import Vex from 'vexflow';
 
@@ -70,10 +64,8 @@ export function setPlacementOnVexFlowArticulation(
 
 /**
  * Represents a single articulation, usually in the `.articulations` Array
- * on a {@link music21.note.Note} or something like that.
+ * on a music21.note.Note or something like that.
  *
- * @class Articulation
- * @memberof music21.articulations
  * @property {string} name
  * @property {string} [placement='above']
  * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
@@ -91,8 +83,6 @@ export class Articulation extends prebase.ProtoM21Object {
 
     /**
      * Generates a Vex.Flow.Articulation for this articulation.
-     *
-     * @returns {Vex.Flow.Articulation}
      */
     vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
         const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
@@ -103,9 +93,6 @@ export class Articulation extends prebase.ProtoM21Object {
 
 /**
  * base class for articulations that change the length of a note...
- *
- * @class LengthArticulation
- * @memberof music21.articulations
  */
 export class LengthArticulation extends Articulation {
     static get className() { return 'music21.articulation.LengthArticulation'; }
@@ -118,9 +105,6 @@ export class LengthArticulation extends Articulation {
 
 /**
  * base class for articulations that change the dynamic of a note...
- *
- * @class DynamicArticulation
- * @memberof music21.articulations
  */
 export class DynamicArticulation extends Articulation {
     static get className() { return 'music21.articulation.DynamicArticulation'; }
@@ -133,9 +117,6 @@ export class DynamicArticulation extends Articulation {
 
 /**
  * base class for articulations that change the pitch of a note...
- *
- * @class PitchArticulation
- * @memberof music21.articulations
  */
 export class PitchArticulation extends Articulation {
     static get className() { return 'music21.articulation.PitchArticulation'; }
@@ -148,9 +129,6 @@ export class PitchArticulation extends Articulation {
 
 /**
  * base class for articulations that change the timbre of a note...
- *
- * @class TimbreArticulation
- * @memberof music21.articulations
  */
 export class TimbreArticulation extends Articulation {
     static get className() { return 'music21.articulation.TimbreArticulation'; }
@@ -163,9 +141,6 @@ export class TimbreArticulation extends Articulation {
 
 /**
  * 50% louder than usual
- *
- * @class Accent
- * @memberof music21.articulations
  */
 export class Accent extends DynamicArticulation {
     static get className() { return 'music21.articulation.Accent'; }
@@ -180,9 +155,6 @@ export class Accent extends DynamicArticulation {
 
 /**
  * 100% louder than usual
- *
- * @class StrongAccent
- * @memberof music21.articulations
  */
 export class StrongAccent extends Accent {
     static get className() { return 'music21.articulation.StrongAccent'; }
@@ -197,9 +169,6 @@ export class StrongAccent extends Accent {
 
 /**
  * no playback for now.
- *
- * @class Staccato
- * @memberof music21.articulations
  */
 export class Staccato extends LengthArticulation {
     static get className() { return 'music21.articulation.Staccato'; }
@@ -213,9 +182,6 @@ export class Staccato extends LengthArticulation {
 
 /**
  * no playback for now.
- *
- * @class Staccatissimo
- * @memberof music21.articulations
  */
 export class Staccatissimo extends Staccato {
     static get className() { return 'music21.articulation.Staccatissimo'; }
@@ -229,9 +195,6 @@ export class Staccatissimo extends Staccato {
 
 /**
  * no playback or display for now.
- *
- * @class Spiccato
- * @memberof music21.articulations
  */
 export class Spiccato extends Staccato {
     static get className() { return 'music21.articulation.Spiccato'; }
@@ -244,9 +207,6 @@ export class Spiccato extends Staccato {
 }
 
 /**
- * @class Marcato
- * @memberof music21.articulations
- *
  * should be both a DynamicArticulation and a LengthArticulation
  * TODO(msc): check that `.classes` reflects that in music21j
  */
@@ -262,10 +222,6 @@ export class Marcato extends DynamicArticulation {
     }
 }
 
-/**
- * @class Tenuto
- * @memberof music21.articulations
- */
 export class Tenuto extends LengthArticulation {
     static get className() { return 'music21.articulation.Tenuto'; }
 

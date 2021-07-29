@@ -23,19 +23,15 @@ import * as stream from './stream';
  * This is possible because the system is deterministic and
  * will come to the same result for each part.  Opportunity
  * for making more efficient through this...
- *
- * @param {music21.stream.Score} score
- * @param {number} containerWidth
- * @returns {LayoutScore}
  */
 export function makeLayoutFromScore(
-    score,
-    containerWidth
-) {
+    score: stream.Score,
+    containerWidth: number,
+): LayoutScore {
     const parts = score.parts.stream();
     // console.log(parts);
     const numParts = parts.length;
-    const partZero = parts.get(0);
+    const partZero = parts.get(0) as stream.Part;
     const numMeasures = partZero.getElementsByClass('Measure').length;
 
     const measureWidths = partZero.getMeasureWidths();
@@ -107,7 +103,7 @@ export function makeLayoutFromScore(
             currentLeft = currentRight;
         }
         for (let pNum = 0; pNum < currentStaves.length; pNum++) {
-            currentStaves[pNum].append(parts.get(pNum).get(i));
+            currentStaves[pNum].append((parts.get(pNum) as stream.Part).get(i));
         }
     }
     for (let j = 0; j < currentStaves.length; j++) {
@@ -118,19 +114,12 @@ export function makeLayoutFromScore(
     return layoutScore;
 }
 
-/**
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} width
- * @property {number|undefined} height
- */
 export class LayoutScore extends stream.Score {
     static get className() { return 'music21.layout.LayoutScore'; }
 
     scoreLayout;
-    measureStart;
-    measureEnd;
+    measureStart: number;
+    measureEnd: number;
     protected _width: number;
     height: number;
     top: number;
@@ -141,11 +130,6 @@ export class LayoutScore extends stream.Score {
         this.scoreLayout = undefined;
         this.measureStart = undefined;
         this.measureEnd = undefined;
-        /**
-         *
-         * @type {number|undefined}
-         * @private
-         */
         this._width = undefined;
         this.height = undefined;
         this.top = 0;
@@ -182,21 +166,15 @@ export class LayoutScore extends stream.Score {
 
 /**
  * All music must currently be on page 1.
- *
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} systemStart
- * @property {number|undefined} systemEnd
  */
 export class Page extends stream.Score {
     static get className() { return 'music21.layout.Page'; }
 
     pageNumber: number;
-    measureStart;
-    measureEnd;
-    systemStart;
-    systemEnd;
+    measureStart: number;
+    measureEnd: number;
+    systemStart: number;
+    systemEnd: number;
     pageLayout;
     _width: number;
 
@@ -226,21 +204,14 @@ export class Page extends stream.Score {
 }
 
 /**
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} width
- * @property {number|undefined} height
- * @property {number|undefined} top
- * @property {number|undefined} left
  */
 export class System extends stream.Score {
     static get className() { return 'music21.layout.System'; }
 
     systemNumber: number;
     systemLayout;
-    measureStart;
-    measureEnd;
+    measureStart: number;
+    measureEnd: number;
     protected _width: number;
     height: number;
     top: number;
@@ -272,10 +243,6 @@ export class System extends stream.Score {
     }
 }
 
-/**
- * @extends music21.stream.Score
- *
- */
 export class Staff extends stream.Part {
     static get className() { return 'music21.layout.Staff'; }
 
