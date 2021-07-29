@@ -24,7 +24,9 @@ export default function tests() {
         assert.ok(mark.textImplicit);
         assert.equal(mark.number, 40);
 
-        mark = new music21.tempo.MetronomeMark({ referent: 2 });
+        mark = new music21.tempo.MetronomeMark({
+            referent: new music21.duration.Duration('half'),
+        });
         assert.strictEqual(mark.referent.quarterLength, 2);
 
         // @ts-ignore
@@ -36,7 +38,7 @@ export default function tests() {
         mark = new music21.tempo.MetronomeMark({
             text: 'grave',
             number: 42,
-            referent: 2,
+            referent: new music21.duration.Duration('half'),
         });
         assert.equal(mark.text, 'grave', 'Expected to find set text');
         assert.notOk(mark.numberImplicit, 'Expected .numberImplicit to be false');
