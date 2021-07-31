@@ -786,6 +786,26 @@ export class Renderer {
             sClef = _clefSingleton;
         }
 
+        const complete_active_tuplet_function = () => {
+            // console.log(activeTupletVexflowNotes);
+            const tupletOptions = {
+                num_notes: activeTuplet.numberNotesActual,
+                notes_occupied: activeTuplet.numberNotesNormal,
+            };
+            // console.log('tupletOptions', tupletOptions);
+            const vfTuplet = new Vex.Flow.Tuplet(
+                activeTupletVexflowNotes,
+                tupletOptions
+            );
+            if (activeTuplet.tupletNormalShow === 'ratio') {
+                vfTuplet.setRatioed(true);
+            }
+            vfTuplets.push(vfTuplet);
+            activeTupletLength = 0.0;
+            activeTuplet = undefined;
+            activeTupletVexflowNotes = [];
+        };
+
         const options = { clef: sClef, stave };
         for (const thisEl of s) {
             if (
@@ -823,30 +843,17 @@ export class Renderer {
                                 - activeTuplet.totalTupletLength()
                         ) < 0.001
                     ) {
-                        // console.log(activeTupletVexflowNotes);
-                        const tupletOptions = {
-                            num_notes: activeTuplet.numberNotesActual,
-                            notes_occupied: activeTuplet.numberNotesNormal,
-                        };
-                        // console.log('tupletOptions', tupletOptions);
-                        const vfTuplet = new Vex.Flow.Tuplet(
-                            activeTupletVexflowNotes,
-                            tupletOptions
-                        );
-                        if (activeTuplet.tupletNormalShow === 'ratio') {
-                            vfTuplet.setRatioed(true);
-                        }
-
-                        vfTuplets.push(vfTuplet);
-                        activeTupletLength = 0.0;
-                        activeTuplet = undefined;
-                        activeTupletVexflowNotes = [];
+                        complete_active_tuplet_function();
                     }
+                } else if (activeTuplet !== undefined) {
+                    // reached a non-tuplet note before getting the end of the
+                    // tuplet.  Might happen if trip{4 8} found in TinyNotation.
+                    complete_active_tuplet_function();
                 }
             }
         }
         if (activeTuplet !== undefined) {
-            console.warn('incomplete tuplet found in stream: ', s);
+            complete_active_tuplet_function();
         }
         if (vfTuplets.length > 0) {
             this.vfTuplets.push(...vfTuplets);

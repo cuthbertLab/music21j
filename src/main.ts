@@ -138,7 +138,7 @@ export {
     webmidi,
 };
 
-export const VERSION = '0.11.15';
+export const VERSION = '0.12.1';
 
 if (typeof window !== 'undefined') {
     (window as any).$ = $;
