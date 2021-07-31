@@ -1,7 +1,9 @@
 /// <reference types="jquery" />
 import * as chord from '../chord';
+import * as clef from '../clef';
 import * as key from '../key';
 import * as meter from '../meter';
+import * as note from '../note';
 import * as pitch from '../pitch';
 import * as stream from '../stream';
 import * as tie from '../tie';
@@ -26,11 +28,6 @@ export declare class ScoreParser {
     xmlPartToPart($mxPart: any, $mxScorePart: any): stream.Part;
     parsePartList($mxScore: any): void;
 }
-/**
- * @property {MeasureParser|undefined} lastMeasureParser
- * @property {music21.meter.TimeSignature|undefined} lastTimeSignature
- * @property {jQuery|undefined} $activeAttributes
- */
 export declare class PartParser {
     parent: ScoreParser;
     $mxPart: any;
@@ -39,7 +36,7 @@ export declare class PartParser {
     stream: stream.Part;
     atSoundingPitch: boolean;
     staffReferenceList: any[];
-    lastTimeSignature: any;
+    lastTimeSignature: meter.TimeSignature;
     lastMeasureWasShort: boolean;
     lastMeasureOffset: number;
     lastClefs: any;
@@ -51,10 +48,10 @@ export declare class PartParser {
     activeMultimeasureRestSpanner: any;
     activeInstrument: any;
     firstMeasureParsed: boolean;
-    $activeAttributes: any;
+    $activeAttributes: JQuery;
     lastDivisions: number;
     appendToScoreAfterParse: boolean;
-    lastMeasureParser: any;
+    lastMeasureParser: MeasureParser;
     constructor($mxPart: any, $mxScorePart: any, parent?: any);
     parse(): void;
     parseXmlScorePart(): void;
@@ -82,7 +79,7 @@ export declare class MeasureParser {
     staffLayoutObjects: any[];
     $mxNoteList: any[];
     $mxLyricList: any[];
-    nLast: any;
+    nLast: note.GeneralNote;
     chordVoice: any;
     fullMeasureRest: boolean;
     restAndNoteCount: {
@@ -103,14 +100,7 @@ export declare class MeasureParser {
         note: string;
         attributes: string;
     };
-    /**
-     *
-     * @param {jQuery} $mxMeasure
-     * @param {PartParser} [parent]
-     * @property {music21.note.GeneralNote|undefined} nLast
-     * @property {jQuery|undefined} $activeAttributes
-     */
-    constructor($mxMeasure: any, parent?: PartParser);
+    constructor($mxMeasure: JQuery, parent?: PartParser);
     parse(): void;
     insertInMeasureOrVoice($mxObj: any, el: any): void;
     xmlToNote($mxNote: any): void;
@@ -121,20 +111,9 @@ export declare class MeasureParser {
     xmlToRest($mxRest: any): any;
     xmlNoteToGeneralNoteHelper(n: any, $mxNote: any, freeSpanners?: boolean): any;
     xmlToDuration($mxNote: any, inputM21: any): any;
-    /**
-     *
-     * @param {jQuery} $mxNote
-     * @returns {music21.tie.Tie}
-     */
-    xmlToTie($mxNote: any): tie.Tie;
+    xmlToTie($mxNote: JQuery): tie.Tie;
     updateLyricsFromList(n: any, lyricList: any): void;
-    /**
-     *
-     * @param {jQuery} $mxLyric
-     * @param {music21.note.Lyric} [inputM21]
-     * @returns {*|music21.note.Lyric|undefined}
-     */
-    xmlToLyric($mxLyric: any, inputM21?: any): any;
+    xmlToLyric($mxLyric: JQuery, inputM21?: note.Lyric): note.Lyric;
     insertIntoMeasureOrVoice($mxElement: JQuery, el: Music21Object): void;
     parseMeasureAttributes(): void;
     parseMeasureNumbers(): void;
@@ -142,7 +121,7 @@ export declare class MeasureParser {
     handleTimeSignature($mxTime: any): void;
     xmlToTimeSignature($mxTime: any): meter.TimeSignature;
     handleClef($mxClef: any): void;
-    xmlToClef($mxClef: any): any;
+    xmlToClef($mxClef: any): clef.Clef;
     handleKeySignature($mxKey: any): void;
     xmlToKeySignature($mxKey: any): key.KeySignature;
 }

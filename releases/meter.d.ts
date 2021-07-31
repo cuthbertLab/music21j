@@ -4,16 +4,6 @@
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * meter module. See {@link music21.meter} namespace for details.
- * Meter and TimeSignature Classes (esp. {@link music21.meter.TimeSignature} ) and methods.
- *
- * @exports music21/meter
- *
- * @namespace music21.meter
- * @memberof music21
- * @requires music21/base
- * @requires music21/duration
  */
 import Vex from 'vexflow';
 import * as base from './base';
@@ -29,8 +19,6 @@ import { Music21Object } from './base';
  * @property {int} [denominator=4]
  * @property {number[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
- * @property {music21.duration.Duration} barDuration - a Duration object
- *     representing the expressed total length of the TimeSignature.
  */
 export declare class TimeSignature extends base.Music21Object {
     static get className(): string;
@@ -116,7 +104,7 @@ export declare class TimeSignature extends base.Music21Object {
     /**
      * Compute the Beat Group according to this time signature for VexFlow. For beaming.
      *
-     * @returns {Array<Vex.Flow.Fraction>} a list of numerator and denominator groups, for VexFlow
+     * returns a list of numerator and denominator groups, for VexFlow, as Vex.Flow.Fraction[]
      */
     vexflowBeatGroups(): Vex.Flow.Fraction[];
 }

@@ -1,58 +1,68 @@
 /// <reference types="jquery" />
+import * as miditools from './miditools';
 import * as pitch from './pitch';
 /**
  * Represents a single Key
- *
- * @class Key
- * @memberof music21.keyboard
- * @property {Array<function>} callbacks - called when key is clicked/selected
- * @property {number} [scaleFactor=1]
- * @property {music21.keyboard.Keyboard|undefined} parent
- * @property {int} id - midi number associated with the key.
- * @property {music21.pitch.Pitch|undefined} pitchObj
- * @property {SVGElement|undefined} svgObj - SVG representing the drawing of the key
- * @property {SVGElement|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
- * @property {string} keyStyle='' - css style information for the key
- * @property {string} keyClass='' - css class information for the key ("keyboardkey" + this is the class)
- * @property {number} width - width of key
- * @property {number} height - height of key
  */
 export declare class Key {
     classes: string[];
+    /**
+     *     called when key is clicked/selected
+     */
     callbacks: {
         click: any;
     };
     scaleFactor: number;
     parent: Keyboard;
+    /**
+     * MIDI number associated with the key.
+     */
     id: number;
+    /**
+     * Width in pixels
+     */
     width: number;
+    /**
+     * Height in pixels.
+     */
     height: number;
+    /**
+     * A pitch object associated with the key
+     */
     pitchObj: pitch.Pitch;
-    svgObj: SVGElement;
-    noteNameSvgObj: SVGElement;
+    /**
+     * The SVG representing the drawing of the key
+     */
+    svgObj: SVGElement | undefined;
+    /**
+     * The SVG representing the note name drawn on the key.
+     */
+    noteNameSvgObj: SVGElement | undefined;
+    /**
+     * CSS Style information for the key
+     */
     keyStyle: string;
+    /**
+     * CSS class with `keyboardkey${keyClass}` for the key.
+     */
     keyClass: string;
     /**
      * Gets an SVG object for the key
      *
-     * @param {number} startX - X position in pixels from left of keyboard to draw key at
-     * @returns {SVGElement} a SVG rectangle for the key
+     * * startX - X position in pixels from left of keyboard to draw key at
+     * * returns an SVG rectangle for the key
      */
-    makeKey(startX: any): SVGElement;
+    makeKey(startX: number): SVGElement;
     /**
      * Adds a circle (red) on the key (to mark middle C etc.)
-     *
-     * @param {string} [strokeColor='red']
-     * @returns {SVGElement}
      */
-    addCircle(strokeColor: any): SVGElement;
+    addCircle(strokeColor?: string): SVGElement;
     /**
      * Adds the note name on the key
      *
-     * @param {Boolean} [labelOctaves=false] - use octave numbers too?
-     * @returns {this}
+     * if labelOctaves then octave numbers will also appear
      */
-    addNoteName(labelOctaves: any): this;
+    addNoteName(labelOctaves?: boolean): this;
     /**
      * Removes the note name from the key (if exists)
      *
@@ -62,20 +72,12 @@ export declare class Key {
 }
 /**
  * Defaults for a WhiteKey (width, height, keyStyle, keyClass)
- *
- * @class WhiteKey
- * @memberof music21.keyboard
- * @extends music21.keyboard.Key
  */
 export declare class WhiteKey extends Key {
     constructor();
 }
 /**
  * Defaults for a BlackKey (width, height, keyStyle, keyClass)
- *
- * @class BlackKey
- * @memberof music21.keyboard
- * @extends music21.keyboard.Key
  */
 export declare class BlackKey extends Key {
     constructor();
@@ -83,11 +85,9 @@ export declare class BlackKey extends Key {
 /**
  * A Class representing a whole Keyboard full of keys.
  *
- * @class Keyboard
- * @memberof music21.keyboard
  * @property {number} whiteKeyWidth - default 23
  * @property {number} scaleFactor - default 1
- * @property {Object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
+ * @property {Object} keyObjects - a mapping of id to `music21.keyboard.Key` objects
  * @property {SVGElement} svgObj - the SVG object of the keyboard
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
@@ -132,12 +132,9 @@ export declare class Keyboard {
      */
     redrawSVG(): SVGElement;
     /**
-     * Appends a keyboard to the `where` parameter
-     *
-     * @param {jQuery|Node} [where]
-     * @returns {music21.keyboard.Keyboard} this
+     * Appends a keyboard to the where parameter
      */
-    appendKeyboard(where: any): this;
+    appendKeyboard(where?: JQuery | HTMLElement): this;
     /**
      * Handle a click on a given SVG object
      *
@@ -152,20 +149,14 @@ export declare class Keyboard {
     createSVG(): SVGElement;
     /**
      * Puts a circle on middle c.
-     *
-     * @param {string} [strokeColor='red']
      */
     markMiddleC(strokeColor?: string): void;
     /**
      * Puts note names on every white key.
-     *
-     * @param {Boolean} [labelOctaves=false]
      */
-    markNoteNames(labelOctaves: any): void;
+    markNoteNames(labelOctaves?: boolean): void;
     /**
      * Remove note names on the keys, if they exist
-     *
-     * @returns {this}
      */
     removeNoteNames(): this;
     /**
@@ -173,9 +164,6 @@ export declare class Keyboard {
      *
      * Do not call this directly, just use createSVG after changing the
      * scrollable property on the keyboard to True.
-     *
-     * @param {SVGElement} svgDOM
-     * @returns {JQuery}
      */
     wrapScrollable(svgDOM: SVGElement): JQuery;
     /**
@@ -192,19 +180,16 @@ export declare class Keyboard {
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.
  *
- * @function music21.keyboard.triggerToggleShow
  * @param {Event} [e]
  */
 export declare const triggerToggleShow: (e: any) => void;
 /**
  * highlight the keyboard stored in "this" appropriately
  *
- * @function music21.keyboard.jazzHighlight
- * @param {music21.miditools.Event} e
  * @example
  * var midiCallbacksPlay = [music21.miditools.makeChords,
  *                          music21.miditools.sendToMIDIjs,
  *                          music21.keyboard.jazzHighlight.bind(k)];
  */
-export declare function jazzHighlight(e: any): void;
+export declare function jazzHighlight(e: miditools.Event): void;
 //# sourceMappingURL=keyboard.d.ts.map

@@ -1,12 +1,10 @@
 import { Music21Exception } from '../exceptions21';
+import { Music21Object } from '../base';
 export declare class FilterException extends Music21Exception {
 }
 declare class _StopIteration {
 }
 export declare const StopIterationSingleton: _StopIteration;
-/**
- * @memberof music21.stream.filters
- */
 export declare class StreamFilter {
     static get derivationStr(): string;
     reset(): void;
@@ -28,8 +26,8 @@ export declare class IsNotFilter extends IsFilter {
 }
 export declare class ClassFilter extends StreamFilter {
     static get derivationStr(): string;
-    classList: string[];
-    constructor(classList?: string | string[]);
+    classList: string[] | (typeof Music21Object)[];
+    constructor(classList?: string | string[] | typeof Music21Object | (typeof Music21Object)[]);
     call(item: any, iterator: any): any;
 }
 export declare class ClassNotFilter extends ClassFilter {

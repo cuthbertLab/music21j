@@ -1,3 +1,22 @@
+/**
+ * music21j -- Javascript reimplementation of Core music21p features.
+ * music21/stream -- Streams -- objects that hold other Music21Objects
+ *
+ * Does not implement the full features of music21p Streams by a long shot...
+ *
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ *
+ * powerful stream module, See music21.stream namespace
+ *
+ * Streams are powerful music21 objects that hold Music21Object collections,
+ * such as music21.note.Note or music21.chord.Chord objects.
+ *
+ * Understanding the {@link Stream} object is of fundamental
+ * importance for using music21.  Definitely read the music21(python) tutorial
+ * on using Streams before proceeding
+ *
+ */
 /// <reference types="jquery" />
 import Vex from 'vexflow';
 import { Music21Exception } from './exceptions21';
@@ -43,31 +62,21 @@ interface MakeAccidentalsParams {
  * @property {number} length - (readonly) the number of elements in the stream.
  * @property {Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
- * @property {music21.clef.Clef} clef - the clef for the Stream (if there is
- *     one; if there are multiple, then the first clef)
- * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
- * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
  * @property {renderOptions.RenderOptions} renderOptions - an object
  *     specifying how to render the stream
  * @property {Stream} flat - (readonly) a flattened representation of the Stream
  * @property {StreamIterator} notes - (readonly) the stream with
- *     only {@link music21.note.Note} and music21.chord.Chord objects included
+ *     only note.NotRest (music21.note.Note and music21.chord.Chord) objects included
  * @property {StreamIterator} notesAndRests - (readonly) like notes but
- *     also with {@link music21.note.Rest} objects included
+ *     also with music21.note.Rest objects included
  * @property {StreamIterator} parts - (readonly) a filter on the Stream
  *     to just get the parts (NON-recursive)
  * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
  * @property {number} tempo - tempo in beats per minute (will become more
  *     sophisticated later, but for now the whole stream has one tempo
- * @property {music21.instrument.Instrument|undefined} instrument - an
- *     instrument object associated with the stream (can be set with a
- *     string also, but will return an `Instrument` object)
  * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
- * @property {Vex.Flow.Stave|undefined} activeVFStave - the current Stave object for the Stream
- * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current
- *     vfShow.Renderer object for the Stream
  * @property {int} [staffLines=5] - number of staff lines
  * @property {function|undefined} changedCallbackFunction - function to
  *     call when the Stream changes through a standard interface
@@ -84,7 +93,13 @@ export declare class Stream extends base.Music21Object {
     recursionType: string;
     autoSort: boolean;
     isFlat: boolean;
+    /**
+     * the current Stave object for the Stream
+     */
     activeVFStave: Vex.Flow.Stave;
+    /**
+     * the current vfShow.Renderer object for the Stream
+     */
     activeVFRenderer: vfShow.Renderer;
     changedCallbackFunction: Function;
     /**
@@ -139,7 +154,10 @@ export declare class Stream extends base.Music21Object {
      */
     _averageTempo(oStart: number, oEnd: number): number;
     /**
-     * Note that .instrument will never return a string, but Typescript requires
+     * The instrument object (NOT stored in the stream!) -- this is a difference from
+     * music21p and expect this to change soon.
+     *
+     * Note that .instrument will never return a string, but Typescript <= 4 requires
      * that getter and setter are the same.
      */
     get instrument(): instrument.Instrument | string;
@@ -224,7 +242,7 @@ export declare class Stream extends base.Music21Object {
         restoreActiveSites?: boolean;
         classFilter?: any;
         skipSelf?: boolean;
-    }): any;
+    }): iterator.RecursiveIterator;
     /**
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
@@ -319,7 +337,7 @@ export declare class Stream extends base.Music21Object {
      * @param {Object} [options]
      * @returns {Stream}
      */
-    makeMeasures(options: any): Stream;
+    makeMeasures(options?: any): Stream;
     containerInHierarchy(el: base.Music21Object, { setActiveSite }?: {
         setActiveSite?: boolean;
     }): Stream | undefined;
@@ -506,17 +524,16 @@ export declare class Stream extends base.Music21Object {
     resetRenderOptions(recursive: any, preserveEvents: any): this;
     write(format?: string): string;
     /**
-     * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
+     * Uses music21.vfShow.Renderer to render Vexflow onto an
      * existing canvas or SVG object.
      *
      * Runs `this.setRenderInteraction` on the canvas.
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
-     * @param {jQuery|HTMLElement} $canvasOrSVG - a canvas or the div surrounding an SVG object
-     * @returns {music21.vfShow.Renderer}
+     * Takes in a canvas or the div surrounding an SVG object
      */
-    renderVexflow($canvasOrSVG: any): vfShow.Renderer;
+    renderVexflow(where?: JQuery | HTMLElement): vfShow.Renderer;
     /**
      * Estimate the stream height for the Stream.
      *
@@ -624,7 +641,7 @@ export declare class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element, default = svg
      * @returns {JQuery} the svg
      */
-    replaceDOM(where: any, preserveSvgSize?: boolean, elementType?: string): JQuery;
+    replaceDOM(where?: JQuery | HTMLElement, preserveSvgSize?: boolean, elementType?: string): JQuery;
     /**
      * Set the type of interaction on the svg based on
      *    - Stream.renderOptions.events.click
@@ -636,19 +653,13 @@ export declare class Stream extends base.Music21Object {
      *    - 'reflow' (string; only on event.resize)
      *    - customFunction (will receive event as a first variable; should set up a way to
      *                    find the original stream; var s = this; var f = function () { s...}
-     *                   )
-     *
-     * @param {JQuery|HTMLElement} canvasOrDiv - canvas or the Div surrounding it.
-     * @returns {this}
      */
-    setRenderInteraction(canvasOrDiv: JQuery | HTMLElement): this;
+    setRenderInteraction(where: JQuery | HTMLElement): this;
     /**
      *
      * Recursively search downward for the closest storedVexflowStave...
-     *
-     * @returns {Vex.Flow.Stave|undefined}
      */
-    recursiveGetStoredVexflowStave(): any;
+    recursiveGetStoredVexflowStave(): Vex.Flow.Stave | undefined;
     /**
      * Given a mouse click, or other event with .pageX and .pageY,
      * find the x and y for the svg.
@@ -664,7 +675,7 @@ export declare class Stream extends base.Music21Object {
      * x of 1 gives 1.42857...
      *
      */
-    getScaledXYforDOM(svg: HTMLElement | SVGElement | JQuery<HTMLElement>, e: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getScaledXYforDOM(svg: HTMLElement | SVGElement | JQuery, e: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
     /**
      *
      * Given a Y position find the diatonicNoteNum that a note at that position would have.
@@ -712,18 +723,11 @@ export declare class Stream extends base.Music21Object {
      *
      * Return a list of [diatonicNoteNum, closestXNote]
      * for an event (e) called on the svg (svg)
-     *
-     * @returns {Array} [diatonicNoteNum, closestXNote]
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement | JQuery<HTMLElement>, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLElement | SVGElement | JQuery, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * Change the pitch of a note given that it has been clicked and then
-     * call changedCallbackFunction
-     *
-     * @param {number} clickedDiatonicNoteNum
-     * @param {music21.note.Note} foundNote
-     * @param {SVGElement|HTMLElement} svg
-     * @returns {*} output of changedCallbackFunction
+     * call changedCallbackFunction and return it
      */
     noteChanged(clickedDiatonicNoteNum: number, foundNote: note.Note, svg: SVGElement | HTMLElement): any;
     /**
@@ -778,9 +782,6 @@ export declare class Measure extends Stream {
 }
 /**
  * Part -- specialized to handle Measures inside it
- *
- * @class Part
- * @memberof music21.stream
  */
 export declare class Part extends Stream {
     static get className(): string;

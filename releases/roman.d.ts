@@ -77,7 +77,6 @@ export declare const functionalityScores: {
  *
  * N.B. this is NOT where abbreviations get expanded
  *
- * @memberof music21.roman
  * @param  {string} shorthand string of a figure w/o roman to parse
  * @return {Array<string>}           array of shorthands
  */
@@ -86,7 +85,6 @@ export declare function expandShortHand(shorthand: any): any[];
  * correctSuffixForChordQuality - Correct a given inversionString suffix given a
  *     chord of various qualities.
  *
- * @memberof music21.roman
  * @param  {chord.Chord} chordObj
  * @param  {string} inversionString a string like '6' to fix.
  * @return {string}           corrected inversionString
@@ -95,7 +93,6 @@ export declare function correctSuffixForChordQuality(chordObj: chord.Chord, inve
 /**
  * maps an index number to a roman numeral in lowercase
  *
- * @memberof music21.roman
  * @example
  * music21.roman.romanToNumber[4]
  * // 'iv'
@@ -105,13 +102,11 @@ export declare const romanToNumber: string[];
  * Represents a RomanNumeral.  By default, capital Roman Numerals are
  * major chords; lowercase are minor.
  *
- * @class RomanNumeral
- * @memberof music21.roman
- * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
- * @param {string|music21.key.Key} [keyStr='C']
- * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale
+ * figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
+ * [keyStr='C']
+ * @property scale - (readonly) returns the scale
  *     associated with the roman numeral
- * @property {music21.key.Key} key - the key associated with the
+ * @property key - the key associated with the
  *     RomanNumeral (not allowed to be undefined yet)
  * @property {string} figure - the figure as passed in
  * @property {string} degreeName - the name associated with the scale degree,
@@ -119,16 +114,8 @@ export declare const romanToNumber: string[];
  *     "subtonic" appropriately
  * @property {int} scaleDegree
  * @property {string|undefined} impliedQuality - "major", "minor", "diminished", "augmented"
- * @property {music21.roman.RomanNumeral|undefined} secondaryRomanNumeral
- * @property {music21.key.Key|undefined} secondaryRomanNumeralKey
  * @property {string|undefined} frontAlterationString
- * @property {music21.interval.Interval|undefined} frontAlterationTransposeInterval
- * @property {music21.pitch.Accidental|undefined} frontAlterationAccidental
  * @property {string|undefined} romanNumeralAlone
- * @property {scale.Scale|boolean|undefined} impliedScale
- * @property {music21.interval.Interval|undefined} scaleOffset
- * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals
- *     are Chord objects, so .pitches will work for them also.
  */
 export declare class RomanNumeral extends harmony.Harmony {
     static get className(): string;
@@ -147,8 +134,8 @@ export declare class RomanNumeral extends harmony.Harmony {
     romanNumeralAlone: any;
     quality: any;
     impliedQuality: any;
-    impliedScale: any;
-    scaleOffset: any;
+    impliedScale: key.Key;
+    scaleOffset: interval.Interval;
     useImpliedScale: boolean;
     bracketedAlterations: any;
     omittedSteps: any;

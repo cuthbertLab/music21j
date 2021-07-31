@@ -14,9 +14,6 @@ export declare class GeneralObjectExporter {
     fromVoice(v: any): any;
     fromGeneralNote(n: any): any;
 }
-/**
- * @memberOf music21.musicxml.m21ToXml
- */
 export declare class XMLExporterBase {
     doc: XMLDocument;
     xmlRoot: any;
@@ -49,9 +46,6 @@ export declare class XMLExporterBase {
     accidentalToMx(a: any): HTMLElement;
     getRandomId(): string;
 }
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
 export declare class ScoreExporter extends XMLExporterBase {
     stream: Score;
     xmIdentification: any;
@@ -76,9 +70,6 @@ export declare class ScoreExporter extends XMLExporterBase {
     setScoreHeader(): void;
     setPartList(): HTMLElement;
 }
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
 export declare class PartExporter extends XMLExporterBase {
     stream: Part;
     parent: ScoreExporter;
@@ -96,9 +87,6 @@ export declare class PartExporter extends XMLExporterBase {
     parse(): any;
     getXmlScorePart(): HTMLElement;
 }
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
 export declare class MeasureExporter extends XMLExporterBase {
     stream: Measure;
     parent: PartExporter;
@@ -122,16 +110,12 @@ export declare class MeasureExporter extends XMLExporterBase {
     parseOneElement(obj: any): void;
     /**
      *
-     * @param {music21.note.GeneralNote} n
-     * @param noteIndexInChord
-     * @param chordParent
-     * @returns {Node}
      */
     noteToXml(n: GeneralNote, { noteIndexInChord, chordParent }?: {
         noteIndexInChord?: number;
         chordParent?: any;
-    }): HTMLElement;
-    restToXml(r: any): HTMLElement;
+    }): Node;
+    restToXml(r: any): Node;
     chordToXml(c: any): any[];
     durationXml(dur: any): HTMLElement;
     pitchToXml(p: any): HTMLElement;

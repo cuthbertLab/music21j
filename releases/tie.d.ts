@@ -8,13 +8,10 @@
  */
 import * as prebase from './prebase';
 /**
- * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
+ * Tie class. Found in music21.note.GeneralNote `.tie`.
  *
  * Does not support advanced music21p values `.to` and `.from`
  *
- * @class Tie
- * @memberof music21.tie
- * @extends music21.prebase.ProtoM21Object
  * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
  * @property {string} type - the tie type
  * @property {string} style - only supports 'normal' for now.

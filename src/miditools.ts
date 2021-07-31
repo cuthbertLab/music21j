@@ -405,9 +405,10 @@ export function loadSoundfont(
         if (debug) {
             console.log('waiting for document ready');
         }
-        $(document).on('ready', () => {
+        // this is the JQuery 3.0 equivalent to $(document).ready()...
+        $(() => {
             if (debug) {
-                console.log('document ready, waiting to load soundfont');
+                console.log('Document ready, waiting to load soundfont');
             }
             $(document.body).append(
                 $(

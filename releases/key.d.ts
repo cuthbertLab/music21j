@@ -10,21 +10,13 @@ export declare const modeSharpsAlter: {
     mixolydian: number;
     locrian: number;
 };
+export declare function convertKeyStringToMusic21KeyString(textString: string): string;
 /**
- *
- * @param {string} textString
- * @returns {string}
- */
-export declare function convertKeyStringToMusic21KeyString(textString: any): any;
-/**
- * @class KeySignature
- * @memberof music21.key
  * @description Represents a key signature
  * @param {int} [sharps=0] -- the number of sharps (negative for flats)
  * @property {int} [sharps=0] -- number of sharps (negative for flats)
  * @property {string[]} flatMapping -- flat signatures 0-12 flats
  * @property {string[]} sharpMapping -- sharp signatures 0-12 sharps
- * @extends music21.base.Music21Object
  * @example
  * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
  * var s = new music21.stream.Stream();
@@ -50,7 +42,6 @@ export declare class KeySignature extends base.Music21Object {
     /**
      * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
      *
-     * @type {music21.pitch.Pitch[]}
      * @readonly
      * @example
      * var ks = new music21.key.KeySignature(3)
@@ -90,8 +81,7 @@ export declare class KeySignature extends base.Music21Object {
     /**
      * Returns the accidental associated with a step in this key, or undefined if none.
      *
-     * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
-     * @returns {(music21.pitch.Accidental|undefined)}
+     * step - a valid step name such as "C","D", etc., but not "C#" etc.
      */
     accidentalByStep(step: string): pitch.Accidental | undefined;
     /**
@@ -100,7 +90,6 @@ export declare class KeySignature extends base.Music21Object {
      *
      * Does not support inPlace unlike music21p v6.
      *
-     * @returns {music21.pitch.Pitch}
      * @example
      * var ks = new music21.key.KeySignature(-3)
      * var p1 = new music21.pitch.Pitch('B')
@@ -117,12 +106,9 @@ export declare class KeySignature extends base.Music21Object {
 /**
  * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
  *
- * TODO: allow keyName to be a {@link music21.pitch.Pitch}
+ * TODO: allow keyName to be a music21.pitch.Pitch
  * TODO: Scale mixin.
  *
- * @class Key
- * @memberof music21.key
- * @extends music21.key.KeySignature
  * @param {string} keyName -- a pitch name representing the key (w/ "-" for flat)
  * @param {string} [mode] -- if not given then the CASE of the keyName will be used ("C" => "major", "c" => "minor")
  */
@@ -135,13 +121,13 @@ export declare class Key extends KeySignature {
     stringInfo(): string;
     get tonicPitchNameWithCase(): string;
     /**
-     * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
+     * returns a music21.scale.MajorScale or music21.scale.MinorScale
+     * or another similar scale
      * object from the pitch object.
      *
-     * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
-     * @returns {Object} A music21.scale.Scale subclass.
+     * [scaleType=this.mode] - the type of scale, or the mode.
      */
-    getScale(scaleType?: any): scale.ConcreteScale;
+    getScale(scaleType?: string): scale.ConcreteScale;
     get isConcrete(): boolean;
     getPitches(...args: any[]): any[];
     pitchFromDegree(degree: any, ...args: any[]): any;

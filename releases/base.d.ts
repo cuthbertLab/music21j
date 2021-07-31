@@ -13,8 +13,6 @@ import { TimeSignature } from './meter';
  * @property {number} classSortOrder - Default sort order for this class
  *     (default 20; override in other classes). Lower numbered objects will sort
  *     before other objects in the staff if priority and offset are the same.
- * @property {music21.duration.Duration} duration - the duration (object) for
- *     the element. (can be set with a quarterLength also)
  * @property {string[]} groups - An Array of strings representing group
  *     (equivalent to css classes) to assign to the object. (default [])
  * @property {boolean} isMusic21Object - true

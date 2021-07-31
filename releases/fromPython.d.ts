@@ -1,7 +1,6 @@
+import type * as stream from './stream';
 /**
  *
- * @class Converter
- * @memberof music21.fromPython
  * @property {boolean} debug
  * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
  * @property {Object} handlers - object mapping string names of classes to a set of
@@ -20,15 +19,11 @@ export declare class Converter {
     /**
      * Fixes up some references that cannot be unpacked from jsonpickle.
      *
-     * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
-     * @returns {music21.stream.Stream}
+     * s - stream after unpacking from jsonpickle
      */
-    streamPostRestore(s: any): any;
+    streamPostRestore(s: stream.Stream): stream.Stream;
     /**
      * Run the main decoder
-     *
-     * @param {string} jss - stream encoded as JSON
-     * @returns {music21.stream.Stream}
      */
     run(jss: any): any;
 }

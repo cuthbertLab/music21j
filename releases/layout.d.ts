@@ -15,24 +15,13 @@ import * as stream from './stream';
  * This is possible because the system is deterministic and
  * will come to the same result for each part.  Opportunity
  * for making more efficient through this...
- *
- * @param {music21.stream.Score} score
- * @param {number} containerWidth
- * @returns {LayoutScore}
  */
-export declare function makeLayoutFromScore(score: any, containerWidth: any): LayoutScore;
-/**
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} width
- * @property {number|undefined} height
- */
+export declare function makeLayoutFromScore(score: stream.Score, containerWidth: number): LayoutScore;
 export declare class LayoutScore extends stream.Score {
     static get className(): string;
     scoreLayout: any;
-    measureStart: any;
-    measureEnd: any;
+    measureStart: number;
+    measureEnd: number;
     protected _width: number;
     height: number;
     top: number;
@@ -43,20 +32,14 @@ export declare class LayoutScore extends stream.Score {
 }
 /**
  * All music must currently be on page 1.
- *
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} systemStart
- * @property {number|undefined} systemEnd
  */
 export declare class Page extends stream.Score {
     static get className(): string;
     pageNumber: number;
-    measureStart: any;
-    measureEnd: any;
-    systemStart: any;
-    systemEnd: any;
+    measureStart: number;
+    measureEnd: number;
+    systemStart: number;
+    systemEnd: number;
     pageLayout: any;
     _width: number;
     constructor();
@@ -64,20 +47,13 @@ export declare class Page extends stream.Score {
     get width(): any;
 }
 /**
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} width
- * @property {number|undefined} height
- * @property {number|undefined} top
- * @property {number|undefined} left
  */
 export declare class System extends stream.Score {
     static get className(): string;
     systemNumber: number;
     systemLayout: any;
-    measureStart: any;
-    measureEnd: any;
+    measureStart: number;
+    measureEnd: number;
     protected _width: number;
     height: number;
     top: number;
@@ -86,10 +62,6 @@ export declare class System extends stream.Score {
     get staves(): stream.iterator.StreamIterator<import("./base").Music21Object>;
     get width(): any;
 }
-/**
- * @extends music21.stream.Score
- *
- */
 export declare class Staff extends stream.Part {
     static get className(): string;
     measureStart: number;

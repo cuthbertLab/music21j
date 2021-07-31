@@ -38,7 +38,7 @@ declare class _StreamIteratorBase<T = Music21Object> {
     get activeElementList(): any;
     addFilter(newFilter: any): this;
     removeFilter(oldFilter: any): this;
-    getElementsByClass(classFilterList: any): this;
+    getElementsByClass(classFilterList: string | string[] | typeof Music21Object | (typeof Music21Object)[]): this;
     getElementsNotOfClass(classFilterList: any): this;
     getElementsByOffset(offsetStart: any, ...args: any[]): this;
     get notes(): _StreamIteratorBase<NotRest>;
@@ -88,6 +88,10 @@ export declare class RecursiveIterator<T = Music21Object> extends _StreamIterato
      *  in the hierarchy. or undefined if we are not currently iterating.
      */
     currentHierarchyOffset(): number;
+    get notes(): RecursiveIterator<NotRest>;
+    get notesAndRests(): RecursiveIterator<GeneralNote>;
+    get parts(): RecursiveIterator<Part>;
+    get voices(): RecursiveIterator<Voice>;
 }
 export {};
 //# sourceMappingURL=iterator.d.ts.map

@@ -1,12 +1,8 @@
 /**
- * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
+ * Objects for keeping track of relationships among Music21Objects.
  *
- * Copyright 2017-2019, Michael Scott Asato Cuthbert
+ * Copyright (c) 2017-2021, Michael Scott Asato Cuthbert
  * License: BSD
- *
- * @namespace music21.sites
- * @memberof music21
- * @requires music21/common
  */
 import { Music21Exception } from './exceptions21';
 import { Stream } from './stream';
@@ -33,15 +29,7 @@ export declare class SiteRef {
     siteIndex: number;
     site: Stream;
 }
-/**
- * @memberOf music21.sites
- * @param {*} obj
- * @returns {number|string}
- */
-export declare function getId(obj: any): any;
-/**
- * @memberOf music21.sites
- */
+export declare function getId(obj: any): number | string;
 export declare class Sites {
     siteDict: any;
     protected _siteIndex: number;

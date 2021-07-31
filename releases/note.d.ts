@@ -5,18 +5,10 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Module for note classes. See the namespace {@link music21.note}
+ * Module for note classes. See the namespace music21.note
  *
- * @requires music21/prebase
- * @requires music21/base
- * @requires music21/pitch
- * @requires music21/beam
- * @exports music21/note
  * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
  *
- * @namespace music21.note
- * @memberof music21
- * @property {string[]} noteheadTypeNames - an Array of allowable notehead names.
  * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
 import Vex from 'vexflow';
@@ -26,8 +18,10 @@ import * as pitch from './pitch';
 import * as beam from './beam';
 import { Music21Exception } from './exceptions21';
 import type * as articulations from './articulations';
+import type * as clef from './clef';
 import type * as expressions from './expressions';
 import type * as instrument from './instrument';
+import type * as tie from './tie';
 export declare class NotRestException extends Music21Exception {
 }
 export declare const noteheadTypeNames: string[];
@@ -35,8 +29,6 @@ export declare const stemDirectionNames: string[];
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
  *
- * @class Lyric
- * @memberOf music21.note
  * @param {string} text - the text of the lyric
  * @param {number} number=1 - the lyric number
  * @param {string} syllabic=undefined - placement of the syllable
@@ -87,18 +79,9 @@ export declare class Lyric extends prebase.ProtoM21Object {
 /**
  * Superclass for all Note values
  *
- * @class GeneralNote
- * @memberof music21.note
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
- * @property {Vex.Flow.StaveNote} [activeVexflowNote] - most recent
- *     Vex.Flow.StaveNote object to be made from this note (could change);
- *     default: undefined
- * @property {Array<music21.expressions.Expression>} expressions - array
- *     of attached expressions
- * @property {Array<music21.articulations.Articulation>} articulations - array
- *     of attached articulations
  * @property {string} lyric - the text of the first
  *     {@link Lyric} object; can also set one.
  * @property {Array<Lyric>} lyrics - array of attached lyrics
@@ -106,7 +89,6 @@ export declare class Lyric extends prebase.ProtoM21Object {
  *     articulations
  * @property {number} midiVolume - how loud is this note, taking into
  *     account articulations
- * @property {music21.tie.Tie|undefined} [tie=undefined] - a tie object
  */
 export declare class GeneralNote extends base.Music21Object {
     static get className(): string;
@@ -117,8 +99,12 @@ export declare class GeneralNote extends base.Music21Object {
     expressions: expressions.Expression[];
     articulations: articulations.Articulation[];
     lyrics: Lyric[];
-    tie: any;
-    activeVexflowNote: Vex.Flow.Note;
+    tie: tie.Tie;
+    /**
+     * Most recent Vex.Flow.StaveNote object to be made from this note (could change)
+     * or undefined.
+     */
+    activeVexflowNote: Vex.Flow.StaveNote | undefined;
     constructor(ql?: number);
     get lyric(): string;
     set lyric(value: string);
@@ -128,25 +114,25 @@ export declare class GeneralNote extends base.Music21Object {
      *
      * @param {string} text - text to be added
      * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
-     * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for cluses about syllable placement.
+     * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for clues about syllable placement.
      * @param {string} [lyricIdentifier] - an optional identifier
      */
     addLyric(text: any, lyricNumber: any, applyRaw: boolean, lyricIdentifier: any): void;
     /**
-     * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
-     *
-     * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
-     * @returns {this}
+     * For subclassing.  Do not use this...
      */
-    setStemDirectionFromClef(clef: any): this;
-    getStemDirectionFromClef(clef: any): any;
+    vexflowNote(options: any): Vex.Flow.StaveNote;
+    /**
+     * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
+     */
+    setStemDirectionFromClef(clef: clef.Clef): this;
+    getStemDirectionFromClef(clef: clef.Clef): string;
     /**
      * Sets the vexflow accidentals (if any) and the dots
      *
-     * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
-     * @param {Object} options -- a set of Vex Flow options
+     * options -- a set of Vex Flow options
      */
-    vexflowAccidentalsAndDisplay(vfn: any, options?: {}): void;
+    vexflowAccidentalsAndDisplay(vfn: Vex.Flow.StaveNote, options?: {}): void;
     /**
      * Return the active channel for the instrument or activeSite's instrument
      */
@@ -160,7 +146,7 @@ export declare class GeneralNote extends base.Music21Object {
      * @param {base.Music21Object} [nextElement] - for determining
      *     the length to play in case of tied notes, etc.
      * @param {Object} [options] - other options (currently just
-     *     `{instrument: {@link music21.instrument.Instrument} }`)
+     *     `{instrument: music21.instrument.Instrument}` and channel[unused])
      * @returns {number} - delay time in milliseconds until the next element (may be ignored)
      */
     playMidi(tempo: number, nextElement: any, { instrument, channel }?: {
@@ -170,15 +156,6 @@ export declare class GeneralNote extends base.Music21Object {
 }
 /**
  * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
- *
- * @param {number} [ql=1.0] - length in quarter notes
- * @property {music21.beam.Beams} beams - a link to a beam object
- * @property {string} [notehead='normal'] - notehead type
- * @property {string} [noteheadFill='default'] - notehead fill (to be moved to style...)
- * @property {string|undefined} [noteheadColor=undefined] - notehead color
- * @property {boolean} [noteheadParenthesis=false] - put a parenthesis around the notehead?
- * @property {string|undefined} [stemDirection=undefined] - One of
- *     ['up','down','noStem', undefined] -- 'double' not supported
  */
 export declare class NotRest extends GeneralNote {
     static get className(): string;
@@ -197,17 +174,16 @@ export declare class NotRest extends GeneralNote {
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
-     * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+     * @param {Object} [options={}] - `{clef: music21.clef.Clef}`
      * clef to set the stem direction of.
-     * @returns {Vex.Flow.StaveNote}
      */
     vexflowNote({ clef }?: {
         clef?: any;
     }): Vex.Flow.StaveNote;
 }
 /**
- * A very, very important class! music21.note.Note objects combine a {@link music21.pitch.Pitch}
- * object to describe pitch (highness/lowness) with a {@link music21.duration.Duration} object
+ * A very, very important class! music21.note.Note objects combine a music21.pitch.Pitch
+ * object to describe pitch (highness/lowness) with a music21.duration.Duration object
  * that defines length, with additional features for drawing the Note, playing it back, etc.
  *
  * Together with {@link Stream} one of the two most important
@@ -219,9 +195,6 @@ export declare class NotRest extends GeneralNote {
  * things you can do with a `Note` object.
  *
  * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
- *
- * @class Note
- * @memberof music21.note
  */
 export declare class Note extends NotRest {
     static get className(): string;
@@ -230,18 +203,9 @@ export declare class Note extends NotRest {
     pitch: pitch.Pitch;
     /**
      *
-     * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch
-     *     name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
-     * @param {(number|undefined)} [ql=1.0] - length in quarter notes
-     * @property {boolean} [isNote=true] - is it a Note? Yes!
-     * @property {boolean} [isRest=false] - is it a Rest? No!
-     * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
-     * @property {string} name - shortcut to `.pitch.name`
-     * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`
-     * @property {string} step - shortcut to `.pitch.step`
-     * @property {number} octave - shortcut to `.pitch.octave`
+     * nn -- pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
      */
-    constructor(nn?: string | pitch.Pitch, ql?: number);
+    constructor(nn?: string | number | pitch.Pitch, ql?: number);
     stringInfo(): string;
     get name(): string;
     set name(nn: string);
@@ -256,14 +220,14 @@ export declare class Note extends NotRest {
     /**
      * Change stem direction according to clef.
      *
-     * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
-     * @returns {this} Original object, for chaining methods
+     * clef to set the stem direction of.
+     * returns original object, for chaining methods
      */
-    setStemDirectionFromClef(clef: any): this;
+    setStemDirectionFromClef(clef: clef.Clef): this;
     /**
      * Same as setStemDirectionFromClef, but do not set the note, just return it.
      */
-    getStemDirectionFromClef(clef: any): string;
+    getStemDirectionFromClef(clef: clef.Clef): string;
     vexflowAccidentalsAndDisplay(vfn: any, { stave, clef }?: {
         stave?: any;
         clef?: any;
@@ -277,8 +241,6 @@ export declare class Note extends NotRest {
 /**
  * Represents a musical rest.
  *
- * @class Rest
- * @memberof music21.note
  * @param {number} [ql=1.0] - length in number of quarterNotes
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
@@ -305,8 +267,7 @@ export declare class Rest extends GeneralNote {
      * Corrects for bug in VexFlow that renders a whole rest too low.
      *
      * @param {Object} options -- vexflow options
-     * @returns {Vex.Flow.StaveNote}
      */
-    vexflowNote(options: any): any;
+    vexflowNote(options: any): Vex.Flow.StaveNote;
 }
 //# sourceMappingURL=note.d.ts.map

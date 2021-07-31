@@ -6,36 +6,25 @@
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
- *
- * See {@link music21.vfShow} namespace for details
- *
- * @namespace music21.vfShow
- * @memberof music21
- * @requires music21.common
- * @requires vexflow
- * @exports music21.vfShow
  */
+/// <reference types="jquery" />
 import Vex from 'vexflow';
 import * as stream from './stream';
+import type * as renderOptions from './renderOptions';
 /**
  * Represents a stack of objects that need to be rendered together.
  *
- * An intermediary state for showing created by {@link music21.vfShow.Renderer}.
+ * An intermediary state for showing created by music21.vfShow.Renderer.
  *
- * @class RenderStack
- * @memberof music21.vfShow
- * @property {Stream[]} streams - {@link Stream} objects
- * associated with the voices
- * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
- * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
+ * streams - are objects associated with the voices
  */
 export declare class RenderStack {
     streams: stream.Stream[];
     voices: Vex.Flow.Voice[];
     textVoices: Vex.Flow.Voice[];
-    voiceToStreamMapping: Map<any, any>;
+    voiceToStreamMapping: Map<Vex.Flow.Voice, stream.Stream>;
     /**
-     * @returns {Array} this.voices and this.textVoices as one array
+     * returns this.voices and this.textVoices as one array
      */
     allTickables(): Vex.Flow.Voice[];
     /**
@@ -57,42 +46,31 @@ export declare class RenderStack {
  * "div" and "where" can be either a DOM
  * element or a jQuery object.
  *
- * @class Renderer
- * @memberof music21.vfShow
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
  * @param {Node|jQuery} [where=document.body] - where to render the stream
- * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
- * (will create if not existing)
- * @property {string} rendererType - canvas or svg
- * @property ctx - a Vex.Flow.SVGContext or Vex.Flow.CanvasContext to use.
  * @property {div} div - div-with-svg-or-canvas element
  * @property {jQuery} $div - jQuery div or canvas element
  * @property {jQuery} $where - jQuery element to render onto
- * @property {Vex.Flow.Formatter} activeFormatter - formatter
- * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
- * @property {Array<Vex.Flow.StaveTie>} vfTies - ties as instances of Vex.Flow.StaveTie
  * @property {Array<number>} systemBreakOffsets - where to break the systems
- * @property {Array<Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
- * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
  */
 export declare class Renderer {
     stream: stream.Stream;
     rendererType: string;
-    div: any;
-    $div: any;
-    $where: any;
-    activeFormatter: any;
-    _vfRenderer: any;
-    _ctx: any;
-    beamGroups: any[];
-    stacks: any[];
-    vfTies: any[];
-    systemBreakOffsets: any[];
-    vfTuplets: any[];
-    constructor(s: any, div?: any, where?: any);
-    get vfRenderer(): any;
-    set vfRenderer(vfr: any);
+    div: HTMLElement;
+    $div: JQuery;
+    $where: JQuery;
+    activeFormatter: Vex.Flow.Formatter;
+    _vfRenderer: Vex.Flow.Renderer;
+    _ctx: Vex.Flow.SVGContext;
+    beamGroups: Vex.Flow.Beam[];
+    stacks: RenderStack[];
+    vfTies: Vex.Flow.StaveTie[];
+    systemBreakOffsets: number[];
+    vfTuplets: Vex.Flow.Tuplet[];
+    constructor(s: any, div?: HTMLElement | JQuery, where?: HTMLElement | JQuery);
+    get vfRenderer(): Vex.Flow.Renderer;
+    set vfRenderer(vfr: Vex.Flow.Renderer);
     get ctx(): any;
     set ctx(ctx: any);
     /**
@@ -109,8 +87,6 @@ export declare class Renderer {
      * Prepares a scorelike stream (i.e., one with parts or
      * Streams that should be rendered vertically like parts)
      * for rendering and adds Staff Connectors
-     *
-     * @param {music21.stream.Score} s - prepare a stream of parts (i.e., Score)
      */
     prepareScorelike(s: stream.Score): void;
     /**
@@ -118,8 +94,6 @@ export declare class Renderer {
      * Prepares a Partlike stream (that is one with Measures
      * or substreams that should be considered like Measures)
      * for rendering.
-     *
-     * @param {music21.stream.Part} p
      */
     preparePartlike(p: stream.Part): void;
     /**
@@ -136,33 +110,31 @@ export declare class Renderer {
      * associates a Vex.Flow.Stave with the stream and
      * returns a vexflow Voice object
      *
-     * @param {music21.stream.Measure} m - a measure object (w or w/o voices)
-     * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
+     * * m - a measure object (w or w/o voices)
+     * * stack - a RenderStack object to prepare into.
      */
-    prepareMeasure(m: any, stack: any): any;
+    prepareMeasure(m: stream.Measure, stack: RenderStack): RenderStack;
     /**
      * Main internal routine to prepare a flat stream
      *
-     * @param {Stream} s - a flat stream object
-     * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
-     * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-     * @param {Object} [optional_renderOp] - render options.
-     * Passed to {@link music21.vfShow.Renderer#renderStave}
-     * @returns {Vex.Flow.Stave} staff to return too
+     * s - a flat stream object
+     * optionalStave - an optional existing stave.
+     * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
+     * returns Vex.Flow.Stave staff to return too
+     *
      * (also changes the `stack` parameter and runs `makeNotation` on s)
      */
-    prepareFlat(s: any, stack: any, optionalStave?: any, optional_renderOp?: any): any;
+    prepareFlat(s: stream.Stream, stack: RenderStack, optionalStave?: Vex.Flow.Stave, optional_renderOp?: renderOptions.RenderOptions): Vex.Flow.Stave;
     /**
      * Render the Vex.Flow.Stave from a flat stream and draws it.
      *
      * Just draws the stave, not the notes, etc.
      *
-     * @param {Stream} [m=this.stream] - a flat stream
-     * @param {Object} [optional_rendOp] - render options, passed
-     * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
-     * @returns {Vex.Flow.Stave} stave
+     * m should be a flat stream: if undefined, this.stream is used.
+     * optional_rendOp - renderOptions, passed to Renderer#newStave
+     * and Renderer#setClefEtc
      */
-    renderStave(m?: any, optional_rendOp?: any): any;
+    renderStave(m?: stream.Stream, optional_rendOp?: renderOptions.RenderOptions): Vex.Flow.Stave;
     /**
      * Draws the Voices (music and text) from `this.stacks`
      *
@@ -190,19 +162,16 @@ export declare class Renderer {
      *
      * Does not draw it...
      *
-     * @param {Stream} [s=this.stream] -- usually a Measure or Voice
-     * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
-     * @returns {Vex.Flow.Voice}
+     * [s=this.stream] -- usually a Measure or Voice
+     * stave - not actually optional.
      */
-    getVoice(s: stream.Stream, stave: any): any;
+    getVoice(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.Voice | undefined;
     /**
      * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
      *
-     * @param {Stream} s -- usually a Measure or Voice
-     * @param {Vex.Flow.Stave} stave
-     * @returns {Vex.Flow.Voice}
+     * s -- usually a Measure or Voice
      */
-    getLyricVoice(s: any, stave: any): any;
+    getLyricVoice(s: stream.Stream, stave: Vex.Flow.Stave): Vex.Flow.Voice;
     /**
      * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
      *
@@ -211,11 +180,9 @@ export declare class Renderer {
     /**
      * Formats a single voice group from a stack.
      *
-     * @param {music21.vfShow.RenderStack} stack
-     * @param {boolean} [autoBeam=measures[0].autoBeam]
-     * @returns {Vex.Flow.Formatter}
+     * if autoBeam is undefined, reads from measures[0].autoBeam]
      */
-    formatVoiceGroup(stack: any, autoBeam?: boolean): any;
+    formatVoiceGroup(stack: RenderStack, autoBeam?: boolean | undefined): Vex.Flow.Formatter;
     /**
      * Draws the beam groups.
      *
@@ -224,23 +191,16 @@ export declare class Renderer {
     /**
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
-     *
-     * @param {Stream} s
-     * @param {Object} [rendOp]
-     * @returns {Vex.Flow.Stave}
      */
-    newStave(s: any, rendOp: any): any;
+    newStave(s?: stream.Stream, rendOp?: renderOptions.RenderOptions): Vex.Flow.Stave;
     /**
      * Sets the number of stafflines, puts the clef on the Stave,
      * adds keySignature, timeSignature, and rightBarline
      *
-     * @param {Stream} s
-     * @param {Vex.Flow.Stave} stave
-     * @param {Object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
-     * object that might have
+     * RenderOptions object might have
      * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
      */
-    setClefEtc(s: any, stave: any, rendOp: any): void;
+    setClefEtc(s: stream.Stream, stave: Vex.Flow.Staves, rendOp?: renderOptions.RenderOptions): void;
     /**
      * Sets the number of stafflines properly for the Stave object.
      *
@@ -248,29 +208,22 @@ export declare class Renderer {
      * if the number of lines is 0 or >=4, because the default in VexFlow is
      * to show the bottom(top?), not middle, lines and that looks bad.
      *
-     * @param {Stream} s - stream to get the `.staffLines`
+     * s - stream to get the `.staffLines`
      * from `s.renderOptions` from -- should allow for overriding.
-     * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
+     *
+     * vexflowStave is the Stave to set lines for.
      */
-    setStafflines(s: any, vexflowStave: any): void;
+    setStafflines(s: stream.Stream, vexflowStave: Vex.Flow.Stave): void;
     /**
      * Gets the Vex.Flow.StaveNote objects from a Stream.
      *
      * Also changes `this.vfTuplets`.
-     *
-     * @param {Stream} [s=this.stream] - flat stream to find notes in
-     * @param {Vex.Flow.Stave} stave - Vex.Flow.Stave to render notes on to.
-     * @returns {Array<Vex.Flow.StaveNote>} notes to return
      */
-    vexflowNotes(s: any, stave: any): any[];
+    vexflowNotes(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.StaveNote[];
     /**
      * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
-     *
-     * @param {Stream} s - flat stream to search.
-     * @param {Vex.Flow.Stave} stave
-     * @returns {Array<Vex.Flow.TextNote>}
      */
-    vexflowLyrics(s: any, stave: any): any[];
+    vexflowLyrics(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.TextNote[];
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */
@@ -279,10 +232,8 @@ export declare class Renderer {
     /**
      * If a stream has parts (NOT CHECKED HERE) create and
      * draw an appropriate Vex.Flow.StaveConnector
-     *
-     * @param {music21.stream.Score} s
      */
-    addStaffConnectors(s: any): void;
+    addStaffConnectors(s?: stream.Score): void;
     /**
      * The process of putting a Stream onto a div affects each of the
      * elements in the Stream by adding pieces of information to
@@ -306,11 +257,7 @@ export declare class Renderer {
      * mad props to our friend Vladimir Viro for figuring this out! Visit http://peachnote.com/
      *
      * Also sets s.storedVexflowStave to stave.
-     *
-     * @param {Vex.Flow.Stave} stave
-     * @param {Stream} [s=this.stream]
-     * @param {Vex.Flow.Formatter} formatter
      */
-    applyFormatterInformationToNotes(stave: Vex.Flow.Stave, s?: stream.Stream, formatter?: any): void;
+    applyFormatterInformationToNotes(stave: Vex.Flow.Stave, s?: stream.Stream, formatter?: Vex.Flow.Formatter): void;
 }
 //# sourceMappingURL=vfShow.d.ts.map

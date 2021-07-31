@@ -1,22 +1,17 @@
 /**
  * module for things that all music21-created objects, not just objects that can live in
- * Stream.elements should inherit. See the {@link music21.prebase} namespace.
+ * Stream.elements should inherit.
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  *
- * @exports music21/prebase
- * @namespace music21.prebase
- * @memberof music21
  */
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
  * everything in music21 should inherit from are given below.
  *
- * @class ProtoM21Object
- * @memberof music21.prebase
  * @property {Array<string>} classes - An Array of strings of classes
  * that the object belongs to (default ['ProtoM21Object'])
  * @property {boolean} isProtoM21Object - Does this object descend
- * from {@link music21.prebase.ProtoM21Object}: obviously true.
+ * from music21.prebase.ProtoM21Object: obviously true.
  * @property {boolean} isMusic21Object - Does this object descend
  * from Music21Object; default false.
  */

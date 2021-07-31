@@ -1,9 +1,6 @@
 import * as prebase from './prebase';
 /**
  * Object mapping int to name, as in `{1: 'whole'}` etc.
- *
- * @memberof music21.duration
- * @type {Object}
  */
 export declare const typeFromNumDict: {
     1: string;
@@ -28,11 +25,7 @@ export declare const ordinalTypeFromNum: string[];
 export declare const vexflowDurationArray: string[];
 /**
  * Duration object; found as the `.duration` attribute on Music21Object instances
- * such as {@link music21.note.Note}
- *
- * @class Duration
- * @memberof music21.duration
- * @param {(number|undefined)} ql - quarterLength (default 1.0)
+ * such as music21.note.Note
  */
 export declare class Duration extends prebase.ProtoM21Object {
     static get className(): string;
@@ -97,11 +90,8 @@ export declare class Duration extends prebase.ProtoM21Object {
      * Reads the tuplet Array for the duration.
      *
      * The tuplet array should be considered Read Only.
-     * Use {@link music21.duration.Duration#appendTuplet} to
+     * Use music21.duration.Duration#appendTuplet to
      * add a tuplet (no way to remove yet)
-     *
-     * @type {Tuplet[]}
-     * @default []
      */
     get tuplets(): Tuplet[];
     /**
@@ -137,14 +127,13 @@ export declare class Duration extends prebase.ProtoM21Object {
     appendTuplet(newTuplet: Tuplet, skipUpdateQl?: boolean): this;
 }
 /**
- * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
+ * Represents a Tuplet; found in music21.duration.Duration#tuplets
  *
- * @memberof music21.duration
- * @param {number} [numberNotesActual=3] - numerator of the tuplet
- * @param {number} [numberNotesNormal=2] - denominator of the tuplet
- * @param {(music21.duration.Duration|number)} [durationActual] - duration or
+ * [numberNotesActual=3] - numerator of the tuplet
+ * [numberNotesNormal=2] - denominator of the tuplet
+ * [durationActual] - duration or
  *     quarterLength of duration type, default music21.duration.Duration(0.5)
- * @param {(music21.duration.Duration|number)} [durationNormal] - unused;
+ * [durationNormal] - unused;
  *     see music21p for description
  */
 export declare class Tuplet extends prebase.ProtoM21Object {
@@ -159,7 +148,7 @@ export declare class Tuplet extends prebase.ProtoM21Object {
     placement: string;
     tupletActualShow: string;
     tupletNormalShow: string;
-    constructor(numberNotesActual?: number, numberNotesNormal?: number, durationActual?: any, durationNormal?: any);
+    constructor(numberNotesActual?: number, numberNotesNormal?: number, durationActual?: Duration | number, durationNormal?: Duration | number);
     /**
      * A nice name for the tuplet.
      *
@@ -170,10 +159,10 @@ export declare class Tuplet extends prebase.ProtoM21Object {
     /**
      * Set both durationActual and durationNormal for the tuplet.
      *
-     * @param {string} type - a duration type, such as `half`, `quarter`
-     * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
+     * type - a duration type, such as `half`, `quarter`
+     * returns A converted music21.duration.Duration matching `type`
      */
-    setDurationType(type: any): Duration;
+    setDurationType(type: string): Duration;
     /**
      * Sets the tuplet ratio.
      *

@@ -1,14 +1,11 @@
 import * as note from './note';
 import * as chordTables from './chordTables';
 import type * as clef from './clef';
-import type { Pitch } from './pitch';
+import type * as pitch from './pitch';
 export { chordTables };
 /**
- * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
- *
- * @param {Array<string|note.Note|Pitch>} [notes] -
+ * @param {Array<string|note.Note|pitch.Pitch>} [notes] -
  *     an Array of strings
- *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
  * @property {number} length - the number of pitches in the Chord (readonly)
  * @property {Pitch[]} pitches - an Array of Pitch objects in the
@@ -27,11 +24,11 @@ export declare class Chord extends note.NotRest {
     _cache: any;
     protected _chordTablesAddress: any;
     protected _chordTablesAddressNeedsUpdating: boolean;
-    constructor(notes?: string | note.Note[] | Pitch[] | string[]);
+    constructor(notes?: string | string[] | note.Note | note.Note[] | pitch.Pitch | pitch.Pitch[]);
     stringInfo(): string;
     get length(): number;
-    get pitches(): Pitch[];
-    set pitches(tempPitches: Pitch[]);
+    get pitches(): pitch.Pitch[];
+    set pitches(tempPitches: pitch.Pitch[]);
     get notes(): note.Note[];
     set notes(newNotes: note.Note[]);
     get orderedPitchClasses(): number[];
@@ -48,16 +45,11 @@ export declare class Chord extends note.NotRest {
     get intervalVector(): any;
     setStemDirectionFromClef(clef?: clef.Clef): this;
     /**
-     * Adds a note to the chord, sorting the note array
+     * Adds a note or Array of notes to the chord, sorting the note array
      *
-     * @param {
-     *     string|string[]|note.Note|Pitch|
-     *     music21.note.Note[]|Pitch[]} notes - the
-     *     Note or Pitch to be added or a string defining a pitch.
-     * @param {boolean} runSort - Sort after running (default true)
-     * @returns {music21.chord.Chord} the original chord.
+     * runSort - Sort after running (default true)
      */
-    add(notes: any, runSort?: boolean): this;
+    add(n: string | string[] | note.Note | note.Note[] | pitch.Pitch | pitch.Pitch[], runSort?: boolean): this;
     sortPitches(): void;
     /**
      * Removes any pitches that appear more than once (in any octave),
@@ -69,25 +61,25 @@ export declare class Chord extends note.NotRest {
     /**
      * Finds the Root of the chord, or sets it as an override.
      */
-    root(newroot?: Pitch): Pitch;
+    root(newroot?: pitch.Pitch): pitch.Pitch;
     /**
      * Returns the number of semitones above the root that a given chordstep is.
      *
      * For instance, in a G dominant 7th chord (G, B, D, F), would
      * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
      *
-     * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-     * @param {Pitch} [testRoot] - the pitch to temporarily consider the root.
-     * @returns {number|undefined} Number of semitones above the root for this
+     * chordStep - the step to find, e.g., 1, 2, 3, etc.
+     * [testRoot] - the pitch to temporarily consider the root.
+     * returns Number of semitones above the root for this
      *     chord step or undefined if no pitch matches that chord step.
      */
-    semitonesFromChordStep(chordStep: number, testRoot?: Pitch): number | undefined;
+    semitonesFromChordStep(chordStep: number, testRoot?: pitch.Pitch): number | undefined;
     /**
      * Gets the lowest note (based on .ps not name) in the chord.
      *
      * return bass pitch or undefined
      */
-    bass(newBass?: Pitch): Pitch | undefined;
+    bass(newBass?: pitch.Pitch): pitch.Pitch | undefined;
     /**
      * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
      *
@@ -128,10 +120,10 @@ export declare class Chord extends note.NotRest {
      * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      */
-    getChordStep(chordStep: number, testRoot?: Pitch): Pitch | undefined;
-    get third(): Pitch | undefined;
-    get fifth(): Pitch | undefined;
-    get seventh(): Pitch | undefined;
+    getChordStep(chordStep: number, testRoot?: pitch.Pitch): pitch.Pitch | undefined;
+    get third(): pitch.Pitch | undefined;
+    get fifth(): pitch.Pitch | undefined;
+    get seventh(): pitch.Pitch | undefined;
 }
 export declare const chordDefinitions: {
     major: string[];

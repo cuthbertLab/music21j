@@ -1,3 +1,4 @@
+/// <reference types="jquery" />
 import * as stream from './stream';
 /**
  * **Function, not class**.
@@ -9,7 +10,7 @@ import * as stream from './stream';
  *
  * * textIn - a valid tinyNotation string
  *
- * * returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+ * * returns {music21.stream.Part|music21.stream.Score} - a Part object or Score (if multiple parts)
  *
  * @example
  * var t = "3/4 c4 B8 c d4 e2.";
@@ -17,15 +18,14 @@ import * as stream from './stream';
  * p.duration.quarterLength;
  * // 6.0
  */
-export declare function TinyNotation(textIn: string): stream.Part | stream.Measure | stream.Score;
+export declare function TinyNotation(textIn: string): stream.Part | stream.Score;
 /**
  * Render all the TinyNotation classes in the DOM as notation
  *
- * Called automatically when music21 is loaded.
+ * Called automatically when music21 is loaded.  TODO -- stop that!
  *
- * @memberof music21.tinyNotation
  * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {HTMLElement|jQuery} [selector]
  */
-export declare function renderNotationDivs(classTypes?: string, selector?: any): void;
+export declare function renderNotationDivs(classTypes?: string, selector?: HTMLElement | JQuery): void;
 //# sourceMappingURL=tinyNotation.d.ts.map

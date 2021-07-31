@@ -4,36 +4,23 @@
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * Instrument module, see {@link music21.instrument}
- * Looking for the {@link music21.instrument.Instrument} object? :-)
- *
- * @exports music21/instrument
- *
- * @namespace music21.instrument
- * @memberof music21
- * @requires music21/base
  */
 import * as base from './base';
+import type * as interval from './interval';
 export declare const global_usedChannels: number[];
 export declare const maxMidi: number;
-/**
- *
- * @type {Array<{fn: string, name: string, midiNumber: number}>}
- */
-export declare const info: {
+interface InstrumentFileInfo {
     fn: string;
     name: string;
     midiNumber: number;
-}[];
+}
+export declare const info: InstrumentFileInfo[];
 /**
  * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
  *
- * See {@link music21.miditools} and esp. `loadSoundfont` for a way of loading soundfonts into
+ * See music21.miditools and esp. `loadSoundfont` for a way of loading soundfonts into
  * instruments.
  *
- * @class Instrument
- * @memberof music21.instrument
  * @param {string} instrumentName
  * @property {string|undefined} partId
  * @property {string|undefined} partName
@@ -45,7 +32,6 @@ export declare const info: {
  * @property {int|undefined} midiChannel
  * @property {int|undefined} lowestNote
  * @property {int|undefined} highestNote
- * @property {music21.interval.Interval|undefined} transposition
  * @property {Boolean} inGMPercMap=false
  * @property {string|undefined} soundfontFn
  * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
@@ -63,7 +49,7 @@ export declare class Instrument extends base.Music21Object {
     _midiChannel: any;
     lowestNote: any;
     highestNote: any;
-    transpostion: any;
+    transposition: interval.Interval;
     inGMPercMap: boolean;
     soundfontFn: any;
     constructor(instrumentName?: string);
@@ -87,11 +73,9 @@ export declare class Instrument extends base.Music21Object {
  * Find information for a given instrument (by filename or name)
  * and load it into an instrument object.
  *
- * @function music21.instrument.find
- * @memberof music21.instrument
- * @param {string} fn - name or filename of instrument
- * @param {music21.instrument.Instrument} [inst] - instrument object to load into
- * @returns {music21.instrument.Instrument|undefined}
+ * fn - name or filename of instrument
+ * [inst] - instrument object to load into
  */
-export declare function find(fn: any, inst?: any): any;
+export declare function find(fn: string, inst?: Instrument): Instrument;
+export {};
 //# sourceMappingURL=instrument.d.ts.map

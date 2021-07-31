@@ -6,7 +6,7 @@
  * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
  * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
  *
- * Copyright (c) 2014-18, Michael Scott Asato Cuthbert
+ * Copyright (c) 2014-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  */
@@ -14,13 +14,7 @@
  * webmidi -- for connecting with external midi devices
  *
  * Uses either the webmidi API or the Jazz plugin
- * See {@link music21.webmidi}
  *
- * @namespace music21.webmidi
- * @memberof music21
- * @requires music21/miditools
- * @requires jQuery
- * @exports music21/webmidi
  * @example smallest usage of the webmidi toolkit.  see testHTML/midiInRequire.html
 
 <html>
@@ -58,6 +52,15 @@ MIDI Input: <div id="putMidiSelectHere" />
 </body>
 </html>
  */
+/// <reference types="jquery" />
+declare type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
+declare interface Jazz extends HTMLObjectElement {
+    isJazz: Readonly<boolean>;
+    classid: string;
+    MidiInOpen: (instrumentName: string, callback: MIDICallbackFunction) => string;
+    MidiInClose: () => void;
+    MidiInList: () => string[];
+}
 /**
  * @typedef {Object} Jazz
  * @extends HTMLObjectElement
@@ -95,15 +98,12 @@ export declare const webmidi: {
  *
  * Shim to convert the data into WebMIDI API format and then call the WebMIDI API midiInArrived
  *
- * See the MIDI spec for information on parameters
+ * See the MIDI spec for information on parameters.
  *
- * @memberof music21.webmidi
- * @param {byte} t - timing information
- * @param {byte} a - data 1
- * @param {byte} b - data 2
- * @param {byte} c - data 3
+ * t is a timestamp number (in milliseconds)
+ * a, b, and c, are three one-byte midi messages.
  */
-export declare function jazzMidiInArrived(t: any, a: any, b: any, c: any): any;
+export declare function jazzMidiInArrived(t: number, a: number, b: number, c: number): any;
 /**
  * Called directly when a MIDI event arrives from the WebMIDI API, or via a Shim (jazzMidiInArrived)
  * when MIDI information comes from JazzMIDI
@@ -115,54 +115,61 @@ export declare function jazzMidiInArrived(t: any, a: any, b: any, c: any): any;
  *
  * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
  *
- * @memberof music21.webmidi
  * @param {Object} midiMessageEvent - midi Information
  */
 export declare function midiInArrived(midiMessageEvent: any): any;
 /**
+ * For pre-native WebMIDI support, such as Safari.
+ *
  * Create a hidden tiny, &lt;object&gt; tag in the DOM with the
  * proper classid (`CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90`) to
  * load the Jazz plugin.
  *
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
- * @function music21.webmidi.createPlugin
  * @param {HTMLElement} [appendElement=document.body] - where to place this hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called
  *     successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
-export declare function createPlugin(appendElement?: HTMLElement, override?: boolean): any;
+export declare function createPlugin(appendElement?: HTMLElement, override?: boolean): Jazz | undefined;
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * @function music21.webmidi.createJazzSelector
  * @param {jQuery|HTMLElement} [$newSelect=document.body] - object to append the select to
  * @param {Object} [options] - see createSelector for details
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-export declare function createJazzSelector($newSelect: any, options?: {}): any;
+export declare function createJazzSelector($newSelect: any, options?: MIDISelectorOptions): any;
 /**
  * Function to be called if the webmidi-api selection changes. (not jazz)
  *
  */
 export declare function selectionChanged(): boolean;
+interface MIDISelectorOptions {
+    /**
+     * Should the list of options auto update?
+     */
+    autoUpdate?: boolean;
+    /**
+     * Function to call on all successful port queries.
+     */
+    onsuccess?: Function;
+    /**
+     * Function to call if port query is successful and at least one input device exists.
+     */
+    oninputsuccess?: Function;
+    /**
+     * Function to call if port query is successful but no input devices are found.
+     */
+    oninputempty?: Function;
+}
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * The options object has several parameters:
- *
- *
- * @function music21.webmidi.createSelector
- * @param {jQuery|HTMLElement} [midiSelectDiv=$('body')] - object to append the select to
- * @param {Object} [options] - see above.
- * @param {boolean} options.autoupdate -- should this auto update?
- * @param {function} options.onsuccess -- function to call on all successful port queries
- * @param {function} options.oninputsuccess -- function to call if successful and at least one input device is found
- * @param {function} options.oninputempty -- function to call if successful but no input devices are found.
- * @param {boolean} options.existingMidiSelect -- is there already a select tag for MIDI?
- * @returns {jQuery|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * Returns JQuery object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-export declare function createSelector(midiSelectDiv: any, options?: {}): any;
+export declare function createSelector(where: JQuery | HTMLElement, options?: MIDISelectorOptions): JQuery | undefined;
 export declare function populateSelect(): void;
+export {};
 //# sourceMappingURL=webmidi.d.ts.map

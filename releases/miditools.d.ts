@@ -2,6 +2,7 @@
 import * as MIDI from 'midicube';
 import '../css/midiPlayer.css';
 import * as chord from './chord';
+import * as instrument from './instrument';
 import * as note from './note';
 import * as tempo from './tempo';
 export interface CallbackInterface {
@@ -49,8 +50,6 @@ declare class _ConfigSingletonClass {
 }
 export declare const config: _ConfigSingletonClass;
 /**
- * @class Event
- * @memberof music21.miditools
  * @param {number} t - timing information
  * @param {number} a - midi data 1 (N.B. a >> 4 = midiCommand )
  * @param {number} b - midi data 2
@@ -83,9 +82,6 @@ export declare class Event {
 }
 /**
  * a mapping of soundfont text names to true, false, or "loading".
- *
- * @memberof music21.miditools
- * @type {Object}
  */
 export declare const loadedSoundfonts: {};
 /**
@@ -93,61 +89,44 @@ export declare const loadedSoundfonts: {};
  *
  *  Runs a setTimeout on itself.
  *  Calls miditools.sendOutChord
- *
- *  @memberof music21.miditools
  */
 export declare function clearOldChords(): void;
 /**
  *  Take a series of jEvent noteOn objects and convert them to a single Chord object
  *  so long as they are all sounded within miditools.maxDelay milliseconds of each other.
  *  this method stores notes in miditools.heldChordNotes (Array).
- *
- *  @param {music21.miditools.Event} jEvent
- *  @memberof music21.miditools
- *  @returns undefined
  */
-export declare function makeChords(jEvent: any): void;
+export declare function makeChords(jEvent: Event): void;
 /**
  * Take the list of Notes and makes a chord out of it, if appropriate and call
- * {@link music21.miditools.callbacks.sendOutChord} callback with the Chord or Note as a parameter.
- *
- * @memberof music21.miditools
- * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
- * @returns {(music21.note.Note|music21.chord.Chord|undefined)} A {@link music21.chord.Chord} object,
- * most likely, but maybe a {@link music21.note.Note} object)
+ * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
-export declare function sendOutChord(chordNoteList: any): any;
+export declare function sendOutChord(chordNoteList: note.Note[]): note.Note | chord.Chord | undefined;
 /**
  * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
  *
- * @memberof music21.miditools
- * @param {music21.note.GeneralNote} [lastElement] - A {@link music21.note.Note} to be quantized
- * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with
+ * returns the same note.Note object passed in with
  * duration quantized
  */
-export declare function quantizeLastNote(lastElement?: any): any;
+export declare function quantizeLastNote(lastElement?: note.GeneralNote): note.GeneralNote | undefined;
 /**
  * Callback to midiEvent.sendToMIDIjs.
  *
- * @memberof music21.miditools
- * @param {music21.miditools.Event} midiEvent - event to send out.
- * @returns undefined
+ * sends a MIDIEvent to midicube
  */
-export declare const sendToMIDIjs: (midiEvent: any) => void;
+export declare const sendToMIDIjs: (midiEvent: Event) => void;
 /**
  * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
  * rather than overriding this important method.
  *
- * @memberof music21.miditools
- * @param {string} soundfont The name of the soundfont that was just loaded
- * @param {function} callback A function to be called after the soundfont is loaded.
+ * soundfont -- The name of the soundfont that was just loaded
+ * callback -- A function to be called after the soundfont is loaded.
  */
-export declare function postLoadCallback(soundfont: any, callback: any): void;
+export declare function postLoadCallback(soundfont: string, callback?: (instrumentObj?: instrument.Instrument) => any): void;
 /**
  * method to load soundfonts while waiting for other processes that need them
  * to load first.
  *
- * @memberof music21.miditools
  * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} [callback] A function to be called after the soundfont is loaded.
  * @example
@@ -159,42 +138,24 @@ export declare function postLoadCallback(soundfont: any, callback: any): void;
  *         s.instrument = i;
  * });
  */
-export declare function loadSoundfont(soundfont: string, callback?: any): void;
+export declare function loadSoundfont(soundfont: string, callback?: (instrumentObj?: instrument.Instrument) => any): void;
 /**
  * MidiPlayer -- an embedded midi player including the ability to create a
  * playback device.
- *
- * @class MidiPlayer
- * @memberOf music21.miditools
- * @property {number} speed - playback speed scaling (1=default).
- * @property {JQuery|undefined} $playDiv - div holding the player,
  */
 export declare class MidiPlayer {
     player: MIDI.Player;
+    /**
+     * playback speed scaling (1=default)
+     */
     speed: number;
     $playDiv: JQuery;
     state: string;
     constructor();
-    /**
-     * @param {jQuery|HTMLElement} [where]
-     * @returns {jQuery}
-     */
-    addPlayer(where: any): JQuery<HTMLElement>;
+    addPlayer(where: JQuery | HTMLElement): JQuery;
     stopButton(): void;
-    /**
-     *
-     * @returns {string}
-     */
     playPng(): string;
-    /**
-     *
-     * @returns {string}
-     */
     pausePng(): string;
-    /**
-     *
-     * @returns {string}
-     */
     stopPng(): string;
     pausePlayStop(stop?: string): void;
     base64Load(b64data: any): void;
@@ -219,8 +180,6 @@ export declare class MidiPlayer {
  * but I hope to change that for sendOutChord also.
  *
  * "general" is usually the callback list to play around with.
- *
- * @memberof music21.miditools
  */
 export declare const callbacks: CallbackInterface;
 export declare const callBacks: CallbackInterface;

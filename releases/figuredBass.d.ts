@@ -1,13 +1,6 @@
-/**
- * @namespace music21.figuredBass
- * @exports music21/figuredBass
- */
 import * as pitch from './pitch';
 /**
  * In music21p is in figuredBass.notation -- eventually to be moved there.
- */
-/**
- * @memberof music21.figuredBass
  */
 export declare class Notation {
     notationColumn: string;
@@ -34,26 +27,18 @@ export declare class Notation {
      *    and this.modifierStrings, which provide the intervals above the
      *    bass and (if necessary) how to modify the corresponding pitches
      *    accordingly.
-     *
-     * @return {undefined}
      */
     _parseNotationColumn(): void;
     _translateToLonghand(): void;
     _getModifiers(): void;
     _getFigures(): void;
 }
-/**
- * @memberOf music21.figuredBass
- */
 export declare class Figure {
     number: number;
     modifierString: string;
     modifier: Modifier;
     constructor(number: any, modifierString: any);
 }
-/**
- * @memberOf music21.figuredBass
- */
 export declare class Modifier {
     modifierString: string;
     accidental: pitch.Accidental;

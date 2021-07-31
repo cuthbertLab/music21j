@@ -1,4 +1,5 @@
 import * as prebase from './prebase';
+import type * as clef from './clef';
 interface UpdateAccidentalDisplayParams {
     pitchPast?: Pitch[];
     pitchPastMeasure?: Pitch[];
@@ -10,8 +11,6 @@ interface UpdateAccidentalDisplayParams {
     lastNoteWasTied?: boolean;
 }
 /**
- * @class Accidental
- * @memberof music21.pitch
  * @param {string|number} accName - an accidental name
  * @property {number} alter
  * @property {string} displayType
@@ -67,7 +66,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
      * @type {string}
      * @readonly
      */
-    get vexflowModifier(): "n" | "#" | "##" | "###" | "bb" | "b" | "bbb";
+    get vexflowModifier(): "b" | "n" | "#" | "##" | "###" | "bb" | "bbb";
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
@@ -114,9 +113,9 @@ export declare const stepsToName: string[];
  */
 export declare const midiToName: string[];
 /**
- * Pitch objects are found in {@link music21.note.Note} objects, and many other places.
+ * Pitch objects are found in music21.note.Note objects, and many other places.
  *
- * They do not have a {@link music21.duration.Duration} associated with them, so they
+ * They do not have a music21.duration.Duration associated with them, so they
  * cannot be placed inside music21.stream.Stream objects.
  *
  * Valid pitch name formats are
@@ -129,8 +128,6 @@ export declare const midiToName: string[];
  *     adjust according to context. If you do not like this behavior, give an octave always.
  * - Microtones are not supported in music21j (they are in music21p)
  *
- * @class Pitch
- * @memberof music21.pitch
  * @param {string|number} pn - name of the pitch, with or without octave, see above.
  * @property {Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch,
@@ -234,10 +231,9 @@ export declare class Pitch extends prebase.ProtoM21Object {
      *
      * if clefObj is undefined, then the clef is treated as TrebleClef.
      *
-     * @param {music21.clef.Clef} [clefObj] - the active {@link music21.clef.Clef} object
-     * @returns {string} - representation in vexflow
+     * [clefObj] - the active music21.clef.Clef object
      */
-    vexflowName(clefObj?: any): string;
+    vexflowName(clefObj?: clef.Clef): string;
 }
 export {};
 //# sourceMappingURL=pitch.d.ts.map

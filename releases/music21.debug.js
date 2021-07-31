@@ -1,5 +1,5 @@
 /**
- * music21j version 0.11.13 built on 2021-07-28.
+ * music21j version 0.11.14 built on 2021-07-30.
  * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -56,13 +56,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * articulations module. See {@link music21.articulations} namespace
- *
- * @namespace music21.articulations
- * @memberof music21
- * @requires music21/prebase
- * @requires vexflow
- * @requires music21/common
+ * articulations module.
  */
 
 
@@ -112,10 +106,8 @@ function setPlacementOnVexFlowArticulation(vfa, placement, stemDirection) {
 }
 /**
  * Represents a single articulation, usually in the `.articulations` Array
- * on a {@link music21.note.Note} or something like that.
+ * on a music21.note.Note or something like that.
  *
- * @class Articulation
- * @memberof music21.articulations
  * @property {string} name
  * @property {string} [placement='above']
  * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
@@ -136,8 +128,6 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object 
   }
   /**
    * Generates a Vex.Flow.Articulation for this articulation.
-   *
-   * @returns {Vex.Flow.Articulation}
    */
 
 
@@ -152,9 +142,6 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object 
 }
 /**
  * base class for articulations that change the length of a note...
- *
- * @class LengthArticulation
- * @memberof music21.articulations
  */
 
 class LengthArticulation extends Articulation {
@@ -170,9 +157,6 @@ class LengthArticulation extends Articulation {
 }
 /**
  * base class for articulations that change the dynamic of a note...
- *
- * @class DynamicArticulation
- * @memberof music21.articulations
  */
 
 class DynamicArticulation extends Articulation {
@@ -188,9 +172,6 @@ class DynamicArticulation extends Articulation {
 }
 /**
  * base class for articulations that change the pitch of a note...
- *
- * @class PitchArticulation
- * @memberof music21.articulations
  */
 
 class PitchArticulation extends Articulation {
@@ -206,9 +187,6 @@ class PitchArticulation extends Articulation {
 }
 /**
  * base class for articulations that change the timbre of a note...
- *
- * @class TimbreArticulation
- * @memberof music21.articulations
  */
 
 class TimbreArticulation extends Articulation {
@@ -224,9 +202,6 @@ class TimbreArticulation extends Articulation {
 }
 /**
  * 50% louder than usual
- *
- * @class Accent
- * @memberof music21.articulations
  */
 
 class Accent extends DynamicArticulation {
@@ -244,9 +219,6 @@ class Accent extends DynamicArticulation {
 }
 /**
  * 100% louder than usual
- *
- * @class StrongAccent
- * @memberof music21.articulations
  */
 
 class StrongAccent extends Accent {
@@ -264,9 +236,6 @@ class StrongAccent extends Accent {
 }
 /**
  * no playback for now.
- *
- * @class Staccato
- * @memberof music21.articulations
  */
 
 class Staccato extends LengthArticulation {
@@ -283,9 +252,6 @@ class Staccato extends LengthArticulation {
 }
 /**
  * no playback for now.
- *
- * @class Staccatissimo
- * @memberof music21.articulations
  */
 
 class Staccatissimo extends Staccato {
@@ -302,9 +268,6 @@ class Staccatissimo extends Staccato {
 }
 /**
  * no playback or display for now.
- *
- * @class Spiccato
- * @memberof music21.articulations
  */
 
 class Spiccato extends Staccato {
@@ -320,9 +283,6 @@ class Spiccato extends Staccato {
 
 }
 /**
- * @class Marcato
- * @memberof music21.articulations
- *
  * should be both a DynamicArticulation and a LengthArticulation
  * TODO(msc): check that `.classes` reflects that in music21j
  */
@@ -341,11 +301,6 @@ class Marcato extends DynamicArticulation {
   }
 
 }
-/**
- * @class Tenuto
- * @memberof music21.articulations
- */
-
 class Tenuto extends LengthArticulation {
   static get className() {
     return 'music21.articulation.Tenuto';
@@ -797,11 +752,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * audioSearch module. See music21.audioSearch namespace
- *
- * @exports music21/audioSearch
- * @memberof music21
- * @requires music21/pitch
- * @requires music21/common
  */
 
  // functions based on the prototype created by Chris Wilson's MIT License version
@@ -850,8 +800,6 @@ const config = new _ConfigSingletonCreator();
  * Note: audioRecording uses the newer getUserMedia routines, so
  * this should be ported to be similar to there.
  *
- * @function music21.audioSearch.getUserMedia
- * @memberof music21.audioSearch
  * @param {Object} dictionary - optional dictionary to fill
  * @param {function} callback - callback on success
  * @param {function} error - callback on error
@@ -1182,15 +1130,7 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * module for Music21Objects, see {@link music21.base}
- *
- * @requires music21/common
- * @requires music21/duration
- * @requires music21/prebase
- * @requires music21/sites
- * @exports music21/base
- * @namespace music21.base
- * @memberof music21
+ * module for Music21Objects
  */
 
 
@@ -1207,8 +1147,6 @@ __webpack_require__.r(__webpack_exports__);
  * @property {number} classSortOrder - Default sort order for this class
  *     (default 20; override in other classes). Lower numbered objects will sort
  *     before other objects in the staff if priority and offset are the same.
- * @property {music21.duration.Duration} duration - the duration (object) for
- *     the element. (can be set with a quarterLength also)
  * @property {string[]} groups - An Array of strings representing group
  *     (equivalent to css classes) to assign to the object. (default [])
  * @property {boolean} isMusic21Object - true
@@ -1701,6 +1639,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
     let unused = null;
 
     try {
+      // noinspection JSUnusedAssignment
       unused = item.isStream;
     } catch (AttributeError) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
@@ -1812,14 +1751,8 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Module holding beam materials. See {@link music21.beam} namespace.
- * {@link music21.beam.Beam} and {music21.beam.Beams} objects
+ * Module holding beam materials.
  *
- * @exports music21/beam
- * @namespace music21.beam
- * @memberof music21
- * @requires music21/prebase
- * @requires music21/duration
  */
 
 
@@ -1834,8 +1767,6 @@ const beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_6__.typeFromNu
 /**
  * Object representing a single beam (e.g., a 16th note that is beamed needs two)
  *
- * @class Beam
- * @memberof music21.beam
  * @param {string} type - "start", "stop", "continue", "partial"
  * @param {string} direction - only needed for partial beams: "left" or "right"
  * @property {number|undefined} number - which beam line does this refer to;
@@ -1859,8 +1790,6 @@ class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
 /**
  * Object representing a collection of Beams
  *
- * @class Beams
- * @memberof music21.beam
  * @property {Beam[]} beamsList - a list of Beam objects
  * @property {boolean} [feathered=false] - is this a feathered beam.
  * @property {number} length - length of beamsList
@@ -2287,15 +2216,8 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * chord Module. See {@link music21.chord} namespace for more details.
- * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
+ * Chord related objects (esp. music21.chord.Chord) and methods.
  *
- * @exports music21/chord
- * @namespace music21.chord
- * @memberof music21
- * @requires vexflow
- * @requires music21/interval
- * @requires music21/note
  */
 
 
@@ -2304,11 +2226,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
- *
- * @param {Array<string|note.Note|Pitch>} [notes] -
+ * @param {Array<string|note.Note|pitch.Pitch>} [notes] -
  *     an Array of strings
- *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
  * @property {number} length - the number of pitches in the Chord (readonly)
  * @property {Pitch[]} pitches - an Array of Pitch objects in the
@@ -2333,18 +2252,24 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_9__.NotRest {
     this._chordTablesAddress = undefined;
     this._chordTablesAddressNeedsUpdating = true; // only update when needed
 
+    let arrayNotes;
+
     if (typeof notes === 'undefined') {
-      notes = [];
+      arrayNotes = [];
     } else if (typeof notes === 'string') {
-      notes = notes.split(/\s+/);
+      arrayNotes = notes.split(/\s+/);
+    } else if (!(notes instanceof Array)) {
+      arrayNotes = [notes];
+    } else {
+      arrayNotes = notes;
     }
 
-    for (const n of notes) {
+    for (const n of arrayNotes) {
       this.add(n, false);
     }
 
-    if (notes.length > 0) {
-      const n0 = notes[0];
+    if (arrayNotes.length > 0) {
+      const n0 = arrayNotes[0];
 
       if (n0 instanceof _note__WEBPACK_IMPORTED_MODULE_9__.Note) {
         if (n0.duration.quarterLength !== this.duration.quarterLength) {
@@ -2583,20 +2508,19 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_9__.NotRest {
     }
   }
   /**
-   * Adds a note to the chord, sorting the note array
+   * Adds a note or Array of notes to the chord, sorting the note array
    *
-   * @param {
-   *     string|string[]|note.Note|Pitch|
-   *     music21.note.Note[]|Pitch[]} notes - the
-   *     Note or Pitch to be added or a string defining a pitch.
-   * @param {boolean} runSort - Sort after running (default true)
-   * @returns {music21.chord.Chord} the original chord.
+   * runSort - Sort after running (default true)
    */
 
 
-  add(notes, runSort = true) {
-    if (!(notes instanceof Array)) {
-      notes = [notes];
+  add(n, runSort = true) {
+    let notes;
+
+    if (!(n instanceof Array)) {
+      notes = [n];
+    } else {
+      notes = n;
     }
 
     for (const noteObj_StrOrNote of notes) {
@@ -2739,9 +2663,9 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_9__.NotRest {
    * For instance, in a G dominant 7th chord (G, B, D, F), would
    * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
    *
-   * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-   * @param {Pitch} [testRoot] - the pitch to temporarily consider the root.
-   * @returns {number|undefined} Number of semitones above the root for this
+   * chordStep - the step to find, e.g., 1, 2, 3, etc.
+   * [testRoot] - the pitch to temporarily consider the root.
+   * returns Number of semitones above the root for this
    *     chord step or undefined if no pitch matches that chord step.
    */
 
@@ -5527,28 +5451,10 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Clef module, see {@link music21.clef} for namespace
  * Clef related objects and properties
  *
- * @exports music21/clef
- * @namespace music21.clef
- * @memberof music21
- * @requires music21/base
- * @requires music21/pitch
  */
 
-
-/*  music21.Clef
-    must be defined before Stream since Stream subclasses call new music21.Clef...
- */
-// TODO: Fix to newest Vexflow format...
-
-/**
- *
- * @type {
- *     {bass: number, soprano: number, tenor: number, percussion: number,
- *     'mezzo-soprano': number, alto: number, treble: number}}
- */
 
 const lowestLines = {
   treble: 31,
@@ -5559,13 +5465,6 @@ const lowestLines = {
   bass: 19,
   percussion: 31
 };
-/**
- *
- * @type {
- *     {bass: number, soprano: number, tenor: number, percussion: number,
- *     'mezzo-soprano': number, alto: number, treble: number}}
- */
-
 const nameToLine = {
   treble: 2,
   soprano: 1,
@@ -5575,13 +5474,6 @@ const nameToLine = {
   bass: 4,
   percussion: 3
 };
-/**
- *
- * @type {
- *     {bass: string, soprano: string, tenor: string, percussion: string,
- *     'mezzo-soprano': string, alto: string, treble: string}}
- */
-
 const nameToSign = {
   treble: 'G',
   soprano: 'C',
@@ -5595,14 +5487,11 @@ const nameToSign = {
  * Clef name can be one of
  * "treble", "bass", "soprano", "mezzo-soprano", "alto", "tenor", "percussion"
  *
- * @param {string} name - clef name
- * @param {number} [octaveChange=0] - ottava
- * @property {string} [name]
- * @property {number} lowestLine - diatonicNoteNum (C4 = 29) for the
+ * lowestLine - diatonicNoteNum (C4 = 29) for the
  *     lowest line (in a five-line staff)
- * @property {number} lowestLineTrebleOffset - difference between the first line
+ * lowestLineTrebleOffset - difference between the first line
  *     of this staff and the first line in treble clef
- * @property {number} octaveChange
+ * octaveChange
  */
 
 class Clef extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
@@ -5675,7 +5564,7 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
       throw new Error('getStemDirectionForPitches cannot operate on an empty Array');
     }
 
-    let relevantPitches = [];
+    let relevantPitches;
 
     if (extremePitchOnly) {
       pitchRealList.sort((a, b) => a.diatonicNoteNum - b.diatonicNoteNum);
@@ -5705,10 +5594,6 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
 }
 /**
  * A TrebleClef (same as new music21.clef.Clef('treble'))
- *
- * @class TrebleClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class TrebleClef extends Clef {
@@ -5727,10 +5612,6 @@ class TrebleClef extends Clef {
  * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1))
  *
  * Unlike music21p, currently not a subclass of TrebleClef.
- *
- * @class Treble8vbClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class Treble8vbClef extends Clef {
@@ -5745,10 +5626,6 @@ class Treble8vbClef extends Clef {
 }
 /**
  * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1))
- *
- * @class Treble8vaClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class Treble8vaClef extends Clef {
@@ -5763,10 +5640,6 @@ class Treble8vaClef extends Clef {
 }
 /**
  * A BassClef (same as new music21.clef.Clef('bass'))
- *
- * @class BassClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class BassClef extends Clef {
@@ -5783,10 +5656,6 @@ class BassClef extends Clef {
 }
 /**
  * A BassClef down an octave (same as new music21.clef.Clef('bass', -1))
- *
- * @class Bass8vbClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class Bass8vbClef extends Clef {
@@ -5803,10 +5672,6 @@ class Bass8vbClef extends Clef {
 }
 /**
  * An AltoClef (same as new music21.clef.Clef('alto'))
- *
- * @class AltoClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class AltoClef extends Clef {
@@ -5823,10 +5688,6 @@ class AltoClef extends Clef {
 }
 /**
  * A Tenor Clef (same as new music21.clef.Clef('tenor'))
- *
- * @class TenorClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class TenorClef extends Clef {
@@ -5843,10 +5704,6 @@ class TenorClef extends Clef {
 }
 /**
  * A Soprano Clef (same as new music21.clef.Clef('soprano'))
- *
- * @class SopranoClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class SopranoClef extends Clef {
@@ -5863,10 +5720,6 @@ class SopranoClef extends Clef {
 }
 /**
  * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano'))
- *
- * @class MezzoSopranoClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class MezzoSopranoClef extends Clef {
@@ -5885,10 +5738,6 @@ class MezzoSopranoClef extends Clef {
  * A Percussion Clef (same as new music21.clef.Clef('percussion'))
  *
  * First line is treated as if it's treble clef. Not available as "bestClef"
- *
- * @class PercussionClef
- * @memberof music21.clef
- * @extends music21.clef.Clef
  */
 
 class PercussionClef extends Clef {
@@ -5967,10 +5816,6 @@ function bestClef(st, {
   }
 }
 /**
- *
- * @param {string} clefString
- * @param {number} [octaveShift=0]
- * @returns {music21.clef.Clef}
  */
 
 function clefFromString(clefString, octaveShift = 0) {
@@ -6052,6 +5897,9 @@ function clefFromString(clefString, octaveShift = 0) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "jQueryAndHTMLVersion": () => (/* binding */ jQueryAndHTMLVersion),
+/* harmony export */   "coerceJQuery": () => (/* binding */ coerceJQuery),
+/* harmony export */   "coerceHTMLElement": () => (/* binding */ coerceHTMLElement),
 /* harmony export */   "merge": () => (/* binding */ merge),
 /* harmony export */   "range": () => (/* binding */ range),
 /* harmony export */   "mixin": () => (/* binding */ mixin),
@@ -6097,6 +5945,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_to_locale_string_js__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_12__);
 
 
 
@@ -6113,22 +5963,49 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * common functions
  * functions that are useful everywhere...
- *
- * @exports music21/common
- * @memberof music21
  */
 
+/**
+ *  Many music21j functions take either JQuery or HTMLElement, but
+ *  "el instanceof $" is not a good way of checking, because the copy of
+ *  JQuery imported into music21j might not be the same copy loaded by a calling
+ *  library or script tag.  Hence these three little functions that coerce in one
+ *  direction or another.
+ */
+
+function jQueryAndHTMLVersion(el) {
+  let $jq;
+  let htmlElement;
+
+  if (el !== undefined && el.jquery !== undefined) {
+    $jq = el;
+    htmlElement = el[0];
+  } else if (el instanceof HTMLElement) {
+    htmlElement = el;
+    $jq = jquery__WEBPACK_IMPORTED_MODULE_12__(el);
+  } else {
+    $jq = jquery__WEBPACK_IMPORTED_MODULE_12__('body');
+    htmlElement = $jq[0];
+  }
+
+  return [$jq, htmlElement];
+}
+function coerceJQuery(el) {
+  return jQueryAndHTMLVersion(el)[0];
+}
+function coerceHTMLElement(el) {
+  return jQueryAndHTMLVersion(el)[1];
+}
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
  * http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
  * recursive parts used in .clone()
  *
- * @function music21.common.merge
  * @param {Object} destination - object to have attributes placed into
  * @param {Object} source - object to take attributes from.
- * @memberof music21.common
  * @returns {Object} destination
  */
+
 function merge(destination, source) {
   if (source === undefined || source === null) {
     return destination;
@@ -6256,9 +6133,8 @@ function posMod(a, b) {
  * In case of tie, returns the first element to reach the maximum
  * number of occurrences.
  *
- * @function music21.common.statisticalMode
  * @param {Array<*>} a - an array to analyze
- * @returns {Object} element with the highest frequency in a
+ * @returns {Object} element with the highest frequency in an array.
  */
 
 function statisticalMode(a) {
@@ -6361,11 +6237,8 @@ function toRoman(num) {
 /**
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
  *
- * @function music21.common.makeSVGright
  * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
  * @param {Object} [attrs] - attributes to pass to the tag.
- * @memberof music21.common
- * @returns {SVGElement}
  */
 
 function makeSVGright(tag = 'svg', attrs = {}) {
@@ -6387,10 +6260,7 @@ function makeSVGright(tag = 'svg', attrs = {}) {
  * Take a number such as 32 and return a string such as "nd"
  * (for "32nd") etc.
  *
- * @function music21.common.ordinalAbbreviation
- * @param {number} value
- * @param {boolean} [plural=false] - make plural (note that "21st" plural is "21st")
- * @return {string}
+ * [plural=false] - make plural (note that "21st" plural is "21st")
  */
 
 function ordinalAbbreviation(value, plural = false) {
@@ -6422,7 +6292,6 @@ function ordinalAbbreviation(value, plural = false) {
 /**
  * Find a rational number approximation of this floating point.
  *
- * @function music21.common.rationalize
  * @param {number} ql - number to rationalize
  * @param {number} [epsilon=0.001] - how close to get
  * @param {int} [maxDenominator=50] - maximum denominator
@@ -6449,9 +6318,7 @@ function rationalize(ql, epsilon = 0.001, maxDenominator = 50) {
  *
  * "400px" -> 400
  *
- * @function music21.common.stripPx
- * @param {number|string} str -- string that might have 'px' at the end or not
- * @returns {number} a number to use
+ * str -- string that might have 'px' at the end or not
  */
 
 function stripPx(str) {
@@ -6466,9 +6333,8 @@ function stripPx(str) {
 /**
  * Find name in the query string (?name=value) and return value.
  *
- * @function music21.common.urlParam
- * @param {string} name - url parameter to find
- * @returns {string} may be "" if empty.
+ * name - url parameter to find
+ * Return may be '' if empty.
  */
 
 function urlParam(name) {
@@ -6748,18 +6614,8 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Module that holds **music21** classes and
- * tools for dealing with durations, especially
- * the {@link music21.duration.Duration} class.
+ * Duration module.
  *
- * Duration module. See {@link music21.duration}
- *
- * @module music21/duration
- * @namespace music21.duration
- * @memberof music21
- * @requires music21/common
- * @requires music21/prebase
- * @exports music21/duration
  */
 
 
@@ -6767,9 +6623,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * Object mapping int to name, as in `{1: 'whole'}` etc.
- *
- * @memberof music21.duration
- * @type {Object}
  */
 
 const typeFromNumDict = {
@@ -6796,11 +6649,7 @@ const ordinalTypeFromNum = ['duplex-maxima', 'maxima', 'longa', 'breve', 'whole'
 const vexflowDurationArray = [undefined, undefined, undefined, '1/2', 'w', 'h', 'q', '8', '16', '32', '64', '128', '256', undefined, undefined];
 /**
  * Duration object; found as the `.duration` attribute on Music21Object instances
- * such as {@link music21.note.Note}
- *
- * @class Duration
- * @memberof music21.duration
- * @param {(number|undefined)} ql - quarterLength (default 1.0)
+ * such as music21.note.Note
  */
 
 class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
@@ -6918,11 +6767,8 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
    * Reads the tuplet Array for the duration.
    *
    * The tuplet array should be considered Read Only.
-   * Use {@link music21.duration.Duration#appendTuplet} to
+   * Use music21.duration.Duration#appendTuplet to
    * add a tuplet (no way to remove yet)
-   *
-   * @type {Tuplet[]}
-   * @default []
    */
 
 
@@ -7075,29 +6921,33 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
 
 }
 /**
- * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
+ * Represents a Tuplet; found in music21.duration.Duration#tuplets
  *
- * @memberof music21.duration
- * @param {number} [numberNotesActual=3] - numerator of the tuplet
- * @param {number} [numberNotesNormal=2] - denominator of the tuplet
- * @param {(music21.duration.Duration|number)} [durationActual] - duration or
+ * [numberNotesActual=3] - numerator of the tuplet
+ * [numberNotesNormal=2] - denominator of the tuplet
+ * [durationActual] - duration or
  *     quarterLength of duration type, default music21.duration.Duration(0.5)
- * @param {(music21.duration.Duration|number)} [durationNormal] - unused;
+ * [durationNormal] - unused;
  *     see music21p for description
  */
 
 class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
-  constructor(numberNotesActual = 3, numberNotesNormal = 2, durationActual = undefined, durationNormal = undefined) {
+  constructor(numberNotesActual = 3, numberNotesNormal = 2, durationActual, durationNormal) {
     super();
     this.frozen = false;
     this.bracket = true;
     this.placement = 'above';
     this.numberNotesActual = numberNotesActual;
     this.numberNotesNormal = numberNotesNormal;
+
+    if (typeof durationActual === 'number') {
+      durationActual = new Duration(durationActual);
+    }
+
     this.durationActual = durationActual || new Duration(0.5);
 
-    if (typeof this.durationActual === 'number') {
-      this.durationActual = new Duration(this.durationActual);
+    if (typeof durationNormal === 'number') {
+      durationNormal = new Duration(durationNormal);
     }
 
     this.durationNormal = durationNormal || this.durationActual;
@@ -7155,8 +7005,8 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
   /**
    * Set both durationActual and durationNormal for the tuplet.
    *
-   * @param {string} type - a duration type, such as `half`, `quarter`
-   * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
+   * type - a duration type, such as `half`, `quarter`
+   * returns A converted music21.duration.Duration matching `type`
    */
 
 
@@ -7239,16 +7089,10 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- * dynamics Module. See {@link music21.dynamics} for namespace
  *
  * Dynamics related objects.
  *
  * Currently do not export to Vexflow.  :-(
- *
- * @exports music21/dynamics
- * @namespace music21.dynamics
- * @memberof music21
- * @requires music21/base
  */
  // noinspection SpellCheckingInspection
 
@@ -7295,9 +7139,6 @@ const dynamicStrToScalar = {
 /**
  * A representation of a dynamic.
  *
- * @class Dynamic
- * @memberof music21.dynamics
- * @extends music21.base.Music21Object
  * @param {number|string} value - either a number between 0 and 1 or a dynamic mark such as "ff" or "mp"
  * @property {string|undefined} value - a name such as "pp" etc.
  * @property {string|undefined} longName - a longer name such as "pianissimo"
@@ -7502,13 +7343,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * Expressions module.  See {@link music21.expressions}
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
  *
- * @exports music21/expressions
- * @namespace music21.expressions
- * @memberof music21
- * @requires music21/expressions
  */
 
 
@@ -7516,9 +7352,6 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
  *
- * @class Expression
- * @memberof music21.expressions
- * @extends music21.base.Music21Object
  * @property {string} name
  * @property {string} vexflowModifier
  * @property {number} setPosition
@@ -7539,8 +7372,6 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * Renders this Expression as a Vex.Flow.Articulation
    *
    * (this is not right for all cases)
-   *
-   * @returns {Vex.Flow.Articulation}
    */
 
 
@@ -7556,9 +7387,6 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
 /**
  * A fermata...
  *
- * @class Fermata
- * @memberof music21.expressions
- * @extends music21.expressions.Expression
  */
 
 class Fermata extends Expression {
@@ -7702,11 +7530,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/**
- * @namespace music21.figuredBass
- * @exports music21/figuredBass
- */
-
 const shorthandNotation = {
   '': [5, 3],
   '5': [5, 3],
@@ -7722,10 +7545,6 @@ const shorthandNotation = {
 };
 /**
  * In music21p is in figuredBass.notation -- eventually to be moved there.
- */
-
-/**
- * @memberof music21.figuredBass
  */
 
 class Notation {
@@ -7763,8 +7582,6 @@ class Notation {
    *    and this.modifierStrings, which provide the intervals above the
    *    bass and (if necessary) how to modify the corresponding pitches
    *    accordingly.
-   *
-   * @return {undefined}
    */
 
 
@@ -7775,8 +7592,8 @@ class Notation {
     const modifierStrings = [];
     const figureStrings = [];
 
-    for (let figure of figures) {
-      figure = figure.trim();
+    for (const fig of figures) {
+      const figure = fig.trim();
       figureStrings.push(figure);
       let numberString = '';
       let modifierString = '';
@@ -7812,7 +7629,7 @@ class Notation {
 
   _translateToLonghand() {
     let oldNumbers = this.numbers;
-    let newNumbers = oldNumbers;
+    let newNumbers;
     const oldModifierStrings = this.modifierStrings;
     let newModifierStrings = oldModifierStrings;
     const oldNumbersString = oldNumbers.toString();
@@ -7886,10 +7703,6 @@ class Notation {
   }
 
 }
-/**
- * @memberOf music21.figuredBass
- */
-
 class Figure {
   constructor(number, modifierString) {
     this.number = number;
@@ -7910,10 +7723,6 @@ const specialModifiers = {
   '+++': '###',
   '++++': '####'
 };
-/**
- * @memberOf music21.figuredBass
- */
-
 class Modifier {
   constructor(modifierString) {
     this.modifierString = modifierString;
@@ -7985,8 +7794,6 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * fromPython module -- see {@link music21.fromPython}
- *
  * Converter for taking a Python-encoded jsonpickle music21p stream
  * and loading it into music21j
  *
@@ -7994,9 +7801,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Requires Cuthbert's jsonpickle.js port.
  *
- * @namespace music21.fromPython
- * @extends music21
- * @requires jsonpickle
  * @example
  * in python:
  *
@@ -8014,8 +7818,6 @@ const jp = jsonpickle__WEBPACK_IMPORTED_MODULE_0__;
 const unpickler = jp.unpickler;
 /**
  *
- * @class Converter
- * @memberof music21.fromPython
  * @property {boolean} debug
  * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
  * @property {Object} handlers - object mapping string names of classes to a set of
@@ -8073,8 +7875,7 @@ class Converter {
   /**
    * Fixes up some references that cannot be unpacked from jsonpickle.
    *
-   * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
-   * @returns {music21.stream.Stream}
+   * s - stream after unpacking from jsonpickle
    */
 
 
@@ -8160,9 +7961,6 @@ class Converter {
   }
   /**
    * Run the main decoder
-   *
-   * @param {string} jss - stream encoded as JSON
-   * @returns {music21.stream.Stream}
    */
 
 
@@ -8298,25 +8096,11 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * Instrument module, see {@link music21.instrument}
- * Looking for the {@link music21.instrument.Instrument} object? :-)
- *
- * @exports music21/instrument
- *
- * @namespace music21.instrument
- * @memberof music21
- * @requires music21/base
  */
 
 const global_usedChannels = []; // differs from m21p -- stored midiProgram numbers
 
 const maxMidi = 16;
-/**
- *
- * @type {Array<{fn: string, name: string, midiNumber: number}>}
- */
-
 const info = [{
   fn: 'acoustic_grand_piano',
   name: 'Acoustic Grand Piano',
@@ -8833,11 +8617,9 @@ const info = [{
 /**
  * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
  *
- * See {@link music21.miditools} and esp. `loadSoundfont` for a way of loading soundfonts into
+ * See music21.miditools and esp. `loadSoundfont` for a way of loading soundfonts into
  * instruments.
  *
- * @class Instrument
- * @memberof music21.instrument
  * @param {string} instrumentName
  * @property {string|undefined} partId
  * @property {string|undefined} partName
@@ -8849,7 +8631,6 @@ const info = [{
  * @property {int|undefined} midiChannel
  * @property {int|undefined} lowestNote
  * @property {int|undefined} highestNote
- * @property {music21.interval.Interval|undefined} transposition
  * @property {Boolean} inGMPercMap=false
  * @property {string|undefined} soundfontFn
  * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
@@ -8869,7 +8650,6 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     this._midiChannel = undefined;
     this.lowestNote = undefined;
     this.highestNote = undefined;
-    this.transpostion = undefined;
     this.inGMPercMap = false;
     this.soundfontFn = undefined;
     this.classSortOrder = -25;
@@ -8947,14 +8727,11 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
  * Find information for a given instrument (by filename or name)
  * and load it into an instrument object.
  *
- * @function music21.instrument.find
- * @memberof music21.instrument
- * @param {string} fn - name or filename of instrument
- * @param {music21.instrument.Instrument} [inst] - instrument object to load into
- * @returns {music21.instrument.Instrument|undefined}
+ * fn - name or filename of instrument
+ * [inst] - instrument object to load into
  */
 
-function find(fn, inst = undefined) {
+function find(fn, inst) {
   if (inst === undefined) {
     inst = new Instrument();
   }
@@ -9042,15 +8819,8 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * interval module. See {@link music21.interval} for namespace
  * Interval related objects
  *
- * @exports music21/interval
- *
- * @namespace music21.interval
- * @memberof music21
- * @requires music21/prebase
- * @requires music21/pitch
  */
 
 
@@ -9060,7 +8830,6 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Interval Directions as an Object/map
  *
- * @memberof music21.interval
  * @example
  * if (music21.interval.Direction.OBLIQUE >
  *     music21.interval.Direction.ASCENDING ) {
@@ -9077,7 +8846,6 @@ const Direction = {
 /**
  * N.B. a dict in music21p -- the indexes here let Direction call them + 1
  *
- * @memberof music21.interval
  * @example
  * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.Direction.OBLIQUE + 1])
  * // "Oblique"
@@ -9087,7 +8855,6 @@ const IntervalDirectionTerms = ['Descending', 'Oblique', 'Ascending'];
 /**
  * ordinals for music terms...
  *
- * @memberof music21.interval
  * @example
  * for (var i = 1; // N.B. 0 = undefined
  *      i < music21.interval.MusicOrdinals.length;
@@ -9109,8 +8876,6 @@ const MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth', 'Fifth'
  *
  * Properties are demonstrated below.
  *
- * @class GenericInterval
- * @memberof music21.interval
  * @param {number} [gi=1] - generic interval (1 or higher, or -2 or lower)
  * @example
  * var gi = new music21.interval.GenericInterval(-14)
@@ -9269,8 +9034,6 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Obje
   }
   /**
    * Returns a new GenericInterval which is the mod7inversion; 3rds (and 10ths etc.) to 6ths, etc.
-   *
-   * @returns {music21.interval.GenericInterval}
    */
 
 
@@ -9280,8 +9043,6 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Obje
   /**
    * Returns a new GenericInterval which has the opposite direction
    * (descending becomes ascending, etc.)
-   *
-   * @returns {music21.interval.GenericInterval}
    */
 
 
@@ -9295,8 +9056,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Obje
   /**
    * Given a specifier, return a new DiatonicInterval with this generic.
    *
-   * @param {string|number} specifier - a specifier such as "P", "m", "M", "A", "dd" etc.
-   * @returns {music21.interval.DiatonicInterval}
+   * specifier - a specifier such as "P", "m", "M", "A", "dd" etc.
    */
 
 
@@ -9305,9 +9065,6 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Obje
   }
   /**
    * Transpose a pitch by this generic interval, maintaining accidentals
-   *
-   * @param {music21.pitch.Pitch} p
-   * @returns {music21.pitch.Pitch}
    */
 
 
@@ -9389,10 +9146,8 @@ const IntervalAdjustImperf = {
 /**
  * Represents a Diatonic interval.  See example for usage.
  *
- * @class DiatonicInterval
- * @memberof music21.interval
- * @param {string|number|undefined} [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
- * @param {music21.interval.GenericInterval|number} [generic=1] - a `GenericInterval`
+ * [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
+ * [generic=1] - a `GenericInterval`
  *              object or a number to be converted to one
  * @example
  * var di = new music21.interval.DiatonicInterval("M", 10);
@@ -9486,8 +9241,6 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Obj
   }
   /**
    * Returns a ChromaticInterval object of the same size.
-   *
-   * @returns {music21.interval.ChromaticInterval}
    */
 
 
@@ -9519,49 +9272,21 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Obj
 
     return new ChromaticInterval(semitones);
   }
-  /**
-   *
-   * @param {music21.pitch.Pitch} p
-   * @returns {music21.pitch.Pitch}
-   */
-
 
   transposePitch(p) {
     const fullIntervalObject = new Interval(this, this.getChromatic());
     return fullIntervalObject.transposePitch(p);
   }
-  /**
-   *
-   * @type {string}
-   */
-
 
   get specifierAbbreviation() {
     return IntervalPrefixSpecs[this.specifier];
   }
-  /**
-   *
-   * @returns {number}
-   */
-
 
   get cents() {
     return this.getChromatic().cents;
   }
 
 }
-/**
- * @class ChromaticInterval
- * @memberof music21.interval
- * @param {number} value - number of semitones (positive or negative)
- * @property {number} cents
- * @property {number} value
- * @property {number} undirected - absolute value of value
- * @property {number} mod12 - reduction to one octave
- * @property {number} intervalClass - reduction to within a tritone (11 = 1, etc.)
- *
- */
-
 class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
   constructor(value = 0) {
     super();
@@ -9603,11 +9328,6 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Ob
   static get className() {
     return 'music21.interval.ChromaticInterval';
   }
-  /**
-   *
-   * @returns {music21.interval.ChromaticInterval}
-   */
-
 
   reverse() {
     return new ChromaticInterval(this.undirected * (-1 * this.direction));
@@ -9615,9 +9335,6 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Ob
 
   /**
    * Transposes pitches but does not maintain accidentals, etc.
-   *
-   * @property {music21.pitch.Pitch} p - pitch to transpose
-   * @returns {music21.pitch.Pitch}
    */
 
 
@@ -9643,8 +9360,6 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Ob
 }
 const IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 /**
- * @function music21.interval.convertDiatonicNumberToStep
- * @memberof music21.interval
  * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
  * @returns {Array} two element array of {string} stepName and {number} octave
  */
@@ -9670,12 +9385,10 @@ function convertDiatonicNumberToStep(dn) {
 /**
  * This is the main, powerful Interval class.
  *
- * Instantiate with either a string ("M3") or two {@link music21.pitch.Pitch} or two {@link music21.note.Note}
+ * Instantiate with either a string ("M3") or two music21.pitch.Pitch or two music21.note.Note objects.
  *
  * See music21p instructions for usage.
  *
- * @class Interval
- * @memberof music21.interval
  * @example
  * var n1 = new music21.note.Note("C4");
  * var n2 = new music21.note.Note("F#5");
@@ -9755,11 +9468,6 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
   static get className() {
     return 'music21.interval.Interval';
   }
-  /**
-   *
-   * @returns {music21.interval.Interval}
-   */
-
 
   get complement() {
     return new Interval(this.diatonic.mod7inversion);
@@ -9790,11 +9498,6 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
     this.isStep = this.isChromaticStep || this.isDiatonicStep;
     this.isSkip = this.diatonic.isSkip;
   }
-  /**
-   *
-   * @type {music21.note.Note|undefined}
-   */
-
 
   get noteStart() {
     return this._noteStart;
@@ -9807,11 +9510,6 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
     this._noteEnd = n.clone();
     this._noteEnd.pitch = p2;
   }
-  /**
-   *
-   * @type {music21.note.Note|undefined}
-   */
-
 
   get noteEnd() {
     return this._noteEnd;
@@ -9844,13 +9542,8 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_9__.ProtoM21Object {
   // noinspection JSUnusedLocalSymbols
 
   /**
-   * TODO: maxAccidental
-   *
-   * @param {music21.pitch.Pitch} p - pitch to transpose
-   * @param {Object} config - configuration
-   * @param {boolean} [config.reverse=false] -- reverse direction
-   * @param {number} [config.maxAccidental=4] -- maximum accidentals to retain (unused)
-   * @returns {music21.pitch.Pitch}
+   * [config.reverse=false] -- reverse direction
+   * [config.maxAccidental=4] -- maximum accidentals to retain (unused/ TODO)
    */
 
 
@@ -9957,7 +9650,7 @@ function intervalsToDiatonic(gInt, cInt) {
 function _getSpecifierFromGenericChromatic(gInt, cInt) {
   const noteVals = [undefined, 0, 2, 4, 5, 7, 9, 11];
   const normalSemis = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
-  let theseSemis = 0;
+  let theseSemis;
 
   if (gInt.direction !== cInt.direction && gInt.direction !== Direction.OBLIQUE && cInt.direction !== Direction.OBLIQUE) {
     // intervals like d2 and dd2 etc. (the last test doesn't matter,
@@ -9981,12 +9674,6 @@ function _getSpecifierFromGenericChromatic(gInt, cInt) {
 
   return specifier;
 }
-/**
- *
- * @param {music21.interval.Interval[]} intervalList
- * @returns {music21.interval.Interval}
- */
-
 function add(intervalList) {
   const p1 = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Pitch('C4');
   let p2 = new _pitch__WEBPACK_IMPORTED_MODULE_10__.Pitch('C4');
@@ -10046,17 +9733,6 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * key and key signature module. See {@link music21.key} namespace for details
- * Key and KeySignature related objects and methods
- *
- * @exports music21/key
- *
- * @namespace music21.key
- * @memberof music21
- * @requires music21/base
- * @requires music21/pitch
- * @requires music21/interval
- * @requires music21/scale
  */
 
 
@@ -10073,12 +9749,6 @@ const modeSharpsAlter = {
   mixolydian: -1,
   locrian: -5
 };
-/**
- *
- * @param {string} textString
- * @returns {string}
- */
-
 function convertKeyStringToMusic21KeyString(textString) {
   if (textString === 'bb') {
     textString = 'b-';
@@ -10091,14 +9761,11 @@ function convertKeyStringToMusic21KeyString(textString) {
   return textString;
 }
 /**
- * @class KeySignature
- * @memberof music21.key
  * @description Represents a key signature
  * @param {int} [sharps=0] -- the number of sharps (negative for flats)
  * @property {int} [sharps=0] -- number of sharps (negative for flats)
  * @property {string[]} flatMapping -- flat signatures 0-12 flats
  * @property {string[]} sharpMapping -- sharp signatures 0-12 sharps
- * @extends music21.base.Music21Object
  * @example
  * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
  * var s = new music21.stream.Stream();
@@ -10162,7 +9829,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
   /**
    * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
    *
-   * @type {music21.pitch.Pitch[]}
    * @readonly
    * @example
    * var ks = new music21.key.KeySignature(3)
@@ -10253,8 +9919,7 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
   /**
    * Returns the accidental associated with a step in this key, or undefined if none.
    *
-   * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
-   * @returns {(music21.pitch.Accidental|undefined)}
+   * step - a valid step name such as "C","D", etc., but not "C#" etc.
    */
 
 
@@ -10280,7 +9945,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
    *
    * Does not support inPlace unlike music21p v6.
    *
-   * @returns {music21.pitch.Pitch}
    * @example
    * var ks = new music21.key.KeySignature(-3)
    * var p1 = new music21.pitch.Pitch('B')
@@ -10323,12 +9987,9 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
 /**
  * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
  *
- * TODO: allow keyName to be a {@link music21.pitch.Pitch}
+ * TODO: allow keyName to be a music21.pitch.Pitch
  * TODO: Scale mixin.
  *
- * @class Key
- * @memberof music21.key
- * @extends music21.key.KeySignature
  * @param {string} keyName -- a pitch name representing the key (w/ "-" for flat)
  * @param {string} [mode] -- if not given then the CASE of the keyName will be used ("C" => "major", "c" => "minor")
  */
@@ -10389,15 +10050,15 @@ class Key extends KeySignature {
     return tonicName;
   }
   /**
-   * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
+   * returns a music21.scale.MajorScale or music21.scale.MinorScale
+   * or another similar scale
    * object from the pitch object.
    *
-   * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
-   * @returns {Object} A music21.scale.Scale subclass.
+   * [scaleType=this.mode] - the type of scale, or the mode.
    */
 
 
-  getScale(scaleType = undefined) {
+  getScale(scaleType) {
     if (scaleType === undefined) {
       scaleType = this.mode;
     }
@@ -10479,19 +10140,7 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Keyboard module, see {@link music21.keyboard} namespace
- *
- * @exports music21/keyboard
- *
- * keyboard namespace -- tools for creating an onscreen keyboard and interacting with it.
- *
- * @namespace music21.keyboard
- * @memberof music21
- * @requires music21/pitch
- * @requires music21/common
- * @requires music21/miditools
- * @requires jquery
- * @requires MIDI
+ * Keyboard module
  *
  * @example Minimum usage:
  * const kd = document.getElementById('keyboardDiv');
@@ -10508,44 +10157,54 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * Represents a single Key
- *
- * @class Key
- * @memberof music21.keyboard
- * @property {Array<function>} callbacks - called when key is clicked/selected
- * @property {number} [scaleFactor=1]
- * @property {music21.keyboard.Keyboard|undefined} parent
- * @property {int} id - midi number associated with the key.
- * @property {music21.pitch.Pitch|undefined} pitchObj
- * @property {SVGElement|undefined} svgObj - SVG representing the drawing of the key
- * @property {SVGElement|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
- * @property {string} keyStyle='' - css style information for the key
- * @property {string} keyClass='' - css class information for the key ("keyboardkey" + this is the class)
- * @property {number} width - width of key
- * @property {number} height - height of key
  */
 
 class Key {
   constructor() {
-    this.classes = ['Key']; // name conflict with key.Key
+    this.classes = ['Key']; // TODO(msc): resolve name conflict with key.Key
+
+    /**
+     *     called when key is clicked/selected
+     */
 
     this.callbacks = {
       click: undefined
     };
     this.scaleFactor = 1;
-    this.id = 0; // midi number
+    /**
+     * MIDI number associated with the key.
+     */
+
+    this.id = 0;
+    /**
+     * Width in pixels
+     */
 
     this.width = 23;
+    /**
+     * Height in pixels.
+     */
+
     this.height = 120;
+    /**
+     * CSS Style information for the key
+     */
+
     this.keyStyle = '';
+    /**
+     * CSS class with `keyboardkey${keyClass}` for the key.
+     */
+
     this.keyClass = '';
   }
   /**
    * Gets an SVG object for the key
    *
-   * @param {number} startX - X position in pixels from left of keyboard to draw key at
-   * @returns {SVGElement} a SVG rectangle for the key
+   * * startX - X position in pixels from left of keyboard to draw key at
+   * * returns an SVG rectangle for the key
    */
 
 
@@ -10574,25 +10233,18 @@ class Key {
   }
   /**
    * Adds a circle (red) on the key (to mark middle C etc.)
-   *
-   * @param {string} [strokeColor='red']
-   * @returns {SVGElement}
    */
 
 
-  addCircle(strokeColor) {
+  addCircle(strokeColor = 'red') {
     if (this.svgObj === undefined || this.parent === undefined || this.parent.svgObj === undefined) {
       return undefined;
-    }
-
-    if (strokeColor === undefined) {
-      strokeColor = 'red';
     }
 
     const x = parseInt(this.svgObj.getAttribute('x'));
     const cx = x + this.parent.scaleFactor * this.width / 2; // console.log('cx', cx);
 
-    const keyattrs = {
+    const keyAttrs = {
       stroke: strokeColor,
       'stroke-width': 3,
       fill: 'none',
@@ -10601,7 +10253,7 @@ class Key {
       class: 'keyboardkeyannotation',
       r: this.width * this.parent.scaleFactor / 4
     };
-    const circleDom = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('circle', keyattrs);
+    const circleDom = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('circle', keyAttrs);
     this.parent.svgObj.appendChild(circleDom); // console.log(circleDom);
 
     return circleDom;
@@ -10609,12 +10261,11 @@ class Key {
   /**
    * Adds the note name on the key
    *
-   * @param {Boolean} [labelOctaves=false] - use octave numbers too?
-   * @returns {this}
+   * if labelOctaves then octave numbers will also appear
    */
 
 
-  addNoteName(labelOctaves) {
+  addNoteName(labelOctaves = false) {
     if (this.svgObj === undefined || this.parent === undefined || this.parent.svgObj === undefined) {
       return this;
     }
@@ -10634,27 +10285,27 @@ class Key {
     let idStr = this.pitchObj.name;
     let fontSize = 14;
 
-    if (labelOctaves === true) {
+    if (labelOctaves) {
       idStr = this.pitchObj.nameWithOctave;
       fontSize = 12;
       x -= 2;
     }
 
     fontSize = Math.floor(fontSize * this.parent.scaleFactor);
-    let textfill = 'white';
+    let textFill = 'white';
 
     if (this.keyClass === 'whitekey') {
-      textfill = 'black';
+      textFill = 'black';
     }
 
-    const textattrs = {
-      fill: textfill,
+    const textAttrs = {
+      fill: textFill,
       x: x + this.parent.scaleFactor * (this.width / 2 - 5),
       y: this.parent.scaleFactor * (this.height - 20),
       class: 'keyboardkeyname',
       'font-size': fontSize
     };
-    const textDom = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('text', textattrs);
+    const textDom = _common__WEBPACK_IMPORTED_MODULE_5__.makeSVGright('text', textAttrs);
     const textNode = document.createTextNode(idStr);
     textDom.appendChild(textNode);
     this.noteNameSvgObj = textDom; // store for removing...
@@ -10688,10 +10339,6 @@ class Key {
 }
 /**
  * Defaults for a WhiteKey (width, height, keyStyle, keyClass)
- *
- * @class WhiteKey
- * @memberof music21.keyboard
- * @extends music21.keyboard.Key
  */
 
 class WhiteKey extends Key {
@@ -10706,10 +10353,6 @@ class WhiteKey extends Key {
 }
 /**
  * Defaults for a BlackKey (width, height, keyStyle, keyClass)
- *
- * @class BlackKey
- * @memberof music21.keyboard
- * @extends music21.keyboard.Key
  */
 
 class BlackKey extends Key {
@@ -10725,11 +10368,9 @@ class BlackKey extends Key {
 /**
  * A Class representing a whole Keyboard full of keys.
  *
- * @class Keyboard
- * @memberof music21.keyboard
  * @property {number} whiteKeyWidth - default 23
  * @property {number} scaleFactor - default 1
- * @property {Object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
+ * @property {Object} keyObjects - a mapping of id to `music21.keyboard.Key` objects
  * @property {SVGElement} svgObj - the SVG object of the keyboard
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
@@ -10804,23 +10445,12 @@ class Keyboard {
     return svgDOM;
   }
   /**
-   * Appends a keyboard to the `where` parameter
-   *
-   * @param {jQuery|Node} [where]
-   * @returns {music21.keyboard.Keyboard} this
+   * Appends a keyboard to the where parameter
    */
 
 
   appendKeyboard(where) {
-    if (where === undefined) {
-      where = document.body;
-    } else {
-      // noinspection JSUnresolvedVariable
-      if (typeof where.jquery !== 'undefined') {
-        where = where[0];
-      }
-    }
-
+    const svg_holder = (0,_common__WEBPACK_IMPORTED_MODULE_5__.coerceHTMLElement)(where);
     let svgDOM = this.createSVG();
 
     if (this.scrollable) {
@@ -10829,9 +10459,9 @@ class Keyboard {
 
     if (this.hideable) {
       // make it so the keyboard can be shown or hidden...
-      this.appendHideableKeyboard(where, svgDOM);
+      this.appendHideableKeyboard(svg_holder, svgDOM);
     } else {
-      where.appendChild(svgDOM); // svg must use appendChild, not append.
+      svg_holder.appendChild(svgDOM); // svg must use appendChild, not append.
     }
 
     return this;
@@ -10950,7 +10580,7 @@ class Keyboard {
 
       currentIndex += 1;
       currentIndex %= 7;
-    } // append blackkeys later since they overlap white keys;
+    } // append black keys later since they overlap white keys;
 
 
     for (let bki = 0; bki < blackKeys.length; bki++) {
@@ -10971,8 +10601,6 @@ class Keyboard {
   }
   /**
    * Puts a circle on middle c.
-   *
-   * @param {string} [strokeColor='red']
    */
 
 
@@ -10985,12 +10613,10 @@ class Keyboard {
   }
   /**
    * Puts note names on every white key.
-   *
-   * @param {Boolean} [labelOctaves=false]
    */
 
 
-  markNoteNames(labelOctaves) {
+  markNoteNames(labelOctaves = false) {
     this.removeNoteNames(); // in case...
 
     for (const keyObj of this.keyObjects.values()) {
@@ -10999,8 +10625,6 @@ class Keyboard {
   }
   /**
    * Remove note names on the keys, if they exist
-   *
-   * @returns {this}
    */
 
 
@@ -11016,9 +10640,6 @@ class Keyboard {
    *
    * Do not call this directly, just use createSVG after changing the
    * scrollable property on the keyboard to True.
-   *
-   * @param {SVGElement} svgDOM
-   * @returns {JQuery}
    */
 
 
@@ -11043,7 +10664,9 @@ class Keyboard {
       this.redrawSVG();
     });
     const $kWrapper = jquery__WEBPACK_IMPORTED_MODULE_3__("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
-    $kWrapper[0].appendChild(svgDOM);
+    const kWrapperDiv = $kWrapper[0];
+    kWrapperDiv.appendChild(svgDOM); // cannot use jquery append with SVG.
+
     $wrapper.append($bDown);
     $wrapper.append($kWrapper);
     $wrapper.append($bUp);
@@ -11095,7 +10718,6 @@ class Keyboard {
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.
  *
- * @function music21.keyboard.triggerToggleShow
  * @param {Event} [e]
  */
 
@@ -11138,8 +10760,6 @@ const triggerToggleShow = e => {
 /**
  * highlight the keyboard stored in "this" appropriately
  *
- * @function music21.keyboard.jazzHighlight
- * @param {music21.miditools.Event} e
  * @example
  * var midiCallbacksPlay = [music21.miditools.makeChords,
  *                          music21.miditools.sendToMIDIjs,
@@ -11228,10 +10848,6 @@ __webpack_require__.r(__webpack_exports__);
  * This is possible because the system is deterministic and
  * will come to the same result for each part.  Opportunity
  * for making more efficient through this...
- *
- * @param {music21.stream.Score} score
- * @param {number} containerWidth
- * @returns {LayoutScore}
  */
 
 function makeLayoutFromScore(score, containerWidth) {
@@ -11322,26 +10938,12 @@ function makeLayoutFromScore(score, containerWidth) {
   currentPage.insert(0, currentSystem);
   return layoutScore;
 }
-/**
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} width
- * @property {number|undefined} height
- */
-
 class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__.Score {
   constructor() {
     super();
     this.scoreLayout = undefined;
     this.measureStart = undefined;
     this.measureEnd = undefined;
-    /**
-     *
-     * @type {number|undefined}
-     * @private
-     */
-
     this._width = undefined;
     this.height = undefined;
     this.top = 0;
@@ -11369,12 +10971,6 @@ class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__.Score {
 }
 /**
  * All music must currently be on page 1.
- *
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} systemStart
- * @property {number|undefined} systemEnd
  */
 
 class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__.Score {
@@ -11408,13 +11004,6 @@ class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__.Score {
 
 }
 /**
- * @extends music21.stream.Score
- * @property {number|undefined} measureStart
- * @property {number|undefined} measureEnd
- * @property {number|undefined} width
- * @property {number|undefined} height
- * @property {number|undefined} top
- * @property {number|undefined} left
  */
 
 class System extends _stream__WEBPACK_IMPORTED_MODULE_0__.Score {
@@ -11448,11 +11037,6 @@ class System extends _stream__WEBPACK_IMPORTED_MODULE_0__.Score {
   }
 
 }
-/**
- * @extends music21.stream.Score
- *
- */
-
 class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__.Part {
   constructor() {
     super();
@@ -11481,6 +11065,213 @@ class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__.Part {
   }
 
 }
+
+/***/ }),
+
+/***/ "./src/main.ts":
+/*!*********************!*\
+  !*** ./src/main.ts ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MIDI": () => (/* reexport module object */ midicube__WEBPACK_IMPORTED_MODULE_1__),
+/* harmony export */   "Vex": () => (/* reexport module object */ vexflow__WEBPACK_IMPORTED_MODULE_3__),
+/* harmony export */   "exceptions21": () => (/* reexport module object */ _exceptions21__WEBPACK_IMPORTED_MODULE_5__),
+/* harmony export */   "base": () => (/* reexport module object */ _base__WEBPACK_IMPORTED_MODULE_7__),
+/* harmony export */   "prebase": () => (/* reexport module object */ _prebase__WEBPACK_IMPORTED_MODULE_6__),
+/* harmony export */   "common": () => (/* reexport module object */ _common__WEBPACK_IMPORTED_MODULE_8__),
+/* harmony export */   "debug": () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_49__.debug),
+/* harmony export */   "articulations": () => (/* reexport module object */ _articulations__WEBPACK_IMPORTED_MODULE_9__),
+/* harmony export */   "audioRecording": () => (/* reexport module object */ _audioRecording__WEBPACK_IMPORTED_MODULE_10__),
+/* harmony export */   "audioSearch": () => (/* reexport module object */ _audioSearch__WEBPACK_IMPORTED_MODULE_11__),
+/* harmony export */   "bar": () => (/* reexport module object */ _bar__WEBPACK_IMPORTED_MODULE_12__),
+/* harmony export */   "beam": () => (/* reexport module object */ _beam__WEBPACK_IMPORTED_MODULE_13__),
+/* harmony export */   "chord": () => (/* reexport module object */ _chord__WEBPACK_IMPORTED_MODULE_14__),
+/* harmony export */   "chordTables": () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_15__),
+/* harmony export */   "clef": () => (/* reexport module object */ _clef__WEBPACK_IMPORTED_MODULE_16__),
+/* harmony export */   "converter": () => (/* reexport module object */ _converter__WEBPACK_IMPORTED_MODULE_17__),
+/* harmony export */   "derivation": () => (/* reexport module object */ _derivation__WEBPACK_IMPORTED_MODULE_18__),
+/* harmony export */   "duration": () => (/* reexport module object */ _duration__WEBPACK_IMPORTED_MODULE_19__),
+/* harmony export */   "dynamics": () => (/* reexport module object */ _dynamics__WEBPACK_IMPORTED_MODULE_20__),
+/* harmony export */   "editorial": () => (/* reexport module object */ _editorial__WEBPACK_IMPORTED_MODULE_21__),
+/* harmony export */   "expressions": () => (/* reexport module object */ _expressions__WEBPACK_IMPORTED_MODULE_22__),
+/* harmony export */   "figuredBass": () => (/* reexport module object */ _figuredBass__WEBPACK_IMPORTED_MODULE_23__),
+/* harmony export */   "fromPython": () => (/* reexport module object */ _fromPython__WEBPACK_IMPORTED_MODULE_24__),
+/* harmony export */   "harmony": () => (/* reexport module object */ _harmony__WEBPACK_IMPORTED_MODULE_25__),
+/* harmony export */   "instrument": () => (/* reexport module object */ _instrument__WEBPACK_IMPORTED_MODULE_26__),
+/* harmony export */   "interval": () => (/* reexport module object */ _interval__WEBPACK_IMPORTED_MODULE_27__),
+/* harmony export */   "key": () => (/* reexport module object */ _key__WEBPACK_IMPORTED_MODULE_28__),
+/* harmony export */   "keyboard": () => (/* reexport module object */ _keyboard__WEBPACK_IMPORTED_MODULE_29__),
+/* harmony export */   "layout": () => (/* reexport module object */ _layout__WEBPACK_IMPORTED_MODULE_30__),
+/* harmony export */   "meter": () => (/* reexport module object */ _meter__WEBPACK_IMPORTED_MODULE_31__),
+/* harmony export */   "miditools": () => (/* reexport module object */ _miditools__WEBPACK_IMPORTED_MODULE_32__),
+/* harmony export */   "musicxml": () => (/* reexport module object */ _musicxml__WEBPACK_IMPORTED_MODULE_33__),
+/* harmony export */   "note": () => (/* reexport module object */ _note__WEBPACK_IMPORTED_MODULE_34__),
+/* harmony export */   "parseLoader": () => (/* reexport module object */ _parseLoader__WEBPACK_IMPORTED_MODULE_35__),
+/* harmony export */   "pitch": () => (/* reexport module object */ _pitch__WEBPACK_IMPORTED_MODULE_36__),
+/* harmony export */   "renderOptions": () => (/* reexport module object */ _renderOptions__WEBPACK_IMPORTED_MODULE_37__),
+/* harmony export */   "roman": () => (/* reexport module object */ _roman__WEBPACK_IMPORTED_MODULE_38__),
+/* harmony export */   "scale": () => (/* reexport module object */ _scale__WEBPACK_IMPORTED_MODULE_39__),
+/* harmony export */   "sites": () => (/* reexport module object */ _sites__WEBPACK_IMPORTED_MODULE_40__),
+/* harmony export */   "stream": () => (/* reexport module object */ _stream__WEBPACK_IMPORTED_MODULE_41__),
+/* harmony export */   "svgs": () => (/* reexport module object */ _svgs__WEBPACK_IMPORTED_MODULE_42__),
+/* harmony export */   "tempo": () => (/* reexport module object */ _tempo__WEBPACK_IMPORTED_MODULE_43__),
+/* harmony export */   "tie": () => (/* reexport module object */ _tie__WEBPACK_IMPORTED_MODULE_44__),
+/* harmony export */   "tinyNotation": () => (/* reexport module object */ _tinyNotation__WEBPACK_IMPORTED_MODULE_45__),
+/* harmony export */   "vfShow": () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_46__),
+/* harmony export */   "voiceLeading": () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_47__),
+/* harmony export */   "webmidi": () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_48__),
+/* harmony export */   "VERSION": () => (/* binding */ VERSION)
+/* harmony export */ });
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jquery-ui-bundle */ "./node_modules/jquery-ui-bundle/jquery-ui.js");
+/* harmony import */ var jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _articulations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./articulations */ "./src/articulations.ts");
+/* harmony import */ var _audioRecording__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./audioRecording */ "./src/audioRecording.ts");
+/* harmony import */ var _audioSearch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./audioSearch */ "./src/audioSearch.ts");
+/* harmony import */ var _bar__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./bar */ "./src/bar.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
+/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./chordTables */ "./src/chordTables.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
+/* harmony import */ var _converter__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./converter */ "./src/converter.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _dynamics__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./dynamics */ "./src/dynamics.ts");
+/* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./editorial */ "./src/editorial.ts");
+/* harmony import */ var _expressions__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./expressions */ "./src/expressions.ts");
+/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./figuredBass */ "./src/figuredBass.ts");
+/* harmony import */ var _fromPython__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./fromPython */ "./src/fromPython.ts");
+/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./harmony */ "./src/harmony.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./key */ "./src/key.ts");
+/* harmony import */ var _keyboard__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./keyboard */ "./src/keyboard.ts");
+/* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./layout */ "./src/layout.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
+/* harmony import */ var _musicxml__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./musicxml */ "./src/musicxml.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _parseLoader__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./parseLoader */ "./src/parseLoader.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
+/* harmony import */ var _roman__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./roman */ "./src/roman.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
+/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
+/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/**!
+ * **music21j**: Javascript reimplementation of Core music21 features.
+ *
+ * See http://web.mit.edu/music21/ for more details.
+ *
+ * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Released under a BSD-3-clause license
+ *
+ */
+
+/**
+ *
+ * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * The plan is to implement all core music21 features as Javascript and to expose
+ * more sophisticated features via server-side connections to remote servers running the
+ * python music21 (music21p).
+ *
+ * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. Any recent
+ * version of Firefox, Safari, Edge,  Chrome, etc. will do.
+ *
+ * All interfaces are beta and may change radically from day to day and release to release.
+ * Do not use this in production code yet.
+ *
+ * music21j acknowledges VexFlow and MIDI.js in particular for their great efforts without which
+ * this module would not be possible.
+ *
+ */
+// webpack loader for music21j.
+
+ // to be removed when export * from is okay.
+
+
+
+ // order below doesn't matter, but good to give a sense
+// of what will be needed by almost everyone, and then
+// alphabetical.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const VERSION = '0.11.15';
+
+if (typeof window !== 'undefined') {
+  window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;
+  window.jQuery = jquery__WEBPACK_IMPORTED_MODULE_2__;
+}
+
+_parseLoader__WEBPACK_IMPORTED_MODULE_35__.runConfiguration();
 
 /***/ }),
 
@@ -11524,16 +11315,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * meter module. See {@link music21.meter} namespace for details.
- * Meter and TimeSignature Classes (esp. {@link music21.meter.TimeSignature} ) and methods.
- *
- * @exports music21/meter
- *
- * @namespace music21.meter
- * @memberof music21
- * @requires music21/base
- * @requires music21/duration
  */
 
 
@@ -11549,8 +11330,6 @@ __webpack_require__.r(__webpack_exports__);
  * @property {int} [denominator=4]
  * @property {number[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
- * @property {music21.duration.Duration} barDuration - a Duration object
- *     representing the expressed total length of the TimeSignature.
  */
 
 class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
@@ -11939,7 +11718,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
   /**
    * Compute the Beat Group according to this time signature for VexFlow. For beaming.
    *
-   * @returns {Array<Vex.Flow.Fraction>} a list of numerator and denominator groups, for VexFlow
+   * returns a list of numerator and denominator groups, for VexFlow, as Vex.Flow.Fraction[]
    */
 
 
@@ -12010,10 +11789,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
  * events from the Jazz plugin or the WebMIDI protocol.
- *
- *
- * @exports music21/miditools
- * @memberof music21
  */
 
 
@@ -12022,9 +11797,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // expose midicube's MIDI to window for soundfonts to load.
 
-window.MIDI = midicube__WEBPACK_IMPORTED_MODULE_1__;
+ // expose midicube version of MIDI to the window for soundfonts to load.
+
+if (typeof window !== 'undefined') {
+  window.MIDI = midicube__WEBPACK_IMPORTED_MODULE_1__;
+}
 
 class _ConfigSingletonClass {
   constructor() {
@@ -12093,8 +11871,6 @@ class _ConfigSingletonClass {
 
 const config = new _ConfigSingletonClass();
 /**
- * @class Event
- * @memberof music21.miditools
  * @param {number} t - timing information
  * @param {number} a - midi data 1 (N.B. a >> 4 = midiCommand )
  * @param {number} b - midi data 2
@@ -12157,9 +11933,6 @@ class Event {
 }
 /**
  * a mapping of soundfont text names to true, false, or "loading".
- *
- * @memberof music21.miditools
- * @type {Object}
  */
 
 const loadedSoundfonts = {};
@@ -12170,8 +11943,6 @@ const loadedSoundfonts = {};
  *
  *  Runs a setTimeout on itself.
  *  Calls miditools.sendOutChord
- *
- *  @memberof music21.miditools
  */
 
 function clearOldChords() {
@@ -12194,10 +11965,6 @@ function clearOldChords() {
  *  Take a series of jEvent noteOn objects and convert them to a single Chord object
  *  so long as they are all sounded within miditools.maxDelay milliseconds of each other.
  *  this method stores notes in miditools.heldChordNotes (Array).
- *
- *  @param {music21.miditools.Event} jEvent
- *  @memberof music21.miditools
- *  @returns undefined
  */
 
 function makeChords(jEvent) {
@@ -12222,12 +11989,7 @@ function makeChords(jEvent) {
 }
 /**
  * Take the list of Notes and makes a chord out of it, if appropriate and call
- * {@link music21.miditools.callbacks.sendOutChord} callback with the Chord or Note as a parameter.
- *
- * @memberof music21.miditools
- * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
- * @returns {(music21.note.Note|music21.chord.Chord|undefined)} A {@link music21.chord.Chord} object,
- * most likely, but maybe a {@link music21.note.Note} object)
+ * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
 
 function sendOutChord(chordNoteList) {
@@ -12258,13 +12020,11 @@ function sendOutChord(chordNoteList) {
 /**
  * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
  *
- * @memberof music21.miditools
- * @param {music21.note.GeneralNote} [lastElement] - A {@link music21.note.Note} to be quantized
- * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with
+ * returns the same note.Note object passed in with
  * duration quantized
  */
 
-function quantizeLastNote(lastElement = undefined) {
+function quantizeLastNote(lastElement) {
   if (lastElement === undefined) {
     lastElement = config.lastElement;
   }
@@ -12306,23 +12066,20 @@ function quantizeLastNote(lastElement = undefined) {
 /**
  * Callback to midiEvent.sendToMIDIjs.
  *
- * @memberof music21.miditools
- * @param {music21.miditools.Event} midiEvent - event to send out.
- * @returns undefined
+ * sends a MIDIEvent to midicube
  */
 
 const sendToMIDIjs = midiEvent => {
   midiEvent.sendToMIDIjs();
 };
-/* ------------ MIDI.js ----------- */
+/* ------------ midicube interface ----------- */
 
 /**
  * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
  * rather than overriding this important method.
  *
- * @memberof music21.miditools
- * @param {string} soundfont The name of the soundfont that was just loaded
- * @param {function} callback A function to be called after the soundfont is loaded.
+ * soundfont -- The name of the soundfont that was just loaded
+ * callback -- A function to be called after the soundfont is loaded.
  */
 
 function postLoadCallback(soundfont, callback) {
@@ -12372,7 +12129,6 @@ function postLoadCallback(soundfont, callback) {
  * method to load soundfonts while waiting for other processes that need them
  * to load first.
  *
- * @memberof music21.miditools
  * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} [callback] A function to be called after the soundfont is loaded.
  * @example
@@ -12385,7 +12141,7 @@ function postLoadCallback(soundfont, callback) {
  * });
  */
 
-function loadSoundfont(soundfont, callback = undefined) {
+function loadSoundfont(soundfont, callback) {
   if (loadedSoundfonts[soundfont] === true) {
     // this soundfont has already been loaded once, so just call the callback.
     if (callback !== undefined) {
@@ -12422,14 +12178,15 @@ function loadSoundfont(soundfont, callback = undefined) {
 
     if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
       console.log('waiting for document ready');
-    }
+    } // this is the JQuery 3.0 equivalent to $(document).ready()...
 
-    jquery__WEBPACK_IMPORTED_MODULE_0__(document).ready(() => {
+
+    jquery__WEBPACK_IMPORTED_MODULE_0__(() => {
       if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
-        console.log('document ready, waiting to load soundfont');
+        console.log('Document ready, waiting to load soundfont');
       }
 
-      jquery__WEBPACK_IMPORTED_MODULE_0__(document.body).append(jquery__WEBPACK_IMPORTED_MODULE_0__("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
+      jquery__WEBPACK_IMPORTED_MODULE_0__(document.body).append(jquery__WEBPACK_IMPORTED_MODULE_0__("<div class='loadingSoundfont'><b>Loading Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
       midicube__WEBPACK_IMPORTED_MODULE_1__.loadPlugin({
         soundfontUrl: _common__WEBPACK_IMPORTED_MODULE_5__.urls.soundfontUrl,
         instrument: soundfont,
@@ -12441,91 +12198,33 @@ function loadSoundfont(soundfont, callback = undefined) {
 /**
  * MidiPlayer -- an embedded midi player including the ability to create a
  * playback device.
- *
- * @class MidiPlayer
- * @memberOf music21.miditools
- * @property {number} speed - playback speed scaling (1=default).
- * @property {JQuery|undefined} $playDiv - div holding the player,
  */
 
 class MidiPlayer {
   constructor() {
+    /**
+     * playback speed scaling (1=default)
+     */
     this.speed = 1.0;
     this.state = ''; // up, down, or empty...
 
     this.player = new midicube__WEBPACK_IMPORTED_MODULE_1__.Player();
   }
-  /**
-   * @param {jQuery|HTMLElement} [where]
-   * @returns {jQuery}
-   */
-
 
   addPlayer(where) {
-    let $where;
-
-    if (where === undefined) {
-      where = document.body;
-    }
-
-    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_0__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_0__(where);
-    } else {
-      $where = where;
-    }
-    /**
-     *
-     * @type {jQuery}
-     */
-
-
+    const $where = (0,_common__WEBPACK_IMPORTED_MODULE_5__.coerceJQuery)(where);
     const $playDiv = jquery__WEBPACK_IMPORTED_MODULE_0__('<div class="midiPlayer">');
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $controls = jquery__WEBPACK_IMPORTED_MODULE_0__('<div class="positionControls">');
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $playPause = jquery__WEBPACK_IMPORTED_MODULE_0__('<input type="image" alt="play" src="' + this.playPng() + '" value="play" class="playPause">');
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $stop = jquery__WEBPACK_IMPORTED_MODULE_0__('<input type="image" alt="stop" src="' + this.stopPng() + '" value="stop" class="stopButton">');
     $playPause.on('click', () => this.pausePlayStop());
     $stop.on('click', () => this.stopButton());
     $controls.append($playPause);
     $controls.append($stop);
     $playDiv.append($controls);
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $time = jquery__WEBPACK_IMPORTED_MODULE_0__('<div class="timeControls">');
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $timePlayed = jquery__WEBPACK_IMPORTED_MODULE_0__('<span class="timePlayed">0:00</span>');
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $capsule = jquery__WEBPACK_IMPORTED_MODULE_0__('<span class="capsule"><span class="cursor"></span></span>');
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $timeRemaining = jquery__WEBPACK_IMPORTED_MODULE_0__('<span class="timeRemaining">-0:00</span>');
     $time.append($timePlayed);
     $time.append($capsule);
@@ -12539,29 +12238,14 @@ class MidiPlayer {
   stopButton() {
     this.pausePlayStop('yes');
   }
-  /**
-   *
-   * @returns {string}
-   */
-
 
   playPng() {
     return _common__WEBPACK_IMPORTED_MODULE_5__.urls.midiPlayer + '/play.png';
   }
-  /**
-   *
-   * @returns {string}
-   */
-
 
   pausePng() {
     return _common__WEBPACK_IMPORTED_MODULE_5__.urls.midiPlayer + '/pause.png';
   }
-  /**
-   *
-   * @returns {string}
-   */
-
 
   stopPng() {
     return _common__WEBPACK_IMPORTED_MODULE_5__.urls.midiPlayer + '/stop.png';
@@ -12698,8 +12382,6 @@ class MidiPlayer {
  * but I hope to change that for sendOutChord also.
  *
  * "general" is usually the callback list to play around with.
- *
- * @memberof music21.miditools
  */
 
 const callbacks = {
@@ -12767,10 +12449,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-/**
- * @namespace music21.musicxml.m21ToXml
- */
 
 
 
@@ -13040,10 +12718,6 @@ class GeneralObjectExporter {
 
 }
 const _musicxmlVersion = '3.0';
-/**
- * @memberOf music21.musicxml.m21ToXml
- */
-
 class XMLExporterBase {
   constructor() {
     this.doc = document.implementation.createDocument('', '', null);
@@ -13205,10 +12879,6 @@ class XMLExporterBase {
   }
 
 }
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
-
 class ScoreExporter extends XMLExporterBase {
   constructor(score) {
     super();
@@ -13334,10 +13004,6 @@ class ScoreExporter extends XMLExporterBase {
   }
 
 }
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
-
 class PartExporter extends XMLExporterBase {
   constructor(partObj, {
     parent = undefined
@@ -13404,10 +13070,6 @@ const _classesToMeasureMethods = [['Note', 'noteToXml'], // NoChord
 const _wrapAttributeMethodClasses = [['Clef', 'clefToXml'], ['KeySignature', 'keySignatureToXml'], ['TimeSignature', 'timeSignatureToXml']];
 const _ignoreOnParseClasses = ['LayoutBase', 'Barline'];
 const divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
-
-/**
- * @extends music21.musicxml.m21ToXml.XMLExporterBase
- */
 
 class MeasureExporter extends XMLExporterBase {
   constructor(measureObj, {
@@ -13545,10 +13207,6 @@ class MeasureExporter extends XMLExporterBase {
 
   /**
    *
-   * @param {music21.note.GeneralNote} n
-   * @param noteIndexInChord
-   * @param chordParent
-   * @returns {Node}
    */
 
 
@@ -13944,22 +13602,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common */ "./src/common.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../chord */ "./src/chord.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../duration */ "./src/duration.ts");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../key */ "./src/key.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../meter */ "./src/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../note */ "./src/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../pitch */ "./src/pitch.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../tie */ "./src/tie.ts");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string.js */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common */ "./src/common.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../chord */ "./src/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../duration */ "./src/duration.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../key */ "./src/key.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../meter */ "./src/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../note */ "./src/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../pitch */ "./src/pitch.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../tie */ "./src/tie.ts");
+
 
 
 
@@ -13979,7 +13640,7 @@ const DEFAULTS = {
 };
 
 function seta(m21El, xmlEl, tag, attributeName = undefined, transform = undefined) {
-  const $matchEl = jquery__WEBPACK_IMPORTED_MODULE_3__(xmlEl).children(tag);
+  const $matchEl = jquery__WEBPACK_IMPORTED_MODULE_4__(xmlEl).children(tag);
 
   if (!$matchEl) {
     return;
@@ -13996,7 +13657,7 @@ function seta(m21El, xmlEl, tag, attributeName = undefined, transform = undefine
   }
 
   if (attributeName === undefined) {
-    attributeName = (0,_common__WEBPACK_IMPORTED_MODULE_4__.hyphenToCamelCase)(tag);
+    attributeName = (0,_common__WEBPACK_IMPORTED_MODULE_5__.hyphenToCamelCase)(tag);
   }
 
   m21El[attributeName] = value;
@@ -14011,26 +13672,26 @@ class ScoreParser {
     this.partGroupList = [];
     this.parts = [];
     this.musicXmlVersion = '1.0';
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_12__.Score();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_13__.Score();
   }
 
   scoreFromUrl(url) {
     this.xmlUrl = url;
     const dataType = 'xml'; // noinspection JSUnusedLocalSymbols
 
-    return jquery__WEBPACK_IMPORTED_MODULE_3__.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc), dataType);
+    return jquery__WEBPACK_IMPORTED_MODULE_4__.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc), dataType);
   }
 
   scoreFromText(xmlText) {
     this.xmlText = xmlText; // Not sure why this is not being found in jQuery
     // noinspection JSUnresolvedFunction
 
-    const xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_3__.parseXML(xmlText);
+    const xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_4__.parseXML(xmlText);
     return this.scoreFromDOMTree(xmlDoc);
   }
 
   scoreFromDOMTree(xmlDoc) {
-    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_3__(jquery__WEBPACK_IMPORTED_MODULE_3__(xmlDoc).children('score-partwise'));
+    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_4__(jquery__WEBPACK_IMPORTED_MODULE_4__(xmlDoc).children('score-partwise'));
     this.xmlRootToScore(this.$xmlRoot, this.stream);
     return this.stream;
   }
@@ -14039,7 +13700,7 @@ class ScoreParser {
     let s = inputM21;
 
     if (inputM21 === undefined) {
-      s = new _stream__WEBPACK_IMPORTED_MODULE_12__.Score();
+      s = new _stream__WEBPACK_IMPORTED_MODULE_13__.Score();
     } // version
     // defaults
     // credit
@@ -14048,7 +13709,7 @@ class ScoreParser {
     this.parsePartList($mxScore);
 
     for (const p of $mxScore.children('part')) {
-      const $p = jquery__WEBPACK_IMPORTED_MODULE_3__(p);
+      const $p = jquery__WEBPACK_IMPORTED_MODULE_4__(p);
       const partId = $p.attr('id'); // if (partId === undefined) {
       //     partId = //something
       // }
@@ -14087,7 +13748,7 @@ class ScoreParser {
 
 
     for (const partListElement of mxPartList) {
-      const $partListElement = jquery__WEBPACK_IMPORTED_MODULE_3__(partListElement);
+      const $partListElement = jquery__WEBPACK_IMPORTED_MODULE_4__(partListElement);
       const partId = $partListElement.attr('id');
       this.mxScorePartDict[partId] = $partListElement;
     } // deal with part-groups
@@ -14095,31 +13756,19 @@ class ScoreParser {
   }
 
 }
-/**
- * @property {MeasureParser|undefined} lastMeasureParser
- * @property {music21.meter.TimeSignature|undefined} lastTimeSignature
- * @property {jQuery|undefined} $activeAttributes
- */
-
 class PartParser {
   constructor($mxPart, $mxScorePart, parent = undefined) {
     this.atSoundingPitch = true;
     this.staffReferenceList = [];
-    this.lastTimeSignature = undefined;
     this.lastMeasureWasShort = false;
     this.lastMeasureOffset = 0.0;
     this.activeTuplets = [undefined, undefined, undefined, undefined, undefined, undefined, undefined];
     this.maxStaves = 1;
     this.lastMeasureNumber = 0;
-    this.lastNumberSuffix = undefined;
     this.multiMeasureRestsToCapture = 0;
-    this.activeMultimeasureRestSpanner = undefined;
-    this.activeInstrument = undefined;
     this.firstMeasureParsed = false;
-    this.$activeAttributes = undefined;
     this.lastDivisions = DEFAULTS.divisionsPerQuarter;
     this.appendToScoreAfterParse = true;
-    this.lastMeasureParser = undefined;
     this.parent = parent;
     this.$mxPart = $mxPart;
     this.$mxScorePart = $mxScorePart; // ignore parent for now
@@ -14129,7 +13778,7 @@ class PartParser {
     } // TODO(msc): spannerBundles
 
 
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_12__.Part();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_13__.Part();
     this.lastClefs = {};
   }
 
@@ -14154,7 +13803,7 @@ class PartParser {
 
   parseMeasures() {
     for (const mxMeasure of this.$mxPart.children('measure')) {
-      const $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_3__(mxMeasure);
+      const $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_4__(mxMeasure);
       this.xmlMeasureToMeasure($mxMeasure);
     }
 
@@ -14194,7 +13843,7 @@ class PartParser {
     if (m.timeSignature !== undefined) {
       this.lastTimeSignature = m.timeSignature;
     } else if (this.lastTimeSignature === undefined) {
-      this.lastTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_9__.TimeSignature('4/4');
+      this.lastTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_10__.TimeSignature('4/4');
     }
   }
 
@@ -14207,13 +13856,6 @@ class PartParser {
 
 }
 class MeasureParser {
-  /**
-   *
-   * @param {jQuery} $mxMeasure
-   * @param {PartParser} [parent]
-   * @property {music21.note.GeneralNote|undefined} nLast
-   * @property {jQuery|undefined} $activeAttributes
-   */
   constructor($mxMeasure, parent = undefined) {
     this.$mxMeasureElements = [];
     this.divisions = undefined;
@@ -14231,7 +13873,6 @@ class MeasureParser {
     this.staffLayoutObjects = [];
     this.$mxNoteList = [];
     this.$mxLyricList = [];
-    this.nLast = undefined;
     this.chordVoice = undefined;
     this.fullMeasureRest = false;
     this.restAndNoteCount = {
@@ -14258,10 +13899,9 @@ class MeasureParser {
     };
     this.$mxMeasure = $mxMeasure;
     this.parent = parent;
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_12__.Measure();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_13__.Measure();
     this.voiceIndices = new Set();
     this.staves = 1;
-    this.$activeAttributes = undefined;
     this.attributesAreInternal = true;
 
     if (parent !== undefined) {
@@ -14279,7 +13919,7 @@ class MeasureParser {
     this.$mxMeasureElements = [];
 
     for (const c of children) {
-      const $c = jquery__WEBPACK_IMPORTED_MODULE_3__(c);
+      const $c = jquery__WEBPACK_IMPORTED_MODULE_4__(c);
       this.$mxMeasureElements.push($c);
     }
 
@@ -14377,7 +14017,7 @@ class MeasureParser {
       notes.push(this.xmlToSimpleNote($mxNote, freeSpanners));
     }
 
-    const c = new _chord__WEBPACK_IMPORTED_MODULE_5__.Chord(notes); // move beams from first note;
+    const c = new _chord__WEBPACK_IMPORTED_MODULE_6__.Chord(notes); // move beams from first note;
     // move articulations;
     // move expressions;
     // move spanners;
@@ -14386,7 +14026,7 @@ class MeasureParser {
   }
 
   xmlToSimpleNote($mxNote, freeSpanners = true) {
-    const n = new _note__WEBPACK_IMPORTED_MODULE_10__.Note();
+    const n = new _note__WEBPACK_IMPORTED_MODULE_11__.Note();
     this.xmlToPitch($mxNote, n.pitch); // beams;
     // stems;
     // noteheads
@@ -14401,7 +14041,7 @@ class MeasureParser {
     let p = inputM21;
 
     if (inputM21 === undefined) {
-      p = new _pitch__WEBPACK_IMPORTED_MODULE_11__.Pitch();
+      p = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Pitch();
     }
 
     let $mxPitch;
@@ -14409,7 +14049,7 @@ class MeasureParser {
     if ($mxNote[0].tagName === 'pitch') {
       $mxPitch = $mxNote;
     } else {
-      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_3__($mxNote.children('pitch')[0]);
+      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_4__($mxNote.children('pitch')[0]);
 
       if ($mxPitch.length === 0) {
         // whoops!
@@ -14433,7 +14073,7 @@ class MeasureParser {
       p.accidental = accObj;
       p.accidental.displayStatus = true; // independent accidental from alter
     } else if (accAlter !== undefined && !Number.isNaN(Number(accAlter))) {
-      p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_11__.Accidental(accAlter);
+      p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Accidental(accAlter);
       p.accidental.displayStatus = false;
     }
 
@@ -14441,9 +14081,9 @@ class MeasureParser {
   }
 
   xmlToAccidental($mxAccidental) {
-    const acc = new _pitch__WEBPACK_IMPORTED_MODULE_11__.Accidental(0); // to-do m21/musicxml accidental name differences;
+    const acc = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Accidental(0); // to-do m21/musicxml accidental name differences;
 
-    let name = jquery__WEBPACK_IMPORTED_MODULE_3__($mxAccidental[0]).text().trim().toLowerCase();
+    let name = jquery__WEBPACK_IMPORTED_MODULE_4__($mxAccidental[0]).text().trim().toLowerCase();
 
     if (name === 'flat-flat') {
       name = 'double-flat';
@@ -14458,7 +14098,7 @@ class MeasureParser {
   }
 
   xmlToRest($mxRest) {
-    const r = new _note__WEBPACK_IMPORTED_MODULE_10__.Rest(); // full measure rest
+    const r = new _note__WEBPACK_IMPORTED_MODULE_11__.Rest(); // full measure rest
     // apply multi-measure rest
     // display-step, octave, etc.
 
@@ -14491,7 +14131,7 @@ class MeasureParser {
     let d = inputM21;
 
     if (inputM21 === undefined) {
-      d = new _duration__WEBPACK_IMPORTED_MODULE_7__.Duration();
+      d = new _duration__WEBPACK_IMPORTED_MODULE_8__.Duration();
     }
 
     const divisions = this.divisions;
@@ -14499,7 +14139,7 @@ class MeasureParser {
     let qLen = 0.0;
 
     if (mxDuration) {
-      const noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_3__(mxDuration).text().trim());
+      const noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_4__(mxDuration).text().trim());
       qLen = noteDivisions / divisions;
     }
 
@@ -14507,7 +14147,7 @@ class MeasureParser {
 
     if (mxType) {
       // long vs longa todo
-      const durationType = jquery__WEBPACK_IMPORTED_MODULE_3__(mxType).text().trim();
+      const durationType = jquery__WEBPACK_IMPORTED_MODULE_4__(mxType).text().trim();
       const numDots = $mxNote.children('dot').length; // tuplets!!!! big to-do!
 
       d.type = durationType;
@@ -14529,21 +14169,15 @@ class MeasureParser {
   // xmlToTremolo
   // xmlOneSpanner
 
-  /**
-   *
-   * @param {jQuery} $mxNote
-   * @returns {music21.tie.Tie}
-   */
-
 
   xmlToTie($mxNote) {
-    const t = new _tie__WEBPACK_IMPORTED_MODULE_13__.Tie();
+    const t = new _tie__WEBPACK_IMPORTED_MODULE_14__.Tie();
     const allTies = $mxNote.children('tie');
 
     if (allTies.length > 1) {
       t.type = 'continue';
     } else {
-      const $t0 = jquery__WEBPACK_IMPORTED_MODULE_3__(allTies[0]);
+      const $t0 = jquery__WEBPACK_IMPORTED_MODULE_4__(allTies[0]);
       t.type = $t0.attr('type');
     } // style
 
@@ -14556,7 +14190,7 @@ class MeasureParser {
     let currentLyricNumber = 1;
 
     for (const mxLyric of lyricList) {
-      const lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_3__(mxLyric));
+      const lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_4__(mxLyric));
 
       if (lyricObj === undefined) {
         continue;
@@ -14570,19 +14204,12 @@ class MeasureParser {
       currentLyricNumber += 1;
     }
   }
-  /**
-   *
-   * @param {jQuery} $mxLyric
-   * @param {music21.note.Lyric} [inputM21]
-   * @returns {*|music21.note.Lyric|undefined}
-   */
 
-
-  xmlToLyric($mxLyric, inputM21 = undefined) {
+  xmlToLyric($mxLyric, inputM21) {
     let l = inputM21;
 
     if (inputM21 === undefined) {
-      l = new _note__WEBPACK_IMPORTED_MODULE_10__.Lyric('');
+      l = new _note__WEBPACK_IMPORTED_MODULE_11__.Lyric('');
     }
 
     try {
@@ -14591,20 +14218,20 @@ class MeasureParser {
       return undefined; // sometimes there are empty lyrics.
     }
 
-    let number = $mxLyric.attr('number');
+    const number = $mxLyric.attr('number');
 
     try {
-      number = parseInt(number);
-      l.number = number;
+      const num = parseInt(number);
+      l.number = num;
     } catch (exc) {
       l.number = 0;
 
       if (number !== undefined) {
-        l.identifier = number;
+        l.identifier = number.toString();
       }
     }
 
-    const identifier = $mxLyric.get('name');
+    const identifier = $mxLyric.attr('name');
 
     if (identifier !== undefined) {
       l.identifier = identifier;
@@ -14653,7 +14280,7 @@ class MeasureParser {
 
     for (const mxSub of $mxAttributes.children()) {
       const tag = mxSub.tagName;
-      const $mxSub = jquery__WEBPACK_IMPORTED_MODULE_3__(mxSub);
+      const $mxSub = jquery__WEBPACK_IMPORTED_MODULE_4__(mxSub);
       const methName = this.attributeTagsToMethods[tag];
 
       if (methName !== undefined) {
@@ -14681,9 +14308,9 @@ class MeasureParser {
   xmlToTimeSignature($mxTime) {
     // senza-misura
     // simple time signature only;
-    const numerator = jquery__WEBPACK_IMPORTED_MODULE_3__($mxTime.children('beats')[0]).text().trim();
-    const denominator = jquery__WEBPACK_IMPORTED_MODULE_3__($mxTime.children('beat-type')[0]).text().trim();
-    return new _meter__WEBPACK_IMPORTED_MODULE_9__.TimeSignature(numerator + '/' + denominator); // symbol
+    const numerator = jquery__WEBPACK_IMPORTED_MODULE_4__($mxTime.children('beats')[0]).text().trim();
+    const denominator = jquery__WEBPACK_IMPORTED_MODULE_4__($mxTime.children('beat-type')[0]).text().trim();
+    return new _meter__WEBPACK_IMPORTED_MODULE_10__.TimeSignature(numerator + '/' + denominator); // symbol
   }
 
   handleClef($mxClef) {
@@ -14696,17 +14323,17 @@ class MeasureParser {
   }
 
   xmlToClef($mxClef) {
-    const sign = jquery__WEBPACK_IMPORTED_MODULE_3__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
+    const sign = jquery__WEBPACK_IMPORTED_MODULE_4__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
 
-    const line = jquery__WEBPACK_IMPORTED_MODULE_3__($mxClef.children('line')[0]).text().trim();
+    const line = jquery__WEBPACK_IMPORTED_MODULE_4__($mxClef.children('line')[0]).text().trim();
     let clefOctaveChange = 0;
     const $coc = $mxClef.children('clef-octave-change');
 
     if ($coc.length > 0) {
-      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_3__($coc[0]).text().trim());
+      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_4__($coc[0]).text().trim());
     }
 
-    return _clef__WEBPACK_IMPORTED_MODULE_6__.clefFromString(sign + line, clefOctaveChange);
+    return _clef__WEBPACK_IMPORTED_MODULE_7__.clefFromString(sign + line, clefOctaveChange);
   }
 
   handleKeySignature($mxKey) {
@@ -14715,7 +14342,7 @@ class MeasureParser {
   }
 
   xmlToKeySignature($mxKey) {
-    const ks = new _key__WEBPACK_IMPORTED_MODULE_8__.KeySignature();
+    const ks = new _key__WEBPACK_IMPORTED_MODULE_9__.KeySignature();
     seta(ks, $mxKey, 'fifths', 'sharps', parseInt); // mode!
     // non-standard and key-octaves
 
@@ -14777,18 +14404,10 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * Module for note classes. See the namespace {@link music21.note}
+ * Module for note classes. See the namespace music21.note
  *
- * @requires music21/prebase
- * @requires music21/base
- * @requires music21/pitch
- * @requires music21/beam
- * @exports music21/note
  * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
  *
- * @namespace music21.note
- * @memberof music21
- * @property {string[]} noteheadTypeNames - an Array of allowable notehead names.
  * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
 
@@ -14806,8 +14425,6 @@ const stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', '
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
  *
- * @class Lyric
- * @memberOf music21.note
  * @param {string} text - the text of the lyric
  * @param {number} number=1 - the lyric number
  * @param {string} syllabic=undefined - placement of the syllable
@@ -14931,18 +14548,9 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
 /**
  * Superclass for all Note values
  *
- * @class GeneralNote
- * @memberof music21.note
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
- * @property {Vex.Flow.StaveNote} [activeVexflowNote] - most recent
- *     Vex.Flow.StaveNote object to be made from this note (could change);
- *     default: undefined
- * @property {Array<music21.expressions.Expression>} expressions - array
- *     of attached expressions
- * @property {Array<music21.articulations.Articulation>} articulations - array
- *     of attached articulations
  * @property {string} lyric - the text of the first
  *     {@link Lyric} object; can also set one.
  * @property {Array<Lyric>} lyrics - array of attached lyrics
@@ -14950,7 +14558,6 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
  *     articulations
  * @property {number} midiVolume - how loud is this note, taking into
  *     account articulations
- * @property {music21.tie.Tie|undefined} [tie=undefined] - a tie object
  */
 
 class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
@@ -15017,7 +14624,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
    *
    * @param {string} text - text to be added
    * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
-   * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for cluses about syllable placement.
+   * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for clues about syllable placement.
    * @param {string} [lyricIdentifier] - an optional identifier
    */
 
@@ -15047,10 +14654,18 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
     }
   }
   /**
+   * For subclassing.  Do not use this...
+   */
+
+
+  vexflowNote(options) {
+    return new (vexflow__WEBPACK_IMPORTED_MODULE_3___default().Flow.StaveNote)({
+      keys: [],
+      duration: this.duration.vexflowDuration + 'r'
+    });
+  }
+  /**
    * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
-   *
-   * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
-   * @returns {this}
    */
 
 
@@ -15059,13 +14674,12 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
   }
 
   getStemDirectionFromClef(clef) {
-    return undefined;
+    return '';
   }
   /**
    * Sets the vexflow accidentals (if any) and the dots
    *
-   * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
-   * @param {Object} options -- a set of Vex Flow options
+   * options -- a set of Vex Flow options
    */
 
 
@@ -15103,7 +14717,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
    * @param {base.Music21Object} [nextElement] - for determining
    *     the length to play in case of tied notes, etc.
    * @param {Object} [options] - other options (currently just
-   *     `{instrument: {@link music21.instrument.Instrument} }`)
+   *     `{instrument: music21.instrument.Instrument}` and channel[unused])
    * @returns {number} - delay time in milliseconds until the next element (may be ignored)
    */
 
@@ -15122,15 +14736,6 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
 }
 /**
  * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
- *
- * @param {number} [ql=1.0] - length in quarter notes
- * @property {music21.beam.Beams} beams - a link to a beam object
- * @property {string} [notehead='normal'] - notehead type
- * @property {string} [noteheadFill='default'] - notehead fill (to be moved to style...)
- * @property {string|undefined} [noteheadColor=undefined] - notehead color
- * @property {boolean} [noteheadParenthesis=false] - put a parenthesis around the notehead?
- * @property {string|undefined} [stemDirection=undefined] - One of
- *     ['up','down','noStem', undefined] -- 'double' not supported
  */
 
 class NotRest extends GeneralNote {
@@ -15139,10 +14744,13 @@ class NotRest extends GeneralNote {
 
     this.notehead = 'normal'; // noinspection JSUnusedGlobalSymbols
 
-    this.noteheadFill = 'default';
+    this.noteheadFill = 'default'; // TODO(msc) -- move to style
+
     this.noteheadColor = 'black';
     this.noteheadParenthesis = false;
     this.volume = 64; // not a real object yet.
+    // ['up','down','noStem', 'unspecified']
+    // double not supported.
 
     this._stemDirection = 'unspecified';
     this.beams = new _beam__WEBPACK_IMPORTED_MODULE_8__.Beams();
@@ -15180,9 +14788,8 @@ class NotRest extends GeneralNote {
   /**
    * Returns a `Vex.Flow.StaveNote` that approximates this note.
    *
-   * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+   * @param {Object} [options={}] - `{clef: music21.clef.Clef}`
    * clef to set the stem direction of.
-   * @returns {Vex.Flow.StaveNote}
    */
 
 
@@ -15258,8 +14865,8 @@ class NotRest extends GeneralNote {
 /* ------- Note ----------- */
 
 /**
- * A very, very important class! music21.note.Note objects combine a {@link music21.pitch.Pitch}
- * object to describe pitch (highness/lowness) with a {@link music21.duration.Duration} object
+ * A very, very important class! music21.note.Note objects combine a music21.pitch.Pitch
+ * object to describe pitch (highness/lowness) with a music21.duration.Duration object
  * that defines length, with additional features for drawing the Note, playing it back, etc.
  *
  * Together with {@link Stream} one of the two most important
@@ -15271,24 +14878,12 @@ class NotRest extends GeneralNote {
  * things you can do with a `Note` object.
  *
  * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
- *
- * @class Note
- * @memberof music21.note
  */
 
 class Note extends NotRest {
   /**
    *
-   * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch
-   *     name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
-   * @param {(number|undefined)} [ql=1.0] - length in quarter notes
-   * @property {boolean} [isNote=true] - is it a Note? Yes!
-   * @property {boolean} [isRest=false] - is it a Rest? No!
-   * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
-   * @property {string} name - shortcut to `.pitch.name`
-   * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`
-   * @property {string} step - shortcut to `.pitch.step`
-   * @property {number} octave - shortcut to `.pitch.octave`
+   * nn -- pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
    */
   constructor(nn = 'C4', ql = 1.0) {
     super(ql); // noinspection JSUnusedGlobalSymbols
@@ -15359,8 +14954,8 @@ class Note extends NotRest {
   /**
    * Change stem direction according to clef.
    *
-   * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
-   * @returns {this} Original object, for chaining methods
+   * clef to set the stem direction of.
+   * returns original object, for chaining methods
    */
 
 
@@ -15377,10 +14972,6 @@ class Note extends NotRest {
 
 
   getStemDirectionFromClef(clef) {
-    if (clef === undefined) {
-      return undefined;
-    }
-
     const midLine = clef.lowestLine + 4;
     const dnnFromCenter = this.pitch.diatonicNoteNum - midLine; // console.log(dnnFromCenter, this.pitch.nameWithOctave);
 
@@ -15482,8 +15073,6 @@ class Note extends NotRest {
 /**
  * Represents a musical rest.
  *
- * @class Rest
- * @memberof music21.note
  * @param {number} [ql=1.0] - length in number of quarterNotes
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
@@ -15524,7 +15113,6 @@ class Rest extends GeneralNote {
    * Corrects for bug in VexFlow that renders a whole rest too low.
    *
    * @param {Object} options -- vexflow options
-   * @returns {Vex.Flow.StaveNote}
    */
 
 
@@ -15794,20 +15382,12 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * pitch module.  See {@link music21.pitch} namespace
  * Pitch related objects and methods
- *
- * @exports music21/pitch
- * @namespace music21.pitch
- * @memberof music21
- * @requires music21/prebase
  */
 
 
 
 /**
- * @class Accidental
- * @memberof music21.pitch
  * @param {string|number} accName - an accidental name
  * @property {number} alter
  * @property {string} displayType
@@ -16030,9 +15610,9 @@ const stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 const midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B'];
 /**
- * Pitch objects are found in {@link music21.note.Note} objects, and many other places.
+ * Pitch objects are found in music21.note.Note objects, and many other places.
  *
- * They do not have a {@link music21.duration.Duration} associated with them, so they
+ * They do not have a music21.duration.Duration associated with them, so they
  * cannot be placed inside music21.stream.Stream objects.
  *
  * Valid pitch name formats are
@@ -16045,8 +15625,6 @@ const midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 
  *     adjust according to context. If you do not like this behavior, give an octave always.
  * - Microtones are not supported in music21j (they are in music21p)
  *
- * @class Pitch
- * @memberof music21.pitch
  * @param {string|number} pn - name of the pitch, with or without octave, see above.
  * @property {Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch,
@@ -16746,12 +16324,11 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
    *
    * if clefObj is undefined, then the clef is treated as TrebleClef.
    *
-   * @param {music21.clef.Clef} [clefObj] - the active {@link music21.clef.Clef} object
-   * @returns {string} - representation in vexflow
+   * [clefObj] - the active music21.clef.Clef object
    */
 
 
-  vexflowName(clefObj = undefined) {
+  vexflowName(clefObj) {
     // returns a vexflow Key name for this pitch.
     let tempPitch = this;
 
@@ -16801,24 +16378,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * module for things that all music21-created objects, not just objects that can live in
- * Stream.elements should inherit. See the {@link music21.prebase} namespace.
+ * Stream.elements should inherit.
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  *
- * @exports music21/prebase
- * @namespace music21.prebase
- * @memberof music21
  */
 
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
  * everything in music21 should inherit from are given below.
  *
- * @class ProtoM21Object
- * @memberof music21.prebase
  * @property {Array<string>} classes - An Array of strings of classes
  * that the object belongs to (default ['ProtoM21Object'])
  * @property {boolean} isProtoM21Object - Does this object descend
- * from {@link music21.prebase.ProtoM21Object}: obviously true.
+ * from music21.prebase.ProtoM21Object: obviously true.
  * @property {boolean} isMusic21Object - Does this object descend
  * from Music21Object; default false.
  */
@@ -17062,20 +16634,14 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * renderOptions module, see {@link music21.renderOptions}
  * Options for rendering a stream
  *
- * @exports music21/renderOptions
- * @namespace music21.renderOptions
- * @memberof music21
  */
 
 /**
  * An object that contains information on rendering the current stream
  *
  * Found on every Stream as `.renderOptions`
- *
- * @memberof music21.renderOptions
  */
 class RenderOptions {
   constructor() {
@@ -17191,7 +16757,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
 /* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./key */ "./src/key.ts");
 /* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
 
 
 
@@ -17210,18 +16775,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Roman numeral module. See  namespace
  * music21.roman -- namespace for dealing with RomanNumeral analysis.
- *
- * @exports music21/roman
- * @memberof music21
- * @requires music21/chord
- * @requires music21/common
- * @requires music21/figuredBass
- * @requires music21/harmony
- * @requires music21/key
- * @requires music21/pitch
- * @requires music21/interval
  */
-
 
 
 
@@ -17304,7 +16858,6 @@ const functionalityScores = {
  *
  * N.B. this is NOT where abbreviations get expanded
  *
- * @memberof music21.roman
  * @param  {string} shorthand string of a figure w/o roman to parse
  * @return {Array<string>}           array of shorthands
  */
@@ -17347,7 +16900,6 @@ function expandShortHand(shorthand) {
  * correctSuffixForChordQuality - Correct a given inversionString suffix given a
  *     chord of various qualities.
  *
- * @memberof music21.roman
  * @param  {chord.Chord} chordObj
  * @param  {string} inversionString a string like '6' to fix.
  * @return {string}           corrected inversionString
@@ -17385,7 +16937,6 @@ function correctSuffixForChordQuality(chordObj, inversionString) {
 /**
  * maps an index number to a roman numeral in lowercase
  *
- * @memberof music21.roman
  * @example
  * music21.roman.romanToNumber[4]
  * // 'iv'
@@ -17396,13 +16947,11 @@ const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * Represents a RomanNumeral.  By default, capital Roman Numerals are
  * major chords; lowercase are minor.
  *
- * @class RomanNumeral
- * @memberof music21.roman
- * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
- * @param {string|music21.key.Key} [keyStr='C']
- * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale
+ * figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
+ * [keyStr='C']
+ * @property scale - (readonly) returns the scale
  *     associated with the roman numeral
- * @property {music21.key.Key} key - the key associated with the
+ * @property key - the key associated with the
  *     RomanNumeral (not allowed to be undefined yet)
  * @property {string} figure - the figure as passed in
  * @property {string} degreeName - the name associated with the scale degree,
@@ -17410,16 +16959,8 @@ const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  *     "subtonic" appropriately
  * @property {int} scaleDegree
  * @property {string|undefined} impliedQuality - "major", "minor", "diminished", "augmented"
- * @property {music21.roman.RomanNumeral|undefined} secondaryRomanNumeral
- * @property {music21.key.Key|undefined} secondaryRomanNumeralKey
  * @property {string|undefined} frontAlterationString
- * @property {music21.interval.Interval|undefined} frontAlterationTransposeInterval
- * @property {music21.pitch.Accidental|undefined} frontAlterationAccidental
  * @property {string|undefined} romanNumeralAlone
- * @property {scale.Scale|boolean|undefined} impliedScale
- * @property {music21.interval.Interval|undefined} scaleOffset
- * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals
- *     are Chord objects, so .pitches will work for them also.
  */
 
 class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_12__.Harmony {
@@ -17505,6 +17046,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_12__.Harmony {
     [workingFigure, useScale] = this._correctForSecondaryRomanNumeral(useScale);
 
     if (workingFigure === 'Cad64') {
+      // useScale might be a Scale, not Key. TODO: NO!
       if (useScale.mode === 'minor') {
         workingFigure = 'i64';
       } else {
@@ -17730,10 +17272,10 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_12__.Harmony {
 
     if (keyOrScale === undefined) {
       this.useImpliedScale = true;
-      this.impliedScale = new _scale__WEBPACK_IMPORTED_MODULE_16__.MajorScale('C');
+      this.impliedScale = new _key__WEBPACK_IMPORTED_MODULE_14__.Key('C');
     } else {
       this.useImpliedScale = false;
-      this.impliedScale = false;
+      this.impliedScale = undefined;
     }
 
     if (this._parsingComplete) {
@@ -18157,11 +17699,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * Scale module. See {@link music21.scale} namespace
- * @module music21/scale
- */
-
-/**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/scale -- Scales
  *
@@ -18169,17 +17706,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- *
- *
- * Scale namespace.  Right now only supports very simple scales.
- *
- * @namespace music21.scale
- * @requires music21.base
- * @requires music21.common
- * @requires music21.debug
- * @requires music21.interval
- * @requires music21.pitch
  */
 
 
@@ -18189,6 +17715,10 @@ __webpack_require__.r(__webpack_exports__);
  // const DIRECTION_BI = 'bi';
 // const DIRECTION_DESCENDING = 'descending';
 // const DIRECTION_ASCENDING = 'ascending';
+
+/**
+ * A generalized Scale object.
+ */
 
 class Scale extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
   constructor() {
@@ -18221,6 +17751,10 @@ class Scale extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
   }
 
 }
+/**
+ * An Abstract Scale
+ */
+
 class AbstractScale extends Scale {
   constructor() {
     super();
@@ -18372,11 +17906,6 @@ class AbstractScale extends Scale {
   }
 
 }
-/**
- * @memberOf music21.scale
- *
- */
-
 class AbstractDiatonicScale extends AbstractScale {
   /**
    *
@@ -18424,11 +17953,6 @@ class AbstractDiatonicScale extends AbstractScale {
   }
 
 }
-/**
- * @memberOf music21.scale
- *
- */
-
 class AbstractHarmonicMinorScale extends AbstractScale {
   static get className() {
     return 'music21.scale.AbstractHarmonicMinorScale';
@@ -18453,10 +17977,6 @@ class AbstractHarmonicMinorScale extends AbstractScale {
 } // temporary, until bidirectional scales are created
 // no need for descending, since minor takes care of that.
 
-/**
- * @memberOf music21.scale
- */
-
 class AbstractAscendingMelodicMinorScale extends AbstractScale {
   static get className() {
     return 'music21.scale.AbstractAscendingMelodicMinorScale';
@@ -18479,10 +17999,6 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
   }
 
 }
-/**
- * @memberOf music21.scale
- */
-
 class ConcreteScale extends Scale {
   constructor(tonic) {
     super();
@@ -18542,10 +18058,6 @@ class ConcreteScale extends Scale {
   }
 
 }
-/**
- * @memberOf music21.scale
- */
-
 class DiatonicScale extends ConcreteScale {
   static get className() {
     return 'music21.scale.DiatonicScale';
@@ -18559,10 +18071,6 @@ class DiatonicScale extends ConcreteScale {
   }
 
 }
-/**
- * @memberOf music21.scale
- */
-
 class MajorScale extends DiatonicScale {
   static get className() {
     return 'music21.scale.MajorScale';
@@ -18576,10 +18084,6 @@ class MajorScale extends DiatonicScale {
   }
 
 }
-/**
- * @memberOf music21.scale
- */
-
 class MinorScale extends DiatonicScale {
   static get className() {
     return 'music21.scale.MinorScale';
@@ -18593,10 +18097,6 @@ class MinorScale extends DiatonicScale {
   }
 
 }
-/**
- * @memberOf music21.scale
- */
-
 class HarmonicMinorScale extends ConcreteScale {
   static get className() {
     return 'music21.scale.HarmonicMinorScale';
@@ -18610,10 +18110,6 @@ class HarmonicMinorScale extends ConcreteScale {
   }
 
 }
-/**
- * @memberOf music21.scale
- */
-
 class AscendingMelodicMinorScale extends ConcreteScale {
   static get className() {
     return 'music21.scale.AscendingMelodicMinorScale';
@@ -18628,14 +18124,7 @@ class AscendingMelodicMinorScale extends ConcreteScale {
 
 }
 /**
- * Function, not class
- *
- * @memberOf music21.scale
- * @function music21.scale.SimpleDiatonicScale
- * @param {pitch.Pitch} [tonic]
- * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
- *     generally 'M' (major) or 'm' (minor) describing the seconds.
- * @returns {Array<pitch.Pitch>} an octave of scale objects.
+ * Function, not class.  DEPRECATED: to be removed.
  */
 
 function SimpleDiatonicScale(tonic, scaleSteps) {
@@ -18669,12 +18158,8 @@ function SimpleDiatonicScale(tonic, scaleSteps) {
   return pitches;
 }
 /**
+ * Function, not class.  DEPRECATED: to be removed.
  * One octave of a major scale
- *
- * @memberOf music21.scale
- * @function music21.scale.ScaleSimpleMajor
- * @param {pitch.Pitch} tonic
- * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function ScaleSimpleMajor(tonic) {
@@ -18682,15 +18167,11 @@ function ScaleSimpleMajor(tonic) {
   return SimpleDiatonicScale(tonic, scaleSteps);
 }
 /**
+ * Function, not class.  DEPRECATED: to be removed.
  * One octave of a minor scale
- *
- * @memberOf music21.scale
- * @function music21.scale.ScaleSimpleMinor
- * @param {pitch.Pitch} tonic
- * @param {string} [minorType='natural'] - 'harmonic', 'harmonic-minor',
+ * [minorType='natural'] - 'harmonic', 'harmonic-minor',
  *     'melodic', 'melodic-minor', 'melodic-minor-ascending',
  *     'melodic-ascending' or other (=natural/melodic-descending)
- * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function ScaleSimpleMinor(tonic, minorType) {
@@ -18747,14 +18228,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
+ * Objects for keeping track of relationships among Music21Objects.
  *
- * Copyright 2017-2019, Michael Scott Asato Cuthbert
+ * Copyright (c) 2017-2021, Michael Scott Asato Cuthbert
  * License: BSD
- *
- * @namespace music21.sites
- * @memberof music21
- * @requires music21/common
  */
 
 
@@ -18791,12 +18268,6 @@ _NoneSiteRef.siteIndex = -2;
 const _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_5__.SingletonCounter();
 
 const GLOBAL_SITE_STATE_DICT = new WeakMap();
-/**
- * @memberOf music21.sites
- * @param {*} obj
- * @returns {number|string}
- */
-
 function getId(obj) {
   if (!GLOBAL_SITE_STATE_DICT.has(obj)) {
     const newId = _singletonCounter.call();
@@ -18806,10 +18277,6 @@ function getId(obj) {
 
   return GLOBAL_SITE_STATE_DICT.get(obj);
 }
-/**
- * @memberOf music21.sites
- */
-
 class Sites {
   constructor() {
     this._siteIndex = 0;
@@ -19129,27 +18596,14 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * powerful stream module, See {@link music21.stream} namespace
- * @exports music21/stream
+ * powerful stream module, See music21.stream namespace
  *
  * Streams are powerful music21 objects that hold Music21Object collections,
- * such as {@link music21.note.Note} or music21.chord.Chord objects.
+ * such as music21.note.Note or music21.chord.Chord objects.
  *
  * Understanding the {@link Stream} object is of fundamental
  * importance for using music21.  Definitely read the music21(python) tutorial
  * on using Streams before proceeding
- *
- * @namespace music21.stream
- * @memberof music21
- * @requires music21/base
- * @requires music21/renderOptions
- * @requires music21/clef
- * @requires music21/vfShow
- * @requires music21/duration
- * @requires music21/common
- * @requires music21/meter
- * @requires music21/pitch
- * @requires jQuery
  *
  */
 
@@ -19192,31 +18646,21 @@ function _exportMusicXMLAsText(s) {
  * @property {number} length - (readonly) the number of elements in the stream.
  * @property {Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
- * @property {music21.clef.Clef} clef - the clef for the Stream (if there is
- *     one; if there are multiple, then the first clef)
- * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
- * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
  * @property {renderOptions.RenderOptions} renderOptions - an object
  *     specifying how to render the stream
  * @property {Stream} flat - (readonly) a flattened representation of the Stream
  * @property {StreamIterator} notes - (readonly) the stream with
- *     only {@link music21.note.Note} and music21.chord.Chord objects included
+ *     only note.NotRest (music21.note.Note and music21.chord.Chord) objects included
  * @property {StreamIterator} notesAndRests - (readonly) like notes but
- *     also with {@link music21.note.Rest} objects included
+ *     also with music21.note.Rest objects included
  * @property {StreamIterator} parts - (readonly) a filter on the Stream
  *     to just get the parts (NON-recursive)
  * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
  * @property {number} tempo - tempo in beats per minute (will become more
  *     sophisticated later, but for now the whole stream has one tempo
- * @property {music21.instrument.Instrument|undefined} instrument - an
- *     instrument object associated with the stream (can be set with a
- *     string also, but will return an `Instrument` object)
  * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
- * @property {Vex.Flow.Stave|undefined} activeVFStave - the current Stave object for the Stream
- * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current
- *     vfShow.Renderer object for the Stream
  * @property {int} [staffLines=5] - number of staff lines
  * @property {function|undefined} changedCallbackFunction - function to
  *     call when the Stream changes through a standard interface
@@ -19250,7 +18694,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
     // TODO(msc): _mutable -- experimental
     // music21j specific attributes NOT to remove:
 
+    /**
+     * the current Stave object for the Stream
+     */
+
     this.activeVFStave = undefined;
+    /**
+     * the current vfShow.Renderer object for the Stream
+     */
+
     this.activeVFRenderer = undefined;
     this.changedCallbackFunction = undefined; // for editable svg objects
     // music21j specific attributes eventually to remove:
@@ -19560,7 +19012,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
     }, 0);
   }
   /**
-   * Note that .instrument will never return a string, but Typescript requires
+   * The instrument object (NOT stored in the stream!) -- this is a difference from
+   * music21p and expect this to change soon.
+   *
+   * Note that .instrument will never return a string, but Typescript <= 4 requires
    * that getter and setter are the same.
    */
 
@@ -19905,10 +19360,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
 
     if (classFilter !== undefined) {
       ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_27__.ClassFilter(classFilter));
-    }
-
-    if (streamsOnly) {
-      return ri;
     }
 
     return ri;
@@ -21006,30 +20457,19 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
     return _exportMusicXMLAsText(this);
   }
   /**
-   * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
+   * Uses music21.vfShow.Renderer to render Vexflow onto an
    * existing canvas or SVG object.
    *
    * Runs `this.setRenderInteraction` on the canvas.
    *
    * Will be moved to vfShow eventually when converter objects are enabled...maybe.
    *
-   * @param {jQuery|HTMLElement} $canvasOrSVG - a canvas or the div surrounding an SVG object
-   * @returns {music21.vfShow.Renderer}
+   * Takes in a canvas or the div surrounding an SVG object
    */
 
 
-  renderVexflow($canvasOrSVG) {
-    /**
-     * @type {HTMLElement|undefined}
-     */
-    let canvasOrSVG;
-
-    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_10__) {
-      canvasOrSVG = $canvasOrSVG[0];
-    } else {
-      canvasOrSVG = $canvasOrSVG;
-    }
-
+  renderVexflow(where) {
+    const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_16__.coerceHTMLElement(where);
     const DOMContains = document.body.contains(canvasOrSVG);
 
     if (!DOMContains) {
@@ -21473,22 +20913,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
 
 
   appendNewDOM(appendElement = document.body, width = undefined, height = undefined, elementType = 'svg') {
-    // noinspection JSMismatchedCollectionQueryUpdate
-    let $appendElement;
-
-    if (appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_10__) {
-      $appendElement = appendElement;
-    } else {
-      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_10__(appendElement);
-    } //      if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
-    //      var $bodyElement = bodyElement;
-    //      if (!(bodyElement instanceof $) {
-    //      $bodyElement = $(bodyElement);
-    //      }
-    //      width = $bodyElement.width();
-    //      };
-
-
+    const $appendElement = _common__WEBPACK_IMPORTED_MODULE_16__.coerceJQuery(appendElement);
     const $svgOrCanvasBlock = this.createDOM(width, height, elementType);
     $appendElement.append($svgOrCanvasBlock);
     return $svgOrCanvasBlock[0];
@@ -21507,20 +20932,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
 
 
   replaceDOM(where, preserveSvgSize = false, elementType = 'svg') {
-    // if called with no where, replaces all the svg elements on the page...
-    if (where === undefined) {
-      where = document.body;
-    }
-
-    let $where;
-
-    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_10__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_10__(where);
-    } else {
-      $where = where; // where = $where[0];
-    }
-
     let $oldSVGOrCanvas;
+    const $where = _common__WEBPACK_IMPORTED_MODULE_16__.coerceJQuery(where);
 
     if ($where.hasClass('streamHolding')) {
       $oldSVGOrCanvas = $where;
@@ -21564,23 +20977,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
    *    - 'reflow' (string; only on event.resize)
    *    - customFunction (will receive event as a first variable; should set up a way to
    *                    find the original stream; var s = this; var f = function () { s...}
-   *                   )
-   *
-   * @param {JQuery|HTMLElement} canvasOrDiv - canvas or the Div surrounding it.
-   * @returns {this}
    */
 
 
-  setRenderInteraction(canvasOrDiv) {
-    let $svg;
-
-    if (canvasOrDiv === undefined) {
-      return this;
-    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_10__)) {
-      $svg = jquery__WEBPACK_IMPORTED_MODULE_10__(canvasOrDiv);
-    } else {
-      $svg = canvasOrDiv;
-    }
+  setRenderInteraction(where) {
+    const $svg = _common__WEBPACK_IMPORTED_MODULE_16__.coerceJQuery(where);
 
     const playFunc = () => {
       this.playStream();
@@ -21589,13 +20990,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
     for (const [eventType, eventFunction] of Object.entries(this.renderOptions.events)) {
       $svg.off(eventType);
 
-      if (typeof eventFunction === 'string' && eventFunction === 'play') {
+      if (eventFunction === 'play') {
         $svg.on(eventType, playFunc);
-      } else if (typeof eventFunction === 'string' && eventType === 'resize' && eventFunction === 'reflow') {
+      } else if (eventType === 'resize' && eventFunction === 'reflow') {
         this.windowReflowStart($svg);
-      } else if (eventFunction !== undefined) {
-        const eventFunctionTyped = eventFunction;
-        $svg.on(eventType, eventFunctionTyped);
+      } else if (eventFunction instanceof Function) {
+        $svg.on(eventType, eventFunction);
       }
     }
 
@@ -21604,8 +21004,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
   /**
    *
    * Recursively search downward for the closest storedVexflowStave...
-   *
-   * @returns {Vex.Flow.Stave|undefined}
    */
 
 
@@ -21651,7 +21049,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
     let xClick;
     let yClick;
 
-    if ((e instanceof MouseEvent || e instanceof jquery__WEBPACK_IMPORTED_MODULE_10__.Event) && e.pageX !== undefined && e.pageY !== undefined) {
+    if (e.pageX !== undefined && e.pageY !== undefined) {
+      // MouseEvent or JQuery.MouseEventBase without instanceof checking.
       xClick = e.pageX;
       yClick = e.pageY;
     } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
@@ -21659,7 +21058,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
       xClick = touch1.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
       yClick = touch1.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     } else {
-      console.error("what are you? ".concat(typeof e));
+      // older MouseEvent such as IE 8 -- unknown support in Firefox
       xClick = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
       yClick = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
@@ -21805,8 +21204,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
    *
    * Return a list of [diatonicNoteNum, closestXNote]
    * for an event (e) called on the svg (svg)
-   *
-   * @returns {Array} [diatonicNoteNum, closestXNote]
    */
 
 
@@ -21822,12 +21219,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_14__.Music21Object {
   }
   /**
    * Change the pitch of a note given that it has been clicked and then
-   * call changedCallbackFunction
-   *
-   * @param {number} clickedDiatonicNoteNum
-   * @param {music21.note.Note} foundNote
-   * @param {SVGElement|HTMLElement} svg
-   * @returns {*} output of changedCallbackFunction
+   * call changedCallbackFunction and return it
    */
 
 
@@ -22086,9 +21478,6 @@ class Measure extends Stream {
 }
 /**
  * Part -- specialized to handle Measures inside it
- *
- * @class Part
- * @memberof music21.stream
  */
 
 class Part extends Stream {
@@ -22867,10 +22256,6 @@ class FilterException extends _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21
 class _StopIteration {}
 
 const StopIterationSingleton = new _StopIteration();
-/**
- * @memberof music21.stream.filters
- */
-
 class StreamFilter {
   static get derivationStr() {
     return 'streamFilter';
@@ -22944,12 +22329,15 @@ class IsNotFilter extends IsFilter {
 class ClassFilter extends StreamFilter {
   constructor(classList = []) {
     super();
+    let classListArray;
 
     if (!Array.isArray(classList)) {
-      classList = [classList];
+      classListArray = [classList];
+    } else {
+      classListArray = classList;
     }
 
-    this.classList = classList;
+    this.classList = classListArray;
   }
 
   static get derivationStr() {
@@ -23596,6 +22984,24 @@ class RecursiveIterator extends _StreamIteratorBase {
     } else {
       return lastStartOffset + lastStream.elementOffset(lastYield);
     }
+  } // TODO(msc): getElementsByOffsetInHierarchy
+  // until we can figure out how to do this in pure typescript:
+
+
+  get notes() {
+    return super.notes;
+  }
+
+  get notesAndRests() {
+    return super.notesAndRests;
+  }
+
+  get parts() {
+    return super.parts;
+  }
+
+  get voices() {
+    return super.voices;
   }
 
 }
@@ -23931,6 +23337,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/base.ts");
 /* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./main */ "./src/main.ts");
 
 
 
@@ -23944,17 +23351,10 @@ __webpack_require__.r(__webpack_exports__);
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
- * tempo module, see {@link music21.tempo}
+ * tempo module,
  *
- * @exports music21/tempo
- * @namespace music21.tempo
- * @memberof music21
- * @requires music21/duration
- * @requires music21/prebase
- * @requires music21/base
- * @requires MIDI
- * @property {number} [baseTempo=60] - basic tempo
  */
+
 
 
 
@@ -23966,11 +23366,8 @@ class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21
 /**
  * Object mapping names to tempo values
  *
- * @name music21.tempo.defaultTempoValues
- * @memberof music21.tempo
- * @example
- * music21.tempo.defaultTempoValues.grave
- * // 40
+ * x = music21.tempo.defaultTempoValues.grave
+ * // x = 40
  */
 
 const defaultTempoValues = {
@@ -24006,22 +23403,8 @@ const defaultTempoValues = {
   prestissimo: 208
 };
 const baseTempo = 60;
-/* --------- metronome ---------- */
-
 /**
- *
- * @class Metronome
- * @memberof music21.tempo
- * @extends music21.prebase.ProtoM21Object
- * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
- * @property {number} tempo
- * @property {number} [numBeatsPerMeasure=4]
- * @property {number} [minTempo=10]
- * @property {number} [maxTempo=600]
- * @property {boolean} [flash=false] - flash the tempo
- * @property {boolean} [silent=false] - play silently
- * @property {number} beat - current beat number
- * @property {number} chirpTimeout - an index of a timeout object for chirping
+ * Metronome object
  */
 
 class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
@@ -24032,16 +23415,19 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
     this.minTempo = 10;
     this.maxTempo = 600;
     this.beat = 4;
+    /**
+     * if true, counts silently
+     */
+
     this.silent = false;
+    /**
+     * should the tempo flash
+     */
+
     this.flash = false;
     this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
     this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
-
-    if (tempoInt === undefined) {
-      this.tempo = baseTempo;
-    } else {
-      this.tempo = tempoInt;
-    }
+    this.tempo = tempoInt;
   }
 
   static get className() {
@@ -24118,14 +23504,15 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
     }
   }
   /**
-   * Increase the metronome tempo one "click".
+   * Increase the metronome tempo one or more "clicks".
    *
    * Value changes depending on the current tempo.  Uses standard metronome guidelines.
    *
+   * n is the number of clicks to the right
+   *
    * To change the tempo, just set this.tempo = n
    *
-   * @param {int} [n=1 - number of clicks to the right
-   * @returns {number} new tempo
+   * returns new tempo
    */
 
 
@@ -24152,12 +23539,13 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
     return this.tempo;
   }
   /**
-   * Decrease the metronome tempo one "click"
+   * Decrease the metronome tempo one or more "clicks"
    *
    * To change the tempo, just set this.tempo = n
    *
-   * @param {int} [n=1] - number of clicks to the left
-   * @returns {number} new tempo
+   * n is the number of clicks to the left
+   *
+   * returns new tempo
    */
 
 
@@ -24185,92 +23573,43 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_7__.ProtoM21Object {
   }
   /**
    * add a Metronome interface onto the DOM at where
-   *
-   * @param {jQuery|HTMLElement} [where]
-   * @returns {jQuery} - a div holding the metronome.
+   * returns a JQuery div holding the metronome.
    */
 
 
   addDiv(where) {
-    /**
-     * @type {jQuery}
-     */
-    let $where;
-
-    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_5__) {
-      $where = where;
-    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_5__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_5__(where);
-    } else {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_5__('body');
-    }
-
+    const $where = _main__WEBPACK_IMPORTED_MODULE_11__.common.coerceJQuery(where);
     const metroThis = this;
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_5__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
     $tempoHolder.css({
       'font-size': '24px',
       'padding-left': '10px',
       'padding-right': '10px'
     });
-    /**
-     *
-     * @type {jQuery}
-     */
-
     const $newDiv = jquery__WEBPACK_IMPORTED_MODULE_5__('<div class="metronomeRendered"></div>');
     $newDiv.append($tempoHolder);
-    /**
-     *
-     * @type {jQuery}
-     */
-
-    const b1 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>start</button>');
-    b1.on('click', () => {
+    const $b1 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>start</button>');
+    $b1.on('click', () => {
       metroThis.chirp();
     });
-    /**
-     *
-     * @type {jQuery}
-     */
-
-    const b2 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>stop</button>');
-    b2.on('click', () => {
+    const $b2 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>stop</button>');
+    $b2.on('click', () => {
       metroThis.stopChirp();
     });
-    $newDiv.prepend(b2);
-    $newDiv.prepend(b1);
-    /**
-     *
-     * @type {jQuery}
-     */
-
-    const b3 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>up</button>');
-    b3.on('click', function increaseSpeedButton() {
-      metroThis.increaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_5__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+    $newDiv.prepend($b2);
+    $newDiv.prepend($b1);
+    const $b3 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>up</button>');
+    $b3.on('click', () => {
+      this.increaseSpeed();
+      $b3.prevAll('.tempoHolder').html(this.tempo.toString());
     });
-    /**
-     *
-     * @type {jQuery}
-     */
-
-    const b4 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>down</button>');
-    b4.on('click', function decreaseSpeedButton() {
-      metroThis.decreaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_5__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+    const $b4 = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>down</button>');
+    $b4.on('click', () => {
+      this.decreaseSpeed();
+      $b4.prevAll('.tempoHolder').html(this.tempo.toString());
     });
-    $newDiv.append(b3);
-    $newDiv.append(b4);
-    /**
-     *
-     * @type {jQuery}
-     */
-
+    $newDiv.append($b3);
+    $newDiv.append($b4);
     const $flash = jquery__WEBPACK_IMPORTED_MODULE_5__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     $flash.css('margin-left', '40px');
     $flash.css('height', '40px');
@@ -24288,21 +23627,6 @@ class TempoText {
   }
 
 }
-/**
- *
- * @class MetronomeMark
- * @memberof music21.tempo
- * @extends base.Music21Object
- * @param {Object} metronome - metronome
- * @param {string} metronome.text - tempo text
- * @param {number} metronome.number - beats per minute
- * @param {number|music21.duration.Duration} metronome.referent - duration value of tempo
- * @param {boolean} metronome.parentheses - ???
- * @property {string} text - tempo text
- * @property {number} number - beats per minute
- * @property {music21.duration.Duration} referent - duration value of tempo
- */
-
 
 class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
   constructor({
@@ -24380,6 +23704,10 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
       this.textImplicit = false;
     }
   }
+  /**
+   * Tempo in beats per minute.
+   */
+
 
   get number() {
     return this._number;
@@ -24432,8 +23760,8 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
     return post;
   }
 
-  _getDefaultText(number, spread = 2) {
-    const tempoNumber = typeof number === 'number' ? number : parseFloat(number);
+  _getDefaultText(n, spread = 2) {
+    const tempoNumber = typeof n === 'number' ? n : parseFloat(n);
     return Object.keys(defaultTempoValues).find(tempoName => {
       const tempoValue = defaultTempoValues[tempoName];
       return tempoValue - spread <= tempoNumber && tempoValue + spread >= tempoNumber;
@@ -24467,29 +23795,12 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-/**
- * Simple tie module {@link music21.tie} namespace
- *
- * @exports music21/tie
- */
-
-/**
- * Tie namespace, just has the {@link music21.tie.Tie} object
- *
- * @namespace music21.tie
- * @memberof music21
- * @requires music21/prebase
- */
-
 const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-ring'];
 /**
- * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
+ * Tie class. Found in music21.note.GeneralNote `.tie`.
  *
  * Does not support advanced music21p values `.to` and `.from`
  *
- * @class Tie
- * @memberof music21.tie
- * @extends music21.prebase.ProtoM21Object
  * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
  * @property {string} type - the tie type
  * @property {string} style - only supports 'normal' for now.
@@ -24560,6 +23871,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
 /* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
 /* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
+/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./main */ "./src/main.ts");
 
 
 
@@ -24574,18 +23886,8 @@ __webpack_require__.r(__webpack_exports__);
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * TinyNotation module
- *
- * @exports music21.tinyNotation
- * @memberof music21
- * @requires music21/base
- * @requires music21/clef
- * @requires music21/duration
- * @requires music21/pitch
- * @requires music21/note
- * @requires music21/meter
- * @requires music21/stream
- * @requires music21/tie
  */
+
 
 
 
@@ -24597,8 +23899,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * Regular expressions object
- *
- * @memberof music21.tinyNotation
  */
 
 const regularExpressions = {
@@ -24636,7 +23936,7 @@ const regularExpressions = {
  *
  * * textIn - a valid tinyNotation string
  *
- * * returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+ * * returns {music21.stream.Part|music21.stream.Score} - a Part object or Score (if multiple parts)
  *
  * @example
  * var t = "3/4 c4 B8 c d4 e2.";
@@ -24677,10 +23977,6 @@ function TinyNotation(textIn) {
     }
 
     let token = tokens[i];
-    /**
-     * @type {music21.note.GeneralNote|undefined}
-     */
-
     let noteObj;
     let lyric;
 
@@ -24751,21 +24047,25 @@ function TinyNotation(textIn) {
       noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Rest(lastDurationQL);
     } else if (tnre.OCTAVE2.exec(token)) {
       const MATCH = tnre.OCTAVE2.exec(token);
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1], lastDurationQL);
-      noteObj.pitch.octave = 4 - MATCH[0].length;
+      const n = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1], lastDurationQL);
+      n.pitch.octave = 4 - MATCH[0].length;
+      noteObj = n;
     } else if (tnre.OCTAVE3.exec(token)) {
       const MATCH = tnre.OCTAVE3.exec(token);
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1], lastDurationQL);
-      noteObj.pitch.octave = 3;
+      const n = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1], lastDurationQL);
+      n.pitch.octave = 3;
+      noteObj = n;
     } else if (tnre.OCTAVE5.exec(token)) {
       // must match octave 5 before 4
       const MATCH = tnre.OCTAVE5.exec(token);
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1].toUpperCase(), lastDurationQL);
-      noteObj.pitch.octave = 3 + MATCH[0].length;
+      const n = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1].toUpperCase(), lastDurationQL);
+      n.pitch.octave = 3 + MATCH[0].length;
+      noteObj = n;
     } else if (tnre.OCTAVE4.exec(token)) {
       const MATCH = tnre.OCTAVE4.exec(token);
-      noteObj = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1].toUpperCase(), lastDurationQL);
-      noteObj.pitch.octave = 4;
+      const n = new _note__WEBPACK_IMPORTED_MODULE_10__.Note(MATCH[1].toUpperCase(), lastDurationQL);
+      n.pitch.octave = 4;
+      noteObj = n;
     }
 
     if (noteObj === undefined) {
@@ -24789,15 +24089,15 @@ function TinyNotation(textIn) {
       storedDict.lastNoteTied = false;
     }
 
-    if (tnre.SHARP.exec(token)) {
+    if (tnre.SHARP.exec(token) && noteObj instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note) {
       const MATCH = tnre.SHARP.exec(token); // sharp
 
       noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_9__.Accidental(MATCH[1].length);
-    } else if (tnre.FLAT.exec(token)) {
+    } else if (tnre.FLAT.exec(token) && noteObj instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note) {
       const MATCH = tnre.FLAT.exec(token); // sharp
 
       noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_9__.Accidental(-1 * MATCH[1].length);
-    } else if (tnre.NAT.exec(token)) {
+    } else if (tnre.NAT.exec(token) && noteObj instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note) {
       noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_9__.Accidental('natural');
       noteObj.pitch.accidental.displayType = 'always';
     }
@@ -24828,7 +24128,7 @@ function TinyNotation(textIn) {
       noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_8__.Tuplet(4, 3, noteObj.duration.quarterLength));
     }
 
-    if (storedDict.inChord) {
+    if (storedDict.inChord && noteObj instanceof _note__WEBPACK_IMPORTED_MODULE_10__.Note) {
       if (chordObj) {
         chordObj.add(noteObj);
       } else {
@@ -24888,30 +24188,19 @@ function TinyNotation(textIn) {
 /**
  * Render all the TinyNotation classes in the DOM as notation
  *
- * Called automatically when music21 is loaded.
+ * Called automatically when music21 is loaded.  TODO -- stop that!
  *
- * @memberof music21.tinyNotation
  * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {HTMLElement|jQuery} [selector]
  */
 
-function renderNotationDivs(classTypes = '.music21.tinyNotation', selector = undefined) {
+function renderNotationDivs(classTypes = '.music21.tinyNotation', selector) {
   let $allRender;
 
   if (selector === undefined) {
     $allRender = jquery__WEBPACK_IMPORTED_MODULE_5__(classTypes);
   } else {
-    /**
-     * @type {jQuery}
-     */
-    let $selector;
-
-    if (!(selector instanceof jquery__WEBPACK_IMPORTED_MODULE_5__)) {
-      $selector = jquery__WEBPACK_IMPORTED_MODULE_5__(selector);
-    } else {
-      $selector = selector;
-    }
-
+    const $selector = _main__WEBPACK_IMPORTED_MODULE_14__.common.coerceJQuery(selector);
     $allRender = $selector.find(classTypes);
   }
 
@@ -24975,13 +24264,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 
 
 
@@ -24998,14 +24286,6 @@ __webpack_require__.r(__webpack_exports__);
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
- *
- * See {@link music21.vfShow} namespace for details
- *
- * @namespace music21.vfShow
- * @memberof music21
- * @requires music21.common
- * @requires vexflow
- * @exports music21.vfShow
  */
 
 
@@ -25013,30 +24293,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_10__.TrebleClef();
+const _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_9__.TrebleClef();
 /**
  * Represents a stack of objects that need to be rendered together.
  *
- * An intermediary state for showing created by {@link music21.vfShow.Renderer}.
+ * An intermediary state for showing created by music21.vfShow.Renderer.
  *
- * @class RenderStack
- * @memberof music21.vfShow
- * @property {Stream[]} streams - {@link Stream} objects
- * associated with the voices
- * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
- * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
+ * streams - are objects associated with the voices
  */
 
 
 class RenderStack {
   constructor() {
     this.streams = [];
-    this.voices = [];
-    this.textVoices = [];
+    this.voices = []; // for the music
+
+    this.textVoices = []; // for lyrics
+
     this.voiceToStreamMapping = new Map();
   }
   /**
-   * @returns {Array} this.voices and this.textVoices as one array
+   * returns this.voices and this.textVoices as one array
    */
 
 
@@ -25089,77 +24366,47 @@ class RenderStack {
  * "div" and "where" can be either a DOM
  * element or a jQuery object.
  *
- * @class Renderer
- * @memberof music21.vfShow
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
  * @param {Node|jQuery} [where=document.body] - where to render the stream
- * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
- * (will create if not existing)
- * @property {string} rendererType - canvas or svg
- * @property ctx - a Vex.Flow.SVGContext or Vex.Flow.CanvasContext to use.
  * @property {div} div - div-with-svg-or-canvas element
  * @property {jQuery} $div - jQuery div or canvas element
  * @property {jQuery} $where - jQuery element to render onto
- * @property {Vex.Flow.Formatter} activeFormatter - formatter
- * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
- * @property {Array<Vex.Flow.StaveTie>} vfTies - ties as instances of Vex.Flow.StaveTie
  * @property {Array<number>} systemBreakOffsets - where to break the systems
- * @property {Array<Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
- * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
  */
 
 class Renderer {
   // measureFormatters = [];
-  constructor(s, div = undefined, where = undefined) {
+  constructor(s, div, where) {
     this.rendererType = 'svg';
-    this.div = undefined;
-    this.$div = undefined;
-    this.$where = undefined;
-    this.activeFormatter = undefined;
-    this._vfRenderer = undefined;
-    this._ctx = undefined;
     this.beamGroups = [];
-    this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
-    //                                           streams: [Array of Streams, usually Measures]}
+    this.stacks = []; // array of: {voices: [Array of Vex.Flow.Voice objects],
+    //                                        streams: [Array of Streams, usually Measures]}
 
     this.vfTies = [];
-    this.systemBreakOffsets = [];
+    this.systemBreakOffsets = []; // where to break the systems
+
     this.vfTuplets = [];
-    this.stream = s; // this.streamType = s.classes[-1];
-
-    if (div !== undefined) {
-      if (div.jquery !== undefined) {
-        this.$div = div;
-        this.div = div[0];
-      } else {
-        this.div = div;
-        this.$div = jquery__WEBPACK_IMPORTED_MODULE_7__(div);
-      }
-    }
-
-    if (where !== undefined) {
-      if (where.jquery !== undefined) {
-        this.$where = where;
-      } else {
-        this.$where = jquery__WEBPACK_IMPORTED_MODULE_7__(where);
-      }
-    }
+    this.stream = s;
+    const [$j_div, html_div] = (0,_common__WEBPACK_IMPORTED_MODULE_11__.jQueryAndHTMLVersion)(div);
+    this.$div = $j_div;
+    this.div = html_div;
+    this.$where = (0,_common__WEBPACK_IMPORTED_MODULE_11__.coerceJQuery)(where);
   }
 
   get vfRenderer() {
     let backend;
 
     if (this.rendererType === 'canvas') {
-      backend = (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Renderer.Backends.CANVAS);
+      backend = (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Renderer.Backends.CANVAS);
     } else {
-      backend = (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Renderer.Backends.SVG);
+      backend = (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Renderer.Backends.SVG);
     }
 
     if (this._vfRenderer !== undefined) {
       return this._vfRenderer;
     } else {
-      this._vfRenderer = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Renderer)(this.div, backend);
+      this._vfRenderer = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Renderer)(this.div, backend);
 
       if (this.rendererType === 'svg') {
         // this is NOT NOT NOT a JQuery object.
@@ -25239,8 +24486,6 @@ class Renderer {
    * Prepares a scorelike stream (i.e., one with parts or
    * Streams that should be rendered vertically like parts)
    * for rendering and adds Staff Connectors
-   *
-   * @param {music21.stream.Score} s - prepare a stream of parts (i.e., Score)
    */
 
 
@@ -25260,8 +24505,6 @@ class Renderer {
    * Prepares a Partlike stream (that is one with Measures
    * or substreams that should be considered like Measures)
    * for rendering.
-   *
-   * @param {music21.stream.Part} p
    */
 
 
@@ -25311,8 +24554,8 @@ class Renderer {
    * associates a Vex.Flow.Stave with the stream and
    * returns a vexflow Voice object
    *
-   * @param {music21.stream.Measure} m - a measure object (w or w/o voices)
-   * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
+   * * m - a measure object (w or w/o voices)
+   * * stack - a RenderStack object to prepare into.
    */
 
 
@@ -25353,17 +24596,16 @@ class Renderer {
   /**
    * Main internal routine to prepare a flat stream
    *
-   * @param {Stream} s - a flat stream object
-   * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
-   * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-   * @param {Object} [optional_renderOp] - render options.
-   * Passed to {@link music21.vfShow.Renderer#renderStave}
-   * @returns {Vex.Flow.Stave} staff to return too
+   * s - a flat stream object
+   * optionalStave - an optional existing stave.
+   * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
+   * returns Vex.Flow.Stave staff to return too
+   *
    * (also changes the `stack` parameter and runs `makeNotation` on s)
    */
 
 
-  prepareFlat(s, stack, optionalStave = undefined, optional_renderOp = undefined) {
+  prepareFlat(s, stack, optionalStave, optional_renderOp) {
     s.makeNotation();
     let stave;
 
@@ -25390,14 +24632,13 @@ class Renderer {
    *
    * Just draws the stave, not the notes, etc.
    *
-   * @param {Stream} [m=this.stream] - a flat stream
-   * @param {Object} [optional_rendOp] - render options, passed
-   * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
-   * @returns {Vex.Flow.Stave} stave
+   * m should be a flat stream: if undefined, this.stream is used.
+   * optional_rendOp - renderOptions, passed to Renderer#newStave
+   * and Renderer#setClefEtc
    */
 
 
-  renderStave(m = undefined, optional_rendOp = undefined) {
+  renderStave(m, optional_rendOp) {
     if (m === undefined) {
       m = this.stream;
     }
@@ -25484,7 +24725,7 @@ class Renderer {
       }
 
       if (onSameSystem) {
-        const vfTie = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveTie)({
+        const vfTie = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveTie)({
           first_note: thisNote.activeVexflowNote,
           last_note: nextNote.activeVexflowNote,
           first_indices: [0],
@@ -25493,12 +24734,12 @@ class Renderer {
         this.vfTies.push(vfTie);
       } else {
         // console.log('got me a tie across systemBreaks!');
-        const vfTie1 = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveTie)({
+        const vfTie1 = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveTie)({
           first_note: thisNote.activeVexflowNote,
           first_indices: [0]
         });
         this.vfTies.push(vfTie1);
-        const vfTie2 = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveTie)({
+        const vfTie2 = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveTie)({
           last_note: nextNote.activeVexflowNote,
           first_indices: [0]
         });
@@ -25511,13 +24752,16 @@ class Renderer {
    *
    * Does not draw it...
    *
-   * @param {Stream} [s=this.stream] -- usually a Measure or Voice
-   * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
-   * @returns {Vex.Flow.Voice}
+   * [s=this.stream] -- usually a Measure or Voice
+   * stave - not actually optional.
    */
 
 
-  getVoice(s = undefined, stave) {
+  getVoice(s, stave) {
+    if (stave === undefined) {
+      return undefined;
+    }
+
     if (s === undefined) {
       s = this.stream;
     } // gets a group of notes as a voice, but completely un-formatted and not drawn.
@@ -25532,9 +24776,7 @@ class Renderer {
   /**
    * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
    *
-   * @param {Stream} s -- usually a Measure or Voice
-   * @param {Vex.Flow.Stave} stave
-   * @returns {Vex.Flow.Voice}
+   * s -- usually a Measure or Voice
    */
 
 
@@ -25569,13 +24811,11 @@ class Renderer {
   /**
    * Formats a single voice group from a stack.
    *
-   * @param {music21.vfShow.RenderStack} stack
-   * @param {boolean} [autoBeam=measures[0].autoBeam]
-   * @returns {Vex.Flow.Formatter}
+   * if autoBeam is undefined, reads from measures[0].autoBeam]
    */
 
 
-  formatVoiceGroup(stack, autoBeam = undefined) {
+  formatVoiceGroup(stack, autoBeam) {
     // formats a group of voices to use the same formatter; returns the formatter
     // if autoBeam is true then it will apply beams for each voice and put them in
     // this.beamGroups;
@@ -25588,7 +24828,7 @@ class Renderer {
       autoBeam = measuresOrVoices[0].autoBeam;
     }
 
-    const formatter = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Formatter)(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
+    const formatter = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Formatter)(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
     // console.log(minLength);
 
     if (vf_voices.length === 0) {
@@ -25629,10 +24869,10 @@ class Renderer {
           beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(); // TODO: getContextByClass...
           // console.log(beatGroups);
         } else {
-          beatGroups = [new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Fraction)(2, 8)]; // default beam groups
+          beatGroups = [new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Fraction)(2, 8)]; // default beam groups
         }
 
-        const beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
+        const beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
         this.beamGroups.push(...beamGroups);
       }
     } else {
@@ -25654,7 +24894,7 @@ class Renderer {
           }
 
           if (eighthNoteBeam.type === 'stop') {
-            const vfBeam = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Beam)(activeBeamGroupNotes, false);
+            const vfBeam = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Beam)(activeBeamGroupNotes, false);
             this.beamGroups.push(vfBeam);
             activeBeamGroupNotes = [];
           }
@@ -25680,10 +24920,6 @@ class Renderer {
   /**
    * Return a new Vex.Flow.Stave object, which represents
    * a single MEASURE of notation in m21j
-   *
-   * @param {Stream} s
-   * @param {Object} [rendOp]
-   * @returns {Vex.Flow.Stave}
    */
 
 
@@ -25716,21 +24952,18 @@ class Renderer {
     } // console.log('streamLength: ' + streamLength);
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
       console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
     }
 
-    const stave = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Stave)(left, top, width);
+    const stave = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Stave)(left, top, width);
     return stave;
   }
   /**
    * Sets the number of stafflines, puts the clef on the Stave,
    * adds keySignature, timeSignature, and rightBarline
    *
-   * @param {Stream} s
-   * @param {Vex.Flow.Stave} stave
-   * @param {Object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
-   * object that might have
+   * RenderOptions object might have
    * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
    */
 
@@ -25793,7 +25026,7 @@ class Renderer {
       const vxBL = barlineMap[bl];
 
       if (vxBL !== undefined) {
-        stave.setEndBarType((vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Barline.type)[vxBL]);
+        stave.setEndBarType((vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Barline.type)[vxBL]);
       }
     }
   }
@@ -25804,9 +25037,10 @@ class Renderer {
    * if the number of lines is 0 or >=4, because the default in VexFlow is
    * to show the bottom(top?), not middle, lines and that looks bad.
    *
-   * @param {Stream} s - stream to get the `.staffLines`
+   * s - stream to get the `.staffLines`
    * from `s.renderOptions` from -- should allow for overriding.
-   * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
+   *
+   * vexflowStave is the Stave to set lines for.
    */
 
 
@@ -25863,10 +25097,6 @@ class Renderer {
    * Gets the Vex.Flow.StaveNote objects from a Stream.
    *
    * Also changes `this.vfTuplets`.
-   *
-   * @param {Stream} [s=this.stream] - flat stream to find notes in
-   * @param {Vex.Flow.Stave} stave - Vex.Flow.Stave to render notes on to.
-   * @returns {Array<Vex.Flow.StaveNote>} notes to return
    */
 
 
@@ -25933,7 +25163,7 @@ class Renderer {
               notes_occupied: activeTuplet.numberNotesNormal
             }; // console.log('tupletOptions', tupletOptions);
 
-            const vfTuplet = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Tuplet)(activeTupletVexflowNotes, tupletOptions);
+            const vfTuplet = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Tuplet)(activeTupletVexflowNotes, tupletOptions);
 
             if (activeTuplet.tupletNormalShow === 'ratio') {
               vfTuplet.setRatioed(true);
@@ -25960,10 +25190,6 @@ class Renderer {
   }
   /**
    * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
-   *
-   * @param {Stream} s - flat stream to search.
-   * @param {Vex.Flow.Stave} stave
-   * @returns {Array<Vex.Flow.TextNote>}
    */
 
 
@@ -25971,11 +25197,11 @@ class Renderer {
     const getTextNote = (text, font, d, lyricObj = undefined) => {
       // console.log(text, font, d);
       // noinspection TypeScriptValidateJSTypes
-      const t1 = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.TextNote)({
+      const t1 = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.TextNote)({
         text,
         font,
         duration: d.vexflowDuration
-      }).setLine(11).setStave(stave).setJustification((vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.TextNote.Justification.LEFT));
+      }).setLine(11).setStave(stave).setJustification((vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.TextNote.Justification.LEFT));
 
       if (lyricObj) {
         t1.setStyle(lyricObj.style);
@@ -25995,7 +25221,7 @@ class Renderer {
 
     const lyricsObjects = [];
 
-    for (const el of s) {
+    for (const el of s.notesAndRests) {
       const lyricsArray = el.lyrics;
 
       if (lyricsArray === undefined) {
@@ -26025,7 +25251,7 @@ class Renderer {
         if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
           addConnector = ' ' + firstLyric.lyricConnector;
           const tempQl = el.duration.quarterLength / 2.0;
-          d = new _duration__WEBPACK_IMPORTED_MODULE_11__.Duration(tempQl);
+          d = new _duration__WEBPACK_IMPORTED_MODULE_10__.Duration(tempQl);
         }
 
         if (firstLyric.style.fontFamily) {
@@ -26092,14 +25318,14 @@ class Renderer {
     } // console.log('creating voice');
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
       console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
     }
 
-    const vfv = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Voice)({
+    const vfv = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Voice)({
       num_beats: num1024,
       beat_value: beatValue,
-      resolution: (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.RESOLUTION)
+      resolution: (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.RESOLUTION)
     }); // from vexflow/src/voice.js
     //
     // Modes allow the addition of ticks in three different ways:
@@ -26110,24 +25336,22 @@ class Renderer {
     //         tick length.
     // noinspection TypeScriptValidateJSTypes
 
-    vfv.setMode((vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.Voice.Mode.SOFT));
+    vfv.setMode((vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.Voice.Mode.SOFT));
     return vfv;
   }
 
   staffConnectorsMap(connectorType) {
     const connectorMap = {
-      brace: (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveConnector.type.BRACE),
-      single: (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveConnector.type.SINGLE),
-      double: (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveConnector.type.DOUBLE),
-      bracket: (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveConnector.type.BRACKET)
+      brace: (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveConnector.type.BRACE),
+      single: (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveConnector.type.SINGLE),
+      double: (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveConnector.type.DOUBLE),
+      bracket: (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveConnector.type.BRACKET)
     };
     return connectorMap[connectorType];
   }
   /**
    * If a stream has parts (NOT CHECKED HERE) create and
    * draw an appropriate Vex.Flow.StaveConnector
-   *
-   * @param {music21.stream.Score} s
    */
 
 
@@ -26183,7 +25407,7 @@ class Renderer {
         }
 
         for (let i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-          const sc = new (vexflow__WEBPACK_IMPORTED_MODULE_8___default().Flow.StaveConnector)(topVFStaff, bottomVFStaff);
+          const sc = new (vexflow__WEBPACK_IMPORTED_MODULE_7___default().Flow.StaveConnector)(topVFStaff, bottomVFStaff);
           const scTypeM21 = s.renderOptions.staffConnectors[i];
           const scTypeVF = this.staffConnectorsMap(scTypeM21); // noinspection TypeScriptValidateJSTypes
 
@@ -26233,10 +25457,6 @@ class Renderer {
    * mad props to our friend Vladimir Viro for figuring this out! Visit http://peachnote.com/
    *
    * Also sets s.storedVexflowStave to stave.
-   *
-   * @param {Vex.Flow.Stave} stave
-   * @param {Stream} [s=this.stream]
-   * @param {Vex.Flow.Formatter} formatter
    */
 
 
@@ -26252,7 +25472,7 @@ class Renderer {
     if (stave !== undefined) {
       noteOffsetLeft = stave.start_x + stave.glyph_start_x;
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
         console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
         console.log('Bottom y: ' + stave.getBottomY());
       } // staveHeight = stave.height;
@@ -26291,7 +25511,7 @@ class Renderer {
       }
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
       for (const n of s) {
         if (n.pitch !== undefined) {
           const nn = n;
@@ -26338,8 +25558,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * @namespace music21.voiceLeading
  */
 
 
@@ -26353,11 +25571,6 @@ const MotionType = {
   parallel: 'Parallel',
   similar: 'Similar'
 };
-/**
- * @memberOf music21.voiceLeading
- * @extends Music21Object
- */
-
 class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
   constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
     super();
@@ -26783,7 +25996,7 @@ __webpack_require__.r(__webpack_exports__);
  * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
  * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
  *
- * Copyright (c) 2014-18, Michael Scott Asato Cuthbert
+ * Copyright (c) 2014-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  *
  */
@@ -26792,13 +26005,7 @@ __webpack_require__.r(__webpack_exports__);
  * webmidi -- for connecting with external midi devices
  *
  * Uses either the webmidi API or the Jazz plugin
- * See {@link music21.webmidi}
  *
- * @namespace music21.webmidi
- * @memberof music21
- * @requires music21/miditools
- * @requires jQuery
- * @exports music21/webmidi
  * @example smallest usage of the webmidi toolkit.  see testHTML/midiInRequire.html
 
 <html>
@@ -26870,7 +26077,7 @@ const webmidi = {
   selectedInputPort: undefined,
   access: undefined,
   $select: undefined,
-  jazzDownloadUrl: 'http://jazz-soft.net/download/Jazz-Plugin/',
+  jazzDownloadUrl: 'https://jazz-soft.net/download/Jazz-Plugin/',
   storedPlugin: undefined,
   selectedJazzInterface: undefined
 };
@@ -26879,13 +26086,10 @@ const webmidi = {
  *
  * Shim to convert the data into WebMIDI API format and then call the WebMIDI API midiInArrived
  *
- * See the MIDI spec for information on parameters
+ * See the MIDI spec for information on parameters.
  *
- * @memberof music21.webmidi
- * @param {byte} t - timing information
- * @param {byte} a - data 1
- * @param {byte} b - data 2
- * @param {byte} c - data 3
+ * t is a timestamp number (in milliseconds)
+ * a, b, and c, are three one-byte midi messages.
  */
 
 function jazzMidiInArrived(t, a, b, c) {
@@ -26906,7 +26110,6 @@ function jazzMidiInArrived(t, a, b, c) {
  *
  * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
  *
- * @memberof music21.webmidi
  * @param {Object} midiMessageEvent - midi Information
  */
 
@@ -26929,13 +26132,14 @@ function midiInArrived(midiMessageEvent) {
   }
 }
 /**
+ * For pre-native WebMIDI support, such as Safari.
+ *
  * Create a hidden tiny, &lt;object&gt; tag in the DOM with the
  * proper classid (`CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90`) to
  * load the Jazz plugin.
  *
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
- * @function music21.webmidi.createPlugin
  * @param {HTMLElement} [appendElement=document.body] - where to place this hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called
  *     successfully before return the storedPlugin unless override is true.
@@ -26976,7 +26180,6 @@ function createPlugin(appendElement = undefined, override = false) {
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * @function music21.webmidi.createJazzSelector
  * @param {jQuery|HTMLElement} [$newSelect=document.body] - object to append the select to
  * @param {Object} [options] - see createSelector for details
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
@@ -27082,49 +26285,25 @@ function selectionChanged() {
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * The options object has several parameters:
- *
- *
- * @function music21.webmidi.createSelector
- * @param {jQuery|HTMLElement} [midiSelectDiv=$('body')] - object to append the select to
- * @param {Object} [options] - see above.
- * @param {boolean} options.autoupdate -- should this auto update?
- * @param {function} options.onsuccess -- function to call on all successful port queries
- * @param {function} options.oninputsuccess -- function to call if successful and at least one input device is found
- * @param {function} options.oninputempty -- function to call if successful but no input devices are found.
- * @param {boolean} options.existingMidiSelect -- is there already a select tag for MIDI?
- * @returns {jQuery|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * Returns JQuery object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 
-function createSelector(midiSelectDiv, options = {}) {
+function createSelector(where, options = {}) {
+  let existingMidiSelect = false;
   const params = {
     autoUpdate: true,
-    existingMidiSelect: false,
     onsuccess: undefined,
     oninputsuccess: undefined,
     oninputempty: undefined
   };
   _common__WEBPACK_IMPORTED_MODULE_2__.merge(params, options);
-  /**
-   * @type {jQuery}
-   */
-
-  let $midiSelectDiv;
-
-  if (typeof midiSelectDiv === 'undefined') {
-    $midiSelectDiv = jquery__WEBPACK_IMPORTED_MODULE_0__('body');
-  } else if (!(midiSelectDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_0__)) {
-    $midiSelectDiv = jquery__WEBPACK_IMPORTED_MODULE_0__(midiSelectDiv);
-  } else {
-    $midiSelectDiv = midiSelectDiv;
-  }
-
+  const $midiSelectDiv = _common__WEBPACK_IMPORTED_MODULE_2__.coerceJQuery(where);
   let $newSelect;
-  const foundMidiSelects = $midiSelectDiv.find('select#midiInSelect');
+  const $foundMidiSelects = $midiSelectDiv.find('select#midiInSelect');
 
-  if (foundMidiSelects.length > 0) {
-    $newSelect = foundMidiSelects[0];
-    params.existingMidiSelect = true;
+  if ($foundMidiSelects.length > 0) {
+    $newSelect = $foundMidiSelects[0];
+    existingMidiSelect = true;
   } else {
     $newSelect = jquery__WEBPACK_IMPORTED_MODULE_0__('<select>').attr('id', 'midiInSelect');
     $midiSelectDiv.append($newSelect);
@@ -27135,7 +26314,7 @@ function createSelector(midiSelectDiv, options = {}) {
   if (navigator.requestMIDIAccess === undefined) {
     createJazzSelector($newSelect, params);
   } else {
-    if (params.existingMidiSelect !== true) {
+    if (!existingMidiSelect) {
       $newSelect.on('change', selectionChanged);
     }
 
@@ -65018,212 +64197,12 @@ module.exports = function (list, options) {
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-/*!*********************!*\
-  !*** ./src/main.ts ***!
-  \*********************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "MIDI": () => (/* reexport module object */ midicube__WEBPACK_IMPORTED_MODULE_1__),
-/* harmony export */   "Vex": () => (/* reexport module object */ vexflow__WEBPACK_IMPORTED_MODULE_3__),
-/* harmony export */   "exceptions21": () => (/* reexport module object */ _exceptions21__WEBPACK_IMPORTED_MODULE_5__),
-/* harmony export */   "base": () => (/* reexport module object */ _base__WEBPACK_IMPORTED_MODULE_7__),
-/* harmony export */   "prebase": () => (/* reexport module object */ _prebase__WEBPACK_IMPORTED_MODULE_6__),
-/* harmony export */   "common": () => (/* reexport module object */ _common__WEBPACK_IMPORTED_MODULE_8__),
-/* harmony export */   "debug": () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_49__.debug),
-/* harmony export */   "articulations": () => (/* reexport module object */ _articulations__WEBPACK_IMPORTED_MODULE_9__),
-/* harmony export */   "audioRecording": () => (/* reexport module object */ _audioRecording__WEBPACK_IMPORTED_MODULE_10__),
-/* harmony export */   "audioSearch": () => (/* reexport module object */ _audioSearch__WEBPACK_IMPORTED_MODULE_11__),
-/* harmony export */   "bar": () => (/* reexport module object */ _bar__WEBPACK_IMPORTED_MODULE_12__),
-/* harmony export */   "beam": () => (/* reexport module object */ _beam__WEBPACK_IMPORTED_MODULE_13__),
-/* harmony export */   "chord": () => (/* reexport module object */ _chord__WEBPACK_IMPORTED_MODULE_14__),
-/* harmony export */   "chordTables": () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_15__),
-/* harmony export */   "clef": () => (/* reexport module object */ _clef__WEBPACK_IMPORTED_MODULE_16__),
-/* harmony export */   "converter": () => (/* reexport module object */ _converter__WEBPACK_IMPORTED_MODULE_17__),
-/* harmony export */   "derivation": () => (/* reexport module object */ _derivation__WEBPACK_IMPORTED_MODULE_18__),
-/* harmony export */   "duration": () => (/* reexport module object */ _duration__WEBPACK_IMPORTED_MODULE_19__),
-/* harmony export */   "dynamics": () => (/* reexport module object */ _dynamics__WEBPACK_IMPORTED_MODULE_20__),
-/* harmony export */   "editorial": () => (/* reexport module object */ _editorial__WEBPACK_IMPORTED_MODULE_21__),
-/* harmony export */   "expressions": () => (/* reexport module object */ _expressions__WEBPACK_IMPORTED_MODULE_22__),
-/* harmony export */   "figuredBass": () => (/* reexport module object */ _figuredBass__WEBPACK_IMPORTED_MODULE_23__),
-/* harmony export */   "fromPython": () => (/* reexport module object */ _fromPython__WEBPACK_IMPORTED_MODULE_24__),
-/* harmony export */   "harmony": () => (/* reexport module object */ _harmony__WEBPACK_IMPORTED_MODULE_25__),
-/* harmony export */   "instrument": () => (/* reexport module object */ _instrument__WEBPACK_IMPORTED_MODULE_26__),
-/* harmony export */   "interval": () => (/* reexport module object */ _interval__WEBPACK_IMPORTED_MODULE_27__),
-/* harmony export */   "key": () => (/* reexport module object */ _key__WEBPACK_IMPORTED_MODULE_28__),
-/* harmony export */   "keyboard": () => (/* reexport module object */ _keyboard__WEBPACK_IMPORTED_MODULE_29__),
-/* harmony export */   "layout": () => (/* reexport module object */ _layout__WEBPACK_IMPORTED_MODULE_30__),
-/* harmony export */   "meter": () => (/* reexport module object */ _meter__WEBPACK_IMPORTED_MODULE_31__),
-/* harmony export */   "miditools": () => (/* reexport module object */ _miditools__WEBPACK_IMPORTED_MODULE_32__),
-/* harmony export */   "musicxml": () => (/* reexport module object */ _musicxml__WEBPACK_IMPORTED_MODULE_33__),
-/* harmony export */   "note": () => (/* reexport module object */ _note__WEBPACK_IMPORTED_MODULE_34__),
-/* harmony export */   "parseLoader": () => (/* reexport module object */ _parseLoader__WEBPACK_IMPORTED_MODULE_35__),
-/* harmony export */   "pitch": () => (/* reexport module object */ _pitch__WEBPACK_IMPORTED_MODULE_36__),
-/* harmony export */   "renderOptions": () => (/* reexport module object */ _renderOptions__WEBPACK_IMPORTED_MODULE_37__),
-/* harmony export */   "roman": () => (/* reexport module object */ _roman__WEBPACK_IMPORTED_MODULE_38__),
-/* harmony export */   "scale": () => (/* reexport module object */ _scale__WEBPACK_IMPORTED_MODULE_39__),
-/* harmony export */   "sites": () => (/* reexport module object */ _sites__WEBPACK_IMPORTED_MODULE_40__),
-/* harmony export */   "stream": () => (/* reexport module object */ _stream__WEBPACK_IMPORTED_MODULE_41__),
-/* harmony export */   "svgs": () => (/* reexport module object */ _svgs__WEBPACK_IMPORTED_MODULE_42__),
-/* harmony export */   "tempo": () => (/* reexport module object */ _tempo__WEBPACK_IMPORTED_MODULE_43__),
-/* harmony export */   "tie": () => (/* reexport module object */ _tie__WEBPACK_IMPORTED_MODULE_44__),
-/* harmony export */   "tinyNotation": () => (/* reexport module object */ _tinyNotation__WEBPACK_IMPORTED_MODULE_45__),
-/* harmony export */   "vfShow": () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_46__),
-/* harmony export */   "voiceLeading": () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_47__),
-/* harmony export */   "webmidi": () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_48__),
-/* harmony export */   "VERSION": () => (/* binding */ VERSION)
-/* harmony export */ });
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jquery-ui-bundle */ "./node_modules/jquery-ui-bundle/jquery-ui.js");
-/* harmony import */ var jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _articulations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./articulations */ "./src/articulations.ts");
-/* harmony import */ var _audioRecording__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./audioRecording */ "./src/audioRecording.ts");
-/* harmony import */ var _audioSearch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./audioSearch */ "./src/audioSearch.ts");
-/* harmony import */ var _bar__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./bar */ "./src/bar.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
-/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./chordTables */ "./src/chordTables.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _converter__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./converter */ "./src/converter.ts");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _dynamics__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./dynamics */ "./src/dynamics.ts");
-/* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./editorial */ "./src/editorial.ts");
-/* harmony import */ var _expressions__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./expressions */ "./src/expressions.ts");
-/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./figuredBass */ "./src/figuredBass.ts");
-/* harmony import */ var _fromPython__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./fromPython */ "./src/fromPython.ts");
-/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./harmony */ "./src/harmony.ts");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./key */ "./src/key.ts");
-/* harmony import */ var _keyboard__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./keyboard */ "./src/keyboard.ts");
-/* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./layout */ "./src/layout.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
-/* harmony import */ var _musicxml__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./musicxml */ "./src/musicxml.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _parseLoader__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./parseLoader */ "./src/parseLoader.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
-/* harmony import */ var _roman__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./roman */ "./src/roman.ts");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
-/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
-/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
-/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/**!
- * **music21j**: Javascript reimplementation of Core music21 features.
- *
- * See http://web.mit.edu/music21/ for more details.
- *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Released under a BSD-3-clause license
- *
- */
-
-/**
- *
- * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- * The plan is to implement all core music21 features as Javascript and to expose
- * more sophisticated features via server-side connections to remote servers running the
- * python music21 (music21p).
- *
- * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. Any recent
- * version of Firefox, Safari, Edge,  Chrome, etc. will do.
- *
- * All interfaces are beta and may change radically from day to day and release to release.
- * Do not use this in production code yet.
- *
- * music21j acknowledges VexFlow and MIDI.js in particular for their great efforts without which
- * this module would not be possible.
- *
- */
-// webpack loader for music21j.
-
- // to be removed when export * from is okay.
-
-
-
- // order below doesn't matter, but good to give a sense
-// of what will be needed by almost everyone, and then
-// alphabetical.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const VERSION = '0.11.13';
-
-if (typeof window !== 'undefined') {
-  window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;
-  window.jQuery = jquery__WEBPACK_IMPORTED_MODULE_2__;
-}
-
-_parseLoader__WEBPACK_IMPORTED_MODULE_35__.runConfiguration();
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/main.ts");
+/******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;
