@@ -3109,26 +3109,44 @@ export class Part extends Stream {
     }
 
     systemWidthsAndBreaks(): [number[], number[]] {
-        const measureWidths = this.getMeasureWidths();
         const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
-        const systemCurrentWidths = [];
-        const systemBreakIndexes = [];
+        const systemCurrentWidths: number[] = [];
+        const systemBreakIndexes: number[] = [];
         let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
-        const startLeft = 20; /* TODO: make it obtained elsewhere */
-        let currentLeft = startLeft;
-        for (let i = 0; i < measureWidths.length; i++) {
-            const currentRight = currentLeft + measureWidths[i];
+        // add this padding to each system: it might be needed for a brace
+        const firstMeasurePadding = 20; /* TODO: make it obtained elsewhere */
+
+        let currentSystemIndex = 0;
+        let currentLeft = firstMeasurePadding;
+        for (const [i, m] of Array.from(this.measures).entries()) {
+            const currentRight = currentLeft + m.renderOptions.width;
+            if (i === 0) {
+                m.renderOptions.startNewSystem = true;
+                m.renderOptions.displayClef = true;
+                m.renderOptions.displayKeySignature = true;
+            }
             /* console.log('left: ' + currentLeft + ' ; right: ' + currentRight + ' ; m: ' + i); */
             if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
+                /* first measure of new System */
                 systemBreakIndexes.push(i - 1);
                 systemCurrentWidths.push(currentLeft);
-
-                // console.log('setting new width at ' + currentLeft);
-                currentLeft = startLeft + measureWidths[i]; // 20 + this width;
                 lastSystemBreak = i;
-            } else {
-                currentLeft = currentRight;
+                currentSystemIndex += 1;
+
+                m.renderOptions.displayClef = true;
+                m.renderOptions.displayKeySignature = true;
+                m.renderOptions.startNewSystem = true;
+                m.renderOptions.left = firstMeasurePadding;
+                m.renderOptions.width = m.estimateStaffLength() + m.renderOptions.staffPadding;
+            } else if (i !== 0) {
+                m.renderOptions.startNewSystem = false;
+                m.renderOptions.displayClef = false; // check for changed clef first?
+                m.renderOptions.displayKeySignature = false; // check for changed KS first?
+                m.renderOptions.left = currentLeft;
+                m.renderOptions.width = m.estimateStaffLength() + m.renderOptions.staffPadding;
             }
+            currentLeft = m.renderOptions.left + m.renderOptions.width;
+            m.renderOptions.systemIndex = currentSystemIndex;
         }
         return [systemCurrentWidths, systemBreakIndexes];
     }
@@ -3143,7 +3161,8 @@ export class Part extends Stream {
      * will come to the same result for each part.  Opportunity
      * for making more efficient through this...
      *
-     * returns an array of all the widths
+     * returns an array of all the widths of complete systems
+     * (last partial system omitted)
      */
     fixSystemInformation(systemHeight?: number, systemPadding?: number): number[] {
         // this is a method on Part!
@@ -3158,73 +3177,32 @@ export class Part extends Stream {
         if (systemPadding === undefined) {
             systemPadding = this.renderOptions.systemPadding;
         }
-        const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
+        // last system is not contained in systemCurrentWidths
+        // possible, but unlikely that the last system would be the
+        // longest and thus left out of the calculation
+        const maxSystemWidth = Math.max(...systemCurrentWidths);
 
         let currentSystemIndex = 0;
-        let leftSubtract = 0;
-        let newLeftSubtract;
 
-        for (const [i, el] of Array.from(this.getElementsByClass('Measure')).entries()) {
-            const m = el as Measure;
-            if (i === 0) {
-                m.renderOptions.startNewSystem = true;
-            }
-            const currentLeft = m.renderOptions.left;
-
-            if (systemBreakIndexes.indexOf(i - 1) !== -1) {
-                /* first measure of new System */
-                const oldWidth = m.renderOptions.width;
-                const oldEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
-                const offsetFromEstimate = oldWidth - oldEstimate;
-                // we look at the offset from the current estimate to see how much
-                // the staff length may have been adjusted to compensate for other
-                // parts with different lengths.
-
-                // but setting these options is bound to change something
-                m.renderOptions.displayClef = true;
-                m.renderOptions.displayKeySignature = true;
-                m.renderOptions.startNewSystem = true;
-
-                // so we get a new estimate.
-                const newEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
-
-                // and adjust it for the change.
-                const newWidth = newEstimate + offsetFromEstimate;
-                m.renderOptions.width = newWidth;
-                leftSubtract = currentLeft - 20;
-                // after this one, we'll have a new left subtract...
-                newLeftSubtract = leftSubtract - (newWidth - oldWidth);
-
+        for (const [i, m] of Array.from(this.measures).entries()) {
+            // values of systemBreakIndices are the measure indices
+            // corresponding to the last measure on a system
+            // here, looking for first measure of new system
+            if (systemBreakIndexes && (i - 1) === systemBreakIndexes[0]) {
+                systemBreakIndexes.shift();
                 currentSystemIndex += 1;
-            } else if (i !== 0) {
-                m.renderOptions.startNewSystem = false;
-                m.renderOptions.displayClef = false; // check for changed clef first?
-                m.renderOptions.displayKeySignature = false; // check for changed KS first?
             }
-            m.renderOptions.systemIndex = currentSystemIndex;
-            let currentSystemMultiplier;
+            let currentSystemMultiplier: number;
             if (currentSystemIndex >= systemCurrentWidths.length) {
                 /* last system... non-justified */
                 currentSystemMultiplier = 1;
             } else {
                 const currentSystemWidth = systemCurrentWidths[currentSystemIndex];
                 currentSystemMultiplier = maxSystemWidth / currentSystemWidth;
-                // console.log('systemMultiplier: ' + currentSystemMultiplier
-                // + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
             }
-            /* might make a small gap? fix? */
-            const newLeft = currentLeft - leftSubtract;
-            if (newLeftSubtract !== undefined) {
-                leftSubtract = newLeftSubtract;
-                newLeftSubtract = undefined;
-            }
-            // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
-            m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
+            m.renderOptions.left = Math.floor(m.renderOptions.left * currentSystemMultiplier);
             m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
-            const newTop = (m.renderOptions.top
-                            + currentSystemIndex * (systemHeight + systemPadding));
-            // console.log('M: ' + i + '; New top: ' + newTop + ' ; old Top: ' + m.renderOptions.top);
-            m.renderOptions.top = newTop;
+            m.renderOptions.top += currentSystemIndex * (systemHeight + systemPadding);
         }
         return systemCurrentWidths;
     }
@@ -3239,8 +3217,8 @@ export class Part extends Stream {
         let currentMeasureIndex = 0; /* 0 indexed for now */
         let currentMeasureLeft = 20;
         const rendOp = this.renderOptions;
-        let lastTimeSignature;
-        let lastKeySignature;
+        let lastTimeSignature: meter.TimeSignature;
+        let lastKeySignature: KeySignature;
         let lastClef: clef.Clef;
 
         for (const el of this.getElementsByClass('Measure')) {
@@ -3505,6 +3483,12 @@ export class Score extends Stream {
             }
         );
         for (const p of this.parts) {
+            // run the systemwidths and breaks calculation
+            // store off the arrays
+            // walk the arrays and get the max for each measure, set on each measure of each part
+        }
+        for (const p of this.parts) {
+            // and send the information here
             p.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding);
         }
         this.renderOptions.height = this.estimateStreamHeight();
