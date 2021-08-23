@@ -1724,9 +1724,17 @@ export class Stream extends base.Music21Object {
         }
 
         const noteIterator = returnObj.recurse().notesAndRests;
-
+        let last_measure: Measure;
         for (const e of noteIterator) {
-            if ((e as base.Music21Object).classes.includes('Note')) {
+            if (e.activeSite !== undefined && e.activeSite.isMeasure) {
+                if (last_measure !== undefined && e.activeSite !== last_measure) {
+                    // New measure: move pitchPast to pitchPastMeasure and clear
+                    pitchPastMeasure = Array.from(pitchPast);
+                    pitchPast = [];
+                }
+                last_measure = e.activeSite;
+            }
+            if (e.classes.includes('Note')) {
                 const p = (e as note.Note).pitch;
                 const lastNoteWasTied: boolean = tiePitchSet.has(p.nameWithOctave);
 
@@ -1743,11 +1751,11 @@ export class Stream extends base.Music21Object {
                 pitchPast.push(p);
 
                 tiePitchSet.clear();
-                const tie = (e as note.Note).tie;
+                const tie = e.tie;
                 if (tie !== undefined && tie.type !== 'stop') {
                     tiePitchSet.add(p.nameWithOctave);
                 }
-            } else if ((e as base.Music21Object).classes.includes('Chord')) {
+            } else if (e.classes.includes('Chord')) {
                 const chordNotes = (e as Chord).notes;
                 const seenPitchNames: Set<string> = new Set();
                 for (const n of chordNotes) {
