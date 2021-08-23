@@ -492,6 +492,21 @@ export default function tests() {
         assert.notOk(c.notes[4].pitch.accidental.displayStatus);  // F# from key signature
     });
 
+    test('music21.stream.Stream makeAccidentals multi-measure', assert => {
+        const n1 = new music21.note.Note('F#4');
+        const m1 = new music21.stream.Measure();
+        m1.append(n1);
+        const n2 = new music21.note.Note('F#4');
+        const m2 = new music21.stream.Measure();
+        m2.append(n2);
+        const p = new music21.stream.Part();
+        p.append(m1);
+        p.append(m2);
+        p.makeAccidentals({inPlace: true});
+        assert.ok(n1.pitch.accidental.displayStatus);
+        assert.ok(n2.pitch.accidental.displayStatus);
+    });
+
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
         const n1 = new music21.note.Note('C5', 0.5);
         n1.stemDirection = 'up';
