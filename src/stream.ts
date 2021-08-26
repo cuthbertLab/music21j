@@ -90,7 +90,7 @@ interface MakeAccidentalsParams {
  * @property {number} length - (readonly) the number of elements in the stream.
  * @property {Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
- * @property {renderOptions.RenderOptions} renderOptions - an object
+ * @property {RenderOptions} renderOptions - an object
  *     specifying how to render the stream
  * @property {Stream} flat - (readonly) a flattened representation of the Stream
  * @property {StreamIterator} notes - (readonly) the stream with
@@ -333,14 +333,14 @@ export class Stream extends base.Music21Object {
     }
 
     get semiFlat(): this {
-        return this._getFlatOrSemiFlat(true);
+        return this.flatten(true);
     }
 
     get flat(): this {
-        return this._getFlatOrSemiFlat(false);
+        return this.flatten(false);
     }
 
-    _getFlatOrSemiFlat(retainContainers): this {
+    flatten(retainContainers: boolean = false): this {
         const newSt = this.clone(false);
         // console.log('done cloning...');
         if (!this.isFlat) {
@@ -980,11 +980,13 @@ export class Stream extends base.Music21Object {
             recurse=false,
         } = {}
     ) {
-        if (shiftOffsets === true) {
-            throw new StreamException('sorry cannot shiftOffsets yet');
+        if (shiftOffsets && recurse) {
+            throw new StreamException(
+                'Cannot do both shiftOffsets and recurse search at the same time...yet'
+            );
         }
-        if (recurse === true) {
-            throw new StreamException('sorry cannot recurse yet');
+        if (shiftOffsets) {
+            throw new StreamException('Cannot shift offsets yet.');
         }
 
         let targetList: base.Music21Object[];
@@ -992,6 +994,7 @@ export class Stream extends base.Music21Object {
             targetList = [targetOrList];
         } else {
             targetList = targetOrList;
+            targetList.sort((a, b) => this.elementOffset(a) - this.elementOffset(b));
         }
         //        if (targetList.length > 1) {
         //            sort targetList
@@ -1006,12 +1009,21 @@ export class Stream extends base.Music21Object {
             } catch (err) {
                 if (err instanceof StreamException) {
                     if (recurse) {
-                        // do something
+                        for (const s of <Stream[]><any> this.recurse({streamsOnly: true})) {
+                            try {
+                                indexInStream = s.index(target);
+                                s.remove(target);
+                                break;
+                            } catch {
+                                // not here...that's normal.  try the next recurse stream.
+                            }
+                        }
                     }
                     continue;
                 }
                 throw err;
             }
+            // not recursive.
 
             // const matchOffset = this._offsetDict[indexInStream];
             // let match;
@@ -1727,6 +1739,7 @@ export class Stream extends base.Music21Object {
         let last_measure: Measure;
         for (const e of noteIterator) {
             if (e.activeSite !== undefined && e.activeSite.isMeasure) {
+                // noinspection JSUnusedAssignment
                 if (last_measure !== undefined && e.activeSite !== last_measure) {
                     // New measure: move pitchPast to pitchPastMeasure and clear
                     pitchPastMeasure = Array.from(pitchPast);
@@ -2000,6 +2013,181 @@ export class Stream extends base.Music21Object {
             return totalLength;
         }
     }
+
+    stripTies(
+        {
+            inPlace=false,
+            matchByPitch=true,
+        }: {
+            inPlace?: boolean,
+            matchByPitch?: boolean,
+       } = {}
+    ): this {
+        let returnObj: this;
+        if (inPlace) {
+            returnObj = this;
+        } else {
+            returnObj = this.clone(true) as this;
+        }
+
+        // returnObj.streamStatus.beams = false;
+        if (returnObj.parts.length) {
+            for (const p of returnObj.parts) {
+                p.stripTies({inPlace: true, matchByPitch});
+            }
+            return returnObj;
+        }
+
+        if (returnObj.voices.length) {
+            for (const v of returnObj.voices) {
+                v.stripTies({inPlace: true, matchByPitch});
+            }
+            return returnObj;
+        }
+        const f = returnObj.flatten();
+        const notes = Array.from(f.notesAndRests);
+
+        let posConnected: number[] = [];
+        const posDelete: number[] = [];
+
+        let nLast: note.GeneralNote;
+        let iLast: number;
+
+        const updateEndMatch = nInner => {
+            const ni_is_chord = nInner.classes.includes('Chord');
+            const nLast_is_chord = nLast?.classes.includes('Chord');
+
+            // m21p case 1
+            if (!ni_is_chord && nInner.tie?.type === 'stop') {
+                return true;
+            }
+            // skip case 2 for now.
+            if (!matchByPitch) {
+                return false;
+            }
+            if (!ni_is_chord
+                && nLast
+                && posConnected.includes(iLast)
+                && !nLast_is_chord
+                && (nLast as note.Note).pitch?.eq(nInner.pitch)
+            ) {
+                return true;
+            }
+
+            if (nLast
+                && !(nInner.classes.includes('Note'))
+                && nLast_is_chord
+                && ni_is_chord
+            ) {
+                if ((nLast as Chord).pitches.length !==
+                    (nInner as Chord).pitches.length
+                ) {
+                    return false;
+                }
+
+                for (let pitchIndex = 0; pitchIndex < (nLast as Chord).pitches.length; pitchIndex++) {
+                    if ((nLast as Chord).pitches[pitchIndex] !== nInner.pitches[pitchIndex]) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        };
+
+        const allTiesAreContinue: (nr: note.NotRest) => boolean = nr => {
+            if (!nr.tie) {
+                return false;
+            }
+            if (nr.tie.type !== 'continue') {
+                return false;
+            }
+            // TODO: check chords...
+            return true;
+        };
+
+        for (let i = 0; i < notes.length; i++) {
+            let endMatch;
+            const n = <note.NotRest> notes[i];
+            if (i > 0) {
+                iLast = i - 1;
+                nLast = notes[iLast];
+            } else {
+                iLast = undefined;
+                nLast = undefined;
+            }
+            if (n.tie?.type === 'start') {
+                if (iLast === undefined || !posConnected.includes(iLast)) {
+                    posConnected = [i];
+                } else if (posConnected.includes(iLast)) {
+                    posConnected.push(i);
+                }
+                endMatch = false;
+            } else if (n.tie?.type === 'continue') {
+                if (!posConnected.length) {
+                    posConnected.push(i);
+                    endMatch = false;
+                } else if (matchByPitch) {
+                    const tempEndMatch = updateEndMatch(n);
+                    if (tempEndMatch) {
+                        posConnected.push(i);
+                        endMatch = false;
+                    } else {
+                        posConnected = [i];
+                        endMatch = false;
+                    }
+                } else if (allTiesAreContinue(n)) {
+                    if (nLast && (nLast as note.NotRest).pitches?.length !== n.pitches?.length) {
+                        posConnected = [i];
+                    } else {
+                        posConnected.push(i);
+                    }
+                    endMatch = false;
+                } else {
+                    posConnected = [];
+                    endMatch = false;
+                }
+            }
+
+            if (endMatch === undefined) {
+                endMatch = updateEndMatch(n);
+            }
+
+            if (endMatch) {
+                posConnected.push(i);
+                if (posConnected.length < 2) {
+                    posConnected = [];
+                    continue;
+                }
+
+                let durSum: number = 0;
+                for (let q_index = 1; q_index < posConnected.length; q_index++) {
+                    const q = posConnected[q_index];
+                    durSum += notes[q].quarterLength;
+                    posDelete.push(q);
+                }
+                if (durSum === 0) {
+                    throw new StreamException('aggregated ties have a zero duration sum');
+                }
+                const qLen = notes[posConnected[0]].quarterLength;
+                notes[posConnected[0]].quarterLength = qLen + durSum;
+                notes[posConnected[0]].tie = undefined;
+
+                // TODO: spanners;
+                posConnected = [];
+            }
+        }
+
+        posDelete.reverse();
+
+        for (const i of posDelete) {
+            const nTarget = notes[i];
+            returnObj.remove(nTarget, {recurse: true});
+        }
+
+        return returnObj;
+    }
+
 
     /**
      * Returns either (1) a Stream containing Elements
@@ -3272,7 +3460,6 @@ export class Score extends Stream {
         // returnObj.streamStatus.beams = true;
         return returnObj;
     }
-
 
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.

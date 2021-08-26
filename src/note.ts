@@ -378,7 +378,7 @@ export class GeneralNote extends base.Music21Object {
      *
      * For a general note -- same as a rest -- doesn't make a sound.  :-)
      *
-     * @param {number} [tempo=120] - tempo in bpm
+     * @param {number} [tempo=120] - tempo in Quarter Lengths per minute.
      * @param {base.Music21Object} [nextElement] - for determining
      *     the length to play in case of tied notes, etc.
      * @param {Object} [options] - other options (currently just
@@ -388,7 +388,11 @@ export class GeneralNote extends base.Music21Object {
     playMidi(
         tempo=120,
         nextElement,
-        { instrument=undefined, channel=undefined } = {}
+        {
+            instrument=undefined,
+            channel=undefined,
+            playLegato=false,
+        } = {}
     ): number {
         // returns the number of milliseconds to the next element in
         // case that can't be determined otherwise.
@@ -661,10 +665,10 @@ export class Note extends NotRest {
         {
             instrument=undefined,
             channel=undefined,
-            playLegato=true,
+            playLegato=false,
         }={}
     ): number {
-        const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel });
+        const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel, playLegato });
         if (channel === undefined) {
             channel = this.activeChannel();
         }
