@@ -28,6 +28,10 @@ export default function tests() {
         const c = new music21.clef.AltoClef();
         const vfn = p.vexflowName(c);
         assert.equal(vfn, 'C#/6', 'Vexflow name set');
+
+        const pp = new music21.pitch.Pitch('D#5');
+        assert.notEqual(p, pp);  // object equality
+        assert.ok(p.eq(pp));  // music21 pitch equality
     });
 
     test('music21.pitch.Pitch.updateAccidentalDisplay', assert => {

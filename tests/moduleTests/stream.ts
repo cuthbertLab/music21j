@@ -126,6 +126,20 @@ export default function tests() {
         assert.throws(() => { cs.getOffsetBySite(s); }, /not stored/, 'cs is no longer in s');
     });
 
+    test('music21.stream.Stream remove recursive', assert => {
+        const p = music21.tinyNotation.TinyNotation('4/4 c1 d1 e1 f1');
+        assert.equal(p.flat.notes.length, 4);
+        const d = p.recurse().notes.get(1);
+        assert.equal(d.name, 'D');
+        p.remove(d, {recurse: true});
+        assert.equal(p.flat.notes.length, 3);
+        const array_notes = Array.from(p.flat.notes) as music21.note.Note[];
+        assert.deepEqual(
+            array_notes.map(n => n.pitch.name),
+            ['C', 'E', 'F']
+        );
+    });
+
     test('music21.stream.Stream.elements from stream', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
@@ -828,5 +842,45 @@ export default function tests() {
                 'down', 'noStem', 'double', 'down',
             ]
         );
+    });
+
+    test('music21.stream.stripTies', assert => {
+        const sc = music21.tinyNotation.TinyNotation('4/4 c2.~ c4');
+        const n_before = sc.flat.notes.get(0);
+        assert.equal(n_before.duration.quarterLength, 3.0);
+
+        const strip = sc.flat.stripTies();
+        const strip_n = Array.from(strip.notes) as music21.note.Note[];
+        assert.equal(strip_n.length, 1);
+        const n_after = strip_n[0];
+        assert.equal(n_after.pitch.nameWithOctave, 'C4');
+        assert.equal(n_after.duration.quarterLength, 4.0, 'Duration one measure after stripping');
+
+        // without flat
+        const sc2 = music21.tinyNotation.TinyNotation('4/4 c1~ c1');
+        const strip2 = sc2.stripTies();
+        assert.equal(strip2.recurse().notes.length, 1);
+        const breve = strip2.recurse().notes.get(0);
+        assert.equal(breve.duration.quarterLength, 8.0);
+        assert.ok(breve.tie === undefined);
+        const m0 = strip2.measures.get(0);
+        assert.ok(Array.from(m0.elements).includes(breve));
+        const m1 = strip2.measures.get(1);
+        assert.equal(m1.notes.length, 0);
+
+        // actual score
+        const sc3_0 = music21.tinyNotation.TinyNotation('3/4 c2.~ c2 r4');
+        const sc3_1 = music21.tinyNotation.TinyNotation('3/4 r2 d4~ d2.');
+        const sc3 = new music21.stream.Score();
+        sc3.insert(0, sc3_0);
+        sc3.insert(0, sc3_1);
+        const strip3 = sc3.stripTies();
+        assert.equal(strip3.recurse().notes.length, 2);
+        const s3_n0 = strip3.recurse().notes.first(0) as music21.note.Note;
+        const s3_n1 = strip3.recurse().notes.get(1) as music21.note.Note;
+        assert.equal(s3_n0.name, 'C');
+        assert.equal(s3_n0.duration.quarterLength, 5.0);  // complex note is okay.
+        assert.equal(s3_n1.name, 'D');
+        assert.equal(s3_n1.duration.quarterLength, 4.0);
     });
 }
