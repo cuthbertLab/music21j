@@ -53,6 +53,16 @@ export class Accidental extends prebase.ProtoM21Object {
         return this.name;
     }
 
+    eq(other: Accidental): boolean {
+        if (!other?.isClassOrSubclass('Accidental')) {
+            return false;
+        }
+        if (this.name === other.name) {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
@@ -335,6 +345,24 @@ export class Pitch extends prebase.ProtoM21Object {
 
     stringInfo(): string {
         return this.nameWithOctave;
+    }
+
+    eq(other: Pitch): boolean {
+        if (!other) {
+            return false;
+        }
+        if (!other.isClassOrSubclass('Pitch')) {
+            return false;
+        }
+        if (this.octave === other.octave
+            && this.step === other.step
+            && (!(this.accidental && other.accidental)
+                || (this.accidental.eq(other.accidental)))
+            // TODO: microtone
+        ) {
+            return true;
+        }
+        return false;
     }
 
     // N.B. cannot use transpose here, because of circular import.
