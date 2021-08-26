@@ -220,4 +220,8 @@ export class ProtoM21Object {
     stringInfo() {
         return '';
     }
+
+    eq(other: this): boolean {
+        return this === other;
+    }
 }
