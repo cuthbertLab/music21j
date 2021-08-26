@@ -81,6 +81,7 @@ export const vexflowDurationArray = [
 export class Duration extends prebase.ProtoM21Object {
     static get className() { return 'music21.duration.Duration'; }
     isGrace: boolean = false;
+    linked: boolean = true;
     protected _quarterLength: number = 0.0;
     protected _dots: number = 0;
     protected _durationNumber = undefined;
@@ -121,7 +122,9 @@ export class Duration extends prebase.ProtoM21Object {
 
     set dots(numDots: number) {
         this._dots = numDots;
-        this.updateQlFromFeatures();
+        if (this.linked) {
+            this.updateQlFromFeatures();
+        }
     }
 
     /**
@@ -148,7 +151,9 @@ export class Duration extends prebase.ProtoM21Object {
         }
         ql = common.opFrac(ql);
         this._quarterLength = ql;
-        this.updateFeaturesFromQl();
+        if (this.linked) {
+            this.updateFeaturesFromQl();
+        }
     }
 
     /**
@@ -178,7 +183,9 @@ export class Duration extends prebase.ProtoM21Object {
             throw new Music21Exception('invalid type ' + typeIn);
         }
         this._type = typeIn;
-        this.updateQlFromFeatures();
+        if (this.linked) {
+            this.updateQlFromFeatures();
+        }
     }
 
     /**
@@ -319,7 +326,7 @@ export class Duration extends prebase.ProtoM21Object {
     appendTuplet(newTuplet: Tuplet, skipUpdateQl=false) {
         newTuplet.frozen = true;
         this._tuplets.push(newTuplet);
-        if (skipUpdateQl !== true) {
+        if (skipUpdateQl !== true && this.linked) {
             this.updateQlFromFeatures();
         }
         return this;
