@@ -2184,7 +2184,6 @@ export class Stream extends base.Music21Object {
         }
 
         $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
-        $newCanvasOrDIV.css('display', 'inline-block');
 
         if (width !== undefined) {
             if (typeof width === 'string') {
