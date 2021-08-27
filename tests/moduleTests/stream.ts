@@ -876,7 +876,7 @@ export default function tests() {
         sc3.insert(0, sc3_1);
         const strip3 = sc3.stripTies();
         assert.equal(strip3.recurse().notes.length, 2);
-        const s3_n0 = strip3.recurse().notes.first(0) as music21.note.Note;
+        const s3_n0 = strip3.recurse().notes.first() as music21.note.Note;
         const s3_n1 = strip3.recurse().notes.get(1) as music21.note.Note;
         assert.equal(s3_n0.name, 'C');
         assert.equal(s3_n0.duration.quarterLength, 5.0);  // complex note is okay.
