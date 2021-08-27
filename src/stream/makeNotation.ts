@@ -61,7 +61,7 @@ export function makeBeams(s: stream.Stream, {
         }
         const noteStream = noteStreamIterator.stream();
 
-        const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
+        const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
         const durSum = parseFloat(durSumErr.toFixed(8));  // remove fraction errors
         const barQL = lastTimeSignature.barDuration.quarterLength;
         if (durSum > barQL) {
