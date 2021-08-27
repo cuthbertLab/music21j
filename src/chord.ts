@@ -621,9 +621,10 @@ export class Chord extends note.NotRest {
         {
             instrument=undefined,
             channel=undefined,
+            playLegato=false,
         }={}
     ) {
-        const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel });
+        const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel, playLegato });
         if (channel === undefined) {
             channel = this.activeChannel();
         }

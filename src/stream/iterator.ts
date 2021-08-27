@@ -74,6 +74,21 @@ class _StreamIteratorBase<T = Music21Object> {
         return Array.from(this).map(func);
     }
 
+    first(): T {
+        for (const el of this) {
+            return el;
+        }
+        return undefined;
+    }
+
+    last(): T {
+        const fe = this.matchingElements();
+        if (!fe.length) {
+            return undefined;
+        }
+        return fe[fe.length - 1];
+    }
+
     get(k): T {
         const fe = this.matchingElements();
         if (k < 0) {
