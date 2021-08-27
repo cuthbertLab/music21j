@@ -13,3 +13,7 @@
     padding: 10px 10px 10px 10px;
     z-index: 20;
 }
+
+.streamHolding {
+    display: inline-block;
+}
