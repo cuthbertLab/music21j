@@ -806,7 +806,9 @@ export class Stream extends base.Music21Object {
         if (!(el instanceof base.Music21Object)) {
             throw new Music21Exception('Can only append a music21 object.');
         }
-
+        if (this._elements.includes(el)) {
+            throw new StreamException(`Cannot append (${el}): already found in Stream`);
+        }
         try {
             if (
                 el.isClassOrSubclass !== undefined
@@ -865,6 +867,9 @@ export class Stream extends base.Music21Object {
     ) {
         if (el === undefined) {
             throw new StreamException('Cannot insert without an element.');
+        }
+        if (this._elements.includes(el)) {
+            throw new StreamException(`Cannot insert (${el}): already found in Stream`);
         }
         try {
             if (!ignoreSort) {
