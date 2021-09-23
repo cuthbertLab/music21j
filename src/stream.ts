@@ -3190,7 +3190,8 @@ export class Part extends Stream {
             // read from measure render options
             let lastSystemIndex = 0;
             let workingSystemWidth = 0;
-            for (const [i, m] of Array.from(this.measures).entries()) {
+            const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
+            for (const [i, m] of Array.from(measure_iter).entries()) {
                 if (m.renderOptions.systemIndex === lastSystemIndex) {
                     workingSystemWidth += m.renderOptions.width;
                 } else {
@@ -3211,7 +3212,8 @@ export class Part extends Stream {
 
         let currentSystemIndex = 0;
 
-        for (const [i, m] of Array.from(this.measures).entries()) {
+        const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
+        for (const [i, m] of Array.from(measure_iter).entries()) {
             // values of systemBreakIndices are the measure indices
             // corresponding to the last measure on a system
             // here, looking for first measure of new system
