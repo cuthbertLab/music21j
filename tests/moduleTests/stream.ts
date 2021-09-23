@@ -891,6 +891,18 @@ export default function tests() {
         s.insert(0, p1);
         s.insert(0, p2);
 
+        const eachMeasureRenderOptionsEqual = (p1: music21.stream.Stream, p2: music21.stream.Stream) => {
+            for (let i = 0; i < p1.measures.length; i++) {
+                const p1m = p1.measures.get(i);
+                const p2m = p2.measures.get(i);
+                const p1m_renderOp_clone = p1m.renderOptions.deepClone();
+                const p2m_renderOp_clone = p2m.renderOptions.deepClone();
+                // we copied precisely so we can hack this to avoid busting the test
+                p2m_renderOp_clone.partIndex = 0;
+                assert.deepEqual(p1m_renderOp_clone, p1m_renderOp_clone);
+            }
+        }
+
         // get initial widths
         s.setSubstreamRenderOptions();
         const p1_m1 = p1.measures.get(0);
@@ -899,7 +911,7 @@ export default function tests() {
         assert.notOk(p1_m2.renderOptions.displayClef);
 
         // force a system break using a margin small enough for clef reiteration to matter
-        const maxWidth = (p1_m1.renderOptions.width + p1_m2.renderOptions.width) - 20;
+        let maxWidth = (p1_m1.renderOptions.width + p1_m2.renderOptions.width) - 20;
         const s_iter = s.recurse(
             {streamsOnly: true, skipSelf: false}
         ) as music21.stream.iterator.RecursiveIterator<music21.stream.Stream>;
@@ -914,11 +926,30 @@ export default function tests() {
         assert.equal(p1_m1.renderOptions.systemIndex, 0);
         assert.equal(p1_m2.renderOptions.systemIndex, 1);
         assert.equal(p1_m3.renderOptions.systemIndex, 2);
+        eachMeasureRenderOptionsEqual(p1, p2);
 
-        for (let i = 0; i < p1.measures.length; i++) {
-            const p1m = p1.measures.get(i);
-            const p2m = p1.measures.get(i);
-            assert.deepEqual(p1m.renderOptions, p2m.renderOptions);
+        // Now loosen the constraint
+        maxWidth += 40;
+        for (const substream of s_iter) {
+            substream.renderOptions.maxSystemWidth = maxWidth;
         }
+        s.setSubstreamRenderOptions();
+
+        assert.equal(p1_m1.renderOptions.systemIndex, 0);
+        assert.equal(p1_m2.renderOptions.systemIndex, 0);
+        assert.equal(p1_m3.renderOptions.systemIndex, 1);
+        eachMeasureRenderOptionsEqual(p1, p2);
+
+        // Now REALLY loosen the constraint
+        // smaller scaleFactors lead to longer allowable system widths
+        for (const substream of s_iter) {
+            substream.renderOptions.scaleFactor.x = 0.25;
+        }
+        s.setSubstreamRenderOptions();
+
+        assert.equal(p1_m1.renderOptions.systemIndex, 0);
+        assert.equal(p1_m2.renderOptions.systemIndex, 0);
+        assert.equal(p1_m3.renderOptions.systemIndex, 0);
+        eachMeasureRenderOptionsEqual(p1, p2);
     });
 }
