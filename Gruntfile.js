@@ -28,8 +28,9 @@ module.exports = grunt => {
     // const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
 
     const SOURCES = [
-        'src/music21/*.ts',
-        'src/music21/*/*.ts',
+        'src/*.ts',
+        'src/*/*.ts',
+        'tests/moduleTests/*.ts',
     ];
     const WATCH_SOURCES = SOURCES.concat(['Gruntfile.js']);
 
