@@ -3112,7 +3112,7 @@ export class Part extends Stream {
      * Calculate system breaks and update measure widths as necessary on
      * account of the reiteration of clefs and key signatures on subsequent systems.
      */
-    systemWidthsAndBreaks(setMeasureWidths: boolean = true): [number[], number[]] {
+    systemWidthsAndBreaks({setMeasureWidths=true}: {setMeasureWidths?: boolean} = {}): [number[], number[]] {
         const maxSystemWidth = this.maxSystemWidth;
         const systemCurrentWidths: number[] = [];
         const systemBreakIndexes: number[] = [];
@@ -3172,8 +3172,15 @@ export class Part extends Stream {
      * returns an array of all the widths of complete systems
      * (last partial system omitted)
      */
-    fixSystemInformation(systemHeight?: number, systemPadding?: number,
-        setMeasureRenderOptions: boolean = true): number[] {
+    fixSystemInformation({
+        systemHeight = undefined,
+        systemPadding = undefined,
+        setMeasureRenderOptions = true,
+    }: {
+        systemHeight?: number,
+        systemPadding?: number,
+        setMeasureRenderOptions?: boolean,
+    } = {}): number[] {
         // this is a method on Part!
         if (systemHeight === undefined) {
             /* part.show() called... */
@@ -3523,12 +3530,16 @@ export class Score extends Stream {
                 p.measures.get(i).renderOptions.width = measureWidths[i];
             }
             // refresh system breaks again, and update lefts, but don't update widths
-            p.systemWidthsAndBreaks(false);
+            p.systemWidthsAndBreaks({setMeasureWidths: false});
         }
         for (const p of this.parts) {
             // fix system info, but no need to recalculate measure widths
             // which would undo what we just did
-            p.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding, false);
+            p.fixSystemInformation({
+                systemHeight: currentScoreHeight,
+                systemPadding: this.renderOptions.systemPadding,
+                setMeasureRenderOptions: false,
+            });
         }
         this.renderOptions.height = this.estimateStreamHeight();
         return this;

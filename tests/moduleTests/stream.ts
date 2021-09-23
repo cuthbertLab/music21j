@@ -914,7 +914,7 @@ export default function tests() {
         assert.equal(p1_m1.renderOptions.systemIndex, 0);
         assert.equal(p1_m2.renderOptions.systemIndex, 1);
         assert.equal(p1_m3.renderOptions.systemIndex, 2);
-        
+
         for (let i = 0; i < p1.measures.length; i++) {
             const p1m = p1.measures.get(i);
             const p2m = p1.measures.get(i);
