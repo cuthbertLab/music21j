@@ -3113,7 +3113,7 @@ export class Part extends Stream {
      * account of the reiteration of clefs and key signatures on subsequent systems.
      */
     systemWidthsAndBreaks(setMeasureWidths: boolean = true): [number[], number[]] {
-        const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
+        const maxSystemWidth = this.maxSystemWidth;
         const systemCurrentWidths: number[] = [];
         const systemBreakIndexes: number[] = [];
         let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
