@@ -901,7 +901,7 @@ export default function tests() {
                 p2m_renderOp_clone.partIndex = 0;
                 assert.deepEqual(p1m_renderOp_clone, p1m_renderOp_clone);
             }
-        }
+        };
 
         // get initial widths
         s.setSubstreamRenderOptions();
