@@ -3108,7 +3108,11 @@ export class Part extends Stream {
         return tempM.estimateStaffLength();
     }
 
-    systemWidthsAndBreaks(): [number[], number[]] {
+    /**
+     * Calculate system breaks and update measure widths as necessary on
+     * account of the reiteration of clefs and key signatures on subsequent systems.
+     */
+    systemWidthsAndBreaks(setMeasureWidths: boolean = true): [number[], number[]] {
         const maxSystemWidth = this.maxSystemWidth; // cryptic note: 'of course fix!'?
         const systemCurrentWidths: number[] = [];
         const systemBreakIndexes: number[] = [];
@@ -3137,13 +3141,17 @@ export class Part extends Stream {
                 m.renderOptions.displayKeySignature = true;
                 m.renderOptions.startNewSystem = true;
                 m.renderOptions.left = firstMeasurePadding;
-                m.renderOptions.width = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                if (setMeasureWidths) {
+                    m.renderOptions.width = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                }
             } else if (i !== 0) {
                 m.renderOptions.startNewSystem = false;
                 m.renderOptions.displayClef = false; // check for changed clef first?
                 m.renderOptions.displayKeySignature = false; // check for changed KS first?
                 m.renderOptions.left = currentLeft;
-                m.renderOptions.width = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                if (setMeasureWidths) {
+                    m.renderOptions.width = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                }
             }
             currentLeft = m.renderOptions.left + m.renderOptions.width;
             m.renderOptions.systemIndex = currentSystemIndex;
@@ -3164,7 +3172,8 @@ export class Part extends Stream {
      * returns an array of all the widths of complete systems
      * (last partial system omitted)
      */
-    fixSystemInformation(systemHeight?: number, systemPadding?: number): number[] {
+    fixSystemInformation(systemHeight?: number, systemPadding?: number,
+        setMeasureRenderOptions: boolean = true): number[] {
         // this is a method on Part!
         if (systemHeight === undefined) {
             /* part.show() called... */
@@ -3172,8 +3181,26 @@ export class Part extends Stream {
         } else if (debug) {
             console.log('overridden systemHeight: ' + systemHeight);
         }
-        const [systemCurrentWidths, systemBreakIndexes] = this.systemWidthsAndBreaks();
-
+        let systemCurrentWidths = [];
+        let systemBreakIndexes = [];
+        if (setMeasureRenderOptions) {
+            [systemCurrentWidths, systemBreakIndexes] = this.systemWidthsAndBreaks();
+        }
+        else {
+            // read from measure render options
+            let lastSystemIndex = 0;
+            let workingSystemWidth = 0;
+            for (const [i, m] of Array.from(this.measures).entries()) {
+                if (m.renderOptions.systemIndex === lastSystemIndex) {
+                    workingSystemWidth += m.renderOptions.width;
+                } else {
+                    systemCurrentWidths.push(workingSystemWidth);
+                    systemBreakIndexes.push(i - 1);
+                    workingSystemWidth = m.renderOptions.width;
+                }
+                lastSystemIndex = m.renderOptions.systemIndex;
+            }
+        }
         if (systemPadding === undefined) {
             systemPadding = this.renderOptions.systemPadding;
         }
@@ -3483,13 +3510,23 @@ export class Score extends Stream {
             }
         );
         for (const p of this.parts) {
-            // run the systemwidths and breaks calculation
-            // store off the arrays
-            // walk the arrays and get the max for each measure, set on each measure of each part
+            // return value is not used
+            // this is done merely to set preliminary measure widths
+            p.systemWidthsAndBreaks();
+        }
+        // synchronize measure widths across all parts
+        const measureWidths = this.getMaxMeasureWidths();
+        for (const p of this.parts) {
+            for (let i = 0; i < measureWidths.length; i++) {
+                p.measures.get(i).renderOptions.width = measureWidths[i];
+            }
+            // refresh system breaks again, and update lefts, but don't update widths
+            p.systemWidthsAndBreaks(false);
         }
         for (const p of this.parts) {
-            // and send the information here
-            p.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding);
+            // fix system info, but no need to recalculate measure widths
+            // which would undo what we just did
+            p.fixSystemInformation(currentScoreHeight, this.renderOptions.systemPadding, false);
         }
         this.renderOptions.height = this.estimateStreamHeight();
         return this;
@@ -3565,9 +3602,6 @@ export class Score extends Stream {
      * by getting the maximum for each measure of
      * Part.getMeasureWidths();
      *
-     * Does this work? I found a bug in this and fixed it that should have
-     * broken it!
-     *
      * @returns Array<number>
      */
     getMaxMeasureWidths() {
@@ -3580,7 +3614,7 @@ export class Score extends Stream {
         }
         for (i = 0; i < measureWidthsArrayOfArrays[0].length; i++) {
             let maxFound = 0;
-            for (let j = 0; j < this.length; j++) {
+            for (let j = 0; j < this.parts.length; j++) {
                 if (measureWidthsArrayOfArrays[j][i] > maxFound) {
                     maxFound = measureWidthsArrayOfArrays[j][i];
                 }

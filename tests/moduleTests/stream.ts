@@ -883,4 +883,42 @@ export default function tests() {
         assert.equal(s3_n1.name, 'D');
         assert.equal(s3_n1.duration.quarterLength, 4.0);
     });
+
+    test('music21.stream.Score setSubstreamRenderOptions', assert => {
+        const p1 = music21.tinyNotation.TinyNotation('4/4 c4 c c c d d d d e e e e');
+        const p2 = music21.tinyNotation.TinyNotation('4/4 c4 c c c d d d d e e e e');
+        const s = new music21.stream.Score();
+        s.insert(0, p1);
+        s.insert(0, p2);
+
+        // get initial widths
+        s.setSubstreamRenderOptions();
+        const p1_m1 = p1.measures.get(0);
+        const p1_m2 = p1.measures.get(1);
+        const p1_m3 = p1.measures.get(2);
+        assert.notOk(p1_m2.renderOptions.displayClef);
+
+        // force a system break using a margin small enough for clef reiteration to matter
+        const maxWidth = (p1_m1.renderOptions.width + p1_m2.renderOptions.width) - 20;
+        const s_iter = s.recurse(
+            {streamsOnly: true, skipSelf: false}
+        ) as music21.stream.iterator.RecursiveIterator<music21.stream.Stream>;
+        for (const substream of s_iter) {
+            substream.renderOptions.maxSystemWidth = maxWidth;
+            substream.renderOptions.scaleFactor = {x: 1.0, y: 1.0};
+        }
+        s.setSubstreamRenderOptions();
+
+        assert.equal(p1.renderOptions.partIndex, 0);
+        assert.equal(p2.renderOptions.partIndex, 1);
+        assert.equal(p1_m1.renderOptions.systemIndex, 0);
+        assert.equal(p1_m2.renderOptions.systemIndex, 1);
+        assert.equal(p1_m3.renderOptions.systemIndex, 2);
+        
+        for (let i = 0; i < p1.measures.length; i++) {
+            const p1m = p1.measures.get(i);
+            const p2m = p1.measures.get(i);
+            assert.deepEqual(p1m.renderOptions, p2m.renderOptions);
+        }
+    });
 }
