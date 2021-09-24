@@ -30,7 +30,6 @@ module.exports = grunt => {
     const SOURCES = [
         'src/*.ts',
         'src/*/*.ts',
-        'tests/moduleTests/*.ts',
     ];
     const WATCH_SOURCES = SOURCES.concat(['Gruntfile.js']);
 
@@ -182,7 +181,7 @@ module.exports = grunt => {
             },
         },
         eslint: {
-            target: SOURCES,
+            target: SOURCES.concat(TEST_SOURCES),
             options: {
                 configFile: '.eslintrc.json',
             },
