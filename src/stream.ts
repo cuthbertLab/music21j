@@ -3127,7 +3127,9 @@ export class Part extends Stream {
                 m.renderOptions.startNewSystem = true;
                 m.renderOptions.displayClef = true;
                 m.renderOptions.displayKeySignature = true;
-                m.renderOptions.width = Math.min(m.renderOptions.width, maxSystemWidth);
+                if (setMeasureWidths) {
+                    m.renderOptions.width = Math.min(m.renderOptions.width, maxSystemWidth);
+                }
             }
             const currentRight = currentLeft + m.renderOptions.width;
             /* console.log('left: ' + currentLeft + ' ; right: ' + currentRight + ' ; m: ' + i); */
