@@ -3123,12 +3123,13 @@ export class Part extends Stream {
         let currentSystemIndex = 0;
         let currentLeft = firstMeasurePadding;
         for (const [i, m] of Array.from(this.measures).entries()) {
-            const currentRight = currentLeft + m.renderOptions.width;
             if (i === 0) {
                 m.renderOptions.startNewSystem = true;
                 m.renderOptions.displayClef = true;
                 m.renderOptions.displayKeySignature = true;
+                m.renderOptions.width = Math.min(m.renderOptions.width, maxSystemWidth);
             }
+            const currentRight = currentLeft + m.renderOptions.width;
             /* console.log('left: ' + currentLeft + ' ; right: ' + currentRight + ' ; m: ' + i); */
             if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
                 /* first measure of new System */
@@ -3142,7 +3143,8 @@ export class Part extends Stream {
                 m.renderOptions.startNewSystem = true;
                 m.renderOptions.left = firstMeasurePadding;
                 if (setMeasureWidths) {
-                    m.renderOptions.width = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                    const estimated_width = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                    m.renderOptions.width = Math.min(estimated_width, maxSystemWidth);
                 }
             } else if (i !== 0) {
                 m.renderOptions.startNewSystem = false;
