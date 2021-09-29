@@ -725,8 +725,8 @@ export class MeasureParser {
 
     handleClef($mxClef) {
         const clefObj = this.xmlToClef($mxClef);
-        this.stream.clef = clefObj;
-        this.insertIntoMeasureOrVoice($mxClef, clefObj);
+        this.stream.clef = clefObj;  // inserts
+        // this.insertIntoMeasureOrVoice($mxClef, clefObj);
         this.lastClefs[0] = clefObj;
         // if (this.parent !== undefined) {
         //     this.parent.lastClefs[0] = clefObj.clone(true);
