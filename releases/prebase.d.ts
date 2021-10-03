@@ -78,5 +78,6 @@ export declare class ProtoM21Object {
      * @returns {string}
      */
     stringInfo(): string;
+    eq(other: this): boolean;
 }
 //# sourceMappingURL=prebase.d.ts.map

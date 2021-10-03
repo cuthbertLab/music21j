@@ -26,6 +26,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
     displayStatus: boolean;
     constructor(accName: string | number);
     stringInfo(): string;
+    eq(other: Accidental): boolean;
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
@@ -154,6 +155,7 @@ export declare class Pitch extends prebase.ProtoM21Object {
     microtone: any;
     constructor(pn?: string | number);
     stringInfo(): string;
+    eq(other: Pitch): boolean;
     get step(): string;
     set step(s: string);
     get octave(): number;

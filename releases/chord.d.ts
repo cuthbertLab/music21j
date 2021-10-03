@@ -109,9 +109,10 @@ export declare class Chord extends note.NotRest {
      * TODO: add.
      */
     inversion(): number;
-    playMidi(tempo?: number, nextElement?: any, { instrument, channel, }?: {
+    playMidi(tempo?: number, nextElement?: any, { instrument, channel, playLegato, }?: {
         instrument?: any;
         channel?: any;
+        playLegato?: boolean;
     }): number;
     /**
      * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above

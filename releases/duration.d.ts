@@ -30,6 +30,7 @@ export declare const vexflowDurationArray: string[];
 export declare class Duration extends prebase.ProtoM21Object {
     static get className(): string;
     isGrace: boolean;
+    linked: boolean;
     protected _quarterLength: number;
     protected _dots: number;
     protected _durationNumber: any;

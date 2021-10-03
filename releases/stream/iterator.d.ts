@@ -26,6 +26,8 @@ declare class _StreamIteratorBase<T = Music21Object> {
     });
     [Symbol.iterator](): Generator<any, void, void>;
     map(func: any): unknown[];
+    first(): T;
+    last(): T;
     get(k: any): T;
     get length(): number;
     updateActiveInformation(): void;

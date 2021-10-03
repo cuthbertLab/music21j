@@ -142,16 +142,17 @@ export declare class GeneralNote extends base.Music21Object {
      *
      * For a general note -- same as a rest -- doesn't make a sound.  :-)
      *
-     * @param {number} [tempo=120] - tempo in bpm
+     * @param {number} [tempo=120] - tempo in Quarter Lengths per minute.
      * @param {base.Music21Object} [nextElement] - for determining
      *     the length to play in case of tied notes, etc.
      * @param {Object} [options] - other options (currently just
      *     `{instrument: music21.instrument.Instrument}` and channel[unused])
      * @returns {number} - delay time in milliseconds until the next element (may be ignored)
      */
-    playMidi(tempo: number, nextElement: any, { instrument, channel }?: {
+    playMidi(tempo: number, nextElement: any, { instrument, channel, playLegato, }?: {
         instrument?: any;
         channel?: any;
+        playLegato?: boolean;
     }): number;
 }
 /**

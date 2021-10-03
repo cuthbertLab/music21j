@@ -27,7 +27,6 @@
 import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';
 import * as Vex from 'vexflow';
-import 'jquery-ui-bundle';
 import * as exceptions21 from './exceptions21';
 import * as prebase from './prebase';
 import * as base from './base';
