@@ -939,10 +939,15 @@ export class Pitch extends prebase.ProtoM21Object {
 
                 // going from a natural to an accidental, we should already be
                 // showing the accidental, but just to check
-                // if A to A#, or A to A-, but not A# to A
+                // if A to A#, or A to A-, but not A# to A nor A to An
             } else if (pPast.accidental === undefined && pSelf.accidental !== undefined) {
                 // noinspection JSObjectNullOrUndefined
-                this.accidental.displayStatus = true;  // accidental is never undefined/natural
+                if (pSelf.accidental.name === 'natural') {
+                    pSelf.accidental.displayStatus = false;
+                }
+                else {
+                    this.accidental.displayStatus = true;
+                }
                 // environLocal.printDebug(['match previous no mark'])
                 setFromPitchPast = true;
                 break;

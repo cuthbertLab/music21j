@@ -527,6 +527,12 @@ export default function tests() {
         m.append(n1);
         m.makeAccidentals({inPlace: true});
         assert.notOk(n1.pitch.accidental.displayStatus);
+
+        n1.pitch.accidental.displayStatus = undefined;
+        const n0 = new music21.note.Note('E4');
+        m.insertAndShift(0, n0);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(n1.pitch.accidental.displayStatus);
     });
 
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
