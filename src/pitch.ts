@@ -668,15 +668,16 @@ export class Pitch extends prebase.ProtoM21Object {
         // no pitches in past...
         // noinspection PointlessBooleanExpressionJS
         if (pitchPastAll.length === 0) {
-            // if we have no past, we always need to show the accidental,
-            // unless this accidental is in the alteredPitches list
+            // if we have no past, we show the accidental if this accidental
+            // is not in the alteredPitches list, or vice versa for naturals
             if (acc_orig !== undefined
                 && (display_orig === false
                     || display_orig === undefined)) {
-                if (!this._nameInKeySignature(alteredPitches)) {
-                    this.accidental.displayStatus = true;
+                const nameInKS = this._nameInKeySignature(alteredPitches);
+                if (this.accidental.name === 'natural') {
+                    this.accidental.displayStatus = nameInKS;
                 } else {
-                    this.accidental.displayStatus = false;
+                    this.accidental.displayStatus = !nameInKS;
                 }
             } else if (this.accidental?.displayStatus === true
                 && this._nameInKeySignature(alteredPitches)) {
