@@ -1000,10 +1000,11 @@ export class Pitch extends prebase.ProtoM21Object {
             }
             // displayAccidentalIfNoPreviousAccidentals = false  // just to be sure
         } else if (!setFromPitchPast && this.accidental !== undefined) {
-            if (!this._nameInKeySignature(alteredPitches)) {
-                this.accidental.displayStatus = true;
+            const name_in_ks = this._nameInKeySignature(alteredPitches);
+            if (this.accidental.name === 'natural') {
+                this.accidental.displayStatus = name_in_ks;
             } else {
-                this.accidental.displayStatus = false;
+                this.accidental.displayStatus = !name_in_ks;
             }
             // if we have natural that alters the key sig, create a natural
         } else if (!setFromPitchPast && this.accidental === undefined) {
