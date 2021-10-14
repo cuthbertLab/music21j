@@ -673,11 +673,10 @@ export class Pitch extends prebase.ProtoM21Object {
             if (acc_orig !== undefined
                 && (display_orig === false
                     || display_orig === undefined)) {
-                const nameInKS = this._nameInKeySignature(alteredPitches);
                 if (this.accidental.name === 'natural') {
-                    this.accidental.displayStatus = nameInKS;
+                    this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
                 } else {
-                    this.accidental.displayStatus = !nameInKS;
+                    this.accidental.displayStatus = !this._nameInKeySignature(alteredPitches);
                 }
             } else if (this.accidental?.displayStatus === true
                 && this._nameInKeySignature(alteredPitches)) {
@@ -943,7 +942,7 @@ export class Pitch extends prebase.ProtoM21Object {
             } else if (pPast.accidental === undefined && pSelf.accidental !== undefined) {
                 // noinspection JSObjectNullOrUndefined
                 if (pSelf.accidental.name === 'natural') {
-                    pSelf.accidental.displayStatus = false;
+                    pSelf.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
                 }
                 else {
                     this.accidental.displayStatus = true;
@@ -1000,11 +999,10 @@ export class Pitch extends prebase.ProtoM21Object {
             }
             // displayAccidentalIfNoPreviousAccidentals = false  // just to be sure
         } else if (!setFromPitchPast && this.accidental !== undefined) {
-            const name_in_ks = this._nameInKeySignature(alteredPitches);
             if (this.accidental.name === 'natural') {
-                this.accidental.displayStatus = name_in_ks;
+                this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
             } else {
-                this.accidental.displayStatus = !name_in_ks;
+                this.accidental.displayStatus = !this._nameInKeySignature(alteredPitches);
             }
             // if we have natural that alters the key sig, create a natural
         } else if (!setFromPitchPast && this.accidental === undefined) {
