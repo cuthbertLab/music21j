@@ -737,7 +737,9 @@ export class MeasureParser {
         const sign = $($mxClef.children('sign')[0])
             .text()
             .trim();
-        // TODO: percussion, etc.
+        if (sign === 'percussion') {
+            return clef.clefFromString(sign);
+        }
         const line = $($mxClef.children('line')[0])
             .text()
             .trim();
