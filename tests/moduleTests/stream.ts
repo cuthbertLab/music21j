@@ -985,4 +985,20 @@ export default function tests() {
         assert.equal(p1_m3.renderOptions.systemIndex, 0);
         eachMeasureRenderOptionsEqual(p1, p2);
     });
+
+    test('music21.stream.Score makeMeasures distinct clefs', assert => {
+        const c = new music21.clef.Clef();
+        const ts = new music21.meter.TimeSignature();
+        const n = new music21.note.Note();
+        n.quarterLength = 4;
+        const n2 = new music21.note.Note();
+        n2.quarterLength = 4;
+        const s = new music21.stream.Stream();
+        for (const el of [c, ts, n, n2]) {
+            s.append(el);
+        }
+        s.makeMeasures({inPlace: true});
+        // this call will fail if there are duplicate clefs
+        assert.ok(s.flatten(true));
+    });
 }

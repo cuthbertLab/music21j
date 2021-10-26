@@ -1252,7 +1252,7 @@ export class Stream extends base.Music21Object {
             if (measureCount === 0) {
                 // simplified...
             }
-            m.clef = clefObj;
+            m.clef = clefObj.clone();
             m.timeSignature = thisTimeSignature.clone();
 
             for (let voiceIndex = 0; voiceIndex < voiceCount; voiceIndex++) {
