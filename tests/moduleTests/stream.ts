@@ -521,6 +521,39 @@ export default function tests() {
         assert.ok(n2.pitch.accidental.displayStatus);
     });
 
+    test('music21.stream.Stream makeAccidentals superfluous naturals', assert => {
+        const m = new music21.stream.Measure();
+        const c_major = new music21.key.Key('C');
+        const n1 = new music21.note.Note('En4');
+        m.append(c_major);
+        m.append(n1);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(n1.pitch.accidental.displayStatus);
+
+        n1.pitch.accidental.displayStatus = undefined;
+        // prepend an implicit E-natural before the explicit E-natural
+        const n0 = new music21.note.Note('E4');
+        m.insertAndShift(0, n0);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(n1.pitch.accidental.displayStatus);
+
+        // append an explicit D-natural
+        const n2 = new music21.note.Note('Dn4');
+        m.append(n2);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(n2.pitch.accidental.displayStatus);
+
+        // re-run the test with C-flat major
+        n1.pitch.accidental.displayStatus = undefined;
+        n2.pitch.accidental.displayStatus = undefined;
+        const c_flat_major = new music21.key.Key('C-');
+        m.replace(c_major, c_flat_major);
+        m.makeAccidentals({inPlace: true});
+        assert.ok(n0.pitch.accidental.displayStatus);  // natural created
+        assert.notOk(n1.pitch.accidental.displayStatus);  // not reiterated
+        assert.ok(n2.pitch.accidental.displayStatus);  // different note
+    });
+
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
         const n1 = new music21.note.Note('C5', 0.5);
         n1.stemDirection = 'up';

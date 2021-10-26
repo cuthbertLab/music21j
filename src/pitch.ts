@@ -668,15 +668,15 @@ export class Pitch extends prebase.ProtoM21Object {
         // no pitches in past...
         // noinspection PointlessBooleanExpressionJS
         if (pitchPastAll.length === 0) {
-            // if we have no past, we always need to show the accidental,
-            // unless this accidental is in the alteredPitches list
+            // if we have no past, we show the accidental if this accidental
+            // is not in the alteredPitches list, or vice versa for naturals
             if (acc_orig !== undefined
                 && (display_orig === false
                     || display_orig === undefined)) {
-                if (!this._nameInKeySignature(alteredPitches)) {
-                    this.accidental.displayStatus = true;
+                if (this.accidental.name === 'natural') {
+                    this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
                 } else {
-                    this.accidental.displayStatus = false;
+                    this.accidental.displayStatus = !this._nameInKeySignature(alteredPitches);
                 }
             } else if (this.accidental?.displayStatus === true
                 && this._nameInKeySignature(alteredPitches)) {
@@ -938,10 +938,15 @@ export class Pitch extends prebase.ProtoM21Object {
 
                 // going from a natural to an accidental, we should already be
                 // showing the accidental, but just to check
-                // if A to A#, or A to A-, but not A# to A
+                // if A to A#, or A to A-, but not A# to A nor A to An
             } else if (pPast.accidental === undefined && pSelf.accidental !== undefined) {
                 // noinspection JSObjectNullOrUndefined
-                this.accidental.displayStatus = true;  // accidental is never undefined/natural
+                if (pSelf.accidental.name === 'natural') {
+                    pSelf.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
+                }
+                else {
+                    this.accidental.displayStatus = true;
+                }
                 // environLocal.printDebug(['match previous no mark'])
                 setFromPitchPast = true;
                 break;
@@ -994,10 +999,10 @@ export class Pitch extends prebase.ProtoM21Object {
             }
             // displayAccidentalIfNoPreviousAccidentals = false  // just to be sure
         } else if (!setFromPitchPast && this.accidental !== undefined) {
-            if (!this._nameInKeySignature(alteredPitches)) {
-                this.accidental.displayStatus = true;
+            if (this.accidental.name === 'natural') {
+                this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
             } else {
-                this.accidental.displayStatus = false;
+                this.accidental.displayStatus = !this._nameInKeySignature(alteredPitches);
             }
             // if we have natural that alters the key sig, create a natural
         } else if (!setFromPitchPast && this.accidental === undefined) {
