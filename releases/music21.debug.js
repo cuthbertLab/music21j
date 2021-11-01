@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.4 built on 2021-10-03.
+ * music21j version 0.12.5 built on 2021-11-01.
  * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -1425,7 +1425,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
   /**
    * For an element which may not be in site, but might be in a Stream
    * in site (or further in streams), find the cumulative offset of the
-   * clement in that site.
+   * element in that site.
    *
    * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
    * a method that is about 10x faster when running through a recursed stream.
@@ -14333,7 +14333,11 @@ class MeasureParser {
   }
 
   xmlToClef($mxClef) {
-    const sign = jquery__WEBPACK_IMPORTED_MODULE_4__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
+    const sign = jquery__WEBPACK_IMPORTED_MODULE_4__($mxClef.children('sign')[0]).text().trim();
+
+    if (sign === 'percussion') {
+      return _clef__WEBPACK_IMPORTED_MODULE_7__.clefFromString(sign);
+    }
 
     const line = jquery__WEBPACK_IMPORTED_MODULE_4__($mxClef.children('line')[0]).text().trim();
     let clefOctaveChange = 0;
@@ -16045,13 +16049,13 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
 
 
     if (pitchPastAll.length === 0) {
-      // if we have no past, we always need to show the accidental,
-      // unless this accidental is in the alteredPitches list
+      // if we have no past, we show the accidental if this accidental
+      // is not in the alteredPitches list, or vice versa for naturals
       if (acc_orig !== undefined && (display_orig === false || display_orig === undefined)) {
-        if (!this._nameInKeySignature(alteredPitches)) {
-          this.accidental.displayStatus = true;
+        if (this.accidental.name === 'natural') {
+          this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
         } else {
-          this.accidental.displayStatus = false;
+          this.accidental.displayStatus = !this._nameInKeySignature(alteredPitches);
         }
       } else if (((_a = this.accidental) === null || _a === void 0 ? void 0 : _a.displayStatus) === true && this._nameInKeySignature(alteredPitches)) {
         // in case display set to true and in alteredPitches, make false
@@ -16294,11 +16298,15 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
         setFromPitchPast = true;
         break; // going from a natural to an accidental, we should already be
         // showing the accidental, but just to check
-        // if A to A#, or A to A-, but not A# to A
+        // if A to A#, or A to A-, but not A# to A nor A to An
       } else if (pPast.accidental === undefined && pSelf.accidental !== undefined) {
         // noinspection JSObjectNullOrUndefined
-        this.accidental.displayStatus = true; // accidental is never undefined/natural
-        // environLocal.printDebug(['match previous no mark'])
+        if (pSelf.accidental.name === 'natural') {
+          pSelf.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
+        } else {
+          this.accidental.displayStatus = true;
+        } // environLocal.printDebug(['match previous no mark'])
+
 
         setFromPitchPast = true;
         break; // if A# to A# and not immediately repeated:
@@ -16347,10 +16355,10 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
       } // displayAccidentalIfNoPreviousAccidentals = false  // just to be sure
 
     } else if (!setFromPitchPast && this.accidental !== undefined) {
-      if (!this._nameInKeySignature(alteredPitches)) {
-        this.accidental.displayStatus = true;
+      if (this.accidental.name === 'natural') {
+        this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
       } else {
-        this.accidental.displayStatus = false;
+        this.accidental.displayStatus = !this._nameInKeySignature(alteredPitches);
       } // if we have natural that alters the key sig, create a natural
 
     } else if (!setFromPitchPast && this.accidental === undefined) {
@@ -19904,7 +19912,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
       if (measureCount === 0) {// simplified...
       }
 
-      m.clef = clefObj;
+      m.clef = clefObj.clone();
       m.timeSignature = thisTimeSignature.clone();
 
       for (let voiceIndex = 0; voiceIndex < voiceCount; voiceIndex++) {

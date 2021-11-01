@@ -94,7 +94,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     /**
      * For an element which may not be in site, but might be in a Stream
      * in site (or further in streams), find the cumulative offset of the
-     * clement in that site.
+     * element in that site.
      *
      * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
      * a method that is about 10x faster when running through a recursed stream.
