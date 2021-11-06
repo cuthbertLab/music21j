@@ -9,7 +9,7 @@ import * as common from './common';
 import { Music21Exception } from './exceptions21';
 
 // for typing only...
-import { Stream } from './stream';
+import type { Stream } from './stream';
 
 /**
  */

@@ -22,10 +22,10 @@ import * as chord from './chord';
 import * as common from './common';
 import * as instrument from './instrument';
 import * as note from './note';
+import {to_el} from './common';
 
 // imports for typechecking only
-import * as tempo from './tempo';
-import {coerceJQuery} from './common';
+import type * as tempo from './tempo';
 
 declare interface MIDIWindow extends Window {
     MIDI?: MIDI,
@@ -317,7 +317,7 @@ export function postLoadCallback(
             'first playing two notes very softly -- seems to flush the buffer.'
         );
     }
-    $('.loadingSoundfont').remove();
+    document.querySelector('.loadingSoundfont')?.remove();
 
     const isAudioTag = MIDI.config.api === 'audiotag';
     const instrumentObj = instrument.find(soundfont);
@@ -410,8 +410,8 @@ export function loadSoundfont(
             if (debug) {
                 console.log('Document ready, waiting to load soundfont');
             }
-            $(document.body).append(
-                $(
+            document.body.append(
+                to_el(
                     "<div class='loadingSoundfont'><b>Loading Instrument</b>: "
                         + 'audio will begin when this message disappears.</div>'
                 )
@@ -440,50 +440,48 @@ export class MidiPlayer {
      * playback speed scaling (1=default)
      */
     speed: number = 1.0;
-    $playDiv: JQuery;
+    playDiv: HTMLElement;
     state: string = '';  // up, down, or empty...
 
     constructor() {
         this.player = new MIDI.Player();
     }
 
-    addPlayer(where: JQuery|HTMLElement): JQuery {
-        const $where = coerceJQuery(where);
-
-        const $playDiv: JQuery = $('<div class="midiPlayer">');
-        const $controls = $('<div class="positionControls">');
-        const $playPause = $(
+    addPlayer(where: HTMLElement): HTMLElement {
+        const playDiv = to_el('<div class="midiPlayer"></div>');
+        const controls = to_el('<div class="positionControls"></div>');
+        const playPause = to_el(
             '<input type="image" alt="play" src="'
                 + this.playPng()
                 + '" value="play" class="playPause">'
         );
 
-        const $stop = $(
+        const stop = to_el(
             '<input type="image" alt="stop" src="'
                 + this.stopPng()
                 + '" value="stop" class="stopButton">'
         );
 
-        $playPause.on('click', () => this.pausePlayStop());
-        $stop.on('click', () => this.stopButton());
-        $controls.append($playPause);
-        $controls.append($stop);
-        $playDiv.append($controls);
+        playPause.addEventListener('click', () => this.pausePlayStop());
+        stop.addEventListener('click', () => this.stopButton());
+        controls.append(playPause);
+        controls.append(stop);
+        playDiv.append(controls);
 
-        const $time = $('<div class="timeControls">');
-        const $timePlayed = $('<span class="timePlayed">0:00</span>');
-        const $capsule = $(
+        const time = to_el('<div class="timeControls"></div>');
+        const timePlayed = to_el('<span class="timePlayed">0:00</span>');
+        const capsule = to_el(
             '<span class="capsule"><span class="cursor"></span></span>'
         );
-        const $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
-        $time.append($timePlayed);
-        $time.append($capsule);
-        $time.append($timeRemaining);
-        $playDiv.append($time);
+        const timeRemaining = to_el('<span class="timeRemaining">-0:00</span>');
+        time.append(timePlayed);
+        time.append(capsule);
+        time.append(timeRemaining);
+        playDiv.append(time);
 
-        $where.append($playDiv);
-        this.$playDiv = $playDiv;
-        return $playDiv;
+        where.append(playDiv);
+        this.playDiv = playDiv;
+        return playDiv;
     }
 
     stopButton() {
@@ -504,10 +502,10 @@ export class MidiPlayer {
 
     pausePlayStop(stop='no') {
         let d;
-        if (this.$playDiv === undefined) {
+        if (!this.playDiv) {
             d = { src: 'doesnt matter' };
         } else {
-            d = this.$playDiv.find('.playPause')[0];
+            d = this.playDiv.querySelector('.playPause');
         }
         if (stop === 'yes') {
             this.player.stop();
@@ -557,18 +555,19 @@ export class MidiPlayer {
 
     updatePlaying() {
         const player = this.player;
-        if (this.$playDiv === undefined) {
+        if (this.playDiv === undefined) {
             return;
         }
-        const $d = this.$playDiv;
+        const d = this.playDiv;
         // update the timestamp
-        const timePlayed = $d.find('.timePlayed')[0];
-        const timeRemaining = $d.find('.timeRemaining')[0];
-        const timeCursor = $d.find('.cursor')[0];
-        const $capsule = $d.find('.capsule');
+        const timePlayed = d.querySelector('.timePlayed');
+        const timeRemaining = d.querySelector('.timeRemaining');
+        const timeCursor = d.querySelector('.cursor') as HTMLElement;
+        const capsule = d.querySelector('.capsule');
         //
-        $capsule.on('dragstart', e => {
-            player.currentTime = (e.pageX - $capsule.offset().left) / 420 * player.endTime;
+        capsule.addEventListener('dragstart', event => {
+            const e = <DragEvent> event;
+            player.currentTime = (e.pageX - $(capsule).offset().left) / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
             }

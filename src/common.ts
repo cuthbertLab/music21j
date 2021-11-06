@@ -23,8 +23,8 @@ export function jQueryAndHTMLVersion(el?: JQuery|HTMLElement): [JQuery, HTMLElem
         htmlElement = el;
         $jq = $(el);
     } else {
-        $jq = $('body');
-        htmlElement = $jq[0];
+        htmlElement = document.body;
+        $jq = $(htmlElement);
     }
     return [$jq, htmlElement];
 }
@@ -515,4 +515,25 @@ export function opFrac(num) {
     } else {
         return num;
     }
+}
+
+/**
+ * Converts a string to a single element using template.
+ *
+ * Similar to $('<tag attributes="xyz"><b>more</b></tag>')[0]
+ *
+ * For security reasons <template> will not parse script
+ * tags.
+ *
+ * This is tagged as returning HTMLElement for convenience
+ * but can also be used to return SVGElement.
+ *
+ * Recommended in:
+ * https://stackoverflow.com/questions/494143/
+ */
+export function to_el(input_string: string): HTMLElement {
+    const template = document.createElement('template');
+    input_string = input_string.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = input_string;
+    return template.content.firstElementChild as HTMLElement;
 }

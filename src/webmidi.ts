@@ -182,7 +182,7 @@ export function createPlugin(
         return webmidi.storedPlugin;
     }
     if (typeof appendElement === 'undefined') {
-        appendElement = $('body')[0];
+        appendElement = document.body;
     }
     const obj = <Jazz> document.createElement('object');
     // noinspection SpellCheckingInspection
