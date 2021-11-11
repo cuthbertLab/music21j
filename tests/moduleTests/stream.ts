@@ -562,7 +562,6 @@ export default function tests() {
         const n3 = new music21.note.Note('D5');
         n3.stemDirection = 'up';
         const m = new music21.stream.Measure();
-        m.renderOptions.useVexflowAutobeam = false;
         m.timeSignature = new music21.meter.TimeSignature('2/4');
         m.append(n1);
         m.append(n2);
@@ -588,7 +587,6 @@ export default function tests() {
         const n2 = new music21.note.Note('C5', 0.5);
         const n3 = new music21.note.Note('C5', 0.5);
         const m = new music21.stream.Measure();
-        m.renderOptions.useVexflowAutobeam = false;
         m.append([ts, n1, n2, n3]);
         m.makeBeams({inPlace: true});
         assert.equal(n1.beams.beamsList.length, 0);
@@ -616,7 +614,6 @@ export default function tests() {
         const n3 = new music21.note.Note('C4', 0.5);
         const m = new music21.stream.Measure();
         m.paddingRight = 1.0;
-        m.renderOptions.useVexflowAutobeam = false;
         m.append([ts, n1, n2, n3]);
         m.makeBeams({inPlace: true});
         assert.equal(n1.beams.beamsList.length, 0);
