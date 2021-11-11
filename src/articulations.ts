@@ -1,7 +1,7 @@
 /**
  * articulations module.
  */
-import Vex from 'vexflow';
+import { Articulation as VFArticulation, ModifierPosition, Ornament } from 'vexflow';
 
 import * as common from './common';
 import * as prebase from './prebase';
@@ -17,10 +17,10 @@ export enum ArticulationPlacement {
 
 export const ArticulationPlacementToVexFlowModifierPosition = new Map(
     [
-        [ArticulationPlacement.ABOVE, Vex.Flow.Modifier.Position.ABOVE],
-        [ArticulationPlacement.BELOW, Vex.Flow.Modifier.Position.BELOW],
-        [ArticulationPlacement.LEFT, Vex.Flow.Modifier.Position.LEFT],
-        [ArticulationPlacement.RIGHT, Vex.Flow.Modifier.Position.RIGHT],
+        [ArticulationPlacement.ABOVE, ModifierPosition.ABOVE],
+        [ArticulationPlacement.BELOW, ModifierPosition.BELOW],
+        [ArticulationPlacement.LEFT, ModifierPosition.LEFT],
+        [ArticulationPlacement.RIGHT, ModifierPosition.RIGHT],
     ]
 );
 
@@ -32,7 +32,7 @@ export interface VexflowArticulationParams {
  * This works the same for music21 Articulations and Expressions
  */
 export function setPlacementOnVexFlowArticulation(
-    vfa: Vex.Flow.Articulation|Vex.Flow.Ornament,
+    vfa: VFArticulation|Ornament,
     placement: ArticulationPlacement,
     stemDirection: string,
 ) {
@@ -84,8 +84,8 @@ export class Articulation extends prebase.ProtoM21Object {
     /**
      * Generates a Vex.Flow.Articulation for this articulation.
      */
-    vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
-        const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
+    vexflow({stemDirection}: VexflowArticulationParams = {}): VFArticulation {
+        const vfa = new VFArticulation(this.vexflowModifier);
         setPlacementOnVexFlowArticulation(vfa, this.placement, stemDirection);
         return vfa;
     }

@@ -132,8 +132,8 @@ module.exports = grunt => {
                         'not ie <= 12',  // all versions -- edge is separate
                     ],
                 },
-                useBuiltIns: 'usage',
-                corejs: 3,
+                // useBuiltIns: 'usage',
+                // corejs: 3,
             },
         ]
     ];

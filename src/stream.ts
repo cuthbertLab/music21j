@@ -20,7 +20,7 @@
 
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
-import Vex from 'vexflow';
+import { Stave } from 'vexflow';
 
 import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
@@ -142,7 +142,7 @@ export class Stream extends base.Music21Object {
     /**
      * the current Stave object for the Stream
      */
-    activeVFStave: Vex.Flow.Stave = undefined;
+    activeVFStave: Stave = undefined;
 
     /**
      * the current vfShow.Renderer object for the Stream
@@ -161,7 +161,7 @@ export class Stream extends base.Music21Object {
         (e: MouseEvent|TouchEvent|JQuery.MouseEventBase) => base.Music21Object|undefined;
 
     // music21j specific attributes eventually to remove:
-    storedVexflowStave: Vex.Flow.Stave = undefined;  // cannot figure out diff w/ activeVFStave
+    storedVexflowStave: Stave = undefined;  // cannot figure out diff w/ activeVFStave
 
     activeNote: note.GeneralNote = undefined;
     _clef = undefined;
@@ -2553,7 +2553,7 @@ export class Stream extends base.Music21Object {
      *
      * Recursively search downward for the closest storedVexflowStave...
      */
-    recursiveGetStoredVexflowStave(): Vex.Flow.Stave|undefined {
+    recursiveGetStoredVexflowStave(): Stave|undefined {
         const storedVexflowStave = this.storedVexflowStave;
         if (storedVexflowStave === undefined) {
             if (this.isFlat) {
