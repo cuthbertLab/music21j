@@ -45,4 +45,30 @@ export default function tests() {
         renderer.render();
         assert.equal(renderer.beamGroups.length, 2);
     });
+
+    test('music21.vfShow.Renderer prepareTies in voices', assert => {
+        const v1 = new music21.stream.Voice();
+        const n0 = new music21.note.Note('F4');
+        v1.repeatAppend(n0, 2);
+        const v2 = new music21.stream.Voice();
+        const n1 = new music21.note.Note('C4');
+        n1.tie = new music21.tie.Tie('start');
+        const n2 = new music21.note.Note('C4');
+        n2.tie = new music21.tie.Tie('stop');
+        v2.append(n1);
+        v2.append(n2);
+        const p = new music21.stream.Part();
+        const m = new music21.stream.Measure();
+        m.append(new music21.clef.TrebleClef());
+        m.append(new music21.meter.TimeSignature('2/4'));
+        m.insert(0, v1);
+        m.insert(0, v2);
+        p.append(m);
+
+        const svg = p.appendNewDOM();
+        const renderer = new music21.vfShow.Renderer(p, svg);
+        renderer.preparePartlike(p);
+        assert.deepEqual(renderer.vfTies[0].first_note, n1.activeVexflowNote);
+        assert.deepEqual(renderer.vfTies[0].last_note, n2.activeVexflowNote);
+    });
 }

@@ -402,7 +402,8 @@ export class Renderer {
      * @param {Stream} p - a Part or similar object
      */
     prepareTies(p: stream.Stream) {
-        const pf = <note.GeneralNote[]> Array.from(p.flat.notesAndRests);
+        // TODO: bridge voices across measures -- this won't get ties in voices across barlines
+        const pf = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
         // console.log('newSystemsAt', this.systemBreakOffsets);
         for (let i = 0; i < pf.length - 1; i++) {
             const thisNote = pf[i];
