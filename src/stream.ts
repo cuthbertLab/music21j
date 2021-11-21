@@ -1443,7 +1443,7 @@ export class Stream extends base.Music21Object {
             out = this.clone(true);
         }
         // already made a copy
-        this.makeAccidentals({ inPlace: true });
+        out.makeAccidentals({ inPlace: true });
         return out;
     }
 
