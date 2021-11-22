@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.5 built on 2021-11-01.
+ * music21j version 0.12.6 built on 2021-11-22.
  * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -2209,17 +2209,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/**
- * music21j -- Javascript reimplementation of Core music21p features.
- * music21/chord -- Chord
- *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * Chord related objects (esp. music21.chord.Chord) and methods.
- *
- */
-
 
 
 
@@ -2340,6 +2329,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_9__.NotRest {
     this._notes = [...newNotes];
     this._cache = {};
     this._overrides = {};
+  }
+
+  vexflowNote({
+    clef = undefined
+  } = {}) {
+    this.sortPitches();
+    return super.vexflowNote({
+      clef
+    });
   }
 
   get orderedPitchClasses() {
@@ -15093,7 +15091,7 @@ class Note extends NotRest {
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
  * @property {string} [name='rest']
- * @property {number} [lineShift=undefined] - number of lines to shift up or down from default
+ * @property {number} [stepShift=0] - number of steps/lines to shift up or down from default
  * @property {string|undefined} [color='black'] - color of the rest
  */
 
@@ -15106,7 +15104,7 @@ class Rest extends GeneralNote {
     this.isNote = false;
     this.isRest = true;
     this.name = 'rest';
-    this.lineShift = 0;
+    this.stepShift = 0;
     this.color = 'black';
     this.volume = 0;
     this.name = 'rest';
@@ -15134,18 +15132,17 @@ class Rest extends GeneralNote {
 
   vexflowNote(options) {
     let keyLine = 'b/4';
+    const activeSiteSingleLine = this.activeSite !== undefined && this.activeSite.renderOptions.staffLines === 1;
 
-    if (this.duration.type === 'whole') {
-      if (this.activeSite !== undefined && this.activeSite.renderOptions.staffLines !== 1) {
-        keyLine = 'd/5';
-      }
+    if (this.duration.type === 'whole' && !activeSiteSingleLine) {
+      keyLine = 'd/5';
     }
 
-    if (this.lineShift !== undefined) {
+    if (this.stepShift !== 0) {
       const p = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch('B4');
-      let ls = this.lineShift;
+      let ls = this.stepShift;
 
-      if (this.duration.type === 'whole') {
+      if (this.duration.type === 'whole' && !activeSiteSingleLine) {
         ls += 2;
       }
 
@@ -16732,7 +16729,7 @@ class RenderOptions {
       click: 'play',
       dblclick: undefined
     };
-    this.useVexflowAutobeam = true;
+    this.useVexflowAutobeam = false;
     this.startNewSystem = false; // noinspection JSUnusedGlobalSymbols
 
     this.startNewPage = false;
@@ -20129,7 +20126,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
     } // already made a copy
 
 
-    this.makeAccidentals({
+    out.makeAccidentals({
       inPlace: true
     });
     return out;
@@ -23415,50 +23412,61 @@ function makeBeams(s, {
 
     if (lastTimeSignature === undefined) {
       throw new _stream__WEBPACK_IMPORTED_MODULE_7__.StreamException('Need a Time Signature to process beams');
-    } // todo voices!
+    }
 
-
-    if (m.length <= 1) {
+    if (m.recurse().notesAndRests.length <= 1) {
       continue; // nothing to beam.
     }
 
-    const noteStreamIterator = m.notesAndRests;
-    const durList = [];
+    const noteGroups = [];
 
-    for (const n of noteStreamIterator) {
-      durList.push(n.duration);
+    if (m.hasVoices()) {
+      for (const v of m.voices) {
+        noteGroups.push(v);
+      }
+    } else {
+      noteGroups.push(m);
     }
 
-    const noteStream = noteStreamIterator.stream();
-    const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
-    const durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
+    for (const noteGroup of noteGroups) {
+      const noteStreamIterator = noteGroup.notesAndRests;
+      const durList = [];
 
-    const barQL = lastTimeSignature.barDuration.quarterLength;
+      for (const n of noteStreamIterator) {
+        durList.push(n.duration);
+      }
 
-    if (durSum > barQL) {
-      continue;
-    }
+      const noteStream = noteStreamIterator.stream();
+      const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
+      const durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
 
-    let offset = 0.0;
+      const barQL = lastTimeSignature.barDuration.quarterLength;
 
-    if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
-      offset = m.paddingLeft;
-    } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
-      offset = barQL - noteStream.highestTime;
-    }
+      if (durSum > barQL) {
+        continue;
+      }
 
-    const beamsList = lastTimeSignature.getBeams(noteStream, {
-      measureStartOffset: offset
-    });
+      let offset = 0.0;
 
-    for (let i = 0; i < noteStream.length; i++) {
-      const n = noteStream.get(i);
-      const thisBeams = beamsList[i];
+      if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
+        offset = m.paddingLeft;
+      } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
+        offset = barQL - noteStream.highestTime;
+      }
 
-      if (thisBeams !== undefined) {
-        n.beams = thisBeams;
-      } else {
-        n.beams = new _beam__WEBPACK_IMPORTED_MODULE_5__.Beams();
+      const beamsList = lastTimeSignature.getBeams(noteStream, {
+        measureStartOffset: offset
+      });
+
+      for (let i = 0; i < noteStream.length; i++) {
+        const n = noteStream.get(i);
+        const thisBeams = beamsList[i];
+
+        if (thisBeams !== undefined) {
+          n.beams = thisBeams;
+        } else {
+          n.beams = new _beam__WEBPACK_IMPORTED_MODULE_5__.Beams();
+        }
       }
     }
   }
@@ -25038,7 +25046,8 @@ class Renderer {
 
 
   prepareTies(p) {
-    const pf = Array.from(p.flat.notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
+    // TODO: bridge voices across measures -- this won't get ties in voices across barlines
+    const pf = Array.from(p.recurse().notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
 
     for (let i = 0; i < pf.length - 1; i++) {
       const thisNote = pf[i];
