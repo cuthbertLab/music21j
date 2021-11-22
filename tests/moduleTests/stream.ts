@@ -640,6 +640,22 @@ export default function tests() {
         assert.equal(n4.beams.beamsList[0].type, 'stop');
     });
 
+    test('music21.stream.Stream makeBeams with voices', assert => {
+        const n1 = new music21.note.Note();
+        n1.duration.type = 'eighth';
+        const v = new music21.stream.Voice();
+        v.repeatAppend(n1, 4);
+        const m = new music21.stream.Measure();
+        m.insert(0, new music21.meter.TimeSignature('2/4'));
+        m.insert(0, v);
+        assert.equal(n1.beams.beamsList.length, 0);
+
+        m.makeBeams({inPlace: true});
+        for (const n of m.recurse().notes) {
+            assert.equal(n.beams.beamsList.length, 1);
+        }
+    });
+
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
         p1.makeAccidentals({ inPlace: true });

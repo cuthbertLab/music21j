@@ -50,37 +50,46 @@ export function makeBeams(s: stream.Stream, {
         if (lastTimeSignature === undefined) {
             throw new StreamException('Need a Time Signature to process beams');
         }
-        // todo voices!
-        if (m.length <= 1) {
+        if (m.recurse().notesAndRests.length <= 1) {
             continue; // nothing to beam.
         }
-        const noteStreamIterator = m.notesAndRests;
-        const durList = [];
-        for (const n of noteStreamIterator) {
-            durList.push(n.duration);
+        const noteGroups = [];
+        if (m.hasVoices()) {
+            for (const v of m.voices) {
+                noteGroups.push(v);
+            }
+        } else {
+            noteGroups.push(m);
         }
-        const noteStream = noteStreamIterator.stream();
-
-        const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
-        const durSum = parseFloat(durSumErr.toFixed(8));  // remove fraction errors
-        const barQL = lastTimeSignature.barDuration.quarterLength;
-        if (durSum > barQL) {
-            continue;
-        }
-        let offset = 0.0;
-        if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
-            offset = m.paddingLeft;
-        } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
-            offset = barQL - noteStream.highestTime;
-        }
-        const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
-        for (let i = 0; i < noteStream.length; i++) {
-            const n = noteStream.get(i) as note.NotRest;
-            const thisBeams = beamsList[i];
-            if (thisBeams !== undefined) {
-                n.beams = thisBeams;
-            } else {
-                n.beams = new beam.Beams();
+        for (const noteGroup of noteGroups) {
+            const noteStreamIterator = noteGroup.notesAndRests;
+            const durList = [];
+            for (const n of noteStreamIterator) {
+                durList.push(n.duration);
+            }
+            const noteStream = noteStreamIterator.stream();
+    
+            const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
+            const durSum = parseFloat(durSumErr.toFixed(8));  // remove fraction errors
+            const barQL = lastTimeSignature.barDuration.quarterLength;
+            if (durSum > barQL) {
+                continue;
+            }
+            let offset = 0.0;
+            if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
+                offset = m.paddingLeft;
+            } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
+                offset = barQL - noteStream.highestTime;
+            }
+            const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
+            for (let i = 0; i < noteStream.length; i++) {
+                const n = noteStream.get(i) as note.NotRest;
+                const thisBeams = beamsList[i];
+                if (thisBeams !== undefined) {
+                    n.beams = thisBeams;
+                } else {
+                    n.beams = new beam.Beams();
+                }
             }
         }
     }
