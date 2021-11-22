@@ -763,7 +763,7 @@ export class Rest extends GeneralNote {
         if (this.duration.type === 'whole' && !activeSiteSingleLine) {
             keyLine = 'd/5';
         }
-        if (this.stepShift !== undefined) {
+        if (this.stepShift !== 0) {
             const p = new pitch.Pitch('B4');
             let ls = this.stepShift;
             if (this.duration.type === 'whole' && !activeSiteSingleLine) {
