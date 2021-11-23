@@ -71,4 +71,16 @@ export default function tests() {
         assert.deepEqual(renderer.vfTies[0].first_note, n1.activeVexflowNote);
         assert.deepEqual(renderer.vfTies[0].last_note, n2.activeVexflowNote);
     });
+
+    test('music21.vfShow.Renderer prepareTies across system break', assert => {
+        const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('c1 d e~ e');
+        const s = new music21.stream.Score();
+        s.append(p);
+        s.renderOptions.maxSystemWidth = 20;
+
+        const svg = s.appendNewDOM();
+        const renderer = new music21.vfShow.Renderer(p, svg);
+        renderer.prepareScorelike(s);
+        assert.equal(renderer.vfTies.length, 2);
+    });
 }
