@@ -2575,14 +2575,21 @@ export class Stream extends base.Music21Object {
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
     getUnscaledXYforDOM(
-        svg,
+        svg: HTMLElement|SVGElement|JQuery,
         e: MouseEvent|TouchEvent|JQuery.MouseEventBase
     ): [number, number] {
-        let offset;
+        let svgOffset;
+        let svgScrollLeft;
+        let svgScrollTop;
         if (svg === undefined) {
-            offset = { left: 0, top: 0 };
+            svgOffset = { left: 0, top: 0 };
+            svgScrollLeft = 0;
+            svgScrollTop = 0;
         } else {
-            offset = $(svg).offset();
+            const $svg = $(svg);
+            svgOffset = $svg.offset();
+            svgScrollLeft = $svg.scrollLeft();
+            svgScrollTop = $svg.scrollTop();
         }
 
         /*
@@ -2616,8 +2623,8 @@ export class Stream extends base.Music21Object {
                 + document.body.scrollTop
                 + document.documentElement.scrollTop;
         }
-        const xPx = xClick - offset.left;
-        const yPx = yClick - offset.top;
+        const xPx = xClick + svgScrollLeft - svgOffset.left;
+        const yPx = yClick + svgScrollTop - svgOffset.top;
         return [xPx, yPx];
     }
 
