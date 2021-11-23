@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.6 built on 2021-11-22.
+ * music21j version 0.12.7 built on 2021-11-23.
  * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -25047,22 +25047,22 @@ class Renderer {
 
   prepareTies(p) {
     // TODO: bridge voices across measures -- this won't get ties in voices across barlines
-    const pf = Array.from(p.recurse().notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
+    const p_recursed = Array.from(p.recurse().notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
 
-    for (let i = 0; i < pf.length - 1; i++) {
-      const thisNote = pf[i];
+    for (let i = 0; i < p_recursed.length - 1; i++) {
+      const thisNote = p_recursed[i];
 
       if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
         continue;
       }
 
-      const nextNote = pf[i + 1];
+      const nextNote = p_recursed[i + 1];
       let onSameSystem = true; // this.systemBreakOffsets.length will be 0 for a flat score
 
       for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
         const thisSystemBreak = this.systemBreakOffsets[sbI];
 
-        if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
+        if (thisNote.getOffsetInHierarchy(p) < thisSystemBreak && nextNote.getOffsetInHierarchy(p) >= thisSystemBreak) {
           onSameSystem = false;
           break;
         }
