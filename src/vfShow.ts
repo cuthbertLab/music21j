@@ -403,14 +403,14 @@ export class Renderer {
      */
     prepareTies(p: stream.Stream) {
         // TODO: bridge voices across measures -- this won't get ties in voices across barlines
-        const pf = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
+        const p_recursed = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
         // console.log('newSystemsAt', this.systemBreakOffsets);
-        for (let i = 0; i < pf.length - 1; i++) {
-            const thisNote = pf[i];
+        for (let i = 0; i < p_recursed.length - 1; i++) {
+            const thisNote = p_recursed[i];
             if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
                 continue;
             }
-            const nextNote = pf[i + 1];
+            const nextNote = p_recursed[i + 1];
             let onSameSystem = true;
             // this.systemBreakOffsets.length will be 0 for a flat score
             for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
