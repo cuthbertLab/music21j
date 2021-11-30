@@ -72,6 +72,43 @@ export default function tests() {
         assert.deepEqual(renderer.vfTies[0].last_note, n2.activeVexflowNote);
     });
 
+    test('music21.vfShow.Renderer prepareTies in voices across barline', assert => {
+        const m1_sop_voice = new music21.stream.Voice();
+        const n_m1_v1 = new music21.note.Note('C5');
+        m1_sop_voice.repeatAppend(n_m1_v1, 2);
+        const m1_alto_voice = new music21.stream.Voice();
+        const n_m1_v2 = new music21.note.Note('E4');
+        m1_alto_voice.repeatAppend(n_m1_v2, 2);
+        const m1 = new music21.stream.Measure();
+        m1.append(m1_sop_voice);
+        m1.append(m1_alto_voice);
+
+        const m2_sop_voice = new music21.stream.Voice();
+        const n_m2_v1 = new music21.note.Note('C5');
+        m2_sop_voice.repeatAppend(n_m2_v1, 2);
+        const m2_alto_voice = new music21.stream.Voice();
+        const n_m2_v2 = new music21.note.Note('E4');
+        m2_alto_voice.repeatAppend(n_m2_v2, 2);
+        const m2 = new music21.stream.Measure();
+        m2.append(m1_sop_voice);
+        m2.append(m1_alto_voice);
+
+        const p = new music21.stream.Part();
+        p.append(m1);
+        p.append(m2);
+        const s = new music21.stream.Score();
+        s.append(p);
+
+        // create tie in alto
+        n_m1_v2.tie = new music21.tie.Tie('start');
+        n_m2_v2.tie = new music21.tie.Tie('stop');
+
+        const svg = s.appendNewDOM();
+        const renderer = new music21.vfShow.Renderer(p, svg);
+        renderer.prepareScorelike(s);
+        assert.equal(renderer.vfTies[0].first_note.line, renderer.vfTies[0].last_note.line);
+    });
+
     test('music21.vfShow.Renderer prepareTies across system break', assert => {
         const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('c1 d e~ e');
         const s = new music21.stream.Score();
