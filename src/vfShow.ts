@@ -405,6 +405,8 @@ export class Renderer {
         const p_recursed = <note.GeneralNote[]> [];
         // Determine order for bridging voices: from earliest appearance
         const voice_ids_in_order_first_encountered = [];
+        // voice IDs are not necessarily unique, so track that they are visited
+        const visited_voices = <stream.Voice[]> [];
         for (const v of p.recurse().getElementsByClass('Voice')) {
             if (!voice_ids_in_order_first_encountered.includes(v.id)) {
                 voice_ids_in_order_first_encountered.push(v.id);
@@ -413,12 +415,19 @@ export class Renderer {
         // Retrieve notes in voices
         for (const v_id of voice_ids_in_order_first_encountered) {
             for (const v of p.recurse().getElementsByClass('Voice')) {
-                // retrieve notes in voices in order voice id encountered
+                // Visit in order voice id encountered
                 // For instance, all Soprano voices, then all Alto...
                 if (v.id !== v_id) {
                     continue;
                 }
+                if (!(v instanceof stream.Voice)) {
+                    throw new TypeError('Incompatible version of music21j');
+                }
+                if (visited_voices.includes(v)) {
+                    continue;
+                }
                 p_recursed.push(...Array.from((v as stream.Voice).notesAndRests));
+                visited_voices.push(v);
             }
         }
         // Retrieve notes "loose" (flat) in measures
