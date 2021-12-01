@@ -100,8 +100,8 @@ export default function tests() {
         s.append(p);
 
         // create tie in alto
-        n_m1_v2.tie = new music21.tie.Tie('start');
-        n_m2_v2.tie = new music21.tie.Tie('stop');
+        m1_alto_voice.notes.get(1).tie = new music21.tie.Tie('start');
+        m2_alto_voice.notes.get(0).tie = new music21.tie.Tie('stop');
 
         const svg = s.appendNewDOM();
         const renderer = new music21.vfShow.Renderer(p, svg);
