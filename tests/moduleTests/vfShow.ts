@@ -74,9 +74,11 @@ export default function tests() {
 
     test('music21.vfShow.Renderer prepareTies in voices across barline', assert => {
         const m1_sop_voice = new music21.stream.Voice();
+        m1_sop_voice.id = 'Soprano';
         const n_m1_v1 = new music21.note.Note('C5');
         m1_sop_voice.repeatAppend(n_m1_v1, 2);
         const m1_alto_voice = new music21.stream.Voice();
+        m1_alto_voice.id = 'Alto';
         const n_m1_v2 = new music21.note.Note('E4');
         m1_alto_voice.repeatAppend(n_m1_v2, 2);
         const m1 = new music21.stream.Measure();
@@ -84,9 +86,11 @@ export default function tests() {
         m1.append(m1_alto_voice);
 
         const m2_sop_voice = new music21.stream.Voice();
+        m2_sop_voice.id = 'Soprano';
         const n_m2_v1 = new music21.note.Note('C5');
         m2_sop_voice.repeatAppend(n_m2_v1, 2);
         const m2_alto_voice = new music21.stream.Voice();
+        m2_alto_voice.id = 'Alto';
         const n_m2_v2 = new music21.note.Note('E4');
         m2_alto_voice.repeatAppend(n_m2_v2, 2);
         const m2 = new music21.stream.Measure();
@@ -107,6 +111,17 @@ export default function tests() {
         const renderer = new music21.vfShow.Renderer(p, svg);
         renderer.prepareScorelike(s);
         assert.equal(renderer.vfTies[0].first_note.line, renderer.vfTies[0].last_note.line);
+
+        // now with random IDs
+        m1_sop_voice.id = 'aaaa';
+        m1_alto_voice.id = 'bbbb';
+        m2_sop_voice.id = 'cccc';
+        m2_alto_voice.id = 'dddd';
+
+        const svg2 = s.appendNewDOM();
+        const renderer2 = new music21.vfShow.Renderer(p, svg2);
+        renderer2.prepareScorelike(s);
+        assert.equal(renderer2.vfTies[0].first_note.line, renderer2.vfTies[0].last_note.line);
     });
 
     test('music21.vfShow.Renderer prepareTies across system break', assert => {
