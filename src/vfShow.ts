@@ -414,14 +414,11 @@ export class Renderer {
         }
         // Retrieve notes in voices
         for (const v_id of voice_ids_in_order_first_encountered) {
-            for (const v of p.recurse().getElementsByClass('Voice')) {
+            for (const v of <stream.Voice[]>(p.recurse() as any).getElementsByClass('Voice')) {
                 // Visit in order voice id encountered
                 // For instance, all Soprano voices, then all Alto...
                 if (v.id !== v_id) {
                     continue;
-                }
-                if (!(v instanceof stream.Voice)) {
-                    throw new TypeError('Incompatible version of music21j');
                 }
                 if (visited_voices.includes(v)) {
                     continue;
