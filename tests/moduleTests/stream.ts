@@ -1014,4 +1014,26 @@ export default function tests() {
         // this call will fail if there are duplicate clefs
         assert.ok(s.flatten(true));
     });
+
+    test('music21.stream.Stream estimateStaffLength', assert => {
+        const v = new music21.stream.Voice();
+        const n = new music21.note.Note();
+        n.duration.type = 'whole';
+        v.append(n);
+        const m = new music21.stream.Measure();
+        m.append(v);
+        const original_width = m.estimateStaffLength();
+        const ks = new music21.key.KeySignature(-6);
+        m.append(ks);
+        m.renderOptions.displayKeySignature = true;
+        assert.equal(m.estimateStaffLength(), original_width + ks.width);
+
+        // Also test getting KeySignature from the context
+        const previous_measure = m.clone();
+        m.remove(ks);
+        const p = new music21.stream.Part();
+        p.append(previous_measure);
+        p.append(m);
+        assert.equal(m.estimateStaffLength(), original_width + ks.width);
+    });
 }

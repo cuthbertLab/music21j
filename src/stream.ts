@@ -1969,8 +1969,7 @@ export class Stream extends base.Music21Object {
      * @returns {number} length in pixels
      */
     estimateStaffLength() {
-        let i;
-        let totalLength;
+        let totalLength: number;
         if (this.renderOptions.overriddenWidth !== undefined) {
             // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
@@ -1986,11 +1985,10 @@ export class Stream extends base.Music21Object {
                     }
                 }
             }
-            return maxLength;
+            totalLength = maxLength;
         } else if (!this.isFlat) {
             // part
-            totalLength = 0;
-            for (i = 0; i < this.length; i++) {
+            for (let i = 0; i < this.length; i++) {
                 const m = this.get(i);
                 if (m instanceof Stream) {
                     totalLength
@@ -2000,23 +1998,27 @@ export class Stream extends base.Music21Object {
                     }
                 }
             }
-            return totalLength;
         } else {
-            const rendOp = this.renderOptions;
             totalLength = 30 * this.notesAndRests.length;
-            if (rendOp.displayClef) {
-                totalLength += 30;
-            }
-            if (rendOp.displayKeySignature) {
-                const ks = this.getSpecialContext('keySignature');
-                totalLength += ks?.width ?? 0;
-            }
-            if (rendOp.displayTimeSignature) {
-                totalLength += 30;
-            }
-            // totalLength += rendOp.staffPadding;
+        }
+        if (this instanceof Voice) {
+            // recursive call: return early so that measure call
+            // pads just once for clef/key/meter
             return totalLength;
         }
+        const rendOp = this.renderOptions;
+        if (rendOp.displayClef) {
+            totalLength += 30;
+        }
+        if (rendOp.displayKeySignature) {
+            const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
+            totalLength += ks?.width ?? 0;
+        }
+        if (rendOp.displayTimeSignature) {
+            totalLength += 30;
+        }
+        // totalLength += rendOp.staffPadding;
+        return totalLength;
     }
 
     stripTies(
