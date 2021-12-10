@@ -898,6 +898,26 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+    Given an object and a number, run append that many times on
+    a clone of the object.
+    numberOfTimes should of course be a positive integer.
+
+    a = stream.Stream()
+    n = note.Note('D--')
+    n.duration.type = 'whole'
+    a.repeatAppend(n, 10)
+    */
+    repeatAppend(item: base.Music21Object, numberOfTimes: number) {
+        if (!(item instanceof base.Music21Object)) {
+            throw new StreamException('to put a non Music21Object in a stream, '
+            + 'create a music21.ElementWrapper for the item');
+        }
+        for (let i = 0; i < numberOfTimes; i++) {
+            this.append(item.clone(true));
+        }
+    }
+
+    /**
      * Inserts a single element at offset, shifting elements at or after it begins
      * later in the stream.
      *

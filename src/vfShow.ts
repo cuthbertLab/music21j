@@ -402,9 +402,40 @@ export class Renderer {
      * @param {Stream} p - a Part or similar object
      */
     prepareTies(p: stream.Stream) {
-        // TODO: bridge voices across measures -- this won't get ties in voices across barlines
-        const p_recursed = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
-        // console.log('newSystemsAt', this.systemBreakOffsets);
+        const p_recursed = <note.GeneralNote[]> [];
+        // Determine order for bridging voices: from earliest appearance
+        const voice_ids_in_order_first_encountered = [];
+        // voice IDs are not necessarily unique, so track that they are visited
+        const visited_voices = <stream.Voice[]> [];
+        for (const v of p.recurse().getElementsByClass('Voice')) {
+            if (!voice_ids_in_order_first_encountered.includes(v.id)) {
+                voice_ids_in_order_first_encountered.push(v.id);
+            }
+        }
+        // Retrieve notes in voices
+        for (const v_id of voice_ids_in_order_first_encountered) {
+            for (const v of <stream.Voice[]>(p.recurse() as any).getElementsByClass('Voice')) {
+                // Visit in order voice id encountered
+                // For instance, all Soprano voices, then all Alto...
+                if (v.id !== v_id) {
+                    continue;
+                }
+                if (visited_voices.includes(v)) {
+                    continue;
+                }
+                p_recursed.push(...Array.from((v as stream.Voice).notesAndRests));
+                visited_voices.push(v);
+            }
+        }
+        // Retrieve notes "loose" (flat) in measures
+        for (const m of p.getElementsByClass('Measure')) {
+            p_recursed.push(...Array.from((m as stream.Measure).notesAndRests));
+        }
+        // Retrieve loose notes in `p` (flat)
+        p_recursed.push(...Array.from(p.notesAndRests));
+        // Other stream nesting patterns not supported
+        // prepareTies currently called by prepareArrivedFlat() and preparePartlike()
+        // supposes well-formed
         for (let i = 0; i < p_recursed.length - 1; i++) {
             const thisNote = p_recursed[i];
             if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
