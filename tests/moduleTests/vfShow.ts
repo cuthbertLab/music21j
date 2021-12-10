@@ -109,15 +109,6 @@ export default function tests() {
 
         s.appendNewDOM();
         assert.equal(s.activeVFRenderer.vfTies[0].first_note.keys[0], s.activeVFRenderer.vfTies[0].last_note.keys[0]);
-
-        // now with random IDs
-        m1_sop_voice.id = 'aaaa';
-        m1_alto_voice.id = 'bbbb';
-        m2_sop_voice.id = 'cccc';
-        m2_alto_voice.id = 'dddd';
-
-        s.appendNewDOM();
-        assert.equal(s.activeVFRenderer.vfTies[0].first_note.keys[0], s.activeVFRenderer.vfTies[0].last_note.keys[0]);
     });
 
     test('music21.vfShow.Renderer prepareTies across system break', assert => {
