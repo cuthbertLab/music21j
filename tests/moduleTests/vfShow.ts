@@ -108,7 +108,7 @@ export default function tests() {
         m2_alto_voice.notes.get(0).tie = new music21.tie.Tie('stop');
 
         s.appendNewDOM();
-        assert.equal(s.activeVFRenderer.vfTies[0].first_note.line, s.activeVFRenderer.vfTies[0].last_note.line);
+        assert.equal(s.activeVFRenderer.vfTies[0].first_note.keys[0], s.activeVFRenderer.vfTies[0].last_note.keys[0]);
 
         // now with random IDs
         m1_sop_voice.id = 'aaaa';
@@ -117,7 +117,7 @@ export default function tests() {
         m2_alto_voice.id = 'dddd';
 
         s.appendNewDOM();
-        assert.equal(s.activeVFRenderer.vfTies[0].first_note.line, s.activeVFRenderer.vfTies[0].last_note.line);
+        assert.equal(s.activeVFRenderer.vfTies[0].first_note.keys[0], s.activeVFRenderer.vfTies[0].last_note.keys[0]);
     });
 
     test('music21.vfShow.Renderer prepareTies across system break', assert => {
