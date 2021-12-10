@@ -94,8 +94,8 @@ export default function tests() {
         const n_m2_v2 = new music21.note.Note('E4');
         m2_alto_voice.repeatAppend(n_m2_v2, 2);
         const m2 = new music21.stream.Measure();
-        m2.append(m1_sop_voice);
-        m2.append(m1_alto_voice);
+        m2.append(m2_sop_voice);
+        m2.append(m2_alto_voice);
 
         const p = new music21.stream.Part();
         p.append(m1);
@@ -107,10 +107,8 @@ export default function tests() {
         m1_alto_voice.notes.get(1).tie = new music21.tie.Tie('start');
         m2_alto_voice.notes.get(0).tie = new music21.tie.Tie('stop');
 
-        const svg = s.appendNewDOM();
-        const renderer = new music21.vfShow.Renderer(p, svg);
-        renderer.prepareScorelike(s);
-        assert.equal(renderer.vfTies[0].first_note.line, renderer.vfTies[0].last_note.line);
+        s.appendNewDOM();
+        assert.equal(s.activeVFRenderer.vfTies[0].first_note.line, s.activeVFRenderer.vfTies[0].last_note.line);
 
         // now with random IDs
         m1_sop_voice.id = 'aaaa';
@@ -118,10 +116,8 @@ export default function tests() {
         m2_sop_voice.id = 'cccc';
         m2_alto_voice.id = 'dddd';
 
-        const svg2 = s.appendNewDOM();
-        const renderer2 = new music21.vfShow.Renderer(p, svg2);
-        renderer2.prepareScorelike(s);
-        assert.equal(renderer2.vfTies[0].first_note.line, renderer2.vfTies[0].last_note.line);
+        s.appendNewDOM();
+        assert.equal(s.activeVFRenderer.vfTies[0].first_note.line, s.activeVFRenderer.vfTies[0].last_note.line);
     });
 
     test('music21.vfShow.Renderer prepareTies across system break', assert => {
