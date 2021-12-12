@@ -752,13 +752,13 @@ export default function tests() {
     });
 
     test('music21.stream.Score.findNoteForClick', assert => {
-        const p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
-        const p2 = music21.tinyNotation.TinyNotation('4/4 A1    C#1   E#1');
+        const p1 = music21.tinyNotation.TinyNotation('4/4     c2            d2      e2 f2 g1');
+        const p2 = music21.tinyNotation.TinyNotation('4/4 trip{AA4 BB4 C#4} D#4 E4  C#1   E#1');
         const s = new music21.stream.Score();
         s.insert(0, p1);
         s.insert(0, p2);
         s.appendNewDOM();  // we need to generate a DOM even if we are not using it.
-        const x = 100;
+        let x = 100;
         let y = 20;
         let [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 43);
@@ -779,6 +779,16 @@ export default function tests() {
             (foundNote as music21.note.Note).pitch.name,
             (p2.flat.notes.get(0) as music21.note.Note).pitch.name
         );
+
+        // check that we can access last note in measure after a triplet
+        x = 285;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, 29);
+        assert.equal(
+            (foundNote as music21.note.Note).pitch.name,
+            (p2.flat.notes.get(4) as music21.note.Note).pitch.name
+        );
+        x = 100;
 
         // check that we never move to another part even if very low
         y = 300;
