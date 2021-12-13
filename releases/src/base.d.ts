@@ -107,6 +107,5 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     contextSites(options?: {}): any;
     _getTimeSignatureForBeat(): TimeSignature;
     get beat(): number;
-    repeatAppend(this: any, item: any, numberOfTimes: any): void;
 }
 //# sourceMappingURL=base.d.ts.map

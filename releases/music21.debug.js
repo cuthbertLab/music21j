@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.7 built on 2021-11-23.
+ * music21j version 0.12.8 built on 2021-12-13.
  * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -1622,31 +1622,6 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
       return ts.getBeatProportion(ts.getMeasureOffsetOrMeterModulusOffset(this));
     } catch (e) {
       return NaN;
-    }
-  }
-  /*
-      Given an object and a number, run append that many times on
-      a deepcopy of the object.
-      numberOfTimes should of course be a positive integer.
-       a = stream.Stream()
-      n = note.Note('D--')
-      n.duration.type = 'whole'
-      a.repeatAppend(n, 10)
-  */
-
-
-  repeatAppend(item, numberOfTimes) {
-    let unused = null;
-
-    try {
-      // noinspection JSUnusedAssignment
-      unused = item.isStream;
-    } catch (AttributeError) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
-    }
-
-    for (let i = 0; i < numberOfTimes; i++) {
-      this.append(item.clone(true));
     }
   }
 
@@ -19527,6 +19502,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
     return this;
   }
   /**
+  Given an object and a number, run append that many times on
+  a clone of the object.
+  numberOfTimes should of course be a positive integer.
+   a = stream.Stream()
+  n = note.Note('D--')
+  n.duration.type = 'whole'
+  a.repeatAppend(n, 10)
+  */
+
+
+  repeatAppend(item, numberOfTimes) {
+    if (!(item instanceof _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object)) {
+      throw new StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
+    }
+
+    for (let i = 0; i < numberOfTimes; i++) {
+      this.append(item.clone(true));
+    }
+  }
+  /**
    * Inserts a single element at offset, shifting elements at or after it begins
    * later in the stream.
    *
@@ -20672,7 +20667,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
   estimateStaffLength() {
     var _a;
 
-    let i;
     let totalLength;
 
     if (this.renderOptions.overriddenWidth !== undefined) {
@@ -20693,12 +20687,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
         }
       }
 
-      return maxLength;
+      totalLength = maxLength;
     } else if (!this.isFlat) {
       // part
-      totalLength = 0;
-
-      for (i = 0; i < this.length; i++) {
+      for (let i = 0; i < this.length; i++) {
         const m = this.get(i);
 
         if (m instanceof Stream) {
@@ -20709,28 +20701,33 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
           }
         }
       }
-
-      return totalLength;
     } else {
-      const rendOp = this.renderOptions;
       totalLength = 30 * this.notesAndRests.length;
+    }
 
-      if (rendOp.displayClef) {
-        totalLength += 30;
-      }
-
-      if (rendOp.displayKeySignature) {
-        const ks = this.getSpecialContext('keySignature');
-        totalLength += (_a = ks === null || ks === void 0 ? void 0 : ks.width) !== null && _a !== void 0 ? _a : 0;
-      }
-
-      if (rendOp.displayTimeSignature) {
-        totalLength += 30;
-      } // totalLength += rendOp.staffPadding;
-
-
+    if (this instanceof Voice) {
+      // recursive call: return early so that measure call
+      // pads just once for clef/key/meter
       return totalLength;
     }
+
+    const rendOp = this.renderOptions;
+
+    if (rendOp.displayClef) {
+      totalLength += 30;
+    }
+
+    if (rendOp.displayKeySignature) {
+      const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
+      totalLength += (_a = ks === null || ks === void 0 ? void 0 : ks.width) !== null && _a !== void 0 ? _a : 0;
+    }
+
+    if (rendOp.displayTimeSignature) {
+      totalLength += 30;
+    } // totalLength += rendOp.staffPadding;
+
+
+    return totalLength;
   }
 
   stripTies({
@@ -25046,8 +25043,45 @@ class Renderer {
 
 
   prepareTies(p) {
-    // TODO: bridge voices across measures -- this won't get ties in voices across barlines
-    const p_recursed = Array.from(p.recurse().notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
+    const p_recursed = []; // Determine order for bridging voices: from earliest appearance
+
+    const voice_ids_in_order_first_encountered = []; // voice IDs are not necessarily unique, so track that they are visited
+
+    const visited_voices = [];
+
+    for (const v of p.recurse().getElementsByClass('Voice')) {
+      if (!voice_ids_in_order_first_encountered.includes(v.id)) {
+        voice_ids_in_order_first_encountered.push(v.id);
+      }
+    } // Retrieve notes in voices
+
+
+    for (const v_id of voice_ids_in_order_first_encountered) {
+      for (const v of p.recurse().getElementsByClass('Voice')) {
+        // Visit in order voice id encountered
+        // For instance, all Soprano voices, then all Alto...
+        if (v.id !== v_id) {
+          continue;
+        }
+
+        if (visited_voices.includes(v)) {
+          continue;
+        }
+
+        p_recursed.push(...Array.from(v.notesAndRests));
+        visited_voices.push(v);
+      }
+    } // Retrieve notes "loose" (flat) in measures
+
+
+    for (const m of p.getElementsByClass('Measure')) {
+      p_recursed.push(...Array.from(m.notesAndRests));
+    } // Retrieve loose notes in `p` (flat)
+
+
+    p_recursed.push(...Array.from(p.notesAndRests)); // Other stream nesting patterns not supported
+    // prepareTies currently called by prepareArrivedFlat() and preparePartlike()
+    // supposes well-formed
 
     for (let i = 0; i < p_recursed.length - 1; i++) {
       const thisNote = p_recursed[i];
@@ -25843,8 +25877,8 @@ class Renderer {
           continue;
         }
 
-        const nTicks = parseInt(vfn.ticks);
-        const formatterNote = formatter.tickContexts.map[String(nextTicks)];
+        const formatterNote = formatter.tickContexts.map[nextTicks];
+        const nTicks = vfn.ticks.numerator / vfn.ticks.denominator * formatter.tickContexts.resolutionMultiplier;
         nextTicks += nTicks;
         el.x = vfn.getAbsoluteX(); // these are a bit hacky...
 

@@ -267,6 +267,17 @@ export declare class Stream extends base.Music21Object {
         setActiveSite?: boolean;
     }): this;
     /**
+    Given an object and a number, run append that many times on
+    a clone of the object.
+    numberOfTimes should of course be a positive integer.
+
+    a = stream.Stream()
+    n = note.Note('D--')
+    n.duration.type = 'whole'
+    a.repeatAppend(n, 10)
+    */
+    repeatAppend(item: base.Music21Object, numberOfTimes: number): void;
+    /**
      * Inserts a single element at offset, shifting elements at or after it begins
      * later in the stream.
      *
@@ -550,7 +561,7 @@ export declare class Stream extends base.Music21Object {
      *
      * @returns {number} length in pixels
      */
-    estimateStaffLength(): any;
+    estimateStaffLength(): number;
     stripTies({ inPlace, matchByPitch, }?: {
         inPlace?: boolean;
         matchByPitch?: boolean;
