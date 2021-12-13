@@ -1194,9 +1194,10 @@ export class Renderer {
                 if (vfn === undefined) {
                     continue;
                 }
-                const nTicks = parseInt(vfn.ticks);
-                const formatterNote
-                    = formatter.tickContexts.map[String(nextTicks)];
+                const formatterNote = formatter.tickContexts.map[nextTicks];
+                const nTicks = (
+                    (vfn.ticks.numerator / vfn.ticks.denominator) * formatter.tickContexts.resolutionMultiplier
+                );
                 nextTicks += nTicks;
                 el.x = vfn.getAbsoluteX();
                 // these are a bit hacky...
