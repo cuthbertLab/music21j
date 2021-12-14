@@ -122,4 +122,23 @@ export default function tests() {
         renderer.prepareScorelike(s);
         assert.equal(renderer.vfTies.length, 2);
     });
+
+    test('music21.vfShow.Renderer.prepareFlat recalculates accidental display', assert => {
+        const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('d4 d# d# d#');
+        const s = new music21.stream.Score();
+        s.append(p);
+        s.appendNewDOM();
+        const notes_iter = p.recurse().notes;
+        const first_note = notes_iter.get(0);
+        const second_note = notes_iter.get(1);
+        assert.equal(first_note.pitch.accidental, undefined);
+        assert.equal(second_note.pitch.accidental.displayStatus, true);
+
+        // D -> D#
+        const aug_1 = new music21.interval.Interval('A1');
+        first_note.pitch = aug_1.transposePitch(first_note.pitch);
+        s.replaceDOM();
+        assert.equal(first_note.pitch.accidental.displayStatus, true);
+        assert.equal(second_note.pitch.accidental.displayStatus, false);
+    });
 }
