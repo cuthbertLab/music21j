@@ -718,7 +718,7 @@ export class Note extends NotRest {
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
  * @property {string} [name='rest']
- * @property {number} [lineShift=undefined] - number of lines to shift up or down from default
+ * @property {number} [stepShift=0] - number of steps/lines to shift up or down from default
  * @property {string|undefined} [color='black'] - color of the rest
  */
 export class Rest extends GeneralNote {
@@ -728,7 +728,7 @@ export class Rest extends GeneralNote {
     isNote: boolean = false;
     isRest: boolean = true;
     name: string = 'rest';
-    lineShift: number = 0;
+    stepShift: number = 0;
     color: string = 'black';
     volume: number = 0;
 
@@ -756,18 +756,17 @@ export class Rest extends GeneralNote {
      */
     vexflowNote(options): StaveNote {
         let keyLine = 'b/4';
-        if (this.duration.type === 'whole') {
-            if (
-                this.activeSite !== undefined
-                && this.activeSite.renderOptions.staffLines !== 1
-            ) {
-                keyLine = 'd/5';
-            }
+        const activeSiteSingleLine = (
+            this.activeSite !== undefined
+            && this.activeSite.renderOptions.staffLines === 1
+        );
+        if (this.duration.type === 'whole' && !activeSiteSingleLine) {
+            keyLine = 'd/5';
         }
-        if (this.lineShift !== undefined) {
+        if (this.stepShift !== 0) {
             const p = new pitch.Pitch('B4');
-            let ls = this.lineShift;
-            if (this.duration.type === 'whole') {
+            let ls = this.stepShift;
+            if (this.duration.type === 'whole' && !activeSiteSingleLine) {
                 ls += 2;
             }
             p.diatonicNoteNum += ls;

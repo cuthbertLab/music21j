@@ -562,7 +562,6 @@ export default function tests() {
         const n3 = new music21.note.Note('D5');
         n3.stemDirection = 'up';
         const m = new music21.stream.Measure();
-        m.renderOptions.useVexflowAutobeam = false;
         m.timeSignature = new music21.meter.TimeSignature('2/4');
         m.append(n1);
         m.append(n2);
@@ -588,7 +587,6 @@ export default function tests() {
         const n2 = new music21.note.Note('C5', 0.5);
         const n3 = new music21.note.Note('C5', 0.5);
         const m = new music21.stream.Measure();
-        m.renderOptions.useVexflowAutobeam = false;
         m.append([ts, n1, n2, n3]);
         m.makeBeams({inPlace: true});
         assert.equal(n1.beams.beamsList.length, 0);
@@ -616,7 +614,6 @@ export default function tests() {
         const n3 = new music21.note.Note('C4', 0.5);
         const m = new music21.stream.Measure();
         m.paddingRight = 1.0;
-        m.renderOptions.useVexflowAutobeam = false;
         m.append([ts, n1, n2, n3]);
         m.makeBeams({inPlace: true});
         assert.equal(n1.beams.beamsList.length, 0);
@@ -641,6 +638,22 @@ export default function tests() {
         assert.equal(n2.beams.beamsList.length, 0);
         assert.equal(n3.beams.beamsList[0].type, 'start');
         assert.equal(n4.beams.beamsList[0].type, 'stop');
+    });
+
+    test('music21.stream.Stream makeBeams with voices', assert => {
+        const n1 = new music21.note.Note();
+        n1.duration.type = 'eighth';
+        const v = new music21.stream.Voice();
+        v.repeatAppend(n1, 4);
+        const m = new music21.stream.Measure();
+        m.insert(0, new music21.meter.TimeSignature('2/4'));
+        m.insert(0, v);
+        assert.equal(n1.beams.beamsList.length, 0);
+
+        m.makeBeams({inPlace: true});
+        for (const n of m.recurse().notes) {
+            assert.equal(n.beams.beamsList.length, 1);
+        }
     });
 
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
@@ -739,13 +752,13 @@ export default function tests() {
     });
 
     test('music21.stream.Score.findNoteForClick', assert => {
-        const p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
-        const p2 = music21.tinyNotation.TinyNotation('4/4 A1    C#1   E#1');
+        const p1 = music21.tinyNotation.TinyNotation('4/4     c2            d2      e2 f2 g1');
+        const p2 = music21.tinyNotation.TinyNotation('4/4 trip{AA4 BB4 C#4} D#4 E4  C#1   E#1');
         const s = new music21.stream.Score();
         s.insert(0, p1);
         s.insert(0, p2);
         s.appendNewDOM();  // we need to generate a DOM even if we are not using it.
-        const x = 100;
+        let x = 100;
         let y = 20;
         let [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 43);
@@ -766,6 +779,16 @@ export default function tests() {
             (foundNote as music21.note.Note).pitch.name,
             (p2.flat.notes.get(0) as music21.note.Note).pitch.name
         );
+
+        // check that we can access last note in measure after a triplet
+        x = 285;
+        [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
+        assert.equal(clickedDNN, 29);
+        assert.equal(
+            (foundNote as music21.note.Note).pitch.name,
+            (p2.flat.notes.get(4) as music21.note.Note).pitch.name
+        );
+        x = 100;
 
         // check that we never move to another part even if very low
         y = 300;
@@ -1000,5 +1023,27 @@ export default function tests() {
         s.makeMeasures({inPlace: true});
         // this call will fail if there are duplicate clefs
         assert.ok(s.flatten(true));
+    });
+
+    test('music21.stream.Stream estimateStaffLength', assert => {
+        const v = new music21.stream.Voice();
+        const n = new music21.note.Note();
+        n.duration.type = 'whole';
+        v.append(n);
+        const m = new music21.stream.Measure();
+        m.append(v);
+        const original_width = m.estimateStaffLength();
+        const ks = new music21.key.KeySignature(-6);
+        m.append(ks);
+        m.renderOptions.displayKeySignature = true;
+        assert.equal(m.estimateStaffLength(), original_width + ks.width);
+
+        // Also test getting KeySignature from the context
+        const previous_measure = m.clone();
+        m.remove(ks);
+        const p = new music21.stream.Part();
+        p.append(previous_measure);
+        p.append(m);
+        assert.equal(m.estimateStaffLength(), original_width + ks.width);
     });
 }

@@ -11,4 +11,18 @@ export default function tests() {
         assert.equal(n.pitch.step, 'D', 'Pitch Step set to D');
         assert.equal(n.pitch.octave, 5, 'Pitch octave set to 5');
     });
+
+    test('music21.note.Rest.vexflowNote whole rest', assert => {
+        const r = new music21.note.Rest();
+        r.duration.type = 'whole';
+        const m = new music21.stream.Measure();
+        m.append(r);
+
+        let vfr = r.vexflowNote({});
+        assert.equal(vfr.getKeyLine(0), 4);
+
+        m.renderOptions.staffLines = 1;
+        vfr = r.vexflowNote({});
+        assert.equal(vfr.getKeyLine(0), 3);
+    });
 }

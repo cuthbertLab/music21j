@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.5 built on 2021-11-01.
+ * music21j version 0.12.8 built on 2021-12-13.
  * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -1624,31 +1624,6 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
       return NaN;
     }
   }
-  /*
-      Given an object and a number, run append that many times on
-      a deepcopy of the object.
-      numberOfTimes should of course be a positive integer.
-       a = stream.Stream()
-      n = note.Note('D--')
-      n.duration.type = 'whole'
-      a.repeatAppend(n, 10)
-  */
-
-
-  repeatAppend(item, numberOfTimes) {
-    let unused = null;
-
-    try {
-      // noinspection JSUnusedAssignment
-      unused = item.isStream;
-    } catch (AttributeError) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
-    }
-
-    for (let i = 0; i < numberOfTimes; i++) {
-      this.append(item.clone(true));
-    }
-  }
 
 }
 
@@ -2209,17 +2184,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/**
- * music21j -- Javascript reimplementation of Core music21p features.
- * music21/chord -- Chord
- *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * Chord related objects (esp. music21.chord.Chord) and methods.
- *
- */
-
 
 
 
@@ -2340,6 +2304,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_9__.NotRest {
     this._notes = [...newNotes];
     this._cache = {};
     this._overrides = {};
+  }
+
+  vexflowNote({
+    clef = undefined
+  } = {}) {
+    this.sortPitches();
+    return super.vexflowNote({
+      clef
+    });
   }
 
   get orderedPitchClasses() {
@@ -15093,7 +15066,7 @@ class Note extends NotRest {
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
  * @property {string} [name='rest']
- * @property {number} [lineShift=undefined] - number of lines to shift up or down from default
+ * @property {number} [stepShift=0] - number of steps/lines to shift up or down from default
  * @property {string|undefined} [color='black'] - color of the rest
  */
 
@@ -15106,7 +15079,7 @@ class Rest extends GeneralNote {
     this.isNote = false;
     this.isRest = true;
     this.name = 'rest';
-    this.lineShift = 0;
+    this.stepShift = 0;
     this.color = 'black';
     this.volume = 0;
     this.name = 'rest';
@@ -15134,18 +15107,17 @@ class Rest extends GeneralNote {
 
   vexflowNote(options) {
     let keyLine = 'b/4';
+    const activeSiteSingleLine = this.activeSite !== undefined && this.activeSite.renderOptions.staffLines === 1;
 
-    if (this.duration.type === 'whole') {
-      if (this.activeSite !== undefined && this.activeSite.renderOptions.staffLines !== 1) {
-        keyLine = 'd/5';
-      }
+    if (this.duration.type === 'whole' && !activeSiteSingleLine) {
+      keyLine = 'd/5';
     }
 
-    if (this.lineShift !== undefined) {
+    if (this.stepShift !== 0) {
       const p = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch('B4');
-      let ls = this.lineShift;
+      let ls = this.stepShift;
 
-      if (this.duration.type === 'whole') {
+      if (this.duration.type === 'whole' && !activeSiteSingleLine) {
         ls += 2;
       }
 
@@ -16732,7 +16704,7 @@ class RenderOptions {
       click: 'play',
       dblclick: undefined
     };
-    this.useVexflowAutobeam = true;
+    this.useVexflowAutobeam = false;
     this.startNewSystem = false; // noinspection JSUnusedGlobalSymbols
 
     this.startNewPage = false;
@@ -19530,6 +19502,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
     return this;
   }
   /**
+  Given an object and a number, run append that many times on
+  a clone of the object.
+  numberOfTimes should of course be a positive integer.
+   a = stream.Stream()
+  n = note.Note('D--')
+  n.duration.type = 'whole'
+  a.repeatAppend(n, 10)
+  */
+
+
+  repeatAppend(item, numberOfTimes) {
+    if (!(item instanceof _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object)) {
+      throw new StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
+    }
+
+    for (let i = 0; i < numberOfTimes; i++) {
+      this.append(item.clone(true));
+    }
+  }
+  /**
    * Inserts a single element at offset, shifting elements at or after it begins
    * later in the stream.
    *
@@ -20129,7 +20121,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
     } // already made a copy
 
 
-    this.makeAccidentals({
+    out.makeAccidentals({
       inPlace: true
     });
     return out;
@@ -20675,7 +20667,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
   estimateStaffLength() {
     var _a;
 
-    let i;
     let totalLength;
 
     if (this.renderOptions.overriddenWidth !== undefined) {
@@ -20696,12 +20687,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
         }
       }
 
-      return maxLength;
+      totalLength = maxLength;
     } else if (!this.isFlat) {
       // part
-      totalLength = 0;
-
-      for (i = 0; i < this.length; i++) {
+      for (let i = 0; i < this.length; i++) {
         const m = this.get(i);
 
         if (m instanceof Stream) {
@@ -20712,28 +20701,33 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
           }
         }
       }
-
-      return totalLength;
     } else {
-      const rendOp = this.renderOptions;
       totalLength = 30 * this.notesAndRests.length;
+    }
 
-      if (rendOp.displayClef) {
-        totalLength += 30;
-      }
-
-      if (rendOp.displayKeySignature) {
-        const ks = this.getSpecialContext('keySignature');
-        totalLength += (_a = ks === null || ks === void 0 ? void 0 : ks.width) !== null && _a !== void 0 ? _a : 0;
-      }
-
-      if (rendOp.displayTimeSignature) {
-        totalLength += 30;
-      } // totalLength += rendOp.staffPadding;
-
-
+    if (this instanceof Voice) {
+      // recursive call: return early so that measure call
+      // pads just once for clef/key/meter
       return totalLength;
     }
+
+    const rendOp = this.renderOptions;
+
+    if (rendOp.displayClef) {
+      totalLength += 30;
+    }
+
+    if (rendOp.displayKeySignature) {
+      const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
+      totalLength += (_a = ks === null || ks === void 0 ? void 0 : ks.width) !== null && _a !== void 0 ? _a : 0;
+    }
+
+    if (rendOp.displayTimeSignature) {
+      totalLength += 30;
+    } // totalLength += rendOp.staffPadding;
+
+
+    return totalLength;
   }
 
   stripTies({
@@ -23415,50 +23409,61 @@ function makeBeams(s, {
 
     if (lastTimeSignature === undefined) {
       throw new _stream__WEBPACK_IMPORTED_MODULE_7__.StreamException('Need a Time Signature to process beams');
-    } // todo voices!
+    }
 
-
-    if (m.length <= 1) {
+    if (m.recurse().notesAndRests.length <= 1) {
       continue; // nothing to beam.
     }
 
-    const noteStreamIterator = m.notesAndRests;
-    const durList = [];
+    const noteGroups = [];
 
-    for (const n of noteStreamIterator) {
-      durList.push(n.duration);
+    if (m.hasVoices()) {
+      for (const v of m.voices) {
+        noteGroups.push(v);
+      }
+    } else {
+      noteGroups.push(m);
     }
 
-    const noteStream = noteStreamIterator.stream();
-    const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
-    const durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
+    for (const noteGroup of noteGroups) {
+      const noteStreamIterator = noteGroup.notesAndRests;
+      const durList = [];
 
-    const barQL = lastTimeSignature.barDuration.quarterLength;
+      for (const n of noteStreamIterator) {
+        durList.push(n.duration);
+      }
 
-    if (durSum > barQL) {
-      continue;
-    }
+      const noteStream = noteStreamIterator.stream();
+      const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
+      const durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
 
-    let offset = 0.0;
+      const barQL = lastTimeSignature.barDuration.quarterLength;
 
-    if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
-      offset = m.paddingLeft;
-    } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
-      offset = barQL - noteStream.highestTime;
-    }
+      if (durSum > barQL) {
+        continue;
+      }
 
-    const beamsList = lastTimeSignature.getBeams(noteStream, {
-      measureStartOffset: offset
-    });
+      let offset = 0.0;
 
-    for (let i = 0; i < noteStream.length; i++) {
-      const n = noteStream.get(i);
-      const thisBeams = beamsList[i];
+      if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
+        offset = m.paddingLeft;
+      } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
+        offset = barQL - noteStream.highestTime;
+      }
 
-      if (thisBeams !== undefined) {
-        n.beams = thisBeams;
-      } else {
-        n.beams = new _beam__WEBPACK_IMPORTED_MODULE_5__.Beams();
+      const beamsList = lastTimeSignature.getBeams(noteStream, {
+        measureStartOffset: offset
+      });
+
+      for (let i = 0; i < noteStream.length; i++) {
+        const n = noteStream.get(i);
+        const thisBeams = beamsList[i];
+
+        if (thisBeams !== undefined) {
+          n.beams = thisBeams;
+        } else {
+          n.beams = new _beam__WEBPACK_IMPORTED_MODULE_5__.Beams();
+        }
       }
     }
   }
@@ -25038,22 +25043,60 @@ class Renderer {
 
 
   prepareTies(p) {
-    const pf = Array.from(p.flat.notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
+    const p_recursed = []; // Determine order for bridging voices: from earliest appearance
 
-    for (let i = 0; i < pf.length - 1; i++) {
-      const thisNote = pf[i];
+    const voice_ids_in_order_first_encountered = []; // voice IDs are not necessarily unique, so track that they are visited
+
+    const visited_voices = [];
+
+    for (const v of p.recurse().getElementsByClass('Voice')) {
+      if (!voice_ids_in_order_first_encountered.includes(v.id)) {
+        voice_ids_in_order_first_encountered.push(v.id);
+      }
+    } // Retrieve notes in voices
+
+
+    for (const v_id of voice_ids_in_order_first_encountered) {
+      for (const v of p.recurse().getElementsByClass('Voice')) {
+        // Visit in order voice id encountered
+        // For instance, all Soprano voices, then all Alto...
+        if (v.id !== v_id) {
+          continue;
+        }
+
+        if (visited_voices.includes(v)) {
+          continue;
+        }
+
+        p_recursed.push(...Array.from(v.notesAndRests));
+        visited_voices.push(v);
+      }
+    } // Retrieve notes "loose" (flat) in measures
+
+
+    for (const m of p.getElementsByClass('Measure')) {
+      p_recursed.push(...Array.from(m.notesAndRests));
+    } // Retrieve loose notes in `p` (flat)
+
+
+    p_recursed.push(...Array.from(p.notesAndRests)); // Other stream nesting patterns not supported
+    // prepareTies currently called by prepareArrivedFlat() and preparePartlike()
+    // supposes well-formed
+
+    for (let i = 0; i < p_recursed.length - 1; i++) {
+      const thisNote = p_recursed[i];
 
       if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
         continue;
       }
 
-      const nextNote = pf[i + 1];
+      const nextNote = p_recursed[i + 1];
       let onSameSystem = true; // this.systemBreakOffsets.length will be 0 for a flat score
 
       for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
         const thisSystemBreak = this.systemBreakOffsets[sbI];
 
-        if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
+        if (thisNote.getOffsetInHierarchy(p) < thisSystemBreak && nextNote.getOffsetInHierarchy(p) >= thisSystemBreak) {
           onSameSystem = false;
           break;
         }
@@ -25834,8 +25877,8 @@ class Renderer {
           continue;
         }
 
-        const nTicks = parseInt(vfn.ticks);
-        const formatterNote = formatter.tickContexts.map[String(nextTicks)];
+        const formatterNote = formatter.tickContexts.map[nextTicks];
+        const nTicks = vfn.ticks.numerator / vfn.ticks.denominator * formatter.tickContexts.resolutionMultiplier;
         nextTicks += nTicks;
         el.x = vfn.getAbsoluteX(); // these are a bit hacky...
 
