@@ -1191,10 +1191,13 @@ export class Renderer {
                 if (vfn === undefined) {
                     continue;
                 }
-                const formatterNote = formatter.tickContexts.map[nextTicks];
-                const nTicks = (
-                    (vfn.ticks.numerator / vfn.ticks.denominator) * formatter.tickContexts.resolutionMultiplier
-                );
+                const formatterNote = formatter.getTickContext(nextTicks);
+                // TODO: RONYEH is there another way to access formatter.tickContexts.resolutionMultiplier?
+                // What is it used for?
+                // eslint-disable-next-line 
+                // @ts-ignore
+                const nTicks = vfn.getTicks().value() * formatter.tickContexts.resolutionMultiplier;
+
                 nextTicks += nTicks;
                 el.x = vfn.getAbsoluteX();
                 // these are a bit hacky...
