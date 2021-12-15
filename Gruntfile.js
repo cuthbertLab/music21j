@@ -75,6 +75,9 @@ module.exports = grunt => {
             watch: true,
             resolve: {
                 extensions: ['.ts', '.js'],
+                alias: {
+                    vexflow: path.resolve(__dirname, './node_modules/vexflow/build/esm/entry/vexflow-gonville.js'),
+                },
             },
             module: {
                 rules: [

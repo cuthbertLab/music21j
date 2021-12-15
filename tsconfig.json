@@ -10,7 +10,7 @@
         "declarationMap": true,
         "declarationDir": "build",
         "target": "es6",
-        "paths": {
+        // "paths": {
             // Choose one of the options below to customize the number of fonts that will be statically compiled into your entry bundle.
             // vexflow.ts bundles all music fonts, which will result in a large entry bundle:
             // "vexflow": ["node_modules/vexflow/entry/vexflow.ts"], // 772 KiB
@@ -19,10 +19,7 @@
             // "vexflow/bravura": ["node_modules/vexflow/entry/vexflow-bravura.ts"], // 486 KiB
             // "vexflow/gonville": ["node_modules/vexflow/entry/vexflow-gonville.ts"], // 439 KiB
             // "vexflow/petaluma": ["node_modules/vexflow/entry/vexflow-petaluma.ts"] // 460 KiB
-            //
-            // You can also alias "vexflow" to one of the above entry points.
-            "vexflow": ["./node_modules/vexflow/entry/vexflow-gonville.ts"],
-        },
+        // },
     },
     "include": [
         "src/**/*"
