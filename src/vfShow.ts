@@ -307,7 +307,8 @@ export class Renderer {
      * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
      * returns Vex.Flow.Stave staff to return too
      *
-     * (also changes the `stack` parameter and runs `makeNotation` on s)
+     * (also changes the `stack` parameter and runs `makeNotation` on s
+     * with overrideStatus: true to update accidental display)
      */
     prepareFlat(
         s: stream.Stream,
@@ -315,8 +316,8 @@ export class Renderer {
         optionalStave?: Vex.Flow.Stave,
         optional_renderOp?: renderOptions.RenderOptions,
     ): Vex.Flow.Stave {
-        s.makeNotation();
-        let stave;
+        s.makeNotation({ overrideStatus: true });
+        let stave: Vex.Flow.Stave;
         if (optionalStave !== undefined) {
             stave = optionalStave;
         } else {

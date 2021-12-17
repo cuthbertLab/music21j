@@ -1455,15 +1455,15 @@ export class Stream extends base.Music21Object {
      *
      * TODO: move call to makeBeams from renderVexflow to here.
      */
-    makeNotation({ inPlace=true }={}): this {
-        let out;
+    makeNotation({ inPlace=true, overrideStatus=false }={}): this {
+        let out: this;
         if (inPlace) {
             out = this;
         } else {
             out = this.clone(true);
         }
         // already made a copy
-        out.makeAccidentals({ inPlace: true });
+        out.makeAccidentals({ inPlace: true, overrideStatus });
         return out;
     }
 
