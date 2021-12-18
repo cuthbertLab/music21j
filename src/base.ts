@@ -182,7 +182,7 @@ export class Music21Object extends prebase.ProtoM21Object {
      * necessary.
      */
     get hasStyleInformation(): boolean {
-        return !(this._style === undefined);
+        return (this._style !== undefined);
     }
 
     /**

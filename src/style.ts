@@ -21,7 +21,7 @@ export enum Enclosure {
 
 // noinspection JSUnusedGlobalSymbols
 export class Style extends prebase.ProtoM21Object {
-    size: undefined;
+    // size: number|undefined;
     relativeX: number|undefined;
     relativeY: number|undefined;
     absoluteX: number|undefined;
