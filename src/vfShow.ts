@@ -674,7 +674,15 @@ export class Renderer {
         if (rendOp.showMeasureNumber) {
             stave.setMeasure(rendOp.measureIndex + 1);
         }
-        if (rendOp.displayClef) {
+
+        let displayClef = rendOp.displayClef;
+        if (sClef?.hasStyleInformation) {
+            if (sClef.style.hideObjectOnPrint) {
+                displayClef = false;
+            }
+        }
+
+        if (displayClef) {
             let ottava;
             const size = 'default';
             if (sClef.octaveChange === 1) {
@@ -685,13 +693,27 @@ export class Renderer {
             stave.addClef(sClef.name, size, ottava);
         }
         const context_ks = s.getSpecialContext('keySignature') || s.getContextByClass('KeySignature');
-        if (context_ks !== undefined && rendOp.displayKeySignature) {
+        let displayKs = (context_ks !== undefined && rendOp.displayKeySignature);
+        if (context_ks?.hasStyleInformation) {
+            if (context_ks.style.hideObjectOnPrint) {
+                displayKs = false;
+            }
+        }
+
+        if (displayKs) {
             const ksVFName = context_ks.majorName().replace(/-/g, 'b');
             stave.addKeySignature(ksVFName);
         }
 
         const context_ts = s.getSpecialContext('timeSignature') || s.getContextByClass('TimeSignature');
-        if (context_ts !== undefined && rendOp.displayTimeSignature) {
+        let displayTs = (context_ts !== undefined && rendOp.displayTimeSignature);
+        if (context_ts?.hasStyleInformation) {
+            if (context_ts.style.hideObjectOnPrint) {
+                displayTs = false;
+            }
+        }
+
+        if (displayTs) {
             stave.addTimeSignature(
                 context_ts.numerator.toString()
                     + '/'

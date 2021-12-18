@@ -2005,13 +2005,16 @@ export class Stream extends base.Music21Object {
             const rendOp = this.renderOptions;
             totalLength = 30 * this.notesAndRests.length;
             if (rendOp.displayClef) {
+                // TODO: do not do this if Clef.style.hideObjectOnPrint
                 totalLength += 30;
             }
             if (rendOp.displayKeySignature) {
                 const ks = this.getSpecialContext('keySignature');
+                // TODO: do not do this if Clef.style.hideObjectOnPrint
                 totalLength += ks?.width ?? 0;
             }
             if (rendOp.displayTimeSignature) {
+                // TODO: do not do this if Clef.style.hideObjectOnPrint
                 totalLength += 30;
             }
             // totalLength += rendOp.staffPadding;
