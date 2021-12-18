@@ -73,6 +73,7 @@ import * as roman from './roman';
 import * as scale from './scale';
 import * as sites from './sites';
 import * as stream from './stream';
+import * as style from './style';
 import * as svgs from './svgs';
 import * as tempo from './tempo';
 import * as tie from './tie';
@@ -128,6 +129,7 @@ export {
     scale,
     sites,
     stream,
+    style,
     svgs,
     tempo,
     tie,

@@ -15,6 +15,7 @@ import * as duration from './duration';
 import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
+import * as style from './style';
 
 // imports for typing only
 import { Stream, Measure } from './stream';
@@ -50,7 +51,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     protected _activeSiteStoredOffset: number = 0;
     protected _naiveOffset: number = 0;
     // _derivation = undefined;
-    // _style = undefined;
+    protected _style: style.Style;
     protected _editorial: editorial.Editorial;
     protected _duration: duration.Duration;
     protected _derivation: derivation.Derivation;
@@ -62,6 +63,8 @@ export class Music21Object extends prebase.ProtoM21Object {
     isStream: boolean = false;
     // beat, etc.
     // lots to do...
+
+    protected static _styleClass: typeof style.Style = style.Style;
 
     constructor(keywords={}) {
         super();
@@ -165,9 +168,45 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._editorial = newEditorial;
     }
 
-    get hasEditorialInformation() : boolean {
+    get hasEditorialInformation(): boolean {
         return (this._editorial !== undefined);
     }
+
+    /**
+     * Returns true if there is a style.Style object
+     * already associated with this object, false otherwise.
+     *
+     * Calling .style on an object will always create a new
+     * Style object, so even though a new Style object isn't too expensive
+     * to create, this property helps to prevent creating new Styles more than
+     * necessary.
+     */
+    get hasStyleInformation(): boolean {
+        return (this._style !== undefined);
+    }
+
+    /**
+     * Returns (or Creates and then Returns) the Style object
+     * associated with this object, or sets a new
+     * style object.  Different classes might use
+     * different Style objects because they might have different
+     * style needs (such as text formatting or bezier positioning)
+     *
+     * Eventually will also query the groups to see if they have
+     * any styles associated with them.
+     */
+    get style(): style.Style {
+        if (!this.hasStyleInformation) {
+            const StyleClass = <typeof style.Style> this.constructor;
+            this._style = new StyleClass();
+        }
+        return this._style;
+    }
+
+    set style(newStyle: style.Style) {
+        this._style = newStyle;
+    }
+
 
     get measureNumber() {
         if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
