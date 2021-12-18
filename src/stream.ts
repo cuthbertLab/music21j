@@ -2032,12 +2032,12 @@ export class Stream extends base.Music21Object {
             totalLength += 30;
         }
         if (rendOp.displayKeySignature) {
-          // TODO: do not do this if Clef.style.hideObjectOnPrint
+            // TODO: do not do this if Clef.style.hideObjectOnPrint
             const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
             totalLength += ks?.width ?? 0;
         }
         if (rendOp.displayTimeSignature) {
-          // TODO: do not do this if Clef.style.hideObjectOnPrint
+            // TODO: do not do this if Clef.style.hideObjectOnPrint
             totalLength += 30;
         }
         // totalLength += rendOp.staffPadding;
