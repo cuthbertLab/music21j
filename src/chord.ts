@@ -8,6 +8,7 @@
  * Chord related objects (esp. music21.chord.Chord) and methods.
  *
  */
+import Vex from 'vexflow';
 import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21';
@@ -125,6 +126,10 @@ export class Chord extends note.NotRest {
         this._overrides = {};
     }
 
+    vexflowNote({ clef=undefined }={}): Vex.Flow.StaveNote {
+        this.sortPitches();
+        return super.vexflowNote({ clef });
+    }
 
     get orderedPitchClasses(): number[] {
         const pcGroup = [];

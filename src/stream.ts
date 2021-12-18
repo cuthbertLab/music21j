@@ -898,6 +898,26 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+    Given an object and a number, run append that many times on
+    a clone of the object.
+    numberOfTimes should of course be a positive integer.
+
+    a = stream.Stream()
+    n = note.Note('D--')
+    n.duration.type = 'whole'
+    a.repeatAppend(n, 10)
+    */
+    repeatAppend(item: base.Music21Object, numberOfTimes: number) {
+        if (!(item instanceof base.Music21Object)) {
+            throw new StreamException('to put a non Music21Object in a stream, '
+            + 'create a music21.ElementWrapper for the item');
+        }
+        for (let i = 0; i < numberOfTimes; i++) {
+            this.append(item.clone(true));
+        }
+    }
+
+    /**
      * Inserts a single element at offset, shifting elements at or after it begins
      * later in the stream.
      *
@@ -1435,15 +1455,15 @@ export class Stream extends base.Music21Object {
      *
      * TODO: move call to makeBeams from renderVexflow to here.
      */
-    makeNotation({ inPlace=true }={}): this {
-        let out;
+    makeNotation({ inPlace=true, overrideStatus=false }={}): this {
+        let out: this;
         if (inPlace) {
             out = this;
         } else {
             out = this.clone(true);
         }
         // already made a copy
-        this.makeAccidentals({ inPlace: true });
+        out.makeAccidentals({ inPlace: true, overrideStatus });
         return out;
     }
 
@@ -1969,8 +1989,7 @@ export class Stream extends base.Music21Object {
      * @returns {number} length in pixels
      */
     estimateStaffLength() {
-        let i;
-        let totalLength;
+        let totalLength: number;
         if (this.renderOptions.overriddenWidth !== undefined) {
             // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
@@ -1986,11 +2005,10 @@ export class Stream extends base.Music21Object {
                     }
                 }
             }
-            return maxLength;
+            totalLength = maxLength;
         } else if (!this.isFlat) {
             // part
-            totalLength = 0;
-            for (i = 0; i < this.length; i++) {
+            for (let i = 0; i < this.length; i++) {
                 const m = this.get(i);
                 if (m instanceof Stream) {
                     totalLength
@@ -2000,26 +2018,30 @@ export class Stream extends base.Music21Object {
                     }
                 }
             }
-            return totalLength;
         } else {
-            const rendOp = this.renderOptions;
             totalLength = 30 * this.notesAndRests.length;
-            if (rendOp.displayClef) {
-                // TODO: do not do this if Clef.style.hideObjectOnPrint
-                totalLength += 30;
-            }
-            if (rendOp.displayKeySignature) {
-                const ks = this.getSpecialContext('keySignature');
-                // TODO: do not do this if Clef.style.hideObjectOnPrint
-                totalLength += ks?.width ?? 0;
-            }
-            if (rendOp.displayTimeSignature) {
-                // TODO: do not do this if Clef.style.hideObjectOnPrint
-                totalLength += 30;
-            }
-            // totalLength += rendOp.staffPadding;
+        }
+        if (this instanceof Voice) {
+            // recursive call: return early so that measure call
+            // pads just once for clef/key/meter
             return totalLength;
         }
+        const rendOp = this.renderOptions;
+        if (rendOp.displayClef) {
+            // TODO: do not do this if Clef.style.hideObjectOnPrint
+            totalLength += 30;
+        }
+        if (rendOp.displayKeySignature) {
+          // TODO: do not do this if Clef.style.hideObjectOnPrint
+            const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
+            totalLength += ks?.width ?? 0;
+        }
+        if (rendOp.displayTimeSignature) {
+          // TODO: do not do this if Clef.style.hideObjectOnPrint
+            totalLength += 30;
+        }
+        // totalLength += rendOp.staffPadding;
+        return totalLength;
     }
 
     stripTies(
