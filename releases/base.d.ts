@@ -3,6 +3,7 @@ import * as duration from './duration';
 import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
+import * as style from './style';
 import { Stream } from './stream';
 import { TimeSignature } from './meter';
 /**
@@ -27,6 +28,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     protected _activeSite: any;
     protected _activeSiteStoredOffset: number;
     protected _naiveOffset: number;
+    protected _style: style.Style;
     protected _editorial: editorial.Editorial;
     protected _duration: duration.Duration;
     protected _derivation: derivation.Derivation;
@@ -36,6 +38,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     sites: sites.Sites;
     isMusic21Object: boolean;
     isStream: boolean;
+    protected static _styleClass: typeof style.Style;
     constructor(keywords?: {});
     /**
      * Override clone on prebase to add a derivation.
@@ -49,6 +52,28 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     get editorial(): editorial.Editorial;
     set editorial(newEditorial: editorial.Editorial);
     get hasEditorialInformation(): boolean;
+    /**
+     * Returns true if there is a style.Style object
+     * already associated with this object, false otherwise.
+     *
+     * Calling .style on an object will always create a new
+     * Style object, so even though a new Style object isn't too expensive
+     * to create, this property helps to prevent creating new Styles more than
+     * necessary.
+     */
+    get hasStyleInformation(): boolean;
+    /**
+     * Returns (or Creates and then Returns) the Style object
+     * associated with this object, or sets a new
+     * style object.  Different classes might use
+     * different Style objects because they might have different
+     * style needs (such as text formatting or bezier positioning)
+     *
+     * Eventually will also query the groups to see if they have
+     * any styles associated with them.
+     */
+    get style(): style.Style;
+    set style(newStyle: style.Style);
     get measureNumber(): number;
     /**
      *  Try to obtain the nearest Measure that contains this object,
