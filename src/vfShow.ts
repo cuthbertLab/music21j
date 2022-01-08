@@ -705,7 +705,11 @@ export class Renderer {
 
         this.setStafflines(s, stave);
         if (rendOp.showMeasureNumber) {
-            stave.setMeasure(rendOp.measureIndex + 1);
+            if (s instanceof stream.Measure && s.number !== undefined) {
+                stave.setMeasure(s.number);
+            } else {
+                stave.setMeasure(rendOp.measureIndex + 1);
+            }
         }
 
         let displayClef = rendOp.displayClef;

@@ -1705,7 +1705,7 @@ export class Stream extends base.Music21Object {
 
         If `cautionaryAll` is true, all accidentals are shown.
 
-        If `overrideStatus` is true, this method will ignore any current `displayStatus` stetting
+        If `overrideStatus` is true, this method will ignore any current `displayStatus` setting
         found on the Accidental. By default this does not happen. If `displayStatus` is set to
         None, the Accidental's `displayStatus` is set.
 
