@@ -312,7 +312,7 @@ export default function tests() {
         assert.equal(n.pitch.accidental.displayStatus, false);
 
         n.pitch.accidental.displayType = 'always';
-        s.makeAccidentals({inPlace: true});
+        s.makeAccidentals({inPlace: true, overrideStatus: true});
         assert.equal(n.pitch.accidental.displayStatus, true);
     });
 
