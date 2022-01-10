@@ -314,7 +314,7 @@ export default function tests() {
         n.pitch.accidental.displayType = 'always';
         s.makeAccidentals({inPlace: true});
         assert.equal(n.pitch.accidental.displayStatus, true);
-    })
+    });
 
     /* // Transpose is Not Implemented in pitch class
     test('music21.pitch.Low Notes', assert => {
