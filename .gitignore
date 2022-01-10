@@ -75,3 +75,6 @@ node_modules/grunt-contrib-uglify/package.json
 .idea/music21j.iml
 .idea/vcs.xml
 .idea/workspace.xml
+
+# VSCode
+*.code-workspace
