@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.9 built on 2022-01-08.
+ * music21j version 0.12.10 built on 2022-01-11.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -15433,7 +15433,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
     this._alter = 0.0;
     this._modifier = '';
     this._unicodeModifier = '';
-    this.displayType = 'normal'; // "normal", "always" supported currently
+    this.displayType = 'normal'; // "normal", "always", "never" supported currently
 
     this.displayStatus = undefined; // true, false, undefined
 
@@ -16046,6 +16046,11 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
       } else if (display_orig === true || display_orig === false) {
         return; // exit: already set, do not override
       }
+    }
+
+    if (acc_orig && acc_orig.displayType === 'never') {
+      this.accidental.displayStatus = false;
+      return;
     }
 
     if (lastNoteWasTied === true) {
