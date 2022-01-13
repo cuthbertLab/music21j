@@ -1,6 +1,6 @@
 /**
- * music21j version 0.12.8 built on 2021-12-13.
- * Copyright (c) 2013-2021 Michael Scott Asato Cuthbert
+ * music21j version 0.12.10 built on 2022-01-11.
+ * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
  * http://github.com/cuthbertLab/music21j
@@ -1115,7 +1115,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./editorial */ "./src/editorial.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
 /* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./style */ "./src/style.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 
 
 
@@ -1132,6 +1133,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * module for Music21Objects
  */
+
 
 
 
@@ -1157,8 +1159,6 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object {
-  // beat, etc.
-  // lots to do...
   constructor(keywords = {}) {
     super();
     this.classSortOrder = 20; // default;
@@ -1273,6 +1273,44 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
 
   get hasEditorialInformation() {
     return this._editorial !== undefined;
+  }
+  /**
+   * Returns true if there is a style.Style object
+   * already associated with this object, false otherwise.
+   *
+   * Calling .style on an object will always create a new
+   * Style object, so even though a new Style object isn't too expensive
+   * to create, this property helps to prevent creating new Styles more than
+   * necessary.
+   */
+
+
+  get hasStyleInformation() {
+    return this._style !== undefined;
+  }
+  /**
+   * Returns (or Creates and then Returns) the Style object
+   * associated with this object, or sets a new
+   * style object.  Different classes might use
+   * different Style objects because they might have different
+   * style needs (such as text formatting or bezier positioning)
+   *
+   * Eventually will also query the groups to see if they have
+   * any styles associated with them.
+   */
+
+
+  get style() {
+    if (!this.hasStyleInformation) {
+      const StyleClass = this.constructor;
+      this._style = new StyleClass();
+    }
+
+    return this._style;
+  }
+
+  set style(newStyle) {
+    this._style = newStyle;
   }
 
   get measureNumber() {
@@ -1609,7 +1647,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
     });
 
     if (ts === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__.Music21Exception('this object does not have a TimeSignature in Sites');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_11__.Music21Exception('this object does not have a TimeSignature in Sites');
     }
 
     return ts;
@@ -1625,7 +1663,10 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_8__.ProtoM21Object
     }
   }
 
-}
+} // beat, etc.
+// lots to do...
+
+Music21Object._styleClass = _style__WEBPACK_IMPORTED_MODULE_10__.Style;
 
 function getContextByClassPayloadExtractor(useSite, flatten, // true, false, or semiflat
 positionStart, getElementMethod, classList) {
@@ -11068,7 +11109,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "base": () => (/* reexport module object */ _base__WEBPACK_IMPORTED_MODULE_6__),
 /* harmony export */   "prebase": () => (/* reexport module object */ _prebase__WEBPACK_IMPORTED_MODULE_5__),
 /* harmony export */   "common": () => (/* reexport module object */ _common__WEBPACK_IMPORTED_MODULE_7__),
-/* harmony export */   "debug": () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_48__.debug),
+/* harmony export */   "debug": () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_49__.debug),
 /* harmony export */   "articulations": () => (/* reexport module object */ _articulations__WEBPACK_IMPORTED_MODULE_8__),
 /* harmony export */   "audioRecording": () => (/* reexport module object */ _audioRecording__WEBPACK_IMPORTED_MODULE_9__),
 /* harmony export */   "audioSearch": () => (/* reexport module object */ _audioSearch__WEBPACK_IMPORTED_MODULE_10__),
@@ -11102,13 +11143,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "scale": () => (/* reexport module object */ _scale__WEBPACK_IMPORTED_MODULE_38__),
 /* harmony export */   "sites": () => (/* reexport module object */ _sites__WEBPACK_IMPORTED_MODULE_39__),
 /* harmony export */   "stream": () => (/* reexport module object */ _stream__WEBPACK_IMPORTED_MODULE_40__),
-/* harmony export */   "svgs": () => (/* reexport module object */ _svgs__WEBPACK_IMPORTED_MODULE_41__),
-/* harmony export */   "tempo": () => (/* reexport module object */ _tempo__WEBPACK_IMPORTED_MODULE_42__),
-/* harmony export */   "tie": () => (/* reexport module object */ _tie__WEBPACK_IMPORTED_MODULE_43__),
-/* harmony export */   "tinyNotation": () => (/* reexport module object */ _tinyNotation__WEBPACK_IMPORTED_MODULE_44__),
-/* harmony export */   "vfShow": () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_45__),
-/* harmony export */   "voiceLeading": () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_46__),
-/* harmony export */   "webmidi": () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_47__),
+/* harmony export */   "style": () => (/* reexport module object */ _style__WEBPACK_IMPORTED_MODULE_41__),
+/* harmony export */   "svgs": () => (/* reexport module object */ _svgs__WEBPACK_IMPORTED_MODULE_42__),
+/* harmony export */   "tempo": () => (/* reexport module object */ _tempo__WEBPACK_IMPORTED_MODULE_43__),
+/* harmony export */   "tie": () => (/* reexport module object */ _tie__WEBPACK_IMPORTED_MODULE_44__),
+/* harmony export */   "tinyNotation": () => (/* reexport module object */ _tinyNotation__WEBPACK_IMPORTED_MODULE_45__),
+/* harmony export */   "vfShow": () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_46__),
+/* harmony export */   "voiceLeading": () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_47__),
+/* harmony export */   "webmidi": () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_48__),
 /* harmony export */   "VERSION": () => (/* binding */ VERSION)
 /* harmony export */ });
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
@@ -11156,14 +11198,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
 /* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
 /* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
-/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
-/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./style */ "./src/style.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
+/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
 /**!
  * **music21j**: Javascript reimplementation of Core music21 features.
  *
@@ -11199,6 +11242,7 @@ __webpack_require__.r(__webpack_exports__);
  // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
 // alphabetical.
+
 
 
 
@@ -15389,7 +15433,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
     this._alter = 0.0;
     this._modifier = '';
     this._unicodeModifier = '';
-    this.displayType = 'normal'; // "normal", "always" supported currently
+    this.displayType = 'normal'; // "normal", "always", "never" supported currently
 
     this.displayStatus = undefined; // true, false, undefined
 
@@ -16002,6 +16046,11 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
       } else if (display_orig === true || display_orig === false) {
         return; // exit: already set, do not override
       }
+    }
+
+    if (acc_orig && acc_orig.displayType === 'never') {
+      this.accidental.displayStatus = false;
+      return;
     }
 
     if (lastNoteWasTied === true) {
@@ -20110,7 +20159,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
 
 
   makeNotation({
-    inPlace = true
+    inPlace = true,
+    overrideStatus = false
   } = {}) {
     let out;
 
@@ -20122,7 +20172,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
 
 
     out.makeAccidentals({
-      inPlace: true
+      inPlace: true,
+      overrideStatus
     });
     return out;
   }
@@ -20361,7 +20412,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
       of register. That is, if a past sharp is found two octaves above a present natural,
       a natural sign is still displayed.
        If `cautionaryAll` is true, all accidentals are shown.
-       If `overrideStatus` is true, this method will ignore any current `displayStatus` stetting
+       If `overrideStatus` is true, this method will ignore any current `displayStatus` setting
       found on the Accidental. By default this does not happen. If `displayStatus` is set to
       None, the Accidental's `displayStatus` is set.
        If `cautionaryNotImmediateRepeat` is true, cautionary accidentals will be displayed for
@@ -20714,15 +20765,18 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_15__.Music21Object {
     const rendOp = this.renderOptions;
 
     if (rendOp.displayClef) {
+      // TODO: do not do this if Clef.style.hideObjectOnPrint
       totalLength += 30;
     }
 
     if (rendOp.displayKeySignature) {
+      // TODO: do not do this if KeySignature.style.hideObjectOnPrint
       const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
       totalLength += (_a = ks === null || ks === void 0 ? void 0 : ks.width) !== null && _a !== void 0 ? _a : 0;
     }
 
     if (rendOp.displayTimeSignature) {
+      // TODO: do not do this if TimeSignature.style.hideObjectOnPrint
       totalLength += 30;
     } // totalLength += rendOp.staffPadding;
 
@@ -23586,6 +23640,58 @@ function setStemDirectionOneGroup(group, {
 
 /***/ }),
 
+/***/ "./src/style.ts":
+/*!**********************!*\
+  !*** ./src/style.ts ***!
+  \**********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Enclosure": () => (/* binding */ Enclosure),
+/* harmony export */   "Style": () => (/* binding */ Style)
+/* harmony export */ });
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+
+
+
+var Enclosure;
+
+(function (Enclosure) {
+  // noinspection JSUnusedGlobalSymbols
+  Enclosure["RECTANGLE"] = "rectangle";
+  Enclosure["SQUARE"] = "square";
+  Enclosure["OVAL"] = "oval";
+  Enclosure["CIRCLE"] = "circle";
+  Enclosure["BRACKET"] = "bracket";
+  Enclosure["TRIANGLE"] = "triangle";
+  Enclosure["DIAMOND"] = "diamond";
+  Enclosure["PENTAGON"] = "pentagon";
+  Enclosure["HEXAGON"] = "hexagon";
+  Enclosure["HEPTAGON"] = "heptagon";
+  Enclosure["OCTAGON"] = "octagon";
+  Enclosure["NONAGON"] = "nonagon";
+  Enclosure["DECAGON"] = "decagon";
+  Enclosure["NONE"] = "none";
+})(Enclosure || (Enclosure = {})); // noinspection JSUnusedGlobalSymbols
+
+
+class Style extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
+  constructor() {
+    super(...arguments); // units: string = 'tenths';
+
+    this.hideObjectOnPrint = false;
+  }
+
+}
+
+/***/ }),
+
 /***/ "./src/svgs.ts":
 /*!*********************!*\
   !*** ./src/svgs.ts ***!
@@ -24609,7 +24715,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
 /* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
 /* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 
 
 
@@ -24627,6 +24734,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
+
 
 
 
@@ -24728,10 +24836,10 @@ class Renderer {
 
     this.vfTuplets = [];
     this.stream = s;
-    const [$j_div, html_div] = (0,_common__WEBPACK_IMPORTED_MODULE_11__.jQueryAndHTMLVersion)(div);
+    const [$j_div, html_div] = (0,_common__WEBPACK_IMPORTED_MODULE_12__.jQueryAndHTMLVersion)(div);
     this.$div = $j_div;
     this.div = html_div;
-    this.$where = (0,_common__WEBPACK_IMPORTED_MODULE_11__.coerceJQuery)(where);
+    this.$where = (0,_common__WEBPACK_IMPORTED_MODULE_12__.coerceJQuery)(where);
   }
 
   get vfRenderer() {
@@ -24941,12 +25049,15 @@ class Renderer {
    * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
    * returns Vex.Flow.Stave staff to return too
    *
-   * (also changes the `stack` parameter and runs `makeNotation` on s)
+   * (also changes the `stack` parameter and runs `makeNotation` on s
+   * with overrideStatus: true to update accidental display)
    */
 
 
   prepareFlat(s, stack, optionalStave, optional_renderOp) {
-    s.makeNotation();
+    s.makeNotation({
+      overrideStatus: true
+    });
     let stave;
 
     if (optionalStave !== undefined) {
@@ -25365,10 +25476,22 @@ class Renderer {
     this.setStafflines(s, stave);
 
     if (rendOp.showMeasureNumber) {
-      stave.setMeasure(rendOp.measureIndex + 1);
+      if (s instanceof _stream__WEBPACK_IMPORTED_MODULE_11__.Measure && s.number !== undefined) {
+        stave.setMeasure(s.number);
+      } else {
+        stave.setMeasure(rendOp.measureIndex + 1);
+      }
     }
 
-    if (rendOp.displayClef) {
+    let displayClef = rendOp.displayClef;
+
+    if (sClef === null || sClef === void 0 ? void 0 : sClef.hasStyleInformation) {
+      if (sClef.style.hideObjectOnPrint) {
+        displayClef = false;
+      }
+    }
+
+    if (displayClef) {
       let ottava;
       const size = 'default';
 
@@ -25382,15 +25505,29 @@ class Renderer {
     }
 
     const context_ks = s.getSpecialContext('keySignature') || s.getContextByClass('KeySignature');
+    let displayKs = context_ks !== undefined && rendOp.displayKeySignature;
 
-    if (context_ks !== undefined && rendOp.displayKeySignature) {
+    if (context_ks === null || context_ks === void 0 ? void 0 : context_ks.hasStyleInformation) {
+      if (context_ks.style.hideObjectOnPrint) {
+        displayKs = false;
+      }
+    }
+
+    if (displayKs) {
       const ksVFName = context_ks.majorName().replace(/-/g, 'b');
       stave.addKeySignature(ksVFName);
     }
 
     const context_ts = s.getSpecialContext('timeSignature') || s.getContextByClass('TimeSignature');
+    let displayTs = context_ts !== undefined && rendOp.displayTimeSignature;
 
-    if (context_ts !== undefined && rendOp.displayTimeSignature) {
+    if (context_ts === null || context_ts === void 0 ? void 0 : context_ts.hasStyleInformation) {
+      if (context_ts.style.hideObjectOnPrint) {
+        displayTs = false;
+      }
+    }
+
+    if (displayTs) {
       stave.addTimeSignature(context_ts.numerator.toString() + '/' + context_ts.denominator.toString());
     }
 

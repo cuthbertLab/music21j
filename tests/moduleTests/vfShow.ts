@@ -122,4 +122,42 @@ export default function tests() {
         renderer.prepareScorelike(s);
         assert.equal(renderer.vfTies.length, 2);
     });
+
+    test('music21.vfShow.Renderer.prepareFlat recalculates accidental display', assert => {
+        const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('d4 d# d# d#');
+        const s = new music21.stream.Score();
+        s.append(p);
+        s.appendNewDOM();
+        const notes_iter = p.recurse().notes;
+        const first_note = notes_iter.get(0);
+        const second_note = notes_iter.get(1);
+        assert.equal(first_note.pitch.accidental, undefined);
+        assert.equal(second_note.pitch.accidental.displayStatus, true);
+
+        // D -> D#
+        const aug_1 = new music21.interval.Interval('A1');
+        first_note.pitch = aug_1.transposePitch(first_note.pitch);
+        s.replaceDOM();
+        assert.equal(first_note.pitch.accidental.displayStatus, true);
+        assert.equal(second_note.pitch.accidental.displayStatus, false);
+    });
+
+    test('music21.vfShow.Renderer obeys measure numbers', assert => {
+        const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('c4 d1 e~ e');
+        const measure_iter = p.getElementsByClass('Measure') as music21.stream.iterator.StreamIterator<music21.stream.Measure>;
+        measure_iter.get(0).paddingLeft = 3.0;
+        for (const [i, m] of Array.from(measure_iter).entries()) {
+            // Renumber the measures so that pickup is m.0
+            m.number = i;
+            m.renderOptions.showMeasureNumber = true;
+        }
+        p.appendNewDOM();
+        for (const stack of p.activeVFRenderer.stacks) {
+            const vf_voice = stack.voices[0];
+            assert.equal(
+                vf_voice.stave.measure,
+                (stack.voiceToStreamMapping.get(vf_voice) as music21.stream.Measure).number
+            );
+        }
+    });
 }

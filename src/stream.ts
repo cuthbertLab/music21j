@@ -1455,15 +1455,15 @@ export class Stream extends base.Music21Object {
      *
      * TODO: move call to makeBeams from renderVexflow to here.
      */
-    makeNotation({ inPlace=true }={}): this {
-        let out;
+    makeNotation({ inPlace=true, overrideStatus=false }={}): this {
+        let out: this;
         if (inPlace) {
             out = this;
         } else {
             out = this.clone(true);
         }
         // already made a copy
-        out.makeAccidentals({ inPlace: true });
+        out.makeAccidentals({ inPlace: true, overrideStatus });
         return out;
     }
 
@@ -1705,7 +1705,7 @@ export class Stream extends base.Music21Object {
 
         If `cautionaryAll` is true, all accidentals are shown.
 
-        If `overrideStatus` is true, this method will ignore any current `displayStatus` stetting
+        If `overrideStatus` is true, this method will ignore any current `displayStatus` setting
         found on the Accidental. By default this does not happen. If `displayStatus` is set to
         None, the Accidental's `displayStatus` is set.
 
@@ -2028,13 +2028,16 @@ export class Stream extends base.Music21Object {
         }
         const rendOp = this.renderOptions;
         if (rendOp.displayClef) {
+            // TODO: do not do this if Clef.style.hideObjectOnPrint
             totalLength += 30;
         }
         if (rendOp.displayKeySignature) {
+            // TODO: do not do this if KeySignature.style.hideObjectOnPrint
             const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
             totalLength += ks?.width ?? 0;
         }
         if (rendOp.displayTimeSignature) {
+            // TODO: do not do this if TimeSignature.style.hideObjectOnPrint
             totalLength += 30;
         }
         // totalLength += rendOp.staffPadding;

@@ -41,7 +41,7 @@ export class Accidental extends prebase.ProtoM21Object {
     protected _alter: number = 0.0;
     protected _modifier: string = '';
     protected _unicodeModifier: string = '';
-    displayType: string = 'normal';  // "normal", "always" supported currently
+    displayType: string = 'normal';  // "normal", "always", "never" supported currently
     displayStatus: boolean = undefined;  // true, false, undefined
 
     constructor(accName: string|number) {
@@ -651,6 +651,10 @@ export class Pitch extends prebase.ProtoM21Object {
             } else if (display_orig === true || display_orig === false) {
                 return;  // exit: already set, do not override
             }
+        }
+        if (acc_orig && acc_orig.displayType === 'never') {
+            this.accidental.displayStatus = false;
+            return;
         }
         if (lastNoteWasTied === true) {
             if (this.accidental !== undefined) {
