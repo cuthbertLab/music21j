@@ -15,14 +15,14 @@ import {
     Formatter,
     Fraction,
     Renderer as VFRenderer,
-    Stave,
+    Stave as VFStave,
     StaveConnector,
     StaveNote,
     StaveTie,
     SVGContext,
     TextNote,
     Tuplet,
-    Voice,
+    Voice as VFVoice,
 } from 'vexflow';
   
 import { debug } from './debug';
@@ -47,15 +47,15 @@ const _clefSingleton = new clef.TrebleClef();
  */
 export class RenderStack {
     streams: stream.Stream[] = [];
-    voices: Voice[] = []; // for the music
-    textVoices: Voice[] = []; // for lyrics
-    voiceToStreamMapping: Map<Voice, stream.Stream> = new Map();
+    voices: VFVoice[] = []; // for the music
+    textVoices: VFVoice[] = []; // for lyrics
+    voiceToStreamMapping: Map<VFVoice, stream.Stream> = new Map();
 
     /**
      * returns this.voices and this.textVoices as one array
      */
-    allTickables(): Voice[] {
-        const t: Voice[] = [];
+    allTickables(): VFVoice[] {
+        const t: VFVoice[] = [];
         t.push(...this.voices);
         t.push(...this.textVoices);
         return t;
@@ -327,11 +327,11 @@ export class Renderer {
     prepareFlat(
         s: stream.Stream,
         stack: RenderStack,
-        optionalStave?: Stave,
+        optionalStave?: VFStave,
         optional_renderOp?: renderOptions.RenderOptions,
-    ): Stave {
+    ): VFStave {
         s.makeNotation({ overrideStatus: true });
-        let stave: Stave;
+        let stave: VFStave;
         if (optionalStave !== undefined) {
             stave = optionalStave;
         } else {
@@ -359,7 +359,7 @@ export class Renderer {
      * optional_rendOp - renderOptions, passed to Renderer#newStave
      * and Renderer#setClefEtc
      */
-    renderStave(m?: stream.Stream, optional_rendOp?: renderOptions.RenderOptions): Stave {
+    renderStave(m?: stream.Stream, optional_rendOp?: renderOptions.RenderOptions): VFStave {
         if (m === undefined) {
             m = this.stream;
         }
@@ -501,7 +501,7 @@ export class Renderer {
      * [s=this.stream] -- usually a Measure or Voice
      * stave - not actually optional.
      */
-    getVoice(s?: stream.Stream, stave?: Stave): Voice | undefined {
+    getVoice(s?: stream.Stream, stave?: VFStave): VFVoice | undefined {
         if (stave === undefined) {
             return undefined;
         }
@@ -524,7 +524,7 @@ export class Renderer {
      *
      * s -- usually a Measure or Voice
      */
-    getLyricVoice(s: stream.Stream, stave: Stave): Voice {
+    getLyricVoice(s: stream.Stream, stave: VFStave): VFVoice {
         const textVoice = this.vexflowVoice(s);
         const lyrics = this.vexflowLyrics(s, stave);
         textVoice.setStave(stave);
@@ -652,7 +652,7 @@ export class Renderer {
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
      */
-    newStave(s?: stream.Stream, rendOp?: renderOptions.RenderOptions): Stave {
+    newStave(s?: stream.Stream, rendOp?: renderOptions.RenderOptions): VFStave {
         if (s === undefined) {
             s = this.stream;
         }
@@ -683,7 +683,7 @@ export class Renderer {
                     + width
             );
         }
-        const stave = new Stave(left, top, width);
+        const stave = new VFStave(left, top, width);
         return stave;
     }
 
@@ -694,7 +694,7 @@ export class Renderer {
      * RenderOptions object might have
      * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
      */
-    setClefEtc(s: stream.Stream, stave: Stave, rendOp?: renderOptions.RenderOptions) {
+    setClefEtc(s: stream.Stream, stave: VFStave, rendOp?: renderOptions.RenderOptions) {
         if (rendOp === undefined) {
             rendOp = s.renderOptions;
         }
@@ -794,7 +794,7 @@ export class Renderer {
      *
      * vexflowStave is the Stave to set lines for.
      */
-    setStafflines(s: stream.Stream, vexflowStave: Stave): void {
+    setStafflines(s: stream.Stream, vexflowStave: VFStave): void {
         const rendOp = s.renderOptions;
         if (rendOp.staffLines !== 5) {
             if (rendOp.staffLines === 0) {
@@ -836,7 +836,7 @@ export class Renderer {
      *
      * Also changes `this.vfTuplets`.
      */
-    vexflowNotes(s?: stream.Stream, stave?: Stave): StaveNote[] {
+    vexflowNotes(s?: stream.Stream, stave?: VFStave): StaveNote[] {
         if (s === undefined) {
             s = this.stream;
         }
@@ -931,7 +931,7 @@ export class Renderer {
     /**
      * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
      */
-    vexflowLyrics(s?: stream.Stream, stave?: Stave): TextNote[] {
+    vexflowLyrics(s?: stream.Stream, stave?: VFStave): TextNote[] {
         const getTextNote = (text, font, d, lyricObj = undefined) => {
             // console.log(text, font, d);
             // noinspection TypeScriptValidateJSTypes
@@ -1011,7 +1011,7 @@ export class Renderer {
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */
-    vexflowVoice(s: stream.Stream): Voice {
+    vexflowVoice(s: stream.Stream): VFVoice {
         const totalLength = s.duration.quarterLength;
 
         let num1024 = Math.round(totalLength / (1 / 256));
@@ -1054,7 +1054,7 @@ export class Renderer {
                     + beatValue.toString()
             );
         }
-        const vfv = new Voice({
+        const vfv = new VFVoice({
             num_beats: num1024,
             beat_value: beatValue,
             resolution: Flow.RESOLUTION,
@@ -1069,7 +1069,7 @@ export class Renderer {
         // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
         //         tick length.
         // noinspection TypeScriptValidateJSTypes
-        vfv.setMode(Voice.Mode.SOFT);
+        vfv.setMode(VFVoice.Mode.SOFT);
         return vfv;
     }
 
@@ -1193,7 +1193,7 @@ export class Renderer {
      *
      * Also sets s.storedVexflowStave to stave.
      */
-    applyFormatterInformationToNotes(stave: Stave, s?: stream.Stream, formatter?: Formatter) {
+    applyFormatterInformationToNotes(stave: VFStave, s?: stream.Stream, formatter?: Formatter) {
         if (s === undefined) {
             s = this.stream;
         }
