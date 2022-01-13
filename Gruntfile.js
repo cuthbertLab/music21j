@@ -135,8 +135,8 @@ module.exports = grunt => {
                         'not ie <= 12',  // all versions -- edge is separate
                     ],
                 },
-                // useBuiltIns: 'usage',
-                // corejs: 3,
+                useBuiltIns: 'usage',
+                corejs: 3,
             },
         ]
     ];
@@ -160,12 +160,8 @@ module.exports = grunt => {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         webpack: {
-            build: Object.assign({
-                mode: 'production',
-            }, webpackCommon),
-            dev: Object.assign({
-                mode: 'development',
-            }, webpackCommon),
+            build: {mode: 'production', ...webpackCommon},
+            dev: {mode: 'development', ...webpackCommon},
             test: webpackTests,
         },
         jsdoc: {
