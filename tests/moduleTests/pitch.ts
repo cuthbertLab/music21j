@@ -316,6 +316,14 @@ export default function tests() {
         assert.equal(n.pitch.accidental.displayStatus, true);
     });
 
+    test('music21.pitch.updateAccidentalDisplay respects overrideStatus', assert => {
+        const n = new music21.note.Note('Cn');
+        n.pitch.accidental.displayStatus = true;
+        const k = new music21.key.Key('C');
+        n.pitch.updateAccidentalDisplay({overrideStatus: true, alteredPitches: k.alteredPitches});
+        assert.equal(n.pitch.accidental.displayStatus, false);
+    });
+
     /* // Transpose is Not Implemented in pitch class
     test('music21.pitch.Low Notes', assert => {
         const dPitch = new music21.pitch.Pitch('D2');
