@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.10 built on 2022-01-11.
+ * music21j version 0.12.11 built on 2022-01-14.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -16072,7 +16072,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
     if (pitchPastAll.length === 0) {
       // if we have no past, we show the accidental if this accidental
       // is not in the alteredPitches list, or vice versa for naturals
-      if (acc_orig !== undefined && (display_orig === false || display_orig === undefined)) {
+      if (acc_orig !== undefined && (overrideStatus || display_orig === false || display_orig === undefined)) {
         if (this.accidental.name === 'natural') {
           this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
         } else {
@@ -16119,7 +16119,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
           break;
         }
       }
-    } // nope, no previous pitches in this octave and register, now more complex things...
+    } // nope, no conflicting accidentals at this name and octave in past...
     // here tied and always are treated the same; we assume that
     // making ties sets the displayStatus, and thus we would not be
     // overriding that display status here
@@ -16294,7 +16294,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object {
         setFromPitchPast = true;
         break; // if A# to A, or A- to A, but not A# to A#
         // we use step and octave though not necessarily a ps comparison
-      } else if (pPast.accidental !== undefined && pPast.accidental.name !== 'natural' && (pSelf.accidental === undefined || pSelf.accidental.displayStatus === false)) {
+      } else if (pPast.accidental !== undefined && pPast.name !== pSelf.name && pPast.accidental.name !== 'natural' && (pSelf.accidental === undefined || pSelf.accidental.displayStatus === false)) {
         if (octaveMatch === false && cautionaryPitchClass === false) {
           continue;
         }
