@@ -675,8 +675,8 @@ export class Pitch extends prebase.ProtoM21Object {
             // if we have no past, we show the accidental if this accidental
             // is not in the alteredPitches list, or vice versa for naturals
             if (acc_orig !== undefined
-                && (display_orig === false
-                    || display_orig === undefined)) {
+                && (overrideStatus || (display_orig === false
+                    || display_orig === undefined))) {
                 if (this.accidental.name === 'natural') {
                     this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
                 } else {
