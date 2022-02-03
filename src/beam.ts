@@ -24,7 +24,8 @@ export const beamableDurationTypes = [
     duration.typeFromNumDict[8],
     duration.typeFromNumDict[16], duration.typeFromNumDict[32],
     duration.typeFromNumDict[64], duration.typeFromNumDict[128],
-    duration.typeFromNumDict[256],
+    duration.typeFromNumDict[256], duration.typeFromNumDict[512],
+    duration.typeFromNumDict[1024], duration.typeFromNumDict[1024],
 ];
 
 
@@ -229,8 +230,8 @@ export class Beams extends prebase.ProtoM21Object {
             or by default.  Either set type here or call setAll() on the Beams
             object afterwards.
 
-     * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
-            like 512th notes) raises an error.
+     * Both "eighth" and "8th" work.  Adding more than 9 beams (i.e. things
+            like 4096th notes) raises an error.
 
      * @param {string|number} level - either a string like "eighth" or a number like 1 (="eighth")
      * @param {string} [type] - type to fill all beams to.
@@ -255,6 +256,12 @@ export class Beams extends prebase.ProtoM21Object {
             count = 5;
         } else if (level === 6 || level === duration.typeFromNumDict[256]) {
             count = 6;
+        } else if (level === 7 || level === duration.typeFromNumDict[512]) {
+            count = 7;
+        } else if (level === 8 || level === duration.typeFromNumDict[1024]) {
+            count = 8;
+        } else if (level === 9 || level === duration.typeFromNumDict[2048]) {
+            count = 9;
         } else {
             throw new Music21Exception('cannot fill beams for level ' + level);
         }
