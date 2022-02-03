@@ -29,6 +29,7 @@ export const typeFromNumDict = {
     256: '256th',
     512: '512th',
     1024: '1024th',
+    2048: '2048th',  // if extended, update beam.beamableDurationTypes
     0: 'zero',
     '0.5': 'breve',
     '0.25': 'longa',
@@ -54,6 +55,7 @@ export const ordinalTypeFromNum = [
     '256th',
     '512th',
     '1024th',
+    '2048th',
 ];
 
 export const vexflowDurationArray = [
@@ -70,6 +72,7 @@ export const vexflowDurationArray = [
     '64',
     '128',
     '256',
+    undefined,
     undefined,
     undefined,
 ];
