@@ -122,7 +122,8 @@ export declare class Renderer {
      * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
      * returns Vex.Flow.Stave staff to return too
      *
-     * (also changes the `stack` parameter and runs `makeNotation` on s)
+     * (also changes the `stack` parameter and runs `makeNotation` on s
+     * with overrideStatus: true to update accidental display)
      */
     prepareFlat(s: stream.Stream, stack: RenderStack, optionalStave?: Vex.Flow.Stave, optional_renderOp?: renderOptions.RenderOptions): Vex.Flow.Stave;
     /**
@@ -198,7 +199,7 @@ export declare class Renderer {
      * adds keySignature, timeSignature, and rightBarline
      *
      * RenderOptions object might have
-     * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+     * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
      */
     setClefEtc(s: stream.Stream, stave: Vex.Flow.Staves, rendOp?: renderOptions.RenderOptions): void;
     /**

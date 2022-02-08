@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.12 built on 2022-02-08.
+ * music21j version 0.12.13 built on 2022-02-08.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -1758,7 +1758,7 @@ const validBeamTypes = {
   continue: true,
   partial: true
 };
-const beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[8], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[16], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[32], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[64], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[128], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[256], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[512], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[1024], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[1024]];
+const beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[8], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[16], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[32], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[64], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[128], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[256], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[512], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[1024], _duration__WEBPACK_IMPORTED_MODULE_4__.typeFromNumDict[2048]];
 /**
  * Object representing a single beam (e.g., a 16th note that is beamed needs two)
  *

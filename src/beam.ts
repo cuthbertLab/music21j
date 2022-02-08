@@ -25,7 +25,7 @@ export const beamableDurationTypes = [
     duration.typeFromNumDict[16], duration.typeFromNumDict[32],
     duration.typeFromNumDict[64], duration.typeFromNumDict[128],
     duration.typeFromNumDict[256], duration.typeFromNumDict[512],
-    duration.typeFromNumDict[1024], duration.typeFromNumDict[1024],
+    duration.typeFromNumDict[1024], duration.typeFromNumDict[2048],
 ];
 
 
