@@ -21,6 +21,15 @@ import {coerceJQuery, jQueryAndHTMLVersion} from './common';
 
 import type * as renderOptions from './renderOptions';
 
+const barlineMap = {
+    single: 'SINGLE',
+    double: 'DOUBLE',
+    end: 'END',
+    none: 'NONE',
+    // TODO: Repeats
+};
+
+
 const _clefSingleton = new clef.TrebleClef();
 
 /**
@@ -682,7 +691,7 @@ export class Renderer {
      * adds keySignature, timeSignature, and rightBarline
      *
      * RenderOptions object might have
-     * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+     * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
      */
     setClefEtc(s: stream.Stream, stave: Vex.Flow.Staves, rendOp?: renderOptions.RenderOptions) {
         if (rendOp === undefined) {
@@ -757,13 +766,18 @@ export class Renderer {
                     + context_ts.denominator.toString()
             );
         }
+        if (rendOp.leftBarline !== undefined) {
+            const bl = rendOp.leftBarline;
+
+            const vxBL = barlineMap[bl];
+            if (vxBL !== undefined) {
+                stave.setBegBarType(Vex.Flow.Barline.type[vxBL]);
+            }
+        }
+
         if (rendOp.rightBarline !== undefined) {
             const bl = rendOp.rightBarline;
-            const barlineMap = {
-                single: 'SINGLE',
-                double: 'DOUBLE',
-                end: 'END',
-            };
+
             const vxBL = barlineMap[bl];
             if (vxBL !== undefined) {
                 stave.setEndBarType(Vex.Flow.Barline.type[vxBL]);
