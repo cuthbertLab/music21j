@@ -1157,6 +1157,24 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+     * Added for compatability with StreamIterator.  Gets the first element
+     * or undefined if none.  No speedups from `.get(0)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    first() {
+        return this.get(0);
+    }
+
+    /**
+     * Added for compatability with StreamIterator.  Gets the last element
+     * or undefined if none.  No speedups from `.get(-1)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    last() {
+        return this.get(-1);
+    }
+
+    /**
      *
      */
     set(index, newEl) {
