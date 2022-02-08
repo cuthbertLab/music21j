@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.13 built on 2022-02-08.
+ * music21j version 0.12.14 built on 2022-02-08.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -19700,6 +19700,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_13__.Music21Object {
       el.activeSite = this;
       return el;
     }
+  }
+  /**
+   * Added for compatability with StreamIterator.  Gets the first element
+   * or undefined if none.  No speedups from `.get(0)`, but makes coding
+   * in a mix of Stream and StreamIterator environments easier.
+   */
+
+
+  first() {
+    return this.get(0);
+  }
+  /**
+   * Added for compatability with StreamIterator.  Gets the last element
+   * or undefined if none.  No speedups from `.get(-1)`, but makes coding
+   * in a mix of Stream and StreamIterator environments easier.
+   */
+
+
+  last() {
+    return this.get(-1);
   }
   /**
    *
