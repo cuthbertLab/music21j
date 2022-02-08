@@ -246,7 +246,7 @@ export declare class Note extends NotRest {
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
  * @property {string} [name='rest']
- * @property {number} [stepShift=0] - number of steps/lines to shift up or down from default
+ * @property {number} [lineShift=undefined] - number of lines to shift up or down from default
  * @property {string|undefined} [color='black'] - color of the rest
  */
 export declare class Rest extends GeneralNote {
@@ -254,7 +254,7 @@ export declare class Rest extends GeneralNote {
     isNote: boolean;
     isRest: boolean;
     name: string;
-    stepShift: number;
+    lineShift: number;
     color: string;
     volume: number;
     constructor(ql?: number);

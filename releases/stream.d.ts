@@ -682,7 +682,7 @@ export declare class Stream extends base.Music21Object {
      *
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg: any, e: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getUnscaledXYforDOM(svg: any, evt: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
     /**
      * return a list of [scaledX, scaledY] for
      * a svg element.

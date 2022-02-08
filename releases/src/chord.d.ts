@@ -1,14 +1,3 @@
-/**
- * music21j -- Javascript reimplementation of Core music21p features.
- * music21/chord -- Chord
- *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * Chord related objects (esp. music21.chord.Chord) and methods.
- *
- */
-import Vex from 'vexflow';
 import * as note from './note';
 import * as chordTables from './chordTables';
 import type * as clef from './clef';
@@ -42,9 +31,6 @@ export declare class Chord extends note.NotRest {
     set pitches(tempPitches: pitch.Pitch[]);
     get notes(): note.Note[];
     set notes(newNotes: note.Note[]);
-    vexflowNote({ clef }?: {
-        clef?: any;
-    }): Vex.Flow.StaveNote;
     get orderedPitchClasses(): number[];
     get chordTablesAddress(): any;
     get commonName(): string;

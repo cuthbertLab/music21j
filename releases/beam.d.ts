@@ -59,8 +59,8 @@ export declare class Beams extends prebase.ProtoM21Object {
             or by default.  Either set type here or call setAll() on the Beams
             object afterwards.
 
-     * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
-            like 512th notes) raises an error.
+     * Both "eighth" and "8th" work.  Adding more than 9 beams (i.e. things
+            like 4096th notes) raises an error.
 
      * @param {string|number} level - either a string like "eighth" or a number like 1 (="eighth")
      * @param {string} [type] - type to fill all beams to.
