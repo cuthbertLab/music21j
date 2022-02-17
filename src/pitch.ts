@@ -948,8 +948,7 @@ export class Pitch extends prebase.ProtoM21Object {
                 // noinspection JSObjectNullOrUndefined
                 if (pSelf.accidental.name === 'natural') {
                     pSelf.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
-                }
-                else {
+                } else if (this.accidental) {
                     this.accidental.displayStatus = true;
                 }
                 // environLocal.printDebug(['match previous no mark'])
