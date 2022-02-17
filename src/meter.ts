@@ -16,6 +16,7 @@ import * as duration from './duration';
 import * as stream from './stream';
 import {Music21Object} from './base';
 import { Music21Exception } from './exceptions21';
+import {opFrac} from './common';
 
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
@@ -267,10 +268,10 @@ export class TimeSignature extends base.Music21Object {
                 return;
             }
             const dur = el.duration;
-            const pos = el.offset + measureStartOffset;
+            const pos = opFrac(el.offset + measureStartOffset);
 
-            const start = pos; // opFrac
-            const end = pos + dur.quarterLength; // opFrac;
+            const start = opFrac(pos);
+            const end = opFrac(pos + dur.quarterLength);
             const startNext = end;
             const isLast = (i === srcStream.length - 1);
             const isFirst = (i === 0);
