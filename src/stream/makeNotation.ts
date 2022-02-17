@@ -5,10 +5,11 @@
 import * as beam from '../beam';
 import * as clef from '../clef';
 
-import * as note from '../note';  // for typing only
-import * as pitch from '../pitch';  // for typing only
+import type * as note from '../note';
+import type * as pitch from '../pitch';
 import * as stream from '../stream';
-import {StreamException} from '../stream';  // for typing only -- circular import otherwise
+import {StreamException} from '../stream';
+import {opFrac} from '../common';
 
 export interface MakeBeamsOptions {
     inPlace?: boolean,
@@ -68,9 +69,9 @@ export function makeBeams(s: stream.Stream, {
                 durList.push(n.duration);
             }
             const noteStream = noteStreamIterator.stream();
-    
+
             const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
-            const durSum = parseFloat(durSumErr.toFixed(8));  // remove fraction errors
+            const durSum = opFrac(durSumErr);  // remove fraction errors
             const barQL = lastTimeSignature.barDuration.quarterLength;
             if (durSum > barQL) {
                 continue;
@@ -79,7 +80,7 @@ export function makeBeams(s: stream.Stream, {
             if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
                 offset = m.paddingLeft;
             } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
-                offset = barQL - noteStream.highestTime;
+                offset = opFrac(barQL - noteStream.highestTime);
             }
             const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
             for (let i = 0; i < noteStream.length; i++) {
