@@ -21,6 +21,15 @@ import {coerceJQuery, jQueryAndHTMLVersion} from './common';
 
 import type * as renderOptions from './renderOptions';
 
+const barlineMap = {
+    single: 'SINGLE',
+    double: 'DOUBLE',
+    end: 'END',
+    none: 'NONE',
+    // TODO: Repeats
+};
+
+
 const _clefSingleton = new clef.TrebleClef();
 
 /**
@@ -307,7 +316,8 @@ export class Renderer {
      * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
      * returns Vex.Flow.Stave staff to return too
      *
-     * (also changes the `stack` parameter and runs `makeNotation` on s)
+     * (also changes the `stack` parameter and runs `makeNotation` on s
+     * with overrideStatus: true to update accidental display)
      */
     prepareFlat(
         s: stream.Stream,
@@ -315,8 +325,8 @@ export class Renderer {
         optionalStave?: Vex.Flow.Stave,
         optional_renderOp?: renderOptions.RenderOptions,
     ): Vex.Flow.Stave {
-        s.makeNotation();
-        let stave;
+        s.makeNotation({ overrideStatus: true });
+        let stave: Vex.Flow.Stave;
         if (optionalStave !== undefined) {
             stave = optionalStave;
         } else {
@@ -402,21 +412,53 @@ export class Renderer {
      * @param {Stream} p - a Part or similar object
      */
     prepareTies(p: stream.Stream) {
-        const pf = <note.GeneralNote[]> Array.from(p.flat.notesAndRests);
-        // console.log('newSystemsAt', this.systemBreakOffsets);
-        for (let i = 0; i < pf.length - 1; i++) {
-            const thisNote = pf[i];
+        const p_recursed = <note.GeneralNote[]> [];
+        // Determine order for bridging voices: from earliest appearance
+        const voice_ids_in_order_first_encountered = [];
+        // voice IDs are not necessarily unique, so track that they are visited
+        const visited_voices = <stream.Voice[]> [];
+        for (const v of p.recurse().getElementsByClass('Voice')) {
+            if (!voice_ids_in_order_first_encountered.includes(v.id)) {
+                voice_ids_in_order_first_encountered.push(v.id);
+            }
+        }
+        // Retrieve notes in voices
+        for (const v_id of voice_ids_in_order_first_encountered) {
+            for (const v of <stream.Voice[]>(p.recurse() as any).getElementsByClass('Voice')) {
+                // Visit in order voice id encountered
+                // For instance, all Soprano voices, then all Alto...
+                if (v.id !== v_id) {
+                    continue;
+                }
+                if (visited_voices.includes(v)) {
+                    continue;
+                }
+                p_recursed.push(...Array.from((v as stream.Voice).notesAndRests));
+                visited_voices.push(v);
+            }
+        }
+        // Retrieve notes "loose" (flat) in measures
+        for (const m of p.getElementsByClass('Measure')) {
+            p_recursed.push(...Array.from((m as stream.Measure).notesAndRests));
+        }
+        // Retrieve loose notes in `p` (flat)
+        p_recursed.push(...Array.from(p.notesAndRests));
+        // Other stream nesting patterns not supported
+        // prepareTies currently called by prepareArrivedFlat() and preparePartlike()
+        // supposes well-formed
+        for (let i = 0; i < p_recursed.length - 1; i++) {
+            const thisNote = p_recursed[i];
             if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
                 continue;
             }
-            const nextNote = pf[i + 1];
+            const nextNote = p_recursed[i + 1];
             let onSameSystem = true;
             // this.systemBreakOffsets.length will be 0 for a flat score
             for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
                 const thisSystemBreak = this.systemBreakOffsets[sbI];
                 if (
-                    thisNote.offset < thisSystemBreak
-                    && nextNote.offset >= thisSystemBreak
+                    thisNote.getOffsetInHierarchy(p) < thisSystemBreak
+                    && nextNote.getOffsetInHierarchy(p) >= thisSystemBreak
                 ) {
                     onSameSystem = false;
                     break;
@@ -649,7 +691,7 @@ export class Renderer {
      * adds keySignature, timeSignature, and rightBarline
      *
      * RenderOptions object might have
-     * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+     * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
      */
     setClefEtc(s: stream.Stream, stave: Vex.Flow.Staves, rendOp?: renderOptions.RenderOptions) {
         if (rendOp === undefined) {
@@ -672,9 +714,21 @@ export class Renderer {
 
         this.setStafflines(s, stave);
         if (rendOp.showMeasureNumber) {
-            stave.setMeasure(rendOp.measureIndex + 1);
+            if (s instanceof stream.Measure && s.number !== undefined) {
+                stave.setMeasure(s.number);
+            } else {
+                stave.setMeasure(rendOp.measureIndex + 1);
+            }
         }
-        if (rendOp.displayClef) {
+
+        let displayClef = rendOp.displayClef;
+        if (sClef?.hasStyleInformation) {
+            if (sClef.style.hideObjectOnPrint) {
+                displayClef = false;
+            }
+        }
+
+        if (displayClef) {
             let ottava;
             const size = 'default';
             if (sClef.octaveChange === 1) {
@@ -685,26 +739,45 @@ export class Renderer {
             stave.addClef(sClef.name, size, ottava);
         }
         const context_ks = s.getSpecialContext('keySignature') || s.getContextByClass('KeySignature');
-        if (context_ks !== undefined && rendOp.displayKeySignature) {
+        let displayKs = (context_ks !== undefined && rendOp.displayKeySignature);
+        if (context_ks?.hasStyleInformation) {
+            if (context_ks.style.hideObjectOnPrint) {
+                displayKs = false;
+            }
+        }
+
+        if (displayKs) {
             const ksVFName = context_ks.majorName().replace(/-/g, 'b');
             stave.addKeySignature(ksVFName);
         }
 
         const context_ts = s.getSpecialContext('timeSignature') || s.getContextByClass('TimeSignature');
-        if (context_ts !== undefined && rendOp.displayTimeSignature) {
+        let displayTs = (context_ts !== undefined && rendOp.displayTimeSignature);
+        if (context_ts?.hasStyleInformation) {
+            if (context_ts.style.hideObjectOnPrint) {
+                displayTs = false;
+            }
+        }
+
+        if (displayTs) {
             stave.addTimeSignature(
                 context_ts.numerator.toString()
                     + '/'
                     + context_ts.denominator.toString()
             );
         }
+        if (rendOp.leftBarline !== undefined) {
+            const bl = rendOp.leftBarline;
+
+            const vxBL = barlineMap[bl];
+            if (vxBL !== undefined) {
+                stave.setBegBarType(Vex.Flow.Barline.type[vxBL]);
+            }
+        }
+
         if (rendOp.rightBarline !== undefined) {
             const bl = rendOp.rightBarline;
-            const barlineMap = {
-                single: 'SINGLE',
-                double: 'DOUBLE',
-                end: 'END',
-            };
+
             const vxBL = barlineMap[bl];
             if (vxBL !== undefined) {
                 stave.setEndBarType(Vex.Flow.Barline.type[vxBL]);
@@ -1162,9 +1235,10 @@ export class Renderer {
                 if (vfn === undefined) {
                     continue;
                 }
-                const nTicks = parseInt(vfn.ticks);
-                const formatterNote
-                    = formatter.tickContexts.map[String(nextTicks)];
+                const formatterNote = formatter.tickContexts.map[nextTicks];
+                const nTicks = (
+                    (vfn.ticks.numerator / vfn.ticks.denominator) * formatter.tickContexts.resolutionMultiplier
+                );
                 nextTicks += nTicks;
                 el.x = vfn.getAbsoluteX();
                 // these are a bit hacky...

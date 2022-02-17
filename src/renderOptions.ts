@@ -61,7 +61,9 @@ export class RenderOptions {
     // scaleFactors.
     maxSystemWidth: number = undefined;
 
+    leftBarline: string = undefined;  // normally not used.
     rightBarline: string = undefined;
+
     staffLines: number = 5;
     staffConnectors: string[] = ['single', 'brace'];
     staffPadding: number = 60; // width...
@@ -71,7 +73,7 @@ export class RenderOptions {
         // resize
     };
 
-    useVexflowAutobeam: boolean = true;
+    useVexflowAutobeam: boolean = false;
 
     startNewSystem: boolean = false;
     // noinspection JSUnusedGlobalSymbols

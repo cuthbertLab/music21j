@@ -15,10 +15,11 @@ import * as duration from './duration';
 import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
+import * as style from './style';
 
 // imports for typing only
 import { Stream, Measure } from './stream';
-import {Music21Exception, StreamException} from './exceptions21';
+import {Music21Exception} from './exceptions21';
 import { TimeSignature } from './meter';
 
 
@@ -50,7 +51,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     protected _activeSiteStoredOffset: number = 0;
     protected _naiveOffset: number = 0;
     // _derivation = undefined;
-    // _style = undefined;
+    protected _style: style.Style;
     protected _editorial: editorial.Editorial;
     protected _duration: duration.Duration;
     protected _derivation: derivation.Derivation;
@@ -62,6 +63,8 @@ export class Music21Object extends prebase.ProtoM21Object {
     isStream: boolean = false;
     // beat, etc.
     // lots to do...
+
+    protected static _styleClass: typeof style.Style = style.Style;
 
     constructor(keywords={}) {
         super();
@@ -165,9 +168,45 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._editorial = newEditorial;
     }
 
-    get hasEditorialInformation() : boolean {
+    get hasEditorialInformation(): boolean {
         return (this._editorial !== undefined);
     }
+
+    /**
+     * Returns true if there is a style.Style object
+     * already associated with this object, false otherwise.
+     *
+     * Calling .style on an object will always create a new
+     * Style object, so even though a new Style object isn't too expensive
+     * to create, this property helps to prevent creating new Styles more than
+     * necessary.
+     */
+    get hasStyleInformation(): boolean {
+        return (this._style !== undefined);
+    }
+
+    /**
+     * Returns (or Creates and then Returns) the Style object
+     * associated with this object, or sets a new
+     * style object.  Different classes might use
+     * different Style objects because they might have different
+     * style needs (such as text formatting or bezier positioning)
+     *
+     * Eventually will also query the groups to see if they have
+     * any styles associated with them.
+     */
+    get style(): style.Style {
+        if (!this.hasStyleInformation) {
+            const StyleClass = <typeof style.Style> this.constructor;
+            this._style = new StyleClass();
+        }
+        return this._style;
+    }
+
+    set style(newStyle: style.Style) {
+        this._style = newStyle;
+    }
+
 
     get measureNumber() {
         if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
@@ -532,32 +571,6 @@ export class Music21Object extends prebase.ProtoM21Object {
             return ts.getBeatProportion(ts.getMeasureOffsetOrMeterModulusOffset(this));
         } catch (e) {
             return NaN;
-        }
-    }
-
-    /*
-        Given an object and a number, run append that many times on
-        a deepcopy of the object.
-        numberOfTimes should of course be a positive integer.
-
-        a = stream.Stream()
-        n = note.Note('D--')
-        n.duration.type = 'whole'
-        a.repeatAppend(n, 10)
-    */
-
-    repeatAppend(this, item, numberOfTimes) {
-        let unused = null;
-        try {
-            // noinspection JSUnusedAssignment
-            unused = item.isStream;
-        } catch (AttributeError) {
-            throw new StreamException('to put a non Music21Object in a stream, '
-            + 'create a music21.ElementWrapper for the item');
-
-        }
-        for (let i = 0; i < numberOfTimes; i++) {
-            this.append(item.clone(true));
         }
     }
 }

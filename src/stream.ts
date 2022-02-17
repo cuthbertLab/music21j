@@ -898,6 +898,26 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+    Given an object and a number, run append that many times on
+    a clone of the object.
+    numberOfTimes should of course be a positive integer.
+
+    a = stream.Stream()
+    n = note.Note('D--')
+    n.duration.type = 'whole'
+    a.repeatAppend(n, 10)
+    */
+    repeatAppend(item: base.Music21Object, numberOfTimes: number) {
+        if (!(item instanceof base.Music21Object)) {
+            throw new StreamException('to put a non Music21Object in a stream, '
+            + 'create a music21.ElementWrapper for the item');
+        }
+        for (let i = 0; i < numberOfTimes; i++) {
+            this.append(item.clone(true));
+        }
+    }
+
+    /**
      * Inserts a single element at offset, shifting elements at or after it begins
      * later in the stream.
      *
@@ -1134,6 +1154,24 @@ export class Stream extends base.Music21Object {
             el.activeSite = this;
             return el;
         }
+    }
+
+    /**
+     * Added for compatability with StreamIterator.  Gets the first element
+     * or undefined if none.  No speedups from `.get(0)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    first() {
+        return this.get(0);
+    }
+
+    /**
+     * Added for compatability with StreamIterator.  Gets the last element
+     * or undefined if none.  No speedups from `.get(-1)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    last() {
+        return this.get(-1);
     }
 
     /**
@@ -1435,15 +1473,15 @@ export class Stream extends base.Music21Object {
      *
      * TODO: move call to makeBeams from renderVexflow to here.
      */
-    makeNotation({ inPlace=true }={}): this {
-        let out;
+    makeNotation({ inPlace=true, overrideStatus=false }={}): this {
+        let out: this;
         if (inPlace) {
             out = this;
         } else {
             out = this.clone(true);
         }
         // already made a copy
-        this.makeAccidentals({ inPlace: true });
+        out.makeAccidentals({ inPlace: true, overrideStatus });
         return out;
     }
 
@@ -1685,7 +1723,7 @@ export class Stream extends base.Music21Object {
 
         If `cautionaryAll` is true, all accidentals are shown.
 
-        If `overrideStatus` is true, this method will ignore any current `displayStatus` stetting
+        If `overrideStatus` is true, this method will ignore any current `displayStatus` setting
         found on the Accidental. By default this does not happen. If `displayStatus` is set to
         None, the Accidental's `displayStatus` is set.
 
@@ -1969,8 +2007,7 @@ export class Stream extends base.Music21Object {
      * @returns {number} length in pixels
      */
     estimateStaffLength() {
-        let i;
-        let totalLength;
+        let totalLength: number;
         if (this.renderOptions.overriddenWidth !== undefined) {
             // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
@@ -1986,11 +2023,10 @@ export class Stream extends base.Music21Object {
                     }
                 }
             }
-            return maxLength;
+            totalLength = maxLength;
         } else if (!this.isFlat) {
             // part
-            totalLength = 0;
-            for (i = 0; i < this.length; i++) {
+            for (let i = 0; i < this.length; i++) {
                 const m = this.get(i);
                 if (m instanceof Stream) {
                     totalLength
@@ -2000,23 +2036,30 @@ export class Stream extends base.Music21Object {
                     }
                 }
             }
-            return totalLength;
         } else {
-            const rendOp = this.renderOptions;
             totalLength = 30 * this.notesAndRests.length;
-            if (rendOp.displayClef) {
-                totalLength += 30;
-            }
-            if (rendOp.displayKeySignature) {
-                const ks = this.getSpecialContext('keySignature');
-                totalLength += ks?.width ?? 0;
-            }
-            if (rendOp.displayTimeSignature) {
-                totalLength += 30;
-            }
-            // totalLength += rendOp.staffPadding;
+        }
+        if (this instanceof Voice) {
+            // recursive call: return early so that measure call
+            // pads just once for clef/key/meter
             return totalLength;
         }
+        const rendOp = this.renderOptions;
+        if (rendOp.displayClef) {
+            // TODO: do not do this if Clef.style.hideObjectOnPrint
+            totalLength += 30;
+        }
+        if (rendOp.displayKeySignature) {
+            // TODO: do not do this if KeySignature.style.hideObjectOnPrint
+            const ks = this.getSpecialContext('keySignature') || this.getContextByClass('KeySignature');
+            totalLength += ks?.width ?? 0;
+        }
+        if (rendOp.displayTimeSignature) {
+            // TODO: do not do this if TimeSignature.style.hideObjectOnPrint
+            totalLength += 30;
+        }
+        // totalLength += rendOp.staffPadding;
+        return totalLength;
     }
 
     stripTies(
@@ -2576,26 +2619,45 @@ export class Stream extends base.Music21Object {
      */
     getUnscaledXYforDOM(
         svg,
-        e: MouseEvent|TouchEvent|JQuery.MouseEventBase
+        evt: MouseEvent|TouchEvent|JQuery.MouseEventBase
     ): [number, number] {
+        let e: MouseEvent|TouchEvent;
+        if ((evt as JQuery.MouseEventBase).originalEvent !== undefined) {
+            // need to get the original event to make touches work right.
+            // https://stackoverflow.com/questions/16674963/event-originalevent-jquery
+            e = (evt as JQuery.MouseEventBase).originalEvent;
+        } else {
+            e = (evt as MouseEvent|TouchEvent);
+        }
+
         let offset;
         if (svg === undefined) {
             offset = { left: 0, top: 0 };
         } else {
+            // replace when not in hotfix/crisis mode:
             offset = $(svg).offset();
+            // ...with this:
+            // const { left, top } = svg.getBoundingClientRect();
+            // offset = {
+            //     left: left + document.body.scrollLeft,
+            //     top: top + document.body.scrollTop,
+            // }
         }
 
         /*
          * mouse event handler code originally from: http://diveintohtml5.org/canvas.html
          */
-        let xClick: number;
-        let yClick: number;
+        let xClick: number = 0;
+        let yClick: number = 0;
         if ((e as MouseEvent).pageX !== undefined
                 && (e as MouseEvent).pageY !== undefined) {
             // MouseEvent or JQuery.MouseEventBase without instanceof checking.
             xClick = (e as MouseEvent).pageX;
             yClick = (e as MouseEvent).pageY;
-        } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
+        } else if (
+            typeof TouchEvent !== 'undefined' && e instanceof TouchEvent
+            && e.touches[0] !== undefined
+        ) {
             const touch1 = (e as TouchEvent).touches[0];
             xClick
                 = touch1.clientX
@@ -2605,17 +2667,8 @@ export class Stream extends base.Music21Object {
                 = touch1.clientY
                 + document.body.scrollTop
                 + document.documentElement.scrollTop;
-        } else {
-            // older MouseEvent such as IE 8 -- unknown support in Firefox
-            xClick
-                = (e as MouseEvent).clientX
-                + document.body.scrollLeft
-                + document.documentElement.scrollLeft;
-            yClick
-                = (e as MouseEvent).clientY
-                + document.body.scrollTop
-                + document.documentElement.scrollTop;
         }
+
         const xPx = xClick - offset.left;
         const yPx = yClick - offset.top;
         return [xPx, yPx];

@@ -267,6 +267,17 @@ export declare class Stream extends base.Music21Object {
         setActiveSite?: boolean;
     }): this;
     /**
+    Given an object and a number, run append that many times on
+    a clone of the object.
+    numberOfTimes should of course be a positive integer.
+
+    a = stream.Stream()
+    n = note.Note('D--')
+    n.duration.type = 'whole'
+    a.repeatAppend(n, 10)
+    */
+    repeatAppend(item: base.Music21Object, numberOfTimes: number): void;
+    /**
      * Inserts a single element at offset, shifting elements at or after it begins
      * later in the stream.
      *
@@ -318,6 +329,18 @@ export declare class Stream extends base.Music21Object {
      */
     get(index: number): base.Music21Object;
     /**
+     * Added for compatability with StreamIterator.  Gets the first element
+     * or undefined if none.  No speedups from `.get(0)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    first(): base.Music21Object;
+    /**
+     * Added for compatability with StreamIterator.  Gets the last element
+     * or undefined if none.  No speedups from `.get(-1)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    last(): base.Music21Object;
+    /**
      *
      */
     set(index: any, newEl: any): this;
@@ -368,8 +391,9 @@ export declare class Stream extends base.Music21Object {
      *
      * TODO: move call to makeBeams from renderVexflow to here.
      */
-    makeNotation({ inPlace }?: {
+    makeNotation({ inPlace, overrideStatus }?: {
         inPlace?: boolean;
+        overrideStatus?: boolean;
     }): this;
     /**
      * Return a new Stream or modify this stream
@@ -478,7 +502,7 @@ export declare class Stream extends base.Music21Object {
 
         If `cautionaryAll` is true, all accidentals are shown.
 
-        If `overrideStatus` is true, this method will ignore any current `displayStatus` stetting
+        If `overrideStatus` is true, this method will ignore any current `displayStatus` setting
         found on the Accidental. By default this does not happen. If `displayStatus` is set to
         None, the Accidental's `displayStatus` is set.
 
@@ -550,7 +574,7 @@ export declare class Stream extends base.Music21Object {
      *
      * @returns {number} length in pixels
      */
-    estimateStaffLength(): any;
+    estimateStaffLength(): number;
     stripTies({ inPlace, matchByPitch, }?: {
         inPlace?: boolean;
         matchByPitch?: boolean;
@@ -670,7 +694,7 @@ export declare class Stream extends base.Music21Object {
      *
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg: any, e: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getUnscaledXYforDOM(svg: any, evt: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
     /**
      * return a list of [scaledX, scaledY] for
      * a svg element.

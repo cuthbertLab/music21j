@@ -41,7 +41,7 @@ export class Accidental extends prebase.ProtoM21Object {
     protected _alter: number = 0.0;
     protected _modifier: string = '';
     protected _unicodeModifier: string = '';
-    displayType: string = 'normal';  // "normal", "always" supported currently
+    displayType: string = 'normal';  // "normal", "always", "never" supported currently
     displayStatus: boolean = undefined;  // true, false, undefined
 
     constructor(accName: string|number) {
@@ -652,6 +652,10 @@ export class Pitch extends prebase.ProtoM21Object {
                 return;  // exit: already set, do not override
             }
         }
+        if (acc_orig && acc_orig.displayType === 'never') {
+            this.accidental.displayStatus = false;
+            return;
+        }
         if (lastNoteWasTied === true) {
             if (this.accidental !== undefined) {
                 if (this.accidental.displayType !== 'even-tied') {
@@ -671,8 +675,8 @@ export class Pitch extends prebase.ProtoM21Object {
             // if we have no past, we show the accidental if this accidental
             // is not in the alteredPitches list, or vice versa for naturals
             if (acc_orig !== undefined
-                && (display_orig === false
-                    || display_orig === undefined)) {
+                && (overrideStatus || (display_orig === false
+                    || display_orig === undefined))) {
                 if (this.accidental.name === 'natural') {
                     this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
                 } else {
@@ -718,7 +722,7 @@ export class Pitch extends prebase.ProtoM21Object {
                 }
             }
         }
-        // nope, no previous pitches in this octave and register, now more complex things...
+        // nope, no conflicting accidentals at this name and octave in past...
 
         // here tied and always are treated the same; we assume that
         // making ties sets the displayStatus, and thus we would not be
@@ -904,6 +908,7 @@ export class Pitch extends prebase.ProtoM21Object {
                 // if A# to A, or A- to A, but not A# to A#
                 // we use step and octave though not necessarily a ps comparison
             } else if (pPast.accidental !== undefined
+                        && pPast.name !== pSelf.name
                         && pPast.accidental.name !== 'natural'
                         && (pSelf.accidental === undefined
                             || pSelf.accidental.displayStatus === false)) {
