@@ -165,7 +165,7 @@ export declare class Keyboard {
      * Do not call this directly, just use createSVG after changing the
      * scrollable property on the keyboard to True.
      */
-    wrapScrollable(svgDOM: SVGElement): JQuery;
+    wrapScrollable(svgDOM: SVGElement): HTMLElement;
     /**
      * Puts a hideable keyboard inside a Div with the proper controls.
      *
@@ -175,7 +175,7 @@ export declare class Keyboard {
      * @param {Node} where
      * @param {SVGElement} keyboardSVG
      */
-    appendHideableKeyboard(where: any, keyboardSVG: any): JQuery<HTMLElement>;
+    appendHideableKeyboard(where: any, keyboardSVG: any): HTMLElement;
 }
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.

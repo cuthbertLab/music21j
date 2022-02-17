@@ -1,10 +1,9 @@
-/// <reference types="jquery" />
 import * as MIDI from 'midicube';
 import '../css/midiPlayer.css';
 import * as chord from './chord';
 import * as instrument from './instrument';
 import * as note from './note';
-import * as tempo from './tempo';
+import type * as tempo from './tempo';
 export interface CallbackInterface {
     raw: (t: any, a: any, b: any, c: any) => Event;
     general: Function | Function[];
@@ -149,10 +148,10 @@ export declare class MidiPlayer {
      * playback speed scaling (1=default)
      */
     speed: number;
-    $playDiv: JQuery;
+    playDiv: HTMLElement;
     state: string;
     constructor();
-    addPlayer(where: JQuery | HTMLElement): JQuery;
+    addPlayer(where: HTMLElement): HTMLElement;
     stopButton(): void;
     playPng(): string;
     pausePng(): string;

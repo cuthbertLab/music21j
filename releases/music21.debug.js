@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.14 built on 2022-02-08.
+ * music21j version 0.12.15 built on 2022-02-17.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -5911,7 +5911,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "numToIntOrFloat": () => (/* binding */ numToIntOrFloat),
 /* harmony export */   "pathSimplify": () => (/* binding */ pathSimplify),
 /* harmony export */   "isFloat": () => (/* binding */ isFloat),
-/* harmony export */   "opFrac": () => (/* binding */ opFrac)
+/* harmony export */   "opFrac": () => (/* binding */ opFrac),
+/* harmony export */   "to_el": () => (/* binding */ to_el)
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator.js */ "./node_modules/core-js/modules/es.array.iterator.js");
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
@@ -5921,14 +5922,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_buffer_slice_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_buffer_slice_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
 /* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.typed-array.float32-array.js */ "./node_modules/core-js/modules/es.typed-array.float32-array.js");
-/* harmony import */ var core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.typed-array.int32-array.js */ "./node_modules/core-js/modules/es.typed-array.int32-array.js");
-/* harmony import */ var core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.trim.js */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.typed-array.float32-array.js */ "./node_modules/core-js/modules/es.typed-array.float32-array.js");
+/* harmony import */ var core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_float32_array_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.typed-array.int32-array.js */ "./node_modules/core-js/modules/es.typed-array.int32-array.js");
+/* harmony import */ var core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_typed_array_int32_array_js__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_8__);
+
 
 
 
@@ -5959,10 +5963,10 @@ function jQueryAndHTMLVersion(el) {
     htmlElement = el[0];
   } else if (el instanceof HTMLElement) {
     htmlElement = el;
-    $jq = jquery__WEBPACK_IMPORTED_MODULE_7__(el);
+    $jq = jquery__WEBPACK_IMPORTED_MODULE_8__(el);
   } else {
-    $jq = jquery__WEBPACK_IMPORTED_MODULE_7__('body');
-    htmlElement = $jq[0];
+    htmlElement = document.body;
+    $jq = jquery__WEBPACK_IMPORTED_MODULE_8__(htmlElement);
   }
 
   return [$jq, htmlElement];
@@ -6473,6 +6477,28 @@ function opFrac(num) {
   } else {
     return num;
   }
+}
+/**
+ * Converts a string to a single element using template.
+ *
+ * Similar to $('<tag attributes="xyz"><b>more</b></tag>')[0]
+ *
+ * For security reasons <template> will not parse script
+ * tags.
+ *
+ * This is tagged as returning HTMLElement for convenience
+ * but can also be used to return SVGElement.
+ *
+ * Recommended in:
+ * https://stackoverflow.com/questions/494143/
+ */
+
+function to_el(input_string) {
+  const template = document.createElement('template');
+  input_string = input_string.trim(); // Never return a text node of whitespace as the result
+
+  template.innerHTML = input_string;
+  return template.content.firstElementChild;
 }
 
 /***/ }),
@@ -10077,13 +10103,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
 
 
 
@@ -10106,7 +10130,6 @@ __webpack_require__.r(__webpack_exports__);
  * k.whiteKeyWidth = 40; // default 23
  *
  */
-
 
 
 
@@ -10174,7 +10197,7 @@ class Key {
       rx: 3,
       ry: 3
     };
-    const keyDOM = _common__WEBPACK_IMPORTED_MODULE_4__.makeSVGright('rect', keyAttrs);
+    const keyDOM = _common__WEBPACK_IMPORTED_MODULE_3__.makeSVGright('rect', keyAttrs);
 
     for (const x in this.callbacks) {
       if ({}.hasOwnProperty.call(this.callbacks, x)) {
@@ -10207,7 +10230,7 @@ class Key {
       class: 'keyboardkeyannotation',
       r: this.width * this.parent.scaleFactor / 4
     };
-    const circleDom = _common__WEBPACK_IMPORTED_MODULE_4__.makeSVGright('circle', keyAttrs);
+    const circleDom = _common__WEBPACK_IMPORTED_MODULE_3__.makeSVGright('circle', keyAttrs);
     this.parent.svgObj.appendChild(circleDom); // console.log(circleDom);
 
     return circleDom;
@@ -10227,7 +10250,7 @@ class Key {
     if (this.id === 0 && this.pitchObj === undefined) {
       return this;
     } else if (this.pitchObj === undefined) {
-      this.pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch();
+      this.pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch();
       this.pitchObj.ps = this.id;
     }
 
@@ -10259,7 +10282,7 @@ class Key {
       class: 'keyboardkeyname',
       'font-size': fontSize
     };
-    const textDom = _common__WEBPACK_IMPORTED_MODULE_4__.makeSVGright('text', textAttrs);
+    const textDom = _common__WEBPACK_IMPORTED_MODULE_3__.makeSVGright('text', textAttrs);
     const textNode = document.createTextNode(idStr);
     textDom.appendChild(textNode);
     this.noteNameSvgObj = textDom; // store for removing...
@@ -10404,7 +10427,7 @@ class Keyboard {
 
 
   appendKeyboard(where) {
-    const svg_holder = (0,_common__WEBPACK_IMPORTED_MODULE_4__.coerceHTMLElement)(where);
+    const svg_holder = (0,_common__WEBPACK_IMPORTED_MODULE_3__.coerceHTMLElement)(where);
     let svgDOM = this.createSVG();
 
     if (this.scrollable) {
@@ -10446,9 +10469,9 @@ class Keyboard {
     }
 
     keyRect.setAttribute('style', 'fill:' + fillColor + ';stroke:black');
-    _miditools__WEBPACK_IMPORTED_MODULE_5__.loadSoundfont('acoustic_grand_piano', i => {
-      midicube__WEBPACK_IMPORTED_MODULE_3__.noteOn(i.midiChannel, id, 100, 0);
-      midicube__WEBPACK_IMPORTED_MODULE_3__.noteOff(i.midiChannel, id, 500);
+    _miditools__WEBPACK_IMPORTED_MODULE_4__.loadSoundfont('acoustic_grand_piano', i => {
+      midicube__WEBPACK_IMPORTED_MODULE_2__.noteOn(i.midiChannel, id, 100, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_2__.noteOff(i.midiChannel, id, 500);
     });
     setTimeout(() => {
       keyRect.setAttribute('style', storedStyle);
@@ -10464,20 +10487,20 @@ class Keyboard {
     // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
     // 6, 57 gives a standard 88-key keyboard;
     if (typeof this.startPitch === 'string') {
-      const tempP = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch(this.startPitch);
+      const tempP = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(this.startPitch);
       this._startDNN = tempP.diatonicNoteNum;
     } else if (typeof this.startPitch === 'number') {
       this._startDNN = this.startPitch;
-    } else if (this.startPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch) {
+    } else if (this.startPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch) {
       this._startDNN = this.startPitch.diatonicNoteNum;
     }
 
     if (typeof this.endPitch === 'string') {
-      const tempP = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch(this.endPitch);
+      const tempP = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(this.endPitch);
       this._endDNN = tempP.diatonicNoteNum;
     } else if (typeof this.endPitch === 'number') {
       this._endDNN = this.endPitch;
-    } else if (this.endPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch) {
+    } else if (this.endPitch instanceof _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch) {
       this._endDNN = this.endPitch.diatonicNoteNum;
     }
 
@@ -10487,13 +10510,13 @@ class Keyboard {
     const totalWidth = this.whiteKeyWidth * this.scaleFactor * keyboardDiatonicLength;
     const height = 120 * this.scaleFactor;
     const heightString = height.toString() + 'px';
-    const svgDOM = _common__WEBPACK_IMPORTED_MODULE_4__.makeSVGright('svg', {
+    const svgDOM = _common__WEBPACK_IMPORTED_MODULE_3__.makeSVGright('svg', {
       'xml:space': 'preserve',
       height: heightString,
       width: totalWidth.toString() + 'px',
       class: 'keyboardSVG'
     });
-    const movingPitch = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch('C4');
+    const movingPitch = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch('C4');
     const blackKeys = [];
     const thisKeyboardObject = this;
 
@@ -10598,33 +10621,27 @@ class Keyboard {
 
 
   wrapScrollable(svgDOM) {
-    const $wrapper = jquery__WEBPACK_IMPORTED_MODULE_2__("<div class='keyboardScrollableWrapper'></div>").css({
-      display: 'inline-block'
-    });
-    const $bDown = jquery__WEBPACK_IMPORTED_MODULE_2__("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
-      'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
-    }).on('click', () => {
-      _miditools__WEBPACK_IMPORTED_MODULE_5__.config.transposeOctave -= 1;
+    const wrapper = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)('<div class="keyboardScrollableWrapper" style="display: inline-block"></div>');
+    const bDown = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("\n            <button class=\"keyboardOctaveDown\" \n                    style=\"font-size: ".concat(Math.floor(this.scaleFactor * 15), "px\">&lt;&lt;</button>\n            "));
+    bDown.addEventListener('click', () => {
+      _miditools__WEBPACK_IMPORTED_MODULE_4__.config.transposeOctave -= 1;
       this.startPitch = this._startDNN - 7;
       this.endPitch = this._endDNN - 7;
       this.redrawSVG();
     });
-    const $bUp = jquery__WEBPACK_IMPORTED_MODULE_2__("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
-      'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
-    }).on('click', () => {
-      _miditools__WEBPACK_IMPORTED_MODULE_5__.config.transposeOctave += 1;
+    const bUp = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("\n            <button class='keyboardOctaveUp'\n                    style=\"font-size: ".concat(Math.floor(this.scaleFactor * 15), "px\"\n            >&gt;&gt;</button>"));
+    bUp.addEventListener('click', () => {
+      _miditools__WEBPACK_IMPORTED_MODULE_4__.config.transposeOctave += 1;
       this.startPitch = this._startDNN + 7;
       this.endPitch = this._endDNN + 7;
       this.redrawSVG();
     });
-    const $kWrapper = jquery__WEBPACK_IMPORTED_MODULE_2__("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
-    const kWrapperDiv = $kWrapper[0];
-    kWrapperDiv.appendChild(svgDOM); // cannot use jquery append with SVG.
-
-    $wrapper.append($bDown);
-    $wrapper.append($kWrapper);
-    $wrapper.append($bUp);
-    return $wrapper;
+    const kWrapperDiv = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+    kWrapperDiv.appendChild(svgDOM);
+    wrapper.append(bDown);
+    wrapper.append(kWrapperDiv);
+    wrapper.append(bUp);
+    return wrapper;
   }
   /**
    * Puts a hideable keyboard inside a Div with the proper controls.
@@ -10638,33 +10655,22 @@ class Keyboard {
 
 
   appendHideableKeyboard(where, keyboardSVG) {
-    const $container = jquery__WEBPACK_IMPORTED_MODULE_2__("<div class='keyboardHideableContainer'/>");
-    const $bInside = jquery__WEBPACK_IMPORTED_MODULE_2__("<div class='keyboardToggleInside'>↥</div>").css({
-      display: 'inline-block',
-      'padding-top': '40px',
-      'font-size': '40px'
-    });
-    const $b = jquery__WEBPACK_IMPORTED_MODULE_2__("<div class='keyboardToggleOutside'/>").css({
-      display: 'inline-block',
-      'vertical-align': 'top',
-      background: 'white'
-    });
-    $b.append($bInside);
-    $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
-    $b.data('state', 'down');
-    $b.on('click', triggerToggleShow);
-    const $explain = jquery__WEBPACK_IMPORTED_MODULE_2__("<div class='keyboardExplain'>Show keyboard</div>").css({
-      display: 'none',
-      'background-color': 'white',
-      padding: '10px 10px 10px 10px',
-      'font-size': '12pt'
-    });
-    $b.append($explain);
-    $container.append($b);
-    $container[0].appendChild(keyboardSVG); // svg must use appendChild, not $.append.
+    var _a;
 
-    jquery__WEBPACK_IMPORTED_MODULE_2__(where).append($container);
-    return $container;
+    const container = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("<div class='keyboardHideableContainer'></div>");
+    const bInside = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("\n            <div class='keyboardToggleInside'\n                 style=\"display: inline-block; padding-top: 40px; font-size: 40px;\"\n            >\u21A5</div>");
+    const b = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("\n            <div class='keyboardToggleOutside'\n                 style=\"display: inline-block; vertical-align: top; background: white\"\n            ></div>\n            ");
+    b.append(bInside);
+    b.setAttribute('data-defaultDisplay', (_a = container.querySelector('.keyboardSVG')) === null || _a === void 0 ? void 0 : _a.style.display);
+    b.setAttribute('data-state', 'down');
+    b.addEventListener('click', e => triggerToggleShow(e));
+    const explain = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("<div class='keyboardExplain'\n                  style=\"display: none; background-color: white; padding: 10px 10px 10px 10px; font-size: 12pt;\"\n             >Show keyboard</div>");
+    b.append(explain);
+    container.append(b);
+    container.appendChild(keyboardSVG); // SVG safer with appendChild
+
+    where.append(container);
+    return container;
   }
 
 } // noinspection JSUnusedLocalSymbols
@@ -10676,39 +10682,37 @@ class Keyboard {
  */
 
 const triggerToggleShow = e => {
-  // "this" refers to the object clicked
-  // e -- event is not used.
-  const $t = jquery__WEBPACK_IMPORTED_MODULE_2__(undefined);
-  const state = $t.data('state');
-  const $parent = $t.parent();
-  let $k = $parent.find('.keyboardScrollableWrapper');
+  const t = e.target;
+  const state = t.getAttribute('data-state');
+  const parent = t.parentElement;
+  let k = parent.querySelector('.keyboardScrollableWrapper');
 
-  if ($k.length === 0) {
+  if (!k) {
     // not scrollable
-    $k = $parent.find('.keyboardSVG');
+    k = parent.querySelector('.keyboardSVG');
   }
 
-  const $bInside = $t.find('.keyboardToggleInside');
-  const $explain = $parent.find('.keyboardExplain');
+  const bInside = t.querySelector('.keyboardToggleInside');
+  const explain = parent.querySelector('.keyboardExplain');
 
   if (state === 'up') {
-    $bInside.text('↥');
-    $bInside.css('padding-top', '40px');
-    $explain.css('display', 'none');
-    let dd = $t.data('defaultDisplay');
+    bInside.innerText = '↥';
+    bInside.style.paddingTop = '40px';
+    explain.style.display = 'none';
+    let dd = t.getAttribute('data-defaultDisplay');
 
     if (dd === undefined) {
       dd = 'inline';
     }
 
-    $k.css('display', dd);
-    $t.data('state', 'down');
+    k.style.display = dd;
+    t.setAttribute('data-state', 'down');
   } else {
-    $k.css('display', 'none');
-    $explain.css('display', 'inline-block');
-    $bInside.text('↧');
-    $bInside.css('padding-top', '10px');
-    $t.data('state', 'up');
+    k.style.display = 'none';
+    explain.style.display = 'inline-block';
+    bInside.innerText = '↧';
+    bInside.style.paddingTop = '10px';
+    t.setAttribute('data-state', 'up');
   }
 };
 /**
@@ -11267,6 +11271,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
  *
@@ -11530,11 +11535,9 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       }
 
       const dur = el.duration;
-      const pos = el.offset + measureStartOffset;
-      const start = pos; // opFrac
-
-      const end = pos + dur.quarterLength; // opFrac;
-
+      const pos = (0,_common__WEBPACK_IMPORTED_MODULE_5__.opFrac)(el.offset + measureStartOffset);
+      const start = (0,_common__WEBPACK_IMPORTED_MODULE_5__.opFrac)(pos);
+      const end = (0,_common__WEBPACK_IMPORTED_MODULE_5__.opFrac)(pos + dur.quarterLength);
       const startNext = end;
       const isLast = i === srcStream.length - 1;
       const isFirst = i === 0;
@@ -12028,13 +12031,15 @@ const sendToMIDIjs = midiEvent => {
  */
 
 function postLoadCallback(soundfont, callback) {
-  // this should be bound to MIDI
+  var _a; // this should be bound to MIDI
+
+
   if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
     console.log('soundfont loaded about to execute callback.');
     console.log('first playing two notes very softly -- seems to flush the buffer.');
   }
 
-  jquery__WEBPACK_IMPORTED_MODULE_0__('.loadingSoundfont').remove();
+  (_a = document.querySelector('.loadingSoundfont')) === null || _a === void 0 ? void 0 : _a.remove();
   const isAudioTag = midicube__WEBPACK_IMPORTED_MODULE_1__.config.api === 'audiotag';
   const instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__.find(soundfont);
 
@@ -12131,7 +12136,7 @@ function loadSoundfont(soundfont, callback) {
         console.log('Document ready, waiting to load soundfont');
       }
 
-      jquery__WEBPACK_IMPORTED_MODULE_0__(document.body).append(jquery__WEBPACK_IMPORTED_MODULE_0__("<div class='loadingSoundfont'><b>Loading Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
+      document.body.append((0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)("<div class='loadingSoundfont'><b>Loading Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
       midicube__WEBPACK_IMPORTED_MODULE_1__.loadPlugin({
         soundfontUrl: _common__WEBPACK_IMPORTED_MODULE_5__.urls.soundfontUrl,
         instrument: soundfont,
@@ -12157,27 +12162,26 @@ class MidiPlayer {
   }
 
   addPlayer(where) {
-    const $where = (0,_common__WEBPACK_IMPORTED_MODULE_5__.coerceJQuery)(where);
-    const $playDiv = jquery__WEBPACK_IMPORTED_MODULE_0__('<div class="midiPlayer">');
-    const $controls = jquery__WEBPACK_IMPORTED_MODULE_0__('<div class="positionControls">');
-    const $playPause = jquery__WEBPACK_IMPORTED_MODULE_0__('<input type="image" alt="play" src="' + this.playPng() + '" value="play" class="playPause">');
-    const $stop = jquery__WEBPACK_IMPORTED_MODULE_0__('<input type="image" alt="stop" src="' + this.stopPng() + '" value="stop" class="stopButton">');
-    $playPause.on('click', () => this.pausePlayStop());
-    $stop.on('click', () => this.stopButton());
-    $controls.append($playPause);
-    $controls.append($stop);
-    $playDiv.append($controls);
-    const $time = jquery__WEBPACK_IMPORTED_MODULE_0__('<div class="timeControls">');
-    const $timePlayed = jquery__WEBPACK_IMPORTED_MODULE_0__('<span class="timePlayed">0:00</span>');
-    const $capsule = jquery__WEBPACK_IMPORTED_MODULE_0__('<span class="capsule"><span class="cursor"></span></span>');
-    const $timeRemaining = jquery__WEBPACK_IMPORTED_MODULE_0__('<span class="timeRemaining">-0:00</span>');
-    $time.append($timePlayed);
-    $time.append($capsule);
-    $time.append($timeRemaining);
-    $playDiv.append($time);
-    $where.append($playDiv);
-    this.$playDiv = $playDiv;
-    return $playDiv;
+    const playDiv = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<div class="midiPlayer"></div>');
+    const controls = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<div class="positionControls"></div>');
+    const playPause = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<input type="image" alt="play" src="' + this.playPng() + '" value="play" class="playPause">');
+    const stop = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<input type="image" alt="stop" src="' + this.stopPng() + '" value="stop" class="stopButton">');
+    playPause.addEventListener('click', () => this.pausePlayStop());
+    stop.addEventListener('click', () => this.stopButton());
+    controls.append(playPause);
+    controls.append(stop);
+    playDiv.append(controls);
+    const time = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<div class="timeControls"></div>');
+    const timePlayed = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<span class="timePlayed">0:00</span>');
+    const capsule = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<span class="capsule"><span class="cursor"></span></span>');
+    const timeRemaining = (0,_common__WEBPACK_IMPORTED_MODULE_5__.to_el)('<span class="timeRemaining">-0:00</span>');
+    time.append(timePlayed);
+    time.append(capsule);
+    time.append(timeRemaining);
+    playDiv.append(time);
+    where.append(playDiv);
+    this.playDiv = playDiv;
+    return playDiv;
   }
 
   stopButton() {
@@ -12199,12 +12203,12 @@ class MidiPlayer {
   pausePlayStop(stop = 'no') {
     let d;
 
-    if (this.$playDiv === undefined) {
+    if (!this.playDiv) {
       d = {
         src: 'doesnt matter'
       };
     } else {
-      d = this.$playDiv.find('.playPause')[0];
+      d = this.playDiv.querySelector('.playPause');
     }
 
     if (stop === 'yes') {
@@ -12252,19 +12256,20 @@ class MidiPlayer {
   updatePlaying() {
     const player = this.player;
 
-    if (this.$playDiv === undefined) {
+    if (this.playDiv === undefined) {
       return;
     }
 
-    const $d = this.$playDiv; // update the timestamp
+    const d = this.playDiv; // update the timestamp
 
-    const timePlayed = $d.find('.timePlayed')[0];
-    const timeRemaining = $d.find('.timeRemaining')[0];
-    const timeCursor = $d.find('.cursor')[0];
-    const $capsule = $d.find('.capsule'); //
+    const timePlayed = d.querySelector('.timePlayed');
+    const timeRemaining = d.querySelector('.timeRemaining');
+    const timeCursor = d.querySelector('.cursor');
+    const capsule = d.querySelector('.capsule'); //
 
-    $capsule.on('dragstart', e => {
-      player.currentTime = (e.pageX - $capsule.offset().left) / 420 * player.endTime;
+    capsule.addEventListener('dragstart', event => {
+      const e = event;
+      player.currentTime = (e.pageX - jquery__WEBPACK_IMPORTED_MODULE_0__(capsule).offset().left) / 420 * player.endTime;
 
       if (player.currentTime < 0) {
         player.currentTime = 0;
@@ -16219,7 +16224,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
         // noinspection JSObjectNullOrUndefined
         if (pSelf.accidental.name === 'natural') {
           pSelf.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
-        } else {
+        } else if (this.accidental) {
           this.accidental.displayStatus = true;
         } // environLocal.printDebug(['match previous no mark'])
 
@@ -23310,6 +23315,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../beam */ "./src/beam.ts");
 /* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
 /* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common */ "./src/common.ts");
 
 
 
@@ -23320,7 +23326,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
- // for typing only -- circular import otherwise
+
 
 function makeBeams(s, {
   inPlace = false,
@@ -23379,7 +23385,7 @@ function makeBeams(s, {
 
       const noteStream = noteStreamIterator.stream();
       const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
-      const durSum = parseFloat(durSumErr.toFixed(8)); // remove fraction errors
+      const durSum = (0,_common__WEBPACK_IMPORTED_MODULE_6__.opFrac)(durSumErr); // remove fraction errors
 
       const barQL = lastTimeSignature.barDuration.quarterLength;
 
@@ -23392,7 +23398,7 @@ function makeBeams(s, {
       if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
         offset = m.paddingLeft;
       } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
-        offset = barQL - noteStream.highestTime;
+        offset = (0,_common__WEBPACK_IMPORTED_MODULE_6__.opFrac)(barQL - noteStream.highestTime);
       }
 
       const beamsList = lastTimeSignature.getBeams(noteStream, {
@@ -26016,7 +26022,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Obje
       this[which] = value;
     } else if (typeof value === 'string') {
       this[which] = new _note__WEBPACK_IMPORTED_MODULE_3__.Note(value);
-    } else if (value.classes.includes('Note')) {
+    } else if (value instanceof _note__WEBPACK_IMPORTED_MODULE_3__.Note) {
       this[which] = value;
     } else {
       const n = new _note__WEBPACK_IMPORTED_MODULE_3__.Note(value.nameWithOctave);
@@ -26072,10 +26078,8 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Obje
   }
 
   _findIntervals() {
-    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v1n1, this.v2n1));
-    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v1n2, this.v2n2));
-    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v1n1, this.v1n2));
-    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v2n1, this.v2n2));
+    this.vIntervals = [new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v1n1, this.v2n1), new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v1n2, this.v2n2)];
+    this.hIntervals = [new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v1n1, this.v1n2), new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(this.v2n1, this.v2n2)];
   }
 
   motionType() {
@@ -26554,7 +26558,7 @@ function createPlugin(appendElement = undefined, override = false) {
   }
 
   if (typeof appendElement === 'undefined') {
-    appendElement = jquery__WEBPACK_IMPORTED_MODULE_0__('body')[0];
+    appendElement = document.body;
   }
 
   const obj = document.createElement('object'); // noinspection SpellCheckingInspection
