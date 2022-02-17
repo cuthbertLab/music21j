@@ -527,7 +527,7 @@ export class Keyboard {
         );
         const bDown = to_el(`
             <button class="keyboardOctaveDown" 
-                    style="font-size: ${ Math.floor(this.scaleFactor * 15)}px">&lt;&lt;</button>
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px">&lt;&lt;</button>
             `);
         bDown.addEventListener('click', () => {
             miditools.config.transposeOctave -= 1;
@@ -537,7 +537,7 @@ export class Keyboard {
         });
         const bUp = to_el(`
             <button class='keyboardOctaveUp'
-                    style="font-size: ${ Math.floor(this.scaleFactor * 15)}px"
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px"
             >&gt;&gt;</button>`);
         bUp.addEventListener('click', () => {
             miditools.config.transposeOctave += 1;
