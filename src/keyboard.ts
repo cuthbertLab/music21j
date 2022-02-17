@@ -329,10 +329,10 @@ export class Keyboard {
     appendKeyboard(where?: JQuery|HTMLElement): this {
         const svg_holder = coerceHTMLElement(where);
 
-        let svgDOM: HTMLElement|SVGElement = this.createSVG();
+        let svgDOM: HTMLElement|SVGSVGElement = this.createSVG();
 
         if (this.scrollable) {
-            svgDOM = this.wrapScrollable(svgDOM)[0];
+            svgDOM = this.wrapScrollable(svgDOM);
         }
 
         if (this.hideable) {
@@ -376,7 +376,7 @@ export class Keyboard {
     /**
      * Draws the SVG associated with this Keyboard
      */
-    createSVG(): SVGElement {
+    createSVG(): SVGSVGElement {
         // DNN = pitch.diatonicNoteNum;
         // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
         // 6, 57 gives a standard 88-key keyboard;
@@ -410,7 +410,7 @@ export class Keyboard {
             height: heightString,
             width: totalWidth.toString() + 'px',
             class: 'keyboardSVG',
-        });
+        }) as SVGSVGElement;
         const movingPitch = new pitch.Pitch('C4');
         const blackKeys = [];
         const thisKeyboardObject = this;
@@ -521,7 +521,7 @@ export class Keyboard {
      * Do not call this directly, just use createSVG after changing the
      * scrollable property on the keyboard to True.
      */
-    wrapScrollable(svgDOM: SVGElement): HTMLElement {
+    wrapScrollable(svgDOM: SVGSVGElement): HTMLElement {
         const wrapper = to_el(
             '<div class="keyboardScrollableWrapper" style="display: inline-block"></div>'
         );
@@ -564,8 +564,8 @@ export class Keyboard {
      * @param {Node} where
      * @param {SVGElement} keyboardSVG
      */
-    appendHideableKeyboard(where, keyboardSVG) {
-        const container = to_el("<div class='keyboardHideableContainer'></div>");
+    appendHideableKeyboard(where, keyboardSVG: SVGSVGElement|HTMLElement) {
+        const container = to_el('<div class="keyboardHideableContainer"></div>');
         const bInside = to_el(`
             <div class='keyboardToggleInside'
                  style="display: inline-block; padding-top: 40px; font-size: 40px;"
@@ -573,8 +573,7 @@ export class Keyboard {
         const b = to_el(`
             <div class='keyboardToggleOutside'
                  style="display: inline-block; vertical-align: top; background: white"
-            ></div>
-            `);
+            ></div>`);
         b.append(bInside);
         b.setAttribute(
             'data-defaultDisplay',
@@ -602,7 +601,7 @@ export class Keyboard {
  * @param {Event} [e]
  */
 export const triggerToggleShow = e => {
-    const t = e.target;
+    const t = e.currentTarget;
     const state = t.getAttribute('data-state');
     const parent = t.parentElement;
     let k = parent.querySelector('.keyboardScrollableWrapper');

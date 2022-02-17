@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.15 built on 2022-02-17.
+ * music21j version 0.12.16 built on 2022-02-17.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -10431,7 +10431,7 @@ class Keyboard {
     let svgDOM = this.createSVG();
 
     if (this.scrollable) {
-      svgDOM = this.wrapScrollable(svgDOM)[0];
+      svgDOM = this.wrapScrollable(svgDOM);
     }
 
     if (this.hideable) {
@@ -10657,9 +10657,9 @@ class Keyboard {
   appendHideableKeyboard(where, keyboardSVG) {
     var _a;
 
-    const container = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("<div class='keyboardHideableContainer'></div>");
+    const container = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)('<div class="keyboardHideableContainer"></div>');
     const bInside = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("\n            <div class='keyboardToggleInside'\n                 style=\"display: inline-block; padding-top: 40px; font-size: 40px;\"\n            >\u21A5</div>");
-    const b = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("\n            <div class='keyboardToggleOutside'\n                 style=\"display: inline-block; vertical-align: top; background: white\"\n            ></div>\n            ");
+    const b = (0,_common__WEBPACK_IMPORTED_MODULE_3__.to_el)("\n            <div class='keyboardToggleOutside'\n                 style=\"display: inline-block; vertical-align: top; background: white\"\n            ></div>");
     b.append(bInside);
     b.setAttribute('data-defaultDisplay', (_a = container.querySelector('.keyboardSVG')) === null || _a === void 0 ? void 0 : _a.style.display);
     b.setAttribute('data-state', 'down');
@@ -10682,7 +10682,7 @@ class Keyboard {
  */
 
 const triggerToggleShow = e => {
-  const t = e.target;
+  const t = e.currentTarget;
   const state = t.getAttribute('data-state');
   const parent = t.parentElement;
   let k = parent.querySelector('.keyboardScrollableWrapper');
