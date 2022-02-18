@@ -126,28 +126,26 @@ export class Lyric extends prebase.ProtoM21Object {
         };
     }
 
-    get identifier() {
+    get identifier(): string|number {
         return this._identifier || this._number;
     }
 
-    set identifier(i) {
+    set identifier(i: string|number) {
         this._identifier = i;
     }
 
     // a property just to match m21p
-    get number() {
+    get number(): number {
         return this._number;
     }
 
-    set number(n) {
+    set number(n: number) {
         this._number = n;
     }
 
     // noinspection JSUnusedGlobalSymbols
     /**
      * get rawText - gets the raw text.
-     *
-     * @return {string}  raw text
      */
     get rawText(): string {
         if (this.syllabic === 'begin') {
@@ -161,7 +159,6 @@ export class Lyric extends prebase.ProtoM21Object {
         }
     }
 
-    // noinspection JSUnusedGlobalSymbols
     set rawText(t: string) {
         this.setTextAndSyllabic(t, true);
     }
@@ -170,11 +167,9 @@ export class Lyric extends prebase.ProtoM21Object {
      * setTextAndSyllabic - Given a setting for rawText and applyRaw,
      *     sets the syllabic type for a lyric based on the rawText
      *
-     * @param  {string} rawText text
-     * @param  {boolean} applyRaw = false if hyphens should not be applied
-     * @return {this}
+     * set applyRaw = false if hyphens should not be applied
      */
-    setTextAndSyllabic(rawText, applyRaw = false) {
+    setTextAndSyllabic(rawText: string, applyRaw: boolean = false): this {
         if (rawText === undefined) {
             this.text = undefined;
             return this;
