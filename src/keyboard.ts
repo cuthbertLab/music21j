@@ -17,13 +17,12 @@
  * k.whiteKeyWidth = 40; // default 23
  *
  */
-import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
 import * as common from './common';
 import * as miditools from './miditools';
 import * as pitch from './pitch';
-import {coerceHTMLElement} from './common';
+import {coerceHTMLElement, to_el} from './common';
 
 /**
  * Represents a single Key
@@ -330,10 +329,10 @@ export class Keyboard {
     appendKeyboard(where?: JQuery|HTMLElement): this {
         const svg_holder = coerceHTMLElement(where);
 
-        let svgDOM: HTMLElement|SVGElement = this.createSVG();
+        let svgDOM: HTMLElement|SVGSVGElement = this.createSVG();
 
         if (this.scrollable) {
-            svgDOM = this.wrapScrollable(svgDOM)[0];
+            svgDOM = this.wrapScrollable(svgDOM);
         }
 
         if (this.hideable) {
@@ -377,7 +376,7 @@ export class Keyboard {
     /**
      * Draws the SVG associated with this Keyboard
      */
-    createSVG(): SVGElement {
+    createSVG(): SVGSVGElement {
         // DNN = pitch.diatonicNoteNum;
         // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
         // 6, 57 gives a standard 88-key keyboard;
@@ -411,7 +410,7 @@ export class Keyboard {
             height: heightString,
             width: totalWidth.toString() + 'px',
             class: 'keyboardSVG',
-        });
+        }) as SVGSVGElement;
         const movingPitch = new pitch.Pitch('C4');
         const blackKeys = [];
         const thisKeyboardObject = this;
@@ -522,41 +521,38 @@ export class Keyboard {
      * Do not call this directly, just use createSVG after changing the
      * scrollable property on the keyboard to True.
      */
-    wrapScrollable(svgDOM: SVGElement): JQuery {
-        const $wrapper = $(
-            "<div class='keyboardScrollableWrapper'></div>"
-        ).css({
-            display: 'inline-block',
+    wrapScrollable(svgDOM: SVGSVGElement): HTMLElement {
+        const wrapper = to_el(
+            '<div class="keyboardScrollableWrapper" style="display: inline-block"></div>'
+        );
+        const bDown = to_el(`
+            <button class="keyboardOctaveDown" 
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px">&lt;&lt;</button>
+            `);
+        bDown.addEventListener('click', () => {
+            miditools.config.transposeOctave -= 1;
+            this.startPitch = this._startDNN - 7;
+            this.endPitch = this._endDNN - 7;
+            this.redrawSVG();
         });
-        const $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>")
-            .css({
-                'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
-            })
-            .on('click', () => {
-                miditools.config.transposeOctave -= 1;
-                this.startPitch = this._startDNN - 7;
-                this.endPitch = this._endDNN - 7;
-                this.redrawSVG();
-            });
-        const $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>")
-            .css({
-                'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
-            })
-            .on('click', () => {
-                miditools.config.transposeOctave += 1;
-                this.startPitch = this._startDNN + 7;
-                this.endPitch = this._endDNN + 7;
-                this.redrawSVG();
-            });
-        const $kWrapper = $(
+        const bUp = to_el(`
+            <button class='keyboardOctaveUp'
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px"
+            >&gt;&gt;</button>`);
+        bUp.addEventListener('click', () => {
+            miditools.config.transposeOctave += 1;
+            this.startPitch = this._startDNN + 7;
+            this.endPitch = this._endDNN + 7;
+            this.redrawSVG();
+        });
+        const kWrapperDiv = to_el(
             "<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>"
         );
-        const kWrapperDiv = $kWrapper[0];
-        kWrapperDiv.appendChild(svgDOM);  // cannot use jquery append with SVG.
-        $wrapper.append($bDown);
-        $wrapper.append($kWrapper);
-        $wrapper.append($bUp);
-        return $wrapper;
+        kWrapperDiv.appendChild(svgDOM);
+        wrapper.append(bDown);
+        wrapper.append(kWrapperDiv);
+        wrapper.append(bUp);
+        return wrapper;
     }
 
     /**
@@ -568,38 +564,33 @@ export class Keyboard {
      * @param {Node} where
      * @param {SVGElement} keyboardSVG
      */
-    appendHideableKeyboard(where, keyboardSVG) {
-        const $container = $("<div class='keyboardHideableContainer'/>");
-        const $bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
-            display: 'inline-block',
-            'padding-top': '40px',
-            'font-size': '40px',
-        });
-        const $b = $("<div class='keyboardToggleOutside'/>").css({
-            display: 'inline-block',
-            'vertical-align': 'top',
-            background: 'white',
-        });
-        $b.append($bInside);
-        $b.data(
-            'defaultDisplay',
-            $container.find('.keyboardSVG').css('display')
+    appendHideableKeyboard(where, keyboardSVG: SVGSVGElement|HTMLElement) {
+        const container = to_el('<div class="keyboardHideableContainer"></div>');
+        const bInside = to_el(`
+            <div class='keyboardToggleInside'
+                 style="display: inline-block; padding-top: 40px; font-size: 40px;"
+            >↥</div>`);
+        const b = to_el(`
+            <div class='keyboardToggleOutside'
+                 style="display: inline-block; vertical-align: top; background: white"
+            ></div>`);
+        b.append(bInside);
+        b.setAttribute(
+            'data-defaultDisplay',
+            (container.querySelector('.keyboardSVG') as HTMLElement)?.style.display,
         );
-        $b.data('state', 'down');
-        $b.on('click', triggerToggleShow);
-        const $explain = $(
-            "<div class='keyboardExplain'>Show keyboard</div>"
-        ).css({
-            display: 'none',
-            'background-color': 'white',
-            padding: '10px 10px 10px 10px',
-            'font-size': '12pt',
-        });
-        $b.append($explain);
-        $container.append($b);
-        $container[0].appendChild(keyboardSVG); // svg must use appendChild, not $.append.
-        $(where).append($container);
-        return $container;
+        b.setAttribute('data-state', 'down');
+        b.addEventListener('click', e => triggerToggleShow(e));
+        const explain = to_el(
+            `<div class='keyboardExplain'
+                  style="display: none; background-color: white; padding: 10px 10px 10px 10px; font-size: 12pt;"
+             >Show keyboard</div>`
+        );
+        b.append(explain);
+        container.append(b);
+        container.appendChild(keyboardSVG);  // SVG safer with appendChild
+        where.append(container);
+        return container;
     }
 }
 
@@ -610,34 +601,32 @@ export class Keyboard {
  * @param {Event} [e]
  */
 export const triggerToggleShow = e => {
-    // "this" refers to the object clicked
-    // e -- event is not used.
-    const $t = $(this);
-    const state = $t.data('state');
-    const $parent = $t.parent();
-    let $k = $parent.find('.keyboardScrollableWrapper');
-    if ($k.length === 0) {
+    const t = e.currentTarget;
+    const state = t.getAttribute('data-state');
+    const parent = t.parentElement;
+    let k = parent.querySelector('.keyboardScrollableWrapper');
+    if (!k) {
         // not scrollable
-        $k = $parent.find('.keyboardSVG');
+        k = parent.querySelector('.keyboardSVG');
     }
-    const $bInside = $t.find('.keyboardToggleInside');
-    const $explain = $parent.find('.keyboardExplain');
+    const bInside = t.querySelector('.keyboardToggleInside');
+    const explain = parent.querySelector('.keyboardExplain');
     if (state === 'up') {
-        $bInside.text('↥');
-        $bInside.css('padding-top', '40px');
-        $explain.css('display', 'none');
-        let dd = $t.data('defaultDisplay');
+        bInside.innerText = '↥';
+        bInside.style.paddingTop = '40px';
+        explain.style.display = 'none';
+        let dd = t.getAttribute('data-defaultDisplay');
         if (dd === undefined) {
             dd = 'inline';
         }
-        $k.css('display', dd);
-        $t.data('state', 'down');
+        k.style.display = dd;
+        t.setAttribute('data-state', 'down');
     } else {
-        $k.css('display', 'none');
-        $explain.css('display', 'inline-block');
-        $bInside.text('↧');
-        $bInside.css('padding-top', '10px');
-        $t.data('state', 'up');
+        k.style.display = 'none';
+        explain.style.display = 'inline-block';
+        bInside.innerText = '↧';
+        bInside.style.paddingTop = '10px';
+        t.setAttribute('data-state', 'up');
     }
 };
 

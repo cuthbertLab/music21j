@@ -35,7 +35,7 @@ export default function tests() {
         assert.ok(vlq2.inwardContraryMotion(), 'inward contrary motion');
         assert.ok(!vlq2.outwardContraryMotion(), 'not outward contrary motion');
 
-        const vlq3 = new VLQ('C4', 'D4', 'A3', 'F3');
+        const vlq3 = new VLQ(new N('C4'), new N('D4'), new N('A3'), new N('F3'));
         assert.ok(vlq3.contraryMotion(), 'contrary motion set w/ strings');
     });
     test(

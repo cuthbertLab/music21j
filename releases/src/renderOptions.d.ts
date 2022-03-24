@@ -40,6 +40,7 @@ export declare class RenderOptions {
     measureIndex: number;
     systemPadding: number;
     maxSystemWidth: number;
+    leftBarline: string;
     rightBarline: string;
     staffLines: number;
     staffConnectors: string[];

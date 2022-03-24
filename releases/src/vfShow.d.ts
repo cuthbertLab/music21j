@@ -199,7 +199,7 @@ export declare class Renderer {
      * adds keySignature, timeSignature, and rightBarline
      *
      * RenderOptions object might have
-     * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+     * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
      */
     setClefEtc(s: stream.Stream, stave: Vex.Flow.Staves, rendOp?: renderOptions.RenderOptions): void;
     /**

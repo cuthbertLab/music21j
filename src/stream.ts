@@ -1157,6 +1157,24 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+     * Added for compatability with StreamIterator.  Gets the first element
+     * or undefined if none.  No speedups from `.get(0)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    first() {
+        return this.get(0);
+    }
+
+    /**
+     * Added for compatability with StreamIterator.  Gets the last element
+     * or undefined if none.  No speedups from `.get(-1)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    last() {
+        return this.get(-1);
+    }
+
+    /**
      *
      */
     set(index, newEl) {
@@ -2601,26 +2619,45 @@ export class Stream extends base.Music21Object {
      */
     getUnscaledXYforDOM(
         svg,
-        e: MouseEvent|TouchEvent|JQuery.MouseEventBase
+        evt: MouseEvent|TouchEvent|JQuery.MouseEventBase
     ): [number, number] {
+        let e: MouseEvent|TouchEvent;
+        if ((evt as JQuery.MouseEventBase).originalEvent !== undefined) {
+            // need to get the original event to make touches work right.
+            // https://stackoverflow.com/questions/16674963/event-originalevent-jquery
+            e = (evt as JQuery.MouseEventBase).originalEvent;
+        } else {
+            e = (evt as MouseEvent|TouchEvent);
+        }
+
         let offset;
         if (svg === undefined) {
             offset = { left: 0, top: 0 };
         } else {
+            // replace when not in hotfix/crisis mode:
             offset = $(svg).offset();
+            // ...with this:
+            // const { left, top } = svg.getBoundingClientRect();
+            // offset = {
+            //     left: left + document.body.scrollLeft,
+            //     top: top + document.body.scrollTop,
+            // }
         }
 
         /*
          * mouse event handler code originally from: http://diveintohtml5.org/canvas.html
          */
-        let xClick: number;
-        let yClick: number;
+        let xClick: number = 0;
+        let yClick: number = 0;
         if ((e as MouseEvent).pageX !== undefined
                 && (e as MouseEvent).pageY !== undefined) {
             // MouseEvent or JQuery.MouseEventBase without instanceof checking.
             xClick = (e as MouseEvent).pageX;
             yClick = (e as MouseEvent).pageY;
-        } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
+        } else if (
+            typeof TouchEvent !== 'undefined' && e instanceof TouchEvent
+            && e.touches[0] !== undefined
+        ) {
             const touch1 = (e as TouchEvent).touches[0];
             xClick
                 = touch1.clientX
@@ -2630,17 +2667,8 @@ export class Stream extends base.Music21Object {
                 = touch1.clientY
                 + document.body.scrollTop
                 + document.documentElement.scrollTop;
-        } else {
-            // older MouseEvent such as IE 8 -- unknown support in Firefox
-            xClick
-                = (e as MouseEvent).clientX
-                + document.body.scrollLeft
-                + document.documentElement.scrollLeft;
-            yClick
-                = (e as MouseEvent).clientY
-                + document.body.scrollTop
-                + document.documentElement.scrollTop;
         }
+
         const xPx = xClick - offset.left;
         const yPx = yClick - offset.top;
         return [xPx, yPx];

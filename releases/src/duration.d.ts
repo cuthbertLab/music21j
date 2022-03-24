@@ -14,6 +14,7 @@ export declare const typeFromNumDict: {
     256: string;
     512: string;
     1024: string;
+    2048: string;
     0: string;
     '0.5': string;
     '0.25': string;

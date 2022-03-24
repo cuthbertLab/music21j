@@ -8,6 +8,7 @@
 import * as interval from './interval';
 import * as key from './key';
 import * as note from './note';
+import type * as pitch from './pitch';
 import { Music21Object } from './base';
 export declare const MotionType: {
     antiParallel: string;
@@ -29,8 +30,8 @@ export declare class VoiceLeadingQuartet extends Music21Object {
     vIntervals: interval.Interval[];
     hIntervals: interval.Interval[];
     _key: key.Key;
-    constructor(v1n1: any, v1n2: any, v2n1: any, v2n2: any, analyticKey?: any);
-    _setVoiceNote(value: note.Note, which: string): void;
+    constructor(v1n1?: note.Note, v1n2?: note.Note, v2n1?: note.Note, v2n2?: note.Note, analyticKey?: key.Key);
+    _setVoiceNote(value: note.Note | pitch.Pitch | string | undefined, which: '_v1n1' | '_v1n2' | '_v2n1' | '_v2n2'): void;
     get v1n1(): note.Note;
     set v1n1(value: note.Note);
     get v1n2(): note.Note;

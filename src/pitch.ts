@@ -675,8 +675,8 @@ export class Pitch extends prebase.ProtoM21Object {
             // if we have no past, we show the accidental if this accidental
             // is not in the alteredPitches list, or vice versa for naturals
             if (acc_orig !== undefined
-                && (display_orig === false
-                    || display_orig === undefined)) {
+                && (overrideStatus || (display_orig === false
+                    || display_orig === undefined))) {
                 if (this.accidental.name === 'natural') {
                     this.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
                 } else {
@@ -722,7 +722,7 @@ export class Pitch extends prebase.ProtoM21Object {
                 }
             }
         }
-        // nope, no previous pitches in this octave and register, now more complex things...
+        // nope, no conflicting accidentals at this name and octave in past...
 
         // here tied and always are treated the same; we assume that
         // making ties sets the displayStatus, and thus we would not be
@@ -908,6 +908,7 @@ export class Pitch extends prebase.ProtoM21Object {
                 // if A# to A, or A- to A, but not A# to A#
                 // we use step and octave though not necessarily a ps comparison
             } else if (pPast.accidental !== undefined
+                        && pPast.name !== pSelf.name
                         && pPast.accidental.name !== 'natural'
                         && (pSelf.accidental === undefined
                             || pSelf.accidental.displayStatus === false)) {
@@ -947,8 +948,7 @@ export class Pitch extends prebase.ProtoM21Object {
                 // noinspection JSObjectNullOrUndefined
                 if (pSelf.accidental.name === 'natural') {
                     pSelf.accidental.displayStatus = this._stepInKeySignature(alteredPitches);
-                }
-                else {
+                } else if (this.accidental) {
                     this.accidental.displayStatus = true;
                 }
                 // environLocal.printDebug(['match previous no mark'])

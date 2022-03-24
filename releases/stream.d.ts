@@ -329,6 +329,18 @@ export declare class Stream extends base.Music21Object {
      */
     get(index: number): base.Music21Object;
     /**
+     * Added for compatability with StreamIterator.  Gets the first element
+     * or undefined if none.  No speedups from `.get(0)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    first(): base.Music21Object;
+    /**
+     * Added for compatability with StreamIterator.  Gets the last element
+     * or undefined if none.  No speedups from `.get(-1)`, but makes coding
+     * in a mix of Stream and StreamIterator environments easier.
+     */
+    last(): base.Music21Object;
+    /**
      *
      */
     set(index: any, newEl: any): this;
@@ -682,7 +694,7 @@ export declare class Stream extends base.Music21Object {
      *
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg: any, e: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getUnscaledXYforDOM(svg: any, evt: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
     /**
      * return a list of [scaledX, scaledY] for
      * a svg element.

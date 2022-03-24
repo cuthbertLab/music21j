@@ -1,5 +1,6 @@
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/main';
+import type { StreamIterator } from '../../src/stream/iterator';
 
 const { test } = QUnit;
 
@@ -144,9 +145,9 @@ export default function tests() {
 
     test('music21.vfShow.Renderer obeys measure numbers', assert => {
         const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('c4 d1 e~ e');
-        const measure_iter = p.getElementsByClass('Measure') as music21.stream.iterator.StreamIterator<music21.stream.Measure>;
-        measure_iter.get(0).paddingLeft = 3.0;
-        for (const [i, m] of Array.from(measure_iter).entries()) {
+        const m_iter = p.getElementsByClass('Measure') as StreamIterator<music21.stream.Measure>;
+        m_iter.get(0).paddingLeft = 3.0;
+        for (const [i, m] of Array.from(m_iter).entries()) {
             // Renumber the measures so that pickup is m.0
             m.number = i;
             m.renderOptions.showMeasureNumber = true;

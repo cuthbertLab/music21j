@@ -302,6 +302,16 @@ export default function tests() {
         //assert.notEqual(convertedNotes.notes[8].pitch.accidental.displayStatus, 'True');
     });
 
+    test('music21.pitch.updateAccidentalDisplay nonconsecutive chromatic pitches', assert => {
+        const p = music21.tinyNotation.TinyNotation('4/4 f#4 e4 f#4');
+        const m = p.getElementsByClass('Measure').get(0) as music21.stream.Measure;
+        m.insert(0, new music21.key.Key('G'));
+        p.recurse().notes.last().pitch.accidental.displayStatus = false;
+        p.makeAccidentals({inPlace: true, overrideStatus: true});
+        assert.equal(p.recurse().notes.first().pitch.accidental.displayStatus, false);
+        assert.equal(p.recurse().notes.last().pitch.accidental.displayStatus, false);
+    });
+
     test('music21.pitch.updateAccidentalDisplay respects displayType', assert => {
         const n = new music21.note.Note('D#3');
         n.pitch.accidental.displayType = 'never';
@@ -314,6 +324,14 @@ export default function tests() {
         n.pitch.accidental.displayType = 'always';
         s.makeAccidentals({inPlace: true, overrideStatus: true});
         assert.equal(n.pitch.accidental.displayStatus, true);
+    });
+
+    test('music21.pitch.updateAccidentalDisplay respects overrideStatus', assert => {
+        const n = new music21.note.Note('Cn');
+        n.pitch.accidental.displayStatus = true;
+        const k = new music21.key.Key('C');
+        n.pitch.updateAccidentalDisplay({overrideStatus: true, alteredPitches: k.alteredPitches});
+        assert.equal(n.pitch.accidental.displayStatus, false);
     });
 
     /* // Transpose is Not Implemented in pitch class
