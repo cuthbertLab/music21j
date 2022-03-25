@@ -69,8 +69,10 @@ export default function tests() {
         const svg = p.appendNewDOM();
         const renderer = new music21.vfShow.Renderer(p, svg);
         renderer.preparePartlike(p);
-        assert.deepEqual(renderer.vfTies[0].first_note, n1.activeVexflowNote);
-        assert.deepEqual(renderer.vfTies[0].last_note, n2.activeVexflowNote);
+        // @ts-ignore
+        assert.deepEqual(renderer.vfTies[0].notes.first_note, n1.activeVexflowNote);
+        // @ts-ignore
+        assert.deepEqual(renderer.vfTies[0].notes.last_note, n2.activeVexflowNote);
     });
 
     test('music21.vfShow.Renderer prepareTies in voices across barline', assert => {
@@ -109,7 +111,12 @@ export default function tests() {
         m2_alto_voice.notes.get(0).tie = new music21.tie.Tie('stop');
 
         s.appendNewDOM();
-        assert.equal(s.activeVFRenderer.vfTies[0].first_note.keys[0], s.activeVFRenderer.vfTies[0].last_note.keys[0]);
+        assert.equal(
+            // @ts-ignore
+            s.activeVFRenderer.vfTies[0].notes.first_note.keys[0], 
+            // @ts-ignore
+            s.activeVFRenderer.vfTies[0].notes.last_note.keys[0]
+        );
     });
 
     test('music21.vfShow.Renderer prepareTies across system break', assert => {
@@ -156,7 +163,8 @@ export default function tests() {
         for (const stack of p.activeVFRenderer.stacks) {
             const vf_voice = stack.voices[0];
             assert.equal(
-                vf_voice.stave.measure,
+                // @ts-ignore
+                vf_voice.getStave().measure,
                 (stack.voiceToStreamMapping.get(vf_voice) as music21.stream.Measure).number
             );
         }
