@@ -3,7 +3,7 @@
  *
  */
 
-import Vex from 'vexflow';
+import {Vex, Articulation as VFArticulation, Ornament as VFOrnament } from 'vexflow';
 import * as base from './base';
 import {
     ArticulationPlacement,
@@ -30,8 +30,8 @@ export class Expression extends base.Music21Object {
      *
      * (this is not right for all cases)
      */
-    vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
-        const vfe = new Vex.Flow.Articulation(this.vexflowModifier);
+    vexflow({stemDirection}: VexflowArticulationParams = {}): VFArticulation | VFOrnament {
+        const vfe = new VFArticulation(this.vexflowModifier);
         setPlacementOnVexFlowArticulation(vfe, this.placement, stemDirection);
         return vfe;
     }
@@ -56,8 +56,8 @@ export class Ornament extends Expression {
     static get className() { return 'music21.expressions.Ornament'; }
 
     name: string = 'ornament';
-    vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
-        const vfe = new Vex.Flow.Ornament(this.vexflowModifier);
+    vexflow({stemDirection}: VexflowArticulationParams = {}): VFOrnament {
+        const vfe = new VFOrnament(this.vexflowModifier);
         setPlacementOnVexFlowArticulation(vfe, this.placement, stemDirection);
         return vfe;
     }
