@@ -23,9 +23,6 @@ export default function tests() {
 
         const iter = new music21.stream.iterator.OffsetIterator(s);
         assert.equal(iter.length, 2);
-        assert.equal(
-            iter.map(x => (x[0] as music21.note.Note).pitch.name),
-            ['C', 'E', 'G', 'D', 'F', 'A']
-        );
+        assert.deepEqual(Array.from(iter), [[c, e, g], [d, f, a]]);
     });
 }
