@@ -1046,4 +1046,12 @@ export default function tests() {
         p.append(m);
         assert.equal(m.estimateStaffLength(), original_width + ks.width);
     });
+
+    test('music21.stream.Stream cloneEmpty', assert => {
+        const p = music21.tinyNotation.TinyNotation('3/4 c4 BB c d4 e2.');
+        const empty = p.cloneEmpty();
+        assert.true(empty instanceof music21.stream.Part);
+        assert.equal(empty.elements.length, 0);
+        assert.equal(empty.derivation.method, 'cloneEmpty');
+    });
 }

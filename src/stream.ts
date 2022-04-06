@@ -28,6 +28,7 @@ import { debug } from './debug';
 import * as base from './base';
 import * as clef from './clef';
 import * as common from './common';
+import * as derivation from './derivation';
 import { Duration } from './duration';
 import * as instrument from './instrument';
 import * as meter from './meter';
@@ -1438,8 +1439,11 @@ export class Stream extends base.Music21Object {
     }
 
     cloneEmpty(derivationMethod?: string): this {
-        const returnObj = this.constructor();
-        // TODO(msc): derivation
+        const returnObj = new (this as any).constructor();
+        const new_derivation = new derivation.Derivation(returnObj);
+        new_derivation.origin = this;
+        new_derivation.method = derivationMethod || 'cloneEmpty';
+        returnObj.derivation = new_derivation;
         returnObj.mergeAttributes(this);
         return returnObj;
     }
