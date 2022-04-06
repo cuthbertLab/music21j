@@ -11,6 +11,7 @@ import dynamics from './moduleTests/dynamics';
 import editorial from './moduleTests/editorial';
 import figuredBass from './moduleTests/figuredBass';
 import interval from './moduleTests/interval';
+import iterator from './moduleTests/stream/iterator';
 import key from './moduleTests/key';
 import meter from './moduleTests/meter';
 import note from './moduleTests/note';
@@ -39,6 +40,7 @@ const allTests = {
     editorial,
     figuredBass,
     interval,
+    iterator,
     key,
     meter,
     note,

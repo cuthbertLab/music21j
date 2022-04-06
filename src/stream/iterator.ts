@@ -305,10 +305,10 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
 
         while (this.index < this.streamLength) {
             // noinspection DuplicatedCode
-            this.index += 1;
+            this.index += 1;  // advance early
             let e;
             try {
-                e = this.srcStreamElements[this.index - 1];
+                e = this.srcStreamElements[this.index - 1];  // backtrack
             } catch (exc) {
                 continue;
             }
@@ -325,7 +325,7 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
             for (let forwardIndex = this.index; forwardIndex < this.streamLength; forwardIndex++) {
                 let nextE;
                 try {
-                    nextE = this.srcStreamElements[this.index - 1];
+                    nextE = this.srcStreamElements[this.index];  // this.index is already the next index
                 } catch (exc) {
                     continue;
                 }
@@ -340,7 +340,6 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
                 }
 
                 yieldEls.push(e);
-                this.index = forwardIndex;
             }
 
             if (this.restoreActiveSites) {
