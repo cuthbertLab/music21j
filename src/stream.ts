@@ -3105,10 +3105,46 @@ export class Part extends Stream {
     static get className() { return 'music21.stream.Part'; }
 
     recursionType: string = 'flatten';
+    _partName: string;
+    _partAbbreviation: string;
 
     // constructor() {
     //     super();
     // }
+
+    /**
+     * The name of this part; if undefined, look up on the stored instrument.
+     */
+    get partName(): string {
+        if (this._partName !== undefined) {
+            return this._partName;
+        }
+        if (this.instrument instanceof instrument.Instrument) {
+            return this.instrument.partName;
+        }
+        return undefined;
+    }
+
+    set partName(name: string) {
+        this._partName = name;
+    }
+
+    /**
+     * The abbreviated name of this part; if undefined, look up on the stored instrument.
+     */
+    get partAbbreviation(): string {
+        if (this._partAbbreviation !== undefined) {
+            return this._partAbbreviation;
+        }
+        if (this.instrument instanceof instrument.Instrument) {
+            return this.instrument.partAbbreviation;
+        }
+        return undefined;
+    }
+
+    set partAbbreviation(name: string) {
+        this._partAbbreviation = name;
+    }
 
     /**
      * How many systems does this Part have?

@@ -131,8 +131,11 @@ export class ScoreParser {
         // const openPartGroups = [];
         for (const partListElement of mxPartList) {
             const $partListElement = $(partListElement);
-            const partId = $partListElement.attr('id');
-            this.mxScorePartDict[partId] = $partListElement;
+            for (const scorePartElement of $partListElement.children('score-part')) {
+                const $scorePartElement = $(scorePartElement);
+                const partId = $scorePartElement.attr('id');
+                this.mxScorePartDict[partId] = $scorePartElement;
+            }
         }
         // deal with part-groups
     }
