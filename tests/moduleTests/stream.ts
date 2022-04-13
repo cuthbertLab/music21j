@@ -247,8 +247,12 @@ export default function tests() {
     test('music21.stream.Stream.repeatAppend', assert => {
         const a = new music21.stream.Stream();
         const n = new music21.note.Note();
+        n.groups.push('all-notes-get-this-group');
         a.repeatAppend(n, 10);
         assert.equal(a.notes.length, 10);
+        a.notes.first().groups.push('first-note-only');
+        assert.equal(a.notes.first().groups, ['all-notes-get-this-group', 'first-note-only']);
+        assert.equal(a.notes.last().groups, ['all-notes-get-this-group']);
     });
 
     test('music21.stream.Stream.insert and offsets', assert => {

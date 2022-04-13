@@ -5,6 +5,8 @@
  *
  */
 
+import * as common from './common';
+
 declare interface ProtoM21ObjectConstructorInterface extends Function {
     className: string;
 }
@@ -155,9 +157,11 @@ export class ProtoM21Object {
                 ret[key] = clonedVersion;
             } else {
                 try {
-                    // for deep this should be:
-                    // music21.common.merge(ret[key], this[key]);
-                    ret[key] = this[key];
+                    if (deep) {
+                        common.merge(ret[key], this[key] as any);
+                    } else {
+                        ret[key] = this[key];
+                    }
                 } catch (e) {
                     if (e instanceof TypeError) {
                         console.log('typeError:', e, key);
