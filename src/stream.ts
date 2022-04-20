@@ -2011,7 +2011,7 @@ export class Stream extends base.Music21Object {
      * @returns {number} length in pixels
      */
     estimateStaffLength() {
-        let totalLength: number;
+        let totalLength = 0;
         if (this.renderOptions.overriddenWidth !== undefined) {
             // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
@@ -2041,7 +2041,14 @@ export class Stream extends base.Music21Object {
                 }
             }
         } else {
-            totalLength = 30 * this.notesAndRests.length;
+            for (const nr of this.notesAndRests) {
+                // if .lyric is > 4 characters, we start padding the length
+                if (nr.lyric !== undefined) {
+                    totalLength += Math.max(30, ((7 * nr.lyric.length) + 2));
+                } else {
+                    totalLength += 30;
+                }
+            }
         }
         if (this instanceof Voice) {
             // recursive call: return early so that measure call
