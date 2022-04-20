@@ -1046,8 +1046,8 @@ export default function tests() {
         p.append(m);
         assert.equal(m.estimateStaffLength(), original_width + ks.width);
 
-        n.lyric = 'lorem';  // 7px * 5 letters = 35, original width otherwise starts at 30
-        assert.equal(m.estimateStaffLength(), original_width + 5 + ks.width);
+        n.lyric = 'lorem';  // (7px * 5 letters + 2) = 37, original width otherwise starts at 30
+        assert.equal(m.estimateStaffLength(), original_width + 7 + ks.width);
     });
 
     test('music21.stream.Stream cloneEmpty', assert => {

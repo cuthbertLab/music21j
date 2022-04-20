@@ -2044,7 +2044,7 @@ export class Stream extends base.Music21Object {
             for (const nr of this.notesAndRests) {
                 // if .lyric is > 4 characters, we start padding the length
                 if (nr.lyric !== undefined) {
-                    totalLength += Math.max(30, 7 * nr.lyric.length);
+                    totalLength += Math.max(30, ((7 * nr.lyric.length) + 2));
                 } else {
                     totalLength += 30;
                 }
