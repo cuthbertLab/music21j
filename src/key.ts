@@ -95,7 +95,7 @@ export class KeySignature extends base.Music21Object {
     }
 
     set sharps(s: number) {
-        this._alteredPitchesCache = [];
+        this._alteredPitchesCache = undefined;
         this._sharps = s;
     }
 
