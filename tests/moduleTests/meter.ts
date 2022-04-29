@@ -132,6 +132,23 @@ export default function tests() {
         assert.strictEqual(beamsList[1].beamsList[0].type, 'stop');
     });
 
+    test('music21.meter.TimeSignature getBeams incomplete measure paddingRight', assert => {
+        // incomplete measure in 12/8, with paddingRight set
+        const m = new music21.stream.Measure();
+        m.append(new music21.note.Note('C', 0.5));
+        m.append(new music21.note.Note('C', 0.25));
+        m.append(new music21.note.Note('C', 1));
+        m.append(new music21.note.Note('C', 1));
+        m.append(new music21.note.Note('C', 0.5));  // this beam crosses the beat boundary 2.75 -> 3.25
+        m.append(new music21.note.Note('C', 0.5));  // and thus cannot be beamed to this one
+        m.paddingRight = 2.25;
+
+        const ts = new music21.meter.TimeSignature('12/8');
+        const beamsList = ts.getBeams(m);
+        assert.strictEqual(typeof beamsList[4], 'undefined');
+        assert.strictEqual(typeof beamsList[5], 'undefined');
+    });
+
     test('music21.meter.TimeSignature compound', assert => {
         const m = new music21.meter.TimeSignature('6/8');
 
