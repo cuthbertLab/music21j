@@ -61,7 +61,7 @@ export class RenderOptions {
     // scaleFactors.
     maxSystemWidth: number = undefined;
 
-    leftBarline: string = undefined;  // normally not used.
+    leftBarline: string = undefined;  // render() sets to 'none' for system beginnings
     rightBarline: string = undefined;
 
     staffLines: number = 5;
