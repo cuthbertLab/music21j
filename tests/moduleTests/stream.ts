@@ -559,8 +559,7 @@ export default function tests() {
         const c = new music21.chord.Chord('G# G');
         m.append(c);
         m.makeAccidentals({inPlace: true});
-        assert.ok(c.pitches[0].accidental.displayStatus);
-        assert.ok(c.pitches[1].accidental.displayStatus);
+        assert.ok(c.pitches[0].accidental.displayStatus);  // G comes first
     });
 
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
