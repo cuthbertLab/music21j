@@ -26,6 +26,7 @@ import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
 
 import * as base from './base';
+import { Chord } from './chord';
 import * as clef from './clef';
 import * as common from './common';
 import * as derivation from './derivation';
@@ -47,7 +48,6 @@ import * as iterator from './stream/iterator';
 import * as makeNotation from './stream/makeNotation';
 
 // for typing only
-import type { Chord } from './chord';
 import type { KeySignature } from './key';
 
 export { filters };
@@ -1815,9 +1815,10 @@ export class Stream extends base.Music21Object {
                 if (tie !== undefined && tie.type !== 'stop') {
                     tiePitchSet.add(p.nameWithOctave);
                 }
-            } else if (e.classes.includes('Chord')) {
-                const chordNotes = (e as Chord).notes;
+            } else if (e instanceof Chord) {
+                const chordNotes = e.notes;
                 const seenPitchNames: Set<string> = new Set();
+                pitchPast.push(...e.pitches);
                 for (const n of chordNotes) {
                     const p = n.pitch;
                     const lastNoteWasTied: boolean = tiePitchSet.has(p.nameWithOctave);
@@ -1841,7 +1842,6 @@ export class Stream extends base.Music21Object {
                 for (const pName of seenPitchNames) {
                     tiePitchSet.add(pName);
                 }
-                pitchPast.push(...(e as Chord).pitches);
             } else {
                 tiePitchSet.clear();
             }
