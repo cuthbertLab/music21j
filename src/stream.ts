@@ -3284,11 +3284,9 @@ export class Part extends Stream {
     fixSystemInformation({
         systemHeight = undefined,
         systemPadding = undefined,
-        setMeasureRenderOptions = true,
     }: {
         systemHeight?: number,
         systemPadding?: number,
-        setMeasureRenderOptions?: boolean,
     } = {}): number[] {
         // this is a method on Part!
         if (systemHeight === undefined) {
@@ -3297,26 +3295,22 @@ export class Part extends Stream {
         } else if (debug) {
             console.log('overridden systemHeight: ' + systemHeight);
         }
-        let systemCurrentWidths = [];
-        let systemBreakIndexes = [];
-        if (setMeasureRenderOptions) {
-            [systemCurrentWidths, systemBreakIndexes] = this.systemWidthsAndBreaks();
-        }
-        else {
-            // read from measure render options
-            let lastSystemIndex = 0;
-            let workingSystemWidth = 0;
-            const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
-            for (const [i, m] of Array.from(measure_iter).entries()) {
-                if (m.renderOptions.systemIndex === lastSystemIndex) {
-                    workingSystemWidth += m.renderOptions.width;
-                } else {
-                    systemCurrentWidths.push(workingSystemWidth);
-                    systemBreakIndexes.push(i - 1);
-                    workingSystemWidth = m.renderOptions.width;
-                }
-                lastSystemIndex = m.renderOptions.systemIndex;
+        const systemCurrentWidths = [];
+        const systemBreakIndexes = [];
+
+        // read from measure render options
+        let lastSystemIndex = 0;
+        let workingSystemWidth = 0;
+        const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
+        for (const [i, m] of Array.from(measure_iter).entries()) {
+            if (m.renderOptions.systemIndex === lastSystemIndex) {
+                workingSystemWidth += m.renderOptions.width;
+            } else {
+                systemCurrentWidths.push(workingSystemWidth);
+                systemBreakIndexes.push(i - 1);
+                workingSystemWidth = m.renderOptions.width;
             }
+            lastSystemIndex = m.renderOptions.systemIndex;
         }
         if (systemPadding === undefined) {
             systemPadding = this.renderOptions.systemPadding;
@@ -3328,7 +3322,6 @@ export class Part extends Stream {
 
         let currentSystemIndex = 0;
 
-        const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
         for (const [i, m] of Array.from(measure_iter).entries()) {
             // values of systemBreakIndices are the measure indices
             // corresponding to the last measure on a system
@@ -3642,12 +3635,9 @@ export class Score extends Stream {
             p.systemWidthsAndBreaks({setMeasureWidths: false});
         }
         for (const p of this.parts) {
-            // fix system info, but no need to recalculate measure widths
-            // which would undo what we just did
             p.fixSystemInformation({
                 systemHeight: currentScoreHeight,
                 systemPadding: this.renderOptions.systemPadding,
-                setMeasureRenderOptions: false,
             });
         }
         this.renderOptions.height = this.estimateStreamHeight();

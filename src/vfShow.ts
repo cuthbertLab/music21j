@@ -206,7 +206,7 @@ export class Renderer {
         if (isScorelike) {
             this.prepareScorelike(s as stream.Score);
         } else if (isPartlike) {
-            this.preparePartlike(s as stream.Part);
+            this.preparePartlike(s as stream.Part, {multipart: false});
         } else {
             this.prepareArrivedFlat(s);
         }
@@ -227,7 +227,7 @@ export class Renderer {
         //
         const parts = s.parts;
         for (const subStream of parts) {
-            this.preparePartlike(subStream);
+            this.preparePartlike(subStream, {multipart: s.parts.length > 1});
         }
         this.addStaffConnectors(s);
     }
@@ -238,7 +238,7 @@ export class Renderer {
      * or substreams that should be considered like Measures)
      * for rendering.
      */
-    preparePartlike(p: stream.Part) {
+    preparePartlike(p: stream.Part, {multipart = false}: {multipart?: boolean} = {}) {
         // console.log('preparePartlike called');
         this.systemBreakOffsets = [];
         const measureList = p.measures;
@@ -246,6 +246,9 @@ export class Renderer {
             const subStream = measureList.get(i);
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
+                if (!multipart) {
+                    subStream.renderOptions.leftBarline = 'none';
+                }
             }
             if (i === p.length - 1 && subStream.renderOptions.rightBarline === undefined) {
                 subStream.renderOptions.rightBarline = 'end';
@@ -267,6 +270,7 @@ export class Renderer {
      */
     prepareArrivedFlat(m: stream.Stream) {
         const stack = new RenderStack();
+        m.renderOptions.leftBarline = 'none';
         this.prepareMeasure(m as stream.Measure, stack);
         this.stacks[0] = stack;
         this.prepareTies(m);
