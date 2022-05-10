@@ -894,7 +894,9 @@ export class Pitch extends prebase.ProtoM21Object {
                         this.accidental = new Accidental('natural');
                     }
                     this.accidental.displayStatus = true;
-
+                // not exactly equivalent with https://github.com/cuthbertLab/music21/pull/1299
+                // because m21j does not track chordAttached
+                // Thus, some potential for subsequent same pitch class to lack a cautionary natural
                     // other cases: already natural in past usage, do not need
                     // natural again (and not in key sig)
                 } else {
