@@ -583,10 +583,12 @@ export class MeasureParser {
             if (mxTimeModification) {
                 const $mxTimeMod = $(mxTimeModification);
                 const normalType = $mxTimeMod.children('normal-type')[0];
-                let normalDur: duration.Duration | undefined;
+                let normalDur: duration.Duration;
                 if (normalType) {
                     normalDur = new duration.Duration(normalType.textContent.trim());
                     normalDur.dots = $mxTimeMod.children('normal-dot').length;
+                } else {
+                    normalDur = d.clone();
                 }
                 const tuplet = new duration.Tuplet(
                     $mxTimeMod.children('actual-notes')[0].textContent.trim(),
