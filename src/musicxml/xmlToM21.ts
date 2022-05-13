@@ -551,7 +551,7 @@ export class MeasureParser {
         return n;
     }
 
-    xmlToDuration($mxNote, inputM21) {
+    xmlToDuration($mxNote, inputM21: duration.Duration) {
         let d = inputM21;
         if (inputM21 === undefined) {
             d = new duration.Duration();
@@ -569,6 +569,7 @@ export class MeasureParser {
             qLen = noteDivisions / divisions;
         }
 
+        const mxTimeModification = $mxNote.children('time-modification')[0];
         const mxType = $mxNote.children('type')[0];
         if (mxType) {
             // long vs longa todo
@@ -576,9 +577,26 @@ export class MeasureParser {
                 .text()
                 .trim();
             const numDots = $mxNote.children('dot').length;
-            // tuplets!!!! big to-do!
             d.type = durationType;
             d.dots = numDots;
+            // Just first tuplet for now
+            if (mxTimeModification) {
+                const $mxTimeMod = $(mxTimeModification);
+                const normalType = $mxTimeMod.children('normal-type')[0];
+                let normalDur: duration.Duration;
+                if (normalType) {
+                    normalDur = new duration.Duration(normalType.textContent.trim());
+                    normalDur.dots = $mxTimeMod.children('normal-dot').length;
+                } else {
+                    normalDur = d.clone();
+                }
+                const tuplet = new duration.Tuplet(
+                    $mxTimeMod.children('actual-notes')[0].textContent.trim(),
+                    $mxTimeMod.children('normal-notes')[0].textContent.trim(),
+                    normalDur,
+                );
+                d.appendTuplet(tuplet);
+            }
         } else {
             d.quarterLength = qLen;
         }
