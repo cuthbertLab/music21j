@@ -5,6 +5,7 @@
  *
  */
 
+import { type } from 'jquery';
 import * as common from './common';
 
 declare interface ProtoM21ObjectConstructorInterface extends Function {
@@ -161,7 +162,7 @@ export class ProtoM21Object {
                 ret[key] = Array.from(this[key] as any);
             } else {
                 try {
-                    if (deep) {
+                    if (deep && typeof this[key] !== 'string') {
                         common.merge(ret[key], this[key] as any);
                     } else {
                         ret[key] = this[key];
