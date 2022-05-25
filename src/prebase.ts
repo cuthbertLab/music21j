@@ -118,9 +118,8 @@ export class ProtoM21Object {
             memo = new WeakMap();
         }
 
-        // TODO(msc): test if Arrays work?
         for (const key in this) {
-            // not that we ONLY copy the keys in Ret -- it's easier that way.
+            // note that we ONLY copy the keys in Ret -- it's easier that way.
             if ({}.hasOwnProperty.call(this, key) === false) {
                 continue;
             }
@@ -155,6 +154,11 @@ export class ProtoM21Object {
                     clonedVersion = m21Obj.clone(deep, memo);
                 }
                 ret[key] = clonedVersion;
+            } else if (
+                deep
+                && this[key] instanceof Array
+            ) {
+                ret[key] = Array.from(this[key] as any);
             } else {
                 try {
                     if (deep) {
