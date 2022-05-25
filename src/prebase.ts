@@ -5,7 +5,6 @@
  *
  */
 
-import { type } from 'jquery';
 import * as common from './common';
 
 declare interface ProtoM21ObjectConstructorInterface extends Function {
