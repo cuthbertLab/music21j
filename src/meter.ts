@@ -193,15 +193,19 @@ export class TimeSignature extends base.Music21Object {
         }
 
         if (beatValue >= 8) {
-            while (numBeats >= 5) {
-                tempBeatGroups.push([3, beatValue]);
-                numBeats -= 3;
-            }
-            if (numBeats === 4) {
-                tempBeatGroups.push([2, beatValue]);
-                tempBeatGroups.push([2, beatValue]);
-            } else if (numBeats > 0) {
-                tempBeatGroups.push([numBeats, beatValue]);
+            if ([4, 2].includes(numBeats)) {  // 4/8 and 2/8 should have eighth beats
+                tempBeatGroups.push([1, beatValue]);
+            } else {
+                while (numBeats >= 5) {
+                    tempBeatGroups.push([3, beatValue]);
+                    numBeats -= 3;
+                }
+                if (numBeats === 4) {
+                    tempBeatGroups.push([2, beatValue]);
+                    tempBeatGroups.push([2, beatValue]);
+                } else if (numBeats > 0) {
+                    tempBeatGroups.push([numBeats, beatValue]);
+                }
             }
         } else if (beatValue === 2) {
             tempBeatGroups.push([1, 2]);
@@ -212,6 +216,27 @@ export class TimeSignature extends base.Music21Object {
             tempBeatGroups.push([2, 8]);
         }
         return tempBeatGroups;
+    }
+
+    _beat_group_as_ql(beatGroup: number[]): number {
+        const temp_ts = new TimeSignature();
+        temp_ts.numerator = beatGroup[0];
+        temp_ts.denominator = beatGroup[1];
+        return temp_ts.barDuration.quarterLength;
+    }
+
+    _beat_groups_to_fill_bar(): number[][] {
+        const post = [];
+        if (this.beatGroups.length === 1) {
+            for (let i = 0; i < this.beatCount; i++) {
+                post.push(this.beatGroups[0]);
+            }
+        } else {
+            for (const beatGroup of this.beatGroups) {
+                post.push(beatGroup);
+            }
+        }
+        return post;
     }
 
     offsetToIndex(
@@ -225,20 +250,39 @@ export class TimeSignature extends base.Music21Object {
                 + `where total duration is ${this.barDuration.quarterLength}`
             );
         }
-        // DOES NOT SUPPORT irregular beats yet...
-        const beatDuration = this.beatDuration;
-        // does not support includeCoincidentBoundaries yet.
-        return Math.floor(qLenPos / beatDuration.quarterLength);
+
+        let accumulated_time = 0.0;
+        let index = -1;  // first beatGroup increments to 0
+
+        for (const beatGroup of this._beat_groups_to_fill_bar()) {
+            index += 1;
+            const beat_group_ql = this._beat_group_as_ql(beatGroup);
+            accumulated_time = opFrac(accumulated_time + beat_group_ql);
+            if (
+                accumulated_time > qLenPos
+                || (includeCoincidentBoundaries && accumulated_time === qLenPos)
+            ) {
+                break;
+            }
+        }
+        return index;
     }
 
     /**
      * Return a span of [start, end] for the current beat/beam grouping
      */
     offsetToSpan(offset: number): number[] {
-        const beatDuration = this.beatDuration.quarterLength;
-        const beatsFromStart = Math.floor(offset / beatDuration);
-        const start = beatsFromStart * beatDuration;
-        const end = start + beatDuration;
+        let start = 0.0;
+        let end = 0.0;
+
+        for (const beatGroup of this._beat_groups_to_fill_bar()) {
+            const beat_group_ql = this._beat_group_as_ql(beatGroup);
+            start = end;
+            end = opFrac(start + beat_group_ql);
+            if (end > offset) {
+                break;
+            }
+        }
         return [start, end];
     }
 
@@ -258,7 +302,7 @@ export class TimeSignature extends base.Music21Object {
                 return;
             }
 
-            if (el.duration.quarterLength >= this.beatDuration.quarterLength) {
+            if (el.quarterLength >= this._beat_group_as_ql(this.beatGroups[0])) {
                 beamsList[i] = undefined;
                 return;
             }
