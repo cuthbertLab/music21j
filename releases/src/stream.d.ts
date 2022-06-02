@@ -860,10 +860,9 @@ export declare class Part extends Stream {
      * returns an array of all the widths of complete systems
      * (last partial system omitted)
      */
-    fixSystemInformation({ systemHeight, systemPadding, setMeasureRenderOptions, }?: {
+    fixSystemInformation({ systemHeight, systemPadding, }?: {
         systemHeight?: number;
         systemPadding?: number;
-        setMeasureRenderOptions?: boolean;
     }): number[];
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions

@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.12.17",
+  "version": "0.12.18",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "releases/music21.debug.js",
   "typings": "releases/main.d.ts",

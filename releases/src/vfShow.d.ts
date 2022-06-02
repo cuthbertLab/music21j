@@ -95,7 +95,9 @@ export declare class Renderer {
      * or substreams that should be considered like Measures)
      * for rendering.
      */
-    preparePartlike(p: stream.Part): void;
+    preparePartlike(p: stream.Part, { multipart }?: {
+        multipart?: boolean;
+    }): void;
     /**
      *
      * Prepares a score that arrived flat... sets up

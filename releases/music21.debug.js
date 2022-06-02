@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.17 built on 2022-04-29.
+ * music21j version 0.12.18 built on 2022-06-02.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -6825,6 +6825,10 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   updateQlFromFeatures() {
     const typeNumber = ordinalTypeFromNum.indexOf(this._type); // must be set property
 
+    if (typeNumber === -1) {
+      return; // e.g. "zero" type
+    }
+
     const undottedQuarterLength = Math.pow(2, quarterTypeIndex - typeNumber);
     const dottedMultiplier = 1 + (Math.pow(2, this._dots) - 1.0) / Math.pow(2, this._dots);
     const unTupletedQl = undottedQuarterLength * dottedMultiplier;
@@ -11396,16 +11400,21 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     }
 
     if (beatValue >= 8) {
-      while (numBeats >= 5) {
-        tempBeatGroups.push([3, beatValue]);
-        numBeats -= 3;
-      }
+      if ([4, 2].includes(numBeats)) {
+        // 4/8 and 2/8 should have eighth beats
+        tempBeatGroups.push([1, beatValue]);
+      } else {
+        while (numBeats >= 5) {
+          tempBeatGroups.push([3, beatValue]);
+          numBeats -= 3;
+        }
 
-      if (numBeats === 4) {
-        tempBeatGroups.push([2, beatValue]);
-        tempBeatGroups.push([2, beatValue]);
-      } else if (numBeats > 0) {
-        tempBeatGroups.push([numBeats, beatValue]);
+        if (numBeats === 4) {
+          tempBeatGroups.push([2, beatValue]);
+          tempBeatGroups.push([2, beatValue]);
+        } else if (numBeats > 0) {
+          tempBeatGroups.push([numBeats, beatValue]);
+        }
       }
     } else if (beatValue === 2) {
       tempBeatGroups.push([1, 2]);
@@ -11419,18 +11428,53 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     return tempBeatGroups;
   }
 
+  _beat_group_as_ql(beatGroup) {
+    const temp_ts = new TimeSignature();
+    temp_ts.numerator = beatGroup[0];
+    temp_ts.denominator = beatGroup[1];
+    return temp_ts.barDuration.quarterLength;
+  }
+
+  _beat_groups_to_fill_bar() {
+    const post = [];
+
+    if (this.beatGroups.length === 1) {
+      for (let i = 0; i < this.beatCount; i++) {
+        post.push(this.beatGroups[0]);
+      }
+    } else {
+      for (const beatGroup of this.beatGroups) {
+        post.push(beatGroup);
+      }
+    }
+
+    return post;
+  }
+
   offsetToIndex(qLenPos, {
     includeCoincidentBoundaries = false
   } = {}) {
     // This should be a method on a MeterSequence.
     if (qLenPos >= this.barDuration.quarterLength || qLenPos < 0) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception("cannot access from qLenPos ".concat(qLenPos, " ") + "where total duration is ".concat(this.barDuration.quarterLength));
-    } // DOES NOT SUPPORT irregular beats yet...
+    }
 
+    let accumulated_time = 0.0;
+    let index = -1; // first beatGroup increments to 0
 
-    const beatDuration = this.beatDuration; // does not support includeCoincidentBoundaries yet.
+    for (const beatGroup of this._beat_groups_to_fill_bar()) {
+      index += 1;
 
-    return Math.floor(qLenPos / beatDuration.quarterLength);
+      const beat_group_ql = this._beat_group_as_ql(beatGroup);
+
+      accumulated_time = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(accumulated_time + beat_group_ql);
+
+      if (accumulated_time > qLenPos || includeCoincidentBoundaries && accumulated_time === qLenPos) {
+        break;
+      }
+    }
+
+    return index;
   }
   /**
    * Return a span of [start, end] for the current beat/beam grouping
@@ -11438,10 +11482,20 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
 
 
   offsetToSpan(offset) {
-    const beatDuration = this.beatDuration.quarterLength;
-    const beatsFromStart = Math.floor(offset / beatDuration);
-    const start = beatsFromStart * beatDuration;
-    const end = start + beatDuration;
+    let start = 0.0;
+    let end = 0.0;
+
+    for (const beatGroup of this._beat_groups_to_fill_bar()) {
+      const beat_group_ql = this._beat_group_as_ql(beatGroup);
+
+      start = end;
+      end = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(start + beat_group_ql);
+
+      if (end > offset) {
+        break;
+      }
+    }
+
     return [start, end];
   }
   /**
@@ -11466,7 +11520,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
         return;
       }
 
-      if (el.duration.quarterLength >= this.beatDuration.quarterLength) {
+      if (el.quarterLength >= this._beat_group_as_ql(this.beatGroups[0])) {
         beamsList[i] = undefined;
         return;
       }
@@ -14022,15 +14076,31 @@ class MeasureParser {
       qLen = noteDivisions / divisions;
     }
 
+    const mxTimeModification = $mxNote.children('time-modification')[0];
     const mxType = $mxNote.children('type')[0];
 
     if (mxType) {
       // long vs longa todo
       const durationType = jquery__WEBPACK_IMPORTED_MODULE_2__(mxType).text().trim();
-      const numDots = $mxNote.children('dot').length; // tuplets!!!! big to-do!
-
+      const numDots = $mxNote.children('dot').length;
       d.type = durationType;
-      d.dots = numDots;
+      d.dots = numDots; // Just first tuplet for now
+
+      if (mxTimeModification) {
+        const $mxTimeMod = jquery__WEBPACK_IMPORTED_MODULE_2__(mxTimeModification);
+        const normalType = $mxTimeMod.children('normal-type')[0];
+        let normalDur;
+
+        if (normalType) {
+          normalDur = new _duration__WEBPACK_IMPORTED_MODULE_6__.Duration(normalType.textContent.trim());
+          normalDur.dots = $mxTimeMod.children('normal-dot').length;
+        } else {
+          normalDur = d.clone();
+        }
+
+        const tuplet = new _duration__WEBPACK_IMPORTED_MODULE_6__.Tuplet($mxTimeMod.children('actual-notes')[0].textContent.trim(), $mxTimeMod.children('normal-notes')[0].textContent.trim(), normalDur);
+        d.appendTuplet(tuplet);
+      }
     } else {
       d.quarterLength = qLen;
     }
@@ -16115,7 +16185,10 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
             this.accidental = new Accidental('natural');
           }
 
-          this.accidental.displayStatus = true; // other cases: already natural in past usage, do not need
+          this.accidental.displayStatus = true; // not exactly equivalent with https://github.com/cuthbertLab/music21/pull/1299
+          // because m21j does not track chordAttached
+          // Thus, some potential for subsequent same pitch class to lack a cautionary natural
+          // other cases: already natural in past usage, do not need
           // natural again (and not in key sig)
         } else {
           if (this.accidental !== undefined) {
@@ -16567,7 +16640,7 @@ class RenderOptions {
     // scaleFactors.
 
     this.maxSystemWidth = undefined;
-    this.leftBarline = undefined; // normally not used.
+    this.leftBarline = undefined; // render() sets to 'none' for system beginnings
 
     this.rightBarline = undefined;
     this.staffLines = 5;
@@ -18389,9 +18462,9 @@ class Sites {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "filters": () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_25__),
-/* harmony export */   "iterator": () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_26__),
-/* harmony export */   "makeNotation": () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_27__),
+/* harmony export */   "filters": () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_26__),
+/* harmony export */   "iterator": () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_27__),
+/* harmony export */   "makeNotation": () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_28__),
 /* harmony export */   "StreamException": () => (/* binding */ StreamException),
 /* harmony export */   "Stream": () => (/* binding */ Stream),
 /* harmony export */   "Voice": () => (/* binding */ Voice),
@@ -18421,22 +18494,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
-/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
+/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
 
 
 
@@ -18480,6 +18554,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
  // eslint-disable-next-line import/no-cycle
 
 
@@ -18492,7 +18567,7 @@ __webpack_require__.r(__webpack_exports__);
 class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_9__.Music21Exception {}
 
 function _exportMusicXMLAsText(s) {
-  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_24__.GeneralObjectExporter(s);
+  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_25__.GeneralObjectExporter(s);
   return gox.parse();
 }
 /**
@@ -18577,7 +18652,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_20__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_21__.RenderOptions();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
@@ -18697,12 +18772,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
   }
 
   get duration() {
-    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_15__.Duration) {
+    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_16__.Duration) {
       // return new duration.Duration(32.0);
       return this._overriddenDuration;
     }
 
-    return new _duration__WEBPACK_IMPORTED_MODULE_15__.Duration(this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_16__.Duration(this.highestTime);
   }
 
   set duration(newDuration) {
@@ -18743,7 +18818,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       // namely, do not set inner streams activeSites to be
       // in things that they won't have later.
       newSt.clear();
-      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_26__.RecursiveIterator(this, {
+      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_27__.RecursiveIterator(this, {
         restoreActiveSites: false,
         includeSelf: false,
         ignoreSorting: true
@@ -18806,7 +18881,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
     const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
     const highestTime = thisFlat.highestTime;
     const lowestOffset = 0;
-    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_22__.MetronomeMark({
+    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_23__.MetronomeMark({
       number: 120
     });
 
@@ -18889,7 +18964,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_16__.Instrument(newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_17__.Instrument(newInstrument);
     }
 
     this._instrument = newInstrument;
@@ -18991,7 +19066,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_17__.TimeSignature(newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_18__.TimeSignature(newTimeSignature);
     }
 
     const oldTS = this._firstElementContext('timeSignature');
@@ -19211,14 +19286,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
     skipSelf = true
   } = {}) {
     const includeSelf = !skipSelf;
-    const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_26__.RecursiveIterator(this, {
+    const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_27__.RecursiveIterator(this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
 
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_25__.ClassFilter(classFilter));
+      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_26__.ClassFilter(classFilter));
     }
 
     return ri;
@@ -19700,7 +19775,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       bestClef: false,
       inPlace: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_13__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_14__.merge(params, options);
     let voiceCount;
 
     if (this.hasVoices()) {
@@ -19906,7 +19981,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       }
 
       const restQL = restInfo.endTime - restInfo.offset;
-      const restObj = new _note__WEBPACK_IMPORTED_MODULE_18__.Rest();
+      const restObj = new _note__WEBPACK_IMPORTED_MODULE_19__.Rest();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
@@ -19930,7 +20005,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
   cloneEmpty(derivationMethod) {
     const returnObj = new this.constructor();
-    const new_derivation = new _derivation__WEBPACK_IMPORTED_MODULE_14__.Derivation(returnObj);
+    const new_derivation = new _derivation__WEBPACK_IMPORTED_MODULE_15__.Derivation(returnObj);
     new_derivation.origin = this;
     new_derivation.method = derivationMethod || 'cloneEmpty';
     returnObj.derivation = new_derivation;
@@ -19994,7 +20069,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
     inPlace = false,
     setStemDirections = true
   } = {}) {
-    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_27__.makeBeams(this, {
+    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_28__.makeBeams(this, {
       inPlace,
       setStemDirections
     });
@@ -20074,7 +20149,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
   }
 
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_26__.StreamIterator(this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_27__.StreamIterator(this);
   }
   /**
    * Find all elements with a certain class; if an Array is given, then any
@@ -20309,9 +20384,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
         if (tie !== undefined && tie.type !== 'stop') {
           tiePitchSet.add(p.nameWithOctave);
         }
-      } else if (e.classes.includes('Chord')) {
+      } else if (e instanceof _chord__WEBPACK_IMPORTED_MODULE_12__.Chord) {
         const chordNotes = e.notes;
         const seenPitchNames = new Set();
+        pitchPast.push(...e.pitches);
 
         for (const n of chordNotes) {
           const p = n.pitch;
@@ -20337,8 +20413,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
         for (const pName of seenPitchNames) {
           tiePitchSet.add(pName);
         }
-
-        pitchPast.push(...e.pitches);
       } else {
         tiePitchSet.clear();
       }
@@ -20371,7 +20445,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
   resetRenderOptions(recursive, preserveEvents) {
     const oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_20__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_21__.RenderOptions();
 
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
@@ -20405,7 +20479,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
 
   renderVexflow(where) {
-    const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_13__.coerceHTMLElement(where);
+    const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_14__.coerceHTMLElement(where);
     const DOMContains = document.body.contains(canvasOrSVG);
 
     if (!DOMContains) {
@@ -20427,7 +20501,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       }
     }
 
-    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_23__.Renderer(this, canvasOrSVG);
+    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_24__.Renderer(this, canvasOrSVG);
 
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
@@ -20859,7 +20933,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       done: undefined,
       startNote: undefined
     };
-    _common__WEBPACK_IMPORTED_MODULE_13__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_14__.merge(params, options);
     const startNoteIndex = params.startNote;
     let currentNoteIndex = 0;
 
@@ -20976,7 +21050,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common__WEBPACK_IMPORTED_MODULE_13__.stripPx(width);
+        width = _common__WEBPACK_IMPORTED_MODULE_14__.stripPx(width);
       }
 
       $newCanvasOrDIV.attr('width', width);
@@ -21044,7 +21118,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
 
   appendNewDOM(appendElement = document.body, width = undefined, height = undefined, elementType = 'svg') {
-    const $appendElement = _common__WEBPACK_IMPORTED_MODULE_13__.coerceJQuery(appendElement);
+    const $appendElement = _common__WEBPACK_IMPORTED_MODULE_14__.coerceJQuery(appendElement);
     const $svgOrCanvasBlock = this.createDOM(width, height, elementType);
     $appendElement.append($svgOrCanvasBlock);
     return $svgOrCanvasBlock[0];
@@ -21064,7 +21138,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
   replaceDOM(where, preserveSvgSize = false, elementType = 'svg') {
     let $oldSVGOrCanvas;
-    const $where = _common__WEBPACK_IMPORTED_MODULE_13__.coerceJQuery(where);
+    const $where = _common__WEBPACK_IMPORTED_MODULE_14__.coerceJQuery(where);
 
     if ($where.hasClass('streamHolding')) {
       $oldSVGOrCanvas = $where;
@@ -21112,7 +21186,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
 
   setRenderInteraction(where) {
-    const $svg = _common__WEBPACK_IMPORTED_MODULE_13__.coerceJQuery(where);
+    const $svg = _common__WEBPACK_IMPORTED_MODULE_14__.coerceJQuery(where);
 
     const playFunc = () => {
       this.playStream();
@@ -21297,7 +21371,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common__WEBPACK_IMPORTED_MODULE_13__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_14__.merge(params, options);
     let foundNote;
     const subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
 
@@ -21368,7 +21442,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
 
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     const n = foundNote;
-    const p = new _pitch__WEBPACK_IMPORTED_MODULE_19__.Pitch('C');
+    const p = new _pitch__WEBPACK_IMPORTED_MODULE_20__.Pitch('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -21469,9 +21543,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
         }
       }
 
-      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_18__.Note) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_19__.Note) {
         const n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_19__.Accidental(newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_20__.Accidental(newAlter);
         /* console.log(n.pitch.name); */
 
         const $newSvg = this.redrawDOM($useSvg[0]);
@@ -21488,7 +21562,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
     const $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_7__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
 
     for (let i = minAccidental; i <= maxAccidental; i++) {
-      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_21__.svg_accidentals.get(i).cloneNode(true);
+      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_22__.svg_accidentals.get(i).cloneNode(true);
       const $button = jquery__WEBPACK_IMPORTED_MODULE_7__('<button style="width: 40px; height: 40px;"></button>').on('click', e => addAccidental(i, e));
       $button[0].appendChild(svg_acc);
       $buttonDiv.append($button);
@@ -21645,7 +21719,7 @@ class Part extends Stream {
       return this._partName;
     }
 
-    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_16__.Instrument) {
+    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_17__.Instrument) {
       return this.instrument.partName;
     }
 
@@ -21665,7 +21739,7 @@ class Part extends Stream {
       return this._partAbbreviation;
     }
 
-    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_16__.Instrument) {
+    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_17__.Instrument) {
       return this.instrument.partAbbreviation;
     }
 
@@ -21834,8 +21908,7 @@ class Part extends Stream {
 
   fixSystemInformation({
     systemHeight = undefined,
-    systemPadding = undefined,
-    setMeasureRenderOptions = true
+    systemPadding = undefined
   } = {}) {
     // this is a method on Part!
     if (systemHeight === undefined) {
@@ -21845,28 +21918,23 @@ class Part extends Stream {
       console.log('overridden systemHeight: ' + systemHeight);
     }
 
-    let systemCurrentWidths = [];
-    let systemBreakIndexes = [];
+    const systemCurrentWidths = [];
+    const systemBreakIndexes = []; // read from measure render options
 
-    if (setMeasureRenderOptions) {
-      [systemCurrentWidths, systemBreakIndexes] = this.systemWidthsAndBreaks();
-    } else {
-      // read from measure render options
-      let lastSystemIndex = 0;
-      let workingSystemWidth = 0;
-      const measure_iter = this.getElementsByClass('Measure');
+    let lastSystemIndex = 0;
+    let workingSystemWidth = 0;
+    const measure_iter = this.getElementsByClass('Measure');
 
-      for (const [i, m] of Array.from(measure_iter).entries()) {
-        if (m.renderOptions.systemIndex === lastSystemIndex) {
-          workingSystemWidth += m.renderOptions.width;
-        } else {
-          systemCurrentWidths.push(workingSystemWidth);
-          systemBreakIndexes.push(i - 1);
-          workingSystemWidth = m.renderOptions.width;
-        }
-
-        lastSystemIndex = m.renderOptions.systemIndex;
+    for (const [i, m] of Array.from(measure_iter).entries()) {
+      if (m.renderOptions.systemIndex === lastSystemIndex) {
+        workingSystemWidth += m.renderOptions.width;
+      } else {
+        systemCurrentWidths.push(workingSystemWidth);
+        systemBreakIndexes.push(i - 1);
+        workingSystemWidth = m.renderOptions.width;
       }
+
+      lastSystemIndex = m.renderOptions.systemIndex;
     }
 
     if (systemPadding === undefined) {
@@ -21878,7 +21946,6 @@ class Part extends Stream {
 
     const maxSystemWidth = Math.max(...systemCurrentWidths);
     let currentSystemIndex = 0;
-    const measure_iter = this.getElementsByClass('Measure');
 
     for (const [i, m] of Array.from(measure_iter).entries()) {
       // values of systemBreakIndices are the measure indices
@@ -22078,7 +22145,7 @@ class Score extends Stream {
     const c = super.clef;
 
     if (c === undefined) {
-      return new _clef__WEBPACK_IMPORTED_MODULE_12__.TrebleClef();
+      return new _clef__WEBPACK_IMPORTED_MODULE_13__.TrebleClef();
     } else {
       return c;
     }
@@ -22176,12 +22243,9 @@ class Score extends Stream {
     }
 
     for (const p of this.parts) {
-      // fix system info, but no need to recalculate measure widths
-      // which would undo what we just did
       p.fixSystemInformation({
         systemHeight: currentScoreHeight,
-        systemPadding: this.renderOptions.systemPadding,
-        setMeasureRenderOptions: false
+        systemPadding: this.renderOptions.systemPadding
       });
     }
 
@@ -24727,7 +24791,9 @@ class Renderer {
     if (isScorelike) {
       this.prepareScorelike(s);
     } else if (isPartlike) {
-      this.preparePartlike(s);
+      this.preparePartlike(s, {
+        multipart: false
+      });
     } else {
       this.prepareArrivedFlat(s);
     }
@@ -24751,7 +24817,9 @@ class Renderer {
     const parts = s.parts;
 
     for (const subStream of parts) {
-      this.preparePartlike(subStream);
+      this.preparePartlike(subStream, {
+        multipart: s.parts.length > 1
+      });
     }
 
     this.addStaffConnectors(s);
@@ -24764,7 +24832,9 @@ class Renderer {
    */
 
 
-  preparePartlike(p) {
+  preparePartlike(p, {
+    multipart = false
+  } = {}) {
     // console.log('preparePartlike called');
     this.systemBreakOffsets = [];
     const measureList = p.measures;
@@ -24774,6 +24844,10 @@ class Renderer {
 
       if (subStream.renderOptions.startNewSystem) {
         this.systemBreakOffsets.push(subStream.offset);
+
+        if (!multipart) {
+          subStream.renderOptions.leftBarline = 'none';
+        }
       }
 
       if (i === p.length - 1 && subStream.renderOptions.rightBarline === undefined) {
@@ -24800,6 +24874,7 @@ class Renderer {
 
   prepareArrivedFlat(m) {
     const stack = new RenderStack();
+    m.renderOptions.leftBarline = 'none';
     this.prepareMeasure(m, stack);
     this.stacks[0] = stack;
     this.prepareTies(m);
