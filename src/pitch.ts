@@ -18,6 +18,7 @@ import type * as clef from './clef';
 interface UpdateAccidentalDisplayParams {
     pitchPast?: Pitch[],
     pitchPastMeasure?: Pitch[],
+    otherSimultaneousPitches?: Pitch[],
     alteredPitches?: Pitch[],
     cautionaryPitchClass?: boolean,
     cautionaryAll?: boolean,
@@ -618,6 +619,7 @@ export class Pitch extends prebase.ProtoM21Object {
         {
             pitchPast = [],
             pitchPastMeasure = [],
+            otherSimultaneousPitches = [],
             alteredPitches = [],
             cautionaryPitchClass = true,
             cautionaryAll = false,
@@ -626,10 +628,6 @@ export class Pitch extends prebase.ProtoM21Object {
             lastNoteWasTied = false,
         }: UpdateAccidentalDisplayParams = {}
     ) {
-        // TODO: this presently deals with chords as simply a list
-        //   we might permit pitchPast to contain a list of pitches, to represent
-        //    a simultaneity?
-
         // should we display accidental if no previous accidentals have been displayed
         // i.e. if it's the first instance of an accidental after a tie
         let displayAccidentalIfNoPreviousAccidentals = false;
@@ -667,6 +665,28 @@ export class Pitch extends prebase.ProtoM21Object {
             } else {
                 return;  // exit: nothing more to do
             }
+        }
+
+        function same_step_different_pitch(p: Pitch) {
+            if (p.step !== this.step) {
+                return false;
+            }
+            return p.nameWithOctave !== this.nameWithOctave;
+        }
+
+        if (
+            cautionaryPitchClass
+            && otherSimultaneousPitches !== undefined
+            && otherSimultaneousPitches.length > 0
+            && otherSimultaneousPitches.filter(same_step_different_pitch, this).length > 0
+        ) {
+            if (acc_orig !== undefined) {
+                acc_orig.displayStatus = true;
+            } else {
+                this.accidental = new Accidental('natural');
+                this.accidental.displayStatus = true;
+            }
+            return;
         }
 
         // no pitches in past...
@@ -894,9 +914,7 @@ export class Pitch extends prebase.ProtoM21Object {
                         this.accidental = new Accidental('natural');
                     }
                     this.accidental.displayStatus = true;
-                // not exactly equivalent with https://github.com/cuthbertLab/music21/pull/1299
-                // because m21j does not track chordAttached
-                // Thus, some potential for subsequent same pitch class to lack a cautionary natural
+
                     // other cases: already natural in past usage, do not need
                     // natural again (and not in key sig)
                 } else {

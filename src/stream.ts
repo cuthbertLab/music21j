@@ -1782,6 +1782,10 @@ export class Stream extends base.Music21Object {
             alteredPitches.push(...addAlterPitches);
         }
 
+        function different_pitch(other: pitch.Pitch) {
+            return other.nameWithOctave !== this.nameWithOctave;  // this is `p`
+        }
+
         const noteIterator = returnObj.recurse().notesAndRests;
         let last_measure: Measure;
         for (const e of noteIterator) {
@@ -1818,14 +1822,15 @@ export class Stream extends base.Music21Object {
             } else if (e instanceof Chord) {
                 const chordNotes = e.notes;
                 const seenPitchNames: Set<string> = new Set();
-                pitchPast.push(...e.pitches);
                 for (const n of chordNotes) {
                     const p = n.pitch;
                     const lastNoteWasTied: boolean = tiePitchSet.has(p.nameWithOctave);
+                    const otherSimultaneousPitches = e.pitches.filter(different_pitch, p);
 
                     p.updateAccidentalDisplay({
                         pitchPast,
                         pitchPastMeasure,
+                        otherSimultaneousPitches,
                         alteredPitches,
                         cautionaryPitchClass,
                         cautionaryAll,
@@ -1842,6 +1847,7 @@ export class Stream extends base.Music21Object {
                 for (const pName of seenPitchNames) {
                     tiePitchSet.add(pName);
                 }
+                pitchPast.push(...e.pitches);
             } else {
                 tiePitchSet.clear();
             }
