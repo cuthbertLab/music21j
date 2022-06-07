@@ -556,10 +556,10 @@ export default function tests() {
 
     test('music21.stream.Stream makeAccidentals augmented unison in chord', assert => {
         const m = new music21.stream.Measure();
-        const c = new music21.chord.Chord('G# G');
+        const c = new music21.chord.Chord('G G#');
         m.append(c);
         m.makeAccidentals({inPlace: true});
-        assert.ok(c.pitches[0].accidental.displayStatus);  // G comes first
+        assert.ok(c.pitches[0].accidental.displayStatus);
     });
 
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
