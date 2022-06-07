@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.18 built on 2022-06-02.
+ * music21j version 0.12.19 built on 2022-06-07.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -15920,6 +15920,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   updateAccidentalDisplay({
     pitchPast = [],
     pitchPastMeasure = [],
+    otherSimultaneousPitches = [],
     alteredPitches = [],
     cautionaryPitchClass = true,
     cautionaryAll = false,
@@ -15927,9 +15928,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
     cautionaryNotImmediateRepeat = true,
     lastNoteWasTied = false
   } = {}) {
-    // TODO: this presently deals with chords as simply a list
-    //   we might permit pitchPast to contain a list of pitches, to represent
-    //    a simultaneity?
     var _a; // should we display accidental if no previous accidentals have been displayed
     // i.e. if it's the first instance of an accidental after a tie
 
@@ -15967,6 +15965,25 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
       } else {
         return; // exit: nothing more to do
       }
+    }
+
+    function same_step_different_pitch(p) {
+      if (p.step !== this.step) {
+        return false;
+      }
+
+      return p.nameWithOctave !== this.nameWithOctave;
+    }
+
+    if (cautionaryPitchClass && otherSimultaneousPitches !== undefined && otherSimultaneousPitches.length > 0 && otherSimultaneousPitches.filter(same_step_different_pitch, this).length > 0) {
+      if (acc_orig !== undefined) {
+        acc_orig.displayStatus = true;
+      } else {
+        this.accidental = new Accidental('natural');
+        this.accidental.displayStatus = true;
+      }
+
+      return;
     } // no pitches in past...
     // noinspection PointlessBooleanExpressionJS
 
@@ -16185,10 +16202,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
             this.accidental = new Accidental('natural');
           }
 
-          this.accidental.displayStatus = true; // not exactly equivalent with https://github.com/cuthbertLab/music21/pull/1299
-          // because m21j does not track chordAttached
-          // Thus, some potential for subsequent same pitch class to lack a cautionary natural
-          // other cases: already natural in past usage, do not need
+          this.accidental.displayStatus = true; // other cases: already natural in past usage, do not need
           // natural again (and not in key sig)
         } else {
           if (this.accidental !== undefined) {
@@ -20349,6 +20363,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       alteredPitches.push(...addAlterPitches);
     }
 
+    function different_pitch(other) {
+      return other.nameWithOctave !== this.nameWithOctave; // this is `p`
+    }
+
     const noteIterator = returnObj.recurse().notesAndRests;
     let last_measure;
 
@@ -20387,14 +20405,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
       } else if (e instanceof _chord__WEBPACK_IMPORTED_MODULE_12__.Chord) {
         const chordNotes = e.notes;
         const seenPitchNames = new Set();
-        pitchPast.push(...e.pitches);
 
         for (const n of chordNotes) {
           const p = n.pitch;
           const lastNoteWasTied = tiePitchSet.has(p.nameWithOctave);
+          const otherSimultaneousPitches = e.pitches.filter(different_pitch, p);
           p.updateAccidentalDisplay({
             pitchPast,
             pitchPastMeasure,
+            otherSimultaneousPitches,
             alteredPitches,
             cautionaryPitchClass,
             cautionaryAll,
@@ -20413,6 +20432,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_11__.Music21Object {
         for (const pName of seenPitchNames) {
           tiePitchSet.add(pName);
         }
+
+        pitchPast.push(...e.pitches);
       } else {
         tiePitchSet.clear();
       }

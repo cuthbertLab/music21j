@@ -3,6 +3,7 @@ import type * as clef from './clef';
 interface UpdateAccidentalDisplayParams {
     pitchPast?: Pitch[];
     pitchPastMeasure?: Pitch[];
+    otherSimultaneousPitches?: Pitch[];
     alteredPitches?: Pitch[];
     cautionaryPitchClass?: boolean;
     cautionaryAll?: boolean;
@@ -67,7 +68,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
      * @type {string}
      * @readonly
      */
-    get vexflowModifier(): "b" | "#" | "##" | "###" | "n" | "bb" | "bbb";
+    get vexflowModifier(): "b" | "n" | "#" | "##" | "###" | "bb" | "bbb";
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
@@ -227,7 +228,7 @@ export declare class Pitch extends prebase.ProtoM21Object {
     getLowerEnharmonic(inPlace?: boolean): this;
     protected _nameInKeySignature(alteredPitches: Pitch[]): boolean;
     protected _stepInKeySignature(alteredPitches: Pitch[]): boolean;
-    updateAccidentalDisplay({ pitchPast, pitchPastMeasure, alteredPitches, cautionaryPitchClass, cautionaryAll, overrideStatus, cautionaryNotImmediateRepeat, lastNoteWasTied, }?: UpdateAccidentalDisplayParams): void;
+    updateAccidentalDisplay({ pitchPast, pitchPastMeasure, otherSimultaneousPitches, alteredPitches, cautionaryPitchClass, cautionaryAll, overrideStatus, cautionaryNotImmediateRepeat, lastNoteWasTied, }?: UpdateAccidentalDisplayParams): void;
     /**
      * Returns the vexflow name for the pitch in the given clef.
      *
