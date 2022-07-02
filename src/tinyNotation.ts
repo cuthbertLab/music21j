@@ -70,6 +70,12 @@ const regularExpressions: { [k: string]: RegExp } = {
  */
 export function TinyNotation(textIn: string): stream.Part|stream.Score {
     textIn = textIn.trim();
+    // compatibility with "tinyNotation: " in m21p
+    const indexOfOptionalPrefix = textIn.toLowerCase().indexOf('tinynotation: ');
+    if (indexOfOptionalPrefix !== -1) {
+        textIn = textIn.slice(indexOfOptionalPrefix);
+    }
+
     const tokens: string[] = textIn.split(' ');
 
     let optionalScore: stream.Score;
