@@ -71,9 +71,8 @@ const regularExpressions: { [k: string]: RegExp } = {
 export function TinyNotation(textIn: string): stream.Part|stream.Score {
     textIn = textIn.trim();
     // compatibility with "tinyNotation: " in m21p
-    const indexOfOptionalPrefix = textIn.toLowerCase().indexOf('tinynotation: ');
-    if (indexOfOptionalPrefix !== -1) {
-        textIn = textIn.slice(indexOfOptionalPrefix);
+    if (textIn.slice(0, 14).toLowerCase() === 'tinynotation: ') {
+        textIn = textIn.slice(14);
     }
 
     const tokens: string[] = textIn.split(' ');

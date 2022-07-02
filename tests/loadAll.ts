@@ -23,6 +23,7 @@ import sites from './moduleTests/sites';
 import stream from './moduleTests/stream';
 import tempo from './moduleTests/tempo';
 import tie from './moduleTests/tie';
+import tinyNotation from './moduleTests/tinyNotation';
 import vfShow from './moduleTests/vfShow';
 import voiceLeading from './moduleTests/voiceLeading';
 
@@ -51,6 +52,7 @@ const allTests = {
     sites,
     stream,
     tempo,
+    tinyNotation,
     tie,
     vfShow,
     voiceLeading,
