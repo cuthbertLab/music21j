@@ -277,29 +277,24 @@ export default function tests() {
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
         const convertedNotes = music21.tinyNotation.TinyNotation(
-            "tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4"
+            "4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4"
         ).flat;
         // Function does not work, stream.ts 1353
         //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
 
-        // Possible bug, first note has accidental information undefined
-        assert.equal(convertedNotes.elements[2].pitches.accidental, undefined, 'Undefined');
-
-        // displayStatus not defined in Note class, or Renamed
-        // assert.equal(convertedNotes.elements[2].pitch.accName.displayStatus, 'True');
+        assert.equal(convertedNotes.elements[2].pitch.accidental.name, 'natural', 'Natural');
+        //assert.equal(convertedNotes.elements[2].pitch.accidental.displayStatus, 'True');
         assert.equal(convertedNotes.elements[3].pitch.accidental.name, 'natural', 'Natural');
         //assert.equal(convertedNotes.elements[3].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[4].pitch.accidental.name, 'natural', 'Natural');
+        assert.equal(convertedNotes.elements[4].pitch.accidental.name, 'flat', 'Flat');
         //assert.equal(convertedNotes.elements[4].pitch.accidental.displayStatus, 'True');
         assert.equal(convertedNotes.elements[5].pitch.accidental.name, 'flat', 'Flat');
         //assert.equal(convertedNotes.elements[5].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[6].pitch.accidental.name, 'flat', 'Flat');
+        assert.equal(convertedNotes.elements[6].pitch.accidental.name, 'natural', 'Natural');
         //assert.equal(convertedNotes.elements[6].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[7].pitch.accidental.name, 'natural', 'Natural');
-        //assert.equal(convertedNotes.elements[7].pitch.accidental.displayStatus, 'True');
-        assert.notEqual(convertedNotes.elements[8].pitch.accidental, 'None', 'None');
-        assert.notEqual(convertedNotes.elements[8].pitch.accidental.name, 'flat', 'Natural');
-        //assert.notEqual(convertedNotes.notes[8].pitch.accidental.displayStatus, 'True');
+        assert.notEqual(convertedNotes.elements[7].pitch.accidental, 'None', 'None');
+        assert.notEqual(convertedNotes.elements[7].pitch.accidental.name, 'flat', 'Natural');
+        //assert.notEqual(convertedNotes.notes[7].pitch.accidental.displayStatus, 'True');
     });
 
     test('music21.pitch.updateAccidentalDisplay nonconsecutive chromatic pitches', assert => {
