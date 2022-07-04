@@ -193,4 +193,15 @@ export default function tests() {
         last_m.createDOM();
         assert.equal(last_m.renderOptions.leftBarline, 'none');
     });
+
+    test('music21.vfShow.Renderer multiple lyrics', assert => {
+        const p = new music21.stream.Part();
+        const n = new music21.note.Note();
+        n.lyrics.push(new music21.note.Lyric('first'));
+        n.lyrics.push(new music21.note.Lyric('second'));
+        p.append(n);
+        p.createDOM();
+        assert.equal(p.activeVFRenderer.stacks[0].textVoices[0].tickables[0].text, 'first');
+        assert.equal(p.activeVFRenderer.stacks[0].textVoices[1].tickables[0].text, 'second');
+    });
 }
