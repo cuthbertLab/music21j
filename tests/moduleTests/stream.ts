@@ -562,6 +562,14 @@ export default function tests() {
         assert.ok(c.pitches[0].accidental.displayStatus);
     });
 
+    test('music21.stream.Stream makeAccidentals perfect octave in chord', assert => {
+        const m = new music21.stream.Measure();
+        const c = new music21.chord.Chord('G4 G5');
+        m.append(c);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(c.pitches[0].accidental?.displayStatus);
+    });
+
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
         const n1 = new music21.note.Note('C5', 0.5);
         n1.stemDirection = 'up';
