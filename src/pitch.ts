@@ -671,7 +671,7 @@ export class Pitch extends prebase.ProtoM21Object {
             if (p.step !== this.step) {
                 return false;
             }
-            return p.nameWithOctave !== this.nameWithOctave;
+            return p.pitchClass !== this.pitchClass;
         }
 
         if (
