@@ -1,5 +1,5 @@
 /**
- * music21j version 0.12.19 built on 2022-06-07.
+ * music21j version 0.12.20 built on 2022-07-15.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -15972,7 +15972,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
         return false;
       }
 
-      return p.nameWithOctave !== this.nameWithOctave;
+      return p.pitchClass !== this.pitchClass;
     }
 
     if (cautionaryPitchClass && otherSimultaneousPitches !== undefined && otherSimultaneousPitches.length > 0 && otherSimultaneousPitches.filter(same_step_different_pitch, this).length > 0) {
@@ -24288,7 +24288,12 @@ const regularExpressions = {
  */
 
 function TinyNotation(textIn) {
-  textIn = textIn.trim();
+  textIn = textIn.trim(); // compatibility with "tinyNotation: " in m21p
+
+  if (textIn.slice(0, 14).toLowerCase() === 'tinynotation: ') {
+    textIn = textIn.slice(14);
+  }
+
   const tokens = textIn.split(' ');
   let optionalScore;
   let p = new _stream__WEBPACK_IMPORTED_MODULE_10__.Part();
@@ -24977,7 +24982,7 @@ class Renderer {
     stack.voiceToStreamMapping.set(vf_voice, s);
 
     if (s.hasLyrics()) {
-      stack.textVoices.push(this.getLyricVoice(s, stave));
+      stack.textVoices.push(...this.getLyricVoices(s, stave));
     }
 
     return stave;
@@ -25167,18 +25172,25 @@ class Renderer {
     return voice;
   }
   /**
-   * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
+   * Returns Vex.Flow.Voices with the lyrics set to render in the proper place.
    *
    * s -- usually a Measure or Voice
    */
 
 
-  getLyricVoice(s, stave) {
-    const textVoice = this.vexflowVoice(s);
-    const lyrics = this.vexflowLyrics(s, stave);
-    textVoice.setStave(stave);
-    textVoice.addTickables(lyrics);
-    return textVoice;
+  getLyricVoices(s, stave) {
+    const textVoices = [];
+    const max_lyric_depth = Math.max(...s.notesAndRests.map(gn => gn.lyrics.length));
+
+    for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
+      const textVoice = this.vexflowVoice(s);
+      const lyrics = this.vexflowLyrics(s, stave, depth);
+      textVoice.setStave(stave);
+      textVoice.addTickables(lyrics);
+      textVoices.push(textVoice);
+    }
+
+    return textVoices;
   }
   /**
    * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
@@ -25620,19 +25632,19 @@ class Renderer {
     return notes;
   }
   /**
-   * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
+   * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
    */
 
 
-  vexflowLyrics(s, stave) {
-    const getTextNote = (text, font, d, lyricObj = undefined) => {
+  vexflowLyrics(s, stave, depth = 0) {
+    const getTextNote = (text, font, d, lyricObj = undefined, line = 11) => {
       // console.log(text, font, d);
       // noinspection TypeScriptValidateJSTypes
       const t1 = new (vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.TextNote)({
         text,
         font,
         duration: d.vexflowDuration
-      }).setLine(11).setStave(stave).setJustification((vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.TextNote.Justification.LEFT));
+      }).setLine(line).setStave(stave).setJustification((vexflow__WEBPACK_IMPORTED_MODULE_4___default().Flow.TextNote.Justification.LEFT));
 
       if (lyricObj) {
         t1.setStyle(lyricObj.style);
@@ -25662,47 +25674,47 @@ class Renderer {
       let text;
       let d = el.duration;
       let addConnector = false;
-      let firstLyric;
       const font = {
         family: 'Serif',
         size: 12,
         weight: ''
       };
+      const lyricAtDepth = lyricsArray[depth]; // rename lyricAtDepth
 
-      if (lyricsArray.length === 0) {
+      if (lyricAtDepth === undefined) {
         text = '';
       } else {
-        firstLyric = lyricsArray[0];
-        text = firstLyric.text;
+        text = lyricAtDepth.text;
 
         if (text === undefined) {
           text = '';
         }
 
-        if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
-          addConnector = ' ' + firstLyric.lyricConnector;
+        if (lyricAtDepth.syllabic === 'middle' || lyricAtDepth.syllabic === 'begin') {
+          addConnector = ' ' + lyricAtDepth.lyricConnector;
           const tempQl = el.duration.quarterLength / 2.0;
           d = new _duration__WEBPACK_IMPORTED_MODULE_7__.Duration(tempQl);
         }
 
-        if (firstLyric.style.fontFamily) {
-          font.family = firstLyric.style.fontFamily;
+        if (lyricAtDepth.style.fontFamily) {
+          font.family = lyricAtDepth.style.fontFamily;
         }
 
-        if (firstLyric.style.fontSize) {
-          font.size = firstLyric.style.fontSize;
+        if (lyricAtDepth.style.fontSize) {
+          font.size = lyricAtDepth.style.fontSize;
         }
 
-        if (firstLyric.style.fontWeight) {
-          font.weight = firstLyric.style.fontWeight;
+        if (lyricAtDepth.style.fontWeight) {
+          font.weight = lyricAtDepth.style.fontWeight;
         }
       }
 
-      const t1 = getTextNote(text, font, d, firstLyric);
+      const line = 11 + depth * 2;
+      const t1 = getTextNote(text, font, d, lyricAtDepth, line);
       lyricsObjects.push(t1);
 
       if (addConnector !== false) {
-        const connector = getTextNote(addConnector, font, d);
+        const connector = getTextNote(addConnector, font, d, undefined, line);
         lyricsObjects.push(connector);
       }
     }

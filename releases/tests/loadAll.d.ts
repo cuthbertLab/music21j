@@ -21,6 +21,7 @@ import sites from './moduleTests/sites';
 import stream from './moduleTests/stream';
 import tempo from './moduleTests/tempo';
 import tie from './moduleTests/tie';
+import tinyNotation from './moduleTests/tinyNotation';
 import vfShow from './moduleTests/vfShow';
 import voiceLeading from './moduleTests/voiceLeading';
 declare const allTests: {
@@ -46,6 +47,7 @@ declare const allTests: {
     sites: typeof sites;
     stream: typeof stream;
     tempo: typeof tempo;
+    tinyNotation: typeof tinyNotation;
     tie: typeof tie;
     vfShow: typeof vfShow;
     voiceLeading: typeof voiceLeading;
