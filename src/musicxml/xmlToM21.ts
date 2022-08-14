@@ -24,10 +24,10 @@ const STAFF_SPECIFIC_CLASSES = [
     'Dynamic',
     'Expression',
     'GeneralNote',
-    'KeySignature',
+    // 'KeySignature',
     'StaffLayout',
     'TempoIndication',
-    'TimeSignature',
+    // 'TimeSignature',
 ];
 
 function seta(
