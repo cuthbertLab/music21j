@@ -18,6 +18,8 @@ const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
 };
 
+const NO_STAFF_ASSIGNED = 0;
+
 function seta(
     m21El,
     xmlEl,
@@ -365,6 +367,34 @@ export class MeasureParser {
         // fullMeasureRest
     }
 
+    getStaffNumber($mxObj: JQuery) {
+        const mxObj = $mxObj[0];
+        if (['harmony', 'forward', 'note', 'direction'].includes(mxObj.tagName)) {
+            const $mxStaff = $mxObj.children('staff');
+            if ($mxStaff.length) {
+                return Number.parseInt($mxStaff.text().trim());
+            }
+            return NO_STAFF_ASSIGNED;
+        } else if (
+            ['staff-layout', 'staff-details', 'measure-style', 'clef',
+                'key', 'time', 'transpose'].includes(mxObj.tagName)) {
+            const maybe_number = $mxObj.attr('number');
+            if (maybe_number) {
+                return Number.parseInt(maybe_number);
+            }
+            return NO_STAFF_ASSIGNED;
+        }
+        return NO_STAFF_ASSIGNED;
+    }
+
+    addToStaffReference($mxObj: JQuery, m21obj: Music21Object) {
+        const staffKey = this.getStaffNumber($mxObj);
+        if (this.staffReference[staffKey] === undefined) {
+            this.staffReference[staffKey] = [];
+        }
+        this.staffReference[staffKey].push(m21obj);
+    }
+
     insertInMeasureOrVoice($mxObj, el) {
         // TODO: offsets!
         // this.stream.insert(this.offsetMeasureNote, el);
@@ -412,7 +442,7 @@ export class MeasureParser {
 
         if (!isChord) {
             this.updateLyricsFromList(n, $mxNote.children('lyric'));
-            // add to staffReference
+            this.addToStaffReference($mxNote, n);
             this.insertInMeasureOrVoice($mxNote, n);
             offsetIncrement = n.duration.quarterLength;
             this.nLast = n;
@@ -421,7 +451,7 @@ export class MeasureParser {
         if (this.$mxNoteList.length && !nextNoteIsChord) {
             const c = this.xmlToChord(this.$mxNoteList);
             this.updateLyricsFromList(c, this.$mxLyricList);
-            // addToStaffRest;
+            this.addToStaffReference(this.$mxNoteList[0], c);
 
             // voices;
             this.insertInMeasureOrVoice($mxNote, c);
@@ -728,6 +758,7 @@ export class MeasureParser {
 
     handleTimeSignature($mxTime) {
         const ts = this.xmlToTimeSignature($mxTime);
+        this.addToStaffReference($mxTime, ts);
         this.insertIntoMeasureOrVoice($mxTime, ts);
     }
 
@@ -746,6 +777,7 @@ export class MeasureParser {
 
     handleClef($mxClef) {
         const clefObj = this.xmlToClef($mxClef);
+        this.addToStaffReference($mxClef, clefObj);
         this.stream.clef = clefObj;  // inserts
         // this.insertIntoMeasureOrVoice($mxClef, clefObj);
         this.lastClefs[0] = clefObj;
@@ -779,6 +811,7 @@ export class MeasureParser {
 
     handleKeySignature($mxKey) {
         const keySig = this.xmlToKeySignature($mxKey);
+        this.addToStaffReference($mxKey, keySig);
         this.insertIntoMeasureOrVoice($mxKey, keySig);
     }
 
