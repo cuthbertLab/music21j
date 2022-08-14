@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 
-import { hyphenToCamelCase } from '../common';
+import { hyphenToCamelCase, opFrac } from '../common';
 import * as chord from '../chord';
 import * as clef from '../clef';
 import * as duration from '../duration';
@@ -388,8 +388,8 @@ export class MeasureParser {
 
     musicDataMethods = {
         note: 'xmlToNote',
-        // 'backup': 'xmlBackup',
-        // 'forward': 'xmlForward',
+        backup: 'xmlBackup',
+        forward: 'xmlForward',
         // 'direction': 'xmlDirection',
         attributes: 'parseAttributesTag',
         // 'harmony': 'xmlHarmony',
@@ -475,9 +475,7 @@ export class MeasureParser {
     }
 
     insertInMeasureOrVoice($mxObj, el) {
-        // TODO: offsets!
-        // this.stream.insert(this.offsetMeasureNote, el);
-        this.stream.append(el);
+        this.stream.insert(this.offsetMeasureNote, el);
     }
 
     xmlToNote($mxNote) {
@@ -711,6 +709,18 @@ export class MeasureParser {
         }
 
         return d;
+    }
+
+    xmlBackup($mxBackup: JQuery) {
+        const $mxDuration = $mxBackup.children('duration');
+        const change = parseFloat($mxDuration.text().trim()) / this.divisions;
+        this.offsetMeasureNote -= Math.max(opFrac(change), 0.0);
+    }
+
+    xmlForward($mxForward: JQuery) {
+        const $mxDuration = $mxForward.children('duration');
+        const change = parseFloat($mxDuration.text().trim()) / this.divisions;
+        this.offsetMeasureNote += Math.min(opFrac(change), 0.0);
     }
 
     // xmlGraceToGrace
