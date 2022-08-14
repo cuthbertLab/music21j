@@ -19,6 +19,16 @@ const DEFAULTS = {
 };
 
 const NO_STAFF_ASSIGNED = 0;
+const STAFF_SPECIFIC_CLASSES = [
+    'Clef',
+    'Dynamic',
+    'Expression',
+    'GeneralNote',
+    'KeySignature',
+    'StaffLayout',
+    'TempoIndication',
+    'TimeSignature',
+];
 
 function seta(
     m21El,
@@ -105,7 +115,7 @@ export class ScoreParser {
             const $mxScorePart = this.mxScorePartDict[partId];
             const part = this.xmlPartToPart($p, $mxScorePart);
             if (part !== undefined) {
-                // partStreams are undefined
+                // part that became 2 PartStaffs is undefined: handles itself
                 s.insert(0.0, part);
                 this.m21PartObjectsById[partId] = part;
                 this.parts.push(part);
@@ -121,8 +131,10 @@ export class ScoreParser {
     xmlPartToPart($mxPart, $mxScorePart) {
         const parser = new PartParser($mxPart, $mxScorePart, this);
         parser.parse();
-        // handle partStreams
-        return parser.stream;
+        if (parser.appendToScoreAfterParse) {
+            return parser.stream;
+        }
+        return undefined;
     }
 
     parsePartList($mxScore) {
@@ -191,7 +203,9 @@ export class PartParser {
         this.parseMeasures();
         // atSoundingPitch;
         // spannerBundles
-        // partStaves;
+        if (this.maxStaves > 1) {
+            this.separateOutPartStaves();
+        }
         if (this.lastClefs.length > 0) {
             this.stream.clef = this.lastClefs[0];
         }
@@ -223,10 +237,12 @@ export class PartParser {
             this.lastMeasureParser.parent = undefined; // gc.
         }
         this.lastMeasureParser = measureParser;
-        // max staves
+        if (measureParser.staves > this.maxStaves) {
+            this.maxStaves = measureParser.staves;
+        }
         // transposition
         this.firstMeasureParsed = true;
-        // staffReferenceList
+        this.staffReferenceList.push(measureParser.staffReference);
 
         const m = measureParser.stream;
         this.setLastMeasureInfo(m);
@@ -257,6 +273,69 @@ export class PartParser {
         // ignore incomplete measures.
         const mOffsetShift = mHighestTime;
         this.lastMeasureOffset += mOffsetShift;
+    }
+
+    separateOutPartStaves() {
+        const partStaffs = [];
+
+        function copyIntoPartStaff(
+            source: stream.Measure | stream.Voice, target: stream.Measure | stream.Voice,
+            elementsOfStaff: Music21Object[]
+        ) {
+            for (const sourceEl of source.getElementsByClass(STAFF_SPECIFIC_CLASSES)) {
+                if (!elementsOfStaff.includes(sourceEl)) {
+                    continue;
+                }
+                try {
+                    target.insert(sourceEl.offset, sourceEl);
+                } catch {
+                    target.insert(sourceEl.offset, sourceEl.clone(true));
+                }
+            }
+        }
+
+        function getStaffInclude(staffKey: number, staffReference: Object) {
+            let els;
+            if (staffKey === 1 && staffReference[0] !== undefined) {
+                els = [...staffReference[0], ...staffReference[1]];
+            } else {
+                els = staffReference[staffKey];
+            }
+            return els;
+        }
+
+        for (let staffIndex = 0; staffIndex < this.maxStaves; staffIndex++) {
+            const staffKey = staffIndex + 1;
+            // TODO: spanners only on first staff
+            const newPartStaff = this.stream.template(
+                {removeClasses: STAFF_SPECIFIC_CLASSES, fillWithRests: false}
+            );
+            const partStaffId = `${this.partId}-Staff${staffKey}`;
+            newPartStaff.id = partStaffId;
+            // TODO: groups?
+            partStaffs.push(newPartStaff);
+            this.parent.m21PartObjectsById[partStaffId] = newPartStaff;
+            
+            for (const [i, sourceMeasure] of Array.from(this.stream.getElementsByClass('Measure')).entries()) {
+                const copyMeasure = newPartStaff.getElementsByClass('Measure').get(i) as stream.Measure;
+                const staffReference = this.staffReferenceList[i];
+                const els_to_include = getStaffInclude(staffKey, staffReference);
+
+                copyIntoPartStaff((sourceMeasure as stream.Measure), copyMeasure, els_to_include);
+                for (const [j, sourceVoice] of Array.from((sourceMeasure as stream.Measure).voices).entries()) {
+                    const copyVoice = copyMeasure.voices.get(j);
+                    copyIntoPartStaff(sourceVoice, copyVoice, els_to_include);
+                }
+                // copyMeasure.flattenUnnecessaryVoices({inPlace: true});
+            }
+        }
+
+        for (const partStaff of partStaffs) {
+            this.parent.stream.insert(0, partStaff);
+        }
+        this.appendToScoreAfterParse = false;
+
+        // TODO: new StaffGroup
     }
 }
 
