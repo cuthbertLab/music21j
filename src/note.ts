@@ -11,7 +11,9 @@
  *
  * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
-import { Accidental as VFAccidental, StaveNote as VFStaveNote, Stem as VFStem} from 'vexflow';
+import {
+    Accidental as VFAccidental, Dot as VFDot, StaveNote as VFStaveNote, Stem as VFStem, 
+} from 'vexflow';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';
@@ -354,7 +356,7 @@ export class GeneralNote extends base.Music21Object {
     vexflowAccidentalsAndDisplay(vfn: VFStaveNote, options={}) {
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
-                vfn.addDotToAll();
+                VFDot.buildAndAttach([vfn], { all: true });
             }
         }
     }
@@ -779,7 +781,7 @@ export class Rest extends GeneralNote {
         });
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
-                vfn.addDotToAll();
+                VFDot.buildAndAttach([vfn], { all: true });
             }
         }
         if (this.color !== undefined) {
