@@ -10,6 +10,10 @@ export default function tests() {
         assert.equal(d.type, 'zero', 'got zero');
         assert.equal(d.dots, 0, 'got no dots');
         assert.equal(d.quarterLength, 0.0, 'got 0.0');
+
+        d.dots = 0;
+        assert.equal(d.dots, 0, 'still no dots');
+        assert.equal(d.quarterLength, 0.0, 'still 0.0');
     });
 
     test('music21.duration.Duration', assert => {

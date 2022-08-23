@@ -95,7 +95,9 @@ export declare class Renderer {
      * or substreams that should be considered like Measures)
      * for rendering.
      */
-    preparePartlike(p: stream.Part): void;
+    preparePartlike(p: stream.Part, { multipart }?: {
+        multipart?: boolean;
+    }): void;
     /**
      *
      * Prepares a score that arrived flat... sets up
@@ -168,11 +170,11 @@ export declare class Renderer {
      */
     getVoice(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.Voice | undefined;
     /**
-     * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
+     * Returns Vex.Flow.Voices with the lyrics set to render in the proper place.
      *
      * s -- usually a Measure or Voice
      */
-    getLyricVoice(s: stream.Stream, stave: Vex.Flow.Stave): Vex.Flow.Voice;
+    getLyricVoices(s: stream.Stream, stave: Vex.Flow.Stave): Vex.Flow.Voice[];
     /**
      * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
      *
@@ -222,9 +224,9 @@ export declare class Renderer {
      */
     vexflowNotes(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.StaveNote[];
     /**
-     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
+     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
      */
-    vexflowLyrics(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.TextNote[];
+    vexflowLyrics(s?: stream.Stream, stave?: Vex.Flow.Stave, depth?: number): Vex.Flow.TextNote[];
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */

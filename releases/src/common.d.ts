@@ -138,4 +138,19 @@ export declare function isFloat(num: any): boolean;
  * Uses a shared memory buffer to give the conversion.
  */
 export declare function opFrac(num: any): any;
+/**
+ * Converts a string to a single element using template.
+ *
+ * Similar to $('<tag attributes="xyz"><b>more</b></tag>')[0]
+ *
+ * For security reasons <template> will not parse script
+ * tags.
+ *
+ * This is tagged as returning HTMLElement for convenience
+ * but can also be used to return SVGElement.
+ *
+ * Recommended in:
+ * https://stackoverflow.com/questions/494143/
+ */
+export declare function to_el(input_string: string): HTMLElement;
 //# sourceMappingURL=common.d.ts.map

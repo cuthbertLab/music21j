@@ -814,6 +814,18 @@ export declare class Measure extends Stream {
 export declare class Part extends Stream {
     static get className(): string;
     recursionType: string;
+    _partName: string;
+    _partAbbreviation: string;
+    /**
+     * The name of this part; if undefined, look up on the stored instrument.
+     */
+    get partName(): string;
+    set partName(name: string);
+    /**
+     * The abbreviated name of this part; if undefined, look up on the stored instrument.
+     */
+    get partAbbreviation(): string;
+    set partAbbreviation(name: string);
     /**
      * How many systems does this Part have?
      *
@@ -848,10 +860,9 @@ export declare class Part extends Stream {
      * returns an array of all the widths of complete systems
      * (last partial system omitted)
      */
-    fixSystemInformation({ systemHeight, systemPadding, setMeasureRenderOptions, }?: {
+    fixSystemInformation({ systemHeight, systemPadding, }?: {
         systemHeight?: number;
         systemPadding?: number;
-        setMeasureRenderOptions?: boolean;
     }): number[];
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions

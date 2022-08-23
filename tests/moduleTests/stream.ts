@@ -554,6 +554,22 @@ export default function tests() {
         assert.ok(n2.pitch.accidental.displayStatus);  // different note
     });
 
+    test('music21.stream.Stream makeAccidentals augmented unison in chord', assert => {
+        const m = new music21.stream.Measure();
+        const c = new music21.chord.Chord('G G#');
+        m.append(c);
+        m.makeAccidentals({inPlace: true});
+        assert.ok(c.pitches[0].accidental.displayStatus);
+    });
+
+    test('music21.stream.Stream makeAccidentals perfect octave in chord', assert => {
+        const m = new music21.stream.Measure();
+        const c = new music21.chord.Chord('G4 G5');
+        m.append(c);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(c.pitches[0].accidental?.displayStatus);
+    });
+
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
         const n1 = new music21.note.Note('C5', 0.5);
         n1.stemDirection = 'up';
@@ -1045,5 +1061,16 @@ export default function tests() {
         p.append(previous_measure);
         p.append(m);
         assert.equal(m.estimateStaffLength(), original_width + ks.width);
+
+        n.lyric = 'lorem';  // (7px * 5 letters + 2) = 37, original width otherwise starts at 30
+        assert.equal(m.estimateStaffLength(), original_width + 7 + ks.width);
+    });
+
+    test('music21.stream.Stream cloneEmpty', assert => {
+        const p = music21.tinyNotation.TinyNotation('3/4 c4 BB c d4 e2.');
+        const empty = p.cloneEmpty();
+        assert.true(empty instanceof music21.stream.Part);
+        assert.equal(empty.elements.length, 0);
+        assert.equal(empty.derivation.method, 'cloneEmpty');
     });
 }

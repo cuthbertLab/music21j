@@ -1,6 +1,7 @@
 /// <reference types="jquery" />
 import * as chord from '../chord';
 import * as clef from '../clef';
+import * as duration from '../duration';
 import * as key from '../key';
 import * as meter from '../meter';
 import * as note from '../note';
@@ -110,7 +111,7 @@ export declare class MeasureParser {
     xmlToAccidental($mxAccidental: any): pitch.Accidental;
     xmlToRest($mxRest: any): any;
     xmlNoteToGeneralNoteHelper(n: any, $mxNote: any, freeSpanners?: boolean): any;
-    xmlToDuration($mxNote: any, inputM21: any): any;
+    xmlToDuration($mxNote: any, inputM21: duration.Duration): duration.Duration;
     xmlToTie($mxNote: JQuery): tie.Tie;
     updateLyricsFromList(n: any, lyricList: any): void;
     xmlToLyric($mxLyric: JQuery, inputM21?: note.Lyric): note.Lyric;

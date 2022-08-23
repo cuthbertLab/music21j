@@ -291,13 +291,6 @@ export class StreamIterator<T = Music21Object> extends _StreamIteratorBase<T> {
 }
 
 export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
-    nextToYield: T[];
-    nextOffsetToYield: number;
-
-    constructor(srcStream, options={}) {
-        super(srcStream, options);
-        this.nextToYield = [];
-    }
 
     * [Symbol.iterator](): Generator<T[], void, void> {
         this.reset();
@@ -305,10 +298,10 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
 
         while (this.index < this.streamLength) {
             // noinspection DuplicatedCode
-            this.index += 1;
+            this.index += 1;  // advance early
             let e;
             try {
-                e = this.srcStreamElements[this.index - 1];
+                e = this.srcStreamElements[this.index - 1];  // backtrack
             } catch (exc) {
                 continue;
             }
@@ -322,25 +315,24 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
             const yieldEls = [e];
             const eOffset = this.srcStream.elementOffset(e);
 
-            for (let forwardIndex = this.index; forwardIndex < this.streamLength; forwardIndex++) {
-                let nextE;
-                try {
-                    nextE = this.srcStreamElements[this.index - 1];
-                } catch (exc) {
+            // allow forwardIndex == this.streamLength because this.index needs
+            // to be incremented inside the loop before being decremented by updateActiveInformation
+            // (when yielding whatever is in yieldEls)
+            for (let forwardIndex = this.index; forwardIndex <= this.streamLength; forwardIndex++) {
+                this.index = forwardIndex;
+                const nextE = this.srcStreamElements[this.index];
+                if (nextE === undefined) {
                     continue;
                 }
                 const nextOffset = this.srcStream.elementOffset(nextE);
                 if (nextOffset !== eOffset) {
-                    this.nextToYield = [nextE];
-                    this.nextOffsetToYield = nextOffset;
                     break;
                 }
                 if (!this.matchesFilters(nextE)) {
                     continue;
                 }
 
-                yieldEls.push(e);
-                this.index = forwardIndex;
+                yieldEls.push(nextE);
             }
 
             if (this.restoreActiveSites) {
@@ -354,11 +346,6 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
         this.cleanup();
     }
 
-    reset() {
-        super.reset();
-        this.nextToYield = [];
-        this.nextOffsetToYield = undefined;
-    }
 }
 
 export class RecursiveIterator<T = Music21Object> extends _StreamIteratorBase<T> {

@@ -212,7 +212,7 @@ export class Renderer {
         if (isScorelike) {
             this.prepareScorelike(s as stream.Score);
         } else if (isPartlike) {
-            this.preparePartlike(s as stream.Part);
+            this.preparePartlike(s as stream.Part, {multipart: false});
         } else {
             this.prepareArrivedFlat(s);
         }
@@ -233,7 +233,7 @@ export class Renderer {
         //
         const parts = s.parts;
         for (const subStream of parts) {
-            this.preparePartlike(subStream);
+            this.preparePartlike(subStream, {multipart: s.parts.length > 1});
         }
         this.addStaffConnectors(s);
     }
@@ -244,7 +244,7 @@ export class Renderer {
      * or substreams that should be considered like Measures)
      * for rendering.
      */
-    preparePartlike(p: stream.Part) {
+    preparePartlike(p: stream.Part, {multipart = false}: {multipart?: boolean} = {}) {
         // console.log('preparePartlike called');
         this.systemBreakOffsets = [];
         const measureList = p.measures;
@@ -252,6 +252,9 @@ export class Renderer {
             const subStream = measureList.get(i);
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
+                if (!multipart) {
+                    subStream.renderOptions.leftBarline = 'none';
+                }
             }
             if (i === p.length - 1 && subStream.renderOptions.rightBarline === undefined) {
                 subStream.renderOptions.rightBarline = 'end';
@@ -273,6 +276,7 @@ export class Renderer {
      */
     prepareArrivedFlat(m: stream.Stream) {
         const stack = new RenderStack();
+        m.renderOptions.leftBarline = 'none';
         this.prepareMeasure(m as stream.Measure, stack);
         this.stacks[0] = stack;
         this.prepareTies(m);
@@ -345,7 +349,7 @@ export class Renderer {
         stack.voiceToStreamMapping.set(vf_voice, s);
 
         if (s.hasLyrics()) {
-            stack.textVoices.push(this.getLyricVoice(s, stave));
+            stack.textVoices.push(...this.getLyricVoices(s, stave));
         }
 
         return stave;
@@ -521,16 +525,21 @@ export class Renderer {
     }
 
     /**
-     * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
+     * Returns Vex.Flow.Voices with the lyrics set to render in the proper place.
      *
      * s -- usually a Measure or Voice
      */
-    getLyricVoice(s: stream.Stream, stave: VFStave): VFVoice {
-        const textVoice = this.vexflowVoice(s);
-        const lyrics = this.vexflowLyrics(s, stave);
-        textVoice.setStave(stave);
-        textVoice.addTickables(lyrics);
-        return textVoice;
+    getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[] {
+        const textVoices = [];
+        const max_lyric_depth = Math.max(...(s.notesAndRests as any).map(gn => gn.lyrics.length));
+        for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
+            const textVoice = this.vexflowVoice(s);
+            const lyrics = this.vexflowLyrics(s, stave, depth);
+            textVoice.setStave(stave);
+            textVoice.addTickables(lyrics);
+            textVoices.push(textVoice);
+        }
+        return textVoices;
     }
 
     /**
@@ -941,10 +950,10 @@ export class Renderer {
     }
 
     /**
-     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
+     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
      */
-    vexflowLyrics(s?: stream.Stream, stave?: VFStave): VFTextNote[] {
-        const getTextNote = (text, font, d, lyricObj=undefined) => {
+    vexflowLyrics(s?: stream.Stream, stave?: VFStave, depth: number=0): VFTextNote[] {
+        const getTextNote = (text, font, d, lyricObj=undefined, line: number=11) => {
             // console.log(text, font, d);
             // noinspection TypeScriptValidateJSTypes
             const t1 = new VFTextNote({
@@ -952,7 +961,7 @@ export class Renderer {
                 font,
                 duration: d.vexflowDuration,
             })
-                .setLine(11)
+                .setLine(line)
                 .setStave(stave)
                 .setJustification(VFTextNote.Justification.LEFT);
             if (lyricObj) {
@@ -974,46 +983,46 @@ export class Renderer {
             if (lyricsArray === undefined) {
                 continue;
             }
-            let text;
+            let text: string;
             let d = el.duration;
             let addConnector: boolean|string = false;
-            let firstLyric;
             const font = {
                 family: 'Serif',
                 size: 12,
                 weight: '',
             };
 
-            if (lyricsArray.length === 0) {
+            const lyricAtDepth = lyricsArray[depth];  // rename lyricAtDepth
+            if (lyricAtDepth === undefined) {
                 text = '';
             } else {
-                firstLyric = lyricsArray[0];
-                text = firstLyric.text;
+                text = lyricAtDepth.text;
                 if (text === undefined) {
                     text = '';
                 }
                 if (
-                    firstLyric.syllabic === 'middle'
-                    || firstLyric.syllabic === 'begin'
+                    lyricAtDepth.syllabic === 'middle'
+                    || lyricAtDepth.syllabic === 'begin'
                 ) {
-                    addConnector = ' ' + firstLyric.lyricConnector;
+                    addConnector = ' ' + lyricAtDepth.lyricConnector;
                     const tempQl = el.duration.quarterLength / 2.0;
                     d = new duration.Duration(tempQl);
                 }
-                if (firstLyric.style.fontFamily) {
-                    font.family = firstLyric.style.fontFamily;
+                if (lyricAtDepth.style.fontFamily) {
+                    font.family = lyricAtDepth.style.fontFamily;
                 }
-                if (firstLyric.style.fontSize) {
-                    font.size = firstLyric.style.fontSize;
+                if (lyricAtDepth.style.fontSize) {
+                    font.size = lyricAtDepth.style.fontSize;
                 }
-                if (firstLyric.style.fontWeight) {
-                    font.weight = firstLyric.style.fontWeight;
+                if (lyricAtDepth.style.fontWeight) {
+                    font.weight = lyricAtDepth.style.fontWeight;
                 }
             }
-            const t1 = getTextNote(text, font, d, firstLyric);
+            const line = 11 + (depth * 2);
+            const t1 = getTextNote(text, font, d, lyricAtDepth, line);
             lyricsObjects.push(t1);
             if (addConnector !== false) {
-                const connector = getTextNote(addConnector, font, d);
+                const connector = getTextNote(addConnector, font, d, undefined, line);
                 lyricsObjects.push(connector);
             }
         }

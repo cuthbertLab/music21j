@@ -5,7 +5,7 @@
  * License: BSD
  */
 import { Music21Exception } from './exceptions21';
-import { Stream } from './stream';
+import type { Stream } from './stream';
 /**
  */
 export declare class SitesException extends Music21Exception {

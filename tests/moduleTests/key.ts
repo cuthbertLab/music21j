@@ -62,4 +62,10 @@ export default function tests() {
 
         assert.equal(k.width, 42, 'checking width');
     });
+
+    test('music21.key.KeySignature setting sharps updates alteredPitches', assert => {
+        const ks = new music21.key.KeySignature();
+        ks.sharps = -4;
+        assert.equal(`${ks.alteredPitches.map(p => p.name)}`, 'B-,E-,A-,D-');
+    });
 }

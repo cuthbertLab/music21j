@@ -21,11 +21,15 @@ export default function tests() {
     });
 
     test('music21.meter.TimeSignature.offsetToSpan', assert => {
-        const m = new music21.meter.TimeSignature('4/4');
-        const [start, end] = m.offsetToSpan(3.2);
+        let m = new music21.meter.TimeSignature('4/4');
+        let [start, end] = m.offsetToSpan(3.2);
         assert.equal(start, 3.0, 'beat starts at 3');
         assert.equal(end, 4.0, 'beat ends at 4');
 
+        m = new music21.meter.TimeSignature('7/8');
+        [start, end] = m.offsetToSpan(2.0);
+        assert.equal(start, 1.5);
+        assert.equal(end, 2.5);
     });
 
     test('music21.meter.TimeSignature.offsetToIndex', assert => {
@@ -37,6 +41,11 @@ export default function tests() {
         m = new music21.meter.TimeSignature('2/2');
         assert.equal(m.offsetToIndex(0.0), 0, '0 gives index 0 in 2/2');
         assert.equal(m.offsetToIndex(3.2), 1, '3.2 gives index 1 in 2/2');
+
+        m = new music21.meter.TimeSignature('5/8');
+        assert.equal(m.offsetToIndex(1.5), 1, '1.5 gives index 1 in 5/8');
+        assert.equal(m.offsetToIndex(1.5, {includeCoincidentBoundaries: true}), 0,
+            '1.5 gives index 0 in 5/8 with coincident');
     });
 
     test('music21.meter.TimeSignature getBeams', assert => {
@@ -91,6 +100,25 @@ export default function tests() {
         }
     });
 
+    test('music21.meter.TimeSignature getBeams 5/8 7/8', assert => {
+        const m = new music21.stream.Measure();
+        const n = new music21.note.Note('C', 0.5);
+        m.repeatAppend(n, 5);
+
+        let ts = new music21.meter.TimeSignature('5/8');
+        let beamsList = ts.getBeams(m);
+
+        assert.deepEqual(beamsList.map(x => x.beamsList[0]?.type),
+            ['start', 'continue', 'stop', 'start', 'stop']);
+
+        ts = new music21.meter.TimeSignature('7/8');
+        m.repeatAppend(n, 2);
+        beamsList = ts.getBeams(m);
+
+        assert.deepEqual(beamsList.map(x => x.beamsList[0]?.type),
+            ['start', 'continue', 'stop', 'start', 'stop', 'start', 'stop']);
+    });
+
     test('music21.meter.TimeSignature getBeams 3/4', assert => {
         const m = new music21.stream.Measure();
         m.append(new music21.note.Note('C', 0.5));
@@ -130,6 +158,23 @@ export default function tests() {
 
         assert.strictEqual(beamsList[0].beamsList[0].type, 'start');
         assert.strictEqual(beamsList[1].beamsList[0].type, 'stop');
+    });
+
+    test('music21.meter.TimeSignature getBeams incomplete measure paddingRight', assert => {
+        // incomplete measure in 12/8, with paddingRight set
+        const m = new music21.stream.Measure();
+        m.append(new music21.note.Note('C', 0.5));
+        m.append(new music21.note.Note('C', 0.25));
+        m.append(new music21.note.Note('C', 1));
+        m.append(new music21.note.Note('C', 1));
+        m.append(new music21.note.Note('C', 0.5));  // this beam crosses the beat boundary 2.75 -> 3.25
+        m.append(new music21.note.Note('C', 0.5));  // and thus cannot be beamed to this one
+        m.paddingRight = 2.25;
+
+        const ts = new music21.meter.TimeSignature('12/8');
+        const beamsList = ts.getBeams(m);
+        assert.strictEqual(typeof beamsList[4], 'undefined');
+        assert.strictEqual(typeof beamsList[5], 'undefined');
     });
 
     test('music21.meter.TimeSignature compound', assert => {
