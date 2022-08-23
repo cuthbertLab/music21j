@@ -491,17 +491,17 @@ export class NotRest extends GeneralNote {
                 const acc = p.accidental;
                 const vf_accidental = new Vex.Flow.Accidental(acc.vexflowModifier);
                 if (acc.vexflowModifier !== 'n' && acc.displayStatus !== false) {
-                    vfn.addAccidental(i, vf_accidental);
+                    vfn.addModifier(vf_accidental, i);
                 } else if (acc.displayType === 'always' || acc.displayStatus === true) {
-                    vfn.addAccidental(i, vf_accidental);
+                    vfn.addModifier(vf_accidental, i);
                 }
             }
         }
         for (const art of this.articulations) {
-            vfn.addArticulation(0, art.vexflow({stemDirection: useStemDirection}));
+            vfn.addModifier(art.vexflow({stemDirection: useStemDirection}));
         }
         for (const exp of this.expressions) {
-            vfn.addArticulation(0, exp.vexflow({stemDirection: useStemDirection}));
+            vfn.addModifier(exp.vexflow({stemDirection: useStemDirection}));
         }
         if (this.noteheadColor !== undefined) {
             vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
