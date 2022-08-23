@@ -69,7 +69,9 @@ export default function tests() {
         const svg = p.appendNewDOM();
         const renderer = new music21.vfShow.Renderer(p, svg);
         renderer.preparePartlike(p, {multipart: false});
+        // @ts-ignore
         assert.deepEqual(renderer.vfTies[0].first_note, n1.activeVexflowNote);
+        // @ts-ignore
         assert.deepEqual(renderer.vfTies[0].last_note, n2.activeVexflowNote);
     });
 
@@ -109,7 +111,12 @@ export default function tests() {
         m2_alto_voice.notes.get(0).tie = new music21.tie.Tie('stop');
 
         s.appendNewDOM();
-        assert.equal(s.activeVFRenderer.vfTies[0].first_note.keys[0], s.activeVFRenderer.vfTies[0].last_note.keys[0]);
+        assert.equal(
+            // @ts-ignore
+            s.activeVFRenderer.vfTies[0].first_note.keys[0], 
+            // @ts-ignore
+            s.activeVFRenderer.vfTies[0].last_note.keys[0]
+        );
     });
 
     test('music21.vfShow.Renderer prepareTies across system break', assert => {
@@ -132,14 +139,21 @@ export default function tests() {
         const notes_iter = p.recurse().notes;
         const first_note = notes_iter.get(0);
         const second_note = notes_iter.get(1);
+        // Error: Property 'pitch' does not exist on type 'NotRest'.
+        // @ts-ignore
         assert.equal(first_note.pitch.accidental, undefined);
+        // @ts-ignore
         assert.equal(second_note.pitch.accidental.displayStatus, true);
 
         // D -> D#
         const aug_1 = new music21.interval.Interval('A1');
+        // @ts-ignore
         first_note.pitch = aug_1.transposePitch(first_note.pitch);
         s.replaceDOM();
+        // Error: Property 'pitch' does not exist on type 'NotRest'.
+        // @ts-ignore
         assert.equal(first_note.pitch.accidental.displayStatus, true);
+        // @ts-ignore
         assert.equal(second_note.pitch.accidental.displayStatus, false);
     });
 
@@ -156,7 +170,8 @@ export default function tests() {
         for (const stack of p.activeVFRenderer.stacks) {
             const vf_voice = stack.voices[0];
             assert.equal(
-                vf_voice.stave.measure,
+                // @ts-ignore
+                vf_voice.getStave().measure,
                 (stack.voiceToStreamMapping.get(vf_voice) as music21.stream.Measure).number
             );
         }
@@ -201,7 +216,11 @@ export default function tests() {
         n.lyrics.push(new music21.note.Lyric('second'));
         p.append(n);
         p.createDOM();
-        assert.equal(p.activeVFRenderer.stacks[0].textVoices[0].tickables[0].text, 'first');
-        assert.equal(p.activeVFRenderer.stacks[0].textVoices[1].tickables[0].text, 'second');
+        // Error: Property 'text' does not exist on type 'Tickable'.
+        // @ts-ignore
+        assert.equal(p.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0].text, 'first');
+        // Error: Property 'text' does not exist on type 'Tickable'.
+        // @ts-ignore
+        assert.equal(p.activeVFRenderer.stacks[0].textVoices[1].getTickables()[0].text, 'second');
     });
 }

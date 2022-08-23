@@ -3,7 +3,7 @@
  *
  */
 
-import {Articulation as VFArticulation, Ornament as VFOrnament } from 'vexflow';
+import { Articulation as VFArticulation, Ornament as VFOrnament } from 'vexflow';
 import * as base from './base';
 import {
     ArticulationPlacement,
