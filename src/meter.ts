@@ -5,7 +5,7 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  */
-import Vex from 'vexflow';
+import { Fraction as VFFraction } from 'vexflow';
 
 import * as base from './base';
 import * as beam from './beam';
@@ -438,12 +438,12 @@ export class TimeSignature extends base.Music21Object {
      *
      * returns a list of numerator and denominator groups, for VexFlow, as Vex.Flow.Fraction[]
      */
-    vexflowBeatGroups(): Vex.Flow.Fraction[] {
+    vexflowBeatGroups(): VFFraction[] {
         const tempBeatGroups = this.beatGroups;
         const vfBeatGroups = [];
         for (let i = 0; i < tempBeatGroups.length; i++) {
             const [bg_numerator, bg_denominator] = tempBeatGroups[i];
-            vfBeatGroups.push(new Vex.Flow.Fraction(bg_numerator, bg_denominator));
+            vfBeatGroups.push(new VFFraction(bg_numerator, bg_denominator));
         }
         return vfBeatGroups;
 
