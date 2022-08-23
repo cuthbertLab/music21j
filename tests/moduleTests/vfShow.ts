@@ -70,9 +70,9 @@ export default function tests() {
         const renderer = new music21.vfShow.Renderer(p, svg);
         renderer.preparePartlike(p, {multipart: false});
         // @ts-ignore
-        assert.deepEqual(renderer.vfTies[0].first_note, n1.activeVexflowNote);
+        assert.deepEqual(renderer.vfTies[0].notes.first_note, n1.activeVexflowNote);
         // @ts-ignore
-        assert.deepEqual(renderer.vfTies[0].last_note, n2.activeVexflowNote);
+        assert.deepEqual(renderer.vfTies[0].notes.last_note, n2.activeVexflowNote);
     });
 
     test('music21.vfShow.Renderer prepareTies in voices across barline', assert => {
@@ -113,9 +113,9 @@ export default function tests() {
         s.appendNewDOM();
         assert.equal(
             // @ts-ignore
-            s.activeVFRenderer.vfTies[0].first_note.keys[0], 
+            s.activeVFRenderer.vfTies[0].notes.first_note.keys[0], 
             // @ts-ignore
-            s.activeVFRenderer.vfTies[0].last_note.keys[0]
+            s.activeVFRenderer.vfTies[0].notes.last_note.keys[0]
         );
     });
 
