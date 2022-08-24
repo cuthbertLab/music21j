@@ -515,11 +515,18 @@ export class Renderer {
             s = this.stream;
         }
 
+        const totalLength = s.duration.quarterLength;
+        if (totalLength === 0) {
+            // Return an empty voice, since the stream is empty.
+            const emptyVoice = new VFVoice().setMode(VFVoice.Mode.SOFT);
+            emptyVoice.setStave(stave);
+            return emptyVoice;
+        }
+
         // gets a group of notes as a voice, but completely un-formatted and not drawn.
         const notes = this.vexflowNotes(s, stave);
         const voice = this.vexflowVoice(s);
         voice.setStave(stave);
-
         voice.addTickables(notes);
         return voice;
     }
@@ -571,6 +578,7 @@ export class Renderer {
         // if autoBeam is true then it will apply beams for each voice and put them in
         // this.beamGroups;
         const allTickables = stack.allTickables();
+        
         const vf_voices = stack.voices;
         const measuresOrVoices = stack.streams;
         const useVexflowAutobeam = this.stream.renderOptions.useVexflowAutobeam;
@@ -587,12 +595,14 @@ export class Renderer {
         let maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
         for (let i = 0; i < allTickables.length; i++) {
             // console.log(voices[i], voices[i].stave, i);
-            if (allTickables[i].getStave().getNoteStartX() > maxGlyphStart) {
-                maxGlyphStart = allTickables[i].getStave().getNoteStartX();
+            const stave = allTickables[i].getStave();
+            if (stave !== undefined && stave.getNoteStartX() > maxGlyphStart) {
+                maxGlyphStart = stave.getNoteStartX();
             }
         }
         for (let i = 0; i < allTickables.length; i++) {
-            allTickables[i].getStave().setNoteStartX(maxGlyphStart); // corrected!
+            const stave = allTickables[i].getStave();
+            stave?.setNoteStartX(maxGlyphStart); // corrected!
         }
         // TODO: should do the same for end_x -- for key sig changes, etc...
 
@@ -600,6 +610,9 @@ export class Renderer {
         const tickablesByStave = stack.tickablesByStave();
         for (const staveTickables of tickablesByStave) {
             formatter.joinVoices(staveTickables);
+        }
+        if (stave === undefined) {
+            return formatter;
         }
         formatter.formatToStave(allTickables, stave);
 
@@ -1034,6 +1047,9 @@ export class Renderer {
      */
     vexflowVoice(s: stream.Stream): VFVoice {
         const totalLength = s.duration.quarterLength;
+        if (totalLength === 0) {
+            return new VFVoice().setMode(VFVoice.Mode.SOFT);
+        }
 
         let num1024 = Math.round(totalLength / (1 / 256));
         let beatValue = 1024;

@@ -419,6 +419,14 @@ export default function tests() {
         assert.equal(c.attr('height'), 50, 'stored height matches');
     });
 
+    test('music21.stream.Stream.DOM voice with no notes', assert => {
+        const s = new music21.stream.Stream();
+        const where = s.createNewDOM(100, 50);
+        // Should not raise an error even though the voice is empty..
+        s.replaceDOM(where);
+        assert.ok(true);
+    });
+
     test('music21.stream.Stream.getElementsByClass', assert => {
         const s = new music21.stream.Stream();
         const n1 = new music21.note.Note('C#5');
