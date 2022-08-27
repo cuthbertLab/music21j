@@ -9,7 +9,8 @@
  */
 
 import {
-    BarlineType as VFBarlineType, Beam as VFBeam, Flow as VexFlow,
+    BarlineType as VFBarlineType, Beam as VFBeam,
+    Flow as VexFlow,
     Formatter as VFFormatter, Fraction as VFFraction, Renderer as VFRenderer, 
     Stave as VFStave, StaveConnector as VFStaveConnector, StaveNote as VFStaveNote, 
     StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote,
@@ -614,7 +615,10 @@ export class Renderer {
         if (stave === undefined) {
             return formatter;
         }
-        formatter.formatToStave(allTickables, stave);
+
+        if (allTickables.length >= 1 && allTickables[0].getTickables().length) {
+            formatter.formatToStave(allTickables, stave);
+        }
 
         // VexFlow and native autobeam both wipe out stemDirection. worth it usually...
         if (autoBeam && useVexflowAutobeam) {

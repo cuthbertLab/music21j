@@ -1935,11 +1935,6 @@ export class Stream extends base.Music21Object {
             vfr.rendererType = 'svg';
         }
 
-        // Do not render this empty stream.
-        if (this.duration.quarterLength === 0) {
-            return vfr;
-        }
-
         vfr.render();
         this.setRenderInteraction(canvasOrSVG);
         this.activeVFRenderer = vfr;
