@@ -11,7 +11,9 @@
  *
  * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
-import Vex from 'vexflow';
+import {
+    Accidental as VFAccidental, Dot as VFDot, StaveNote as VFStaveNote, Stem as VFStem, 
+} from 'vexflow';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';
@@ -235,7 +237,7 @@ export class GeneralNote extends base.Music21Object {
      * Most recent Vex.Flow.StaveNote object to be made from this note (could change)
      * or undefined.
      */
-    activeVexflowNote: Vex.Flow.StaveNote|undefined;
+    activeVexflowNote: VFStaveNote|undefined;
 
     constructor(ql=1.0) {
         super();
@@ -328,8 +330,8 @@ export class GeneralNote extends base.Music21Object {
     /**
      * For subclassing.  Do not use this...
      */
-    vexflowNote(options): Vex.Flow.StaveNote {
-        return new Vex.Flow.StaveNote({
+    vexflowNote(options): VFStaveNote {
+        return new VFStaveNote({
             keys: [],
             duration: this.duration.vexflowDuration + 'r',
         });
@@ -351,10 +353,10 @@ export class GeneralNote extends base.Music21Object {
      *
      * options -- a set of Vex Flow options
      */
-    vexflowAccidentalsAndDisplay(vfn: Vex.Flow.StaveNote, options={}) {
+    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, options={}) {
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
-                vfn.addDotToAll();
+                VFDot.buildAndAttach([vfn], { all: true });
             }
         }
     }
@@ -457,7 +459,7 @@ export class NotRest extends GeneralNote {
      * @param {Object} [options={}] - `{clef: music21.clef.Clef}`
      * clef to set the stem direction of.
      */
-    vexflowNote({ clef=undefined }={}): Vex.Flow.StaveNote {
+    vexflowNote({ clef=undefined }={}): VFStaveNote {
         let useStemDirection = this.stemDirection;
 
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
@@ -477,10 +479,10 @@ export class NotRest extends GeneralNote {
 
         // Not supported: Double;  None is done elsewhere?
         const vfnStemDirection = useStemDirection === 'down'
-            ? Vex.Flow.StaveNote.STEM_DOWN
-            : Vex.Flow.StaveNote.STEM_UP;
+            ? VFStem.DOWN
+            : VFStem.UP;
 
-        const vfn = new Vex.Flow.StaveNote({
+        const vfn = new VFStaveNote({
             keys: vexflowPitchKeys,
             duration: vfd,
             stem_direction: vfnStemDirection,
@@ -489,19 +491,19 @@ export class NotRest extends GeneralNote {
         for (const [i, p] of this.pitches.entries()) {
             if (p.accidental !== undefined) {
                 const acc = p.accidental;
-                const vf_accidental = new Vex.Flow.Accidental(acc.vexflowModifier);
+                const vf_accidental = new VFAccidental(acc.vexflowModifier);
                 if (acc.vexflowModifier !== 'n' && acc.displayStatus !== false) {
-                    vfn.addAccidental(i, vf_accidental);
+                    vfn.addModifier(vf_accidental, i);
                 } else if (acc.displayType === 'always' || acc.displayStatus === true) {
-                    vfn.addAccidental(i, vf_accidental);
+                    vfn.addModifier(vf_accidental, i);
                 }
             }
         }
         for (const art of this.articulations) {
-            vfn.addArticulation(0, art.vexflow({stemDirection: useStemDirection}));
+            vfn.addModifier(art.vexflow({stemDirection: useStemDirection}));
         }
         for (const exp of this.expressions) {
-            vfn.addArticulation(0, exp.vexflow({stemDirection: useStemDirection}));
+            vfn.addModifier(exp.vexflow({stemDirection: useStemDirection}));
         }
         if (this.noteheadColor !== undefined) {
             vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
@@ -754,7 +756,7 @@ export class Rest extends GeneralNote {
      *
      * @param {Object} options -- vexflow options
      */
-    vexflowNote(options): Vex.Flow.StaveNote {
+    vexflowNote(options): VFStaveNote {
         let keyLine = 'b/4';
         const activeSiteSingleLine = (
             this.activeSite !== undefined
@@ -773,13 +775,13 @@ export class Rest extends GeneralNote {
             keyLine = p.vexflowName(undefined);
         }
 
-        const vfn = new Vex.Flow.StaveNote({
+        const vfn = new VFStaveNote({
             keys: [keyLine],
             duration: this.duration.vexflowDuration + 'r',
         });
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
-                vfn.addDotToAll();
+                VFDot.buildAndAttach([vfn], { all: true });
             }
         }
         if (this.color !== undefined) {
