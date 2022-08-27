@@ -10,16 +10,16 @@
   <div id="qunit-fixture"></div>
   <script src="./music21.tests.js"></script>
   <script>
-  QUnit.config.autoload = false;
-  QUnit.config.autostart = false;
-  for (const testModule in m21Tests.default) {
-      if (typeof m21Tests.default[testModule] === 'function') {
-          const testSuite = m21Tests.default[testModule];
-          testSuite();
-      }
-  }
-  QUnit.load();
-  QUnit.start();
+    QUnit.config.autoload = false;
+    QUnit.config.autostart = false;
+    for (const testModule in m21Tests.default) {
+        if (typeof m21Tests.default[testModule] === 'function') {
+            const testSuite = m21Tests.default[testModule];
+            testSuite();
+        }
+    }
+    QUnit.load();
+    QUnit.start();
   </script>
 </body>
 </html>
