@@ -296,7 +296,8 @@ export function selectionChanged() {
     if (selectedInput === webmidi.selectedInputPort) {
         return false;
     }
-    const storedStateChange = webmidi.access.onstatechange; // port.close() fires onstatechange, so turn off for a moment.
+    // port.close() fires onstatechange, so turn off for a moment.
+    const storedStateChange = webmidi.access.onstatechange;
     webmidi.access.onstatechange = () => {};
     if (debug) {
         console.log('current input changed to: ' + selectedInput);

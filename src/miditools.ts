@@ -12,7 +12,6 @@
  * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
  * events from the Jazz plugin or the WebMIDI protocol.
  */
-import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
 import { debug } from './debug';
@@ -405,8 +404,7 @@ export function loadSoundfont(
         if (debug) {
             console.log('waiting for document ready');
         }
-        // this is the JQuery 3.0 equivalent to $(document).ready()...
-        $(() => {
+        const sf_loader_on_ready = () => {
             if (debug) {
                 console.log('Document ready, waiting to load soundfont');
             }
@@ -425,7 +423,13 @@ export function loadSoundfont(
                     callback
                 ),
             });
-        });
+        };
+
+        if (document.readyState !== 'loading') {
+            sf_loader_on_ready();
+        } else {
+            document.addEventListener('DOMContentLoaded', sf_loader_on_ready);
+        }
     }
 }
 
@@ -567,7 +571,9 @@ export class MidiPlayer {
         //
         capsule.addEventListener('dragstart', event => {
             const e = <DragEvent> event;
-            player.currentTime = (e.pageX - $(capsule).offset().left) / 420 * player.endTime;
+            player.currentTime = (
+                e.pageX - (capsule.getBoundingClientRect().left + window.scrollX))
+                / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
             }

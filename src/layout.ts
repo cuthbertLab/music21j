@@ -5,8 +5,6 @@
  *
  */
 // future -- rewrite of Score and Part to Page, System, SystemPart
-// not currently used
-// import * as $ from 'jquery';
 //
 // import { base } from './base';
 // import { renderOptions } from './renderOptions';
