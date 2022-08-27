@@ -11,13 +11,13 @@ on:
 
 jobs:
   frontend_tests:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
-        node-version: '10.x'
+        node-version: 16
 
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
       with:
         submodules: True
 
@@ -28,13 +28,13 @@ jobs:
       run: grunt test_no_watch
 
   eslint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
-        node-version: '10.x'
+        node-version: 16
 
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
       with:
         submodules: True
 

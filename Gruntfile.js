@@ -183,7 +183,7 @@ module.exports = grunt => {
         eslint: {
             target: SOURCES.concat(TEST_SOURCES),
             options: {
-                configFile: '.eslintrc.json',
+                overrideConfigFile: '.eslintrc.json',
             },
         },
         qunit: {

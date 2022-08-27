@@ -475,11 +475,8 @@ export class Stream extends base.Music21Object {
     /**
      * The instrument object (NOT stored in the stream!) -- this is a difference from
      * music21p and expect this to change soon.
-     *
-     * Note that .instrument will never return a string, but Typescript <= 4 requires
-     * that getter and setter are the same.
      */
-    get instrument(): instrument.Instrument|string {
+    get instrument(): instrument.Instrument {
         if (this._instrument === undefined && this.activeSite !== undefined) {
             return this.activeSite.instrument;
         } else {
@@ -649,12 +646,8 @@ export class Stream extends base.Music21Object {
      * either from an Array or from another Stream.  Setting from another Stream
      * will preserve the offsets.
      * DO NOT MODIFY individual components (consider it like a Python tuple)
-     *
-     * Note that a Stream is never returned from .elements,
-     * but TypeScript requires getter and setters to have the same
-     * function signature.
      */
-    get elements(): base.Music21Object[]|Stream {
+    get elements(): base.Music21Object[] {
         if (!this.isSorted) {
             this.sort();
         }
@@ -1439,6 +1432,7 @@ export class Stream extends base.Music21Object {
     }
 
     cloneEmpty(derivationMethod?: string): this {
+        // noinspection JSPotentiallyInvalidConstructorUsage
         const returnObj = new (this as any).constructor();
         const new_derivation = new derivation.Derivation(returnObj);
         new_derivation.origin = this;
@@ -1679,7 +1673,7 @@ export class Stream extends base.Music21Object {
      *
      *  el is the object with an offset and class to search for.
      *
-     *  elStream is a place to get el's offset from.  Otherwise activeSite is used
+     *  elStream is a place to get el's offset from.  Otherwise, activeSite is used
      */
     playingWhenAttacked(el: base.Music21Object, elStream?): base.Music21Object|undefined {
         let elOffset;
@@ -1869,7 +1863,7 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Resets all the RenderOptions back to defaults. Can run recursively
+     * Resets all the RenderOptions back to default values. Can run recursively
      * and can also preserve the `RenderOptions.events` object.
      *
      * @param {boolean} [recursive=false]
@@ -2582,7 +2576,7 @@ export class Stream extends base.Music21Object {
      *    - Stream.renderOptions.events.dblclick
      *    - Stream.renderOptions.events.resize
      *
-     * Currently the only options available for each are:
+     * Currently, the only options available for each are:
      *    - 'play' (string)
      *    - 'reflow' (string; only on event.resize)
      *    - customFunction (will receive event as a first variable; should set up a way to
@@ -3555,7 +3549,7 @@ export class Score extends Stream {
         this.renderOptions.systemPadding = 40;
     }
 
-    get clef() { // TODO: remove -- this is unlike m21p
+    get clef(): clef.Clef { // TODO: remove -- this is unlike m21p
         const c = super.clef;
         if (c === undefined) {
             return new clef.TrebleClef();
@@ -3564,7 +3558,7 @@ export class Score extends Stream {
         }
     }
 
-    set clef(newClef) {
+    set clef(newClef: clef.Clef) {
         super.clef = newClef;
     }
 

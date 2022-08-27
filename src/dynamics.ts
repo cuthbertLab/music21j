@@ -99,7 +99,7 @@ export class Dynamic extends base.Music21Object {
         this.value = value;
     }
 
-    get value(): string|number {
+    get value(): string {
         return this._value;
     }
 

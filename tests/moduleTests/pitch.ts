@@ -281,20 +281,20 @@ export default function tests() {
         ).flat;
         // Function does not work, stream.ts 1353
         //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
-
-        assert.equal(convertedNotes.elements[2].pitch.accidental.name, 'natural', 'Natural');
-        //assert.equal(convertedNotes.elements[2].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[3].pitch.accidental.name, 'natural', 'Natural');
-        //assert.equal(convertedNotes.elements[3].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[4].pitch.accidental.name, 'flat', 'Flat');
-        //assert.equal(convertedNotes.elements[4].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[5].pitch.accidental.name, 'flat', 'Flat');
-        //assert.equal(convertedNotes.elements[5].pitch.accidental.displayStatus, 'True');
-        assert.equal(convertedNotes.elements[6].pitch.accidental.name, 'natural', 'Natural');
-        //assert.equal(convertedNotes.elements[6].pitch.accidental.displayStatus, 'True');
-        assert.notEqual(convertedNotes.elements[7].pitch.accidental, 'None', 'None');
-        assert.notEqual(convertedNotes.elements[7].pitch.accidental.name, 'flat', 'Natural');
-        //assert.notEqual(convertedNotes.notes[7].pitch.accidental.displayStatus, 'True');
+        const els = convertedNotes.elements as music21.note.Note[];
+        assert.equal(els[2].pitch.accidental.name, 'natural', 'Natural');
+        //assert.equal(els[2].pitch.accidental.displayStatus, 'True');
+        assert.equal(els[3].pitch.accidental.name, 'natural', 'Natural');
+        //assert.equal(els[3].pitch.accidental.displayStatus, 'True');
+        assert.equal(els[4].pitch.accidental.name, 'flat', 'Flat');
+        //assert.equal(els[4].pitch.accidental.displayStatus, 'True');
+        assert.equal(els[5].pitch.accidental.name, 'flat', 'Flat');
+        //assert.equal(els[5].pitch.accidental.displayStatus, 'True');
+        assert.equal(els[6].pitch.accidental.name, 'natural', 'Natural');
+        //assert.equal(els[6].pitch.accidental.displayStatus, 'True');
+        assert.notEqual(els[7].pitch.accidental, 'None', 'None');
+        assert.notEqual(els[7].pitch.accidental.name, 'flat', 'Natural');
+        //assert.notEqual(els[7].pitch.accidental.displayStatus, 'True');
     });
 
     test('music21.pitch.updateAccidentalDisplay nonconsecutive chromatic pitches', assert => {

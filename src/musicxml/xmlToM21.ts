@@ -591,8 +591,8 @@ export class MeasureParser {
                     normalDur = d.clone();
                 }
                 const tuplet = new duration.Tuplet(
-                    $mxTimeMod.children('actual-notes')[0].textContent.trim(),
-                    $mxTimeMod.children('normal-notes')[0].textContent.trim(),
+                    parseInt($mxTimeMod.children('actual-notes')[0].textContent.trim()),
+                    parseInt($mxTimeMod.children('normal-notes')[0].textContent.trim()),
                     normalDur,
                 );
                 d.appendTuplet(tuplet);
