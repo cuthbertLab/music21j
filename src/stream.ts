@@ -1432,6 +1432,7 @@ export class Stream extends base.Music21Object {
     }
 
     cloneEmpty(derivationMethod?: string): this {
+        // noinspection JSPotentiallyInvalidConstructorUsage
         const returnObj = new (this as any).constructor();
         const new_derivation = new derivation.Derivation(returnObj);
         new_derivation.origin = this;
@@ -1672,7 +1673,7 @@ export class Stream extends base.Music21Object {
      *
      *  el is the object with an offset and class to search for.
      *
-     *  elStream is a place to get el's offset from.  Otherwise activeSite is used
+     *  elStream is a place to get el's offset from.  Otherwise, activeSite is used
      */
     playingWhenAttacked(el: base.Music21Object, elStream?): base.Music21Object|undefined {
         let elOffset;
@@ -1862,7 +1863,7 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Resets all the RenderOptions back to defaults. Can run recursively
+     * Resets all the RenderOptions back to default values. Can run recursively
      * and can also preserve the `RenderOptions.events` object.
      *
      * @param {boolean} [recursive=false]
@@ -2575,7 +2576,7 @@ export class Stream extends base.Music21Object {
      *    - Stream.renderOptions.events.dblclick
      *    - Stream.renderOptions.events.resize
      *
-     * Currently the only options available for each are:
+     * Currently, the only options available for each are:
      *    - 'play' (string)
      *    - 'reflow' (string; only on event.resize)
      *    - customFunction (will receive event as a first variable; should set up a way to

@@ -352,8 +352,7 @@ export class MetronomeMark extends base.Music21Object {
         }
     }
 
-    // sigh, again the TypeScript limitation...
-    get text(): undefined|string|TempoText {
+    get text(): undefined|string {
         if (this._tempoText === undefined) {
             return undefined;
         }
