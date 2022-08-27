@@ -9,6 +9,7 @@ import dynamics from './moduleTests/dynamics';
 import editorial from './moduleTests/editorial';
 import figuredBass from './moduleTests/figuredBass';
 import interval from './moduleTests/interval';
+import iterator from './moduleTests/stream/iterator';
 import key from './moduleTests/key';
 import meter from './moduleTests/meter';
 import note from './moduleTests/note';
@@ -20,6 +21,7 @@ import sites from './moduleTests/sites';
 import stream from './moduleTests/stream';
 import tempo from './moduleTests/tempo';
 import tie from './moduleTests/tie';
+import tinyNotation from './moduleTests/tinyNotation';
 import vfShow from './moduleTests/vfShow';
 import voiceLeading from './moduleTests/voiceLeading';
 declare const allTests: {
@@ -34,6 +36,7 @@ declare const allTests: {
     editorial: typeof editorial;
     figuredBass: typeof figuredBass;
     interval: typeof interval;
+    iterator: typeof iterator;
     key: typeof key;
     meter: typeof meter;
     note: typeof note;
@@ -44,6 +47,7 @@ declare const allTests: {
     sites: typeof sites;
     stream: typeof stream;
     tempo: typeof tempo;
+    tinyNotation: typeof tinyNotation;
     tie: typeof tie;
     vfShow: typeof vfShow;
     voiceLeading: typeof voiceLeading;

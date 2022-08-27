@@ -266,6 +266,9 @@ export class Duration extends prebase.ProtoM21Object {
 
     updateQlFromFeatures() {
         const typeNumber = ordinalTypeFromNum.indexOf(this._type); // must be set property
+        if (typeNumber === -1) {
+            return;  // e.g. "zero" type
+        }
         const undottedQuarterLength = (
             2 ** (quarterTypeIndex - typeNumber)
         );

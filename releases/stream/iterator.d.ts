@@ -53,11 +53,7 @@ export declare class StreamIterator<T = Music21Object> extends _StreamIteratorBa
     [Symbol.iterator](): Generator<T, void, void>;
 }
 export declare class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
-    nextToYield: T[];
-    nextOffsetToYield: number;
-    constructor(srcStream: any, options?: {});
     [Symbol.iterator](): Generator<T[], void, void>;
-    reset(): void;
 }
 export declare class RecursiveIterator<T = Music21Object> extends _StreamIteratorBase<T> {
     returnSelf: boolean;

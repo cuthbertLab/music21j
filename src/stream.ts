@@ -20,14 +20,16 @@
 
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
-import Vex from 'vexflow';
+import { Stave as VFStave } from 'vexflow';
 
 import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
 
 import * as base from './base';
+import { Chord } from './chord';
 import * as clef from './clef';
 import * as common from './common';
+import * as derivation from './derivation';
 import { Duration } from './duration';
 import * as instrument from './instrument';
 import * as meter from './meter';
@@ -46,7 +48,6 @@ import * as iterator from './stream/iterator';
 import * as makeNotation from './stream/makeNotation';
 
 // for typing only
-import type { Chord } from './chord';
 import type { KeySignature } from './key';
 
 export { filters };
@@ -142,7 +143,7 @@ export class Stream extends base.Music21Object {
     /**
      * the current Stave object for the Stream
      */
-    activeVFStave: Vex.Flow.Stave = undefined;
+    activeVFStave: VFStave = undefined;
 
     /**
      * the current vfShow.Renderer object for the Stream
@@ -161,7 +162,7 @@ export class Stream extends base.Music21Object {
         (e: MouseEvent|TouchEvent|JQuery.MouseEventBase) => base.Music21Object|undefined;
 
     // music21j specific attributes eventually to remove:
-    storedVexflowStave: Vex.Flow.Stave = undefined;  // cannot figure out diff w/ activeVFStave
+    storedVexflowStave: VFStave = undefined;  // cannot figure out diff w/ activeVFStave
 
     activeNote: note.GeneralNote = undefined;
     _clef = undefined;
@@ -1431,8 +1432,11 @@ export class Stream extends base.Music21Object {
     }
 
     cloneEmpty(derivationMethod?: string): this {
-        const returnObj = this.constructor();
-        // TODO(msc): derivation
+        const returnObj = new (this as any).constructor();
+        const new_derivation = new derivation.Derivation(returnObj);
+        new_derivation.origin = this;
+        new_derivation.method = derivationMethod || 'cloneEmpty';
+        returnObj.derivation = new_derivation;
         returnObj.mergeAttributes(this);
         return returnObj;
     }
@@ -1771,6 +1775,10 @@ export class Stream extends base.Music21Object {
             alteredPitches.push(...addAlterPitches);
         }
 
+        function different_pitch(other: pitch.Pitch) {
+            return other.nameWithOctave !== this.nameWithOctave;  // this is `p`
+        }
+
         const noteIterator = returnObj.recurse().notesAndRests;
         let last_measure: Measure;
         for (const e of noteIterator) {
@@ -1804,16 +1812,18 @@ export class Stream extends base.Music21Object {
                 if (tie !== undefined && tie.type !== 'stop') {
                     tiePitchSet.add(p.nameWithOctave);
                 }
-            } else if (e.classes.includes('Chord')) {
-                const chordNotes = (e as Chord).notes;
+            } else if (e instanceof Chord) {
+                const chordNotes = e.notes;
                 const seenPitchNames: Set<string> = new Set();
                 for (const n of chordNotes) {
                     const p = n.pitch;
                     const lastNoteWasTied: boolean = tiePitchSet.has(p.nameWithOctave);
+                    const otherSimultaneousPitches = e.pitches.filter(different_pitch, p);
 
                     p.updateAccidentalDisplay({
                         pitchPast,
                         pitchPastMeasure,
+                        otherSimultaneousPitches,
                         alteredPitches,
                         cautionaryPitchClass,
                         cautionaryAll,
@@ -1830,7 +1840,7 @@ export class Stream extends base.Music21Object {
                 for (const pName of seenPitchNames) {
                     tiePitchSet.add(pName);
                 }
-                pitchPast.push(...(e as Chord).pitches);
+                pitchPast.push(...e.pitches);
             } else {
                 tiePitchSet.clear();
             }
@@ -1917,6 +1927,7 @@ export class Stream extends base.Music21Object {
         } else if (tagName === 'svg') {
             vfr.rendererType = 'svg';
         }
+
         vfr.render();
         this.setRenderInteraction(canvasOrSVG);
         this.activeVFRenderer = vfr;
@@ -2000,7 +2011,7 @@ export class Stream extends base.Music21Object {
      * @returns {number} length in pixels
      */
     estimateStaffLength() {
-        let totalLength: number;
+        let totalLength = 0;
         if (this.renderOptions.overriddenWidth !== undefined) {
             // console.log('Overridden staff width: ' + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
@@ -2030,7 +2041,14 @@ export class Stream extends base.Music21Object {
                 }
             }
         } else {
-            totalLength = 30 * this.notesAndRests.length;
+            for (const nr of this.notesAndRests) {
+                // if .lyric is > 4 characters, we start padding the length
+                if (nr.lyric !== undefined) {
+                    totalLength += Math.max(30, ((7 * nr.lyric.length) + 2));
+                } else {
+                    totalLength += 30;
+                }
+            }
         }
         if (this instanceof Voice) {
             // recursive call: return early so that measure call
@@ -2589,7 +2607,7 @@ export class Stream extends base.Music21Object {
      *
      * Recursively search downward for the closest storedVexflowStave...
      */
-    recursiveGetStoredVexflowStave(): Vex.Flow.Stave|undefined {
+    recursiveGetStoredVexflowStave(): VFStave|undefined {
         const storedVexflowStave = this.storedVexflowStave;
         if (storedVexflowStave === undefined) {
             if (this.isFlat) {
@@ -3094,10 +3112,46 @@ export class Part extends Stream {
     static get className() { return 'music21.stream.Part'; }
 
     recursionType: string = 'flatten';
+    _partName: string;
+    _partAbbreviation: string;
 
     // constructor() {
     //     super();
     // }
+
+    /**
+     * The name of this part; if undefined, look up on the stored instrument.
+     */
+    get partName(): string {
+        if (this._partName !== undefined) {
+            return this._partName;
+        }
+        if (this.instrument instanceof instrument.Instrument) {
+            return this.instrument.partName;
+        }
+        return undefined;
+    }
+
+    set partName(name: string) {
+        this._partName = name;
+    }
+
+    /**
+     * The abbreviated name of this part; if undefined, look up on the stored instrument.
+     */
+    get partAbbreviation(): string {
+        if (this._partAbbreviation !== undefined) {
+            return this._partAbbreviation;
+        }
+        if (this.instrument instanceof instrument.Instrument) {
+            return this.instrument.partAbbreviation;
+        }
+        return undefined;
+    }
+
+    set partAbbreviation(name: string) {
+        this._partAbbreviation = name;
+    }
 
     /**
      * How many systems does this Part have?
@@ -3230,11 +3284,9 @@ export class Part extends Stream {
     fixSystemInformation({
         systemHeight = undefined,
         systemPadding = undefined,
-        setMeasureRenderOptions = true,
     }: {
         systemHeight?: number,
         systemPadding?: number,
-        setMeasureRenderOptions?: boolean,
     } = {}): number[] {
         // this is a method on Part!
         if (systemHeight === undefined) {
@@ -3243,26 +3295,22 @@ export class Part extends Stream {
         } else if (debug) {
             console.log('overridden systemHeight: ' + systemHeight);
         }
-        let systemCurrentWidths = [];
-        let systemBreakIndexes = [];
-        if (setMeasureRenderOptions) {
-            [systemCurrentWidths, systemBreakIndexes] = this.systemWidthsAndBreaks();
-        }
-        else {
-            // read from measure render options
-            let lastSystemIndex = 0;
-            let workingSystemWidth = 0;
-            const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
-            for (const [i, m] of Array.from(measure_iter).entries()) {
-                if (m.renderOptions.systemIndex === lastSystemIndex) {
-                    workingSystemWidth += m.renderOptions.width;
-                } else {
-                    systemCurrentWidths.push(workingSystemWidth);
-                    systemBreakIndexes.push(i - 1);
-                    workingSystemWidth = m.renderOptions.width;
-                }
-                lastSystemIndex = m.renderOptions.systemIndex;
+        const systemCurrentWidths = [];
+        const systemBreakIndexes = [];
+
+        // read from measure render options
+        let lastSystemIndex = 0;
+        let workingSystemWidth = 0;
+        const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
+        for (const [i, m] of Array.from(measure_iter).entries()) {
+            if (m.renderOptions.systemIndex === lastSystemIndex) {
+                workingSystemWidth += m.renderOptions.width;
+            } else {
+                systemCurrentWidths.push(workingSystemWidth);
+                systemBreakIndexes.push(i - 1);
+                workingSystemWidth = m.renderOptions.width;
             }
+            lastSystemIndex = m.renderOptions.systemIndex;
         }
         if (systemPadding === undefined) {
             systemPadding = this.renderOptions.systemPadding;
@@ -3274,7 +3322,6 @@ export class Part extends Stream {
 
         let currentSystemIndex = 0;
 
-        const measure_iter = this.getElementsByClass('Measure') as iterator.StreamIterator<Measure>;
         for (const [i, m] of Array.from(measure_iter).entries()) {
             // values of systemBreakIndices are the measure indices
             // corresponding to the last measure on a system
@@ -3588,12 +3635,9 @@ export class Score extends Stream {
             p.systemWidthsAndBreaks({setMeasureWidths: false});
         }
         for (const p of this.parts) {
-            // fix system info, but no need to recalculate measure widths
-            // which would undo what we just did
             p.fixSystemInformation({
                 systemHeight: currentScoreHeight,
                 systemPadding: this.renderOptions.systemPadding,
-                setMeasureRenderOptions: false,
             });
         }
         this.renderOptions.height = this.estimateStreamHeight();

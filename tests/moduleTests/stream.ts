@@ -419,6 +419,14 @@ export default function tests() {
         assert.equal(c.attr('height'), 50, 'stored height matches');
     });
 
+    test('music21.stream.Stream.DOM voice with no notes', assert => {
+        const s = new music21.stream.Stream();
+        const where = s.createNewDOM(100, 50);
+        // Should not raise an error even though the voice is empty..
+        s.replaceDOM(where);
+        assert.ok(true);
+    });
+
     test('music21.stream.Stream.getElementsByClass', assert => {
         const s = new music21.stream.Stream();
         const n1 = new music21.note.Note('C#5');
@@ -552,6 +560,22 @@ export default function tests() {
         assert.ok(n0.pitch.accidental.displayStatus);  // natural created
         assert.notOk(n1.pitch.accidental.displayStatus);  // not reiterated
         assert.ok(n2.pitch.accidental.displayStatus);  // different note
+    });
+
+    test('music21.stream.Stream makeAccidentals augmented unison in chord', assert => {
+        const m = new music21.stream.Measure();
+        const c = new music21.chord.Chord('G G#');
+        m.append(c);
+        m.makeAccidentals({inPlace: true});
+        assert.ok(c.pitches[0].accidental.displayStatus);
+    });
+
+    test('music21.stream.Stream makeAccidentals perfect octave in chord', assert => {
+        const m = new music21.stream.Measure();
+        const c = new music21.chord.Chord('G4 G5');
+        m.append(c);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(c.pitches[0].accidental?.displayStatus);
     });
 
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
@@ -1045,5 +1069,16 @@ export default function tests() {
         p.append(previous_measure);
         p.append(m);
         assert.equal(m.estimateStaffLength(), original_width + ks.width);
+
+        n.lyric = 'lorem';  // (7px * 5 letters + 2) = 37, original width otherwise starts at 30
+        assert.equal(m.estimateStaffLength(), original_width + 7 + ks.width);
+    });
+
+    test('music21.stream.Stream cloneEmpty', assert => {
+        const p = music21.tinyNotation.TinyNotation('3/4 c4 BB c d4 e2.');
+        const empty = p.cloneEmpty();
+        assert.true(empty instanceof music21.stream.Part);
+        assert.equal(empty.elements.length, 0);
+        assert.equal(empty.derivation.method, 'cloneEmpty');
     });
 }

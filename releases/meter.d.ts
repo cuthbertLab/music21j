@@ -72,6 +72,8 @@ export declare class TimeSignature extends base.Music21Object {
      *     find a list of beat groups.
      */
     computeBeatGroups(): number[][];
+    _beat_group_as_ql(beatGroup: number[]): number;
+    _beat_groups_to_fill_bar(): number[][];
     offsetToIndex(qLenPos: number, { includeCoincidentBoundaries }?: {
         includeCoincidentBoundaries?: boolean;
     }): number;

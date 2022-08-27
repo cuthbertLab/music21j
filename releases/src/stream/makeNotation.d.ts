@@ -1,4 +1,4 @@
-import * as note from '../note';
+import type * as note from '../note';
 import * as stream from '../stream';
 export interface MakeBeamsOptions {
     inPlace?: boolean;
