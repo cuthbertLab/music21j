@@ -1,4 +1,6 @@
 import * as QUnit from 'qunit';
+import {TextNote as VFTextNote} from 'vexflow';
+
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
 
@@ -23,7 +25,11 @@ export default function tests() {
         p.append(m);
         s.append(p);
 
-        const svg = s.appendNewDOM();
+        s.appendNewDOM();
+
+        const svg = document.createElement('svg');
+        svg.setAttribute('height', '300');
+        svg.setAttribute('width', '300');
 
         let renderer = new music21.vfShow.Renderer(s, svg);
         assert.equal(renderer.beamGroups.length, 0);
@@ -45,6 +51,7 @@ export default function tests() {
         renderer = new music21.vfShow.Renderer(s, svg);
         renderer.render();
         assert.equal(renderer.beamGroups.length, 2);
+        s.appendNewDOM();
     });
 
     test('music21.vfShow.Renderer prepareTies in voices', assert => {
@@ -162,9 +169,20 @@ export default function tests() {
     });
 
     test('music21.vfShow.Renderer obeys measure numbers', assert => {
-        const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('c4 d1 e~ e');
+        const p = new music21.stream.Part();
+        const m0 = new music21.stream.Measure();
+        m0.append(new music21.note.Note('C4'));
+        m0.paddingLeft = 3.0;
+        p.append(m0);
+        for (const n_name of ['D', 'E', 'E']) {
+            const m = new music21.stream.Measure();
+            const n = new music21.note.Note(n_name + '4');
+            n.duration.type = 'whole';
+            m.append(n);
+            p.append(m);
+        }
+
         const m_iter = p.getElementsByClass('Measure') as StreamIterator<music21.stream.Measure>;
-        m_iter.get(0).paddingLeft = 3.0;
         for (const [i, m] of Array.from(m_iter).entries()) {
             // Renumber the measures so that pickup is m.0
             m.number = i;
@@ -173,10 +191,14 @@ export default function tests() {
         p.appendNewDOM();
         for (const stack of p.activeVFRenderer.stacks) {
             const vf_voice = stack.voices[0];
+            const measure_number = (
+                stack.voiceToStreamMapping.get(vf_voice) as music21.stream.Measure
+            ).number;
             assert.equal(
                 // @ts-ignore
                 vf_voice.getStave().measure,
-                (stack.voiceToStreamMapping.get(vf_voice) as music21.stream.Measure).number
+                measure_number,
+                `measure_number ${measure_number} is correct`,
             );
         }
     });
@@ -187,30 +209,37 @@ export default function tests() {
         // Example 1: multipart -- no action on left barlines
         s.repeatAppend(p, 2);
         s.renderOptions.maxSystemWidth = 200;
-        s.createDOM();
+        s.appendNewDOM();
 
         const m_iter = s.parts.last().getElementsByClass('Measure') as StreamIterator<music21.stream.Measure>;
         assert.deepEqual(
             m_iter.map(m => m.renderOptions.startNewSystem),
             [true, false, false, true, false],
+            'new system breaks before m1 and 4.',
         );
         assert.deepEqual(
             m_iter.map(m => m.renderOptions.leftBarline),
             [undefined, undefined, undefined, undefined, undefined],
+            'left barlines are undefined = Normal',
         );
 
         // Example 2: single part -- left barlines 'none' on new systems
         s.remove(s.parts.first());
-        s.createDOM();
+        s.appendNewDOM();
         assert.deepEqual(
             m_iter.map(m => m.renderOptions.leftBarline),
             ['none', undefined, undefined, 'none', undefined],
+            'left barlines are omitted at the start of systems.'
         );
 
         // Example 3: single measure left barline 'none'
         const last_m = m_iter.last();
         last_m.createDOM();
-        assert.equal(last_m.renderOptions.leftBarline, 'none');
+        assert.equal(
+            last_m.renderOptions.leftBarline,
+            'none',
+            'single measure has no left barline.',
+        );
     });
 
     test('music21.vfShow.Renderer multiple lyrics', assert => {
@@ -219,12 +248,23 @@ export default function tests() {
         n.lyrics.push(new music21.note.Lyric('first'));
         n.lyrics.push(new music21.note.Lyric('second'));
         m.append(n);
-        m.createDOM();
-        // Error: Property 'text' does not exist on type 'Tickable'.
-        // @ts-ignore
-        assert.equal(m.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0].text, 'first');
-        // Error: Property 'text' does not exist on type 'Tickable'.
-        // @ts-ignore
-        assert.equal(m.activeVFRenderer.stacks[0].textVoices[1].getTickables()[0].text, 'second');
+        m.renderOptions.heightBelowStaff = 40;
+        m.appendNewDOM();
+        const t1 = m.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0] as VFTextNote;
+        assert.equal(
+            // Error: Property 'text' does not exist on type 'Tickable'.
+            // @ts-ignore
+            t1.text,
+            'first',
+            'first lyric is "first".'
+        );
+        const t2 = m.activeVFRenderer.stacks[0].textVoices[1].getTickables()[0] as VFTextNote;
+        assert.equal(
+            // Error: Property 'text' does not exist on type 'Tickable'.
+            // @ts-ignore
+            t2.text,
+            'second',
+            'second lyric is "second".'
+        );
     });
 }

@@ -1,7 +1,9 @@
 import * as QUnit from 'qunit';
+import {KeySignature as VFKeySignature, StaveModifierPosition, Glyph as VFGlyph} from 'vexflow';
 import * as music21 from '../../src/main';
 
 const { test } = QUnit;
+
 
 export default function tests() {
     test('music21.key.convertKeyStringToMusic21KeyString', assert => {
@@ -13,6 +15,21 @@ export default function tests() {
         assert.equal(conv('b'), 'b', 'b minor passed');
         assert.equal(conv('B'), 'B', 'B major passed');
         assert.equal(conv('Eb'), 'E-', 'E- major passed');
+    });
+
+    test('music21.key vexflow', assert => {
+        const ks = new music21.key.KeySignature(3);
+        const s = new music21.stream.Stream();
+        s.append(ks);
+        s.appendNewDOM();
+        const vfs = s.activeVFStave;
+        const modifiers = vfs.getModifiers(StaveModifierPosition.BEGIN, VFKeySignature.CATEGORY);
+        assert.equal(modifiers.length, 1, 'One key signature at beginning in VF');
+        // @ts-ignore
+        const glyphs: VFGlyph[] = modifiers[0].glyphs;
+        assert.equal(glyphs.length, 3, '3 sharp KS should have 3 glyphs');
+        const g = glyphs[0];
+        assert.equal(g.getCode(), 'accidentalSharp', 'Code is accidentalSharp');
     });
 
     test('music21.key.Key', assert => {

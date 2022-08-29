@@ -17,6 +17,7 @@
       <w>attrchange</w>
       <w>audiobuffer</w>
       <w>audiotag</w>
+      <w>autobeam</w>
       <w>bainbridge</w>
       <w>barline</w>
       <w>barlines</w>
@@ -84,6 +85,7 @@
       <w>jianpu</w>
       <w>jordi</w>
       <w>jsonpickle</w>
+      <w>kachalo</w>
       <w>kalimba</w>
       <w>kanakangi</w>
       <w>keyboardkey</w>
