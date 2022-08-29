@@ -213,7 +213,9 @@ export class Renderer {
             isPartlike = true;
         }
         // requires organization Score -> Part -> Measure -> elements...
-        if (isScorelike) {
+        if (isFlat) {
+            this.prepareArrivedFlat(s);
+        } else if (isScorelike) {
             this.prepareScorelike(s as stream.Score);
         } else if (isPartlike) {
             this.preparePartlike(s as stream.Part, {multipart: false});
