@@ -169,9 +169,20 @@ export default function tests() {
     });
 
     test('music21.vfShow.Renderer obeys measure numbers', assert => {
-        const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('c4 d1 e~ e');
+        const p = new music21.stream.Part();
+        const m0 = new music21.stream.Measure();
+        m0.append(new music21.note.Note('C4'));
+        m0.paddingLeft = 3.0;
+        p.append(m0);
+        for (const n_name of ['D', 'E', 'E']) {
+            const m = new music21.stream.Measure();
+            const n = new music21.note.Note(n_name + '4');
+            n.duration.type = 'whole';
+            m.append(n);
+            p.append(m);
+        }
+
         const m_iter = p.getElementsByClass('Measure') as StreamIterator<music21.stream.Measure>;
-        m_iter.get(0).paddingLeft = 3.0;
         for (const [i, m] of Array.from(m_iter).entries()) {
             // Renumber the measures so that pickup is m.0
             m.number = i;
@@ -180,10 +191,14 @@ export default function tests() {
         p.appendNewDOM();
         for (const stack of p.activeVFRenderer.stacks) {
             const vf_voice = stack.voices[0];
+            const measure_number = (
+                stack.voiceToStreamMapping.get(vf_voice) as music21.stream.Measure
+            ).number;
             assert.equal(
                 // @ts-ignore
                 vf_voice.getStave().measure,
-                (stack.voiceToStreamMapping.get(vf_voice) as music21.stream.Measure).number
+                measure_number,
+                `measure_number ${measure_number} is correct`,
             );
         }
     });
