@@ -58,6 +58,7 @@ import { debug } from './debug';
 
 import * as common from './common';
 import * as miditools from './miditools';
+import defaults from './defaults';
 
 type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
 
@@ -169,7 +170,8 @@ export function midiInArrived(midiMessageEvent) {
  *
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
- * @param {HTMLElement} [appendElement=document.body] - where to place this hidden object (does not really matter)
+ * @param {HTMLElement} [appendElement=document.body] - where to place this
+ *     hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called
  *     successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
@@ -182,7 +184,7 @@ export function createPlugin(
         return webmidi.storedPlugin;
     }
     if (typeof appendElement === 'undefined') {
-        appendElement = document.body;
+        appendElement = document.querySelector(defaults.appendLocation);
     }
     const obj = <Jazz> document.createElement('object');
     // noinspection SpellCheckingInspection
@@ -296,7 +298,8 @@ export function selectionChanged() {
     if (selectedInput === webmidi.selectedInputPort) {
         return false;
     }
-    const storedStateChange = webmidi.access.onstatechange; // port.close() fires onstatechange, so turn off for a moment.
+    // port.close() fires onstatechange, so turn off for a moment.
+    const storedStateChange = webmidi.access.onstatechange;
     webmidi.access.onstatechange = () => {};
     if (debug) {
         console.log('current input changed to: ' + selectedInput);

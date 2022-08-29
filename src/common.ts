@@ -1,16 +1,17 @@
 /**
- * common functions
+ * common functions.
  * functions that are useful everywhere...
  */
 
 
 import * as $ from 'jquery';
+import defaults from './defaults';
 
 /**
  *  Many music21j functions take either JQuery or HTMLElement, but
  *  "el instanceof $" is not a good way of checking, because the copy of
  *  JQuery imported into music21j might not be the same copy loaded by a calling
- *  library or script tag.  Hence these three little functions that coerce in one
+ *  library or script tag.  Hence, these three little functions that coerce in one
  *  direction or another.
  */
 export function jQueryAndHTMLVersion(el?: JQuery|HTMLElement): [JQuery, HTMLElement] {
@@ -23,7 +24,7 @@ export function jQueryAndHTMLVersion(el?: JQuery|HTMLElement): [JQuery, HTMLElem
         htmlElement = el;
         $jq = $(el);
     } else {
-        htmlElement = document.body;
+        htmlElement = document.querySelector(defaults.appendLocation);
         $jq = $(htmlElement);
     }
     return [$jq, htmlElement];
@@ -166,7 +167,7 @@ export function posMod(a, b) {
 /**
  *
  * Returns the statistical mode (most commonly appearing element)
- * in a.
+ * in 'a' which is an Array or iterable.
  *
  * In case of tie, returns the first element to reach the maximum
  * number of occurrences.
@@ -368,7 +369,7 @@ export function stripPx(str: number|string): number {
  * Return may be '' if empty.
  */
 export function urlParam(name: string): string {
-    name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
+    name = name.replace(/\[/, '\\[').replace(/]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     const results = regex.exec(window.location.search);
     return results == null

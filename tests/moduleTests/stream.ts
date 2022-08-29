@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/main';
 
@@ -422,7 +421,7 @@ export default function tests() {
     test('music21.stream.Stream.DOM voice with no notes', assert => {
         const s = new music21.stream.Stream();
         const where = s.createNewDOM(100, 50);
-        // Should not raise an error even though the voice is empty..
+        // Should not raise an error even though the voice is empty.
         s.replaceDOM(where);
         assert.ok(true);
     });
@@ -474,7 +473,7 @@ export default function tests() {
         const n = new music21.note.Note('G3');
         const s = new music21.stream.Measure();
         s.append(n);
-        s.appendNewDOM(document.body);
+        s.appendNewDOM();
         assert.equal(s.length, 1, 'ensure that should have one note');
         const n1 = new music21.note.Note('G3');
         const s1 = new music21.stream.Measure();
@@ -486,7 +485,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
-        $(document.body).append(div1);
+        document.querySelector(music21.defaults.appendLocation).appendChild(div1[0]);
     });
     test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');
@@ -977,7 +976,7 @@ export default function tests() {
                 const p2m = p2.measures.get(i);
                 const p1m_renderOp_clone = p1m.renderOptions.deepClone();
                 const p2m_renderOp_clone = p2m.renderOptions.deepClone();
-                // we copied precisely so we can hack this to avoid busting the test
+                // we copied precisely, so we can hack this to avoid busting the test
                 p2m_renderOp_clone.partIndex = 0;
                 assert.deepEqual(p1m_renderOp_clone, p1m_renderOp_clone);
             }

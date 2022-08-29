@@ -49,6 +49,7 @@ import * as chord from './chord';
 import * as chordTables from './chordTables';
 import * as clef from './clef';
 import * as converter from './converter';
+import defaults from './defaults';
 import * as derivation from './derivation';
 import * as duration from './duration';
 import * as dynamics from './dynamics';
@@ -105,6 +106,7 @@ export {
     chordTables,
     clef,
     converter,
+    defaults,
     derivation,
     duration,
     dynamics,

@@ -160,9 +160,9 @@ export class PartParser {
     lastNumberSuffix;
 
     multiMeasureRestsToCapture = 0;
-    activeMultimeasureRestSpanner;
+    // activeMultimeasureRestSpanner;
 
-    activeInstrument;
+    // activeInstrument;
     firstMeasureParsed = false;
     $activeAttributes: JQuery;
     lastDivisions = DEFAULTS.divisionsPerQuarter;

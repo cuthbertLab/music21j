@@ -78,3 +78,4 @@ node_modules/grunt-contrib-uglify/package.json
 
 # VSCode
 *.code-workspace
+/tests/test_compile_out/

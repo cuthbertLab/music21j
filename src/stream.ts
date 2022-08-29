@@ -49,6 +49,7 @@ import * as makeNotation from './stream/makeNotation';
 
 // for typing only
 import type { KeySignature } from './key';
+import defaults from './defaults';
 
 export { filters };
 export { iterator };
@@ -1906,10 +1907,10 @@ export class Stream extends base.Music21Object {
      */
     renderVexflow(where?: JQuery|HTMLElement): vfShow.Renderer {
         const canvasOrSVG = common.coerceHTMLElement(where);
-        const DOMContains = document.body.contains(canvasOrSVG);
+        const DOMContains = document.querySelector(defaults.appendLocation).contains(canvasOrSVG);
         if (!DOMContains) {
             // temporarily add to DOM so Firefox can measure it...
-            document.body.appendChild(canvasOrSVG);
+            document.querySelector(defaults.appendLocation).appendChild(canvasOrSVG);
         }
         const tagName = canvasOrSVG.tagName.toLowerCase();
 
@@ -1934,7 +1935,7 @@ export class Stream extends base.Music21Object {
         this.activeVFRenderer = vfr;
         if (!DOMContains) {
             // remove the adding to DOM so that Firefox could measure it...
-            document.body.removeChild(canvasOrSVG);
+            document.querySelector(defaults.appendLocation).removeChild(canvasOrSVG);
         }
 
         return vfr;
@@ -2510,11 +2511,18 @@ export class Stream extends base.Music21Object {
      *
      */
     appendNewDOM(
-        appendElement: JQuery|HTMLElement = document.body,
+        appendElement: JQuery|HTMLElement|string = '',
         width: number|string = undefined,
         height: number|string = undefined,
         elementType: string = 'svg'
     ): HTMLElement {
+        if (!appendElement) {
+            appendElement = defaults.appendLocation;
+        }
+        if (typeof appendElement === 'string') {
+            appendElement = document.querySelector(appendElement) as HTMLElement;
+        }
+
         const $appendElement = common.coerceJQuery(appendElement);
         const $svgOrCanvasBlock = this.createDOM(width, height, elementType);
         $appendElement.append($svgOrCanvasBlock);

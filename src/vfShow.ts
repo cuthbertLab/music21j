@@ -204,13 +204,18 @@ export class Renderer {
 
         if (s.isClassOrSubclass('Score')) {
             isScorelike = true;
+        } else if (s.isClassOrSubclass('Part')) {
+            // might be a Part with measures and voices.
+            isPartlike = true;
         } else if (!isFlat && !(s.get(0) as stream.Stream).isFlat) {
             isScorelike = true;
         } else if (!isFlat) {
             isPartlike = true;
         }
         // requires organization Score -> Part -> Measure -> elements...
-        if (isScorelike) {
+        if (isFlat) {
+            this.prepareArrivedFlat(s);
+        } else if (isScorelike) {
             this.prepareScorelike(s as stream.Score);
         } else if (isPartlike) {
             this.preparePartlike(s as stream.Part, {multipart: false});

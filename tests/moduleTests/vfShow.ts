@@ -66,9 +66,8 @@ export default function tests() {
         m.insert(0, v2);
         p.append(m);
 
-        const svg = p.appendNewDOM();
-        const renderer = new music21.vfShow.Renderer(p, svg);
-        renderer.preparePartlike(p, {multipart: false});
+        p.appendNewDOM();
+        const renderer = p.activeVFRenderer;
         // @ts-ignore
         assert.deepEqual(renderer.vfTies[0].notes.first_note, n1.activeVexflowNote);
         // @ts-ignore
@@ -79,10 +78,12 @@ export default function tests() {
         const m1_sop_voice = new music21.stream.Voice();
         m1_sop_voice.id = 'Soprano';
         const n_m1_v1 = new music21.note.Note('C5');
+        n_m1_v1.stemDirection = 'up';
         m1_sop_voice.repeatAppend(n_m1_v1, 2);
         const m1_alto_voice = new music21.stream.Voice();
         m1_alto_voice.id = 'Alto';
         const n_m1_v2 = new music21.note.Note('E4');
+        n_m1_v2.stemDirection = 'down';
         m1_alto_voice.repeatAppend(n_m1_v2, 2);
         const m1 = new music21.stream.Measure();
         m1.append(m1_sop_voice);
@@ -91,10 +92,12 @@ export default function tests() {
         const m2_sop_voice = new music21.stream.Voice();
         m2_sop_voice.id = 'Soprano';
         const n_m2_v1 = new music21.note.Note('C5');
+        n_m2_v1.stemDirection = 'up';
         m2_sop_voice.repeatAppend(n_m2_v1, 2);
         const m2_alto_voice = new music21.stream.Voice();
         m2_alto_voice.id = 'Alto';
         const n_m2_v2 = new music21.note.Note('E4');
+        n_m2_v2.stemDirection = 'down';
         m2_alto_voice.repeatAppend(n_m2_v2, 2);
         const m2 = new music21.stream.Measure();
         m2.append(m2_sop_voice);
@@ -123,11 +126,12 @@ export default function tests() {
         const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('c1 d e~ e');
         const s = new music21.stream.Score();
         s.append(p);
-        s.renderOptions.maxSystemWidth = 20;
-
-        const svg = s.appendNewDOM();
-        const renderer = new music21.vfShow.Renderer(p, svg);
-        renderer.prepareScorelike(s);
+        s.renderOptions.systemPadding = 0;
+        s.renderOptions.heightAboveStaff = 10;
+        s.renderOptions.heightBelowStaff = 10;
+        s.renderOptions.maxSystemWidth = 60;
+        s.appendNewDOM();
+        const renderer = s.activeVFRenderer;
         assert.equal(renderer.vfTies.length, 2);
     });
 
@@ -210,17 +214,17 @@ export default function tests() {
     });
 
     test('music21.vfShow.Renderer multiple lyrics', assert => {
-        const p = new music21.stream.Part();
+        const m = new music21.stream.Measure();
         const n = new music21.note.Note();
         n.lyrics.push(new music21.note.Lyric('first'));
         n.lyrics.push(new music21.note.Lyric('second'));
-        p.append(n);
-        p.createDOM();
+        m.append(n);
+        m.createDOM();
         // Error: Property 'text' does not exist on type 'Tickable'.
         // @ts-ignore
-        assert.equal(p.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0].text, 'first');
+        assert.equal(m.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0].text, 'first');
         // Error: Property 'text' does not exist on type 'Tickable'.
         // @ts-ignore
-        assert.equal(p.activeVFRenderer.stacks[0].textVoices[1].getTickables()[0].text, 'second');
+        assert.equal(m.activeVFRenderer.stacks[0].textVoices[1].getTickables()[0].text, 'second');
     });
 }
