@@ -4,6 +4,24 @@ const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const package_json = require('./package.json');
+const {spawn} = require('child_process');
+
+
+// run qunit code while grunt watching.
+class QUnitInWatch {
+    apply(compiler) {
+        compiler.hooks.done.tap('QUnitInWatch', stats => {
+            const child = spawn('grunt', ['qunit'], {cwd: __dirname});
+            child.stdout.on('data', function (data) {
+                process.stdout.write(data);
+            });
+            child.stderr.on('data', function (data) {
+                process.stderr.write(data);
+            });
+        });
+    }
+}
+
 
 module.exports = grunt => {
 
@@ -149,7 +167,8 @@ module.exports = grunt => {
     webpackTests.entry = TEST_ENTRY;
     webpackTests.output.path = TEST_DIR;
     webpackTests.output.library = 'm21Tests';
-    webpackTests.watch = false;
+    webpackTests.devtool = 'eval-source-map';
+    webpackTests.plugins.push(new QUnitInWatch());
     // webpackTests.cache = true;
 
     // Project configuration.
@@ -164,6 +183,7 @@ module.exports = grunt => {
                 mode: 'development',
             }, webpackCommon),
             test: webpackTests,
+            test_no_watch: {...webpackTests, watch: false},
         },
         jsdoc: {
             dist: {
@@ -229,8 +249,10 @@ module.exports = grunt => {
 
     // Default task(s).
     grunt.registerTask('default', ['webpack:build']);
-    grunt.registerTask('test', 'Watch qunit tests', ['watch:test']);
-    grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
+    // grunt.registerTask('test', 'Watch qunit tests', ['watch:test']);
+    // grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
+    grunt.registerTask('test', 'Watch qunit tests', ['webpack:test']);
+    grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test_no_watch', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', () => {
         grunt.task.run('jsdoc');
         grunt.task.run('bump');

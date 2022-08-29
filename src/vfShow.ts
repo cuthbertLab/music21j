@@ -204,6 +204,9 @@ export class Renderer {
 
         if (s.isClassOrSubclass('Score')) {
             isScorelike = true;
+        } else if (s.isClassOrSubclass('Part')) {
+            // might be a Part with measures and voices.
+            isPartlike = true;
         } else if (!isFlat && !(s.get(0) as stream.Stream).isFlat) {
             isScorelike = true;
         } else if (!isFlat) {

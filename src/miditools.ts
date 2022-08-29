@@ -25,6 +25,7 @@ import {to_el} from './common';
 
 // imports for typechecking only
 import type * as tempo from './tempo';
+import defaults from './defaults';
 
 declare interface MIDIWindow extends Window {
     MIDI?: MIDI,
@@ -408,7 +409,7 @@ export function loadSoundfont(
             if (debug) {
                 console.log('Document ready, waiting to load soundfont');
             }
-            document.body.append(
+            document.querySelector(defaults.appendLocation).append(
                 to_el(
                     "<div class='loadingSoundfont'><b>Loading Instrument</b>: "
                         + 'audio will begin when this message disappears.</div>'
@@ -452,6 +453,10 @@ export class MidiPlayer {
     }
 
     addPlayer(where: HTMLElement): HTMLElement {
+        if (typeof where === 'string') {
+            // obsolete usage
+            where = document.querySelector(where) as HTMLElement;
+        }
         const playDiv = to_el('<div class="midiPlayer"></div>');
         const controls = to_el('<div class="positionControls"></div>');
         const playPause = to_el(

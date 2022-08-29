@@ -5,6 +5,7 @@
 
 
 import * as $ from 'jquery';
+import defaults from './defaults';
 
 /**
  *  Many music21j functions take either JQuery or HTMLElement, but
@@ -23,7 +24,7 @@ export function jQueryAndHTMLVersion(el?: JQuery|HTMLElement): [JQuery, HTMLElem
         htmlElement = el;
         $jq = $(el);
     } else {
-        htmlElement = document.body;
+        htmlElement = document.querySelector(defaults.appendLocation);
         $jq = $(htmlElement);
     }
     return [$jq, htmlElement];
