@@ -1,4 +1,5 @@
 import * as QUnit from 'qunit';
+import {StaveModifierPosition, TimeSignature as VFTimeSignature} from 'vexflow';
 import * as music21 from '../../src/main';
 
 const { test } = QUnit;
@@ -46,6 +47,20 @@ export default function tests() {
         assert.equal(m.offsetToIndex(1.5), 1, '1.5 gives index 1 in 5/8');
         assert.equal(m.offsetToIndex(1.5, {includeCoincidentBoundaries: true}), 0,
             '1.5 gives index 0 in 5/8 with coincident');
+    });
+
+    test('music21.meter.TimeSignature vexflow renders', assert => {
+        const ts1 = new music21.meter.TimeSignature('5/4');
+        const m = new music21.stream.Measure();
+        m.append(ts1);
+        m.appendNewDOM();
+
+        const vfs = m.activeVFStave;
+        const modifiers = vfs.getModifiers(StaveModifierPosition.BEGIN, VFTimeSignature.CATEGORY);
+        assert.equal(modifiers.length, 1, 'One time signature at beginning in VF');
+
+        const p = music21.tinyNotation.TinyNotation('4/4 c1 2/16 d8 12/8 e1.');
+        p.appendNewDOM();
     });
 
     test('music21.meter.TimeSignature getBeams', assert => {

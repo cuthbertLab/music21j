@@ -33,7 +33,7 @@ module.exports = grunt => {
         + 'Michael Scott Asato Cuthbert\n'
         + ' * BSD License, see LICENSE\n'
         + ' *\n'
-        + ' * http://github.com/cuthbertLab/music21j\n'
+        + ' * https://github.com/cuthbertLab/music21j\n'
         + ' */\n';
     const BASE_DIR = __dirname;
     const BUILD_DIR = path.join(BASE_DIR, 'build');

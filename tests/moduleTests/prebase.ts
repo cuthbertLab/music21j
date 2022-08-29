@@ -33,13 +33,26 @@ export default function tests() {
         assert.notOk(n.classSet.has('Rest'));
     });
 
-    test('clone', assert => {
+    test('music21.prebase.ProtoM21Object.clone', assert => {
+        const d = new music21.duration.Duration('half');
+        d.dots = 2;
+        const d2 = d.clone();
+        assert.equal(d.quarterLength, d2.quarterLength, 'Prebase duration cloned');
+
         const n = new music21.note.Note('D4');
         const n2 = n.clone();
         n.pitch.octave = 5;
-        assert.equal(n2.pitch.octave, 4);
+        assert.equal(
+            n2.pitch.octave,
+            4,
+            'Deep Note clone retains separate pitch objects.'
+        );
         const n3 = n.clone(false);
         n.pitch.octave = 6;
-        assert.equal(n3.pitch.octave, 6);
+        assert.equal(
+            n3.pitch.octave,
+            6,
+            'Shallow Note clone shares a pitch object.'
+        );
     });
 }
