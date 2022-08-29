@@ -138,7 +138,6 @@ export default function tests() {
     test('music21.vfShow.Renderer.prepareFlat recalculates accidental display', assert => {
         const p = <music21.stream.Part> music21.tinyNotation.TinyNotation('d4 d# d# d#');
         const s = new music21.stream.Score();
-        assert.equal(1, 2);
         s.append(p);
         s.appendNewDOM();
         const notes_iter = p.recurse().notes;
