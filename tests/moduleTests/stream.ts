@@ -923,6 +923,20 @@ export default function tests() {
         );
     });
 
+    test('music21.stream.makeNotation testMakeBeamsFromContextTS', assert => {
+        const p = music21.tinyNotation.TinyNotation(alla_breve_test);
+        const m_iter = p.getElementsByClass('Measure');
+        const m0 = m_iter.get(0) as music21.stream.Measure;
+        const m1 = m_iter.get(1) as music21.stream.Measure;
+
+        m1.makeBeams({inPlace: true, failOnNoTimeSignature: true});
+        m0.remove(m0.timeSignature);
+        m0._timeSignature = undefined;
+        assert.throws(
+            () => { m1.makeBeams({inPlace: true, failOnNoTimeSignature: true}); }
+        );
+    });
+
     test('music21.stream.stripTies', assert => {
         const sc = music21.tinyNotation.TinyNotation('4/4 c2.~ c4');
         const n_before = sc.flat.notes.get(0);

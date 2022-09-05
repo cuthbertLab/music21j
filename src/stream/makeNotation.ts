@@ -5,6 +5,7 @@
 import * as beam from '../beam';
 import * as clef from '../clef';
 
+import type * as meter from '../meter';
 import type * as note from '../note';
 import type * as pitch from '../pitch';
 import * as stream from '../stream';
@@ -14,6 +15,7 @@ import {opFrac} from '../common';
 export interface MakeBeamsOptions {
     inPlace?: boolean,
     setStemDirections?: boolean,
+    failOnNoTimeSignature?: boolean,
 }
 
 export interface StemDirectionBeatGroupOptions {
@@ -29,6 +31,7 @@ export interface IterateBeamGroupsOptions {
 export function makeBeams(s: stream.Stream, {
     inPlace=false,
     setStemDirections=true,
+    failOnNoTimeSignature=false,
 }: MakeBeamsOptions = {}): stream.Stream {
     let returnObj: stream.Stream = s;
     if (!inPlace) {
@@ -43,13 +46,14 @@ export function makeBeams(s: stream.Stream, {
             mColl.push(m as stream.Measure);
         }
     }
-    let lastTimeSignature;
+    let lastTimeSignature: meter.TimeSignature;
     for (const m of mColl) {
-        if (m.timeSignature !== undefined) {
-            lastTimeSignature = m.timeSignature;
-        }
+        lastTimeSignature = m.timeSignature || m.getContextByClass('TimeSignature');
         if (lastTimeSignature === undefined) {
-            throw new StreamException('Need a Time Signature to process beams');
+            if (failOnNoTimeSignature) {
+                throw new StreamException('Need a Time Signature to process beams');
+            }
+            continue;
         }
         if (m.recurse().notesAndRests.length <= 1) {
             continue; // nothing to beam.

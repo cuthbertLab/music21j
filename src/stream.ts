@@ -1495,9 +1495,12 @@ export class Stream extends base.Music21Object {
         {
             inPlace=false,
             setStemDirections=true,
+            failOnNoTimeSignature=false,
         }: makeNotation.MakeBeamsOptions={}
     ): this {
-        return makeNotation.makeBeams(this, { inPlace, setStemDirections }) as this;
+        return makeNotation.makeBeams(
+            this, { inPlace, setStemDirections, failOnNoTimeSignature }
+        ) as this;
     }
 
     /**
