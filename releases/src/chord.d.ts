@@ -8,7 +8,7 @@
  * Chord related objects (esp. music21.chord.Chord) and methods.
  *
  */
-import Vex from 'vexflow';
+import { StaveNote as VFStaveNote } from 'vexflow';
 import * as note from './note';
 import * as chordTables from './chordTables';
 import type * as clef from './clef';
@@ -44,7 +44,7 @@ export declare class Chord extends note.NotRest {
     set notes(newNotes: note.Note[]);
     vexflowNote({ clef }?: {
         clef?: any;
-    }): Vex.Flow.StaveNote;
+    }): VFStaveNote;
     get orderedPitchClasses(): number[];
     get chordTablesAddress(): any;
     get commonName(): string;

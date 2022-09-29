@@ -40,6 +40,7 @@ import * as chord from './chord';
 import * as chordTables from './chordTables';
 import * as clef from './clef';
 import * as converter from './converter';
+import defaults from './defaults';
 import * as derivation from './derivation';
 import * as duration from './duration';
 import * as dynamics from './dynamics';
@@ -73,6 +74,6 @@ import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
 import { debug } from './debug';
-export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, style, svgs, tempo, tie, tinyNotation, vfShow, voiceLeading, webmidi, };
+export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, defaults, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, style, svgs, tempo, tie, tinyNotation, vfShow, voiceLeading, webmidi, };
 export declare const VERSION = "0.12.1";
 //# sourceMappingURL=main.d.ts.map

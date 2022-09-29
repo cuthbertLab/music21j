@@ -1,7 +1,7 @@
 /**
  * articulations module.
  */
-import Vex from 'vexflow';
+import { Articulation as VFArticulation, Ornament as VFOrnament } from 'vexflow';
 import * as prebase from './prebase';
 export declare enum ArticulationPlacement {
     ABOVE = "above",
@@ -11,14 +11,14 @@ export declare enum ArticulationPlacement {
     STEM_SIDE = "stemSide",
     NOTE_SIDE = "noteSide"
 }
-export declare const ArticulationPlacementToVexFlowModifierPosition: Map<ArticulationPlacement, any>;
+export declare const ArticulationPlacementToVexFlowModifierPosition: Map<ArticulationPlacement, import("vexflow").ModifierPosition>;
 export interface VexflowArticulationParams {
     stemDirection?: string;
 }
 /**
  * This works the same for music21 Articulations and Expressions
  */
-export declare function setPlacementOnVexFlowArticulation(vfa: Vex.Flow.Articulation | Vex.Flow.Ornament, placement: ArticulationPlacement, stemDirection: string): void;
+export declare function setPlacementOnVexFlowArticulation(vfa: VFArticulation | VFOrnament, placement: ArticulationPlacement, stemDirection: string): void;
 /**
  * Represents a single articulation, usually in the `.articulations` Array
  * on a music21.note.Note or something like that.
@@ -39,7 +39,7 @@ export declare class Articulation extends prebase.ProtoM21Object {
     /**
      * Generates a Vex.Flow.Articulation for this articulation.
      */
-    vexflow({ stemDirection }?: VexflowArticulationParams): Vex.Flow.Articulation;
+    vexflow({ stemDirection }?: VexflowArticulationParams): VFArticulation;
 }
 /**
  * base class for articulations that change the length of a note...

@@ -1,4 +1,5 @@
 /// <reference types="jquery" />
+/// <reference types="jquery" />
 import * as prebase from './prebase';
 import * as base from './base';
 import * as duration from './duration';
@@ -100,7 +101,7 @@ export declare class MetronomeMark extends base.Music21Object {
     constructor({ text, number, referent, parentheses, }?: MetronomeMarkOptions);
     _updateNumberFromText(): void;
     _updateTextFromNumber(): void;
-    get text(): undefined | string | TempoText;
+    get text(): undefined | string;
     set text(value: undefined | string | TempoText);
     /**
      * Tempo in beats per minute.

@@ -53,6 +53,7 @@ MIDI Input: <div id="putMidiSelectHere" />
 </html>
  */
 /// <reference types="jquery" />
+/// <reference types="jquery" />
 declare type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
 declare interface Jazz extends HTMLObjectElement {
     isJazz: Readonly<boolean>;
@@ -127,7 +128,8 @@ export declare function midiInArrived(midiMessageEvent: any): any;
  *
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
- * @param {HTMLElement} [appendElement=document.body] - where to place this hidden object (does not really matter)
+ * @param {HTMLElement} [appendElement=document.body] - where to place this
+ *     hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called
  *     successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object

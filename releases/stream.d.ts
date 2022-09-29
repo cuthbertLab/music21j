@@ -18,7 +18,8 @@
  *
  */
 /// <reference types="jquery" />
-import Vex from 'vexflow';
+/// <reference types="jquery" />
+import { Stave as VFStave } from 'vexflow';
 import { Music21Exception } from './exceptions21';
 import * as base from './base';
 import * as clef from './clef';
@@ -96,7 +97,7 @@ export declare class Stream extends base.Music21Object {
     /**
      * the current Stave object for the Stream
      */
-    activeVFStave: Vex.Flow.Stave;
+    activeVFStave: VFStave;
     /**
      * the current vfShow.Renderer object for the Stream
      */
@@ -110,7 +111,7 @@ export declare class Stream extends base.Music21Object {
      *      $(can).on('click', s.DOMChangerFunction);
      */
     DOMChangerFunction: (e: MouseEvent | TouchEvent | JQuery.MouseEventBase) => base.Music21Object | undefined;
-    storedVexflowStave: Vex.Flow.Stave;
+    storedVexflowStave: VFStave;
     activeNote: note.GeneralNote;
     _clef: any;
     displayClef: any;
@@ -156,11 +157,8 @@ export declare class Stream extends base.Music21Object {
     /**
      * The instrument object (NOT stored in the stream!) -- this is a difference from
      * music21p and expect this to change soon.
-     *
-     * Note that .instrument will never return a string, but Typescript <= 4 requires
-     * that getter and setter are the same.
      */
-    get instrument(): instrument.Instrument | string;
+    get instrument(): instrument.Instrument;
     set instrument(newInstrument: instrument.Instrument | string);
     /**
      * specialContext gets from a private attribute or from zero-position
@@ -207,12 +205,8 @@ export declare class Stream extends base.Music21Object {
      * either from an Array or from another Stream.  Setting from another Stream
      * will preserve the offsets.
      * DO NOT MODIFY individual components (consider it like a Python tuple)
-     *
-     * Note that a Stream is never returned from .elements,
-     * but TypeScript requires getter and setters to have the same
-     * function signature.
      */
-    get elements(): base.Music21Object[] | Stream;
+    get elements(): base.Music21Object[];
     set elements(newElements: base.Music21Object[] | Stream);
     /**
      * getSpecialContext is a transitional replacement for
@@ -360,7 +354,7 @@ export declare class Stream extends base.Music21Object {
      * @param {Object} [options]
      * @returns {Stream}
      */
-    makeMeasures(options?: any): Stream;
+    makeMeasures(options?: any): any;
     containerInHierarchy(el: base.Music21Object, { setActiveSite }?: {
         setActiveSite?: boolean;
     }): Stream | undefined;
@@ -401,7 +395,7 @@ export declare class Stream extends base.Music21Object {
      *
      * Called from renderVexflow()
      */
-    makeBeams({ inPlace, setStemDirections, }?: makeNotation.MakeBeamsOptions): this;
+    makeBeams({ inPlace, setStemDirections, failOnNoTimeSignature, }?: makeNotation.MakeBeamsOptions): this;
     /**
      * Returns a boolean value showing if this
      * Stream contains any Parts or Part-like
@@ -477,7 +471,7 @@ export declare class Stream extends base.Music21Object {
      *
      *  el is the object with an offset and class to search for.
      *
-     *  elStream is a place to get el's offset from.  Otherwise activeSite is used
+     *  elStream is a place to get el's offset from.  Otherwise, activeSite is used
      */
     playingWhenAttacked(el: base.Music21Object, elStream?: any): base.Music21Object | undefined;
     /**
@@ -538,7 +532,7 @@ export declare class Stream extends base.Music21Object {
      */
     setSubstreamRenderOptions(): this;
     /**
-     * Resets all the RenderOptions back to defaults. Can run recursively
+     * Resets all the RenderOptions back to default values. Can run recursively
      * and can also preserve the `RenderOptions.events` object.
      *
      * @param {boolean} [recursive=false]
@@ -657,7 +651,7 @@ export declare class Stream extends base.Music21Object {
      * this is a difference with other routines and should be fixed. TODO: FIX)
      *
      */
-    appendNewDOM(appendElement?: JQuery | HTMLElement, width?: number | string, height?: number | string, elementType?: string): HTMLElement;
+    appendNewDOM(appendElement?: JQuery | HTMLElement | string, width?: number | string, height?: number | string, elementType?: string): HTMLElement;
     /**
      * Replaces a particular Svg with a new rendering of one.
      *
@@ -676,7 +670,7 @@ export declare class Stream extends base.Music21Object {
      *    - Stream.renderOptions.events.dblclick
      *    - Stream.renderOptions.events.resize
      *
-     * Currently the only options available for each are:
+     * Currently, the only options available for each are:
      *    - 'play' (string)
      *    - 'reflow' (string; only on event.resize)
      *    - customFunction (will receive event as a first variable; should set up a way to
@@ -687,7 +681,7 @@ export declare class Stream extends base.Music21Object {
      *
      * Recursively search downward for the closest storedVexflowStave...
      */
-    recursiveGetStoredVexflowStave(): Vex.Flow.Stave | undefined;
+    recursiveGetStoredVexflowStave(): VFStave | undefined;
     /**
      * Given a mouse click, or other event with .pageX and .pageY,
      * find the x and y for the svg.

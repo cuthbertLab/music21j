@@ -1,4 +1,5 @@
 /// <reference types="jquery" />
+/// <reference types="jquery" />
 import * as chord from '../chord';
 import * as clef from '../clef';
 import * as duration from '../duration';
@@ -46,8 +47,6 @@ export declare class PartParser {
     lastMeasureNumber: number;
     lastNumberSuffix: any;
     multiMeasureRestsToCapture: number;
-    activeMultimeasureRestSpanner: any;
-    activeInstrument: any;
     firstMeasureParsed: boolean;
     $activeAttributes: JQuery;
     lastDivisions: number;

@@ -1,13 +1,14 @@
 /**
- * common functions
+ * common functions.
  * functions that are useful everywhere...
  */
+/// <reference types="jquery" />
 /// <reference types="jquery" />
 /**
  *  Many music21j functions take either JQuery or HTMLElement, but
  *  "el instanceof $" is not a good way of checking, because the copy of
  *  JQuery imported into music21j might not be the same copy loaded by a calling
- *  library or script tag.  Hence these three little functions that coerce in one
+ *  library or script tag.  Hence, these three little functions that coerce in one
  *  direction or another.
  */
 export declare function jQueryAndHTMLVersion(el?: JQuery | HTMLElement): [JQuery, HTMLElement];
@@ -47,7 +48,7 @@ export declare function posMod(a: any, b: any): number;
 /**
  *
  * Returns the statistical mode (most commonly appearing element)
- * in a.
+ * in 'a' which is an Array or iterable.
  *
  * In case of tie, returns the first element to reach the maximum
  * number of occurrences.

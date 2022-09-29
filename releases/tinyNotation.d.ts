@@ -1,4 +1,5 @@
 /// <reference types="jquery" />
+/// <reference types="jquery" />
 import * as stream from './stream';
 /**
  * **Function, not class**.

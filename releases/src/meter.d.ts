@@ -5,7 +5,7 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  */
-import Vex from 'vexflow';
+import { Fraction as VFFraction } from 'vexflow';
 import * as base from './base';
 import * as beam from './beam';
 import * as duration from './duration';
@@ -108,6 +108,6 @@ export declare class TimeSignature extends base.Music21Object {
      *
      * returns a list of numerator and denominator groups, for VexFlow, as Vex.Flow.Fraction[]
      */
-    vexflowBeatGroups(): Vex.Flow.Fraction[];
+    vexflowBeatGroups(): VFFraction[];
 }
 //# sourceMappingURL=meter.d.ts.map

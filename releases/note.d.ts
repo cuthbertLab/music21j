@@ -11,7 +11,7 @@
  *
  * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
-import Vex from 'vexflow';
+import { StaveNote as VFStaveNote } from 'vexflow';
 import * as prebase from './prebase';
 import * as base from './base';
 import * as pitch from './pitch';
@@ -61,8 +61,6 @@ export declare class Lyric extends prebase.ProtoM21Object {
     set number(n: number);
     /**
      * get rawText - gets the raw text.
-     *
-     * @return {string}  raw text
      */
     get rawText(): string;
     set rawText(t: string);
@@ -70,11 +68,9 @@ export declare class Lyric extends prebase.ProtoM21Object {
      * setTextAndSyllabic - Given a setting for rawText and applyRaw,
      *     sets the syllabic type for a lyric based on the rawText
      *
-     * @param  {string} rawText text
-     * @param  {boolean} applyRaw = false if hyphens should not be applied
-     * @return {this}
+     * set applyRaw = false if hyphens should not be applied
      */
-    setTextAndSyllabic(rawText: any, applyRaw?: boolean): this;
+    setTextAndSyllabic(rawText: string, applyRaw?: boolean): this;
 }
 /**
  * Superclass for all Note values
@@ -104,7 +100,7 @@ export declare class GeneralNote extends base.Music21Object {
      * Most recent Vex.Flow.StaveNote object to be made from this note (could change)
      * or undefined.
      */
-    activeVexflowNote: Vex.Flow.StaveNote | undefined;
+    activeVexflowNote: VFStaveNote | undefined;
     constructor(ql?: number);
     get lyric(): string;
     set lyric(value: string);
@@ -121,7 +117,7 @@ export declare class GeneralNote extends base.Music21Object {
     /**
      * For subclassing.  Do not use this...
      */
-    vexflowNote(options: any): Vex.Flow.StaveNote;
+    vexflowNote(options: any): VFStaveNote;
     /**
      * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
      */
@@ -132,7 +128,7 @@ export declare class GeneralNote extends base.Music21Object {
      *
      * options -- a set of Vex Flow options
      */
-    vexflowAccidentalsAndDisplay(vfn: Vex.Flow.StaveNote, options?: {}): void;
+    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, options?: {}): void;
     /**
      * Return the active channel for the instrument or activeSite's instrument
      */
@@ -180,7 +176,7 @@ export declare class NotRest extends GeneralNote {
      */
     vexflowNote({ clef }?: {
         clef?: any;
-    }): Vex.Flow.StaveNote;
+    }): VFStaveNote;
 }
 /**
  * A very, very important class! music21.note.Note objects combine a music21.pitch.Pitch
@@ -269,6 +265,6 @@ export declare class Rest extends GeneralNote {
      *
      * @param {Object} options -- vexflow options
      */
-    vexflowNote(options: any): Vex.Flow.StaveNote;
+    vexflowNote(options: any): VFStaveNote;
 }
 //# sourceMappingURL=note.d.ts.map

@@ -1,3 +1,17 @@
+/**
+ * music21j -- Javascript reimplementation of Core music21p features.
+ * music21/miditools -- A collection of tools for midi.
+ *
+ * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ *
+ * @author Michael Scott Asato Cuthbert
+ *
+ * A collection of tools for midi. See the namespace.
+ *
+ * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
+ * events from the Jazz plugin or the WebMIDI protocol.
+ */
 import * as MIDI from 'midicube';
 import '../css/midiPlayer.css';
 import * as chord from './chord';

@@ -68,7 +68,7 @@ export declare class Dynamic extends base.Music21Object {
     longName: string;
     englishName: string;
     constructor(value: string | number);
-    get value(): string | number;
+    get value(): string;
     set value(value: string | number);
     get volumeScalar(): number;
     set volumeScalar(value: number);
