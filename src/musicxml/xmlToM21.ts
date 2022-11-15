@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 
-import { hyphenToCamelCase } from '../common';
+import { hyphenToCamelCase, opFrac } from '../common';
 import * as chord from '../chord';
 import * as clef from '../clef';
 import * as duration from '../duration';
@@ -17,6 +17,18 @@ import type { Music21Object } from '../base';
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
 };
+
+const NO_STAFF_ASSIGNED = 0;
+const STAFF_SPECIFIC_CLASSES = [
+    'Clef',
+    'Dynamic',
+    'Expression',
+    'GeneralNote',
+    // 'KeySignature',
+    'StaffLayout',
+    'TempoIndication',
+    // 'TimeSignature',
+];
 
 function seta(
     m21El,
@@ -103,7 +115,7 @@ export class ScoreParser {
             const $mxScorePart = this.mxScorePartDict[partId];
             const part = this.xmlPartToPart($p, $mxScorePart);
             if (part !== undefined) {
-                // partStreams are undefined
+                // part that became 2 PartStaffs is undefined: handles itself
                 s.insert(0.0, part);
                 this.m21PartObjectsById[partId] = part;
                 this.parts.push(part);
@@ -119,8 +131,10 @@ export class ScoreParser {
     xmlPartToPart($mxPart, $mxScorePart) {
         const parser = new PartParser($mxPart, $mxScorePart, this);
         parser.parse();
-        // handle partStreams
-        return parser.stream;
+        if (parser.appendToScoreAfterParse) {
+            return parser.stream;
+        }
+        return undefined;
     }
 
     parsePartList($mxScore) {
@@ -189,7 +203,9 @@ export class PartParser {
         this.parseMeasures();
         // atSoundingPitch;
         // spannerBundles
-        // partStaves;
+        if (this.maxStaves > 1) {
+            this.separateOutPartStaves();
+        }
         if (this.lastClefs.length > 0) {
             this.stream.clef = this.lastClefs[0];
         }
@@ -221,10 +237,12 @@ export class PartParser {
             this.lastMeasureParser.parent = undefined; // gc.
         }
         this.lastMeasureParser = measureParser;
-        // max staves
+        if (measureParser.staves > this.maxStaves) {
+            this.maxStaves = measureParser.staves;
+        }
         // transposition
         this.firstMeasureParsed = true;
-        // staffReferenceList
+        this.staffReferenceList.push(measureParser.staffReference);
 
         const m = measureParser.stream;
         this.setLastMeasureInfo(m);
@@ -255,6 +273,69 @@ export class PartParser {
         // ignore incomplete measures.
         const mOffsetShift = mHighestTime;
         this.lastMeasureOffset += mOffsetShift;
+    }
+
+    separateOutPartStaves() {
+        const partStaffs = [];
+
+        function copyIntoPartStaff(
+            source: stream.Measure | stream.Voice, target: stream.Measure | stream.Voice,
+            elementsOfStaff: Music21Object[]
+        ) {
+            for (const sourceEl of source.getElementsByClass(STAFF_SPECIFIC_CLASSES)) {
+                if (!elementsOfStaff.includes(sourceEl)) {
+                    continue;
+                }
+                try {
+                    target.insert(sourceEl.offset, sourceEl);
+                } catch {
+                    target.insert(sourceEl.offset, sourceEl.clone(true));
+                }
+            }
+        }
+
+        function getStaffInclude(staffKey: number, staffReference: Object) {
+            let els;
+            if (staffKey === 1 && staffReference[0] !== undefined) {
+                els = [...staffReference[0], ...staffReference[1]];
+            } else {
+                els = staffReference[staffKey];
+            }
+            return els;
+        }
+
+        for (let staffIndex = 0; staffIndex < this.maxStaves; staffIndex++) {
+            const staffKey = staffIndex + 1;
+            // TODO: spanners only on first staff
+            const newPartStaff = this.stream.template(
+                {removeClasses: STAFF_SPECIFIC_CLASSES, fillWithRests: false}
+            );
+            const partStaffId = `${this.partId}-Staff${staffKey}`;
+            newPartStaff.id = partStaffId;
+            // TODO: groups?
+            partStaffs.push(newPartStaff);
+            this.parent.m21PartObjectsById[partStaffId] = newPartStaff;
+            
+            for (const [i, sourceMeasure] of Array.from(this.stream.getElementsByClass('Measure')).entries()) {
+                const copyMeasure = newPartStaff.getElementsByClass('Measure').get(i) as stream.Measure;
+                const staffReference = this.staffReferenceList[i];
+                const els_to_include = getStaffInclude(staffKey, staffReference);
+
+                copyIntoPartStaff((sourceMeasure as stream.Measure), copyMeasure, els_to_include);
+                for (const [j, sourceVoice] of Array.from((sourceMeasure as stream.Measure).voices).entries()) {
+                    const copyVoice = copyMeasure.voices.get(j);
+                    copyIntoPartStaff(sourceVoice, copyVoice, els_to_include);
+                }
+                // copyMeasure.flattenUnnecessaryVoices({inPlace: true});
+            }
+        }
+
+        for (const partStaff of partStaffs) {
+            this.parent.stream.insert(0, partStaff);
+        }
+        this.appendToScoreAfterParse = false;
+
+        // TODO: new StaffGroup
     }
 }
 
@@ -307,8 +388,8 @@ export class MeasureParser {
 
     musicDataMethods = {
         note: 'xmlToNote',
-        // 'backup': 'xmlBackup',
-        // 'forward': 'xmlForward',
+        backup: 'xmlBackup',
+        forward: 'xmlForward',
         // 'direction': 'xmlDirection',
         attributes: 'parseAttributesTag',
         // 'harmony': 'xmlHarmony',
@@ -365,10 +446,36 @@ export class MeasureParser {
         // fullMeasureRest
     }
 
+    getStaffNumber($mxObj: JQuery) {
+        const mxObj = $mxObj[0];
+        if (['harmony', 'forward', 'note', 'direction'].includes(mxObj.tagName)) {
+            const $mxStaff = $mxObj.children('staff');
+            if ($mxStaff.length) {
+                return Number.parseInt($mxStaff.text().trim());
+            }
+            return NO_STAFF_ASSIGNED;
+        } else if (
+            ['staff-layout', 'staff-details', 'measure-style', 'clef',
+                'key', 'time', 'transpose'].includes(mxObj.tagName)) {
+            const maybe_number = $mxObj.attr('number');
+            if (maybe_number) {
+                return Number.parseInt(maybe_number);
+            }
+            return NO_STAFF_ASSIGNED;
+        }
+        return NO_STAFF_ASSIGNED;
+    }
+
+    addToStaffReference($mxObj: JQuery, m21obj: Music21Object) {
+        const staffKey = this.getStaffNumber($mxObj);
+        if (this.staffReference[staffKey] === undefined) {
+            this.staffReference[staffKey] = [];
+        }
+        this.staffReference[staffKey].push(m21obj);
+    }
+
     insertInMeasureOrVoice($mxObj, el) {
-        // TODO: offsets!
-        // this.stream.insert(this.offsetMeasureNote, el);
-        this.stream.append(el);
+        this.stream.insert(this.offsetMeasureNote, el);
     }
 
     xmlToNote($mxNote) {
@@ -412,16 +519,17 @@ export class MeasureParser {
 
         if (!isChord) {
             this.updateLyricsFromList(n, $mxNote.children('lyric'));
-            // add to staffReference
+            this.addToStaffReference($mxNote, n);
             this.insertInMeasureOrVoice($mxNote, n);
             offsetIncrement = n.duration.quarterLength;
             this.nLast = n;
+            this.offsetMeasureNote += offsetIncrement;
         }
 
         if (this.$mxNoteList.length && !nextNoteIsChord) {
             const c = this.xmlToChord(this.$mxNoteList);
             this.updateLyricsFromList(c, this.$mxLyricList);
-            // addToStaffRest;
+            this.addToStaffReference(this.$mxNoteList[0], c);
 
             // voices;
             this.insertInMeasureOrVoice($mxNote, c);
@@ -430,9 +538,9 @@ export class MeasureParser {
             this.$mxLyricList = [];
             offsetIncrement = c.duration.quarterLength;
             this.nLast = c;
+            this.offsetMeasureNote += offsetIncrement;
         }
 
-        this.offsetMeasureNote += offsetIncrement;
     }
 
     xmlToChord($mxNoteList) {
@@ -604,6 +712,18 @@ export class MeasureParser {
         return d;
     }
 
+    xmlBackup($mxBackup: JQuery) {
+        const $mxDuration = $mxBackup.children('duration');
+        const change = parseFloat($mxDuration.text().trim()) / this.divisions;
+        this.offsetMeasureNote -= Math.max(opFrac(change), 0.0);
+    }
+
+    xmlForward($mxForward: JQuery) {
+        const $mxDuration = $mxForward.children('duration');
+        const change = parseFloat($mxDuration.text().trim()) / this.divisions;
+        this.offsetMeasureNote += Math.min(opFrac(change), 0.0);
+    }
+
     // xmlGraceToGrace
     // xmlNotations
     // xmlTechnicalToArticulation
@@ -728,6 +848,7 @@ export class MeasureParser {
 
     handleTimeSignature($mxTime) {
         const ts = this.xmlToTimeSignature($mxTime);
+        this.addToStaffReference($mxTime, ts);
         this.insertIntoMeasureOrVoice($mxTime, ts);
     }
 
@@ -746,8 +867,8 @@ export class MeasureParser {
 
     handleClef($mxClef) {
         const clefObj = this.xmlToClef($mxClef);
-        this.stream.clef = clefObj;  // inserts
-        // this.insertIntoMeasureOrVoice($mxClef, clefObj);
+        this.addToStaffReference($mxClef, clefObj);
+        this.insertIntoMeasureOrVoice($mxClef, clefObj);
         this.lastClefs[0] = clefObj;
         // if (this.parent !== undefined) {
         //     this.parent.lastClefs[0] = clefObj.clone(true);
@@ -779,6 +900,7 @@ export class MeasureParser {
 
     handleKeySignature($mxKey) {
         const keySig = this.xmlToKeySignature($mxKey);
+        this.addToStaffReference($mxKey, keySig);
         this.insertIntoMeasureOrVoice($mxKey, keySig);
     }
 
