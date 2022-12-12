@@ -174,8 +174,6 @@ export default function tests() {
         assert.equal(s.highestTime, 3.0);
         assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
 
-        // noinspection TypeScriptValidateJSTypes
-        // @ts-ignore
         s.duration = new music21.duration.Duration(3.0);
         s.append(new music21.note.Note('D#5'));
         assert.equal(

@@ -223,7 +223,7 @@ export function makeChords(jEvent: Event): void {
  * Take the list of Notes and makes a chord out of it, if appropriate and call
  * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
-export function sendOutChord(chordNoteList: note.Note[]): note.Note|chord.Chord|undefined {
+export function sendOutChord(chordNoteList: note.Note[]): note.Note|chord.Chord {
     let appendObject;
     if (chordNoteList.length > 1) {
         // console.log(chordNoteList[0].name, chordNoteList[1].name);

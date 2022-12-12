@@ -52,7 +52,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     protected _naiveOffset: number = 0;
     // _derivation = undefined;
     protected _style: style.Style;
-    protected _editorial: editorial.Editorial;
+    protected _editorial: Record<string, any>;  // actually editorial.Editorial
     protected _duration: duration.Duration;
     protected _derivation: derivation.Derivation;
     protected _priority: number = 0;
@@ -157,15 +157,19 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._derivation = newDerivation;
     }
 
-    get editorial(): editorial.Editorial {
+    /**
+     * Note that the editorial is typed as Record<string, any>
+     *     but actually returns an editorial object
+     */
+    get editorial(): Record<string, any> {
         if (this._editorial === undefined) {
             this._editorial = new editorial.Editorial();
         }
         return this._editorial;
     }
 
-    set editorial(newEditorial: editorial.Editorial) {
-        this._editorial = newEditorial;
+    set editorial(newEditorial: editorial.Editorial|Record<string, any>) {
+        this._editorial = newEditorial as any;
     }
 
     get hasEditorialInformation(): boolean {

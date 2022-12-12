@@ -148,23 +148,16 @@ export default function tests() {
         s.append(p);
         s.appendNewDOM();
         const notes_iter = p.recurse().notes;
-        const first_note = notes_iter.get(0);
-        const second_note = notes_iter.get(1);
-        // Error: Property 'pitch' does not exist on type 'NotRest'.
-        // @ts-ignore
+        const first_note = notes_iter.get(0) as music21.note.Note;
+        const second_note = notes_iter.get(1) as music21.note.Note;
         assert.equal(first_note.pitch.accidental, undefined);
-        // @ts-ignore
         assert.equal(second_note.pitch.accidental.displayStatus, true);
 
         // D -> D#
         const aug_1 = new music21.interval.Interval('A1');
-        // @ts-ignore
         first_note.pitch = aug_1.transposePitch(first_note.pitch);
         s.replaceDOM();
-        // Error: Property 'pitch' does not exist on type 'NotRest'.
-        // @ts-ignore
         assert.equal(first_note.pitch.accidental.displayStatus, true);
-        // @ts-ignore
         assert.equal(second_note.pitch.accidental.displayStatus, false);
     });
 
