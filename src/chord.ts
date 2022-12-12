@@ -18,6 +18,7 @@ import * as chordTables from './chordTables';
 
 // imports for typing
 import type * as clef from './clef';
+import type * as instrument from './instrument';
 import type * as pitch from './pitch';
 
 export { chordTables };
@@ -620,13 +621,17 @@ export class Chord extends note.NotRest {
         return undefined;
     }
 
-    playMidi(
+    override playMidi(
         tempo: number = 120,
-        nextElement?,
+        nextElement = undefined,
         {
             instrument=undefined,
             channel=undefined,
             playLegato=false,
+        }: {
+            instrument?: instrument.Instrument,
+            channel?: number,
+            playLegato?: boolean,
         }={}
     ) {
         const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel, playLegato });

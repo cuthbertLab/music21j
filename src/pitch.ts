@@ -541,7 +541,7 @@ export class Pitch extends prebase.ProtoM21Object {
      * @param {int} directionInt -- -1 = down, 1 = up
      * @returns {Pitch}
      */
-    _getEnharmonicHelper(inPlace=false, directionInt) {
+    _getEnharmonicHelper(inPlace=false, directionInt=0) {
         // differs from Python version because
         // cannot import interval here.
         let octaveStored = true;

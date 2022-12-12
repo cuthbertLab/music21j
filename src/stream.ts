@@ -1518,7 +1518,8 @@ export class Stream extends base.Music21Object {
         }: makeNotation.MakeBeamsOptions={}
     ): this {
         return makeNotation.makeBeams(
-            this, { inPlace, setStemDirections, failOnNoTimeSignature }
+            this,
+            { inPlace, setStemDirections, failOnNoTimeSignature }
         ) as this;
     }
 
@@ -2804,7 +2805,7 @@ export class Stream extends base.Music21Object {
     noteElementFromScaledX(
         xPxScaled: number,
         allowablePixels: number = 10,
-        systemIndex?: number,
+        systemIndex: number = 0,
         options={},
     ): note.GeneralNote {
         const params = {
@@ -2970,7 +2971,7 @@ export class Stream extends base.Music21Object {
     getAccidentalToolbar(
         minAccidental: number = -1,
         maxAccidental: number = 1,
-        $siblingSvg?: JQuery
+        $siblingSvg: JQuery = undefined,
     ): JQuery<HTMLDivElement> {
         minAccidental = Math.round(minAccidental);
         maxAccidental = Math.round(maxAccidental);

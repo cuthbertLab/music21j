@@ -561,7 +561,8 @@ export class Music21Object extends prebase.ProtoM21Object {
     _getTimeSignatureForBeat(): TimeSignature {
         // note: getContextByClass does not full support BeforeOffset yet.
         const ts: TimeSignature = this.getContextByClass(
-            'TimeSignature', {getElementMethod: 'getElementAtOrBeforeOffset'}
+            'TimeSignature',
+            {getElementMethod: 'getElementAtOrBeforeOffset'},
         );
         if (ts === undefined) {
             throw new Music21Exception('this object does not have a TimeSignature in Sites');

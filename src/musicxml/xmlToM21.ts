@@ -279,7 +279,8 @@ export class PartParser {
         const partStaffs = [];
 
         function copyIntoPartStaff(
-            source: stream.Measure | stream.Voice, target: stream.Measure | stream.Voice,
+            source: stream.Measure | stream.Voice,
+            target: stream.Measure | stream.Voice,
             elementsOfStaff: Music21Object[]
         ) {
             for (const sourceEl of source.getElementsByClass(STAFF_SPECIFIC_CLASSES)) {

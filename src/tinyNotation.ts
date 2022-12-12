@@ -303,7 +303,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
  */
 export function renderNotationDivs(
     classTypes: string = '.music21.tinyNotation',
-    selector?: HTMLElement|JQuery
+    selector: HTMLElement|JQuery = undefined,
 ) {
     let $allRender: JQuery;
 
