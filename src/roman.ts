@@ -354,7 +354,7 @@ export class RomanNumeral extends harmony.Harmony {
         let frontAlterationString = '';
         let frontAlterationTransposeInterval;
         let frontAlterationAccidental;
-        const _alterationRegex = /'^(b+|-+|#+)'/;
+        const _alterationRegex = /^(b+|-+|#+)/;
         const match = _alterationRegex.exec(workingFigure);
         if (match != null) {
             const group = match[1];
@@ -462,12 +462,12 @@ export class RomanNumeral extends harmony.Harmony {
     _parseRNAloneAmidstAug6(workingFigure, useScale) {
         let romanNumeralAlone = '';
         const _romanNumeralAloneRegex = /^(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)/;
-        const _augmentedSixthRegex = /^(It|Ger|Fr|Sw)'/;
+        const _augmentedSixthRegex = /^(It|Ger|Fr|Sw)/;
         const rm = _romanNumeralAloneRegex.exec(workingFigure);
         const a6match = _augmentedSixthRegex.exec(workingFigure);
         if (rm === null && a6match === null) {
             throw new Music21Exception(
-                `No roman numeral found in ${workingFigure}`
+                `No roman numeral found in ${workingFigure}.`
             );
         }
         if (a6match !== null) {
