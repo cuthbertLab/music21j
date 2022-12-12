@@ -54,7 +54,7 @@ MIDI Input: <div id="putMidiSelectHere" />
  */
 /// <reference types="jquery" />
 /// <reference types="jquery" />
-declare type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
+type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
 declare interface Jazz extends HTMLObjectElement {
     isJazz: Readonly<boolean>;
     classid: string;

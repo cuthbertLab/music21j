@@ -12,6 +12,7 @@ import { StaveNote as VFStaveNote } from 'vexflow';
 import * as note from './note';
 import * as chordTables from './chordTables';
 import type * as clef from './clef';
+import type * as instrument from './instrument';
 import type * as pitch from './pitch';
 export { chordTables };
 /**
@@ -124,8 +125,8 @@ export declare class Chord extends note.NotRest {
      */
     inversion(): number;
     playMidi(tempo?: number, nextElement?: any, { instrument, channel, playLegato, }?: {
-        instrument?: any;
-        channel?: any;
+        instrument?: instrument.Instrument;
+        channel?: number;
         playLegato?: boolean;
     }): number;
     /**

@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  */
 import { ProtoM21Object } from './prebase';
-export declare class Editorial extends ProtoM21Object {
+export declare class Editorial extends ProtoM21Object implements Record<string, any> {
     static get className(): string;
     comments: any[];
     footnotes: any[];

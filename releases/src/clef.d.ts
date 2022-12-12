@@ -11,7 +11,7 @@
 import * as base from './base';
 import * as pitch from './pitch';
 import { Stream } from './stream';
-declare type ClefName = 'treble' | 'soprano' | 'mezzo-soprano' | 'alto' | 'tenor' | 'bass' | 'percussion';
+type ClefName = 'treble' | 'soprano' | 'mezzo-soprano' | 'alto' | 'tenor' | 'bass' | 'percussion';
 export declare const lowestLines: Record<ClefName, number>;
 export declare const nameToLine: Record<ClefName, number>;
 export declare const nameToSign: Record<ClefName, string>;

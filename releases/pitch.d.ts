@@ -68,7 +68,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
      * @type {string}
      * @readonly
      */
-    get vexflowModifier(): "b" | "n" | "#" | "##" | "###" | "bb" | "bbb";
+    get vexflowModifier(): "b" | "#" | "n" | "##" | "bb" | "###" | "bbb";
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
@@ -213,7 +213,7 @@ export declare class Pitch extends prebase.ProtoM21Object {
      * @param {int} directionInt -- -1 = down, 1 = up
      * @returns {Pitch}
      */
-    _getEnharmonicHelper(inPlace: boolean, directionInt: any): this;
+    _getEnharmonicHelper(inPlace?: boolean, directionInt?: number): this;
     /**
      *
      * @param {boolean} [inPlace=false]

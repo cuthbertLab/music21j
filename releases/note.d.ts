@@ -113,7 +113,7 @@ export declare class GeneralNote extends base.Music21Object {
      * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for clues about syllable placement.
      * @param {string} [lyricIdentifier] - an optional identifier
      */
-    addLyric(text: any, lyricNumber: any, applyRaw: boolean, lyricIdentifier: any): void;
+    addLyric(text: any, lyricNumber: any, applyRaw?: boolean, lyricIdentifier?: any): void;
     /**
      * For subclassing.  Do not use this...
      */
@@ -145,9 +145,9 @@ export declare class GeneralNote extends base.Music21Object {
      *     `{instrument: music21.instrument.Instrument}` and channel[unused])
      * @returns {number} - delay time in milliseconds until the next element (may be ignored)
      */
-    playMidi(tempo: number, nextElement: any, { instrument, channel, playLegato, }?: {
-        instrument?: any;
-        channel?: any;
+    playMidi(tempo?: number, nextElement?: base.Music21Object, { instrument, channel, playLegato, }?: {
+        instrument?: instrument.Instrument;
+        channel?: number;
         playLegato?: boolean;
     }): number;
 }
@@ -229,9 +229,9 @@ export declare class Note extends NotRest {
         stave?: any;
         clef?: any;
     }): void;
-    playMidi(tempo?: number, nextElement?: any, { instrument, channel, playLegato, }?: {
-        instrument?: any;
-        channel?: any;
+    playMidi(tempo?: number, nextElement?: base.Music21Object, { instrument, channel, playLegato, }?: {
+        instrument?: instrument.Instrument;
+        channel?: number;
         playLegato?: boolean;
     }): number;
 }

@@ -114,7 +114,7 @@ export declare function makeChords(jEvent: Event): void;
  * Take the list of Notes and makes a chord out of it, if appropriate and call
  * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
-export declare function sendOutChord(chordNoteList: note.Note[]): note.Note | chord.Chord | undefined;
+export declare function sendOutChord(chordNoteList: note.Note[]): note.Note | chord.Chord;
 /**
  * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
  *

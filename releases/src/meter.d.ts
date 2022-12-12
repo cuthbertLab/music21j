@@ -13,6 +13,7 @@ import * as stream from './stream';
 import { Music21Object } from './base';
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
+ * divisions is currently not used.
  *
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]

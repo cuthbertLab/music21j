@@ -213,7 +213,7 @@ export declare class Pitch extends prebase.ProtoM21Object {
      * @param {int} directionInt -- -1 = down, 1 = up
      * @returns {Pitch}
      */
-    _getEnharmonicHelper(inPlace: boolean, directionInt: any): this;
+    _getEnharmonicHelper(inPlace?: boolean, directionInt?: number): this;
     /**
      *
      * @param {boolean} [inPlace=false]

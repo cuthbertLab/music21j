@@ -59,6 +59,7 @@ export declare class PartParser {
     xmlMeasureToMeasure($mxMeasure: any): void;
     setLastMeasureInfo(m: any): void;
     adjustTimeAttributesFromMeasure(m: any): void;
+    separateOutPartStaves(): void;
 }
 export declare class MeasureParser {
     $mxMeasure: any;
@@ -98,10 +99,14 @@ export declare class MeasureParser {
     };
     musicDataMethods: {
         note: string;
+        backup: string;
+        forward: string;
         attributes: string;
     };
     constructor($mxMeasure: JQuery, parent?: PartParser);
     parse(): void;
+    getStaffNumber($mxObj: JQuery): number;
+    addToStaffReference($mxObj: JQuery, m21obj: Music21Object): void;
     insertInMeasureOrVoice($mxObj: any, el: any): void;
     xmlToNote($mxNote: any): void;
     xmlToChord($mxNoteList: any): chord.Chord;
@@ -111,6 +116,8 @@ export declare class MeasureParser {
     xmlToRest($mxRest: any): any;
     xmlNoteToGeneralNoteHelper(n: any, $mxNote: any, freeSpanners?: boolean): any;
     xmlToDuration($mxNote: any, inputM21: duration.Duration): duration.Duration;
+    xmlBackup($mxBackup: JQuery): void;
+    xmlForward($mxForward: JQuery): void;
     xmlToTie($mxNote: JQuery): tie.Tie;
     updateLyricsFromList(n: any, lyricList: any): void;
     xmlToLyric($mxLyric: JQuery, inputM21?: note.Lyric): note.Lyric;

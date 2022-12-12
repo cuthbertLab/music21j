@@ -144,37 +144,66 @@ and supported by the Music and Theater Arts section of [MIT].
 
 Dev Notes
 ----------------
-Build with
+Build and watch with
 
 ```sh
-$ grunt webpack
-
-or
-
-$ grunt webpack watch
+$ grunt
 ```
 
-Before building, every once in a while run (in the music21j directory)
+test with
 
+```sh
+$ grunt test
 ```
-node_modules/.bin/npm-check-updates
+
+for running tests one time without watch, you can use:
+
+```sh
+$ grunt test_no_watch
+```
+
+Publishing a new version
+-------------------------
+You'll need to be part of the npm dev team.
+
+Two steps.  First run:
+
+```sh
+$ grunt publish
+```
+
+which will update the version number and tries to build the
+docs via `grunt jsdoc` (currently failing).
+
+The template is specified in jsdoc-template/jsdoc.conf.json
+
+For a non-backwards compatible release, edit the minor 
+version number manually here, in main.ts, and of course in
+package.json.
+
+Then run:
+
+```sh
+$ npm publish
+```
+
+which will copy the current contents of `build` in `releases`
+and publish on npm.
+
+Before publishing, every once in a while run (in the music21j directory)
+
+```sh
+$ node_modules/.bin/npm-check-updates
 ```
 
 and if it looks like something to update, run
 
-```
-node_modules/.bin/npm-check-updates --upgradeAll
-npm update
-```
-
-Build documentation with:
-
-```
-grunt jsdoc
+```sh
+$ node_modules/.bin/npm-check-updates -u
+$ npm install
 ```
 
-The template is specified in jsdoc-template/jsdoc.conf.json
 
-These docs will be changing in preparation for v. 1.0 release. (on webpack)
+These docs will be changing in preparation for v. 1.0 release.
 
 

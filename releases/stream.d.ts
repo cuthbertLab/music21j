@@ -985,6 +985,8 @@ export declare class Score extends Stream {
         setLeft?: boolean;
     }): this;
 }
+export declare class PartStaff extends Part {
+}
 export declare class OffsetMap {
     element: base.Music21Object;
     offset: number;

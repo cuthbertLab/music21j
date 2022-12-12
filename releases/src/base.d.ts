@@ -29,7 +29,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     protected _activeSiteStoredOffset: number;
     protected _naiveOffset: number;
     protected _style: style.Style;
-    protected _editorial: editorial.Editorial;
+    protected _editorial: Record<string, any>;
     protected _duration: duration.Duration;
     protected _derivation: derivation.Derivation;
     protected _priority: number;
@@ -49,8 +49,12 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     set activeSite(site: any);
     get derivation(): derivation.Derivation;
     set derivation(newDerivation: derivation.Derivation);
-    get editorial(): editorial.Editorial;
-    set editorial(newEditorial: editorial.Editorial);
+    /**
+     * Note that the editorial is typed as Record<string, any>
+     *     but actually returns an editorial object
+     */
+    get editorial(): Record<string, any>;
+    set editorial(newEditorial: editorial.Editorial | Record<string, any>);
     get hasEditorialInformation(): boolean;
     /**
      * Returns true if there is a style.Style object

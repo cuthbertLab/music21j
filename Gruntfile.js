@@ -253,7 +253,7 @@ module.exports = grunt => {
     // grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
     grunt.registerTask('test', 'Watch qunit tests', ['webpack:test']);
     grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test_no_watch', 'qunit']);
-    grunt.registerTask('publish', 'Raise the version and publish', () => {
+    grunt.registerTask('publish', 'Raise the version and be ready to publish', () => {
         grunt.task.run('jsdoc');
         grunt.task.run('bump');
     });
