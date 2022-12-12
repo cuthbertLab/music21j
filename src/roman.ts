@@ -106,7 +106,7 @@ export function expandShortHand(shorthand) {
     shorthand = shorthand.replace('11', 'x');
     shorthand = shorthand.replace('13', 'y');
     shorthand = shorthand.replace('15', 'z');
-    const rx = new RegExp('#*-*b*o*[1-9xyz]', 'g');
+    const rx = /#*-*b*o*[1-9xyz]/g;
     let shorthandGroups = [];
     let match = rx.exec(shorthand);
     while (match !== null) {
@@ -354,7 +354,7 @@ export class RomanNumeral extends harmony.Harmony {
         let frontAlterationString = '';
         let frontAlterationTransposeInterval;
         let frontAlterationAccidental;
-        const _alterationRegex = new RegExp('^(b+|-+|#+)');
+        const _alterationRegex = /'^(b+|-+|#+)'/;
         const match = _alterationRegex.exec(workingFigure);
         if (match != null) {
             const group = match[1];
@@ -461,10 +461,8 @@ export class RomanNumeral extends harmony.Harmony {
 
     _parseRNAloneAmidstAug6(workingFigure, useScale) {
         let romanNumeralAlone = '';
-        const _romanNumeralAloneRegex = new RegExp(
-            '^(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)'
-        );
-        const _augmentedSixthRegex = new RegExp('^(It|Ger|Fr|Sw)');
+        const _romanNumeralAloneRegex = /^(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)/;
+        const _augmentedSixthRegex = /^(It|Ger|Fr|Sw)'/;
         const rm = _romanNumeralAloneRegex.exec(workingFigure);
         const a6match = _augmentedSixthRegex.exec(workingFigure);
         if (rm === null && a6match === null) {
@@ -761,7 +759,7 @@ export class RomanNumeral extends harmony.Harmony {
             figure = this._figure;
         }
         let workingFigure = figure;
-        const rx = new RegExp('(.*?)/([#a-np-zA-NP-Z].*)');
+        const rx = /(.*?)\/([#a-np-zA-NP-Z].*)/;
         const match = rx.exec(figure);
         if (match !== null) {
             const primaryFigure = match[1];
@@ -793,7 +791,7 @@ export class RomanNumeral extends harmony.Harmony {
 
     _parseOmittedSteps(workingFigure) {
         const omittedSteps = [];
-        const rx = new RegExp(/\[no(\d+)]s*/);
+        const rx = /\[no(\d+)]s*/;
         let match = rx.exec(workingFigure);
         while (match !== null) {
             const thisStepStr = match[1];
@@ -809,7 +807,7 @@ export class RomanNumeral extends harmony.Harmony {
 
     _parseBracketedAlterations(workingFigure) {
         const bracketedAlterations = this.bracketedAlterations;
-        const rx = new RegExp(/\[(b+|-+|#+)(\d+)]/);
+        const rx =/\[(b+|-+|#+)(\d+)]/;
         let match = rx.exec(workingFigure);
         while (match !== null) {
             const matchAlteration = match[1];

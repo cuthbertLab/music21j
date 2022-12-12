@@ -197,7 +197,7 @@ export function autoCorrelate(
     buf,
     sampleRate: number,
     minFrequency: number = 0,
-    maxFrequency?: number
+    maxFrequency: number = undefined,
 ) {
     const SIZE = buf.length;
     const MAX_SAMPLES = Math.floor(SIZE / 2);

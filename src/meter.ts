@@ -20,6 +20,7 @@ import {opFrac} from './common';
 
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
+ * divisions is currently not used.
  *
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
@@ -41,7 +42,7 @@ export class TimeSignature extends base.Music21Object {
     _overwrittenBeatCount;
     _overwrittenBeatDuration;
 
-    constructor(value: string = '4/4', divisions?) {
+    constructor(value: string = '4/4', divisions=undefined) {
         super();
         this.classSortOrder = 4;
         this.resetValues(value, divisions);
@@ -51,7 +52,7 @@ export class TimeSignature extends base.Music21Object {
         return this.ratioString;
     }
 
-    resetValues(value: string = '4/4', divisions?) {
+    resetValues(value: string = '4/4', divisions=undefined) {
         this.symbol = '';
         this.symbolizeDenominator = false;
         this._overwrittenBarDuration = undefined;
@@ -65,6 +66,7 @@ export class TimeSignature extends base.Music21Object {
     }
 
     load(value: string, divisions?) {
+        // "divisions" is unused.
         const valueLower = value.toLowerCase();
         if (valueLower === 'common' || valueLower === 'c') {
             value = '4/4';

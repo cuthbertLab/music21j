@@ -75,6 +75,7 @@ class _StreamIteratorBase<T = Music21Object> {
     }
 
     first(): T {
+        // eslint-disable-next-line no-unreachable-loop
         for (const el of this) {
             return el;
         }

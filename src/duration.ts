@@ -365,8 +365,8 @@ export class Tuplet extends prebase.ProtoM21Object {
     constructor(
         numberNotesActual: number = 3,
         numberNotesNormal: number = 2,
-        durationActual?: Duration|number,
-        durationNormal?: Duration|number
+        durationActual: Duration|number = undefined,
+        durationNormal: Duration|number = undefined,
     ) {
         super();
         this.numberNotesActual = numberNotesActual;

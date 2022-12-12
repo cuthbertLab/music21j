@@ -45,8 +45,14 @@ export default function tests() {
 
         m = new music21.meter.TimeSignature('5/8');
         assert.equal(m.offsetToIndex(1.5), 1, '1.5 gives index 1 in 5/8');
-        assert.equal(m.offsetToIndex(1.5, {includeCoincidentBoundaries: true}), 0,
-            '1.5 gives index 0 in 5/8 with coincident');
+        assert.equal(
+            m.offsetToIndex(
+                1.5,
+                {includeCoincidentBoundaries: true},
+            ),
+            0,
+            '1.5 gives index 0 in 5/8 with coincident',
+        );
     });
 
     test('music21.meter.TimeSignature vexflow renders', assert => {
@@ -123,15 +129,19 @@ export default function tests() {
         let ts = new music21.meter.TimeSignature('5/8');
         let beamsList = ts.getBeams(m);
 
-        assert.deepEqual(beamsList.map(x => x.beamsList[0]?.type),
-            ['start', 'continue', 'stop', 'start', 'stop']);
+        assert.deepEqual(
+            beamsList.map(x => x.beamsList[0]?.type),
+            ['start', 'continue', 'stop', 'start', 'stop']
+        );
 
         ts = new music21.meter.TimeSignature('7/8');
         m.repeatAppend(n, 2);
         beamsList = ts.getBeams(m);
 
-        assert.deepEqual(beamsList.map(x => x.beamsList[0]?.type),
-            ['start', 'continue', 'stop', 'start', 'stop', 'start', 'stop']);
+        assert.deepEqual(
+            beamsList.map(x => x.beamsList[0]?.type),
+            ['start', 'continue', 'stop', 'start', 'stop', 'start', 'stop']
+        );
     });
 
     test('music21.meter.TimeSignature getBeams 3/4', assert => {

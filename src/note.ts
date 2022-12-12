@@ -288,7 +288,12 @@ export class GeneralNote extends base.Music21Object {
      * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for clues about syllable placement.
      * @param {string} [lyricIdentifier] - an optional identifier
      */
-    addLyric(text, lyricNumber, applyRaw = false, lyricIdentifier) {
+    addLyric(
+        text,
+        lyricNumber,
+        applyRaw = false,
+        lyricIdentifier=undefined,
+    ) {
         if (lyricNumber === undefined) {
             const maxLyrics = this.lyrics.length + 1;
             const newLyric = new Lyric(
@@ -383,12 +388,16 @@ export class GeneralNote extends base.Music21Object {
      * @returns {number} - delay time in milliseconds until the next element (may be ignored)
      */
     playMidi(
-        tempo=120,
-        nextElement,
+        tempo: number = 120,
+        nextElement: base.Music21Object = undefined,
         {
             instrument=undefined,
             channel=undefined,
             playLegato=false,
+        }: {
+            instrument?: instrument.Instrument,
+            channel?: number,
+            playLegato?: boolean,
         } = {}
     ): number {
         // returns the number of milliseconds to the next element in
@@ -656,14 +665,18 @@ export class Note extends NotRest {
         }
     }
 
-    playMidi(
-        tempo=120,
-        nextElement=undefined,
+    override playMidi(
+        tempo: number = 120,
+        nextElement: base.Music21Object = undefined,
         {
             instrument=undefined,
             channel=undefined,
             playLegato=false,
-        }={}
+        }: {
+            instrument?: instrument.Instrument,
+            channel?: number,
+            playLegato?: boolean,
+        } = {},
     ): number {
         const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel, playLegato });
         if (channel === undefined) {
