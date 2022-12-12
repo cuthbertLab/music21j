@@ -842,29 +842,29 @@ export class Renderer {
             } else if (rendOp.staffLines === 1) {
                 // Vex.Flow.Stave.setNumLines hides all but the top line.
                 // this is better
-                vexflowStave.options.line_config = [
+                vexflowStave.setConfigForLines([
                     { visible: false },
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: false },
                     { visible: false },
-                ];
+                ]);
             } else if (rendOp.staffLines === 2) {
-                vexflowStave.options.line_config = [
+                vexflowStave.setConfigForLines([
                     { visible: false },
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: true },
                     { visible: false },
-                ];
+                ]);
             } else if (rendOp.staffLines === 3) {
-                vexflowStave.options.line_config = [
+                vexflowStave.setConfigForLines([
                     { visible: false },
                     { visible: true },
                     { visible: true }, // show middle
                     { visible: true },
                     { visible: false },
-                ];
+                ]);
             } else {
                 vexflowStave.setNumLines(rendOp.staffLines);
             }

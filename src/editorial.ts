@@ -8,7 +8,7 @@
 
 import { ProtoM21Object } from './prebase';
 
-export class Editorial extends ProtoM21Object {
+export class Editorial extends ProtoM21Object implements Record<string, any> {
     static get className() { return 'music21.editorial.Editorial'; }
 
     comments: any[] = [];
