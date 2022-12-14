@@ -638,7 +638,7 @@ export class Note extends NotRest {
             console.log(this.stemDirection);
         }
         if (this.stemDirection === 'noStem') {
-            vfn.glyph.stem = false;
+            vfn.glyphProps.stem = false;
             // vfn.render_options.stem_height = 0;
         } else {
             // correct VexFlow stem length for notes far from the center line;
