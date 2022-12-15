@@ -1,5 +1,5 @@
 /**
- * music21j version 0.13.1 built on 2022-12-12.
+ * music21j version 0.13.2 built on 2022-12-15.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -10590,7 +10590,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.13.0';
+const VERSION = '0.13.2';
 if (typeof window !== 'undefined') {
   window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;
   window.jQuery = jquery__WEBPACK_IMPORTED_MODULE_2__;
@@ -14002,7 +14002,7 @@ class Note extends NotRest {
       console.log(this.stemDirection);
     }
     if (this.stemDirection === 'noStem') {
-      vfn.glyph.stem = false;
+      vfn.glyphProps.stem = false;
       // vfn.render_options.stem_height = 0;
     } else {
       // correct VexFlow stem length for notes far from the center line;
