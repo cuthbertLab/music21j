@@ -1,5 +1,5 @@
 /**
- * music21j version 0.13.2 built on 2022-12-15.
+ * music21j version 0.13.3 built on 2022-12-17.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -10590,7 +10590,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.13.2';
+const VERSION = '0.13.3';
 if (typeof window !== 'undefined') {
   window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;
   window.jQuery = jquery__WEBPACK_IMPORTED_MODULE_2__;
