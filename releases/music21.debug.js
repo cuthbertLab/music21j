@@ -1,5 +1,5 @@
 /**
- * music21j version 0.13.3 built on 2022-12-17.
+ * music21j version 0.13.3 built on 2022-12-27.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -11062,9 +11062,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../css/midiPlayer.css */ "./css/midiPlayer.css");
 /* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
 /* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
+/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/note.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi.
@@ -11193,7 +11193,7 @@ class Event {
    * @returns {note.Note} - the {@link note.Note} object represented by Event.midiNote
    */
   music21Note() {
-    const m21n = new _note__WEBPACK_IMPORTED_MODULE_6__.Note();
+    const m21n = new _note__WEBPACK_IMPORTED_MODULE_7__.Note();
     m21n.pitch.ps = this.midiNote;
     return m21n;
   }
@@ -11282,7 +11282,7 @@ function quantizeLastNote(lastElement) {
   if (lastElement === undefined) {
     return undefined;
   }
-  if (lastElement instanceof _note__WEBPACK_IMPORTED_MODULE_6__.NotRest) {
+  if (lastElement instanceof _note__WEBPACK_IMPORTED_MODULE_7__.NotRest) {
     lastElement.stemDirection = undefined;
   }
   const nowInMS = Date.now();
@@ -11333,7 +11333,7 @@ function postLoadCallback(soundfont, callback) {
   }
   (_a = document.querySelector('.loadingSoundfont')) === null || _a === void 0 ? void 0 : _a.remove();
   const isAudioTag = midicube__WEBPACK_IMPORTED_MODULE_0__.config.api === 'audiotag';
-  const instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_5__.find(soundfont);
+  const instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__.find(soundfont);
   if (instrumentObj !== undefined) {
     midicube__WEBPACK_IMPORTED_MODULE_0__.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
     if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
@@ -11376,7 +11376,7 @@ function loadSoundfont(soundfont, callback) {
   if (loadedSoundfonts[soundfont] === true) {
     // this soundfont has already been loaded once, so just call the callback.
     if (callback !== undefined) {
-      const instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_5__.find(soundfont);
+      const instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__.find(soundfont);
       callback(instrumentObj);
     }
   } else if (loadedSoundfonts[soundfont] === 'loading') {
@@ -11388,7 +11388,7 @@ function loadSoundfont(soundfont, callback) {
           console.log('other process has finished loading; calling callback');
         }
         if (callback !== undefined) {
-          const instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_5__.find(soundfont);
+          const instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__.find(soundfont);
           callback(instrumentObj);
         }
       } else {
@@ -11410,7 +11410,7 @@ function loadSoundfont(soundfont, callback) {
       if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
         console.log('Document ready, waiting to load soundfont');
       }
-      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_7__["default"].appendLocation).append((0,_common__WEBPACK_IMPORTED_MODULE_4__.to_el)("<div class='loadingSoundfont'><b>Loading Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
+      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_5__["default"].appendLocation).append((0,_common__WEBPACK_IMPORTED_MODULE_4__.to_el)("<div class='loadingSoundfont'><b>Loading Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
       midicube__WEBPACK_IMPORTED_MODULE_0__.loadPlugin({
         soundfontUrl: _common__WEBPACK_IMPORTED_MODULE_4__.urls.soundfontUrl,
         instrument: soundfont,
@@ -22330,7 +22330,8 @@ function renderNotationDivs() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "RenderStack": () => (/* binding */ RenderStack),
-/* harmony export */   "Renderer": () => (/* binding */ Renderer)
+/* harmony export */   "Renderer": () => (/* binding */ Renderer),
+/* harmony export */   "vexflowDefaults": () => (/* binding */ vexflowDefaults)
 /* harmony export */ });
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
@@ -22376,6 +22377,9 @@ const barlineMap = {
   // TODO: Repeats
 };
 
+const vexflowDefaults = {
+  softmaxFactor: 10
+};
 const _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_7__.TrebleClef();
 /**
  * Represents a stack of objects that need to be rendered together.
@@ -22881,7 +22885,9 @@ class Renderer {
     if (autoBeam === undefined) {
       autoBeam = measuresOrVoices[0].autoBeam;
     }
-    const formatter = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Formatter();
+    const formatter = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Formatter({
+      softmaxFactor: vexflowDefaults.softmaxFactor
+    });
     // var minLength = formatter.preCalculateMinTotalWidth([voices]);
     // console.log(minLength);
     if (vf_voices.length === 0) {
@@ -23338,8 +23344,9 @@ class Renderer {
     }
     const vfv = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice({
       num_beats: num1024,
-      beat_value: beatValue,
-      resolution: vexflow__WEBPACK_IMPORTED_MODULE_5__.Flow.RESOLUTION
+      beat_value: beatValue
+      // this is the default
+      // resolution: VexFlow.RESOLUTION,
     });
     // from vexflow/src/voice.js
     //
@@ -23351,6 +23358,7 @@ class Renderer {
     //         tick length.
     // noinspection TypeScriptValidateJSTypes
     vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice.Mode.SOFT);
+    vfv.setSoftmaxFactor(vexflowDefaults.softmaxFactor); // will be wiped out later...
     return vfv;
   }
   staffConnectorsMap(connectorType) {

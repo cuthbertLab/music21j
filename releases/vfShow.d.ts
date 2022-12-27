@@ -12,6 +12,9 @@
 import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
 import * as stream from './stream';
 import type * as renderOptions from './renderOptions';
+export declare const vexflowDefaults: {
+    softmaxFactor: number;
+};
 /**
  * Represents a stack of objects that need to be rendered together.
  *

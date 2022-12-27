@@ -16,7 +16,7 @@
             font-family: "Courier", monospace;
             font-size: 14px;
             width: 1000px;
-            height: 180px;
+            height: 200px;
         }
         div.editor-error .text {
             background: #faa;
@@ -46,10 +46,17 @@
         <p></p>
         <div class="example sandbox">
             <textarea id="sandbox" class="editor">
-const n = new music21.note.Note("C#");
-n.duration.type = "whole";
 const s = new music21.stream.Stream();
+const n = new music21.note.Note("C#");
+n.duration.type = "half";
+const n2 = new music21.note.Note("C#");
+n2.duration.type = "quarter";
+const n3 = new music21.note.Note("C#");
+n3.duration.type = "quarter";
+s.append(new music21.meter.TimeSignature('4/4'));
 s.append(n);
+s.append(n2);
+s.append(n3);
 s.replaceDOM();
 </textarea>
             <p></p>

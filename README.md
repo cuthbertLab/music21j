@@ -156,6 +156,17 @@ test with
 $ grunt test
 ```
 
+You might get an error that looks like this which you can currently ignore:
+
+```
+Access to XMLHttpRequest at 
+'file:///soundfonts/midi-js-soundfonts-master/FluidR3_GM/acoustic_grand_piano-ogg.js' 
+from origin 'null' has been blocked by CORS policy
+```
+
+We hope to fix it later, but for now, we're not testing audio output.
+
+
 for running tests one time without watch, you can use:
 
 ```sh

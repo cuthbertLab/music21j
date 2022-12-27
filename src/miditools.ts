@@ -19,13 +19,12 @@ import '../css/midiPlayer.css';
 
 import * as chord from './chord';
 import * as common from './common';
+import defaults from './defaults';
 import * as instrument from './instrument';
 import * as note from './note';
 import {to_el} from './common';
 
-// imports for typechecking only
 import type * as tempo from './tempo';
-import defaults from './defaults';
 
 declare interface MIDIWindow extends Window {
     MIDI?: MIDI,

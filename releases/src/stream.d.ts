@@ -354,7 +354,7 @@ export declare class Stream extends base.Music21Object {
      * @param {Object} [options]
      * @returns {Stream}
      */
-    makeMeasures(options?: any): any;
+    makeMeasures(options?: any): Stream;
     containerInHierarchy(el: base.Music21Object, { setActiveSite }?: {
         setActiveSite?: boolean;
     }): Stream | undefined;

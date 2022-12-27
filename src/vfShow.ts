@@ -10,7 +10,6 @@
 
 import {
     BarlineType as VFBarlineType, Beam as VFBeam,
-    Flow as VexFlow,
     Formatter as VFFormatter, Fraction as VFFraction, Renderer as VFRenderer, 
     Stave as VFStave, StaveConnector as VFStaveConnector, StaveNote as VFStaveNote, 
     StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote,
@@ -20,12 +19,12 @@ import {
 import { debug } from './debug';
 import * as clef from './clef';
 import * as duration from './duration';
-
-// imports for typechecking only
-import * as note from './note';
 import * as stream from './stream';
+
 import {coerceJQuery, jQueryAndHTMLVersion} from './common';
 
+// imports for typechecking only
+import type * as note from './note';
 import type * as renderOptions from './renderOptions';
 
 const barlineMap = {
@@ -34,6 +33,10 @@ const barlineMap = {
     end: 'END',
     none: 'NONE',
     // TODO: Repeats
+};
+
+export const vexflowDefaults = {
+    softmaxFactor: 10,
 };
 
 
@@ -592,7 +595,7 @@ export class Renderer {
             autoBeam = measuresOrVoices[0].autoBeam;
         }
 
-        const formatter = new VFFormatter();
+        const formatter = new VFFormatter({softmaxFactor: vexflowDefaults.softmaxFactor});
         // var minLength = formatter.preCalculateMinTotalWidth([voices]);
         // console.log(minLength);
         if (vf_voices.length === 0) {
@@ -1104,7 +1107,8 @@ export class Renderer {
         const vfv = new VFVoice({
             num_beats: num1024,
             beat_value: beatValue,
-            resolution: VexFlow.RESOLUTION,
+            // this is the default
+            // resolution: VexFlow.RESOLUTION,
         });
 
         // from vexflow/src/voice.js
@@ -1117,6 +1121,7 @@ export class Renderer {
         //         tick length.
         // noinspection TypeScriptValidateJSTypes
         vfv.setMode(VFVoice.Mode.SOFT);
+        vfv.setSoftmaxFactor(vexflowDefaults.softmaxFactor);  // will be wiped out later...
         return vfv;
     }
 
