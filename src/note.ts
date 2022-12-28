@@ -511,6 +511,11 @@ export class NotRest extends GeneralNote {
         }
         if (this.noteheadColor !== undefined) {
             vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
+            vfn.setLedgerLineStyle({
+                ...vfn.getLedgerLineStyle(),
+                fillStyle: this.noteheadColor,
+                strokeStyle: this.noteheadColor,
+            });
         }
         this.activeVexflowNote = vfn;
         return vfn;
@@ -794,6 +799,11 @@ export class Rest extends GeneralNote {
         }
         if (this.color !== undefined) {
             vfn.setStyle({ fillStyle: this.color, strokeStyle: this.color });
+            vfn.setLedgerLineStyle({
+                ...vfn.getLedgerLineStyle(),
+                fillStyle: this.color,
+                strokeStyle: this.color,
+            });
         }
         this.activeVexflowNote = vfn;
         return vfn;
