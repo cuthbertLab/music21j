@@ -1,5 +1,5 @@
 /**
- * music21j version 0.13.3 built on 2022-12-27.
+ * music21j version 0.13.5 built on 2022-12-28.
  * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -13480,6 +13480,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 
 /**
@@ -13885,6 +13886,10 @@ class NotRest extends GeneralNote {
         fillStyle: this.noteheadColor,
         strokeStyle: this.noteheadColor
       });
+      vfn.setLedgerLineStyle(_extends(_extends({}, vfn.getLedgerLineStyle()), {
+        fillStyle: this.noteheadColor,
+        strokeStyle: this.noteheadColor
+      }));
     }
     this.activeVexflowNote = vfn;
     return vfn;
@@ -14143,6 +14148,10 @@ class Rest extends GeneralNote {
         fillStyle: this.color,
         strokeStyle: this.color
       });
+      vfn.setLedgerLineStyle(_extends(_extends({}, vfn.getLedgerLineStyle()), {
+        fillStyle: this.color,
+        strokeStyle: this.color
+      }));
     }
     this.activeVexflowNote = vfn;
     return vfn;
