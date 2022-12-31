@@ -51,6 +51,8 @@
         "no-console": ["off"],
         "no-continue": ["off"],
         "no-confusing-arrow": ["off"],
+        "no-dupe-class-members": ["off"],
+        "@typescript-eslint/no-dupe-class-members": "error",
         "no-else-return": ["off"],
         "no-lonely-if": ["off"],
         "no-mixed-operators": ["off"],

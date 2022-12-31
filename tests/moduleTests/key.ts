@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import {KeySignature as VFKeySignature, StaveModifierPosition, Glyph as VFGlyph} from 'vexflow';
+import {KeySignature as VFKeySignature, StaveModifierPosition, Glyph as VFGlyph} from 'vexflow/bravura';
 import * as music21 from '../../src/main';
 
 const { test } = QUnit;

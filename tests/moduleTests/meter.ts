@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import {StaveModifierPosition, TimeSignature as VFTimeSignature} from 'vexflow';
+import {StaveModifierPosition, TimeSignature as VFTimeSignature} from 'vexflow/bravura';
 import * as music21 from '../../src/main';
 
 const { test } = QUnit;

@@ -1,7 +1,7 @@
 /**
  * articulations module.
  */
-import { Articulation as VFArticulation, Modifier as VFModifier, Ornament as VFOrnament } from 'vexflow';
+import { Articulation as VFArticulation, Modifier as VFModifier, Ornament as VFOrnament } from 'vexflow/bravura';
 
 import * as common from './common';
 import * as prebase from './prebase';

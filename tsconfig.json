@@ -2,14 +2,20 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "lib": ["es6", "dom", "es2018"],
+        "lib": ["es6", "dom", "es2018", "es2019", "es2020"],
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
         "declarationDir": "build",
-        "target": "es6"
+        "target": "es6",
+        "baseUrl": "./",
+        "paths": {
+            "vexflow/bravura":  ["node_modules/vexflow/entry/vexflow-bravura.ts"],
+            "vexflow/gonville": ["node_modules/vexflow/entry/vexflow-gonville.ts"],
+            "vexflow/petaluma": ["node_modules/vexflow/entry/vexflow-petaluma.ts"]
+        }
     },
     "include": [
         "src/**/*"

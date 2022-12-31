@@ -14,7 +14,7 @@ import {
     Stave as VFStave, StaveConnector as VFStaveConnector, StaveNote as VFStaveNote, 
     StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote,
     Tuplet as VFTuplet, Voice as VFVoice,
-} from 'vexflow';
+} from 'vexflow/bravura';
 
 import { debug } from './debug';
 import * as clef from './clef';
@@ -595,7 +595,7 @@ export class Renderer {
             autoBeam = measuresOrVoices[0].autoBeam;
         }
 
-        const formatter = new VFFormatter({softmaxFactor: vexflowDefaults.softmaxFactor});
+        const formatter = new VFFormatter();
         // var minLength = formatter.preCalculateMinTotalWidth([voices]);
         // console.log(minLength);
         if (vf_voices.length === 0) {
@@ -785,7 +785,9 @@ export class Renderer {
                 displayKs = false;
             }
         }
-
+        if (displayKs && context_ks?.sharps === 0) {
+            displayKs = false;  // no empty C major key signatures.
+        }
         if (displayKs) {
             const ksVFName = context_ks.majorName().replace(/-/g, 'b');
             stave.addKeySignature(ksVFName);
@@ -803,7 +805,8 @@ export class Renderer {
             stave.addTimeSignature(
                 context_ts.numerator.toString()
                     + '/'
-                    + context_ts.denominator.toString()
+                    + context_ts.denominator.toString(),
+                10 // customPadding.  15 is too big
             );
         }
         if (rendOp.leftBarline !== undefined) {
@@ -1121,7 +1124,6 @@ export class Renderer {
         //         tick length.
         // noinspection TypeScriptValidateJSTypes
         vfv.setMode(VFVoice.Mode.SOFT);
-        vfv.setSoftmaxFactor(vexflowDefaults.softmaxFactor);  // will be wiped out later...
         return vfv;
     }
 

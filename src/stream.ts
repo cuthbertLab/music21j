@@ -20,7 +20,7 @@
 
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
-import { Stave as VFStave } from 'vexflow';
+import { Stave as VFStave } from 'vexflow/bravura';
 
 import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
@@ -544,7 +544,7 @@ export class Stream extends base.Music21Object {
     }
 
     get clef(): clef.Clef {
-        return this.getSpecialContext('clef', false) as clef.Clef;
+        return this.getSpecialContext('clef', false);
     }
 
     set clef(newClef: clef.Clef) {
@@ -701,7 +701,11 @@ export class Stream extends base.Music21Object {
      *
      * May be removed
      */
-    getSpecialContext(context, warnOnCall=false) {
+    getSpecialContext(context: 'clef', warnOnCall?: boolean): clef.Clef|undefined;
+    getSpecialContext(context: 'keySignature', warnOnCall?: boolean): KeySignature|undefined;
+    getSpecialContext(context: 'timeSignature', warnOnCall?: boolean): meter.TimeSignature|undefined;
+    getSpecialContext(context: string, warnOnCall?: boolean): base.Music21Object|undefined;
+    getSpecialContext(context: string, warnOnCall: boolean = false): base.Music21Object|undefined {
         const first_el = this._firstElementContext(context);
         if (first_el !== undefined) {
             return first_el;

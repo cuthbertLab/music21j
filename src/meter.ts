@@ -5,7 +5,7 @@
  * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
  */
-import { Fraction as VFFraction } from 'vexflow';
+import { Fraction as VFFraction } from 'vexflow/bravura';
 
 import * as base from './base';
 import * as beam from './beam';

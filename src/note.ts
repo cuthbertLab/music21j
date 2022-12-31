@@ -13,7 +13,7 @@
  */
 import {
     Accidental as VFAccidental, Dot as VFDot, StaveNote as VFStaveNote, Stem as VFStem, 
-} from 'vexflow';
+} from 'vexflow/bravura';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';

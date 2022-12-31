@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import {TextNote as VFTextNote} from 'vexflow';
+import {TextNote as VFTextNote} from 'vexflow/bravura';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
