@@ -2826,13 +2826,22 @@ export class Stream extends base.Music21Object {
             note: undefined,
         }; // a backup in case we did not find within allowablePixels
 
-        for (const el of subStream.flat.notesAndRests) {
-            const n = el as any; // for missing x and width
+        const notesAndRests = Array.from(subStream.flat.notesAndRests);
+        for (let i = 0; i < notesAndRests.length; i++) {
+            const n = notesAndRests[i] as any; // for missing x and width
+            const nextN = notesAndRests[i + 1] as any;
+            // console.log(n);
             /* should also
              * compensate for accidentals...
              */
-            const leftDistance = Math.abs(n.x - xPxScaled);
-            const rightDistance = Math.abs(n.x + n.width - xPxScaled);
+            const leftX = n.x;
+            let rightX = n.x + n.width;
+            if (nextN) {
+                // truncate notes that overflow into the following note
+                rightX = Math.min(rightX, nextN.x - 1);
+            }
+            const leftDistance = Math.abs(leftX - xPxScaled);
+            const rightDistance = Math.abs(rightX - xPxScaled);
             const minDistance = Math.min(leftDistance, rightDistance);
 
             if (

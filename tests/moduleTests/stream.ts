@@ -1092,4 +1092,31 @@ export default function tests() {
         assert.equal(empty.elements.length, 0);
         assert.equal(empty.derivation.method, 'cloneEmpty');
     });
+
+    test('music21.stream.Stream noteElementFromScaledX overlapping notes', assert => {
+        const n1 = new music21.note.Note();
+        const n2 = new music21.note.Note();
+
+        // mock Note x positions to simulate post-rendered state
+        // note widths overlap intentionally
+        (n1 as any).x = 100;
+        (n1 as any).width = 23;
+        (n2 as any).x = 120;
+        (n2 as any).width = 23;
+
+        const s = new music21.stream.Stream();
+        s.renderOptions.scaleFactor = { x: 1.0, y: 1.0 };
+        s.append([n1, n2]);
+
+        assert.deepEqual(s.noteElementFromScaledX(118), n1);
+        assert.deepEqual(s.noteElementFromScaledX(119), n1);
+        assert.deepEqual(s.noteElementFromScaledX(120), n2);
+        assert.deepEqual(s.noteElementFromScaledX(121), n2);
+
+        // even though 122 is closer to the end of n1 (123)
+        // than the beginning of n2 (120), it should still return n2
+        // since we truncate note widths that overflow into the following note
+        assert.deepEqual(s.noteElementFromScaledX(122), n2);
+        assert.deepEqual(s.noteElementFromScaledX(123), n2);
+    });
 }
