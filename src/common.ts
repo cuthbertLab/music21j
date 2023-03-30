@@ -513,6 +513,9 @@ export function opFrac(num) {
     }
     if (is_power_of_2_denominator(num)) {
         return parseFloat(num.toPrecision(6));
+    } else if (num < 0.0000011) {
+        // leading zeros don't pass with is_power_of_2_denominator
+        return 0;
     } else {
         return num;
     }
