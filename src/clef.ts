@@ -309,10 +309,10 @@ export const all_clefs = {
  *
  */
 export function bestClef(st: Stream, { recurse=true }={}): Clef {
-    // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
+    // console.log('calling flatten on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
     let stFlat;
     if (recurse) {
-        stFlat = st.flat;
+        stFlat = st.flatten();
     } else {
         stFlat = st;
     }

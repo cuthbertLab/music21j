@@ -278,7 +278,7 @@ export default function tests() {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
         const convertedNotes = music21.tinyNotation.TinyNotation(
             "4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4"
-        ).flat;
+        ).flatten();
         // Function does not work, stream.ts 1353
         //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
         const els = convertedNotes.elements as music21.note.Note[];
