@@ -653,7 +653,7 @@ export class Renderer {
             }
         } else {
             for (const s of stack.streams) {
-                const notes = s.flat.notes;
+                const notes = s.flatten().notes;
                 let activeBeamGroupNotes = [];
                 for (const n of notes) {
                     if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {

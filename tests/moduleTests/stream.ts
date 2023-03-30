@@ -127,12 +127,12 @@ export default function tests() {
 
     test('music21.stream.Stream remove recursive', assert => {
         const p = music21.tinyNotation.TinyNotation('4/4 c1 d1 e1 f1');
-        assert.equal(p.flat.notes.length, 4);
+        assert.equal(p.flatten().notes.length, 4);
         const d = p.recurse().notes.get(1);
         assert.equal(d.name, 'D');
         p.remove(d, {recurse: true});
-        assert.equal(p.flat.notes.length, 3);
-        const array_notes = Array.from(p.flat.notes) as music21.note.Note[];
+        assert.equal(p.flatten().notes.length, 3);
+        const array_notes = Array.from(p.flatten().notes) as music21.note.Note[];
         assert.deepEqual(
             array_notes.map(n => n.pitch.name),
             ['C', 'E', 'F']
@@ -208,7 +208,7 @@ export default function tests() {
             'duration of streams with nested parts'
         );
         assert.equal(
-            sc.flat.duration.quarterLength,
+            sc.flatten().duration.quarterLength,
             4.0,
             'duration of flat stream with overlapping notes'
         );
@@ -219,7 +219,7 @@ export default function tests() {
             'new music21.duration with nested parts'
         );
         assert.equal(
-            sc.flat.duration.quarterLength,
+            sc.flatten().duration.quarterLength,
             3.5,
             'new music21.duration of flat stream'
         );
@@ -280,12 +280,12 @@ export default function tests() {
 
         assert.equal((p.get(0) as music21.stream.Stream).get(0).offset, 0.0);
         assert.notOk(p.isFlat, 'part has substreams');
-        const pf = p.flat;
+        const pf = p.flatten();
         assert.equal(pf.get(0).offset, 0.0);
         assert.equal(pf.get(1).offset, 4.0);
         assert.ok(pf.isFlat, 'flat has no substreams');
 
-        const pf2 = p.flat; // repeated calls do not change
+        const pf2 = p.flatten(); // repeated calls do not change
         assert.ok(pf2.isFlat, 'flat has no substreams');
         assert.equal(
             pf2.get(0).offset,
@@ -297,11 +297,11 @@ export default function tests() {
             4.0,
             'repeated calls do not change offset 2'
         );
-        const pf3 = pf2.flat;
+        const pf3 = pf2.flatten();
         assert.equal(
             pf3.get(1).offset,
             4.0,
-            '.flat.flat does not change offset'
+            '.flatten().flatten() does not change offset'
         );
 
         const semiFlatP = p.semiFlat;
@@ -700,13 +700,13 @@ export default function tests() {
         assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
     });
 
-    test('music21.stream.Stream.flat', assert => {
+    test('music21.stream.Stream.flatten()', assert => {
         const p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
         const p2 = music21.tinyNotation.TinyNotation('4/4 A1    C#1   E#1');
         const s = new music21.stream.Score();
         s.insert(0, p1);
         s.insert(0, p2);
-        const sf = s.flat.notes;
+        const sf = s.flatten().notes;
         const sf_names = (Array.from(sf) as music21.note.Note[]).map(n => n.name);
         assert.deepEqual(sf_names, ['C', 'A', 'D', 'E', 'C#', 'F', 'G', 'E#']);
         const sf_offsets = Array.from(sf).map(n => n.offset);
@@ -783,13 +783,13 @@ export default function tests() {
         let y = 20;
         let [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 43);
-        assert.strictEqual(foundNote, p1.flat.notes.get(0));
+        assert.strictEqual(foundNote, p1.flatten().notes.get(0));
         y = 100;
         [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 27);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p1.flat.notes.get(0) as music21.note.Note).pitch.name
+            (p1.flatten().notes.get(0) as music21.note.Note).pitch.name
         );
 
         // check that we eventually move to p2
@@ -798,7 +798,7 @@ export default function tests() {
         assert.equal(clickedDNN, 29);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p2.flat.notes.get(0) as music21.note.Note).pitch.name
+            (p2.flatten().notes.get(0) as music21.note.Note).pitch.name
         );
 
         // check that we can access last note in measure after a triplet
@@ -807,7 +807,7 @@ export default function tests() {
         assert.equal(clickedDNN, 29);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p2.flat.notes.get(4) as music21.note.Note).pitch.name
+            (p2.flatten().notes.get(4) as music21.note.Note).pitch.name
         );
         x = 100;
 
@@ -817,7 +817,7 @@ export default function tests() {
         assert.equal(clickedDNN, -1);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p2.flat.notes.get(0) as music21.note.Note).pitch.name
+            (p2.flatten().notes.get(0) as music21.note.Note).pitch.name
         );
     });
 
@@ -872,7 +872,7 @@ export default function tests() {
         d[3].stemDirection = 'up';
 
         music21.stream.makeNotation.setStemDirectionForBeamGroups(p);
-        const pn2 = Array.from(p.flat.notes) as music21.note.Note[];
+        const pn2 = Array.from(p.flatten().notes) as music21.note.Note[];
         const stemDirections = pn2.map(n => n.stemDirection);
         assert.deepEqual(
             stemDirections,
@@ -888,7 +888,7 @@ export default function tests() {
     test('music21.stream.makeNotation testSetStemDirectionConsistency', assert => {
         const p = music21.tinyNotation.TinyNotation('2/4 b8 f8 a8 b8');
         p.makeBeams({inPlace: true, setStemDirections: false});
-        const note_array = Array.from(p.flat.notes) as music21.note.Note[];
+        const note_array = Array.from(p.flatten().notes) as music21.note.Note[];
         note_array[0].stemDirection = 'down';
         note_array[1].stemDirection = 'unspecified';
         note_array[2].stemDirection = 'down';
@@ -901,14 +901,14 @@ export default function tests() {
 
     test('music21.stream.makeNotation testMakeBeamsWithStemDirection', assert => {
         const p = music21.tinyNotation.TinyNotation(alla_breve_test);
-        const pn = Array.from(p.flat.notes) as music21.note.Note[];
+        const pn = Array.from(p.flatten().notes) as music21.note.Note[];
         pn[14].stemDirection = 'down';
         pn[15].stemDirection = 'noStem';
         pn[16].stemDirection = 'double';
         pn[17].stemDirection = 'up';
 
         p.makeBeams({inPlace: true});
-        const pn2 = Array.from(p.flat.notes) as music21.note.Note[];
+        const pn2 = Array.from(p.flatten().notes) as music21.note.Note[];
         const stemDirections = pn2.map(n => n.stemDirection);
         assert.deepEqual(
             stemDirections,
@@ -937,10 +937,10 @@ export default function tests() {
 
     test('music21.stream.stripTies', assert => {
         const sc = music21.tinyNotation.TinyNotation('4/4 c2.~ c4');
-        const n_before = sc.flat.notes.get(0);
+        const n_before = sc.flatten().notes.get(0);
         assert.equal(n_before.duration.quarterLength, 3.0);
 
-        const strip = sc.flat.stripTies();
+        const strip = sc.flatten().stripTies();
         const strip_n = Array.from(strip.notes) as music21.note.Note[];
         assert.equal(strip_n.length, 1);
         const n_after = strip_n[0];

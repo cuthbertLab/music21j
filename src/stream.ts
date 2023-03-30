@@ -342,6 +342,12 @@ export class Stream extends base.Music21Object {
         return this.flatten(false);
     }
 
+    /**
+     * Returns a new Stream with all nested elements inserted at their offset from
+     * the top level Stream.
+     *
+     * @param retainContainers - if true, retain the containers (e.g., Measure, Part, etc.)
+     */
     flatten(retainContainers: boolean = false): this {
         const newSt = this.clone(false);
         // console.log('done cloning...');
@@ -407,7 +413,7 @@ export class Stream extends base.Music21Object {
      */
     _metronomeMarkBoundaries(): [number, number, tempo.MetronomeMark][] {
         const mmBoundaries: [number, number, tempo.MetronomeMark][] = [];
-        const thisFlat = this.flat;
+        const thisFlat = this.flatten();
         const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
 
         const highestTime = thisFlat.highestTime;
@@ -1568,7 +1574,7 @@ export class Stream extends base.Music21Object {
         if (this.hasVoices()) {
             // TODO(msc) -- remove jQuery each...
             $.each(this.getElementsByClass('Voice'), (i, v) => {
-                groups.push([v.flat, i]);
+                groups.push([v.flatten(), i]);
             });
         } else {
             groups = [[this, undefined]];
@@ -2349,7 +2355,7 @@ export class Stream extends base.Music21Object {
         if (startNoteIndex !== undefined) {
             currentNoteIndex = startNoteIndex;
         }
-        const thisFlat = this.flat;
+        const thisFlat = this.flatten();
         const flatEls = [];
         for (const el of thisFlat) {
             flatEls.push(el);
@@ -2826,7 +2832,7 @@ export class Stream extends base.Music21Object {
             note: undefined,
         }; // a backup in case we did not find within allowablePixels
 
-        const notesAndRests = Array.from(subStream.flat.notesAndRests);
+        const notesAndRests = Array.from(subStream.flatten().notesAndRests);
         for (let i = 0; i < notesAndRests.length; i++) {
             const n = notesAndRests[i] as any; // for missing x and width
             const nextN = notesAndRests[i + 1] as any;
