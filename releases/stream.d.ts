@@ -136,6 +136,12 @@ export declare class Stream extends base.Music21Object {
     get highestTime(): number;
     get semiFlat(): this;
     get flat(): this;
+    /**
+     * Returns a new Stream with all nested elements inserted at their offset from
+     * the top level Stream.
+     *
+     * @param retainContainers - if true, retain the containers (e.g., Measure, Part, etc.)
+     */
     flatten(retainContainers?: boolean): this;
     get notes(): iterator.StreamIterator<note.NotRest>;
     get notesAndRests(): iterator.StreamIterator<note.GeneralNote>;

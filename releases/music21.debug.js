@@ -1,6 +1,6 @@
 /**
- * music21j version 0.13.5 built on 2022-12-28.
- * Copyright (c) 2013-2022 Michael Scott Asato Cuthbert
+ * music21j version 0.13.6 built on 2023-03-30.
+ * Copyright (c) 2013-2023 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
  * https://github.com/cuthbertLab/music21j
@@ -610,7 +610,177 @@ class Recorder {
 /**
  * This code does NOT go through babel, so no arrow functions, let, const, etc.
  */
-const recorderWorkerJs = "function recorderWorkerJs() {\n    /**\n     *\n     *   Rewritten from Matt Diamond's recorderWorker -- MIT License\n     */\n    RecorderWorker = function RecorderWorker(parentContext) {\n            this.parent = parentContext;\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n            this.sampleRate = undefined;\n    };\n    RecorderWorker.prototype.onmessage = function onmessage(e) {\n            switch (e.data.command) {\n            case 'init':\n                this.init(e.data.config);\n                break;\n            case 'record':\n                this.record(e.data.buffer);\n                break;\n            case 'exportWAV':\n                this.exportWAV(e.data.type);\n                break;\n            case 'exportMonoWAV':\n                this.exportMonoWAV(e.data.type);\n                break;\n            case 'getBuffers':\n                this.getBuffers();\n                break;\n            case 'clear':\n                this.clear();\n                break;\n            default:\n                break;\n            }\n   };\n   RecorderWorker.prototype.postMessage = function postMessage(msg) {\n            this.parent.postMessage(msg);\n   };\n\n   RecorderWorker.prototype.init = function init(config) {\n            this.sampleRate = config.sampleRate;\n   };\n\n   RecorderWorker.prototype.record = function record(inputBuffer) {\n            var inputBufferL = inputBuffer[0];\n            var inputBufferR = inputBuffer[1];\n            this.recBuffersL.push(inputBufferL);\n            this.recBuffersR.push(inputBufferR);\n            this.recLength += inputBufferL.length;\n   };\n\n   RecorderWorker.prototype.exportWAV = function exportWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var bufferR = this.mergeBuffers(this.recBuffersR);\n            var interleaved = this.interleave(bufferL, bufferR);\n            var dataview = this.encodeWAV(interleaved);\n            var audioBlob = new Blob([dataview], { 'type': type });\n\n            this.postMessage(audioBlob);\n   };\n\n   RecorderWorker.prototype.exportMonoWAV = function exportMonoWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var dataview = this.encodeWAV(bufferL);\n            var audioBlob = new Blob([dataview], { 'type': type });\n\n            this.postMessage(audioBlob);\n   };\n\n   RecorderWorker.prototype.mergeBuffers = function mergeBuffers(recBuffers) {\n            var result = new Float32Array(this.recLength);\n            var offset = 0;\n            for (var i = 0; i < recBuffers.length; i++) {\n                result.set(recBuffers[i], offset);\n                offset += recBuffers[i].length;\n            }\n            return result;\n    };\n\n    RecorderWorker.prototype.getBuffers = function getBuffers() {\n            var buffers = [];\n            buffers.push(this.mergeBuffers(this.recBuffersL));\n            buffers.push(this.mergeBuffers(this.recBuffersR));\n            this.postMessage(buffers);\n        };\n\n    RecorderWorker.prototype.clear = function clear() {\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n        }\n\n    RecorderWorker.prototype.interleave = function interleave(inputL, inputR) {\n            var combinedLength = inputL.length + inputR.length;\n            var result = new Float32Array(combinedLength);\n\n            var index = 0;\n            var inputIndex = 0;\n\n            while (index < combinedLength) {\n                result[index++] = inputL[inputIndex];\n                result[index++] = inputR[inputIndex];\n                inputIndex++;\n            }\n            return result;\n        }\n    RecorderWorker.prototype.encodeWAV = function encodeWAV(samples, mono) {\n            var buffer = new ArrayBuffer(44 + (samples.length * 2));\n            var view = new DataView(buffer);\n\n            /* RIFF identifier */\n            writeString(view, 0, 'RIFF');\n\n            /* file length */\n            view.setUint32(4, 32 + samples.length * 2, true);\n\n            /* RIFF type */\n            writeString(view, 8, 'WAVE');\n\n            /* format chunk identifier */\n            writeString(view, 12, 'fmt ');\n\n            /* format chunk length */\n            view.setUint32(16, 16, true);\n\n            /* sample format (raw) */\n            view.setUint16(20, 1, true);\n\n            /* channel count */\n            view.setUint16(22, mono ? 1 : 2, true);\n\n            /* sample rate */\n            view.setUint32(24, this.sampleRate, true);\n\n            /* byte rate (sample rate * block align) */\n            view.setUint32(28, this.sampleRate * 4, true);\n\n            /* block align (channel count * bytes per sample) */\n            view.setUint16(32, 4, true);\n\n            /* bits per sample */\n            view.setUint16(34, 16, true);\n\n            /* data chunk identifier */\n            writeString(view, 36, 'data');\n\n            /* data chunk length */\n            view.setUint32(40, samples.length * 2, true);\n\n            floatTo16BitPCM(view, 44, samples);\n\n            return view;\n        }\n\n    function floatTo16BitPCM(output, offset, input) {\n        for (var i = 0; i < input.length; i++, offset += 2) {\n            var s = Math.max(-1, Math.min(1, input[i]));\n            output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);\n        }\n    }\n\n    function writeString(view, offset, string) {\n        for (var i = 0; i < string.length; i++) {\n            view.setUint8(offset + i, string.charCodeAt(i));\n        }\n    }\n\n    var recordWorker = new RecorderWorker(this);\n    this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);\n}";
+const recorderWorkerJs = `function recorderWorkerJs() {
+    /**
+     *
+     *   Rewritten from Matt Diamond's recorderWorker -- MIT License
+     */
+    RecorderWorker = function RecorderWorker(parentContext) {
+            this.parent = parentContext;
+            this.recLength = 0;
+            this.recBuffersL = [];
+            this.recBuffersR = [];
+            this.sampleRate = undefined;
+    };
+    RecorderWorker.prototype.onmessage = function onmessage(e) {
+            switch (e.data.command) {
+            case 'init':
+                this.init(e.data.config);
+                break;
+            case 'record':
+                this.record(e.data.buffer);
+                break;
+            case 'exportWAV':
+                this.exportWAV(e.data.type);
+                break;
+            case 'exportMonoWAV':
+                this.exportMonoWAV(e.data.type);
+                break;
+            case 'getBuffers':
+                this.getBuffers();
+                break;
+            case 'clear':
+                this.clear();
+                break;
+            default:
+                break;
+            }
+   };
+   RecorderWorker.prototype.postMessage = function postMessage(msg) {
+            this.parent.postMessage(msg);
+   };
+
+   RecorderWorker.prototype.init = function init(config) {
+            this.sampleRate = config.sampleRate;
+   };
+
+   RecorderWorker.prototype.record = function record(inputBuffer) {
+            var inputBufferL = inputBuffer[0];
+            var inputBufferR = inputBuffer[1];
+            this.recBuffersL.push(inputBufferL);
+            this.recBuffersR.push(inputBufferR);
+            this.recLength += inputBufferL.length;
+   };
+
+   RecorderWorker.prototype.exportWAV = function exportWAV(type) {
+            var bufferL = this.mergeBuffers(this.recBuffersL);
+            var bufferR = this.mergeBuffers(this.recBuffersR);
+            var interleaved = this.interleave(bufferL, bufferR);
+            var dataview = this.encodeWAV(interleaved);
+            var audioBlob = new Blob([dataview], { 'type': type });
+
+            this.postMessage(audioBlob);
+   };
+
+   RecorderWorker.prototype.exportMonoWAV = function exportMonoWAV(type) {
+            var bufferL = this.mergeBuffers(this.recBuffersL);
+            var dataview = this.encodeWAV(bufferL);
+            var audioBlob = new Blob([dataview], { 'type': type });
+
+            this.postMessage(audioBlob);
+   };
+
+   RecorderWorker.prototype.mergeBuffers = function mergeBuffers(recBuffers) {
+            var result = new Float32Array(this.recLength);
+            var offset = 0;
+            for (var i = 0; i < recBuffers.length; i++) {
+                result.set(recBuffers[i], offset);
+                offset += recBuffers[i].length;
+            }
+            return result;
+    };
+
+    RecorderWorker.prototype.getBuffers = function getBuffers() {
+            var buffers = [];
+            buffers.push(this.mergeBuffers(this.recBuffersL));
+            buffers.push(this.mergeBuffers(this.recBuffersR));
+            this.postMessage(buffers);
+        };
+
+    RecorderWorker.prototype.clear = function clear() {
+            this.recLength = 0;
+            this.recBuffersL = [];
+            this.recBuffersR = [];
+        }
+
+    RecorderWorker.prototype.interleave = function interleave(inputL, inputR) {
+            var combinedLength = inputL.length + inputR.length;
+            var result = new Float32Array(combinedLength);
+
+            var index = 0;
+            var inputIndex = 0;
+
+            while (index < combinedLength) {
+                result[index++] = inputL[inputIndex];
+                result[index++] = inputR[inputIndex];
+                inputIndex++;
+            }
+            return result;
+        }
+    RecorderWorker.prototype.encodeWAV = function encodeWAV(samples, mono) {
+            var buffer = new ArrayBuffer(44 + (samples.length * 2));
+            var view = new DataView(buffer);
+
+            /* RIFF identifier */
+            writeString(view, 0, 'RIFF');
+
+            /* file length */
+            view.setUint32(4, 32 + samples.length * 2, true);
+
+            /* RIFF type */
+            writeString(view, 8, 'WAVE');
+
+            /* format chunk identifier */
+            writeString(view, 12, 'fmt ');
+
+            /* format chunk length */
+            view.setUint32(16, 16, true);
+
+            /* sample format (raw) */
+            view.setUint16(20, 1, true);
+
+            /* channel count */
+            view.setUint16(22, mono ? 1 : 2, true);
+
+            /* sample rate */
+            view.setUint32(24, this.sampleRate, true);
+
+            /* byte rate (sample rate * block align) */
+            view.setUint32(28, this.sampleRate * 4, true);
+
+            /* block align (channel count * bytes per sample) */
+            view.setUint16(32, 4, true);
+
+            /* bits per sample */
+            view.setUint16(34, 16, true);
+
+            /* data chunk identifier */
+            writeString(view, 36, 'data');
+
+            /* data chunk length */
+            view.setUint32(40, samples.length * 2, true);
+
+            floatTo16BitPCM(view, 44, samples);
+
+            return view;
+        }
+
+    function floatTo16BitPCM(output, offset, input) {
+        for (var i = 0; i < input.length; i++, offset += 2) {
+            var s = Math.max(-1, Math.min(1, input[i]));
+            output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        }
+    }
+
+    function writeString(view, offset, string) {
+        for (var i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    }
+
+    var recordWorker = new RecorderWorker(this);
+    this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);
+}`;
 
 /***/ }),
 
@@ -925,7 +1095,7 @@ function standardizeBarType() {
   if (barTypeDict[value] !== undefined) {
     return barTypeDict[value];
   }
-  throw new BarException("cannot process style: ".concat(value));
+  throw new BarException(`cannot process style: ${value}`);
 }
 class Barline extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
   static get className() {
@@ -1293,7 +1463,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object
         return csOffset;
       }
     }
-    throw new Error("Element ".concat(this, " is not in hierarchy of ").concat(site));
+    throw new Error(`Element ${this} is not in hierarchy of ${site}`);
   }
   // ---------- Contexts -------------
   getContextByClass(className) {
@@ -1384,7 +1554,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_6__.ProtoM21Object
         try {
           offsetInStream = siteObj.elementOffset(_this);
         } catch (e) {
-          console.error("".concat(_this + '', " is not in ").concat(siteObj + ''));
+          console.error(`${_this + ''} is not in ${siteObj + ''}`);
           continue;
         }
         const newOffset = offsetInStream + params.offsetAppend;
@@ -5158,10 +5328,10 @@ const SCREF = {
 };
 function forteIndexToInversionsAvailable(card, index) {
   if (card < 1 || card > 12) {
-    throw new Error("cardinality ".concat(card, " is not valid"));
+    throw new Error(`cardinality ${card} is not valid`);
   }
   if (index < 1 || index > TNMAX[card]) {
-    throw new Error("index ".concat(index, " is invalid"));
+    throw new Error(`index ${index} is invalid`);
   }
   // get morris invariance vector
   const morris = FORTE[card][index][2];
@@ -5194,16 +5364,16 @@ function _validateAddress(address) {
     inversion = address[2];
   }
   if (card < 1 || card > 13) {
-    throw new Error("cardinality ".concat(card, " not valid"));
+    throw new Error(`cardinality ${card} not valid`);
   }
   // using TN mode for all comparisons
   if (index < 1 || index > TNMAX[card]) {
-    throw new Error("index ".concat(index, " not valid"));
+    throw new Error(`index ${index} not valid`);
   }
   const inversionsAvailable = forteIndexToInversionsAvailable(card, index);
   if (inversion !== undefined) {
     if (!inversionsAvailable.includes(inversion)) {
-      throw new Error("inversion ".concat(inversion, " not valid"));
+      throw new Error(`inversion ${inversion} not valid`);
     }
   }
   if (inversion === undefined) {
@@ -5285,7 +5455,7 @@ function addressToForteName(address) {
     // tni, ignore inversion
     iStr = '';
   }
-  return "".concat(card, "-").concat(index).concat(iStr);
+  return `${card}-${index}${iStr}`;
 }
 function seekChordTablesAddress(c) {
   const pcSet = c.orderedPitchClasses;
@@ -5366,7 +5536,7 @@ function seekChordTablesAddress(c) {
     }
   }
   if (!match) {
-    throw new Error("cannot find a chord table address for ".concat(pcSet));
+    throw new Error(`cannot find a chord table address for ${pcSet}`);
   }
   return _chordTableAddress(card, index, inversion, matchedPCOriginal);
 }
@@ -5402,11 +5572,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -5457,7 +5624,7 @@ const nameToSign = {
  *     of this staff and the first line in treble clef
  * octaveChange
  */
-class Clef extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
+class Clef extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
   static get className() {
     return 'music21.clef.Clef';
   }
@@ -5499,7 +5666,7 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     }
 
     const lowestLineDifference = this.lowestLineTrebleOffset;
-    const tempPitch = new _pitch__WEBPACK_IMPORTED_MODULE_3__.Pitch(p.step);
+    const tempPitch = new _pitch__WEBPACK_IMPORTED_MODULE_2__.Pitch(p.step);
     tempPitch.octave = p.octave;
     tempPitch.diatonicNoteNum += lowestLineDifference;
     tempPitch.accidental = p.accidental;
@@ -5693,10 +5860,10 @@ function bestClef(st) {
   let {
     recurse = true
   } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
+  // console.log('calling flatten on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
   let stFlat;
   if (recurse) {
-    stFlat = st.flat;
+    stFlat = st.flatten();
   } else {
     stFlat = st;
   }
@@ -6323,6 +6490,9 @@ function opFrac(num) {
   }
   if (is_power_of_2_denominator(num)) {
     return parseFloat(num.toPrecision(6));
+  } else if (num < 0.0000011) {
+    // leading zeros don't pass with is_power_of_2_denominator
+    return 0;
   } else {
     return num;
   }
@@ -9323,9 +9493,9 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_6__.Music21Object {
     } else if (this.sharps === 1) {
       return 'of 1 sharp';
     } else if (this.sharps < 0) {
-      return "of ".concat(Math.abs(this.sharps), " flats");
+      return `of ${Math.abs(this.sharps)} flats`;
     } else {
-      return "of ".concat(this.sharps, " sharps");
+      return `of ${this.sharps} sharps`;
     }
   }
   get sharps() {
@@ -10041,14 +10211,20 @@ class Keyboard {
    */
   wrapScrollable(svgDOM) {
     const wrapper = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)('<div class="keyboardScrollableWrapper" style="display: inline-block"></div>');
-    const bDown = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)("\n            <button class=\"keyboardOctaveDown\" \n                    style=\"font-size: ".concat(Math.floor(this.scaleFactor * 15), "px\">&lt;&lt;</button>\n            "));
+    const bDown = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)(`
+            <button class="keyboardOctaveDown" 
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px">&lt;&lt;</button>
+            `);
     bDown.addEventListener('click', () => {
       _miditools__WEBPACK_IMPORTED_MODULE_3__.config.transposeOctave -= 1;
       this.startPitch = this._startDNN - 7;
       this.endPitch = this._endDNN - 7;
       this.redrawSVG();
     });
-    const bUp = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)("\n            <button class='keyboardOctaveUp'\n                    style=\"font-size: ".concat(Math.floor(this.scaleFactor * 15), "px\"\n            >&gt;&gt;</button>"));
+    const bUp = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)(`
+            <button class='keyboardOctaveUp'
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px"
+            >&gt;&gt;</button>`);
     bUp.addEventListener('click', () => {
       _miditools__WEBPACK_IMPORTED_MODULE_3__.config.transposeOctave += 1;
       this.startPitch = this._startDNN + 7;
@@ -10074,13 +10250,21 @@ class Keyboard {
   appendHideableKeyboard(where, keyboardSVG) {
     var _a;
     const container = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)('<div class="keyboardHideableContainer"></div>');
-    const bInside = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)("\n            <div class='keyboardToggleInside'\n                 style=\"display: inline-block; padding-top: 40px; font-size: 40px;\"\n            >\u21A5</div>");
-    const b = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)("\n            <div class='keyboardToggleOutside'\n                 style=\"display: inline-block; vertical-align: top; background: white\"\n            ></div>");
+    const bInside = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)(`
+            <div class='keyboardToggleInside'
+                 style="display: inline-block; padding-top: 40px; font-size: 40px;"
+            >↥</div>`);
+    const b = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)(`
+            <div class='keyboardToggleOutside'
+                 style="display: inline-block; vertical-align: top; background: white"
+            ></div>`);
     b.append(bInside);
     b.setAttribute('data-defaultDisplay', (_a = container.querySelector('.keyboardSVG')) === null || _a === void 0 ? void 0 : _a.style.display);
     b.setAttribute('data-state', 'down');
     b.addEventListener('click', e => triggerToggleShow(e));
-    const explain = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)("<div class='keyboardExplain'\n                  style=\"display: none; background-color: white; padding: 10px 10px 10px 10px; font-size: 12pt;\"\n             >Show keyboard</div>");
+    const explain = (0,_common__WEBPACK_IMPORTED_MODULE_2__.to_el)(`<div class='keyboardExplain'
+                  style="display: none; background-color: white; padding: 10px 10px 10px 10px; font-size: 12pt;"
+             >Show keyboard</div>`);
     b.append(explain);
     container.append(b);
     container.appendChild(keyboardSVG); // SVG safer with appendChild
@@ -10590,7 +10774,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.13.3';
+const VERSION = '0.13.6';
 if (typeof window !== 'undefined') {
   window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;
   window.jQuery = jquery__WEBPACK_IMPORTED_MODULE_2__;
@@ -10844,7 +11028,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     // This should be a method on a MeterSequence.
     if (qLenPos >= this.barDuration.quarterLength || qLenPos < 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception("cannot access from qLenPos ".concat(qLenPos, " ") + "where total duration is ".concat(this.barDuration.quarterLength));
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception(`cannot access from qLenPos ${qLenPos} ` + `where total duration is ${this.barDuration.quarterLength}`);
     }
     let accumulated_time = 0.0;
     let index = -1; // first beatGroup increments to 0
@@ -11846,7 +12030,7 @@ class GeneralObjectExporter {
       }
     }
     if (outObj === undefined) {
-      throw new MusicXMLExportException("Cannot translate the object ".concat(obj, " to a complete musicXML document; ") + 'put it in a Stream first!');
+      throw new MusicXMLExportException(`Cannot translate the object ${obj} to a complete musicXML document; ` + 'put it in a Stream first!');
     }
     return outObj;
   }
@@ -11915,7 +12099,9 @@ class XMLExporterBase {
   }
   // no indentation :-(
   xmlHeader() {
-    return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n        <!DOCTYPE score-partwise PUBLIC \"-//Recordare//DTD MusicXML ".concat(_musicxmlVersion, "  Partwise//EN\" \"http://www.musicxml.org/dtds/partwise.dtd\">\n        ");
+    return `<?xml version="1.0" encoding="utf-8"?>
+        <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML ${_musicxmlVersion}  Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+        `;
   }
   /**
    * Note: this is not a method in music21p, but it needs access to this.doc in music21j
@@ -12927,7 +13113,7 @@ class PartParser {
         removeClasses: STAFF_SPECIFIC_CLASSES,
         fillWithRests: false
       });
-      const partStaffId = "".concat(this.partId, "-Staff").concat(staffKey);
+      const partStaffId = `${this.partId}-Staff${staffKey}`;
       newPartStaff.id = partStaffId;
       // TODO: groups?
       partStaffs.push(newPartStaff);
@@ -13823,7 +14009,7 @@ class NotRest extends GeneralNote {
     } else if (direction === 'none') {
       direction = 'noStem';
     } else if (!stemDirectionNames.includes(direction)) {
-      throw new NotRestException("not a valid stem direction name: ".concat(direction));
+      throw new NotRestException(`not a valid stem direction name: ${direction}`);
     }
     this._stemDirection = direction;
   }
@@ -14647,7 +14833,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
     }
     s = s.toUpperCase();
     if (!stepsToName.includes(s)) {
-      throw new TypeError("".concat(s, " is not a valid step name."));
+      throw new TypeError(`${s} is not a valid step name.`);
     }
     this._step = s;
     this.spellingIsInferred = false;
@@ -14956,7 +15142,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
     for (let i = pitchPast.length - 1; i >= 0; i--) {
       const thisPPast = pitchPast[i];
       if (thisPPast === undefined) {
-        throw new Error("PitchPast was undefined ".concat(i));
+        throw new Error(`PitchPast was undefined ${i}`);
       }
       if (thisPPast.step === this.step && thisPPast.octave === this.octave) {
         if (thisPPast.name !== this.name) {
@@ -15449,7 +15635,7 @@ class ProtoM21Object {
     if (si !== '') {
       si = ' ' + si;
     }
-    return "<".concat(this.classes[0]).concat(si, ">");
+    return `<${this.classes[0]}${si}>`;
   }
   /**
    *
@@ -15979,7 +16165,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_8__.Harmony {
     const rm = _romanNumeralAloneRegex.exec(workingFigure);
     const a6match = _augmentedSixthRegex.exec(workingFigure);
     if (rm === null && a6match === null) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_4__.Music21Exception("No roman numeral found in ".concat(workingFigure, "."));
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_4__.Music21Exception(`No roman numeral found in ${workingFigure}.`);
     }
     if (a6match !== null) {
       if (useScale.mode === 'major') {
@@ -17104,48 +17290,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Stream": () => (/* binding */ Stream),
 /* harmony export */   "StreamException": () => (/* binding */ StreamException),
 /* harmony export */   "Voice": () => (/* binding */ Voice),
-/* harmony export */   "filters": () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_25__),
-/* harmony export */   "iterator": () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_26__),
-/* harmony export */   "makeNotation": () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_27__)
+/* harmony export */   "filters": () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_24__),
+/* harmony export */   "iterator": () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_25__),
+/* harmony export */   "makeNotation": () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_26__)
 /* harmony export */ });
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator.js */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.reduce.js */ "./node_modules/core-js/modules/es.array.reduce.js");
-/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.exec.js */ "./node_modules/core-js/modules/es.regexp.exec.js");
-/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
-/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
-/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
-
+/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.reduce.js */ "./node_modules/core-js/modules/es.array.reduce.js");
+/* harmony import */ var core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_reduce_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.exec.js */ "./node_modules/core-js/modules/es.regexp.exec.js");
+/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
+/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
+/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
 
 
 
@@ -17197,9 +17380,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception {}
+class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception {}
 function _exportMusicXMLAsText(s) {
-  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_24__.GeneralObjectExporter(s);
+  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_23__.GeneralObjectExporter(s);
   return gox.parse();
 }
 /**
@@ -17232,7 +17415,7 @@ function _exportMusicXMLAsText(s) {
  *     call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
-class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
+class Stream extends _base__WEBPACK_IMPORTED_MODULE_9__.Music21Object {
   static get className() {
     return 'music21.stream.Stream';
   }
@@ -17278,7 +17461,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     this._timeSignature = undefined; // a music21.meter.TimeSignature object
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_20__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_19__.RenderOptions();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
@@ -17320,7 +17503,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       }
       const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(canvasOrSVGElement, e);
       if (foundNote === undefined) {
-        if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
           console.log('No note found');
         }
         return undefined;
@@ -17378,11 +17561,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     }
   }
   get duration() {
-    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_15__.Duration) {
+    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_14__.Duration) {
       // return new duration.Duration(32.0);
       return this._overriddenDuration;
     }
-    return new _duration__WEBPACK_IMPORTED_MODULE_15__.Duration(this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_14__.Duration(this.highestTime);
   }
   set duration(newDuration) {
     this._overriddenDuration = newDuration;
@@ -17406,6 +17589,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
   get flat() {
     return this.flatten(false);
   }
+  /**
+   * Returns a new Stream with all nested elements inserted at their offset from
+   * the top level Stream.
+   *
+   * @param retainContainers - if true, retain the containers (e.g., Measure, Part, etc.)
+   */
   flatten() {
     let retainContainers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     const newSt = this.clone(false);
@@ -17415,7 +17604,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       // namely, do not set inner streams activeSites to be
       // in things that they won't have later.
       newSt.clear();
-      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_26__.RecursiveIterator(this, {
+      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_25__.RecursiveIterator(this, {
         restoreActiveSites: false,
         includeSelf: false,
         ignoreSorting: true
@@ -17464,11 +17653,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
    */
   _metronomeMarkBoundaries() {
     const mmBoundaries = [];
-    const thisFlat = this.flat;
+    const thisFlat = this.flatten();
     const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
     const highestTime = thisFlat.highestTime;
     const lowestOffset = 0;
-    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_22__.MetronomeMark({
+    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_21__.MetronomeMark({
       number: 120
     });
     if (!metronomeMarks.length) {
@@ -17536,7 +17725,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
   }
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_16__.Instrument(newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_15__.Instrument(newInstrument);
     }
     this._instrument = newInstrument;
   }
@@ -17616,7 +17805,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
   }
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_17__.TimeSignature(newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_16__.TimeSignature(newTimeSignature);
     }
     const oldTS = this._firstElementContext('timeSignature');
     if (oldTS !== undefined) {
@@ -17735,7 +17924,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       return undefined;
     }
     if (warnOnCall) {
-      console.warn("Calling special context ".concat(context, "!"));
+      console.warn(`Calling special context ${context}!`);
     }
     return special_context;
   }
@@ -17789,13 +17978,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       skipSelf = true
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     const includeSelf = !skipSelf;
-    const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_26__.RecursiveIterator(this, {
+    const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_25__.RecursiveIterator(this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_25__.ClassFilter(classFilter));
+      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_24__.ClassFilter(classFilter));
     }
     return ri;
   }
@@ -17814,11 +18003,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       return this;
     }
     const el = elOrElList;
-    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object)) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception('Can only append a music21 object.');
+    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_9__.Music21Object)) {
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception('Can only append a music21 object.');
     }
     if (this._elements.includes(el)) {
-      throw new StreamException("Cannot append (".concat(el, "): already found in Stream"));
+      throw new StreamException(`Cannot append (${el}): already found in Stream`);
     }
     try {
       if (el.isClassOrSubclass !== undefined && el.isClassOrSubclass('NotRest')) {
@@ -17865,7 +18054,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       throw new StreamException('Cannot insert without an element.');
     }
     if (this._elements.includes(el)) {
-      throw new StreamException("Cannot insert (".concat(el, "): already found in Stream"));
+      throw new StreamException(`Cannot insert (${el}): already found in Stream`);
     }
     try {
       if (!ignoreSort) {
@@ -17897,7 +18086,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
   a.repeatAppend(n, 10)
   */
   repeatAppend(item, numberOfTimes) {
-    if (!(item instanceof _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object)) {
+    if (!(item instanceof _base__WEBPACK_IMPORTED_MODULE_9__.Music21Object)) {
       throw new StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
     }
     for (let i = 0; i < numberOfTimes; i++) {
@@ -17952,7 +18141,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     const index = this._elements.indexOf(el);
     if (index === -1) {
       // endElements
-      throw new StreamException("cannot find object (".concat(el, ") in Stream"));
+      throw new StreamException(`cannot find object (${el}) in Stream`);
     }
     return index;
   }
@@ -18154,7 +18343,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
   set(index, newEl) {
     const replaceEl = this.get(index);
     if (replaceEl === undefined) {
-      throw new StreamException("Cannot set element at index ".concat(index, "."));
+      throw new StreamException(`Cannot set element at index ${index}.`);
     }
     this.replace(replaceEl, newEl);
     return this;
@@ -18203,7 +18392,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       bestClef: false,
       inPlace: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_13__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_12__.merge(params, options);
     let voiceCount;
     if (this.hasVoices()) {
       voiceCount = this.getElementsByClass('Voice').length;
@@ -18375,7 +18564,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
         return;
       }
       const restQL = restInfo.endTime - restInfo.offset;
-      const restObj = new _note__WEBPACK_IMPORTED_MODULE_18__.Rest();
+      const restObj = new _note__WEBPACK_IMPORTED_MODULE_17__.Rest();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
@@ -18393,7 +18582,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       } else if (removeClasses === true || removeClasses.some(removeClass => el.classSet.has(removeClass)) || !retainVoices && el.classSet.has('Voice')) {
         // remove this element
         if (fillWithRests && el.quarterLength) {
-          const endTime = _common__WEBPACK_IMPORTED_MODULE_13__.opFrac(el.offset + el.quarterLength);
+          const endTime = _common__WEBPACK_IMPORTED_MODULE_12__.opFrac(el.offset + el.quarterLength);
           if (restInfo.offset === undefined) {
             restInfo.offset = el.offset;
             restInfo.endTime = endTime;
@@ -18412,7 +18601,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
   cloneEmpty(derivationMethod) {
     // noinspection JSPotentiallyInvalidConstructorUsage
     const returnObj = new this.constructor();
-    const new_derivation = new _derivation__WEBPACK_IMPORTED_MODULE_14__.Derivation(returnObj);
+    const new_derivation = new _derivation__WEBPACK_IMPORTED_MODULE_13__.Derivation(returnObj);
     new_derivation.origin = this;
     new_derivation.method = derivationMethod || 'cloneEmpty';
     returnObj.derivation = new_derivation;
@@ -18469,7 +18658,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       setStemDirections = true,
       failOnNoTimeSignature = false
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_27__.makeBeams(this, {
+    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_26__.makeBeams(this, {
       inPlace,
       setStemDirections,
       failOnNoTimeSignature
@@ -18516,8 +18705,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     let groups = [];
     if (this.hasVoices()) {
       // TODO(msc) -- remove jQuery each...
-      jquery__WEBPACK_IMPORTED_MODULE_6__.each(this.getElementsByClass('Voice'), (i, v) => {
-        groups.push([v.flat, i]);
+      jquery__WEBPACK_IMPORTED_MODULE_5__.each(this.getElementsByClass('Voice'), (i, v) => {
+        groups.push([v.flatten(), i]);
       });
     } else {
       groups = [[this, undefined]];
@@ -18537,7 +18726,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     return offsetMap;
   }
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_26__.StreamIterator(this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_25__.StreamIterator(this);
   }
   /**
    * Find all elements with a certain class; if an Array is given, then any
@@ -18753,7 +18942,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
         if (tie !== undefined && tie.type !== 'stop') {
           tiePitchSet.add(p.nameWithOctave);
         }
-      } else if (e instanceof _chord__WEBPACK_IMPORTED_MODULE_11__.Chord) {
+      } else if (e instanceof _chord__WEBPACK_IMPORTED_MODULE_10__.Chord) {
         const chordNotes = e.notes;
         const seenPitchNames = new Set();
         for (const n of chordNotes) {
@@ -18807,7 +18996,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
    */
   resetRenderOptions(recursive, preserveEvents) {
     const oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_20__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_19__.RenderOptions();
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
     }
@@ -18836,11 +19025,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
    * Takes in a canvas or the div surrounding an SVG object
    */
   renderVexflow(where) {
-    const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_13__.coerceHTMLElement(where);
-    const DOMContains = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_28__["default"].appendLocation).contains(canvasOrSVG);
+    const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_12__.coerceHTMLElement(where);
+    const DOMContains = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_27__["default"].appendLocation).contains(canvasOrSVG);
     if (!DOMContains) {
       // temporarily add to DOM so Firefox can measure it...
-      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_28__["default"].appendLocation).appendChild(canvasOrSVG);
+      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_27__["default"].appendLocation).appendChild(canvasOrSVG);
     }
     const tagName = canvasOrSVG.tagName.toLowerCase();
     if (this.autoBeam === true) {
@@ -18854,7 +19043,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
         }
       }
     }
-    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_23__.Renderer(this, canvasOrSVG);
+    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_22__.Renderer(this, canvasOrSVG);
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
     } else if (tagName === 'svg') {
@@ -18865,7 +19054,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     this.activeVFRenderer = vfr;
     if (!DOMContains) {
       // remove the adding to DOM so that Firefox could measure it...
-      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_28__["default"].appendLocation).removeChild(canvasOrSVG);
+      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_27__["default"].appendLocation).removeChild(canvasOrSVG);
     }
     return vfr;
   }
@@ -18907,7 +19096,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       if (!ignoreSystems) {
         numSystems = this.numSystems();
       }
-      if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
       let partHeight = numSystems * staffHeight + (numSystems - 1) * systemPadding;
@@ -19158,7 +19347,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     for (const element of sortedElements) {
       if (element) {
         if (element.offset > highestCurrentEndTime) {
-          const gapElement = new _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object();
+          const gapElement = new _base__WEBPACK_IMPORTED_MODULE_9__.Music21Object();
           const gapQuarterLength = element.offset - highestCurrentEndTime;
           gapElement.duration = this.duration;
           gapElement.duration.quarterLength = gapQuarterLength;
@@ -19206,13 +19395,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       done: undefined,
       startNote: undefined
     };
-    _common__WEBPACK_IMPORTED_MODULE_13__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_12__.merge(params, options);
     const startNoteIndex = params.startNote;
     let currentNoteIndex = 0;
     if (startNoteIndex !== undefined) {
       currentNoteIndex = startNoteIndex;
     }
-    const thisFlat = this.flat;
+    const thisFlat = this.flatten();
     const flatEls = [];
     for (const el of thisFlat) {
       flatEls.push(el);
@@ -19235,7 +19424,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
         // const nextOffset = nextNote ? nextNote.offset : el.offset + el.duration.quarterLength;
         // const tempo = thisStream._averageTempo(el.offset, nextOffset);
         // const milliseconds = playDuration * 1000 * 60 / tempo;
-        if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
           console.log('playing: ', el, playDuration, milliseconds, params.tempo);
         }
         if (el.playMidi !== undefined) {
@@ -19261,7 +19450,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     // turns off all currently playing MIDI notes (on any stream) and stops playback.
     this._stopPlaying = true;
     for (let i = 0; i < 127; i++) {
-      midicube__WEBPACK_IMPORTED_MODULE_7__.noteOff(0, i, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_6__.noteOff(0, i, 0);
     }
     return this;
   }
@@ -19296,14 +19485,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     let $newCanvasOrDIV;
     if (elementType === 'svg') {
       // we render SVG on a Div for Vexflow
-      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_6__('<div/>');
+      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_5__('<div/>');
     } else if (elementType === 'canvas') {
-      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_6__('<canvas/>');
+      $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_5__('<canvas/>');
     }
     $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common__WEBPACK_IMPORTED_MODULE_13__.stripPx(width);
+        width = _common__WEBPACK_IMPORTED_MODULE_12__.stripPx(width);
       }
       $newCanvasOrDIV.attr('width', width);
     } else {
@@ -19374,12 +19563,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     let height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     let elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
     if (!appendElement) {
-      appendElement = _defaults__WEBPACK_IMPORTED_MODULE_28__["default"].appendLocation;
+      appendElement = _defaults__WEBPACK_IMPORTED_MODULE_27__["default"].appendLocation;
     }
     if (typeof appendElement === 'string') {
       appendElement = document.querySelector(appendElement);
     }
-    const $appendElement = _common__WEBPACK_IMPORTED_MODULE_13__.coerceJQuery(appendElement);
+    const $appendElement = _common__WEBPACK_IMPORTED_MODULE_12__.coerceJQuery(appendElement);
     const $svgOrCanvasBlock = this.createDOM(width, height, elementType);
     $appendElement.append($svgOrCanvasBlock);
     return $svgOrCanvasBlock[0];
@@ -19399,7 +19588,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     let preserveSvgSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     let elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
     let $oldSVGOrCanvas;
-    const $where = _common__WEBPACK_IMPORTED_MODULE_13__.coerceJQuery(where);
+    const $where = _common__WEBPACK_IMPORTED_MODULE_12__.coerceJQuery(where);
     if ($where.hasClass('streamHolding')) {
       $oldSVGOrCanvas = $where;
     } else {
@@ -19407,13 +19596,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     }
     // TODO: Max Width!
     if ($oldSVGOrCanvas.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception('No svg defined for replaceDOM!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception('No svg defined for replaceDOM!');
     } else if ($oldSVGOrCanvas.length > 1) {
       // change last svg...
       // replacing each with svgBlock doesn't work
       // anyhow, it just resizes the svg but doesn't
       // draw.
-      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_6__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
+      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_5__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
     }
     let svgBlock;
     if (preserveSvgSize) {
@@ -19439,7 +19628,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
    *                    find the original stream; var s = this; var f = function () { s...}
    */
   setRenderInteraction(where) {
-    const $svg = _common__WEBPACK_IMPORTED_MODULE_13__.coerceJQuery(where);
+    const $svg = _common__WEBPACK_IMPORTED_MODULE_12__.coerceJQuery(where);
     const playFunc = () => {
       this.playStream();
     };
@@ -19495,7 +19684,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       };
     } else {
       // replace when not in hotfix/crisis mode:
-      offset = jquery__WEBPACK_IMPORTED_MODULE_6__(svg).offset();
+      offset = jquery__WEBPACK_IMPORTED_MODULE_5__(svg).offset();
       // ...with this:
       // const { left, top } = svg.getBoundingClientRect();
       // offset = {
@@ -19602,7 +19791,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common__WEBPACK_IMPORTED_MODULE_13__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_12__.merge(params, options);
     let foundNote;
     const subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
     if (subStream === undefined) {
@@ -19612,13 +19801,22 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       minDistanceSoFar: params.backupMaximum,
       note: undefined
     }; // a backup in case we did not find within allowablePixels
-    for (const el of subStream.flat.notesAndRests) {
-      const n = el; // for missing x and width
+    const notesAndRests = Array.from(subStream.flatten().notesAndRests);
+    for (let i = 0; i < notesAndRests.length; i++) {
+      const n = notesAndRests[i]; // for missing x and width
+      const nextN = notesAndRests[i + 1];
+      // console.log(n);
       /* should also
        * compensate for accidentals...
        */
-      const leftDistance = Math.abs(n.x - xPxScaled);
-      const rightDistance = Math.abs(n.x + n.width - xPxScaled);
+      const leftX = n.x;
+      let rightX = n.x + n.width;
+      if (nextN) {
+        // truncate notes that overflow into the following note
+        rightX = Math.min(rightX, nextN.x - 1);
+      }
+      const leftDistance = Math.abs(leftX - xPxScaled);
+      const rightDistance = Math.abs(rightX - xPxScaled);
       const minDistance = Math.min(leftDistance, rightDistance);
       if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
         foundNote = n;
@@ -19660,7 +19858,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
    */
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     const n = foundNote;
-    const p = new _pitch__WEBPACK_IMPORTED_MODULE_19__.Pitch('C');
+    const p = new _pitch__WEBPACK_IMPORTED_MODULE_18__.Pitch('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -19685,7 +19883,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     if (!this.isFlat) {
       this.setSubstreamRenderOptions();
     }
-    const $svg = jquery__WEBPACK_IMPORTED_MODULE_6__(svg); // works even if svg is already $jquery
+    const $svg = jquery__WEBPACK_IMPORTED_MODULE_5__(svg); // works even if svg is already $jquery
     const $newSvg = this.createNewDOM($svg.width(), $svg.height());
     this.renderVexflow($newSvg);
     $svg.replaceWith($newSvg);
@@ -19703,7 +19901,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     /*
      * Create an editable svg with an accidental selection bar.
      */
-    const $d = jquery__WEBPACK_IMPORTED_MODULE_6__('<div/>').css('text-align', 'left').css('position', 'relative');
+    const $d = jquery__WEBPACK_IMPORTED_MODULE_5__('<div/>').css('text-align', 'left').css('position', 'relative');
     this.renderOptions.events.click = this.DOMChangerFunction;
     if (this.changedCallbackFunction === undefined) {
       this.changedCallbackFunction = this.DOMChangerFunction;
@@ -19711,7 +19909,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
     const $svgDiv = this.createDOM(width, height);
     const $buttonDiv = this.getAccidentalToolbar(minAccidental, maxAccidental, $svgDiv);
     $d.append($buttonDiv);
-    $d.append(jquery__WEBPACK_IMPORTED_MODULE_6__("<br style='clear: both;' />"));
+    $d.append(jquery__WEBPACK_IMPORTED_MODULE_5__("<br style='clear: both;' />"));
     $d.append($svgDiv);
     return $d;
   }
@@ -19736,7 +19934,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
        */
       let $useSvg = $siblingSvg;
       if ($useSvg === undefined) {
-        let $searchParent = jquery__WEBPACK_IMPORTED_MODULE_6__(clickEvent.target).parent();
+        let $searchParent = jquery__WEBPACK_IMPORTED_MODULE_5__(clickEvent.target).parent();
         let maxSearch = 99;
         while (maxSearch > 0 && $searchParent !== undefined && ($useSvg === undefined || $useSvg[0] === undefined)) {
           maxSearch -= 1;
@@ -19748,9 +19946,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
           return;
         }
       }
-      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_18__.Note) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_17__.Note) {
         const n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_19__.Accidental(newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_18__.Accidental(newAlter);
         /* console.log(n.pitch.name); */
         const $newSvg = this.redrawDOM($useSvg[0]);
         if (this.changedCallbackFunction !== undefined) {
@@ -19761,10 +19959,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
         }
       }
     };
-    const $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_6__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+    const $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_5__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
     for (let i = minAccidental; i <= maxAccidental; i++) {
-      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_21__.svg_accidentals.get(i).cloneNode(true);
-      const $button = jquery__WEBPACK_IMPORTED_MODULE_6__('<button style="width: 40px; height: 40px;"></button>').on('click', e => addAccidental(i, e));
+      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_20__.svg_accidentals.get(i).cloneNode(true);
+      const $button = jquery__WEBPACK_IMPORTED_MODULE_5__('<button style="width: 40px; height: 40px;"></button>').on('click', e => addAccidental(i, e));
       $button[0].appendChild(svg_acc);
       $buttonDiv.append($button);
     }
@@ -19774,13 +19972,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
    * get a JQuery div containing two buttons -- play and stop
    */
   getPlayToolbar() {
-    const $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_6__('<div/>').attr('class', 'playToolbar scoreToolbar');
-    const $bPlay = jquery__WEBPACK_IMPORTED_MODULE_6__('<button>&#9658</button>');
+    const $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_5__('<div/>').attr('class', 'playToolbar scoreToolbar');
+    const $bPlay = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>&#9658</button>');
     $bPlay.on('click', () => {
       this.playStream();
     });
     $buttonDiv.append($bPlay);
-    const $bStop = jquery__WEBPACK_IMPORTED_MODULE_6__('<button>&#9724</button>');
+    const $bStop = jquery__WEBPACK_IMPORTED_MODULE_5__('<button>&#9724</button>');
     $bStop.on('click', () => {
       this.stopPlayStream();
     });
@@ -19810,17 +20008,17 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_10__.Music21Object {
       this.maxSystemWidth = svgWidth - 40;
       $jSvgNow.remove();
       const svgObj = this.appendNewDOM($jSvgParent);
-      $jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_6__(svgObj);
+      $jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_5__(svgObj);
     };
     let resizeTimeout = 0;
-    jquery__WEBPACK_IMPORTED_MODULE_6__(window).on('resize', () => {
+    jquery__WEBPACK_IMPORTED_MODULE_5__(window).on('resize', () => {
       if (resizeTimeout) {
         window.clearTimeout(resizeTimeout);
       }
       resizeTimeout = window.setTimeout(() => resizeEnd(), 200);
     });
     setTimeout(() => {
-      const $window = jquery__WEBPACK_IMPORTED_MODULE_6__(window);
+      const $window = jquery__WEBPACK_IMPORTED_MODULE_5__(window);
       const doResize = $window.data('triggerResizeOnCreateSvg');
       if (doResize === undefined || doResize === true) {
         resizeEnd();
@@ -19894,7 +20092,7 @@ class Part extends Stream {
     if (this._partName !== undefined) {
       return this._partName;
     }
-    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_16__.Instrument) {
+    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_15__.Instrument) {
       return this.instrument.partName;
     }
     return undefined;
@@ -19909,7 +20107,7 @@ class Part extends Stream {
     if (this._partAbbreviation !== undefined) {
       return this._partAbbreviation;
     }
-    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_16__.Instrument) {
+    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_15__.Instrument) {
       return this.instrument.partAbbreviation;
     }
     return undefined;
@@ -20050,7 +20248,7 @@ class Part extends Stream {
     if (systemHeight === undefined) {
       /* part.show() called... */
       systemHeight = this.renderOptions.staffAreaHeight;
-    } else if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+    } else if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
       console.log('overridden systemHeight: ' + systemHeight);
     }
     const systemCurrentWidths = [];
@@ -20185,8 +20383,8 @@ class Part extends Stream {
       [x, y] = this.getScaledXYforDOM(svg, e);
     }
     // debug = true;
-    if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug && svg !== undefined) {
-      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_6__(svg).height());
+    if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug && svg !== undefined) {
+      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_5__(svg).height());
     }
     // TODO(msc) -- systemPadding was never used -- should it be?
     // let systemPadding = this.renderOptions.systemPadding;
@@ -20213,7 +20411,7 @@ class Part extends Stream {
       const right = left + rendOp.width;
       const top = rendOp.top;
       const bottom = top + rendOp.height;
-      if (_debug__WEBPACK_IMPORTED_MODULE_9__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
         console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
       }
       if (xPxScaled >= left && xPxScaled <= right) {
@@ -20245,7 +20443,7 @@ class Score extends Stream {
   get clef() {
     const c = super.clef;
     if (c === undefined) {
-      return new _clef__WEBPACK_IMPORTED_MODULE_12__.TrebleClef();
+      return new _clef__WEBPACK_IMPORTED_MODULE_11__.TrebleClef();
     } else {
       return c;
     }
@@ -21884,7 +22082,7 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_5__.Music21Object {
     } else if (value.duration) {
       this._referent = value.duration;
     } else {
-      throw new TempoException("Cannot get a Duration from the supplied object: ".concat(value));
+      throw new TempoException(`Cannot get a Duration from the supplied object: ${value}`);
     }
   }
   _getDefaultNumber(tempoText) {
@@ -21972,7 +22170,7 @@ class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   }
   set type(newType) {
     if (!VALID_TIE_TYPES.includes(newType)) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception("Type must be one of ".concat(VALID_TIE_TYPES, ", not ").concat(newType));
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception(`Type must be one of ${VALID_TIE_TYPES}, not ${newType}`);
     }
     this._type = newType;
   }
@@ -22346,19 +22544,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
 /* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat.js */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.exec.js */ "./node_modules/core-js/modules/es.regexp.exec.js");
-/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-
+/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.exec.js */ "./node_modules/core-js/modules/es.regexp.exec.js");
+/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 
 
 
@@ -22389,7 +22584,7 @@ const barlineMap = {
 const vexflowDefaults = {
   softmaxFactor: 10
 };
-const _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_7__.TrebleClef();
+const _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_6__.TrebleClef();
 /**
  * Represents a stack of objects that need to be rendered together.
  *
@@ -22467,22 +22662,22 @@ class Renderer {
     this.systemBreakOffsets = []; // where to break the systems
     this.vfTuplets = [];
     this.stream = s;
-    const [$j_div, html_div] = (0,_common__WEBPACK_IMPORTED_MODULE_10__.jQueryAndHTMLVersion)(div);
+    const [$j_div, html_div] = (0,_common__WEBPACK_IMPORTED_MODULE_9__.jQueryAndHTMLVersion)(div);
     this.$div = $j_div;
     this.div = html_div;
-    this.$where = (0,_common__WEBPACK_IMPORTED_MODULE_10__.coerceJQuery)(where);
+    this.$where = (0,_common__WEBPACK_IMPORTED_MODULE_9__.coerceJQuery)(where);
   }
   get vfRenderer() {
     let backend;
     if (this.rendererType === 'canvas') {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_5__.Renderer.Backends.CANVAS;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_4__.Renderer.Backends.CANVAS;
     } else {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_5__.Renderer.Backends.SVG;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_4__.Renderer.Backends.SVG;
     }
     if (this._vfRenderer !== undefined) {
       return this._vfRenderer;
     } else {
-      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Renderer(this.div, backend);
+      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_4__.Renderer(this.div, backend);
       if (this.rendererType === 'svg') {
         // this is NOT NOT NOT a JQuery object.
         // noinspection JSDeprecatedSymbols
@@ -22792,7 +22987,7 @@ class Renderer {
         }
       }
       if (onSameSystem) {
-        const vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveTie({
+        const vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveTie({
           first_note: thisNote.activeVexflowNote,
           last_note: nextNote.activeVexflowNote,
           first_indices: [0],
@@ -22801,12 +22996,12 @@ class Renderer {
         this.vfTies.push(vfTie);
       } else {
         // console.log('got me a tie across systemBreaks!');
-        const vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveTie({
+        const vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveTie({
           first_note: thisNote.activeVexflowNote,
           first_indices: [0]
         });
         this.vfTies.push(vfTie1);
-        const vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveTie({
+        const vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveTie({
           last_note: nextNote.activeVexflowNote,
           first_indices: [0]
         });
@@ -22832,7 +23027,7 @@ class Renderer {
     const totalLength = s.duration.quarterLength;
     if (totalLength === 0) {
       // Return an empty voice, since the stream is empty.
-      const emptyVoice = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice.Mode.SOFT);
+      const emptyVoice = new vexflow__WEBPACK_IMPORTED_MODULE_4__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_4__.Voice.Mode.SOFT);
       emptyVoice.setStave(stave);
       return emptyVoice;
     }
@@ -22894,7 +23089,7 @@ class Renderer {
     if (autoBeam === undefined) {
       autoBeam = measuresOrVoices[0].autoBeam;
     }
-    const formatter = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Formatter({
+    const formatter = new vexflow__WEBPACK_IMPORTED_MODULE_4__.Formatter({
       softmaxFactor: vexflowDefaults.softmaxFactor
     });
     // var minLength = formatter.preCalculateMinTotalWidth([voices]);
@@ -22937,15 +23132,15 @@ class Renderer {
           // TODO: getContextByClass...
           // console.log(beatGroups);
         } else {
-          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_5__.Fraction(2, 8)]; // default beam groups
+          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_4__.Fraction(2, 8)]; // default beam groups
         }
 
-        const beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_5__.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
+        const beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_4__.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
         this.beamGroups.push(...beamGroups);
       }
     } else {
       for (const s of stack.streams) {
-        const notes = s.flat.notes;
+        const notes = s.flatten().notes;
         let activeBeamGroupNotes = [];
         for (const n of notes) {
           if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
@@ -22958,7 +23153,7 @@ class Renderer {
             activeBeamGroupNotes.push(n.activeVexflowNote);
           }
           if (eighthNoteBeam.type === 'stop') {
-            const vfBeam = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Beam(activeBeamGroupNotes, false);
+            const vfBeam = new vexflow__WEBPACK_IMPORTED_MODULE_4__.Beam(activeBeamGroupNotes, false);
             this.beamGroups.push(vfBeam);
             activeBeamGroupNotes = [];
           }
@@ -23002,10 +23197,10 @@ class Renderer {
       left = 10;
     }
     // console.log('streamLength: ' + streamLength);
-    if (_debug__WEBPACK_IMPORTED_MODULE_6__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_5__.debug) {
       console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
     }
-    const stave = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Stave(left, top, width);
+    const stave = new vexflow__WEBPACK_IMPORTED_MODULE_4__.Stave(left, top, width);
     return stave;
   }
   /**
@@ -23031,7 +23226,7 @@ class Renderer {
     sClef = sClef || _clefSingleton;
     this.setStafflines(s, stave);
     if (rendOp.showMeasureNumber) {
-      if (s instanceof _stream__WEBPACK_IMPORTED_MODULE_9__.Measure && s.number !== undefined) {
+      if (s instanceof _stream__WEBPACK_IMPORTED_MODULE_8__.Measure && s.number !== undefined) {
         stave.setMeasure(s.number);
       } else {
         stave.setMeasure(rendOp.measureIndex + 1);
@@ -23078,14 +23273,14 @@ class Renderer {
       const bl = rendOp.leftBarline;
       const vxBL = barlineMap[bl];
       if (vxBL !== undefined) {
-        stave.setBegBarType(vexflow__WEBPACK_IMPORTED_MODULE_5__.BarlineType[vxBL]);
+        stave.setBegBarType(vexflow__WEBPACK_IMPORTED_MODULE_4__.BarlineType[vxBL]);
       }
     }
     if (rendOp.rightBarline !== undefined) {
       const bl = rendOp.rightBarline;
       const vxBL = barlineMap[bl];
       if (vxBL !== undefined) {
-        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_5__.BarlineType[vxBL]);
+        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_4__.BarlineType[vxBL]);
       }
     }
   }
@@ -23180,7 +23375,7 @@ class Renderer {
         notes_occupied: activeTuplet.numberNotesNormal
       };
       // console.log('tupletOptions', tupletOptions);
-      const vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Tuplet(activeTupletVexflowNotes, tupletOptions);
+      const vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_4__.Tuplet(activeTupletVexflowNotes, tupletOptions);
       if (activeTuplet.tupletNormalShow === 'ratio') {
         vfTuplet.setRatioed(true);
       }
@@ -23245,11 +23440,11 @@ class Renderer {
       let line = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 11;
       // console.log(text, font, d);
       // noinspection TypeScriptValidateJSTypes
-      const t1 = new vexflow__WEBPACK_IMPORTED_MODULE_5__.TextNote({
+      const t1 = new vexflow__WEBPACK_IMPORTED_MODULE_4__.TextNote({
         text,
         font,
         duration: d.vexflowDuration
-      }).setLine(line).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_5__.TextNote.Justification.LEFT);
+      }).setLine(line).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_4__.TextNote.Justification.LEFT);
       if (lyricObj) {
         t1.setStyle(lyricObj.style);
       }
@@ -23287,7 +23482,7 @@ class Renderer {
         if (lyricAtDepth.syllabic === 'middle' || lyricAtDepth.syllabic === 'begin') {
           addConnector = ' ' + lyricAtDepth.lyricConnector;
           const tempQl = el.duration.quarterLength / 2.0;
-          d = new _duration__WEBPACK_IMPORTED_MODULE_8__.Duration(tempQl);
+          d = new _duration__WEBPACK_IMPORTED_MODULE_7__.Duration(tempQl);
         }
         if (lyricAtDepth.style.fontFamily) {
           font.family = lyricAtDepth.style.fontFamily;
@@ -23315,7 +23510,7 @@ class Renderer {
   vexflowVoice(s) {
     const totalLength = s.duration.quarterLength;
     if (totalLength === 0) {
-      return new vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice.Mode.SOFT);
+      return new vexflow__WEBPACK_IMPORTED_MODULE_4__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_4__.Voice.Mode.SOFT);
     }
     let num1024 = Math.round(totalLength / (1 / 256));
     let beatValue = 1024;
@@ -23348,10 +23543,10 @@ class Renderer {
       num1024 /= 2;
     }
     // console.log('creating voice');
-    if (_debug__WEBPACK_IMPORTED_MODULE_6__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_5__.debug) {
       console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
     }
-    const vfv = new vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice({
+    const vfv = new vexflow__WEBPACK_IMPORTED_MODULE_4__.Voice({
       num_beats: num1024,
       beat_value: beatValue
       // this is the default
@@ -23366,16 +23561,16 @@ class Renderer {
     // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
     //         tick length.
     // noinspection TypeScriptValidateJSTypes
-    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_5__.Voice.Mode.SOFT);
+    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_4__.Voice.Mode.SOFT);
     vfv.setSoftmaxFactor(vexflowDefaults.softmaxFactor); // will be wiped out later...
     return vfv;
   }
   staffConnectorsMap(connectorType) {
     const connectorMap = {
-      brace: vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveConnector.type.BRACE,
-      single: vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveConnector.type.SINGLE,
-      double: vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveConnector.type.DOUBLE,
-      bracket: vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveConnector.type.BRACKET
+      brace: vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveConnector.type.BRACE,
+      single: vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveConnector.type.SINGLE,
+      double: vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveConnector.type.DOUBLE,
+      bracket: vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveConnector.type.BRACKET
     };
     return connectorMap[connectorType];
   }
@@ -23425,7 +23620,7 @@ class Renderer {
           }
         }
         for (let i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-          const sc = new vexflow__WEBPACK_IMPORTED_MODULE_5__.StaveConnector(topVFStaff, bottomVFStaff);
+          const sc = new vexflow__WEBPACK_IMPORTED_MODULE_4__.StaveConnector(topVFStaff, bottomVFStaff);
           const scTypeM21 = s.renderOptions.staffConnectors[i];
           const scTypeVF = this.staffConnectorsMap(scTypeM21);
           // noinspection TypeScriptValidateJSTypes
@@ -23483,7 +23678,7 @@ class Renderer {
     if (stave !== undefined) {
       const noteStartX = stave.getNoteStartX();
       noteOffsetLeft = noteStartX;
-      if (_debug__WEBPACK_IMPORTED_MODULE_6__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_5__.debug) {
         console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.getNoteStartX(): ' + noteStartX);
         console.log('Bottom y: ' + stave.getBottomY());
       }
@@ -23519,7 +23714,7 @@ class Renderer {
       }
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_6__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_5__.debug) {
       for (const n of s) {
         if (n.pitch !== undefined) {
           const nn = n;
@@ -29443,22 +29638,6 @@ $({ target: 'Array', proto: true, forced: !STRICT_METHOD || CHROME_BUG }, {
     return $reduce(this, callbackfn, length, length > 1 ? arguments[1] : undefined);
   }
 });
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/modules/es.array.unscopables.flat.js":
-/*!*******************************************************************!*\
-  !*** ./node_modules/core-js/modules/es.array.unscopables.flat.js ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-// this method was added to unscopables after implementation
-// in popular engines, so it's moved to a separate module
-var addToUnscopables = __webpack_require__(/*! ../internals/add-to-unscopables */ "./node_modules/core-js/internals/add-to-unscopables.js");
-
-// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
-addToUnscopables('flat');
 
 
 /***/ }),
