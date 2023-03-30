@@ -1,8 +1,9 @@
 #!/usr/bin/env pyhthon
-
 '''
-It's very important that this server be started in the main music21j directory, not in this directory
-so call
+Starts a very basic python-based webserver for debugging.
+
+It's very important that this server be started in the main music21j directory, not in just any
+directory, so call
 
     cd ~/git/music21j
     python server/start_python_server.py
@@ -14,20 +15,23 @@ try:
     from BaseHTTPServer import HTTPServer
     from CGIHTTPServer import CGIHTTPRequestHandler
     from CGIHTTPServer import _url_collapse_path
-except ImportError: # python 3
+except ImportError:  # python 3
     from http.server import HTTPServer
     from http.server import CGIHTTPRequestHandler
     from http.server import _url_collapse_path
 
-import cgitb;
-cgitb.enable()  # Error reporting
 
+try:
+    import cgitb;
+    cgitb.enable()  # Error reporting
+except ImportError:
+    pass  # deprecated in Python 3.11 to be removed in 3.13. Not necessary.
 
 
 class MykeCGIHTTPServer(CGIHTTPRequestHandler):
-
     def is_cgi(self):
-        """Test whether self.path corresponds to a CGI script.
+        """
+        Test whether self.path corresponds to a CGI script.
 
         Returns True and updates the cgi_info attribute to the tuple
         (dir, rest) if self.path requires running a CGI script.
@@ -53,7 +57,7 @@ def main():
     server = HTTPServer
     handler = MykeCGIHTTPServer
 
-    #handler.cgi_directories.append("/server/cgi-bin/")
+    # handler.cgi_directories.append("/server/cgi-bin/")
     if len(sys.argv) > 1:
         port = int(sys.argv[1])
     else:
