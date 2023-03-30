@@ -35,11 +35,6 @@ const barlineMap = {
     // TODO: Repeats
 };
 
-export const vexflowDefaults = {
-    softmaxFactor: 10,
-};
-
-
 const _clefSingleton = new clef.TrebleClef();
 
 /**
@@ -806,7 +801,7 @@ export class Renderer {
                 context_ts.numerator.toString()
                     + '/'
                     + context_ts.denominator.toString(),
-                10 // customPadding.  15 is too big
+                15 // customPadding. 15 is default; too big w/ accidentals; ok w/o
             );
         }
         if (rendOp.leftBarline !== undefined) {
