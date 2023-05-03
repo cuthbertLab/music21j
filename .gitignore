@@ -64,8 +64,6 @@ nosetests.xml
 # Mr Developer
 .mr.developer.cfg
 
-soundfonts/*
-
 node_modules/grunt-contrib-uglify/package.json
 
 # PyCharm
