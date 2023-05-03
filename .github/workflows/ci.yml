@@ -1,0 +1,45 @@
+name: CI
+
+on:
+    push:
+        branches:
+        - master
+        - '*CI*'
+    pull_request:
+        branches:
+        - '*'
+
+jobs:
+  frontend_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: True
+
+    - name: Install deps
+      run: npm ci
+
+    - name: Run frontend tests
+      run: grunt test_no_watch
+
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - uses: actions/checkout@v3
+      with:
+        submodules: True
+
+    - name: Install deps
+      run: npm ci
+
+    - name: Run eslint
+      run: grunt eslint

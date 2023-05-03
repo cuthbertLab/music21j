@@ -1,14 +1,18 @@
-#node
+# node
 node_modules/
 node_modules/grunt/package.json
 
-build/*.js
-build/*.map
+# Build is not committed, just releases/
+build/
 
+# Built tests
 tests/music21.tests.js
 tests/music21.tests.js.map
 
+# Python files
+__pycache__
 *.py[cod]
+
 .buildpath
 
 # emacs
@@ -18,9 +22,11 @@ tests/music21.tests.js.map
 # vim
 *.swp
 
-#Eclipse
+# Eclipse
 /.settings
 .settings
+
+# IDEA
 .project
 .pydevproject
 
@@ -43,7 +49,6 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-__pycache__
 
 # Installer logs
 pip-log.txt
@@ -71,7 +76,6 @@ node_modules/grunt-contrib-uglify/package.json
 .idea/vcs.xml
 .idea/workspace.xml
 
-
-# Built tests
-tests/music21.tests.js
-tests/music21.tests.js.map
+# VSCode
+*.code-workspace
+/tests/test_compile_out/

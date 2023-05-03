@@ -1,13 +1,12 @@
 <html><head>
-   <script data-main="//localhost:8000/src/music21" src="//localhost:8000/ext/require/require.js"></script>
+   <script src="//localhost:8000/build/music21.debug.js"></script>
+</head>
+<body>
    <script>
-   require(['music21'], function () {
        var n = new music21.note.Note("F#");
        var s = new music21.stream.Stream();
        s.append(n);
        s.appendNewDOM();
-   });
    </script>
-</head>
-<body></body>
+</body>
 </html>

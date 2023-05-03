@@ -1,0 +1,22 @@
+<html>
+<head>
+ <title>Hi</title>
+    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+</head>
+<body>
+<div>Just a single chord that plays with a violin sound when loaded</div>
+<script src="../build/music21.debug.js"></script>
+<script>
+music21.miditools.loadSoundfont('violin', vln =>  {
+    const ch = new music21.chord.Chord(["C#", "E", "F#5"]);
+    ch.duration.type="whole";
+    ch.duration.dots = 1;
+
+    const s = new music21.stream.Measure();
+    s.instrument = vln;
+    s.append(ch);
+    s.appendNewDOM();
+});
+</script>
+</body>
+</html>

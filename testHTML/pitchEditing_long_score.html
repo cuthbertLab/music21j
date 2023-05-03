@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pitch Editing</title>
+</head>
+<body>
+    <h2>Testing alterable pitches in a long score</h2>
+    <div id="editable" style="width: 250px">
+    </div>
+
+    <h2>Testing alterable pitches in a long SINGLE PART</h2>
+    <div id="editablePart" style="width: 250px">
+    </div>
+
+
+    <script src="../build/music21.debug.js"></script>
+    <script type="application/javascript">
+        const editable = $('#editable');
+        const p1 = music21.tinyNotation.TinyNotation(
+            `a1 a1 a1 a1 a1 a1 a1 a1 a1
+             e1 e1 e1 e1 e1 e1 e1 e1 e1
+             a1 a1 a1 a1 a1 a1 a1 a1 a1
+            `);
+        const p2 = music21.tinyNotation.TinyNotation(
+            `A1 A1 A1 A1 A1 A1 A1 A1 A1
+             E1 E1 E1 E1 E1 E1 E1 E1 E1
+             A1 A1 A1 A1 A1 A1 A1 A1 A1
+             `);
+        if (!(p1 instanceof music21.stream.Part)) {
+            console.error('p1 must be a Part to work.')
+        }
+        const s = new music21.stream.Score();
+        s.insert(0, p1);
+        s.insert(0, p2);
+        s.renderOptions.maxSystemWidth = 400;
+        s.renderOptions.marginBottom = 600;
+        s.renderOptions.systemPadding = 100;
+        const d = s.editableAccidentalDOM(500);
+        editable.append(d);
+
+
+        const editablePart = $('#editablePart');
+        const p = music21.tinyNotation.TinyNotation(
+            `a1 a1 a1 a1 a1 a1 a1 a1 a1
+             e1 e1 e1 e1 e1 e1 e1 e1 e1
+             a1 a1 a1 a1 a1 a1 a1 a1 a1
+            `);
+        p.renderOptions.maxSystemWidth = 400;
+        const dp = p.editableAccidentalDOM(500);
+        editablePart.append(dp);
+    </script>
+</body>
+</html>

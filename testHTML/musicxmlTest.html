@@ -1,64 +1,18 @@
-<html>
-<body>
-    <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+<html lang="en">
+<head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <script>
-    mxl = `<!DOCTYPE score-partwise  PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
-    <score-partwise version="3.0">
-      <movement-title>Music21 Fragment</movement-title>
-      <identification>
-        <creator type="composer">Music21</creator>
-        <encoding>
-          <encoding-date>2017-09-09</encoding-date>
-          <software>music21 v.5.0.4a2</software>
-        </encoding>
-      </identification>
-      <defaults>
-        <scaling>
-          <millimeters>7</millimeters>
-          <tenths>40</tenths>
-        </scaling>
-      </defaults>
-      <part-list>
-        <score-part id="P920cace3b0bddaa7c71d37374e3d2a14">
-          <part-name />
-        </score-part>
-      </part-list>
-      <!--=========================== Part 1 ===========================-->
-      <part id="P920cace3b0bddaa7c71d37374e3d2a14">
-        <!--========================= Measure 1 ==========================-->
-        <measure number="1">
-          <attributes>
-            <divisions>10080</divisions>
-            <time>
-              <beats>1</beats>
-              <beat-type>4</beat-type>
-            </time>
-            <clef>
-              <sign>G</sign>
-              <line>2</line>
-            </clef>
-          </attributes>
-          <note>
-            <pitch>
-              <step>C</step>
-              <octave>4</octave>
-            </pitch>
-            <duration>10080</duration>
-            <type>quarter</type>
-          </note>
-        </measure>
-      </part>
-    </score-partwise>
-    `;
+</head>
+<body>
+    <h1>MusicXML rendering test</h1>
+    <div>This page should render a four-part Bach chorale, first four measures</div>
 
+    <script src="../build/music21.debug.js"></script>
+    <script>
     mxUrl = 'bachOut.xml';
-    require(['music21'], function () {
-        sp = new music21.musicxml.ScoreParser();
-        sp.scoreFromUrl(mxUrl).done(() => {
-            sc = sp.stream;
-            sc.appendNewDOM();
-        });
+    sp = new music21.musicxml.xmlToM21.ScoreParser();
+    sp.scoreFromUrl(mxUrl).done(() => {
+        sc = sp.stream;
+        sc.appendNewDOM();
     });
     </script>
 </body>

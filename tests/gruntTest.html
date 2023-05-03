@@ -2,32 +2,24 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Music21 QUnit Grunt  Tests</title>
-  <link rel="stylesheet" href="qUnit/qunit-2.0.1.css">
-  <script src="qUnit/qunit-2.0.1.js"></script>
-  <script src="../src/ext/jquery/jquery-2.1.1.min.js"></script>
-  <script src="../src/ext/jsonpickle/build/jsonpickle.debug.js"></script>
-  <script src="../src/ext/polyfill.js"></script>
-  <script src="../src/ext/midijs/build/MIDI.js"></script>
-  <script src="../src/ext/vexflow/vexflow-debug.js"></script>
-  <script src="../build/music21.debug.js" charset="utf-8"></script>
-  <script src="../build/music21.tests.js" charset="utf-8"></script>
+  <title>Music21 QUnit Grunt Tests</title>
+  <script src="./music21.tests.js"></script>
   <script>
   QUnit.start();
-  QUnit.test( "hello test", function(assert) {
-      assert.equal(1, 1, "Passed!" );
-  });    
-  for (var testModule in allTests) {
+  QUnit.test( "QUnit load test", function(assert) {
+      assert.equal(1, 1, "Test that QUnit loaded properly" );
+  });
+  for (let testModule in allTests) {
       if (typeof(allTests[testModule]) == 'function') {
-          var testSuite = allTests[testModule];
+          const testSuite = allTests[testModule];
           testSuite();
-      }        
+      }
   }
   </script>
 </head>
 
 <body>
   <div id="qunit"></div>
-  <div id="qunit-fixture"></div>  
+  <div id="qunit-fixture"></div>
 </body>
 </html>

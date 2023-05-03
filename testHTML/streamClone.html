@@ -1,76 +1,82 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns = "http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
  <title>stream.clone()</title>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <!-- midi.js package -->
-  <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
-
- <link rel="stylesheet" href="http://web.mit.edu/music21/doc/_static/m21.css" type="text/css" />
- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
-
+    <script src="../build/music21.debug.js"></script>
+    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
 </head>
 <body>
+<h1>Stream.clone() tests...</h1>
 <script type="text/javascript">
 
-var allStream;
+    let allStream;
 
-require(['music21'], function (music21) {
-    var $b = $('body');
-    $b.append("<div>s = one measure tinyNotation</div>");
-    
-    var s = music21.tinyNotation.TinyNotation('3/4 C4 D2');
-    s.appendNewDOM();
+    const $b = $('body');
+    $b.append("<div>s = one measure</div>");
+
+    const s = new music21.stream.Measure();
+    s.append(new music21.clef.BassClef());
+    s.append(new music21.meter.TimeSignature('3/4'));
+    const n1 = new music21.note.Note('C3');
+    const n2 = new music21.note.Note('D3');
+    n2.duration.type = 'half';
+    s.append(n1);
+    s.append(n2);
+
+    const s1 = s.clone(true);
+    s1.appendNewDOM();
     $b.append("<div>clone and change step from C to E</div>");
-    
-    var y = s.clone(true);
-    y.get(0).pitch.step = 'E';
-    y.get(0).stemDirection = undefined;
+
+    const y = s1.clone(true);
+    y.flat.notes.get(0).pitch.step = 'E';
+    y.flat.notes.get(0).stemDirection = undefined;
     y.appendNewDOM();
     $b.append("<div>s (original) unchanged?</div>");
-    s.appendNewDOM();
-    
+    s1.appendNewDOM();
+
     $b.append("<div><h1>three measure tiny notation Part</h1></div>");
-    var s2 = music21.tinyNotation.TinyNotation('3/4 b2. a2. g2.');
+    const s2 = music21.tinyNotation.TinyNotation('3/4 b2. a2. g2.');
     s2.appendNewDOM();
     $b.append("<div>cloned right?</div>");
-    var y2 = s2.clone(true);
+    const y2 = s2.clone(true);
     y2.appendNewDOM();
-    
+
     $b.append("<div>s3 = three measure tiny notation Part (s.clone(), s.clone([D=A]), s.clone())</div>");
-    var s3 = new music21.stream.Part();
-    s3.append(s.clone(true));
-    var sScrewy = s.clone(true);
-    sScrewy.get(1).pitch.step = 'A';
-    sScrewy.get(1).stemDirection = undefined;
+    const s3 = new music21.stream.Part();
+    const m1 = s.clone(true);
+    m1.renderOptions.left = 0;
+    s3.append(m1);
+    const sScrewy = s.clone(true);
+    sScrewy.renderOptions.left = 200;
+    sScrewy.flat.notes.get(1).pitch.step = 'A';
+    sScrewy.flat.notes.get(1).stemDirection = undefined;
     s3.append(sScrewy);
-    s3.append(s.clone(true));
-    s3.appendNewDOM();    
+    const m3 = s.clone(true);
+    m3.renderOptions.left = 400;
+    s3.append(m3);
+    s3.appendNewDOM();
 
     $b.append("<h1>Score</h1><div>s4 = three parts (s3.clone(), s3.clone()-inverted, s3.clone()</div>");
 
-    var s4 = new music21.stream.Score();
+    const s4 = new music21.stream.Score();
     s4.insert(0, s3.clone(true));
-    
-    var s3Second = s3.clone(true);
-    var s3SecondFlat = s3Second.flat;
-    for (var i = 0; i < s3SecondFlat.length; i++) {
-        var n = s3SecondFlat.get(i);
+
+    const s3Second = s3.clone(true);
+    const s3SecondFlat = s3Second.flat;
+    for (const n of s3SecondFlat.flat.notes) {
         n.stemDirection = undefined;
-        n.pitch.diatonicNoteNum = 22 + (29 - n.pitch.diatonicNoteNum); 
+        n.pitch.diatonicNoteNum = 22 + (29 - n.pitch.diatonicNoteNum);
     }
-    
+
     s4.insert(0, s3Second);
     s4.insert(0, s3.clone(true));
     s4.appendNewDOM();
-    
+
     $b.append("<div>is s3Second activeSite s4? " + (s3Second.activeSite === s4).toString() + "</div>");
 
     $b.append("<div>s3 unchanged?</div>");
-    s3.appendNewDOM();    
-    
-});
+    s3.appendNewDOM();
 </script>
-<h1>Stream.clone() tests...</h1>
 </body>
 </html>

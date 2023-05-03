@@ -1,29 +1,27 @@
 <html>
 <head>
-    <script src="../ext/require/require.js" data-main="../src/music21"></script>
     <style>
     canvas {
-        display: inline-block; 
-        background: #202020; 
+        display: inline-block;
+        background: #202020;
         box-shadow: 0px 0px 10px blue;
     }
     </style>
-    <script>
+</head>
+<body>
+<script>
     audioRecorder = undefined;
-    require(['music21'], function(music21) {
-        audioRecorder = new music21.audioRecording.Recorder();
-        audioRecorder.initAudio();
-    });
-
-    var isRecording = false;
     function toggleRecording() {
+        const button = document.querySelector('#recordButton');
         if (isRecording) {
             console.log('stopping');
+            button.innerHTML = 'Record';
             audioRecorder.stop();
             isRecording = false;
             audioRecorder.getBuffers( b => audioRecorder.drawWaveformCanvas(b) );
         } else {
             console.log('starting');
+            button.innerHTML = 'Stop';
             audioRecorder.clear();
             audioRecorder.record();
             audioRecorder.updateAnalysers();
@@ -34,21 +32,37 @@
         audioRecorder.exportWAV();
     }
     function playback() {
-        audioRecorder.getBuffers( function(b) { audioRecorder.playBuffers(b) });
+        audioRecorder.getBuffers(b => audioRecorder.playBuffers(b));
     }
 
-    
-    </script>
-</head>
-<body>
+</script>
 <div>
-	<button onclick="toggleRecording(this)">Record</button>
+	<button id="recordButton" onclick="toggleRecording(this)">Record</button>
 	<button onclick="save()">Save</button>
-	<a href="#" id="save">hi</a>
+	<a href="#" id="save">Download</a>
 </div>
 <div>
     <canvas id="frequencyAnalyser" width="256" height="50"></canvas>
     <canvas id="waveformCanvas" width="256" height="50" onclick='playback()'></canvas>
 </div>
+<div>
+    After music21 has loaded, click on <code>Record</code> to start
+    audio recording (you may need to give permissions and you will
+    need to be running over https if not on localhost).  Then after
+    recording you will see your waveform on the right.  Click that
+    to play back.  Click save / download to get a copy.
+</div>
+<div>
+    Unknown bug -- sometimes does not work a second time if
+    refresh is hit.
+</div>
+
+    <script src="../build/music21.debug.js"></script>
+    <script>
+    audioRecorder = new music21.audioRecording.Recorder();
+    audioRecorder.initAudio();
+
+    let isRecording = false;
+    </script>
 </body>
 </html>

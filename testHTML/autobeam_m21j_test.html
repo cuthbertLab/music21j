@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+    <title>Title</title>
+</head>
+<body>
+<h1>Test music21j autobeam</h1>
+<script src="../build/music21.debug.js"></script>
+<div id="autobeam_goes_here"></div>
+<script>
+    const n1 = new music21.note.Note('C5', 0.5);
+    n1.stemDirection = 'up';
+    const n2 = new music21.note.Note('C5', 0.5);
+    n2.stemDirection = 'up';
+    const n3 = new music21.note.Note('D5');
+    n3.stemDirection = 'up';
+    const m = new music21.stream.Measure();
+    m.renderOptions.useVexflowAutobeam = false;
+    m.timeSignature = new music21.meter.TimeSignature('2/4');
+    m.append(n1);
+    m.append(n2);
+    m.append(n3);
+    m.makeBeams({inPlace: true});
+    m.appendNewDOM($('#autobeam_goes_here'));
+</script>
+</body>
+</html>

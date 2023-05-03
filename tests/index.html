@@ -1,13 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Music21 QUnit Tests</title>
-  <link rel="stylesheet" href="qUnit/qunit-2.0.1.css">
+  <link rel="stylesheet" href="../node_modules/qunit/qunit/qunit.css">
 </head>
 <body>
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
-  <script data-main="tests" src="../ext/require/require.js"></script>
+  <div id="streamAppend"></div>
+  <script src="./music21.tests.js"></script>
+  <script>
+    music21.defaults.appendLocation = '#streamAppend';
+    // test_name_to_id = {};
+    QUnit.config.autoload = false;
+    QUnit.config.autostart = false;
+    for (const testModule in m21Tests.default) {
+        if (typeof m21Tests.default[testModule] === 'function') {
+            const testSuite = m21Tests.default[testModule];
+            testSuite();
+        }
+    }
+    QUnit.testDone(details => {
+      const testId = details.testId;
+      const m21Output = Array.from(document.querySelector('#streamAppend').childNodes);
+      if (m21Output.length) {
+        const domOut = document.getElementById('qunit-test-output-' + testId);
+        const sourceOut = domOut.querySelector('.qunit-source');
+        const m21Div = document.createElement('div');
+        m21Div.classList.add('m21output');
+        m21Div.append(...m21Output);  // will remove from streamAppend in process.
+        sourceOut.append(m21Div);
+        const counts = domOut.querySelector('.counts');
+        counts.innerHTML += ` + ${m21Output.length} outputs`;
+      }
+    });
+    QUnit.load();
+    QUnit.start();
+  </script>
 </body>
 </html>

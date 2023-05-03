@@ -1,22 +1,21 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns = "http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
- <title>21M.051: Make me a Canon!</title>
+ <title>Make me a Canon!</title>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <script data-main="../src/music21" src="../ext/require/require.js"></script>
  <link rel="stylesheet" href="../css/m21.css" type="text/css" />
 
 </head>
 <body>
-<script type="text/javascript">
-var m2;
+<h1>This creates a canon out of the editing</h1>
+<div>Dec 2019 -- temporarily not working.</div>
+<div id="canonGoesHere"></div>
 
-require(['music21'], function() {
-    makeRound();
-});
+<script src="../build/music21.debug.js"></script>
+<script type="text/javascript">
+let m2;
 
 fillScoreOut = function(editor, scoreOut) {
-    scoreOutNew = new music21.stream.Score();
+    const scoreOutNew = new music21.stream.Score();
     scoreOutNew.timeSignature = scoreOut.timeSignature;
     scoreOutNew.clef = scoreOut.clef;
     scoreOutNew.maxSystemWidth = scoreOut.maxSystemWidth;
@@ -63,7 +62,7 @@ fillScoreOut = function(editor, scoreOut) {
 };
 
 makeRound = function() {
-    $('#testBank').append(
+    $('#canonGoesHere').append(
         $(
             '<div>Edit the pitches (sorry no rhythm here) for a 3-voice canon w/ entrances every four measures</div>'
         )
@@ -98,7 +97,7 @@ makeRound = function() {
     pEditor = new music21.stream.Part();
     //pEditor.renderOptions.scaleFactor = {x: 1, y: 1};
     pEditor.maxSystemWidth =
-        $('#testBank').width() / pEditor.renderOptions.scaleFactor.x;
+        $('#canonGoesHere').width() / pEditor.renderOptions.scaleFactor.x;
     pEditor.timeSignature = new music21.meter.TimeSignature('4/4');
     pEditor.clef = new music21.clef.Clef('treble');
 
@@ -115,42 +114,37 @@ makeRound = function() {
     pEditor.autoBeam = false;
     //console.log(pEditor);
 
+    const $canonDiv = $('#canonGoesHere');
+
     // editable SVG...
     s2 = new music21.stream.Score();
     //s2.renderOptions.scaleFactor = {x: 1, y: 1};
-    s2.maxSystemWidth = $('#testBank').width() / s2.renderOptions.scaleFactor.x;
+    s2.maxSystemWidth = $canonDiv.width() / s2.renderOptions.scaleFactor.x;
 
     s2.renderOptions.events['click'] = s2.DOMChangerFunction;
-    //console.log($("#testBank").width());
+    //console.log($("#canonGoesHere").width());
     s2.changedCallbackFunction = function() {
         fillScoreOut(s2.elements[0], scoreOut);
     };
     s2.autoBeam = false;
     s2.append(pEditor);
-    s2.appendNewDOM($('#testBank'));
+    s2.appendNewDOM($canonDiv);
 
     // pEditor.renderOptions.events['click'] = pEditor.DOMChangerFunction;
     // pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
-    // pEditor.appendNewDOM($("#testBank"));
-    $('#testBank').append($("<br clear='all'/>"));
-    $('#testBank').append(
+    // pEditor.appendNewDOM($("#canonGoesHere"));
+    $canonDiv.append($("<br clear='all'/>"));
+    $canonDiv.append(
         $('<div>Your score will appear here. Click it to play!</div>')
     );
 
-    scoreOut.maxSystemWidth = $('#testBank').width();
+    scoreOut.maxSystemWidth = $canonDiv.width();
 
-    scoreOut.appendNewDOM($('#testBank'));
-    $('#testBank').append($("<br clear='all'/>"));
+    scoreOut.appendNewDOM($canonDiv);
+    $canonDiv.append($("<br clear='all'/>"));
 };
-</script>
-<div class="document">
-  <div class="documentwrapper">
-	<div class="bodywrapper">
-	  <div class="body" id="testBank" class='streamHolder' style="border: 1px black solid; height: auto">
-	  </div>
-	</div>
-  </div>
-</div>
+makeRound();
 
+</script>
 </body>
 </html>

@@ -1,65 +1,66 @@
-<html>
+<html lang="en">
 <head>
 <title>MIDI In Chords for Music21j</title>
 <!-- for MSIE 10 on Windows 8 -->
 <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" />
-<script data-main="../src/music21.js" src="../ext/require/require.js"></script>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
-<script>
-    var s = ""; // will become Stream object soon...
-    var metro = ""; // will become Metronome object soon...
-
-    function appendElement(appendObject) {
-        if (s.length > 7) {
-            s.elements = s.elements.slice(1)
-        }
-        if (s.length > 0) {
-            var lastNote = s.elements[s.length - 1];
-        }
-        s.append(appendObject);
-        var $svgDiv = $("#svgDiv");
-        $svgDiv.empty();
-        var canv = s.appendNewDOM($svgDiv);
-    }
-
-    require([ 'music21' ], function() {
-        s = new music21.stream.Measure();
-        s.clef = new music21.clef.TrebleClef();
-        s.renderOptions.staffLines = 5;
-
-        metro = new music21.tempo.Metronome();
-        metro.addDiv($("#metronomeDiv")); // todo: appendTo()
-
-        music21.miditools.metronome = metro;
-
-        k = new music21.keyboard.Keyboard();
-        var kd = document.getElementById('keyboardDiv');
-        k.startPitch = 18; // 6
-        k.endPitch = 39; // 57
-
-        k.appendKeyboard(kd); // 37key keyboard
-
-        music21.webmidi.createSelector($("#putMidiSelectHere"));
-        music21.miditools.callBacks.general = [ music21.miditools.makeChords, music21.keyboard.jazzHighlight.bind(k),
-                music21.miditools.sendToMIDIjs ];
-        music21.miditools.callBacks.sendOutChord = appendElement;
-    });
-</script>
 
 </head>
 <body>
 	<div>
 		MIDI Input:
-		<div id="putMidiSelectHere" />
+		<div id="putMidiSelectHere"></div>
 	</div>
 	<h2>Chord and Duration rendering and Metronome Demo.</h2>
 	<div id='keyboardDiv'></div>
 	<div>
-		<i>Requires MIDI keyboard and Jazz Plugin to work.</i>
+		<i>Requires MIDI keyboard and WebMIDI(Chrome) or Jazz Plugin to work.</i>
 	</div>
 	<div id="svgDiv">
 	</div>
 	<div id="metronomeDiv"></div>
+	<script src="../build/music21.debug.js"></script>
+	<script>
+    let s; // will become Stream object soon...
+    let metro; // will become Metronome object soon...
+
+    function appendElement(appendObject) {
+        if (s.length > 7) {
+            s.elements = s.elements.slice(1)
+        }
+        // if (s.length > 0) {
+        //     const lastNote = s.elements[s.length - 1];
+        // }
+        s.append(appendObject);
+        const $svgDiv = $("#svgDiv");
+        $svgDiv.empty();
+        s.appendNewDOM($svgDiv);
+    }
+
+	s = new music21.stream.Measure();
+	s.clef = new music21.clef.TrebleClef();
+	s.renderOptions.staffLines = 5;
+
+	metro = new music21.tempo.Metronome();
+	metro.addDiv($("#metronomeDiv")); // todo: appendTo()
+
+	music21.miditools.config.metronome = metro;
+
+	const k = new music21.keyboard.Keyboard();
+	const kd = document.getElementById('keyboardDiv');
+	k.startPitch = 18; // 6
+	k.endPitch = 39; // 57
+
+	k.appendKeyboard(kd); // 37key keyboard
+
+	music21.webmidi.createSelector($("#putMidiSelectHere"));
+	music21.miditools.callbacks.general = [
+		music21.miditools.makeChords,
+		music21.keyboard.jazzHighlight.bind(k),
+		music21.miditools.sendToMIDIjs,
+	];
+	music21.miditools.callbacks.sendOutChord = appendElement;
+</script>
+
 </body>
 </html>

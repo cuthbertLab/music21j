@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pitch Editing</title>
+</head>
+<body>
+    <h2>Testing alterable pitches in the score</h2>
+    <div>A bug makes it so that the accidental button does not redraw the systems.</div>
+    <div id="editable">
+    </div>
+
+    <script src="../build/music21.debug.js"></script>
+    <script type="application/javascript">
+    const s = music21.tinyNotation.TinyNotation("G2 B4 c4");
+    s.clef = new music21.clef.Clef('bass');
+    const d = s.editableAccidentalDOM();
+    const editable = $("#editable");
+    editable.append(d);
+    editable.append( $("<br clear='all'/>") );
+
+    const s2 = music21.tinyNotation.TinyNotation("2/2 a2 b4 c'4");
+    s2.clef = new music21.clef.Clef('treble');
+    const d2 = s2.editableAccidentalDOM(undefined, undefined, {minAccidental: -2, maxAccidental: 2});
+    editable.append(d2);
+    </script>
+
+</body>
+</html>
