@@ -435,12 +435,12 @@ export const pathSimplify = path => {
     if (path.indexOf('//') === 0) {
         pPrefix = '//'; //cdn loading;
         path = path.slice(2);
-        console.log('cdn load: ', pPrefix, ' into ', path);
+        // console.log('cdn load: ', pPrefix, ' into ', path);
     } else if (path.indexOf('://') !== -1) { // for cross site requests...
         const protoSpace = path.indexOf('://');
         pPrefix = path.slice(0, protoSpace + 3);
         path = path.slice(protoSpace + 3);
-        console.log('cross-site split', pPrefix, path);
+        // console.log('cross-site split', pPrefix, path);
     }
     const ps = path.split('/');
     const addSlash = (path.slice(path.length - 1, path.length) === '/');
