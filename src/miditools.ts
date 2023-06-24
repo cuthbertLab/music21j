@@ -523,7 +523,7 @@ export class MidiPlayer {
             this.player.pause(true);
         } else {
             d.src = this.pausePng();
-            this.player.resume().catch(console.error);
+            this.player.resume();
         }
     }
 
