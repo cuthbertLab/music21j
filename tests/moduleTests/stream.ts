@@ -1067,22 +1067,31 @@ export default function tests() {
         v.append(n);
         const m = new music21.stream.Measure();
         m.append(v);
-        const original_width = m.estimateStaffLength();
+        const originalWidth = m.estimateStaffLength();
         const ks = new music21.key.KeySignature(-6);
         m.append(ks);
         m.renderOptions.displayKeySignature = true;
-        assert.equal(m.estimateStaffLength(), original_width + ks.width);
+        assert.equal(m.estimateStaffLength(), originalWidth + ks.width);
 
         // Also test getting KeySignature from the context
-        const previous_measure = m.clone();
+        const previousMeasure = m.clone();
         m.remove(ks);
         const p = new music21.stream.Part();
-        p.append(previous_measure);
+        p.append(previousMeasure);
         p.append(m);
-        assert.equal(m.estimateStaffLength(), original_width + ks.width);
+        assert.equal(m.estimateStaffLength(), originalWidth + ks.width);
 
         n.lyric = 'lorem';  // (7px * 5 letters + 2) = 37, original width otherwise starts at 30
-        assert.equal(m.estimateStaffLength(), original_width + 7 + ks.width);
+        assert.equal(m.estimateStaffLength(), originalWidth + 7 + ks.width);
+
+        const previousMeasureOverallLength =
+            previousMeasure.estimateStaffLength() + previousMeasure.renderOptions.staffPadding;
+        const measureOverallLength = m.estimateStaffLength() + m.renderOptions.staffPadding;
+        assert.equal(p.estimateStaffLength(), previousMeasureOverallLength + measureOverallLength);
+
+        m.renderOptions.startNewSystem = true;
+        assert.ok(previousMeasureOverallLength < measureOverallLength);
+        assert.equal(p.estimateStaffLength(), measureOverallLength);
     });
 
     test('music21.stream.Stream cloneEmpty', assert => {
