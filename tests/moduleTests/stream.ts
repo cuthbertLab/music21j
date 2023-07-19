@@ -1076,7 +1076,7 @@ export default function tests() {
         // Also test getting KeySignature from the context
         const previousMeasure = m.clone();
         m.remove(ks);
-        const p = new music21.stream.Score();
+        const p = new music21.stream.Part();
         p.append(previousMeasure);
         p.append(m);
         assert.equal(m.estimateStaffLength(), originalWidth + ks.width);
