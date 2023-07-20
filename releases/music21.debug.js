@@ -1,5 +1,5 @@
 /**
- * music21j version 0.13.6 built on 2023-03-30.
+ * music21j version 0.13.7 built on 2023-07-20.
  * Copyright (c) 2013-2023 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -6415,14 +6415,15 @@ const pathSimplify = path => {
   if (path.indexOf('//') === 0) {
     pPrefix = '//'; //cdn loading;
     path = path.slice(2);
-    console.log('cdn load: ', pPrefix, ' into ', path);
+    // console.log('cdn load: ', pPrefix, ' into ', path);
   } else if (path.indexOf('://') !== -1) {
     // for cross site requests...
     const protoSpace = path.indexOf('://');
     pPrefix = path.slice(0, protoSpace + 3);
     path = path.slice(protoSpace + 3);
-    console.log('cross-site split', pPrefix, path);
+    // console.log('cross-site split', pPrefix, path);
   }
+
   const ps = path.split('/');
   const addSlash = path.slice(path.length - 1, path.length) === '/';
   const pout = [];
@@ -10774,7 +10775,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.13.6';
+const VERSION = '0.13.7';
 if (typeof window !== 'undefined') {
   window.$ = jquery__WEBPACK_IMPORTED_MODULE_2__;
   window.jQuery = jquery__WEBPACK_IMPORTED_MODULE_2__;
@@ -11677,7 +11678,7 @@ class MidiPlayer {
       this.player.pause(true);
     } else {
       d.src = this.pausePng();
-      this.player.resume().catch(console.error);
+      this.player.resume();
     }
   }
   base64Load(b64data) {
@@ -20152,19 +20153,19 @@ class Part extends Stream {
     }
     if (!this.isFlat) {
       // part with Measures underneath
-      let totalLength = 0;
+      let currentSystemLength = 0;
       let isFirst = true;
+      const systemLengths = [];
       for (const el of this.getElementsByClass('Measure')) {
         const m = el;
-        // this looks wrong, but actually seems to be right. moving it to
-        // after the break breaks things.
-        totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
         if (!isFirst && m.renderOptions.startNewSystem === true) {
-          break;
+          systemLengths.push(currentSystemLength);
+          currentSystemLength = 0;
         }
+        currentSystemLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
         isFirst = false;
       }
-      return totalLength;
+      return Math.max(...systemLengths, currentSystemLength);
     }
     // no measures found in part... treat as measure
     const tempM = new Measure();
