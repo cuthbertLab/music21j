@@ -541,3 +541,10 @@ export function to_el(input_string: string): HTMLElement {
     template.innerHTML = input_string;
     return template.content.firstElementChild as HTMLElement;
 }
+
+/**
+ * Sleep for some time in milliseconds.
+ */
+export function sleep(ms: number): Promise<number> {
+    return new Promise(resolve => window.setTimeout(resolve, ms));
+}

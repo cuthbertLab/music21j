@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tinyNotation -- TinyNotation implementation
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * TinyNotation module
  */

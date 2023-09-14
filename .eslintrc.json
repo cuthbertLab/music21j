@@ -58,6 +58,7 @@
         "no-multiple-empty-lines": ["error", { "max": 3 }],
         "no-param-reassign": ["off"],
         "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+        "no-promise-executor-return": ["off"],
         "no-restricted-syntax": [
             2,
             "DebuggerStatement",

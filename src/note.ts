@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/note -- Note, Rest, NotRest, GeneralNote
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Based on music21 (music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * Module for note classes. See the namespace music21.note
  *

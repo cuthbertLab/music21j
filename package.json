@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.13.7",
+  "version": "0.14.1",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "releases/music21.debug.js",
   "typings": "releases/main.d.ts",
@@ -85,8 +85,8 @@
   ],
   "author": {
     "name": "Michael Scott Asato Cuthbert",
-    "email": "cuthbert@mit.edu",
-    "url": "http://www.trecento.com"
+    "email": "michael.asato.cuthbert@gmail.com",
+    "url": "https://www.trecento.com"
   },
   "license": "BSD-3-Clause",
   "bugs": {

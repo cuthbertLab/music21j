@@ -4,7 +4,7 @@
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
+        <script src="../build/music21.debug.js"></script>
     </head>
     <body>
 	<div style='text-align: center; font-size: 8pt'>
@@ -29,7 +29,7 @@
     </div>
     <div id="svgDivGrandStaff" style='text-align: center' class='streamHolding'>
     </div>
-        <script src="../build/music21.debug.js"></script>
+    <div id="metronomeDiv"></div>
 		<script>
 		let m; // will become Measure object soon...
         let m1; // will become Measure object soon...
@@ -148,7 +148,7 @@
 
 
         metro = new music21.tempo.Metronome();
-        // metro.addDiv($("#metronomeDiv"));
+        metro.addDiv(document.querySelector("#metronomeDiv"));
 
         music21.miditools.config.metronome = metro;
         k = new music21.keyboard.Keyboard();
