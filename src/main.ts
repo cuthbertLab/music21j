@@ -3,13 +3,13 @@
  *
  * See http://web.mit.edu/music21/ for more details.
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
@@ -28,7 +28,6 @@
 // webpack loader for music21j.
 import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';  // to be removed when export * from is okay.
-import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
 // order below doesn't matter, but good to give a sense
@@ -142,10 +141,5 @@ export {
 };
 
 export const VERSION = '0.13.7';
-
-if (typeof window !== 'undefined') {
-    (window as any).$ = $;
-    (window as any).jQuery = $;
-}
 
 parseLoader.runConfiguration();

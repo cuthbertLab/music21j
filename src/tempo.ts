@@ -2,13 +2,12 @@
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/tempo -- tempo and (not in music21p) metronome objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * tempo module,
  *
  */
-import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';
@@ -17,6 +16,7 @@ import * as duration from './duration';
 
 import { Music21Exception } from './exceptions21';
 import {common} from './main';
+import {sleep, to_el} from './common';
 
 export class TempoException extends Music21Exception {}
 
@@ -90,7 +90,7 @@ export class Metronome extends prebase.ProtoM21Object {
     flash: boolean = false;
     tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
     tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
-    $metronomeDiv: JQuery;
+    metronomeDiv: HTMLDivElement;
 
     constructor(tempoInt: number = baseTempo) {
         super();
@@ -114,15 +114,13 @@ export class Metronome extends prebase.ProtoM21Object {
         return 60.0 / this.tempo;
     }
 
-    _silentFlash(flashColor) {
-        this.$metronomeDiv
-            .find('.metroFlash')
-            .css('background-color', flashColor)
-            .fadeOut(this.beatLength * 1000 / 4, function silentFadeOut() {
-                $(this)
-                    .css('background-color', '#ffffff')
-                    .fadeIn(1);
-            });
+    _silentFlash(flashColor: string): void {
+        const fm = <HTMLSpanElement> this.metronomeDiv.querySelector('.metroFlash');
+        fm.style.transition = 'background-color ' + (this.beatLength/4).toString() + 's ease-in-out';
+        fm.style.backgroundColor = flashColor;
+        sleep(this.beatLength*1000/4).then(() => {
+            fm.style.backgroundColor = '#ffffff';
+        });
     }
 
     /**
@@ -226,61 +224,51 @@ export class Metronome extends prebase.ProtoM21Object {
      * add a Metronome interface onto the DOM at where
      * returns a JQuery div holding the metronome.
      */
-    addDiv(where?: JQuery|HTMLElement): JQuery {
-        const $where: JQuery = common.coerceJQuery(where);
-        const metroThis = this;
-        const $tempoHolder: JQuery = $(
+    addDiv(where?: HTMLElement): HTMLElement {
+        where = <HTMLElement> common.coerceHTMLElement(where);
+        const tempoHolder: HTMLSpanElement = to_el(
             '<span class="tempoHolder">' + this.tempo.toString() + '</span>'
         );
-        $tempoHolder.css({
-            'font-size': '24px',
-            'padding-left': '10px',
-            'padding-right': '10px',
+        tempoHolder.style.fontSize = '24px';
+        tempoHolder.style.paddingLeft = '10px';
+        tempoHolder.style.paddingRight = '10px';
+        const newDiv = <HTMLDivElement> to_el('<div class="metronomeRendered"></div>');
+        const b1 = <HTMLButtonElement> to_el('<button>start</button>');
+        b1.addEventListener('click', () => {
+            this.chirp();
         });
-        const $newDiv: JQuery = $('<div class="metronomeRendered"></div>');
-        $newDiv.append($tempoHolder);
-
-        const $b1: JQuery = $('<button>start</button>');
-        $b1.on('click', () => {
-            metroThis.chirp();
+        const b2 = <HTMLButtonElement> to_el('<button>stop</button>');
+        b2.addEventListener('click', () => {
+            this.stopChirp();
         });
+        newDiv.appendChild(b1);
+        newDiv.appendChild(b2);
+        newDiv.appendChild(tempoHolder);
 
-        const $b2: JQuery = $('<button>stop</button>');
-        $b2.on('click', () => {
-            metroThis.stopChirp();
-        });
-        $newDiv.prepend($b2);
-        $newDiv.prepend($b1);
-
-        const $b3: JQuery = $('<button>up</button>');
-        $b3.on('click', () => {
+        const b3 = <HTMLButtonElement> to_el('<button>up</button>');
+        b3.addEventListener('click', () => {
             this.increaseSpeed();
-            $b3
-                .prevAll('.tempoHolder')
-                .html(this.tempo.toString());
+            b3.parentElement.querySelector('.tempoHolder').innerHTML = this.tempo.toString();
         });
-        const $b4: JQuery = $('<button>down</button>');
-        $b4.on('click', () => {
+        const b4 = <HTMLButtonElement> to_el('<button>down</button>');
+        b4.addEventListener('click', () => {
             this.decreaseSpeed();
-            $b4
-                .prevAll('.tempoHolder')
-                .html(this.tempo.toString());
+            b4.parentElement.querySelector('.tempoHolder').innerHTML = this.tempo.toString();
         });
-        $newDiv.append($b3);
-        $newDiv.append($b4);
-        const $flash: JQuery = $(
+        newDiv.appendChild(b3);
+        newDiv.appendChild(b4);
+        const flash = <HTMLSpanElement> to_el(
             '<span class="metroFlash">'
                 + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'
         );
-        $flash.css('margin-left', '40px');
-        $flash.css('height', '40px');
+        flash.style.marginLeft = '40px';
+        flash.style.height = '40px';
 
-        $newDiv.append($flash);
+        newDiv.appendChild(flash);
+        where.appendChild(newDiv);
 
-        $where.append($newDiv);
-
-        this.$metronomeDiv = $newDiv;
-        return $newDiv;
+        this.metronomeDiv = newDiv;
+        return newDiv;
     }
 }
 
@@ -304,8 +292,8 @@ export class MetronomeMark extends base.Music21Object {
     protected _number: number;
     numberImplicit: boolean;
     protected _tempoText: TempoText;
-    textImplicit;
-    protected _referent;
+    textImplicit: boolean;
+    protected _referent: duration.Duration;
     parentheses: boolean = false;
 
     constructor({
@@ -391,27 +379,29 @@ export class MetronomeMark extends base.Music21Object {
         this.numberImplicit = false;
     }
 
-    get referent() {
+    get referent(): duration.Duration|undefined {
         return this._referent;
     }
 
-    set referent(value) {
+    set referent(value: string|number|duration.Duration|base.Music21Object) {
         if (value === undefined) {
             this._referent = new duration.Duration(1);
-        } else if (['number', 'string'].includes(typeof value)) {
+        } else if (typeof value === 'number') {
             this._referent = new duration.Duration(value);
-        } else if (value.classes.includes('Duration')) {
+        } else if (typeof value === 'string') {
+            this._referent = new duration.Duration(value);
+        } else if (value instanceof duration.Duration) {
             this._referent = value;
-        } else if (value.duration) {
+        } else if (value instanceof base.Music21Object) {
             this._referent = value.duration;
         } else {
             throw new TempoException(`Cannot get a Duration from the supplied object: ${value}`);
         }
     }
 
-    _getDefaultNumber(tempoText) {
+    _getDefaultNumber(tempoText: string|TempoText): number {
         const tempoStr = tempoText instanceof TempoText ? tempoText.text : tempoText;
-        let post;
+        let post: number;
         const tempoNames = Object.keys(defaultTempoValues);
         if (tempoNames.includes(tempoStr.toLowerCase())) {
             post = defaultTempoValues[tempoStr.toLowerCase()];

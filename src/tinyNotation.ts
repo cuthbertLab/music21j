@@ -2,13 +2,11 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tinyNotation -- TinyNotation implementation
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * TinyNotation module
  */
-import * as $ from 'jquery';
-
 import * as chord from './chord';
 import * as clef from './clef';
 import * as duration from './duration';
@@ -17,7 +15,6 @@ import * as note from './note';
 import * as meter from './meter';
 import * as stream from './stream';
 import * as tie from './tie';
-import {common} from './main';
 
 /**
  * Regular expressions object
@@ -303,45 +300,42 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
  */
 export function renderNotationDivs(
     classTypes: string = '.music21.tinyNotation',
-    selector: HTMLElement|JQuery = undefined,
-) {
-    let $allRender: JQuery;
+    selector: HTMLElement|string = undefined,
+): void {
+    let allRender: NodeList;
 
     if (selector === undefined) {
-        $allRender = $(classTypes);
+        allRender = document.querySelectorAll(classTypes);
+    } else if (typeof selector === 'string') {
+        allRender = document.querySelectorAll(selector + ' ' + classTypes);
     } else {
-        const $selector = common.coerceJQuery(selector);
-        $allRender = $selector.find(classTypes);
+        allRender = selector.querySelectorAll(classTypes);
     }
 
-    for (let i = 0; i < $allRender.length; i++) {
-        const thisTN = $allRender[i];
-        const $thisTN = $(thisTN);
-        let thisTNContents;
-        if ($thisTN.attr('tinynotationcontents') !== undefined) {
-            thisTNContents = $thisTN.attr('tinynotationcontents');
-        } else if (thisTN.textContent !== undefined) {
+    for (let i = 0; i < allRender.length; i++) {
+        const thisTN = allRender[i] as HTMLElement;
+        let thisTNContents: string;
+        if (thisTN.getAttribute('tinynotationcontents')) {
+            thisTNContents = thisTN.getAttribute('tinynotationcontents');
+        } else if (thisTN.textContent) {
             thisTNContents = thisTN.textContent;
             thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
         }
 
-        if (
-            String.prototype.trim !== undefined
-            && thisTNContents !== undefined
-        ) {
+        if (thisTNContents) {
             thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
         }
         if (thisTNContents) {
             const st = TinyNotation(thisTNContents);
-            if ($thisTN.hasClass('noPlayback')) {
+            if (thisTN.classList.contains('noPlayback')) {
                 st.renderOptions.events.click = undefined;
             }
             const newSVG = st.createDOM();
 
-            $thisTN.attr('tinynotationcontents', thisTNContents);
-            $thisTN.empty();
-            $thisTN.data('stream', st);
-            $thisTN.append(newSVG);
+            thisTN.setAttribute('tinynotationcontents', thisTNContents);
+            thisTN.replaceChildren();
+            // thisTN.data('stream', st);
+            thisTN.appendChild(newSVG);
             // console.log(thisTNContents);
         }
     }

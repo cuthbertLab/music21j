@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Music21j Sandbox</title>
     <script src="../build/music21.debug.js"></script>
-    <style type="text/css">
+    <style>
         .streamHolding {
             background: #eed;
             padding: 10px;
@@ -73,26 +73,31 @@ s.replaceDOM();
     let timeout;
     let msg = "";
 
-    mainSVG = $("#mainSVG")[0];
-    msg = $('div.editor-error .text');
+    mainSVG = document.querySelector("#mainSVG");
+    msg = document.querySelector('div.editor-error .text');
+    const sandbox = document.querySelector("#sandbox");
     live_code();
 
-    $('#sandbox').on('blur keyup paste', function() {
-        if (timeout) {
-            clearTimeout(timeout)
-        };
-        timeout = setTimeout(live_code, 200);
-    });
+    for (const evt of ['blur', 'keyup', 'paste']) {
+        sandbox.addEventListener(evt, () => {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(live_code, 200);
+        });
+    }
+
     function live_code() {
-        let code = $("#sandbox").val();
+        let code = sandbox.value;
 
         try {
             eval(code);
-            msg.html('').hide();
+            msg.innerHTML = '';
+            msg.style.display = 'none';
         } catch (e) {
-            msg.html(e.toString()).show();
+            msg.innerHTML = e.toString();
+            msg.style.display = 'block';
         }
-
     }
 </script>
 </body>

@@ -16,7 +16,7 @@
 
     <script src="../build/music21.debug.js"></script>
     <script type="application/javascript">
-        const editable = $('#editable');
+        const editable = document.querySelector('#editable');
         const p1 = music21.tinyNotation.TinyNotation(
             `a1 a1 a1 a1 a1 a1 a1 a1 a1
              e1 e1 e1 e1 e1 e1 e1 e1 e1
@@ -37,10 +37,9 @@
         s.renderOptions.marginBottom = 600;
         s.renderOptions.systemPadding = 100;
         const d = s.editableAccidentalDOM(500);
-        editable.append(d);
+        editable.appendChild(d);
 
-
-        const editablePart = $('#editablePart');
+        const editablePart = document.querySelector('#editablePart');
         const p = music21.tinyNotation.TinyNotation(
             `a1 a1 a1 a1 a1 a1 a1 a1 a1
              e1 e1 e1 e1 e1 e1 e1 e1 e1
@@ -48,7 +47,7 @@
             `);
         p.renderOptions.maxSystemWidth = 400;
         const dp = p.editableAccidentalDOM(500);
-        editablePart.append(dp);
+        editablePart.appendChild(dp);
     </script>
 </body>
 </html>

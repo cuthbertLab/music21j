@@ -1,4 +1,4 @@
-<html><head>
+<html lang="en-us"><head>
 <title>Stacey Canon</title>
     <script src="../build/music21.debug.js"></script>
     <link rel="stylesheet" href="../css/m21.css" type="text/css" />
@@ -50,18 +50,18 @@
        };
 
 
-       $('#startListening').on('click', function () {
+       document.querySelector('#startListening').addEventListener('click', () => {
            mn.chirp();
            music21.audioSearch.getUserMedia(undefined, delayLine);
        });
-       $('#stopListening').on('click', function () {
+       document.querySelector('#stopListening').addEventListener('click', () => {
            if (input.mediaStream !== undefined && input.mediaStream.active) {
-               var mainTrack = input.mediaStream.getTracks()[0];
+               const mainTrack = input.mediaStream.getTracks()[0];
                mainTrack.stop();
            }
        });
-       $('#stopPlayback').on('click', function () {
-           for (var i = 0; i < numVoices; i++) {
+       document.querySelector('#stopPlayback').addEventListener('click', () => {
+           for (let i = 0; i < numVoices; i++) {
                delayNodes[i].disconnect();
            }
            input.disconnect();
@@ -70,7 +70,7 @@
        });
 
        mn = new music21.tempo.Metronome();
-       mn.addDiv($('#metronomeDiv'));
+       mn.addDiv(document.querySelector('#metronomeDiv'));
        mn.silent = true;
        mn.flash = true;
        console.log(mn);

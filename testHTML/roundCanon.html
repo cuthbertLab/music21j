@@ -57,13 +57,14 @@ fillScoreOut = function(editor, scoreOut) {
         }
         scoreOutNew.append(p);
     }
-    $($('.streamHolding')[1]).attr('height', '600'); //.attr('width', '550');
-    scoreOutNew.redrawDOM($('.streamHolding')[1]);
+    const s1 = document.querySelectorAll('.streamHolding')[1];
+    s1.setAttribute('height', '600'); //.attr('width', '550');
+    scoreOutNew.redrawDOM(s1);
 };
 
 makeRound = function() {
-    $('#canonGoesHere').append(
-        $(
+    document.querySelectorAll('#canonGoesHere').appendChild(
+        music21.common.to_el(
             '<div>Edit the pitches (sorry no rhythm here) for a 3-voice canon w/ entrances every four measures</div>'
         )
     );
@@ -97,15 +98,16 @@ makeRound = function() {
     pEditor = new music21.stream.Part();
     //pEditor.renderOptions.scaleFactor = {x: 1, y: 1};
     pEditor.maxSystemWidth =
-        $('#canonGoesHere').width() / pEditor.renderOptions.scaleFactor.x;
+        document.querySelector('#canonGoesHere').getBoundingClientRect().width
+            / pEditor.renderOptions.scaleFactor.x;
     pEditor.timeSignature = new music21.meter.TimeSignature('4/4');
     pEditor.clef = new music21.clef.Clef('treble');
 
-    for (var i = 0; i < notes.length * numParts; i++) {
-        var m = new music21.stream.Measure();
-        for (var j = 0; j < 4; j++) {
+    for (let i = 0; i < notes.length * numParts; i++) {
+        const m = new music21.stream.Measure();
+        for (let j = 0; j < 4; j++) {
             //var n = new music21.note.Rest();
-            var n = new music21.note.Note(notes[i % notes.length]);
+            const n = new music21.note.Note(notes[i % notes.length]);
             m.append(n);
             m.autoBeam = false;
         }
@@ -114,34 +116,33 @@ makeRound = function() {
     pEditor.autoBeam = false;
     //console.log(pEditor);
 
-    const $canonDiv = $('#canonGoesHere');
+    const canonDiv = document.querySelector('#canonGoesHere');
 
     // editable SVG...
     s2 = new music21.stream.Score();
     //s2.renderOptions.scaleFactor = {x: 1, y: 1};
-    s2.maxSystemWidth = $canonDiv.width() / s2.renderOptions.scaleFactor.x;
+    s2.maxSystemWidth = canonDiv.getBoundingClientRect().width / s2.renderOptions.scaleFactor.x;
 
     s2.renderOptions.events['click'] = s2.DOMChangerFunction;
-    //console.log($("#canonGoesHere").width());
     s2.changedCallbackFunction = function() {
         fillScoreOut(s2.elements[0], scoreOut);
     };
     s2.autoBeam = false;
     s2.append(pEditor);
-    s2.appendNewDOM($canonDiv);
+    s2.appendNewDOM(canonDiv);
 
     // pEditor.renderOptions.events['click'] = pEditor.DOMChangerFunction;
     // pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
     // pEditor.appendNewDOM($("#canonGoesHere"));
-    $canonDiv.append($("<br clear='all'/>"));
-    $canonDiv.append(
-        $('<div>Your score will appear here. Click it to play!</div>')
+    canonDiv.appendChild(music21.common.to_el("<br clear='all'/>"));
+    canonDiv.appendChild(
+        music21.common.to_el('<div>Your score will appear here. Click it to play!</div>')
     );
 
-    scoreOut.maxSystemWidth = $canonDiv.width();
+    scoreOut.maxSystemWidth = canonDiv.getBoundingClientRect().width;
 
-    scoreOut.appendNewDOM($canonDiv);
-    $canonDiv.append($("<br clear='all'/>"));
+    scoreOut.appendNewDOM(canonDiv);
+    canonDiv.appendChild(music21.common.to_el("<br clear='all'/>"));
 };
 makeRound();
 

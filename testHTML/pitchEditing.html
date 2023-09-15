@@ -15,14 +15,14 @@
     const s = music21.tinyNotation.TinyNotation("G2 B4 c4");
     s.clef = new music21.clef.Clef('bass');
     const d = s.editableAccidentalDOM();
-    const editable = $("#editable");
-    editable.append(d);
-    editable.append( $("<br clear='all'/>") );
+    const editable = document.querySelector("#editable");
+    editable.appendChild(d);
+    editable.appendChild(msuic21.common.to_el("<br clear='all'/>") );
 
     const s2 = music21.tinyNotation.TinyNotation("2/2 a2 b4 c'4");
     s2.clef = new music21.clef.Clef('treble');
     const d2 = s2.editableAccidentalDOM(undefined, undefined, {minAccidental: -2, maxAccidental: 2});
-    editable.append(d2);
+    editable.appendChild(d2);
     </script>
 
 </body>

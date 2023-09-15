@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
@@ -21,7 +21,7 @@ import * as clef from './clef';
 import * as duration from './duration';
 import * as stream from './stream';
 
-import {coerceJQuery, jQueryAndHTMLVersion} from './common';
+import {coerceHTMLElement} from './common';
 
 // imports for typechecking only
 import type * as note from './note';
@@ -99,23 +99,20 @@ export class RenderStack {
  *
  * "s" can be any type of Stream.
  *
- * "div" and "where" can be either a DOM
- * element or a jQuery object.
+ * "div" and "where" should be a DOM element.
  *
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
- * @param {Node|jQuery} [where=document.body] - where to render the stream
+ * @param {HTMLElement} [where=document.body] - where to render the stream
  * @property {div} div - div-with-svg-or-canvas element
- * @property {jQuery} $div - jQuery div or canvas element
- * @property {jQuery} $where - jQuery element to render onto
+ * @property {HTMLElement} where - HTMLElement to render onto
  * @property {Array<number>} systemBreakOffsets - where to break the systems
  */
 export class Renderer {
     stream: stream.Stream;
     rendererType: string = 'svg';
     div: HTMLElement;
-    $div: JQuery;
-    $where: JQuery;
+    where: HTMLElement;
     activeFormatter: VFFormatter;
     _vfRenderer: VFRenderer;
     _ctx: VFSVGContext;  // removing CanvasContext
@@ -127,12 +124,10 @@ export class Renderer {
     vfTuplets: VFTuplet[] = [];
     // measureFormatters = [];
 
-    constructor(s, div?: HTMLElement|JQuery, where?: HTMLElement|JQuery) {
+    constructor(s: stream.Stream, div?: HTMLElement, where?: HTMLElement|JQuery) {
         this.stream = s;
-        const [$j_div, html_div] = jQueryAndHTMLVersion(div);
-        this.$div = $j_div;
-        this.div = html_div;
-        this.$where = coerceJQuery(where);
+        this.div = coerceHTMLElement(div);
+        this.where = coerceHTMLElement(where);
     }
 
     get vfRenderer(): VFRenderer {
@@ -151,8 +146,8 @@ export class Renderer {
                 // this is NOT NOT NOT a JQuery object.
                 // noinspection JSDeprecatedSymbols
                 this._vfRenderer.resize(
-                    parseInt(this.$div.attr('width')),
-                    parseInt(this.$div.attr('height'))
+                    parseInt(this.div.getAttribute('width')),
+                    parseInt(this.div.getAttribute('height'))
                 );
             }
             return this._vfRenderer as VFRenderer;
