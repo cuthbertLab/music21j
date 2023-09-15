@@ -2667,7 +2667,7 @@ export class Stream extends base.Music21Object {
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
     getUnscaledXYforDOM(
-        svg,
+        svg: HTMLElement,
         e: MouseEvent|TouchEvent
     ): [number, number] {
         let offset: { left: number, top: number };
