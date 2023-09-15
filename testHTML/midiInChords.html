@@ -32,20 +32,20 @@
         //     let lastNote = s.elements[s.length - 1];
         // }
         s.append(appendObject);
-        const $svgDiv = $("#svgDiv");
-        $svgDiv.empty();
-        s.appendNewDOM($svgDiv);
+        const svgDiv = document.querySelector("#svgDiv");
+        svgDiv.replaceChildren();
+        s.appendNewDOM(svgDiv);
     }
 
 	s = new music21.stream.Measure();
 	s.clef = new music21.clef.TrebleClef();
 	s.renderOptions.staffLines = 5;
 	metro = new music21.tempo.Metronome();
-	metro.addDiv($("#metronomeDiv"));
+	metro.addDiv(document.querySelector("#metronomeDiv"));
 
 	music21.miditools.config.metronome = metro;
 
-	music21.webmidi.createSelector($("#putMidiSelectHere"));
+	music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
 	music21.miditools.callbacks.general = [
 		music21.miditools.makeChords,
 		music21.miditools.sendToMIDIjs,

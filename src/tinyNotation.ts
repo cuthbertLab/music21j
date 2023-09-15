@@ -315,14 +315,14 @@ export function renderNotationDivs(
     for (let i = 0; i < allRender.length; i++) {
         const thisTN = allRender[i] as HTMLElement;
         let thisTNContents: string;
-        if (thisTN.getAttribute('tinynotationcontents') !== undefined) {
+        if (thisTN.getAttribute('tinynotationcontents')) {
             thisTNContents = thisTN.getAttribute('tinynotationcontents');
-        } else if (thisTN.textContent !== undefined) {
+        } else if (thisTN.textContent) {
             thisTNContents = thisTN.textContent;
             thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
         }
 
-        if (thisTNContents !== undefined) {
+        if (thisTNContents) {
             thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
         }
         if (thisTNContents) {

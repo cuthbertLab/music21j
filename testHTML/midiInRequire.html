@@ -15,7 +15,7 @@
 	    </div>
     	<script src="../build/music21.debug.js"></script>
 		<script>
-        music21.webmidi.createSelector($("#putMidiSelectHere"));
+        music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
         music21.miditools.callbacks.general = music21.miditools.sendToMIDIjs;
 		</script>
 

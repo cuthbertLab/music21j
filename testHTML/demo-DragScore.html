@@ -1,21 +1,21 @@
 <html lang="en">
 <head>
- <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <script src="../build/music21.debug.js" type="application/javascript"></script>
- <link rel="stylesheet" href="../css/m21.css" type="text/css" />
- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
-
+ 	<title>Drag and Create a Score</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ 	<script src="../build/music21.debug.js" type="application/javascript"></script>
+	<link rel="stylesheet" href="../css/m21.css" type="text/css" />
+ 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
 </head>
 <body>
 <h1>Create your own score!</h1>
 <h2>Double Click any Fragment to Hear it.</h2>
 <div id="dragContent">
 	<div id="themeDiv"></div>
-	<div id="dropDiv" height="800" width="1200" style="border: 2px dashed black">
+	<div id="dropDiv" style="height: 800px; width: 1200px; border: 2px dashed black">
 		<h1>Create an 8-measure piece by dropping fragments here! <br/>Go for a smooth pattern. Then click here to play your score.</h1>
-		<button onclick="clearScore()">Clear</button> ... <button onclick="undoAdd()">Undo</button><br></br>
+		<button onclick="clearScore()">Clear</button> ... <button onclick="undoAdd()">Undo</button><br>
 		<div style="text-align: left">
-			<div id="dropSvg" class='streamHolding' height=200 width=1000></div>
+			<div id="dropSvg" class='streamHolding' style="height: 200px; width: 1000px"></div>
 		</div>
 	</div>
 </div>

@@ -2986,8 +2986,8 @@ export class Stream extends base.Music21Object {
                 let maxSearch = 99;
                 while (
                     maxSearch > 0
-                    && searchParent !== undefined
-                    && useSvg === undefined
+                    && searchParent
+                    && !useSvg
                 ) {
                     maxSearch -= 1;
                     useSvg = searchParent.querySelector('.streamHolding');
