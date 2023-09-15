@@ -1,5 +1,3 @@
-import * as $ from 'jquery';
-
 import { hyphenToCamelCase, opFrac } from '../common';
 import * as chord from '../chord';
 import * as clef from '../clef';
@@ -13,6 +11,7 @@ import * as tie from '../tie';
 
 // imports just for typing:
 import type { Music21Object } from '../base';
+import type { ProtoM21Object } from '../prebase';
 
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
@@ -30,21 +29,21 @@ const STAFF_SPECIFIC_CLASSES = [
     // 'TimeSignature',
 ];
 
+/**
+ * Set an attribute of a Music21 Object via
+ */
 function seta(
-    m21El,
-    xmlEl,
+    m21El: Music21Object|ProtoM21Object,
+    xmlEl: Element,
     tag: string,
-    attributeName=undefined,
-    transform=undefined
+    attributeName: string = undefined,
+    transform: (e: any) => any = undefined,
 ) {
-    const $matchEl = $(xmlEl).children(tag);
-    if (!$matchEl) {
+    const matchEl = xmlEl.getElementsByTagName(tag);
+    if (!matchEl.length) {
         return;
     }
-    let value = $matchEl
-        .contents()
-        .eq(0)
-        .text();
+    let value = matchEl[0].textContent?.trim() ?? '';
     if (value === undefined || value === '') {
         return;
     }
@@ -58,9 +57,9 @@ function seta(
 }
 
 export class ScoreParser {
-    xmlText;
-    xmlUrl;
-    $xmlRoot;
+    xmlText: string;
+    xmlUrl: string;
+    xmlRoot: Element;
     stream: stream.Score;
     definesExplicitSystemBreaks: boolean = false;
     definesExplicitPageBreaks: boolean = false;
@@ -76,44 +75,41 @@ export class ScoreParser {
         this.stream = new stream.Score();
     }
 
-    scoreFromUrl(url) {
+    async scoreFromUrl(url: string): Promise<stream.Score> {
         this.xmlUrl = url;
-        const dataType = 'xml';
-        // noinspection JSUnusedLocalSymbols
-        return $.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc), dataType);
+        const response = await fetch(url);
+        const xmlText = await response.text();
+        return this.scoreFromText(xmlText);
+        // // noinspection JSUnusedLocalSymbols
+        // return $.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc), dataType);
     }
 
-    scoreFromText(xmlText) {
+    scoreFromText(xmlText: string): stream.Score {
         this.xmlText = xmlText;
-        // Not sure why this is not being found in jQuery
-        // noinspection JSUnresolvedFunction
-        const xmlDoc = $.parseXML(xmlText);
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
         return this.scoreFromDOMTree(xmlDoc);
     }
 
-    scoreFromDOMTree(xmlDoc) {
-        this.$xmlRoot = $($(xmlDoc).children('score-partwise'));
-        this.xmlRootToScore(this.$xmlRoot, this.stream);
+    scoreFromDOMTree(xmlDoc: Document): stream.Score {
+        this.xmlRoot = xmlDoc.querySelector('score-partwise');
+        this.xmlRootToScore(this.xmlRoot, this.stream);
         return this.stream;
     }
 
-    xmlRootToScore($mxScore, inputM21) {
-        let s = inputM21;
-        if (inputM21 === undefined) {
-            s = new stream.Score();
-        }
+    xmlRootToScore(mxScore: Element, inputM21: stream.Score) {
+        const s: stream.Score = inputM21 ?? new stream.Score();
         // version
         // defaults
         // credit
-        this.parsePartList($mxScore);
-        for (const p of $mxScore.children('part')) {
-            const $p = $(p);
-            const partId = $p.attr('id');
+        this.parsePartList(mxScore);
+        for (const p of Array.from(mxScore.getElementsByTagName('part'))) {
+            const partId = p.getAttribute('id');
             // if (partId === undefined) {
             //     partId = //something
             // }
-            const $mxScorePart = this.mxScorePartDict[partId];
-            const part = this.xmlPartToPart($p, $mxScorePart);
+            const mxScorePart = this.mxScorePartDict[partId];
+            const part = this.xmlPartToPart(p, mxScorePart);
             if (part !== undefined) {
                 // part that became 2 PartStaffs is undefined: handles itself
                 s.insert(0.0, part);
@@ -128,8 +124,8 @@ export class ScoreParser {
         return s;
     }
 
-    xmlPartToPart($mxPart, $mxScorePart) {
-        const parser = new PartParser($mxPart, $mxScorePart, this);
+    xmlPartToPart(mxPart: Element, mxScorePart: Element): stream.Part {
+        const parser = new PartParser(mxPart, mxScorePart, this);
         parser.parse();
         if (parser.appendToScoreAfterParse) {
             return parser.stream;
@@ -137,18 +133,16 @@ export class ScoreParser {
         return undefined;
     }
 
-    parsePartList($mxScore) {
-        const mxPartList = $mxScore.children('part-list');
-        if (!mxPartList) {
+    parsePartList(mxScore: Element) {
+        const mxPartList = Array.from(mxScore.getElementsByTagName('part-list'));
+        if (!mxPartList.length) {
             return;
         }
         // const openPartGroups = [];
         for (const partListElement of mxPartList) {
-            const $partListElement = $(partListElement);
-            for (const scorePartElement of $partListElement.children('score-part')) {
-                const $scorePartElement = $(scorePartElement);
-                const partId = $scorePartElement.attr('id');
-                this.mxScorePartDict[partId] = $scorePartElement;
+            for (const scorePartElement of Array.from(partListElement.getElementsByTagName('score-part'))) {
+                const partId = scorePartElement.getAttribute('id');
+                this.mxScorePartDict[partId] = scorePartElement;
             }
         }
         // deal with part-groups
@@ -157,8 +151,8 @@ export class ScoreParser {
 
 export class PartParser {
     parent: ScoreParser;
-    $mxPart;
-    $mxScorePart;
+    mxPart: Element;
+    mxScorePart: Element;
     partId: string;
     stream: stream.Part;
     atSoundingPitch = true;
@@ -167,30 +161,30 @@ export class PartParser {
     lastTimeSignature: meter.TimeSignature;
     lastMeasureWasShort = false;
     lastMeasureOffset = 0.0;
-    lastClefs;
+    lastClefs: Record<number, clef.Clef> = {};
     activeTuplets = [undefined, undefined, undefined, undefined, undefined, undefined, undefined];
     maxStaves = 1;
     lastMeasureNumber = 0;
-    lastNumberSuffix;
+    lastNumberSuffix: string = '';
 
     multiMeasureRestsToCapture = 0;
     // activeMultimeasureRestSpanner;
 
     // activeInstrument;
     firstMeasureParsed = false;
-    $activeAttributes: JQuery;
+    activeAttributes: Element;
     lastDivisions = DEFAULTS.divisionsPerQuarter;
 
     appendToScoreAfterParse = true;
     lastMeasureParser: MeasureParser;
 
-    constructor($mxPart, $mxScorePart, parent=undefined) {
+    constructor(mxPart: Element, mxScorePart: Element, parent: ScoreParser = undefined) {
         this.parent = parent;
-        this.$mxPart = $mxPart;
-        this.$mxScorePart = $mxScorePart;
+        this.mxPart = mxPart;
+        this.mxScorePart = mxScorePart;
         // ignore parent for now
-        if ($mxPart !== undefined) {
-            this.partId = $mxPart.attr('id');
+        if (mxPart !== undefined) {
+            this.partId = mxPart.getAttribute('id');
             // ignore empty partId for now
         }
         // TODO(msc): spannerBundles
@@ -206,32 +200,31 @@ export class PartParser {
         if (this.maxStaves > 1) {
             this.separateOutPartStaves();
         }
-        if (this.lastClefs.length > 0) {
+        if (this.lastClefs[0]) {
             this.stream.clef = this.lastClefs[0];
         }
     }
 
     parseXmlScorePart() {
         const part = this.stream;
-        const $mxScorePart = this.$mxScorePart;
+        const mxScorePart = this.mxScorePart;
 
-        seta(part, $mxScorePart, 'part-name'); // todo -- clean string
+        seta(part, mxScorePart, 'part-name'); // todo -- clean string
         // remainder of part names
         // instruments
     }
 
     parseMeasures() {
-        for (const mxMeasure of this.$mxPart.children('measure')) {
-            const $mxMeasure = $(mxMeasure);
-            this.xmlMeasureToMeasure($mxMeasure);
+        for (const mxMeasure of Array.from(this.mxPart.getElementsByTagName('measure'))) {
+            this.xmlMeasureToMeasure(mxMeasure);
         }
         if (this.lastMeasureParser !== undefined) {
             this.lastMeasureParser.parent = undefined; // gc.
         }
     }
 
-    xmlMeasureToMeasure($mxMeasure) {
-        const measureParser = new MeasureParser($mxMeasure, this);
+    xmlMeasureToMeasure(mxMeasure: Element): void {
+        const measureParser = new MeasureParser(mxMeasure, this);
         measureParser.parse();
         if (this.lastMeasureParser !== undefined) {
             this.lastMeasureParser.parent = undefined; // gc.
@@ -255,7 +248,7 @@ export class PartParser {
         this.adjustTimeAttributesFromMeasure(m);
     }
 
-    setLastMeasureInfo(m) {
+    setLastMeasureInfo(m: stream.Measure): void {
         if (m.number !== this.lastMeasureNumber) {
             this.lastMeasureNumber = m.number;
             this.lastNumberSuffix = m.numberSuffix;
@@ -268,14 +261,14 @@ export class PartParser {
         }
     }
 
-    adjustTimeAttributesFromMeasure(m) {
+    adjustTimeAttributesFromMeasure(m: stream.Measure): void {
         const mHighestTime = m.highestTime;
         // ignore incomplete measures.
         const mOffsetShift = mHighestTime;
         this.lastMeasureOffset += mOffsetShift;
     }
 
-    separateOutPartStaves() {
+    separateOutPartStaves(): void {
         const partStaffs = [];
 
         function copyIntoPartStaff(
@@ -341,9 +334,9 @@ export class PartParser {
 }
 
 export class MeasureParser {
-    $mxMeasure;
+    mxMeasure: Element;
     parent: PartParser;
-    $mxMeasureElements = [];
+    mxMeasureElements: Element[] = [];
     stream: stream.Measure;
 
     divisions = undefined;
@@ -355,14 +348,14 @@ export class MeasureParser {
     voicesById = {};
     voiceIndices;
     staves = 1;
-    $activeAttributes = undefined;
+    activeAttributes = undefined;
     attributesAreInternal = true;
     measureNumber: number = undefined;
     numberSuffix: string = undefined;
     staffLayoutObjects = [];
 
-    $mxNoteList = [];
-    $mxLyricList = [];
+    mxNoteList = [];
+    mxLyricList = [];
     nLast: note.GeneralNote;
     chordVoice = undefined;
     fullMeasureRest = false;
@@ -404,8 +397,8 @@ export class MeasureParser {
         // Note: <print> is handled separately...
     };
 
-    constructor($mxMeasure: JQuery, parent: PartParser = undefined) {
-        this.$mxMeasure = $mxMeasure;
+    constructor(mxMeasure: Element, parent: PartParser = undefined) {
+        this.mxMeasure = mxMeasure;
         this.parent = parent;
         this.stream = new stream.Measure();
 
@@ -426,20 +419,14 @@ export class MeasureParser {
         this.parseMeasureAttributes();
         // updateVoiceInformation;
 
-        const children = this.$mxMeasure.children();
-        this.$mxMeasureElements = [];
-        for (const c of children) {
-            const $c = $(c);
-            this.$mxMeasureElements.push($c);
-        }
-
+        this.mxMeasureElements = Array.from(this.mxMeasure.children);
         let i = 0;
-        for (const $mxObj of this.$mxMeasureElements) {
-            const tag = $mxObj[0].tagName;
+        for (const mxObj of this.mxMeasureElements) {
+            const tag = mxObj.tagName;
             this.parseIndex = i;
             const methName = this.musicDataMethods[tag];
             if (methName !== undefined) {
-                this[methName]($mxObj);
+                this[methName](mxObj);
             }
             i += 1;
         }
@@ -447,18 +434,17 @@ export class MeasureParser {
         // fullMeasureRest
     }
 
-    getStaffNumber($mxObj: JQuery) {
-        const mxObj = $mxObj[0];
+    getStaffNumber(mxObj: Element) {
         if (['harmony', 'forward', 'note', 'direction'].includes(mxObj.tagName)) {
-            const $mxStaff = $mxObj.children('staff');
-            if ($mxStaff.length) {
-                return Number.parseInt($mxStaff.text().trim());
+            const mxStaffs = mxObj.getElementsByTagName('staff');
+            if (mxStaffs.length) {
+                return Number.parseInt(mxStaffs[0].textContent.trim());
             }
             return NO_STAFF_ASSIGNED;
         } else if (
             ['staff-layout', 'staff-details', 'measure-style', 'clef',
                 'key', 'time', 'transpose'].includes(mxObj.tagName)) {
-            const maybe_number = $mxObj.attr('number');
+            const maybe_number = mxObj.getAttribute('number');
             if (maybe_number) {
                 return Number.parseInt(maybe_number);
             }
@@ -467,25 +453,25 @@ export class MeasureParser {
         return NO_STAFF_ASSIGNED;
     }
 
-    addToStaffReference($mxObj: JQuery, m21obj: Music21Object) {
-        const staffKey = this.getStaffNumber($mxObj);
+    addToStaffReference(mxObj: Element, m21obj: Music21Object): void {
+        const staffKey = this.getStaffNumber(mxObj);
         if (this.staffReference[staffKey] === undefined) {
             this.staffReference[staffKey] = [];
         }
         this.staffReference[staffKey].push(m21obj);
     }
 
-    insertInMeasureOrVoice($mxObj, el) {
+    insertInMeasureOrVoice(mxObj: Element, el: Music21Object): void {
         this.stream.insert(this.offsetMeasureNote, el);
     }
 
-    xmlToNote($mxNote) {
+    xmlToNote(mxNote: Element) {
         let nextNoteIsChord = false;
-        const $mxObjNext = this.$mxMeasureElements[this.parseIndex + 1];
-        if ($mxObjNext !== undefined) {
+        const mxObjNext = this.mxMeasureElements[this.parseIndex + 1];
+        if (mxObjNext !== undefined) {
             if (
-                $mxObjNext[0].tagName === 'note'
-                && $mxObjNext.children('chord').length > 0
+                mxObjNext.tagName === 'note'
+                && mxObjNext.querySelector('chord')
             ) {
                 nextNoteIsChord = true;
             }
@@ -494,10 +480,10 @@ export class MeasureParser {
         let isRest = false;
 
         let offsetIncrement = 0.0;
-        if ($mxNote.children('rest').length > 0) {
+        if (mxNote.querySelector('rest')) {
             isRest = true;
         }
-        if ($mxNote.children('chord').length > 0) {
+        if (mxNote.querySelector('chord')) {
             isChord = true;
         }
         if (nextNoteIsChord) {
@@ -507,48 +493,47 @@ export class MeasureParser {
         let n;
 
         if (isChord) {
-            this.$mxNoteList.push($mxNote);
-            this.$mxLyricList.push(...$mxNote.children('lyric'));
+            this.mxNoteList.push(mxNote);
+            this.mxLyricList.push(...Array.from(mxNote.querySelectorAll('lyric')));
         } else if (!isChord && !isRest) {
             // normal note
             this.restAndNoteCount.note += 1;
-            n = this.xmlToSimpleNote($mxNote);
+            n = this.xmlToSimpleNote(mxNote);
         } else {
             this.restAndNoteCount.rest += 1;
-            n = this.xmlToRest($mxNote);
+            n = this.xmlToRest(mxNote);
         }
 
         if (!isChord) {
-            this.updateLyricsFromList(n, $mxNote.children('lyric'));
-            this.addToStaffReference($mxNote, n);
-            this.insertInMeasureOrVoice($mxNote, n);
+            this.updateLyricsFromList(n, Array.from(mxNote.querySelectorAll('lyric')));
+            this.addToStaffReference(mxNote, n);
+            this.insertInMeasureOrVoice(mxNote, n);
             offsetIncrement = n.duration.quarterLength;
             this.nLast = n;
             this.offsetMeasureNote += offsetIncrement;
         }
 
-        if (this.$mxNoteList.length && !nextNoteIsChord) {
-            const c = this.xmlToChord(this.$mxNoteList);
-            this.updateLyricsFromList(c, this.$mxLyricList);
-            this.addToStaffReference(this.$mxNoteList[0], c);
+        if (this.mxNoteList.length && !nextNoteIsChord) {
+            const c = this.xmlToChord(this.mxNoteList);
+            this.updateLyricsFromList(c, this.mxLyricList);
+            this.addToStaffReference(this.mxNoteList[0], c);
 
             // voices;
-            this.insertInMeasureOrVoice($mxNote, c);
+            this.insertInMeasureOrVoice(mxNote, c);
 
-            this.$mxNoteList = [];
-            this.$mxLyricList = [];
+            this.mxNoteList = [];
+            this.mxLyricList = [];
             offsetIncrement = c.duration.quarterLength;
             this.nLast = c;
             this.offsetMeasureNote += offsetIncrement;
         }
-
     }
 
-    xmlToChord($mxNoteList) {
+    xmlToChord(mxNoteList: Element[]): chord.Chord {
         const notes = [];
-        for (const $mxNote of $mxNoteList) {
+        for (const mxNote of mxNoteList) {
             const freeSpanners = false;
-            notes.push(this.xmlToSimpleNote($mxNote, freeSpanners));
+            notes.push(this.xmlToSimpleNote(mxNote, freeSpanners));
         }
         const c = new chord.Chord(notes);
         // move beams from first note;
@@ -559,48 +544,48 @@ export class MeasureParser {
         return c;
     }
 
-    xmlToSimpleNote($mxNote, freeSpanners=true) {
+    xmlToSimpleNote(mxNote, freeSpanners=true) {
         const n = new note.Note();
-        this.xmlToPitch($mxNote, n.pitch);
+        this.xmlToPitch(mxNote, n.pitch);
         // beams;
         // stems;
         // noteheads
-        return this.xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners);
+        return this.xmlNoteToGeneralNoteHelper(n, mxNote, freeSpanners);
     }
 
     // xmlToBeam
     // xmlToBeams
     // xmlNotehead
 
-    xmlToPitch($mxNote, inputM21) {
+    xmlToPitch(mxNote: Element, inputM21: pitch.Pitch) {
         let p = inputM21;
         if (inputM21 === undefined) {
             p = new pitch.Pitch();
         }
 
-        let $mxPitch;
-        if ($mxNote[0].tagName === 'pitch') {
-            $mxPitch = $mxNote;
+        let mxPitch;
+        if (mxNote.tagName === 'pitch') {
+            mxPitch = mxNote;
         } else {
-            $mxPitch = $($mxNote.children('pitch')[0]);
-            if ($mxPitch.length === 0) {
+            mxPitch = mxNote.querySelector('pitch');
+            if (!mxPitch) {
                 // whoops!
                 return p;
             }
         }
 
-        seta(p, $mxPitch, 'step');
-        seta(p, $mxPitch, 'octave', undefined, parseInt);
-        const $mxAlter = $mxPitch.children('alter');
-        let accAlter;
-        if ($mxAlter.length) {
-            accAlter = parseFloat($mxAlter.text().trim());
+        seta(p, mxPitch, 'step');
+        seta(p, mxPitch, 'octave', undefined, parseInt);
+        const mxAlter = mxPitch.querySelector('alter');
+        let accAlter: number = 0.0;
+        if (mxAlter) {
+            accAlter = parseFloat(mxAlter.textContent.trim());
         }
 
-        const $mxAccidental = $mxNote.children('accidental');
+        const mxAccidental = mxNote.querySelector('accidental');
         // dropping support for musescore 0.9 errors...
-        if ($mxAccidental.length) {
-            const accObj = this.xmlToAccidental($mxAccidental);
+        if (mxAccidental) {
+            const accObj = this.xmlToAccidental(mxAccidental);
             p.accidental = accObj;
             p.accidental.displayStatus = true;
             // independent accidental from alter
@@ -611,17 +596,13 @@ export class MeasureParser {
         return p;
     }
 
-    xmlToAccidental($mxAccidental) {
+    xmlToAccidental(mxAccidental: Element): pitch.Accidental {
         const acc = new pitch.Accidental(0);
         // to-do m21/musicxml accidental name differences;
-        let name = $($mxAccidental[0])
-            .text()
-            .trim()
-            .toLowerCase();
+        let name = mxAccidental.textContent.trim().toLowerCase();
         if (name === 'flat-flat') {
             name = 'double-flat';
         }
-
         acc.set(name);
 
         // set print style
@@ -631,28 +612,28 @@ export class MeasureParser {
         return acc;
     }
 
-    xmlToRest($mxRest) {
+    xmlToRest(mxRest: Element) {
         const r = new note.Rest();
         // full measure rest
         // apply multi-measure rest
         // display-step, octave, etc.
-        return this.xmlNoteToGeneralNoteHelper(r, $mxRest);
+        return this.xmlNoteToGeneralNoteHelper(r, mxRest);
     }
 
     // noinspection JSUnusedLocalSymbols
-    xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners=true) {
+    xmlNoteToGeneralNoteHelper(n: note.GeneralNote, mxNote: Element, freeSpanners=true) {
         // spanners
         // setPrintStyle
         // print-object
         // dynamics
         // pizzicato
         // grace
-        this.xmlToDuration($mxNote, n.duration);
+        this.xmlToDuration(mxNote, n.duration);
         // type styles
         // color
         // position
-        if ($mxNote.children('tie').length > 0) {
-            n.tie = this.xmlToTie($mxNote);
+        if (mxNote.querySelector('tie')) {
+            n.tie = this.xmlToTie(mxNote);
         }
         // grace
         // notations
@@ -660,48 +641,41 @@ export class MeasureParser {
         return n;
     }
 
-    xmlToDuration($mxNote, inputM21: duration.Duration) {
+    xmlToDuration(mxNote, inputM21: duration.Duration) {
         let d = inputM21;
         if (inputM21 === undefined) {
             d = new duration.Duration();
         }
         const divisions = this.divisions;
-        const mxDuration = $mxNote.children('duration')[0];
+        const mxDuration = mxNote.querySelector('duration');
         let qLen = 0.0;
 
         if (mxDuration) {
-            const noteDivisions = parseFloat(
-                $(mxDuration)
-                    .text()
-                    .trim()
-            );
+            const noteDivisions = parseFloat(mxDuration.textContent.trim());
             qLen = noteDivisions / divisions;
         }
 
-        const mxTimeModification = $mxNote.children('time-modification')[0];
-        const mxType = $mxNote.children('type')[0];
+        const mxTimeModification = mxNote.querySelector('time-modification');
+        const mxType = mxNote.querySelector('type');
         if (mxType) {
             // long vs longa todo
-            const durationType = $(mxType)
-                .text()
-                .trim();
-            const numDots = $mxNote.children('dot').length;
+            const durationType = mxType.textContent.trim();
+            const numDots = mxNote.querySelectorAll('dot').length;
             d.type = durationType;
             d.dots = numDots;
             // Just first tuplet for now
             if (mxTimeModification) {
-                const $mxTimeMod = $(mxTimeModification);
-                const normalType = $mxTimeMod.children('normal-type')[0];
+                const normalType = mxTimeModification.querySelector('normal-type');
                 let normalDur: duration.Duration;
                 if (normalType) {
                     normalDur = new duration.Duration(normalType.textContent.trim());
-                    normalDur.dots = $mxTimeMod.children('normal-dot').length;
+                    normalDur.dots = mxTimeModification.querySelectorAll('normal-dot').length;
                 } else {
                     normalDur = d.clone();
                 }
                 const tuplet = new duration.Tuplet(
-                    parseInt($mxTimeMod.children('actual-notes')[0].textContent.trim()),
-                    parseInt($mxTimeMod.children('normal-notes')[0].textContent.trim()),
+                    parseInt(mxTimeModification.querySelector('actual-notes').textContent.trim()),
+                    parseInt(mxTimeModification.querySelector('normal-notes').textContent.trim()),
                     normalDur,
                 );
                 d.appendTuplet(tuplet);
@@ -713,15 +687,15 @@ export class MeasureParser {
         return d;
     }
 
-    xmlBackup($mxBackup: JQuery) {
-        const $mxDuration = $mxBackup.children('duration');
-        const change = parseFloat($mxDuration.text().trim()) / this.divisions;
+    xmlBackup(mxBackup: Element) {
+        const mxDuration = mxBackup.querySelector('duration');
+        const change = parseFloat(mxDuration.textContent.trim()) / this.divisions;
         this.offsetMeasureNote -= Math.max(opFrac(change), 0.0);
     }
 
-    xmlForward($mxForward: JQuery) {
-        const $mxDuration = $mxForward.children('duration');
-        const change = parseFloat($mxDuration.text().trim()) / this.divisions;
+    xmlForward(mxForward: Element) {
+        const mxDuration = mxForward.querySelector('duration');
+        const change = parseFloat(mxDuration.textContent.trim()) / this.divisions;
         this.offsetMeasureNote += Math.min(opFrac(change), 0.0);
     }
 
@@ -737,14 +711,14 @@ export class MeasureParser {
     // xmlToTremolo
     // xmlOneSpanner
 
-    xmlToTie($mxNote: JQuery): tie.Tie {
+    xmlToTie(mxNote: Element): tie.Tie {
         const t = new tie.Tie();
-        const allTies = $mxNote.children('tie');
+        const allTies = mxNote.querySelectorAll('tie');
         if (allTies.length > 1) {
             t.type = 'continue';
         } else {
-            const $t0 = $(allTies[0]);
-            t.type = $t0.attr('type');
+            const t0 = allTies[0];
+            t.type = t0.getAttribute('type');
         }
         // style
         return t;
@@ -754,7 +728,7 @@ export class MeasureParser {
     updateLyricsFromList(n, lyricList) {
         let currentLyricNumber = 1;
         for (const mxLyric of lyricList) {
-            const lyricObj = this.xmlToLyric($(mxLyric));
+            const lyricObj = this.xmlToLyric(mxLyric);
             if (lyricObj === undefined) {
                 continue;
             }
@@ -766,17 +740,17 @@ export class MeasureParser {
         }
     }
 
-    xmlToLyric($mxLyric: JQuery, inputM21?: note.Lyric): note.Lyric {
+    xmlToLyric(mxLyric: Element, inputM21?: note.Lyric): note.Lyric {
         let l = inputM21;
         if (inputM21 === undefined) {
             l = new note.Lyric('');
         }
         try {
-            l.text = $mxLyric.children('text').text().trim();
+            l.text = mxLyric.querySelector('text').textContent.trim();
         } catch (exc) {
             return undefined; // sometimes there are empty lyrics.
         }
-        const number = $mxLyric.attr('number');
+        const number = mxLyric.getAttribute('number');
         try {
             const num = parseInt(number);
             l.number = num;
@@ -786,14 +760,14 @@ export class MeasureParser {
                 l.identifier = number.toString();
             }
         }
-        const identifier: string = $mxLyric.attr('name');
+        const identifier: string = mxLyric.getAttribute('name');
         if (identifier !== undefined) {
             l.identifier = identifier;
         }
 
-        const $mxSyllabic = $mxLyric.children('syllabic');
-        if ($mxSyllabic.length) {
-            l.syllabic = $mxSyllabic.text().trim();
+        const mxSyllabic = mxLyric.querySelector('syllabic');
+        if (mxSyllabic) {
+            l.syllabic = mxSyllabic.textContent.trim();
         }
         // setStyleAttributes
         // setColor
@@ -805,7 +779,7 @@ export class MeasureParser {
     }
 
 
-    insertIntoMeasureOrVoice($mxElement: JQuery, el: Music21Object) {
+    insertIntoMeasureOrVoice(mxElement: Element, el: Music21Object) {
         this.stream.insert(this.offsetMeasureNote, el);
     }
 
@@ -815,7 +789,7 @@ export class MeasureParser {
     }
 
     parseMeasureNumbers() {
-        const mNumRaw = this.$mxMeasure.attr('number');
+        const mNumRaw = this.mxMeasure.getAttribute('number');
         const mNum = parseInt(mNumRaw); // no suffixes...
         this.stream.number = mNum;
         if (this.parent) {
@@ -824,90 +798,77 @@ export class MeasureParser {
         this.measureNumber = mNum;
     }
 
-    parseAttributesTag($mxAttributes) {
+    parseAttributesTag(mxAttributes) {
         this.attributesAreInternal = false;
-        this.$activeAttributes = $mxAttributes;
-        for (const mxSub of $mxAttributes.children()) {
+        this.activeAttributes = mxAttributes;
+        for (const mxSub of <Element[]> Array.from(mxAttributes.children)) {
             const tag = mxSub.tagName;
-            const $mxSub = $(mxSub);
             const methName = this.attributeTagsToMethods[tag];
             if (methName !== undefined) {
-                this[methName]($mxSub);
+                this[methName](mxSub);
             } else if (tag === 'staves') {
-                this.staves = parseInt($mxSub.text());
+                this.staves = parseInt(mxSub.textContent.trim());
             } else if (tag === 'divisions') {
-                this.divisions = parseFloat($mxSub.text());
+                this.divisions = parseFloat(mxSub.textContent.trim());
             }
             // transpose;
         }
         if (this.parent !== undefined) {
             this.parent.lastDivisions = this.divisions;
-            this.parent.$activeAttributes = this.$activeAttributes;
+            this.parent.activeAttributes = this.activeAttributes;
         }
     }
     // xmlTransposeToInterval
 
-    handleTimeSignature($mxTime) {
-        const ts = this.xmlToTimeSignature($mxTime);
-        this.addToStaffReference($mxTime, ts);
-        this.insertIntoMeasureOrVoice($mxTime, ts);
+    handleTimeSignature(mxTime) {
+        const ts = this.xmlToTimeSignature(mxTime);
+        this.addToStaffReference(mxTime, ts);
+        this.insertIntoMeasureOrVoice(mxTime, ts);
     }
 
-    xmlToTimeSignature($mxTime) {
+    xmlToTimeSignature(mxTime) {
         // senza-misura
         // simple time signature only;
-        const numerator = $($mxTime.children('beats')[0])
-            .text()
-            .trim();
-        const denominator = $($mxTime.children('beat-type')[0])
-            .text()
-            .trim();
+        const numerator = mxTime.querySelector('beats').textContent.trim();
+        const denominator = mxTime.querySelector('beat-type').textContent.trim();
         return new meter.TimeSignature(numerator + '/' + denominator);
         // symbol
     }
 
-    handleClef($mxClef) {
-        const clefObj = this.xmlToClef($mxClef);
-        this.addToStaffReference($mxClef, clefObj);
-        this.insertIntoMeasureOrVoice($mxClef, clefObj);
+    handleClef(mxClef) {
+        const clefObj = this.xmlToClef(mxClef);
+        this.addToStaffReference(mxClef, clefObj);
+        this.insertIntoMeasureOrVoice(mxClef, clefObj);
         this.lastClefs[0] = clefObj;
         // if (this.parent !== undefined) {
         //     this.parent.lastClefs[0] = clefObj.clone(true);
         // }
     }
 
-    xmlToClef($mxClef) {
-        const sign = $($mxClef.children('sign')[0])
-            .text()
-            .trim();
+    xmlToClef(mxClef) {
+        const sign = mxClef.querySelector('sign').textContent.trim();
         if (sign === 'percussion') {
             return clef.clefFromString(sign);
         }
-        const line = $($mxClef.children('line')[0])
-            .text()
-            .trim();
+        const line = mxClef.querySelector('line').textContent.trim();
 
         let clefOctaveChange = 0;
-        const $coc = $mxClef.children('clef-octave-change');
-        if ($coc.length > 0) {
-            clefOctaveChange = parseInt(
-                $($coc[0])
-                    .text()
-                    .trim()
-            );
+        const coc = mxClef.querySelector('clef-octave-change');
+        if (coc) {
+            clefOctaveChange = parseInt(coc.textContent.trim());
         }
         return clef.clefFromString(sign + line, clefOctaveChange);
     }
 
-    handleKeySignature($mxKey) {
-        const keySig = this.xmlToKeySignature($mxKey);
-        this.addToStaffReference($mxKey, keySig);
-        this.insertIntoMeasureOrVoice($mxKey, keySig);
+    handleKeySignature(mxKey) {
+        const keySig = this.xmlToKeySignature(mxKey);
+        this.addToStaffReference(mxKey, keySig);
+        this.insertIntoMeasureOrVoice(mxKey, keySig);
     }
 
-    xmlToKeySignature($mxKey) {
+    xmlToKeySignature(mxKey) {
         const ks = new key.KeySignature();
-        seta(ks, $mxKey, 'fifths', 'sharps', parseInt);
+        seta(ks, mxKey, 'fifths', 'sharps', parseInt);
         // mode!
         // non-standard and key-octaves
         return ks;

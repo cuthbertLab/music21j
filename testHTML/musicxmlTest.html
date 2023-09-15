@@ -11,10 +11,7 @@
     <script>
     mxUrl = 'bachOut.xml';
     sp = new music21.musicxml.xmlToM21.ScoreParser();
-    sp.scoreFromUrl(mxUrl).done(() => {
-        sc = sp.stream;
-        sc.appendNewDOM();
-    });
+    sp.scoreFromUrl(mxUrl).then(sc => sc.appendNewDOM());
     </script>
 </body>
 </html>
