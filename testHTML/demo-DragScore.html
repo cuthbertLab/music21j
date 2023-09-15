@@ -1,15 +1,14 @@
 <html lang="en">
 <head>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <!-- midi.js package -->
-<script src="../build/music21.debug.js" type="application/javascript"></script>
-
+ <script src="../build/music21.debug.js" type="application/javascript"></script>
  <link rel="stylesheet" href="../css/m21.css" type="text/css" />
  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
 
 </head>
 <body>
-<h1>Click me to play!</h1>
+<h1>Create your own score!</h1>
+<h2>Double Click any Fragment to Hear it.</h2>
 <div id="dragContent">
 	<div id="themeDiv"></div>
 	<div id="dropDiv" height="800" width="1200" style="border: 2px dashed black">
@@ -43,6 +42,7 @@ function renderThemes() {
     const r = new music21.vfShow.Renderer(); // should be static method;
 
 	let dragged;
+	const dragMap = new WeakMap()
 
     for (let i = 0; i < themes.length; i++) {
         const thisTheme = themes[i];
@@ -51,12 +51,15 @@ function renderThemes() {
         myStream.autoBeam = true;
         myStream.elements = myTNStream.getElementsByClass('Measure').get(0).elements;
         myStream.timeSignature = new music21.meter.TimeSignature('4/4');
-        const $nc = myStream.createPlayableDOM();
-        $nc.data('stream', myStream);
-        const $themeDiv = $('#themeDiv');
-		$themeDiv.append($nc);
-		$nc.attr('draggable', 'true');
-		$nc.on('dragstart', e => { dragged = e.target; });
+		myStream.renderOptions.events.click = () => {};
+		myStream.renderOptions.events.dblclick = 'play';
+        const nc = myStream.createDOM();
+		dragMap.set(nc, myStream);
+        // nc.data('stream', myStream);
+        const themeDiv = document.querySelector('#themeDiv');
+		themeDiv.appendChild(nc);
+		nc.setAttribute('draggable', 'true');
+		nc.addEventListener('dragstart', e => { dragged = e.target; });
         // // here is where we create something!
         // $nc
         //     .draggable({
@@ -66,9 +69,9 @@ function renderThemes() {
         //         revert: true,
         //     })
         //     .data('stream', myStream);
-        $nc[0].ondblclick = $nc[0].onclick; // not working right now...
-        $nc[0].onclick = undefined;
-        themeDivs.push($nc);
+        // nc.addEventListener('dblclick', () => nc.playStream()); // not working right now...
+        // nc.addEventListener('click', e => {e.stopPropagation(); return false; });
+        themeDivs.push(nc);
         r.removeFormatterInformation(myStream, true); // recursive.
 
         // if (i % 4 === 3) {
@@ -76,16 +79,20 @@ function renderThemes() {
         //     // alert(nc);
         // }
     }
-    $('body').append($('<br/>'));
-    $('html').on('drop', e => console.log(e));
-    $('#dropDiv').on('drop', e => {
+    document.body.appendChild(music21.common.to_el('<br/>'));
+    document.body.addEventListener('drop', e => console.log(e));
+    document.querySelector('#dropDiv').addEventListener('drop', e => {
 		e.preventDefault();
 		e.stopPropagation();
-    	handleThemeDrop($(dragged).data('stream'));
-	}).on("dragover", e => {
+    	handleThemeDrop(dragMap.get(dragged));
+	});
+	document.querySelector('#dropDiv').addEventListener("dragover", e => {
     	// must cancel dragover even or drop never occurs.
 		e.preventDefault();
-    	e.stopPropagation();
+	});
+	document.querySelector('#dropDiv').addEventListener("dragenter", e => {
+    	// must cancel dragover even or drop never occurs.
+		e.preventDefault();
 	});
 	// {
     //     accept: '#themeDiv .streamHolding',
@@ -96,6 +103,7 @@ function renderThemes() {
 }
 
 function handleThemeDrop(containedStream) {
+	console.log('theme dropped!');
     const containedStreamCopy = containedStream.clone(true);
 
     allStream.append(containedStreamCopy);
@@ -105,20 +113,20 @@ function handleThemeDrop(containedStream) {
             allStream.get(i).renderOptions.rightBarline = 'double';
         }
     }
-    allStreamScore.replaceDOM($('#dropDiv .streamHolding'));
+    allStreamScore.replaceDOM(document.querySelector('#dropDiv .streamHolding'));
     // alert(allStream.hi);
 }
 
 function clearScore() {
     allStream.elements = [];
-    const $newSVG = allStreamScore.createPlayableDOM();
-    $('#dropDiv .streamHolding').replaceWith($newSVG[0]);
+    const newSVG = allStreamScore.createPlayableDOM();
+    document.querySelector('#dropDiv .streamHolding').replaceWith(newSVG);
 }
 
 function undoAdd() {
     allStream.elements = allStream.elements.slice(0, allStream.length - 1);
-    const $newSVG = allStreamScore.createPlayableDOM();
-    $('#dropDiv .streamHolding').replaceWith($newSVG[0]);
+    const newSVG = allStreamScore.createPlayableDOM();
+    document.querySelector('#dropDiv .streamHolding').replaceWith(newSVG);
 }
 
 let allStream;
@@ -130,9 +138,8 @@ allStreamScore.renderOptions.overriddenWidth = 600;
 allStream = new music21.stream.Part();
 allStream.renderOptions.overriddenWidth = 600;
 allStreamScore.append(allStream);
-const $newDOM = allStreamScore.createPlayableDOM();
-$('#dropSvg').replaceWith($newDOM);
-
+const newDOM = allStreamScore.createPlayableDOM();
+document.querySelector('#dropSvg').replaceWith(newDOM);
 </script>
 </body>
 </html>
