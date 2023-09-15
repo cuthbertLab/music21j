@@ -68,7 +68,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
      * @type {string}
      * @readonly
      */
-    get vexflowModifier(): "bb" | "b" | "#" | "##" | "###" | "n" | "bbb";
+    get vexflowModifier(): "b" | "bb" | "#" | "n" | "##" | "###" | "bbb";
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape

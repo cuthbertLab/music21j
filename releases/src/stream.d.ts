@@ -672,7 +672,7 @@ export declare class Stream extends base.Music21Object {
      *
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg: any, e: MouseEvent | TouchEvent): [number, number];
+    getUnscaledXYforDOM(svg: HTMLElement, e: MouseEvent | TouchEvent): [number, number];
     /**
      * return a list of [scaledX, scaledY] for
      * a svg element.
@@ -681,7 +681,7 @@ export declare class Stream extends base.Music21Object {
      * x of 1 gives 1.42857...
      *
      */
-    getScaledXYforDOM(svg: HTMLElement | SVGElement, e: MouseEvent | TouchEvent): [number, number];
+    getScaledXYforDOM(svg: HTMLElement, e: MouseEvent | TouchEvent): [number, number];
     /**
      *
      * Given a Y position find the diatonicNoteNum that a note at that position would have.
@@ -863,7 +863,7 @@ export declare class Part extends Stream {
      *
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.
      *
@@ -951,7 +951,7 @@ export declare class Score extends Stream {
      *
      * returns [diatonicNoteNum, m21Element]
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * How many systems are there? Calls numSystems() on the first part.
      */

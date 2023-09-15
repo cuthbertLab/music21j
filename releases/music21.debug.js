@@ -1,5 +1,5 @@
 /**
- * music21j version 0.14.1 built on 2023-09-14.
+ * music21j version 0.14.3 built on 2023-09-15.
  * Copyright (c) 2013-2023 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -19922,7 +19922,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
        * To be called on a button...
        */
       let useSvg = siblingSvg;
-      if (useSvg === undefined) {
+      if (!useSvg) {
         let searchParent = clickEvent.currentTarget.parentElement;
         let maxSearch = 99;
         while (maxSearch > 0 && searchParent && !useSvg) {
@@ -19930,7 +19930,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
           useSvg = searchParent.querySelector('.streamHolding');
           searchParent = searchParent.parentElement;
         }
-        if (useSvg === undefined) {
+        if (!useSvg) {
           console.log('Could not find a svg...');
           return;
         }
