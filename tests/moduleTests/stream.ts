@@ -412,8 +412,8 @@ export default function tests() {
         n.duration.type = 'half';
         s.append(n);
         const c = s.createNewDOM(100, 50);
-        assert.equal(c.attr('width'), 100, 'stored width matches');
-        assert.equal(c.attr('height'), 50, 'stored height matches');
+        assert.equal(c.getAttribute('width'), 100, 'stored width matches');
+        assert.equal(c.getAttribute('height'), 50, 'stored height matches');
     });
 
     test('music21.stream.Stream.DOM voice with no notes', assert => {
@@ -483,7 +483,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
-        document.querySelector(music21.defaults.appendLocation).appendChild(div1[0]);
+        document.querySelector(music21.defaults.appendLocation).appendChild(div1);
     });
     test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');

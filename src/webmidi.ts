@@ -84,20 +84,6 @@ declare interface NavigatorWithWebMIDI extends Navigator {
  *
  */
 
-/**
- *
- * @type {
- *     {
- *     selectedInputPort: *,
- *     access: *,
- *     jazzDownloadUrl: string,
- *     selectedOutputPort: *,
- *     storedPlugin: *,
- *     selectedJazzInterface: *,
- *     $select: jQuery|undefined
- *     }
- * }
- */
 interface WebMIDIOptions {
     selectedOutputPort: string,
     selectedInputPort: string,
@@ -355,7 +341,7 @@ interface MIDISelectorOptions {
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * Returns JQuery object containing the select tag, or undefined if Jazz cannot be loaded.
+ * Returns an HTMLSelectElement or undefined if Jazz cannot be loaded.
  */
 export function createSelector(
     where: HTMLElement,

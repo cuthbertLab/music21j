@@ -80,8 +80,6 @@ export class ScoreParser {
         const response = await fetch(url);
         const xmlText = await response.text();
         return this.scoreFromText(xmlText);
-        // // noinspection JSUnusedLocalSymbols
-        // return $.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc), dataType);
     }
 
     scoreFromText(xmlText: string): stream.Score {

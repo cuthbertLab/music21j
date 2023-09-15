@@ -99,12 +99,11 @@ export class RenderStack {
  *
  * "s" can be any type of Stream.
  *
- * "div" and "where" can be either a DOM
- * element or a jQuery object.
+ * "div" and "where" should be a DOM element.
  *
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
- * @param {HTMLElement|jQuery} [where=document.body] - where to render the stream
+ * @param {HTMLElement} [where=document.body] - where to render the stream
  * @property {div} div - div-with-svg-or-canvas element
  * @property {HTMLElement} where - HTMLElement to render onto
  * @property {Array<number>} systemBreakOffsets - where to break the systems
@@ -125,7 +124,7 @@ export class Renderer {
     vfTuplets: VFTuplet[] = [];
     // measureFormatters = [];
 
-    constructor(s: stream.Stream, div?: HTMLElement|JQuery, where?: HTMLElement|JQuery) {
+    constructor(s: stream.Stream, div?: HTMLElement, where?: HTMLElement|JQuery) {
         this.stream = s;
         this.div = coerceHTMLElement(div);
         this.where = coerceHTMLElement(where);

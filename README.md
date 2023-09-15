@@ -122,7 +122,6 @@ Thanks to the following packages (among others) for making music21j possible:
 * [Vexflow] - music notation in HTML5
 * [midicube] - audio processing of MIDI based on [MIDI.js]
 * [Jazzsoft] - plug-in for accessing MIDI in the browser in the absence of WebMIDI Api.
-* [jQuery] - easy manipulation of HTML DOM.
 * [qUnit] - testing framework
 * [jsdoc] - makes this documentation possible
 
@@ -137,7 +136,6 @@ and supported by the Music and Theater Arts section of [MIT].
 [Vexflow]:http://www.vexflow.com
 [MIDI.js]:http://mudcu.be/midi-js/
 [Jazzsoft]:http://jazz-soft.net
-[jQuery]:http://jquery.com
 [qUnit]:http://qunitjs.com
 [jsdoc]:http://usejsdoc.org
 

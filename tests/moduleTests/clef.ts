@@ -1,10 +1,7 @@
-import $ from 'jquery';
-
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/main';
 
 const { test } = QUnit;
-
 
 export default function tests() {
     test('music21.clef.Clef', assert => {
@@ -34,7 +31,7 @@ export default function tests() {
         const s = new music21.stream.Stream();
         s.clef = ac;
         s.append(n);
-        s.appendNewDOM($('body'));
+        s.appendNewDOM();
     });
     test('music21.clef clefFromString', assert => {
         const tc = music21.clef.clefFromString('treble');

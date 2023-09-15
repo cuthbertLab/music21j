@@ -2,42 +2,19 @@
  * common functions.
  * functions that are useful everywhere...
  */
-
-
-import * as $ from 'jquery';
 import defaults from './defaults';
 
-/**
- *  Many music21j functions take either JQuery or HTMLElement, but
- *  "el instanceof $" is not a good way of checking, because the copy of
- *  JQuery imported into music21j might not be the same copy loaded by a calling
- *  library or script tag.  Hence, these three little functions that coerce in one
- *  direction or another.
- */
-export function jQueryAndHTMLVersion(el?: JQuery|HTMLElement): [JQuery, HTMLElement] {
-    let $jq: JQuery;
+export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
     let htmlElement: HTMLElement;
     if (el !== undefined && (el as JQuery).jquery !== undefined) {
-        $jq = (el as JQuery);
         htmlElement = (el as JQuery)[0];
     } else if (el instanceof HTMLElement) {
         htmlElement = el;
-        $jq = $(el);
     } else {
         htmlElement = document.querySelector(defaults.appendLocation);
-        $jq = $(htmlElement);
     }
-    return [$jq, htmlElement];
+    return htmlElement;
 }
-
-export function coerceJQuery(el?: JQuery|HTMLElement): JQuery {
-    return jQueryAndHTMLVersion(el)[0];
-}
-
-export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
-    return jQueryAndHTMLVersion(el)[1];
-}
-
 
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
@@ -524,7 +501,7 @@ export function opFrac(num) {
 /**
  * Converts a string to a single element using template.
  *
- * Similar to $('<tag attributes="xyz"><b>more</b></tag>')[0]
+ * Similar to JQuery's $('<tag attributes="xyz"><b>more</b></tag>')[0]
  *
  * For security reasons <template> will not parse script
  * tags.

@@ -224,7 +224,7 @@ export class Metronome extends prebase.ProtoM21Object {
      * add a Metronome interface onto the DOM at where
      * returns a JQuery div holding the metronome.
      */
-    addDiv(where?: JQuery|HTMLElement): HTMLElement {
+    addDiv(where?: HTMLElement): HTMLElement {
         where = <HTMLElement> common.coerceHTMLElement(where);
         const tempoHolder: HTMLSpanElement = to_el(
             '<span class="tempoHolder">' + this.tempo.toString() + '</span>'

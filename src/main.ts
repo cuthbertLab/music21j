@@ -28,7 +28,6 @@
 // webpack loader for music21j.
 import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';  // to be removed when export * from is okay.
-import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
 // order below doesn't matter, but good to give a sense
@@ -142,10 +141,5 @@ export {
 };
 
 export const VERSION = '0.13.7';
-
-if (typeof window !== 'undefined') {
-    (window as any).$ = $;
-    (window as any).jQuery = $;
-}
 
 parseLoader.runConfiguration();

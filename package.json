@@ -21,7 +21,6 @@
     "/webResources"
   ],
   "dependencies": {
-    "jquery": "^3.6.1",
     "jsonpickle": "^1.1.2",
     "midicube": "^0.6.1",
     "vexflow": "^4.2.0"
