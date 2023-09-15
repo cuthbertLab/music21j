@@ -75,9 +75,9 @@ s.replaceDOM();
 
     mainSVG = document.querySelector("#mainSVG");
     msg = document.querySelector('div.editor-error .text');
+    const sandbox = document.querySelector("#sandbox");
     live_code();
 
-    const sandbox = document.querySelector("#sandbox");
     for (const evt of ['blur', 'keyup', 'paste']) {
         sandbox.addEventListener(evt, () => {
             if (timeout) {
@@ -92,9 +92,11 @@ s.replaceDOM();
 
         try {
             eval(code);
-            msg.html('').hide();
+            msg.innerHTML = '';
+            msg.style.display = 'none';
         } catch (e) {
-            msg.html(e.toString()).show();
+            msg.innerHTML = e.toString();
+            msg.style.display = 'block';
         }
     }
 </script>
