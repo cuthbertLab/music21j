@@ -2667,7 +2667,7 @@ export class Stream extends base.Music21Object {
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
     getUnscaledXYforDOM(
-        svg,
+        svg: HTMLElement,
         e: MouseEvent|TouchEvent
     ): [number, number] {
         let offset: { left: number, top: number };
@@ -2720,7 +2720,7 @@ export class Stream extends base.Music21Object {
      *
      */
     getScaledXYforDOM(
-        svg: HTMLElement|SVGElement,
+        svg: HTMLElement,
         e: MouseEvent|TouchEvent
     ): [number, number] {
         const [xPx, yPx] = this.getUnscaledXYforDOM(svg, e);
@@ -2981,7 +2981,7 @@ export class Stream extends base.Music21Object {
              * To be called on a button...
              */
             let useSvg = siblingSvg;
-            if (useSvg === undefined) {
+            if (!useSvg) {
                 let searchParent = (clickEvent.currentTarget as HTMLButtonElement).parentElement;
                 let maxSearch = 99;
                 while (
@@ -2993,7 +2993,7 @@ export class Stream extends base.Music21Object {
                     useSvg = searchParent.querySelector('.streamHolding');
                     searchParent = searchParent.parentElement;
                 }
-                if (useSvg === undefined) {
+                if (!useSvg) {
                     console.log('Could not find a svg...');
                     return;
                 }
@@ -3479,7 +3479,7 @@ export class Part extends Stream {
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
     findNoteForClick(
-        svg?: HTMLElement|SVGElement,
+        svg?: HTMLElement,
         e?: MouseEvent|TouchEvent,
         x?: number,
         y?: number,
@@ -3796,7 +3796,7 @@ export class Score extends Stream {
      * returns [diatonicNoteNum, m21Element]
      */
     findNoteForClick(
-        svg?: HTMLElement|SVGElement,
+        svg?: HTMLElement,
         e?: MouseEvent|TouchEvent,
         x?: number,
         y?: number,
