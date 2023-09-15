@@ -1,18 +1,5 @@
-/**
- * common functions.
- * functions that are useful everywhere...
- */
 /// <reference types="jquery" />
 /// <reference types="jquery" />
-/**
- *  Many music21j functions take either JQuery or HTMLElement, but
- *  "el instanceof $" is not a good way of checking, because the copy of
- *  JQuery imported into music21j might not be the same copy loaded by a calling
- *  library or script tag.  Hence, these three little functions that coerce in one
- *  direction or another.
- */
-export declare function jQueryAndHTMLVersion(el?: JQuery | HTMLElement): [JQuery, HTMLElement];
-export declare function coerceJQuery(el?: JQuery | HTMLElement): JQuery;
 export declare function coerceHTMLElement(el?: JQuery | HTMLElement): HTMLElement;
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
@@ -142,7 +129,7 @@ export declare function opFrac(num: any): any;
 /**
  * Converts a string to a single element using template.
  *
- * Similar to $('<tag attributes="xyz"><b>more</b></tag>')[0]
+ * Similar to JQuery's $('<tag attributes="xyz"><b>more</b></tag>')[0]
  *
  * For security reasons <template> will not parse script
  * tags.
@@ -154,4 +141,8 @@ export declare function opFrac(num: any): any;
  * https://stackoverflow.com/questions/494143/
  */
 export declare function to_el(input_string: string): HTMLElement;
+/**
+ * Sleep for some time in milliseconds.
+ */
+export declare function sleep(ms: number): Promise<number>;
 //# sourceMappingURL=common.d.ts.map

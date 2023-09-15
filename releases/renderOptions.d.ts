@@ -4,8 +4,8 @@
  *
  * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * Options for rendering a stream
  *

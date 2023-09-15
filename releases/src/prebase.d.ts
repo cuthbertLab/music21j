@@ -1,7 +1,7 @@
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit.
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
  *
  */
 /**

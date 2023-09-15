@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
@@ -47,23 +47,20 @@ export declare class RenderStack {
  *
  * "s" can be any type of Stream.
  *
- * "div" and "where" can be either a DOM
- * element or a jQuery object.
+ * "div" and "where" should be a DOM element.
  *
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
- * @param {Node|jQuery} [where=document.body] - where to render the stream
+ * @param {HTMLElement} [where=document.body] - where to render the stream
  * @property {div} div - div-with-svg-or-canvas element
- * @property {jQuery} $div - jQuery div or canvas element
- * @property {jQuery} $where - jQuery element to render onto
+ * @property {HTMLElement} where - HTMLElement to render onto
  * @property {Array<number>} systemBreakOffsets - where to break the systems
  */
 export declare class Renderer {
     stream: stream.Stream;
     rendererType: string;
     div: HTMLElement;
-    $div: JQuery;
-    $where: JQuery;
+    where: HTMLElement;
     activeFormatter: VFFormatter;
     _vfRenderer: VFRenderer;
     _ctx: VFSVGContext;
@@ -72,7 +69,7 @@ export declare class Renderer {
     vfTies: VFStaveTie[];
     systemBreakOffsets: number[];
     vfTuplets: VFTuplet[];
-    constructor(s: any, div?: HTMLElement | JQuery, where?: HTMLElement | JQuery);
+    constructor(s: stream.Stream, div?: HTMLElement, where?: HTMLElement | JQuery);
     get vfRenderer(): VFRenderer;
     set vfRenderer(vfr: VFRenderer);
     get ctx(): VFSVGContext;

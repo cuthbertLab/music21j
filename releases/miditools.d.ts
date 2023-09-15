@@ -3,7 +3,7 @@
  * music21/miditools -- A collection of tools for midi.
  *
  * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
  *
  * @author Michael Scott Asato Cuthbert
  *

@@ -1,5 +1,3 @@
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 import * as prebase from './prebase';
 import * as base from './base';
 import * as duration from './duration';
@@ -38,12 +36,12 @@ export declare class Metronome extends prebase.ProtoM21Object {
     flash: boolean;
     tempoRanges: number[];
     tempoIncreases: number[];
-    $metronomeDiv: JQuery;
+    metronomeDiv: HTMLDivElement;
     constructor(tempoInt?: number);
     get tempo(): number;
     set tempo(t: number);
     get beatLength(): number;
-    _silentFlash(flashColor: any): void;
+    _silentFlash(flashColor: string): void;
     /**
      * Play a note (a higher one on the downbeat) and start the metronome chirping.
      */
@@ -78,7 +76,7 @@ export declare class Metronome extends prebase.ProtoM21Object {
      * add a Metronome interface onto the DOM at where
      * returns a JQuery div holding the metronome.
      */
-    addDiv(where?: JQuery | HTMLElement): JQuery;
+    addDiv(where?: HTMLElement): HTMLElement;
 }
 declare class TempoText {
     text: string;
@@ -95,8 +93,8 @@ export declare class MetronomeMark extends base.Music21Object {
     protected _number: number;
     numberImplicit: boolean;
     protected _tempoText: TempoText;
-    textImplicit: any;
-    protected _referent: any;
+    textImplicit: boolean;
+    protected _referent: duration.Duration;
     parentheses: boolean;
     constructor({ text, number, referent, parentheses, }?: MetronomeMarkOptions);
     _updateNumberFromText(): void;
@@ -108,9 +106,9 @@ export declare class MetronomeMark extends base.Music21Object {
      */
     get number(): number;
     set number(value: number);
-    get referent(): any;
-    set referent(value: any);
-    _getDefaultNumber(tempoText: any): any;
+    get referent(): duration.Duration | undefined;
+    set referent(value: string | number | duration.Duration | base.Music21Object);
+    _getDefaultNumber(tempoText: string | TempoText): number;
     _getDefaultText(n: number | string, spread?: number): string;
 }
 export {};

@@ -1,24 +1,3 @@
-/**
- * music21j -- Javascript reimplementation of Core music21p features.
- * music21/stream -- Streams -- objects that hold other Music21Objects
- *
- * Does not implement the full features of music21p Streams by a long shot...
- *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * powerful stream module, See music21.stream namespace
- *
- * Streams are powerful music21 objects that hold Music21Object collections,
- * such as music21.note.Note or music21.chord.Chord objects.
- *
- * Understanding the {@link Stream} object is of fundamental
- * importance for using music21.  Definitely read the music21(python) tutorial
- * on using Streams before proceeding
- *
- */
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 import { Stave as VFStave } from 'vexflow';
 import { Music21Exception } from './exceptions21';
 import * as base from './base';
@@ -86,6 +65,7 @@ interface MakeAccidentalsParams {
 export declare class Stream extends base.Music21Object {
     static get className(): string;
     _offsetDict: WeakMap<base.Music21Object, number>;
+    _svgEventMap: WeakMap<HTMLElement, Record<keyof HTMLElementEventMap, Array<(e: any) => any>>>;
     _elements: base.Music21Object[];
     isSorted: boolean;
     isStream: boolean;
@@ -108,9 +88,9 @@ export declare class Stream extends base.Music21Object {
      * will change the stream. Used in editableAccidentalDOM, among other places.
      *
      *      var can = s.appendNewDOM();
-     *      $(can).on('click', s.DOMChangerFunction);
+     *      can.addEventListener('click', () => s.DOMChangerFunction());
      */
-    DOMChangerFunction: (e: MouseEvent | TouchEvent | JQuery.MouseEventBase) => base.Music21Object | undefined;
+    DOMChangerFunction: (e: MouseEvent | TouchEvent) => base.Music21Object | undefined;
     storedVexflowStave: VFStave;
     activeNote: note.GeneralNote;
     _clef: any;
@@ -248,7 +228,6 @@ export declare class Stream extends base.Music21Object {
      *
      * @param elOrElList - element
      * or list of elements to append
-     * @returns {this}
      */
     append(elOrElList: base.Music21Object | base.Music21Object[]): this;
     sort(): this;
@@ -343,8 +322,8 @@ export declare class Stream extends base.Music21Object {
     /**
      *
      */
-    set(index: any, newEl: any): this;
-    setElementOffset(el: any, value: any, addElement?: boolean): void;
+    set(index: number, newEl: base.Music21Object): this;
+    setElementOffset(el: base.Music21Object, value: number, addElement?: boolean): void;
     elementOffset(element: any, stringReturns?: boolean): number;
     /**
      * Takes a stream and places all of its elements into
@@ -360,7 +339,7 @@ export declare class Stream extends base.Music21Object {
      * @param {Object} [options]
      * @returns {Stream}
      */
-    makeMeasures(options?: any): any;
+    makeMeasures(options?: any): Stream;
     containerInHierarchy(el: base.Music21Object, { setActiveSite }?: {
         setActiveSite?: boolean;
     }): Stream | undefined;
@@ -479,7 +458,7 @@ export declare class Stream extends base.Music21Object {
      *
      *  elStream is a place to get el's offset from.  Otherwise, activeSite is used
      */
-    playingWhenAttacked(el: base.Music21Object, elStream?: any): base.Music21Object | undefined;
+    playingWhenAttacked(el: base.Music21Object, elStream?: Stream): base.Music21Object | undefined;
     /**
         A method to set and provide accidentals given various conditions and contexts.
 
@@ -545,7 +524,7 @@ export declare class Stream extends base.Music21Object {
      * @param {boolean} [preserveEvents=false]
      * @returns {this}
      */
-    resetRenderOptions(recursive: any, preserveEvents: any): this;
+    resetRenderOptions(recursive?: boolean, preserveEvents?: boolean): this;
     write(format?: string): string;
     /**
      * Uses music21.vfShow.Renderer to render Vexflow onto an
@@ -557,7 +536,7 @@ export declare class Stream extends base.Music21Object {
      *
      * Takes in a canvas or the div surrounding an SVG object
      */
-    renderVexflow(where?: JQuery | HTMLElement): vfShow.Renderer;
+    renderVexflow(where?: HTMLDivElement | HTMLCanvasElement): vfShow.Renderer;
     /**
      * Estimate the stream height for the Stream.
      *
@@ -586,7 +565,7 @@ export declare class Stream extends base.Music21Object {
      * or (2) null if there are no gaps.
      * @returns {object}
      */
-    findGaps(): Stream;
+    findGaps(): Stream | null;
     /**
      * Returns True if there are no gaps between the lowest offset and the highest time.
      * Otherwise returns False
@@ -620,7 +599,7 @@ export declare class Stream extends base.Music21Object {
      *
      * elementType can be `svg` (default) or `canvas`
      *
-     * returns a $div encompassing either the SVG or Canvas element.
+     * returns an HTMLDivElement encompassing either the SVG or Canvas element.
      *
      * if width is undefined, will use `this.estimateStaffLength()`
      *     + `this.renderOptions.staffPadding`
@@ -629,47 +608,46 @@ export declare class Stream extends base.Music21Object {
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
      */
-    createNewDOM(width?: number | string, height?: number | string, elementType?: string): JQuery<HTMLDivElement> | JQuery<HTMLCanvasElement>;
+    createNewDOM(width?: number | string, height?: number | string, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Creates a rendered, playable svg where clicking plays it.
      *
      * Called from appendNewDOM() etc.
      *
      */
-    createPlayableDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): JQuery;
+    createPlayableDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Creates a new svg and renders vexflow on it
      *
      * @param {number|string|undefined} [width]
      * @param {number|string|undefined} [height]
      * @param {string} elementType - what type of element svg or canvas, default = svg
-     * @returns {JQuery} canvas or SVG
+     * @returns {HTMLDivElement|HTMLCanvasElement} Div containing SVG or the Canvas element
      */
-    createDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): JQuery;
+    createDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
      *
-     * @param {JQuery|HTMLElement} [appendElement=document.body] - where to place the svg
+     * @param {HTMLElement} [where=document.body] - where to place the svg
      * @param {number|string} [width]
      * @param {number|string} [height]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {SVGElement|HTMLElement} svg (not the jQuery object --
-     * this is a difference with other routines and should be fixed. TODO: FIX)
+     * @returns {HTMLDivElement|HTMLCanvasElement} svg or canvas
      *
      */
-    appendNewDOM(appendElement?: JQuery | HTMLElement | string, width?: number | string, height?: number | string, elementType?: string): HTMLElement;
+    appendNewDOM(where?: HTMLElement | string, width?: number | string, height?: number | string, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Replaces a particular Svg with a new rendering of one.
      *
      * Note that if 'where' is empty, will replace all svg elements on the page.
      *
-     * @param {JQuery|HTMLElement} [where] - the canvas or SVG to replace or
+     * @param {HTMLElement} [where] - the canvas or SVG to replace or
      *     a container holding the canvas(es) to replace.
      * @param {boolean} [preserveSvgSize=false]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {JQuery} the svg
+     * @returns {HTMLDivElement} the svg
      */
-    replaceDOM(where?: JQuery | HTMLElement, preserveSvgSize?: boolean, elementType?: string): JQuery;
+    replaceDOM(where?: HTMLElement, preserveSvgSize?: boolean, elementType?: string): HTMLElement;
     /**
      * Set the type of interaction on the svg based on
      *    - Stream.renderOptions.events.click
@@ -682,7 +660,7 @@ export declare class Stream extends base.Music21Object {
      *    - customFunction (will receive event as a first variable; should set up a way to
      *                    find the original stream; var s = this; var f = function () { s...}
      */
-    setRenderInteraction(where: JQuery | HTMLElement): this;
+    setRenderInteraction(where: HTMLDivElement | HTMLCanvasElement): this;
     /**
      *
      * Recursively search downward for the closest storedVexflowStave...
@@ -694,7 +672,7 @@ export declare class Stream extends base.Music21Object {
      *
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg: any, evt: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getUnscaledXYforDOM(svg: any, e: MouseEvent | TouchEvent): [number, number];
     /**
      * return a list of [scaledX, scaledY] for
      * a svg element.
@@ -703,7 +681,7 @@ export declare class Stream extends base.Music21Object {
      * x of 1 gives 1.42857...
      *
      */
-    getScaledXYforDOM(svg: HTMLElement | SVGElement | JQuery, e: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getScaledXYforDOM(svg: HTMLElement | SVGElement, e: MouseEvent | TouchEvent): [number, number];
     /**
      *
      * Given a Y position find the diatonicNoteNum that a note at that position would have.
@@ -723,7 +701,7 @@ export declare class Stream extends base.Music21Object {
      * @returns {this}
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: any, systemIndex?: number): this;
+    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Stream;
     /**
      *
      * Return the note (or chord or rest) at pixel X (or within allowablePixels [default 10])
@@ -752,16 +730,16 @@ export declare class Stream extends base.Music21Object {
      * Return a list of [diatonicNoteNum, closestXNote]
      * for an event (e) called on the svg (svg)
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement | JQuery, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLDivElement | HTMLCanvasElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * Change the pitch of a note given that it has been clicked and then
      * call changedCallbackFunction and return it
      */
-    noteChanged(clickedDiatonicNoteNum: number, foundNote: note.Note, svg: SVGElement | HTMLElement): any;
+    noteChanged(clickedDiatonicNoteNum: number, foundNote: note.Note, svg: HTMLDivElement | HTMLCanvasElement): any;
     /**
      * Redraws an svgDiv, keeping the events of the previous svg.
      */
-    redrawDOM(svg: JQuery | HTMLElement | SVGElement): JQuery;
+    redrawDOM(svg: HTMLDivElement | HTMLCanvasElement): HTMLDivElement | HTMLCanvasElement;
     /**
      * Renders a stream on svg with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
@@ -769,25 +747,25 @@ export declare class Stream extends base.Music21Object {
     editableAccidentalDOM(width?: number, height?: number, { minAccidental, maxAccidental, }?: {
         minAccidental?: number;
         maxAccidental?: number;
-    }): JQuery<HTMLDivElement>;
+    }): HTMLDivElement;
     /**
      * Returns an accidental toolbar from minAccidental to maxAccidental.
      *
-     * If $siblingSvg is defined then this toolbar alters the notes in that
+     * If siblingSvg is defined then this toolbar alters the notes in that
      * toolbar.
      */
-    getAccidentalToolbar(minAccidental?: number, maxAccidental?: number, $siblingSvg?: JQuery): JQuery<HTMLDivElement>;
+    getAccidentalToolbar(minAccidental?: number, maxAccidental?: number, siblingSvg?: HTMLDivElement | HTMLCanvasElement): HTMLDivElement;
     /**
-     * get a JQuery div containing two buttons -- play and stop
+     * get a Div element containing two buttons -- play and stop
      */
-    getPlayToolbar(): JQuery<HTMLDivElement>;
+    getPlayToolbar(): HTMLDivElement;
     /**
      * Begins a series of bound events to the window that makes it
      * so that on resizing the stream is redrawn and reflowed to the
      * new size.
      *bt
      */
-    windowReflowStart($jSvg: JQuery): this;
+    windowReflowStart(svg: HTMLDivElement | HTMLCanvasElement): this;
     /**
      * Does this stream have a {@link Voice} inside it?
      */
@@ -885,7 +863,7 @@ export declare class Part extends Stream {
      *
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.
      *
@@ -894,7 +872,7 @@ export declare class Part extends Stream {
      * @returns {Stream}
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: any, systemIndex?: any): any;
+    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Stream;
 }
 /**
  * Scores with multiple parts
@@ -920,7 +898,7 @@ export declare class Score extends Stream {
      * @returns {Stream} usually a Measure
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: any, systemIndex?: number): any;
+    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Stream;
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions
      *
@@ -963,7 +941,7 @@ export declare class Score extends Stream {
      * @param  {number} y the scaled Y
      * @return Array<number>   systemIndex, scaledYRelativeToSystem
      */
-    systemIndexAndScaledY(y: any): number[];
+    systemIndexAndScaledY(y: number): number[];
     /**
      * Score object
      *
@@ -973,7 +951,7 @@ export declare class Score extends Stream {
      *
      * returns [diatonicNoteNum, m21Element]
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * How many systems are there? Calls numSystems() on the first part.
      */
