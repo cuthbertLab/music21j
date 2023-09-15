@@ -57,7 +57,7 @@ import { debug } from './debug';
 import * as common from './common';
 import * as miditools from './miditools';
 import defaults from './defaults';
-import {to_el} from './common';
+import {sleep, to_el} from './common';
 
 type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
 
@@ -321,7 +321,9 @@ export function selectionChanged(e: Event) {
             port.close();
         }
     });
-    webmidi.access.onstatechange = storedStateChange;
+    sleep(300).then(() => {
+        webmidi.access.onstatechange = storedStateChange;
+    });
     return false;
 }
 
