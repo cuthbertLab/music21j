@@ -2674,10 +2674,10 @@ export class Stream extends base.Music21Object {
         if (svg === undefined) {
             offset = { left: 0, top: 0 };
         } else {
-            const { left, top } = svg.getBoundingClientRect();
+            const bound = svg.getBoundingClientRect();
             offset = {
-                left: left + document.body.scrollLeft,
-                top: top + document.body.scrollTop,
+                left: bound.left,
+                top: bound.top,
             };
         }
 
@@ -2686,24 +2686,17 @@ export class Stream extends base.Music21Object {
          */
         let xClick: number = 0;
         let yClick: number = 0;
-        if ((e as MouseEvent).pageX !== undefined
-                && (e as MouseEvent).pageY !== undefined) {
+        if ((e as MouseEvent).clientX !== undefined) {
             // MouseEvent or JQuery.MouseEventBase without instanceof checking.
-            xClick = (e as MouseEvent).pageX;
-            yClick = (e as MouseEvent).pageY;
+            xClick = (e as MouseEvent).clientX;
+            yClick = (e as MouseEvent).clientY;
         } else if (
             typeof TouchEvent !== 'undefined' && e instanceof TouchEvent
             && e.touches[0] !== undefined
         ) {
             const touch1 = (e as TouchEvent).touches[0];
-            xClick
-                = touch1.clientX
-                + document.body.scrollLeft
-                + document.documentElement.scrollLeft;
-            yClick
-                = touch1.clientY
-                + document.body.scrollTop
-                + document.documentElement.scrollTop;
+            xClick = touch1.clientX;
+            yClick = touch1.clientY;
         }
 
         const xPx = xClick - offset.left;
