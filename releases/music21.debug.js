@@ -1,5 +1,5 @@
 /**
- * music21j version 0.14.3 built on 2023-09-15.
+ * music21j version 0.14.4 built on 2023-09-16.
  * Copyright (c) 2013-2023 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -19672,13 +19672,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
         top: 0
       };
     } else {
-      const {
-        left,
-        top
-      } = svg.getBoundingClientRect();
+      const bound = svg.getBoundingClientRect();
       offset = {
-        left: left + document.body.scrollLeft,
-        top: top + document.body.scrollTop
+        left: bound.left,
+        top: bound.top
       };
     }
     /*
@@ -19686,14 +19683,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_8__.Music21Object {
      */
     let xClick = 0;
     let yClick = 0;
-    if (e.pageX !== undefined && e.pageY !== undefined) {
+    if (e.clientX !== undefined) {
       // MouseEvent or JQuery.MouseEventBase without instanceof checking.
-      xClick = e.pageX;
-      yClick = e.pageY;
+      xClick = e.clientX;
+      yClick = e.clientY;
     } else if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent && e.touches[0] !== undefined) {
       const touch1 = e.touches[0];
-      xClick = touch1.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-      yClick = touch1.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+      xClick = touch1.clientX;
+      yClick = touch1.clientY;
     }
     const xPx = xClick - offset.left;
     const yPx = yClick - offset.top;
