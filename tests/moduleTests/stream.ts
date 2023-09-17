@@ -128,7 +128,7 @@ export default function tests() {
     test('music21.stream.Stream remove recursive', assert => {
         const p = music21.tinyNotation.TinyNotation('4/4 c1 d1 e1 f1');
         assert.equal(p.flatten().notes.length, 4);
-        const d = p.recurse().notes.get(1);
+        const d = p.recurse().notes.get(1) as music21.note.Note;
         assert.equal(d.name, 'D');
         p.remove(d, {recurse: true});
         assert.equal(p.flatten().notes.length, 3);
@@ -483,7 +483,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
-        document.querySelector(music21.defaults.appendLocation).appendChild(div1);
+        globalThis.document.querySelector(music21.defaults.appendLocation).appendChild(div1);
     });
     test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');

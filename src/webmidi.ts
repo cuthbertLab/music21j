@@ -70,10 +70,6 @@ declare interface Jazz extends HTMLObjectElement {
     MidiInList: () => string[],
 }
 
-declare interface NavigatorWithWebMIDI extends Navigator {
-    requestMIDIAccess?: Function,
-}
-
 /**
  * @typedef {Object} Jazz
  * @extends HTMLObjectElement
@@ -368,13 +364,13 @@ export function createSelector(
     }
     webmidi.select = newSelect;
 
-    if ((<NavigatorWithWebMIDI> navigator).requestMIDIAccess === undefined) {
+    if (navigator.requestMIDIAccess === undefined) {
         createJazzSelector(newSelect, params);
     } else {
         if (!existingMidiSelect) {
             newSelect.addEventListener('change', e => selectionChanged(e));
         }
-        (<NavigatorWithWebMIDI> navigator).requestMIDIAccess().then(
+        navigator.requestMIDIAccess().then(
             access => {
                 webmidi.access = access;
                 populateSelect();

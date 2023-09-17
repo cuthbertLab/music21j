@@ -301,10 +301,10 @@ export default function tests() {
         const p = music21.tinyNotation.TinyNotation('4/4 f#4 e4 f#4');
         const m = p.getElementsByClass('Measure').get(0) as music21.stream.Measure;
         m.insert(0, new music21.key.Key('G'));
-        p.recurse().notes.last().pitch.accidental.displayStatus = false;
+        (p.recurse().notes.last() as music21.note.Note).pitch.accidental.displayStatus = false;
         p.makeAccidentals({inPlace: true, overrideStatus: true});
-        assert.equal(p.recurse().notes.first().pitch.accidental.displayStatus, false);
-        assert.equal(p.recurse().notes.last().pitch.accidental.displayStatus, false);
+        assert.equal((p.recurse().notes.first() as music21.note.Note).pitch.accidental.displayStatus, false);
+        assert.equal((p.recurse().notes.last() as music21.note.Note).pitch.accidental.displayStatus, false);
     });
 
     test('music21.pitch.updateAccidentalDisplay respects displayType', assert => {
