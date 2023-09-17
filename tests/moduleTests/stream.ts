@@ -483,7 +483,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
-        document.querySelector(music21.defaults.appendLocation).appendChild(div1);
+        globalThis.document.querySelector(music21.defaults.appendLocation).appendChild(div1);
     });
     test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');
