@@ -666,8 +666,10 @@ export class Renderer {
                         activeBeamGroupNotes.push(n.activeVexflowNote);
                     }
                     if (eighthNoteBeam.type === 'stop') {
-                        const vfBeam = new VFBeam(activeBeamGroupNotes, false);
-                        this.beamGroups.push(vfBeam);
+                        if (activeBeamGroupNotes.length > 1) {
+                            const vfBeam = new VFBeam(activeBeamGroupNotes, false);
+                            this.beamGroups.push(vfBeam);
+                        }
                         activeBeamGroupNotes = [];
                     }
                 }

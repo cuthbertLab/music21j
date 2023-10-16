@@ -350,7 +350,7 @@ export class TimeSignature extends base.Music21Object {
                 beamType = 'stop';
                 if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
                     beamType = 'partial-left';
-                } else if (beamPrevious && beamPrevious.getTypeByNumber(beamNumber) === 'stop') {
+                } else if (beamPrevious && ['stop', 'partial-left'].includes(beamPrevious.getTypeByNumber(beamNumber))) {
                     beamsList[i] = undefined;
                 }
             } else if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
