@@ -68,10 +68,9 @@ export class Accidental extends prebase.ProtoM21Object {
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
-     * @param {number|string} accName - the name, number, or modifier to set
-     * @returns {undefined}
+     * accName - the name, number, or modifier to set
      */
-    set(accName: number|string) {
+    set(accName: number|string): void {
         if (typeof accName === 'string') {
             accName = accName.toLowerCase();
         }

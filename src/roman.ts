@@ -95,10 +95,10 @@ export const functionalityScores = {
  *
  * N.B. this is NOT where abbreviations get expanded
  *
- * @param  {string} shorthand string of a figure w/o roman to parse
- * @return {Array<string>}           array of shorthands
+ * shorthand is a string of a figure w/o roman to parse
+ * returns an array of shorthands
  */
-export function expandShortHand(shorthand) {
+export function expandShortHand(shorthand: string): string[] {
     shorthand = shorthand.replace('/', '');
     if (shorthand.match(/[b-]$/)) {
         shorthand += '3';
@@ -204,7 +204,7 @@ export class RomanNumeral extends harmony.Harmony {
 
     // do not set up initial values here because super is not first.
     _parsingComplete: boolean;
-    primaryFigure;
+    primaryFigure: string;
     secondaryRomanNumeral: RomanNumeral;
     secondaryRomanNumeralKey: key.Key;
     pivotChord;
@@ -215,9 +215,9 @@ export class RomanNumeral extends harmony.Harmony {
     frontAlterationString: string;
     frontAlterationTransposeInterval: interval.Interval;
     frontAlterationAccidental: pitch.Accidental;
-    romanNumeralAlone;
-    quality;
-    impliedQuality;
+    romanNumeralAlone: string;
+    quality: string;
+    impliedQuality: string;
     impliedScale: key.Key;
     scaleOffset: interval.Interval;
     useImpliedScale: boolean;
@@ -304,7 +304,7 @@ export class RomanNumeral extends harmony.Harmony {
     }
 
     _parseFigure() {
-        let workingFigure;
+        let workingFigure: string;
         let useScale = this.impliedScale;
         if (!this.useImpliedScale) {
             useScale = this.key;
@@ -350,10 +350,10 @@ export class RomanNumeral extends harmony.Harmony {
         }
     }
 
-    _parseFrontAlterations(workingFigure) {
+    _parseFrontAlterations(workingFigure: string): string {
         let frontAlterationString = '';
-        let frontAlterationTransposeInterval;
-        let frontAlterationAccidental;
+        let frontAlterationTransposeInterval: interval.Interval;
+        let frontAlterationAccidental: pitch.Accidental;
         const _alterationRegex = /^(b+|-+|#+)/;
         const match = _alterationRegex.exec(workingFigure);
         if (match != null) {
@@ -376,7 +376,7 @@ export class RomanNumeral extends harmony.Harmony {
         return workingFigure;
     }
 
-    _correctBracketedPitches() {
+    _correctBracketedPitches(): void {
         for (const innerAlteration of this.bracketedAlterations) {
             const [alterNotation, chordStep] = innerAlteration;
             const alterPitch = this.getChordStep(chordStep);
@@ -394,7 +394,7 @@ export class RomanNumeral extends harmony.Harmony {
         }
     }
 
-    _setImpliedQualityFromString(workingFigure) {
+    _setImpliedQualityFromString(workingFigure: string): string {
         let impliedQuality = '';
         if (workingFigure.startsWith('o')) {
             impliedQuality = 'diminished';
@@ -426,7 +426,7 @@ export class RomanNumeral extends harmony.Harmony {
         return workingFigure;
     }
 
-    _fixMinorVIandVII(useScale) {
+    _fixMinorVIandVII(useScale): void {
         if (useScale.mode !== 'minor') {
             return;
         }
@@ -459,7 +459,7 @@ export class RomanNumeral extends harmony.Harmony {
         );
     }
 
-    _parseRNAloneAmidstAug6(workingFigure, useScale) {
+    _parseRNAloneAmidstAug6(workingFigure: string, useScale): [string, any] {
         let romanNumeralAlone = '';
         const _romanNumeralAloneRegex = /^(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)/;
         const _augmentedSixthRegex = /^(It|Ger|Fr|Sw)/;
@@ -501,11 +501,9 @@ export class RomanNumeral extends harmony.Harmony {
 
     /**
      * get romanNumeral - return either romanNumeralAlone (II) or with frontAlterationAccidental (#II)
-     *
-     * @return {string}  new romanNumeral;
      */
 
-    get romanNumeral() {
+    get romanNumeral(): string {
         if (this.frontAlterationAccidental === undefined) {
             return this.romanNumeralAlone;
         } else {
@@ -604,7 +602,7 @@ export class RomanNumeral extends harmony.Harmony {
      * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
      *
      */
-    _updatePitches() {
+    _updatePitches(): void {
         let useScale;
         if (this.secondaryRomanNumeralKey !== undefined) {
             useScale = this.secondaryRomanNumeralKey;
@@ -682,7 +680,7 @@ export class RomanNumeral extends harmony.Harmony {
         this._correctBracketedPitches();
     }
 
-    bassScaleDegreeFromNotation(notationObject) {
+    bassScaleDegreeFromNotation(notationObject): number {
         const c = new pitch.Pitch('C3');
         const cDNN = c.diatonicNoteNum; // always 22
         const pitches = [c];
@@ -710,7 +708,7 @@ export class RomanNumeral extends harmony.Harmony {
         return bassSD;
     }
 
-    _matchAccidentalsToQuality(impliedQuality) {
+    _matchAccidentalsToQuality(impliedQuality: string): void {
         const correctSemitones = this._findSemitoneSizeForQuality(
             impliedQuality
         );
@@ -769,7 +767,7 @@ export class RomanNumeral extends harmony.Harmony {
                 useScale,
             );
             this.secondaryRomanNumeral = secondaryRomanNumeral;
-            let secondaryMode;
+            let secondaryMode: string;
             if (secondaryRomanNumeral.quality === 'minor') {
                 secondaryMode = 'minor';
             } else if (secondaryRomanNumeral.quality === 'major') {
@@ -789,7 +787,7 @@ export class RomanNumeral extends harmony.Harmony {
         return [workingFigure, useScale];
     }
 
-    _parseOmittedSteps(workingFigure) {
+    _parseOmittedSteps(workingFigure: string): string {
         const omittedSteps = [];
         const rx = /\[no(\d+)]s*/;
         let match = rx.exec(workingFigure);
@@ -805,7 +803,7 @@ export class RomanNumeral extends harmony.Harmony {
         return workingFigure;
     }
 
-    _parseBracketedAlterations(workingFigure) {
+    _parseBracketedAlterations(workingFigure: string): string {
         const bracketedAlterations = this.bracketedAlterations;
         const rx =/\[(b+|-+|#+)(\d+)]/;
         let match = rx.exec(workingFigure);
@@ -819,8 +817,8 @@ export class RomanNumeral extends harmony.Harmony {
         return workingFigure;
     }
 
-    _findSemitoneSizeForQuality(impliedQuality) {
-        let correctSemitones;
+    _findSemitoneSizeForQuality(impliedQuality: string): number[] {
+        let correctSemitones: number[];
         if (impliedQuality === 'major') {
             correctSemitones = [4, 7];
         } else if (impliedQuality === 'minor') {
@@ -873,7 +871,7 @@ export class RomanNumeral extends harmony.Harmony {
                 inversionName = ' (second inversion)';
             }
         }
-        let fullChordName;
+        let fullChordName: string;
         let connector = ' in ';
         let suffix = '';
         if (displayType === 'roman') {

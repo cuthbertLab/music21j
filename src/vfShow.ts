@@ -10,11 +10,15 @@
 
 import {
     BarlineType as VFBarlineType, Beam as VFBeam,
-    Formatter as VFFormatter, Fraction as VFFraction, Renderer as VFRenderer, 
-    Stave as VFStave, StaveConnector as VFStaveConnector, StaveNote as VFStaveNote, 
+    Formatter as VFFormatter, Fraction as VFFraction, Renderer as VFRenderer,
+    type RendererBackends as VFRendererBackends,
+    Stave as VFStave, StaveConnector as VFStaveConnector,
+    type StaveConnectorType as VFStaveConnectorType,
+    StaveNote as VFStaveNote,
     StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote,
     Tuplet as VFTuplet, Voice as VFVoice,
 } from 'vexflow';
+import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 
 import { debug } from './debug';
 import * as clef from './clef';
@@ -26,6 +30,8 @@ import {coerceHTMLElement} from './common';
 // imports for typechecking only
 import type * as note from './note';
 import type * as renderOptions from './renderOptions';
+import type {Tuplet} from './duration';
+import {StaveConnector} from './types';
 
 const barlineMap = {
     single: 'SINGLE',
@@ -131,7 +137,7 @@ export class Renderer {
     }
 
     get vfRenderer(): VFRenderer {
-        let backend;
+        let backend: VFRendererBackends;
         if (this.rendererType === 'canvas') {
             backend = VFRenderer.Backends.CANVAS;
         } else {
@@ -305,7 +311,7 @@ export class Renderer {
                 firstVoiceCopy.insert(el.offset, el);
             }
             const rendOp = m.renderOptions; // get render options from Measure;
-            let stave;
+            let stave: VFStave;
             for (const [i, voiceStream] of Array.from(m.getElementsByClass('Voice')).entries()) {
                 let voiceToRender = <stream.Voice> voiceStream;
                 if (i === 0) {
@@ -628,7 +634,7 @@ export class Renderer {
             for (let i = 0; i < vf_voices.length; i++) {
                 const vf_voice = vf_voices[i];
                 const associatedStream = stack.voiceToStreamMapping.get(vf_voice);
-                let beatGroups;
+                let beatGroups: VFFraction[];
                 if (
                     associatedStream !== undefined
                     && associatedStream.getSpecialContext('timeSignature') !== undefined
@@ -766,7 +772,7 @@ export class Renderer {
         }
 
         if (displayClef) {
-            let ottava;
+            let ottava: string;
             const size = 'default';
             if (sClef.octaveChange === 1) {
                 ottava = '8va';
@@ -883,7 +889,7 @@ export class Renderer {
         // runs on a flat stream, returns a list of voices...
         const notes = [];
         const vfTuplets = [];
-        let activeTuplet;
+        let activeTuplet: Tuplet;
         let activeTupletLength = 0.0;
         let activeTupletVexflowNotes = [];
         let sClef = s.getSpecialContext('clef') || s.getContextByClass('Clef');
@@ -976,7 +982,13 @@ export class Renderer {
      * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
      */
     vexflowLyrics(s?: stream.Stream, stave?: VFStave, depth: number=0): VFTextNote[] {
-        const getTextNote = (text, font, d, lyricObj=undefined, line: number=11) => {
+        const getTextNote = (
+            text: string,
+            font: VFFontInfo,
+            d: duration.Duration,
+            lyricObj: note.Lyric = undefined,
+            line: number = 11
+        ): VFTextNote => {
             // console.log(text, font, d);
             // noinspection TypeScriptValidateJSTypes
             const t1 = new VFTextNote({
@@ -1122,7 +1134,7 @@ export class Renderer {
         return vfv;
     }
 
-    staffConnectorsMap(connectorType) {
+    staffConnectorsMap(connectorType: StaveConnector): VFStaveConnectorType  {
         const connectorMap = {
             brace: VFStaveConnector.type.BRACE,
             single: VFStaveConnector.type.SINGLE,
@@ -1214,20 +1226,17 @@ export class Renderer {
      * each {@link Music21Object} -- see `applyFormatterInformationToNotes`
      *
      * You might want to remove this information; this routine does that.
-     *
-     * @param {Stream} s - can have parts, measures, etc.
-     * @param {boolean} [recursive=false]
      */
-    removeFormatterInformation(s, recursive=false) {
+    removeFormatterInformation(s: stream.Stream, recursive: boolean = false): void {
         s.storedVexflowStave = undefined;
         for (const el of s) {
-            el.x = undefined;
-            el.y = undefined;
-            el.width = undefined;
-            el.systemIndex = undefined;
-            el.activeVexflowNote = undefined;
+            (el as any).x = undefined;
+            (el as any).y = undefined;
+            (el as any).width = undefined;
+            (el as any).systemIndex = undefined;
+            (el as any).activeVexflowNote = undefined;
             if (recursive && el.isClassOrSubclass('Stream')) {
-                this.removeFormatterInformation(el, recursive);
+                this.removeFormatterInformation((<stream.Stream><any> el), recursive);
             }
         }
     }
@@ -1245,7 +1254,7 @@ export class Renderer {
      *
      * Also sets s.storedVexflowStave to stave.
      */
-    applyFormatterInformationToNotes(stave: VFStave, s?: stream.Stream, formatter?: VFFormatter) {
+    applyFormatterInformationToNotes(stave: VFStave, s?: stream.Stream, formatter?: VFFormatter): void {
         if (s === undefined) {
             s = this.stream;
         }

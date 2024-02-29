@@ -104,7 +104,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
 
         let token = tokens[i];
         let noteObj: note.GeneralNote|note.Note|note.Rest;
-        let lyric;
+        let lyric: string;
         if (tnre.PARTBREAK.exec(token)) {
             if (m.length > 0) {
                 p.append(m);
@@ -138,7 +138,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
         }
         if (tnre.ENDBRAC.exec(token)) {
             if (chordObj && tnre.LYRIC.exec(token)) {
-                let chordLyric;
+                let chordLyric: string;
                 [token, chordLyric] = token.split('_');
                 chordObj.lyric = chordLyric;
             }
@@ -266,7 +266,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
         p.append(m);
     }
 
-    let returnObject;
+    let returnObject: stream.Part|stream.Score;
 
     if (optionalScore !== undefined) {
         if (p.length > 0) {

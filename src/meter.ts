@@ -33,14 +33,14 @@ export class TimeSignature extends base.Music21Object {
 
     _numerator: number = 4;
     _denominator: number = 4;
-    _overwrittenBarDuration;
+    _overwrittenBarDuration: duration.Duration;
     symbol: string = '';
     symbolizeDenominator: boolean = false;
 
     // music21j simple attributes;
     _beatGroups: number[][] = [];
-    _overwrittenBeatCount;
-    _overwrittenBeatDuration;
+    _overwrittenBeatCount: number;
+    _overwrittenBeatDuration: duration.Duration;
 
     constructor(value: string = '4/4', divisions=undefined) {
         super();
@@ -65,7 +65,7 @@ export class TimeSignature extends base.Music21Object {
         this.load(value, divisions);
     }
 
-    load(value: string, divisions?) {
+    load(value: string, divisions?): void {
         // "divisions" is unused.
         const valueLower = value.toLowerCase();
         if (valueLower === 'common' || valueLower === 'c') {
@@ -296,9 +296,9 @@ export class TimeSignature extends base.Music21Object {
         const params = { measureStartOffset: 0.0 };
         common.merge(params, options);
         const measureStartOffset = params.measureStartOffset;
-        let beamsList = beam.Beams.naiveBeams(srcStream);
+        let beamsList: beam.Beams[] = beam.Beams.naiveBeams(srcStream);
         beamsList = beam.Beams.removeSandwichedUnbeamables(beamsList);
-        const fixBeamsOneElementDepth = (i, el, depth) => {
+        const fixBeamsOneElementDepth = (i: number, el, depth) => {
             const beams = beamsList[i];
             if (!beams) {
                 return;
@@ -321,8 +321,8 @@ export class TimeSignature extends base.Music21Object {
             const startNext = end;
             const isLast = (i === srcStream.length - 1);
             const isFirst = (i === 0);
-            let beamNext;
-            let beamPrevious;
+            let beamNext: beam.Beams;
+            let beamPrevious: beam.Beams;
             if (!isFirst) {
                 beamPrevious = beamsList[i - 1];
             }
@@ -340,7 +340,7 @@ export class TimeSignature extends base.Music21Object {
                 return;
             }
 
-            let beamType;
+            let beamType: string;
             if (isFirst && measureStartOffset === 0.0) {
                 beamType = 'start';
                 if (beamNext === undefined || !(beamNext.getNumbers().includes(beamNumber))) {

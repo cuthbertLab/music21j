@@ -749,14 +749,14 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
 export const IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 /**
- * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
- * @returns {Array} two element array of {string} stepName and {number} octave
+ * dn - diatonic number, where 29 = C4, C#4 etc.
+ * returns a two element array of [stepName, octave]
  */
 export function convertDiatonicNumberToStep(
     dn: number
 ): [string, number] {
-    let stepNumber;
-    let octave;
+    let stepNumber: number;
+    let octave: number;
     if (dn === 0) {
         return ['B', -1];
     } else if (dn > 0) {
@@ -936,10 +936,7 @@ export class Interval extends prebase.ProtoM21Object {
     }
 
 
-    /**
-     * @returns {Boolean}
-     */
-    isConsonant() {
+    isConsonant(): boolean {
         const sn = this.simpleName;
         const consonantNames = ['P5', 'm3', 'M3', 'm6', 'M6', 'P1'];
         if (consonantNames.indexOf(sn) !== -1) {
@@ -968,7 +965,7 @@ export class Interval extends prebase.ProtoM21Object {
         const pitch2 = this.diatonic.generic.transposePitch(p);
         pitch2.accidental = undefined;
         // step and octave are right now, but not necessarily accidental
-        let halfStepsToFix;
+        let halfStepsToFix: number;
         if (!reverse) {
             halfStepsToFix = this.chromatic.semitones - Math.floor(pitch2.ps - p.ps);
         } else {
@@ -992,9 +989,9 @@ export class Interval extends prebase.ProtoM21Object {
 }
 
 export function intervalFromGenericAndChromatic(
-    gInt,
-    cInt
-) {
+    gInt: number|GenericInterval,
+    cInt: number|ChromaticInterval
+): Interval {
     if (typeof gInt === 'number') {
         gInt = new GenericInterval(gInt);
     }
@@ -1009,7 +1006,7 @@ export function intervalFromGenericAndChromatic(
 /**
  * Convert two notes or pitches to a GenericInterval;
  */
-export function notesToGeneric(n1, n2) {
+export function notesToGeneric(n1, n2): GenericInterval {
     let p1 = n1;
     if (n1.pitch !== undefined) {
         p1 = n1.pitch;
@@ -1024,8 +1021,8 @@ export function notesToGeneric(n1, n2) {
 }
 
 export function convertStaffDistanceToInterval(
-    staffDist
-) {
+    staffDist: number
+): number {
     if (staffDist === 0) {
         return 1;
     } else if (staffDist > 0) {
@@ -1035,7 +1032,7 @@ export function convertStaffDistanceToInterval(
     }
 }
 
-export function notesToChromatic(n1, n2) {
+export function notesToChromatic(n1, n2): ChromaticInterval {
     let p1 = n1;
     if (n1.pitch !== undefined) {
         p1 = n1.pitch;
@@ -1047,20 +1044,23 @@ export function notesToChromatic(n1, n2) {
     return new ChromaticInterval(p2.ps - p1.ps);
 }
 
-export function intervalsToDiatonic(gInt, cInt) {
+export function intervalsToDiatonic(
+    gInt: GenericInterval,
+    cInt: ChromaticInterval,
+): DiatonicInterval {
     const specifier = _getSpecifierFromGenericChromatic(gInt, cInt);
-    // todo -- convert specifier...
+    // TODO -- convert specifier...
     return new DiatonicInterval(specifier, gInt);
 }
 
 export function _getSpecifierFromGenericChromatic(
-    gInt,
-    cInt
+    gInt: GenericInterval,
+    cInt: ChromaticInterval,
 ): number {
     const noteVals = [undefined, 0, 2, 4, 5, 7, 9, 11];
     const normalSemis
         = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
-    let theseSemis;
+    let theseSemis: number;
     if (
         gInt.direction !== cInt.direction
         && gInt.direction !== Direction.OBLIQUE

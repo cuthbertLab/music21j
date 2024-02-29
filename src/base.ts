@@ -16,12 +16,11 @@ import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
 import * as style from './style';
+import {Music21Exception} from './exceptions21';
 
 // imports for typing only
-import { Stream, Measure } from './stream';
-import {Music21Exception} from './exceptions21';
-import { TimeSignature } from './meter';
-
+import type {Stream, Measure} from './stream';
+import type {TimeSignature} from './meter';
 
 declare interface StreamRecursionLike {
     recursionType: string;
@@ -311,7 +310,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.duration.quarterLength = ql;
     }
 
-    mergeAttributes(other) {
+    mergeAttributes(other: Music21Object): this {
         // id;
         this.groups = other.groups.slice();
         return this;

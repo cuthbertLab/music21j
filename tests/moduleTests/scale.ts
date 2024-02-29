@@ -35,6 +35,6 @@ export default function tests() {
         assert.equal(pitches[6].name, 'E');
         assert.equal(pitches[7].name, 'F');
         assert.equal(sc.pitchFromDegree(5).name, 'C');
-        assert.equal(sc.getScaleDegreeFromPitch('B-'), 4);
+        assert.equal(sc.getScaleDegreeFromPitch(new music21.pitch.Pitch('B-')), 4);
     });
 }

@@ -137,10 +137,8 @@ export class Event {
     /**
      * Calls MIDI.noteOn or MIDI.noteOff for the note
      * represented by the Event (if appropriate)
-     *
-     * @returns {undefined}
      */
-    sendToMIDIjs() {
+    sendToMIDIjs(): void {
         if (MIDI.config.is_connected) {
             // noteOn check because does not exist if no audio context
             // or soundfont has been loaded, such as if a play event
@@ -223,7 +221,7 @@ export function makeChords(jEvent: Event): void {
  * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
 export function sendOutChord(chordNoteList: note.Note[]): note.Note|chord.Chord {
-    let appendObject;
+    let appendObject: note.Note|chord.Chord;
     if (chordNoteList.length > 1) {
         // console.log(chordNoteList[0].name, chordNoteList[1].name);
         appendObject = new chord.Chord(chordNoteList);
@@ -527,7 +525,7 @@ export class MidiPlayer {
         }
     }
 
-    base64Load(b64data) {
+    base64Load(b64data): void {
         const player = this.player;
         player.timeWarp = this.speed;
 
@@ -591,7 +589,7 @@ export class MidiPlayer {
             }
         });
         //
-        const timeFormatting = n => {
+        const timeFormatting = (n: number): string => {
             const minutes = Math.floor(n / 60);
             let seconds = String(Math.floor(n - minutes * 60));
             if (seconds.length === 1) {

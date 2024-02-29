@@ -141,13 +141,13 @@ export class AbstractScale extends Scale {
 
     // noinspection JSUnusedLocalSymbols
     getRealization(
-        pitchObj,
+        pitchObj: pitch.Pitch,
         unused_stepOfPitch=undefined,
         unused_minPitch=undefined,
         unused_maxPitch=undefined,
         unused_direction=undefined,
         unused_reverse=undefined
-    ) {
+    ): pitch.Pitch[] {
         // if (direction === undefined) {
         //     direction = DIRECTION_ASCENDING;
         // }
@@ -159,7 +159,7 @@ export class AbstractScale extends Scale {
         } else {
             pitchObj = pitchObj.clone();
         }
-        const post = [pitchObj];
+        const post: pitch.Pitch[] = [pitchObj];
         for (const intV of this._net) {
             pitchObj = intV.transposePitch(pitchObj);
             post.push(pitchObj);
@@ -167,7 +167,11 @@ export class AbstractScale extends Scale {
         return post;
     }
 
-    getPitchFromNodeDegree(pitchReference, unused_nodeName, nodeDegreeTarget) {
+    getPitchFromNodeDegree(
+        pitchReference: pitch.Pitch, 
+        _nodeName: string|number, 
+        nodeDegreeTarget: number
+    ): pitch.Pitch {
         const zeroIndexDegree = nodeDegreeTarget - 1;
         for (let i = 0; i < zeroIndexDegree; i++) {
             const thisIntv = this._net[i % this._net.length];
@@ -178,9 +182,9 @@ export class AbstractScale extends Scale {
 
     // noinspection JSUnusedLocalSymbols
     getRelativeNodeDegree(
-        pitchReference,
-        unused_nodeName,
-        pitchTarget,
+        pitchReference: pitch.Pitch,
+        unused_nodeName: string|number,
+        pitchTarget: pitch.Pitch,
         unused_comparisonAttribute=undefined,
         unused_direction=undefined
     ) {
@@ -208,7 +212,7 @@ export class AbstractScale extends Scale {
 }
 
 export class AbstractDiatonicScale extends AbstractScale {
-    static get className() { return 'music21.scale.AbstractDiatonicScale'; }
+    static override get className(): string { return 'music21.scale.AbstractDiatonicScale'; }
 
     dominantDegree: number;
     relativeMajorDegree: number;
@@ -216,13 +220,12 @@ export class AbstractDiatonicScale extends AbstractScale {
 
     /**
      *
-     * @param {string} [mode]
      * @property {string} type
      * @property {number|undefined} tonicDegree
      * @property {number|undefined} dominantDegree
      * @property {boolean} octaveDuplicating
      */
-    constructor(mode='major') {
+    constructor(mode: string='major') {
         super();
         this.type = 'Abstract diatonic';
         this.tonicDegree = undefined;
@@ -231,9 +234,9 @@ export class AbstractDiatonicScale extends AbstractScale {
         this.buildNetwork(mode);
     }
 
-    buildNetwork(mode: string) {
+    buildNetwork(mode: string): void {
         const srcList = ['M2', 'M2', 'm2', 'M2', 'M2', 'M2', 'm2'];
-        let intervalList;
+        let intervalList: string[];
         this.tonicDegree = 1;
         this.dominantDegree = 5;
         if (['major', 'ionian'].includes(mode)) {
@@ -299,7 +302,7 @@ export class ConcreteScale extends Scale {
     tonic: pitch.Pitch;
     abstract: AbstractScale;
 
-    constructor(tonic) {
+    constructor(tonic: string|pitch.Pitch) {
         super();
         if (typeof tonic === 'string') {
             tonic = new pitch.Pitch(tonic);
@@ -333,8 +336,8 @@ export class ConcreteScale extends Scale {
         unused_minPitch=undefined,
         unused_maxPitch=undefined,
         unused_direction=undefined
-    ) {
-        let pitchObj;
+    ): pitch.Pitch[] {
+        let pitchObj: pitch.Pitch;
         if (this.tonic === undefined) {
             pitchObj = new pitch.Pitch('C4');
         } else {
@@ -345,12 +348,12 @@ export class ConcreteScale extends Scale {
 
     // noinspection JSUnusedLocalSymbols
     pitchFromDegree(
-        degree,
+        degree: number,
         unused_minPitch=undefined,
         unused_maxPitch=undefined,
         unused_direction=undefined,
         unused_equateTermini=undefined
-    ) {
+    ): pitch.Pitch {
         return this.abstract.getPitchFromNodeDegree(
             this.tonic,
             this.abstract.tonicDegree,
@@ -360,10 +363,10 @@ export class ConcreteScale extends Scale {
 
     // noinspection JSUnusedLocalSymbols
     getScaleDegreeFromPitch(
-        pitchTarget,
+        pitchTarget: pitch.Pitch,
         unused_direction=undefined,
         unused_comparisonAttribute=undefined
-    ) {
+    ): number {
         return this.abstract.getRelativeNodeDegree(
             this.tonic,
             this.abstract.tonicDegree,
@@ -375,8 +378,8 @@ export class ConcreteScale extends Scale {
 export class DiatonicScale extends ConcreteScale {
     static get className() { return 'music21.scale.DiatonicScale'; }
 
-    constructor(tonic) {
-        super(tonic); // a.k.a. ^2 :-)
+    constructor(tonic: string|pitch.Pitch) {
+        super(tonic); 
         this.abstract = new AbstractDiatonicScale();
         this.type = 'diatonic';
     }
@@ -385,8 +388,8 @@ export class DiatonicScale extends ConcreteScale {
 export class MajorScale extends DiatonicScale {
     static get className() { return 'music21.scale.MajorScale'; }
 
-    constructor(tonic) {
-        super(tonic); // a.k.a. ^2 :-)
+    constructor(tonic: string|pitch.Pitch) {
+        super(tonic); 
         this.type = 'major';
         this.abstract.buildNetwork(this.type);
     }
@@ -396,8 +399,8 @@ export class MajorScale extends DiatonicScale {
 export class MinorScale extends DiatonicScale {
     static get className() { return 'music21.scale.MinorScale'; }
 
-    constructor(tonic) {
-        super(tonic); // a.k.a. ^2 :-)
+    constructor(tonic: string|pitch.Pitch) {
+        super(tonic);
         this.type = 'minor';
         this.abstract.buildNetwork(this.type);
     }
@@ -406,8 +409,8 @@ export class MinorScale extends DiatonicScale {
 export class HarmonicMinorScale extends ConcreteScale {
     static get className() { return 'music21.scale.HarmonicMinorScale'; }
 
-    constructor(tonic) {
-        super(tonic); // a.k.a. ^2 :-)
+    constructor(tonic: string|pitch.Pitch) {
+        super(tonic); 
         this.type = 'harmonic minor';
         this.abstract = new AbstractHarmonicMinorScale();
     }
@@ -416,8 +419,8 @@ export class HarmonicMinorScale extends ConcreteScale {
 export class AscendingMelodicMinorScale extends ConcreteScale {
     static get className() { return 'music21.scale.AscendingMelodicMinorScale'; }
 
-    constructor(tonic) {
-        super(tonic); // a.k.a. ^2 :-)
+    constructor(tonic: string|pitch.Pitch) {
+        super(tonic); 
         this.type = 'harmonic minor';
         this.abstract = new AbstractAscendingMelodicMinorScale();
     }
