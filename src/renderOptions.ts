@@ -10,6 +10,7 @@
  * Options for rendering a stream
  *
  */
+import {StaveConnector} from './types';
 
 interface EventInterface {
     click: string|Function|undefined,
@@ -65,7 +66,7 @@ export class RenderOptions {
     rightBarline: string = undefined;
 
     staffLines: number = 5;
-    staffConnectors: string[] = ['single', 'brace'];
+    staffConnectors: StaveConnector[] = [StaveConnector.SINGLE, StaveConnector.BRACE];
     staffPadding: number = 60; // width...
     events: EventInterface = {
         click: 'play',

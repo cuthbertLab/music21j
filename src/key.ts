@@ -229,8 +229,8 @@ export class KeySignature extends base.Music21Object {
      */
     transposePitchFromC(p: pitch.Pitch): pitch.Pitch {
         const originalOctave = p.octave;
-        let transInterval;
-        let transTimes;
+        let transInterval: interval.Interval;
+        let transTimes: number;
         if (this.sharps === 0) {
             return new pitch.Pitch(p.nameWithOctave);
         } else if (this.sharps < 0) {
@@ -350,7 +350,7 @@ export class Key extends KeySignature {
         return this._scale.pitchFromDegree(degree, ...args);
     }
 
-    getScaleDegreeFromPitch(pitchTarget, ...args) {
+    getScaleDegreeFromPitch(pitchTarget, ...args): number {
         return this._scale.getScaleDegreeFromPitch(pitchTarget, ...args);
     }
 }

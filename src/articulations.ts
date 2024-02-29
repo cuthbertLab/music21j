@@ -35,7 +35,7 @@ export function setPlacementOnVexFlowArticulation(
     vfa: VFArticulation|VFOrnament,
     placement: ArticulationPlacement,
     stemDirection: string,
-) {
+): void {
     if (placement === undefined) {
         return;
     }

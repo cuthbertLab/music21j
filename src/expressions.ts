@@ -1,5 +1,5 @@
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  */
 
@@ -12,7 +12,7 @@ import {
 } from './articulations';
 
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  * @property {string} name
  * @property {string} vexflowModifier

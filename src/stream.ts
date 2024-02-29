@@ -60,8 +60,15 @@ declare interface Constructable<T> {
     new() : T;
 }
 
+export interface PlayStreamParams {
+    instrument?: instrument.Instrument,
+    tempo?: number,
+    done?: () => any,
+    startNote?: number,
+}
 
-function _exportMusicXMLAsText(s) {
+
+function _exportMusicXMLAsText(s: Stream): string {
     const gox = new GeneralObjectExporter(s);
     return gox.parse();
 }
@@ -111,7 +118,9 @@ interface MakeAccidentalsParams {
  *     call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
-export class Stream extends base.Music21Object {
+export class Stream<ElementType extends base.Music21Object = base.Music21Object>
+    extends base.Music21Object {
+
     static get className() { return 'music21.stream.Stream'; }
 
     // from music21p's core.py
@@ -190,7 +199,7 @@ export class Stream extends base.Music21Object {
             self: Stream,
             deep: boolean,
             _memo
-        ) {
+        ): void {
             if (!deep) {
                 newObj.renderOptions = self.renderOptions;
             } else {
@@ -204,7 +213,7 @@ export class Stream extends base.Music21Object {
             self,
             deep,
             memo,
-        ) {
+        ): void {
             if (!deep) {
                 newObj.elements = self;
                 return;
@@ -281,8 +290,7 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     *
-     * @returns {IterableIterator<Music21Object>}
+     *  Iterator for use in `for (const x of new Stream())` contexts.
      */
     * [Symbol.iterator](): IterableIterator<base.Music21Object> {
         if (this.autoSort && !this.isSorted) {
@@ -705,9 +713,9 @@ export class Stream extends base.Music21Object {
      * as a way of making the older music21j attributes still work while
      * transitioning to a more music21p-like approach.
      *
-     * May be removed
+     * May be removed.
      */
-    getSpecialContext(context, warnOnCall=false) {
+    getSpecialContext(context: string, warnOnCall=false) {
         const first_el = this._firstElementContext(context);
         if (first_el !== undefined) {
             return first_el;
@@ -725,12 +733,12 @@ export class Stream extends base.Music21Object {
     /**
      * Map as if this were an Array
      */
-    map(func) {
+    map(func: (el: ElementType) => any): any[] {
         return Array.from(this).map(func);
     }
 
-    filter(func) {
-        return Array.from(this).filter(func);
+    filter(func: (el: ElementType) => boolean): ElementType[] {
+        return (Array.from(this) as ElementType[]).filter(func);
     }
 
     clear() {
@@ -752,7 +760,7 @@ export class Stream extends base.Music21Object {
         clearIsSorted=true,
         memo=undefined, // unused
         keepIndex=false, // unused
-    }={}) {
+    }={}): void {
         if (clearIsSorted) {
             this.isSorted = false;
         }
@@ -789,12 +797,10 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Add an element to the end of the stream, setting its `.offset` accordingly
-     *
-     * @param elOrElList - element
-     * or list of elements to append
+     * Add an element (or a list of elements) to the end of the stream,
+     * setting each element's `.offset` accordingly
      */
-    append(elOrElList: base.Music21Object|base.Music21Object[]): this {
+    append(elOrElList: ElementType|ElementType[]): this {
         if (Array.isArray(elOrElList)) {
             for (const el of elOrElList) {
                 this.append(el);
@@ -802,7 +808,7 @@ export class Stream extends base.Music21Object {
             return this;
         }
 
-        const el: base.Music21Object = elOrElList;
+        const el: ElementType = elOrElList;
         if (!(el instanceof base.Music21Object)) {
             throw new Music21Exception('Can only append a music21 object.');
         }
@@ -836,7 +842,7 @@ export class Stream extends base.Music21Object {
         return this;
     }
 
-    sort() {
+    sort(): this {
         if (this.isSorted) {
             return this;
         }
@@ -863,7 +869,7 @@ export class Stream extends base.Music21Object {
         {
             ignoreSort=false,
             setActiveSite=true,
-        }={}
+        }: {ignoreSort?: boolean, setActiveSite?: boolean} = {}
     ): this {
         if (el === undefined) {
             throw new StreamException('Cannot insert without an element.');
@@ -907,7 +913,7 @@ export class Stream extends base.Music21Object {
     n.duration.type = 'whole'
     a.repeatAppend(n, 10)
     */
-    repeatAppend(item: base.Music21Object, numberOfTimes: number) {
+    repeatAppend(item: ElementType, numberOfTimes: number): void {
         if (!(item instanceof base.Music21Object)) {
             throw new StreamException('to put a non Music21Object in a stream, '
             + 'create a music21.ElementWrapper for the item');
@@ -1028,13 +1034,13 @@ export class Stream extends base.Music21Object {
         let i = -1;
         for (const target of targetList) {
             i += 1;
-            let indexInStream;
+            let indexInStream: number;
             try {
                 indexInStream = this.index(target);
             } catch (err) {
                 if (err instanceof StreamException) {
                     if (recurse) {
-                        for (const s of <Stream[]><any> this.recurse({streamsOnly: true})) {
+                        for (const s of <Stream<ElementType>[]><any> this.recurse({streamsOnly: true})) {
                             try {
                                 indexInStream = s.index(target);
                                 s.remove(target);
@@ -1106,7 +1112,7 @@ export class Stream extends base.Music21Object {
         {
             recurse=false,
             allDerived=true,
-        } = {}
+        }: {recurse?: boolean, allDerived?: boolean} = {}
     ) {
         try {
             this.index(target);
@@ -1161,7 +1167,7 @@ export class Stream extends base.Music21Object {
      * or undefined if none.  No speedups from `.get(0)`, but makes coding
      * in a mix of Stream and StreamIterator environments easier.
      */
-    first() {
+    first(): base.Music21Object {
         return this.get(0);
     }
 
@@ -1170,7 +1176,7 @@ export class Stream extends base.Music21Object {
      * or undefined if none.  No speedups from `.get(-1)`, but makes coding
      * in a mix of Stream and StreamIterator environments easier.
      */
-    last() {
+    last(): base.Music21Object {
         return this.get(-1);
     }
 
@@ -1204,7 +1210,7 @@ export class Stream extends base.Music21Object {
         el.activeSite = this;
     }
 
-    elementOffset(element, stringReturns=false) {
+    elementOffset(element: base.Music21Object, _stringReturns=false): number {
         if (!this._offsetDict.has(element)) {
             throw new StreamException(
                 'An entry for this object ' + element.toString() + ' is not stored in this Stream.'
@@ -1382,11 +1388,14 @@ export class Stream extends base.Music21Object {
         addPartIdAsGroup=true,
         removeRedundantPitches=true,
         toSoundingPitch=true,
-    }={}) {
+    }: {
+            addTies?: boolean, addPartIdAsGroup?: boolean,
+            removeRedundantPitches?: boolean, toSoundingPitch?: boolean
+    } = {}) {
         const workObj = this;
-        let templateStream;
+        let templateStream: Stream;
         if (this.hasPartLikeStreams()) {
-            templateStream = workObj.getElementsByClass('Stream').get(0);
+            templateStream = workObj.getElementsByClass('Stream').get(0) as Stream;
         } else {
             templateStream = workObj;
         }
@@ -1552,10 +1561,8 @@ export class Stream extends base.Music21Object {
 
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
-     *
-     * @returns {boolean}
      */
-    hasLyrics() {
+    hasLyrics(): boolean {
         for (const el of this) {
             if ((el as note.Note).lyric !== undefined) {
                 return true;
@@ -1660,7 +1667,7 @@ export class Stream extends base.Music21Object {
         }={}
     ) {
 
-        let s;
+        let s: iterator.StreamIterator;
         if (classList !== undefined) {
             s = this.iter.getElementsByClass(classList);
         } else {
@@ -2195,7 +2202,7 @@ export class Stream extends base.Music21Object {
         };
 
         for (let i = 0; i < notes.length; i++) {
-            let endMatch;
+            let endMatch: boolean;
             const n = <note.NotRest> notes[i];
             if (i > 0) {
                 iLast = i - 1;
@@ -2320,11 +2327,9 @@ export class Stream extends base.Music21Object {
     /**
      * Returns True if there are no gaps between the lowest offset and the highest time.
      * Otherwise returns False
-     *
-     * @returns {boolean}
      */
 
-    get isGapless() {
+    get isGapless(): boolean {
         return (this.findGaps() === null);
     }
 
@@ -2336,12 +2341,9 @@ export class Stream extends base.Music21Object {
      * `options` can be an object containing:
      * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
-     *
-     * @param {Object} [options] - object of playback options
-     * @returns {this}
      */
-    playStream(options={}): this {
-        const params = {
+    playStream(options: PlayStreamParams = {}): this {
+        const params: PlayStreamParams = {
             instrument: this.instrument,
             tempo: this.tempo,
             done: undefined,
@@ -2361,7 +2363,7 @@ export class Stream extends base.Music21Object {
         const lastNoteIndex = flatEls.length - 1;
         this._stopPlaying = false;
 
-        const playNext = (elements, params) => {
+        const playNext = (elements: ElementType[], params): void => {
             if (currentNoteIndex <= lastNoteIndex && !this._stopPlaying) {
                 const el = elements[currentNoteIndex];
                 let nextNote;
@@ -2389,8 +2391,8 @@ export class Stream extends base.Music21Object {
                     );
                 }
 
-                if (el.playMidi !== undefined) {
-                    el.playMidi(params.tempo, nextNote, params);
+                if ((<note.Note><any> el).playMidi !== undefined) {
+                    (<note.Note><any> el).playMidi(params.tempo, nextNote, params);
                 }
                 currentNoteIndex += 1;
                 setTimeout(() => {
@@ -2761,13 +2763,8 @@ export class Stream extends base.Music21Object {
      * Returns the stream that is at X location xPxScaled and system systemIndex.
      *
      * Override in subclasses, always returns this; here.
-     *
-     * @param {number} xPxScaled
-     * @param {number} [systemIndex]
-     * @returns {this}
-     *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex: number = 0): Stream {
+    getStreamFromScaledXandSystemIndex(_xPxScaled: number, _systemIndex: number = 0): Stream {
         return this;
     }
 
@@ -2782,12 +2779,6 @@ export class Stream extends base.Music21Object {
      * note within the window even if it's beyond allowablePixels (default: true)
      * and 'backupMaximum' which specifies a maximum distance even for backup
      * (default: 70);
-     *
-     * @param {number} xPxScaled
-     * @param {number} [allowablePixels=10]
-     * @param {number} [systemIndex]
-     * @param {Object} [options]
-     * @returns {Music21Object|undefined}
      */
     noteElementFromScaledX(
         xPxScaled: number,
@@ -3451,11 +3442,8 @@ export class Part extends Stream {
     /**
      * systemIndexAndScaledY - given a scaled Y, return the systemIndex
      * and the scaledYRelativeToSystem
-     *
-     * @param  {number} y the scaled Y
-     * @return {number[]}  systemIndex, scaledYRelativeToSystem
      */
-    systemIndexAndScaledY(y) {
+    systemIndexAndScaledY(y: number): [number, number] {
         // this is Part.systemIndexAndScaledY
         const systemHeight = this.renderOptions.staffAreaHeight;
         const systemPadding = this.renderOptions.systemPadding;
@@ -3469,7 +3457,7 @@ export class Part extends Stream {
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
      *
-     * @returns {Array} [clickedDiatonicNoteNum, foundNote]
+     * returns a two element array of [clickedDiatonicNoteNum, foundNote]
      */
     findNoteForClick(
         svg?: HTMLElement,
@@ -3507,14 +3495,9 @@ export class Part extends Stream {
 
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.
-     *
-     * @param {number} [xPxScaled]
-     * @param {number} [systemIndex]
-     * @returns {Stream}
-     *
      */
-    override getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Stream {
-        let gotMeasure: Stream;
+    override getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Measure {
+        let gotMeasure: Measure;
         const measures = this.measures;
         for (const m of measures) {
             const rendOp = m.renderOptions;
@@ -3606,7 +3589,7 @@ export class Score extends Stream {
     override getStreamFromScaledXandSystemIndex(
         xPxScaled: number,
         systemIndex: number = undefined
-    ): Stream {
+    ): Measure {
         const parts = this.parts;
         return parts
             .get(0)
@@ -3700,7 +3683,7 @@ export class Score extends Stream {
      *
      * @param {Object} params -- passed to each part
      */
-    playStream(params): this {
+    playStream(params: PlayStreamParams = {}): this {
         // play multiple parts in parallel...
         for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
@@ -3842,9 +3825,6 @@ export class Score extends Stream {
      * if setLeft is true then also set the renderOptions.left
      *
      * This does not even out systems.
-     *
-     * @param {Object} options
-     * @param {boolean} [options.setLeft=true]
      */
     evenPartMeasureSpacing({ setLeft=true }={}): this {
         const measureStacks: number[][] = [];

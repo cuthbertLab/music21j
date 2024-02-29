@@ -94,17 +94,17 @@ export class Chord extends note.NotRest {
         return tempPitches;
     }
 
-    set pitches(tempPitches: pitch.Pitch[]) {
+    set pitches(tempPitches: (pitch.Pitch|string|note.Note)[]) {
         this._notes = [];
         for (let i = 0; i < tempPitches.length; i++) {
-            let addNote;
+            let addNote: note.Note;
             if (typeof tempPitches[i] === 'string') {
-                addNote = new note.Note(tempPitches[i]);
-            } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
+                addNote = new note.Note(tempPitches[i] as string);
+            } else if ((tempPitches[i] as pitch.Pitch).isClassOrSubclass('Pitch')) {
                 addNote = new note.Note();
-                addNote.pitch = tempPitches[i];
-            } else if (tempPitches[i].isClassOrSubclass('Note')) {
-                addNote = tempPitches[i];
+                addNote.pitch = tempPitches[i] as pitch.Pitch;
+            } else if ((tempPitches[i] as note.Note).isClassOrSubclass('Note')) {
+                addNote = tempPitches[i] as note.Note;
             } else {
                 console.warn('bad pitch', tempPitches[i]);
                 throw new Music21Exception(
@@ -191,7 +191,7 @@ export class Chord extends note.NotRest {
         return chordTables.addressToForteName(this.chordTablesAddress, 'tni');
     }
 
-    get(i) {
+    get(i: number): note.Note {
         if (typeof i === 'number') {
             return this._notes[i];
         } else {
@@ -206,7 +206,7 @@ export class Chord extends note.NotRest {
     }
 
 
-    areZRelations(other): boolean {
+    areZRelations(other: Chord): boolean {
         const zRelationAddress = chordTables.addressToZAddress(this.chordTablesAddress);
         if (zRelationAddress === undefined) {
             return false;
@@ -219,7 +219,7 @@ export class Chord extends note.NotRest {
         return true;
     }
 
-    getZRelation() {
+    getZRelation(): Chord {
         if (!this.hasZRelation) {
             return undefined;
         }
@@ -462,7 +462,7 @@ export class Chord extends note.NotRest {
             return this._cache.bass;
         }
 
-        let lowest;
+        let lowest: pitch.Pitch;
         const pitches = this.pitches;
         for (let i = 0; i < pitches.length; i++) {
             const p = pitches[i];
@@ -638,7 +638,7 @@ export class Chord extends note.NotRest {
         if (channel === undefined) {
             channel = this.activeChannel();
         }
-        let midNum;
+        let midNum: number;
         const volume = this.midiVolume;
         // TODO: Tied Chords.
         for (let j = 0; j < this._notes.length; j++) {

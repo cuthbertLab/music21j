@@ -1,6 +1,6 @@
 // this is not completely working properly...
 class ExtendableError extends Error {
-    constructor(message) {
+    constructor(message: string) {
         super();
         // restore prototype chain
         const actualProto = new.target.prototype;

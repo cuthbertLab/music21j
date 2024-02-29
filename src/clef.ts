@@ -10,7 +10,8 @@
  */
 import * as base from './base';
 import * as pitch from './pitch';
-import { Stream } from './stream'; // for typing only
+import type * as note from './note';
+import type { Stream } from './stream';
 
 /*  music21.Clef
     must be defined before Stream since Stream subclasses call new music21.Clef...
@@ -310,7 +311,7 @@ export const all_clefs = {
  */
 export function bestClef(st: Stream, { recurse=true }={}): Clef {
     // console.log('calling flatten on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
-    let stFlat;
+    let stFlat: Stream;
     if (recurse) {
         stFlat = st.flatten();
     } else {
@@ -320,17 +321,17 @@ export function bestClef(st: Stream, { recurse=true }={}): Clef {
     let totalPitch = 0.0;
     for (let i = 0; i < stFlat.length; i++) {
         const el = stFlat.get(i);
-        if (el.pitch !== undefined) {
+        if ((<note.Note><any> el).pitch !== undefined) {
             totalNotes += 1;
-            totalPitch += el.pitch.diatonicNoteNum;
-        } else if (el.pitches !== undefined) {
-            for (let j = 0; j < el.pitches.length; j++) {
+            totalPitch += (<note.Note><any> el).pitch.diatonicNoteNum;
+        } else if ((<note.NotRest><any> el).pitches !== undefined) {
+            for (let j = 0; j < (<note.NotRest><any> el).pitches.length; j++) {
                 totalNotes += 1;
-                totalPitch += el.pitches[j].diatonicNoteNum;
+                totalPitch += (<note.NotRest><any> el).pitches[j].diatonicNoteNum;
             }
         }
     }
-    let averageHeight;
+    let averageHeight: number;
     if (totalNotes === 0) {
         averageHeight = 29;
     } else {
@@ -349,8 +350,8 @@ export function bestClef(st: Stream, { recurse=true }={}): Clef {
  */
 export function clefFromString(clefString: string, octaveShift: number = 0): Clef {
     const xnStr = clefString.trim();
-    let thisType;
-    let lineNum;
+    let thisType: string;
+    let lineNum: number;
     if (xnStr.toLowerCase() === 'percussion') {
         return new PercussionClef();
     } // todo: tab, none, jianpu
@@ -385,7 +386,8 @@ export function clefFromString(clefString: string, octaveShift: number = 0): Cle
         }
     }
 
-    const arrayEqual = (a, b) => a.length === b.length && a.every((el, ix) => el === b[ix]);
+    // TODO: remove this -- we have other ways of deep equality
+    const arrayEqual = (a: any[], b: any[]) => a.length === b.length && a.every((el, ix) => el === b[ix]);
 
     const params = [thisType, lineNum, octaveShift];
     if (arrayEqual(params, ['G', 2, 0])) {

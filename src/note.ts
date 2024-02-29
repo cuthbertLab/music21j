@@ -283,17 +283,17 @@ export class GeneralNote extends base.Music21Object {
     /**
      * Add a {@link Lyric} object to the Note
      *
-     * @param {string} text - text to be added
-     * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
-     * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for clues about syllable placement.
-     * @param {string} [lyricIdentifier] - an optional identifier
+     * text - text to be added
+     * [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
+     * [applyRaw=false] - if `true`, do not parse the text for clues about syllable placement.
+     * [lyricIdentifier] - an optional identifier
      */
     addLyric(
-        text,
-        lyricNumber,
-        applyRaw = false,
-        lyricIdentifier=undefined,
-    ) {
+        text: string,
+        lyricNumber: number,
+        applyRaw: boolean = false,
+        lyricIdentifier: string = undefined,
+    ): void {
         if (lyricNumber === undefined) {
             const maxLyrics = this.lyrics.length + 1;
             const newLyric = new Lyric(
@@ -340,20 +340,20 @@ export class GeneralNote extends base.Music21Object {
     /**
      * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
      */
-    setStemDirectionFromClef(clef: clef.Clef): this {
+    setStemDirectionFromClef(_clef: clef.Clef): this {
         return this;
     }
 
-    getStemDirectionFromClef(clef: clef.Clef): string {
+    getStemDirectionFromClef(_clef: clef.Clef): string {
         return '';
     }
 
     /**
      * Sets the vexflow accidentals (if any) and the dots
      *
-     * options -- a set of Vex Flow options
+     * options -- a set of VexFlow options
      */
-    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, options={}) {
+    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, options={}): void {
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
                 VFDot.buildAndAttach([vfn], { all: true });
@@ -380,16 +380,14 @@ export class GeneralNote extends base.Music21Object {
      *
      * For a general note -- same as a rest -- doesn't make a sound.  :-)
      *
-     * @param {number} [tempo=120] - tempo in Quarter Lengths per minute.
-     * @param {base.Music21Object} [nextElement] - for determining
+     * tempo in Quarter Lengths per minute.
+     * [nextElement] - for determining
      *     the length to play in case of tied notes, etc.
-     * @param {Object} [options] - other options (currently just
-     *     `{instrument: music21.instrument.Instrument}` and channel[unused])
-     * @returns {number} - delay time in milliseconds until the next element (may be ignored)
+     * returns delay time in milliseconds until the next element (may be ignored)
      */
     playMidi(
         tempo: number = 120,
-        nextElement: base.Music21Object = undefined,
+        _nextElement: base.Music21Object = undefined,
         {
             instrument=undefined,
             channel=undefined,
@@ -412,7 +410,7 @@ export class GeneralNote extends base.Music21Object {
  * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
  */
 export class NotRest extends GeneralNote {
-    static get className() { return 'music21.note.NotRest'; }
+    static override get className(): string { return 'music21.note.NotRest'; }
     // noinspection JSUnusedGlobalSymbols
     notehead: string = 'normal';
     // noinspection JSUnusedGlobalSymbols
@@ -460,10 +458,9 @@ export class NotRest extends GeneralNote {
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
-     * @param {Object} [options={}] - `{clef: music21.clef.Clef}`
      * clef to set the stem direction of.
      */
-    vexflowNote({ clef=undefined }={}): VFStaveNote {
+    override vexflowNote({ clef=undefined }={}): VFStaveNote {
         let useStemDirection = this.stemDirection;
 
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
@@ -637,7 +634,7 @@ export class Note extends NotRest {
         }
     }
 
-    vexflowAccidentalsAndDisplay(vfn, { stave=undefined, clef=undefined }={}) {
+    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, { stave=undefined, clef=undefined }={}): void {
         super.vexflowAccidentalsAndDisplay(vfn, { stave, clef });
         if (debug) {
             console.log(this.stemDirection);
@@ -754,11 +751,7 @@ export class Rest extends GeneralNote {
         this.name = 'rest';
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return this.duration.quarterLength.toString();
     }
 
@@ -767,9 +760,8 @@ export class Rest extends GeneralNote {
      * Returns a `Vex.Flow.StaveNote` that approximates this rest.
      * Corrects for bug in VexFlow that renders a whole rest too low.
      *
-     * @param {Object} options -- vexflow options
      */
-    vexflowNote(options): VFStaveNote {
+    override vexflowNote(options): VFStaveNote {
         let keyLine = 'b/4';
         const activeSiteSingleLine = (
             this.activeSite !== undefined

@@ -237,11 +237,8 @@ export class Instrument extends base.Music21Object {
      * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
      * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
      * Skips 10 unless this.inGMPercMap is true
-     *
-     * @param {int[]} [usedChannels]
-     * @returns {number|undefined}
      */
-    autoAssignMidiChannel(usedChannels=undefined) {
+    autoAssignMidiChannel(usedChannels: number[] = undefined): number {
         if (usedChannels === undefined) {
             usedChannels = global_usedChannels;
         }
