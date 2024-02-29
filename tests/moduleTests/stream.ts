@@ -1,5 +1,6 @@
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/main';
+import {StaveConnector} from '../../src/types';
 
 const { test } = QUnit;
 
@@ -680,11 +681,14 @@ export default function tests() {
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
         p1.makeAccidentals({ inPlace: true });
-        let p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
+        let p_list = p1.recurse().notes.map(n => n.pitches[0]) as music21.pitch.Pitch[];
         assert.notOk(p_list[0].accidental, 'p_list[0].accidental should not exist');
         assert.notOk(p_list[1].accidental, 'p_list[1].accidental should not exist');
         assert.ok(p_list[2].accidental.displayStatus);
-        assert.notOk(p_list[3].accidental.displayStatus, '2nd F# accidental should not display');  // same measure
+        assert.notOk(
+            p_list[3].accidental.displayStatus,
+            '2nd F# accidental should not display'
+        );  // same measure
         assert.notOk(p_list[4].accidental, 'G should not have accidental');
         assert.ok(p_list[5].accidental.displayStatus);  // B flat
         assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
@@ -694,7 +698,7 @@ export default function tests() {
         const f_maj = new music21.key.Key('F');
         m1.insert(0, f_maj);
         p1.makeAccidentals({ inPlace: true });
-        p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
+        p_list = p1.recurse().notes.map(n => n.pitches[0]) as music21.pitch.Pitch[];
 
         assert.notOk(p_list[5].accidental.displayStatus, 'first b-flat should not display');  // B flat
         assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
@@ -744,7 +748,7 @@ export default function tests() {
         const one_options = testOne.renderOptions;
         one_options.staffLines = 4;
         one_options.scaleFactor.x = 1.5;
-        one_options.staffConnectors = ['double'];
+        one_options.staffConnectors = [StaveConnector.DOUBLE];
         one_options.events.click = 'fake_event';
         one_options.events.dblclick = e => {};
         const testTwo = testOne.clone(true);  // deepcopy
@@ -762,7 +766,7 @@ export default function tests() {
         assert.equal(two_options.staffLines, 4);
         one_options.scaleFactor.x = 1.0;
         assert.equal(two_options.scaleFactor.x, 1.5);
-        one_options.staffConnectors.push('brace');
+        one_options.staffConnectors.push(StaveConnector.BRACE);
         assert.deepEqual(two_options.staffConnectors, ['double']);
         one_options.events.click = 'faker_event';
 
