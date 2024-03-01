@@ -1,9 +1,9 @@
 import { StreamException } from '../exceptions21';
+import * as filters from './filters';
 import type { Music21Object } from '../base';
 import type { GeneralNote, NotRest } from '../note';
 import type { Part, Stream, Voice } from '../stream';
 import type { ClassFilterType } from '../types';
-import { StreamFilter } from './filters';
 export declare class StreamIteratorException extends StreamException {
 }
 export declare class StreamIteratorBase<T extends Music21Object = Music21Object> {
@@ -15,7 +15,7 @@ export declare class StreamIteratorBase<T extends Music21Object = Music21Object>
     cleanupOnStop: boolean;
     restoreActiveSites: boolean;
     overrideDerivation: any;
-    filters: readonly StreamFilter[];
+    filters: filters.StreamFilter[];
     protected _len: number;
     protected _matchingElements: T[];
     sectionIndex: number;
@@ -44,11 +44,13 @@ export declare class StreamIteratorBase<T extends Music21Object = Music21Object>
     /**
      * Returns a new StreamIterator with the filter added.
      */
-    addFilter(newFilter: StreamFilter): StreamIteratorBase<T>;
+    addFilter(newFilter: filters.StreamFilter): StreamIteratorBase<T>;
     /**
      * Returns a new StreamIterator with the filter removed.
+     *
+     * Silently ignres
      */
-    removeFilter(oldFilter: StreamFilter): StreamIteratorBase<T>;
+    removeFilter(oldFilter: filters.StreamFilter): StreamIteratorBase<T>;
     getElementsByClass(classFilterList: ClassFilterType): StreamIteratorBase<T>;
     getElementsNotOfClass(classFilterList: ClassFilterType): StreamIteratorBase<T>;
     getElementsByOffset(offsetStart: number, ...args: any[]): StreamIteratorBase<T>;
@@ -95,6 +97,10 @@ export declare class RecursiveIterator<T extends Music21Object = Music21Object> 
      *  in the hierarchy. or undefined if we are not currently iterating.
      */
     currentHierarchyOffset(): number;
+    getElementsByClass<TT extends T = T>(classFilterList: string): RecursiveIterator<TT>;
+    getElementsByClass<TT extends T = T>(classFilterList: string[]): RecursiveIterator<TT>;
+    getElementsByClass<TT extends T = T>(classFilterList: (new () => TT)): RecursiveIterator<TT>;
+    getElementsByClass<TT extends T = T>(classFilterList: (new () => T)[]): RecursiveIterator<TT>;
     get notes(): RecursiveIterator<NotRest>;
     get notesAndRests(): RecursiveIterator<GeneralNote>;
     get parts(): RecursiveIterator<Part>;
