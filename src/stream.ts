@@ -783,7 +783,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         skipSelf=true,
     }={}): iterator.RecursiveIterator {
         const includeSelf = !skipSelf;
-        const ri = new iterator.RecursiveIterator(
+        let ri = new iterator.RecursiveIterator(
             this,
             {
                 streamsOnly,
@@ -792,7 +792,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             }
         );
         if (classFilter !== undefined) {
-            ri.addFilter(new filters.ClassFilter(classFilter));
+            ri = ri.getElementsByClass(classFilter);
         }
         return ri;
     }
@@ -1132,12 +1132,12 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
 
     /**
      * Get the `index`th element from the Stream.  Equivalent to the
-     * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
+     * music21p format of s[index] using __getitem__.  Can use negative indexing
+     * to get from the end.
      *
-     * Once Proxy objects are supported by all operating systems for
+     * for the recursing by class method of `__getitem__` see `rc` below.
      *
-     * @param {number} index - can be -1, -2, to index from the end, like python
-     * @returns {Music21Object|undefined}
+     * index - can be -1, -2, to index from the end, like python
      */
     get(index: number): base.Music21Object {
         // substitute for Python stream __getitem__; supports -1 indexing, etc.
@@ -1162,6 +1162,31 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             return el;
         }
     }
+
+    /**
+     * Return a RecursiveIterator by class for a stream.  Equivalent to the
+     * music21p format of s[note.Note] using __getitem__.  (rc = recurse by class)
+     *
+     * for the get-by-index form of music21p's `__getitem__` see `get()`.
+     *
+     * See also `rcf(Class)` which returns the first item by class.  For
+     * quickly working.
+     */
+    rc<TT extends base.Music21Object = base.Music21Object>(
+        klass: (new() => TT)
+    ): iterator.RecursiveIterator<TT> {
+        return this.recurse().getElementsByClass(klass);
+    }
+
+    /**
+     * A pure convenience method for `s.recurse().getElementsByClass(klass).first()`
+     *
+     * Requires a Class (type), does not take a string.
+     */
+    rcf<TT extends base.Music21Object = base.Music21Object>(klass: (new() => TT)): TT {
+        return this.rc(klass).first();
+    }
+
 
     /**
      * Added for compatability with StreamIterator.  Gets the first element
@@ -1679,14 +1704,13 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             classList=undefined,
         }={}
     ): iterator.StreamIterator {
-
-        let s: iterator.StreamIterator;
+        let si: iterator.StreamIterator;
         if (classList !== undefined) {
-            s = this.iter.getElementsByClass(classList);
+            si = this.iter.getElementsByClass(classList);
         } else {
-            s = this.iter;
+            si = this.iter;
         }
-        return s.getElementsByOffset(
+        return si.getElementsByOffset(
             offsetStart,
             offsetEnd,
             {
@@ -1814,7 +1838,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         }
         let ks: KeySignature;
         if (useKeySignature === true) {
-            ks = this.keySignature ?? this.getContextByClass('KeySignature');
+            ks = this.keySignature ?? (this.getContextByClass('KeySignature') as KeySignature);
         } else if (useKeySignature !== false) {
             ks = useKeySignature as KeySignature;
         }

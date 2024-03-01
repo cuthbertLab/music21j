@@ -126,6 +126,23 @@ export default function tests() {
         assert.throws(() => { cs.getOffsetBySite(s); }, /not stored/, 'cs is no longer in s');
     });
 
+    test('music21.stream.Stream rc, rcf', assert => {
+        const nested = music21.tinyNotation.TinyNotation('4/4 c1 d1 /chord{e1 g b} r2. f4');
+        assert.equal(nested.getElementsByClass(music21.stream.Measure).length, 4);
+        const just_notes = nested.rc(music21.note.Note);
+        assert.ok(
+            just_notes instanceof music21.stream.iterator.RecursiveIterator,
+            'just_notes is a recursive iterator'
+        );
+        assert.equal(just_notes.length, 3, 'just_notes.length');
+        const the_chord = nested.rcf(music21.chord.Chord);
+        assert.equal(the_chord.notes.length, 3, 'the_chord.notes.length');
+        const the_rest = nested.rcf(music21.note.Rest);
+        assert.equal(the_rest.quarterLength, 3.0, 'the_rest.quarterLength');
+        const note_found = nested.rcf(music21.roman.RomanNumeral);
+        assert.notOk(note_found, 'no roman numerals found');
+    });
+
     test('music21.stream.Stream remove recursive', assert => {
         const p = music21.tinyNotation.TinyNotation('4/4 c1 d1 e1 f1');
         assert.equal(p.flatten().notes.length, 4);
