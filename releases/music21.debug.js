@@ -1,5 +1,5 @@
 /**
- * music21j version 0.14.7 built on 2024-02-29.
+ * music21j version 0.14.8 built on 2024-03-01.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -20720,6 +20720,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../exceptions21 */ "./src/exceptions21.ts");
 /* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filters */ "./src/stream/filters.ts");
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 
 const StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_1__.StopIterationSingleton;
@@ -20762,6 +20763,14 @@ class StreamIteratorBase {
     for (const el of this.srcStreamElements) {
       yield el;
     }
+  }
+  clone() {
+    const constructor = this.constructor;
+    return new constructor(this.srcStream, {
+      filterList: [...this.filters],
+      restoreActiveSites: this.restoreActiveSites,
+      activeInformation: _extends({}, this.activeInformation)
+    });
   }
   map(func) {
     return Array.from(this).map(func);
@@ -20877,25 +20886,32 @@ class StreamIteratorBase {
   get activeElementList() {
     return this.activeInformation.stream[this.activeInformation.iterSection];
   }
+  /**
+   * Returns a new StreamIterator with the filter added.
+   */
   addFilter(newFilter) {
     for (const f of this.filters) {
       if (newFilter === f) {
-        return this; // will not work... because == overrides.
+        return this.clone(); // will not work... because == overrides.
       }
     }
 
-    this.filters.push(newFilter);
-    this.resetCaches();
-    return this;
+    const clone = this.clone();
+    clone.filters = [...clone.filters, newFilter];
+    return clone;
   }
-  // noinspection JSUnusedGlobalSymbols
+  /**
+   * Returns a new StreamIterator with the filter removed.
+   *
+   * Silently ignres
+   */
   removeFilter(oldFilter) {
     const index = this.filters.indexOf(oldFilter);
+    const clone = this.clone();
     if (index !== -1) {
-      this.filters.splice(index, 1);
+      clone.filters = clone.filters.toSpliced(index, 1);
     }
-    this.resetCaches();
-    return this;
+    return clone;
   }
   // getElementById(elementId) {
   //
@@ -21137,6 +21153,9 @@ class RecursiveIterator extends StreamIteratorBase {
     } else {
       return lastStartOffset + lastStream.elementOffset(lastYield);
     }
+  }
+  getElementsByClass(classFilterList) {
+    return super.getElementsByClass(classFilterList);
   }
   // TODO(msc): getElementsByOffsetInHierarchy
   // until we can figure out how to do this in pure typescript:

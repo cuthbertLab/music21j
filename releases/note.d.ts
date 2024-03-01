@@ -53,7 +53,7 @@ export declare class Lyric extends prebase.ProtoM21Object {
     protected _identifier: string | number;
     syllabic: string;
     applyRaw: boolean;
-    style: any;
+    style: Record<string, any>;
     constructor(text: string, number?: number, syllabic?: any, applyRaw?: boolean, identifier?: string | number);
     get identifier(): string | number;
     set identifier(i: string | number);
@@ -102,6 +102,8 @@ export declare class GeneralNote extends base.Music21Object {
      */
     activeVexflowNote: VFStaveNote | undefined;
     constructor(ql?: number);
+    get pitches(): pitch.Pitch[];
+    set pitches(_value: pitch.Pitch[]);
     get lyric(): string;
     set lyric(value: string);
     get midiVolume(): number;
@@ -117,7 +119,7 @@ export declare class GeneralNote extends base.Music21Object {
     /**
      * For subclassing.  Do not use this...
      */
-    vexflowNote(options: any): VFStaveNote;
+    vexflowNote(_options: any): VFStaveNote;
     /**
      * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
      */
@@ -128,7 +130,7 @@ export declare class GeneralNote extends base.Music21Object {
      *
      * options -- a set of VexFlow options
      */
-    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, options?: {}): void;
+    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, _options?: {}): void;
     /**
      * Return the active channel for the instrument or activeSite's instrument
      */
@@ -143,7 +145,7 @@ export declare class GeneralNote extends base.Music21Object {
      *     the length to play in case of tied notes, etc.
      * returns delay time in milliseconds until the next element (may be ignored)
      */
-    playMidi(tempo?: number, _nextElement?: base.Music21Object, { instrument, channel, playLegato, }?: {
+    playMidi(tempo?: number, _nextElement?: base.Music21Object, _unused_options?: {
         instrument?: instrument.Instrument;
         channel?: number;
         playLegato?: boolean;
@@ -162,8 +164,6 @@ export declare class NotRest extends GeneralNote {
     beams: beam.Beams;
     protected _stemDirection: string;
     constructor(ql?: number);
-    get pitches(): pitch.Pitch[];
-    set pitches(_value: pitch.Pitch[]);
     get stemDirection(): string;
     set stemDirection(direction: string);
     /**
@@ -257,6 +257,6 @@ export declare class Rest extends GeneralNote {
      * Corrects for bug in VexFlow that renders a whole rest too low.
      *
      */
-    vexflowNote(options: any): VFStaveNote;
+    vexflowNote(_options: any): VFStaveNote;
 }
 //# sourceMappingURL=note.d.ts.map

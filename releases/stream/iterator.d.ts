@@ -3,6 +3,7 @@ import type { Music21Object } from '../base';
 import type { GeneralNote, NotRest } from '../note';
 import type { Part, Stream, Voice } from '../stream';
 import type { ClassFilterType } from '../types';
+import { StreamFilter } from './filters';
 export declare class StreamIteratorException extends StreamException {
 }
 export declare class StreamIteratorBase<T extends Music21Object = Music21Object> {
@@ -14,7 +15,7 @@ export declare class StreamIteratorBase<T extends Music21Object = Music21Object>
     cleanupOnStop: boolean;
     restoreActiveSites: boolean;
     overrideDerivation: any;
-    filters: any[];
+    filters: readonly StreamFilter[];
     protected _len: number;
     protected _matchingElements: T[];
     sectionIndex: number;
@@ -26,6 +27,7 @@ export declare class StreamIteratorBase<T extends Music21Object = Music21Object>
         ignoreSorting?: boolean;
     });
     [Symbol.iterator](): Generator<any, void, void>;
+    clone<TT extends Music21Object = T>(): StreamIteratorBase<TT>;
     map(func: (el: T) => any): any[];
     first(): T;
     last(): T;
@@ -36,18 +38,24 @@ export declare class StreamIteratorBase<T extends Music21Object = Music21Object>
     resetCaches(): void;
     cleanup(): void;
     matchingElements(): T[];
-    matchesFilters(e: Music21Object): any;
+    matchesFilters(e: Music21Object): {};
     stream(): Stream<T>;
     get activeElementList(): any;
-    addFilter(newFilter: any): this;
-    removeFilter(oldFilter: any): this;
-    getElementsByClass(classFilterList: ClassFilterType): this;
-    getElementsNotOfClass(classFilterList: ClassFilterType): this;
-    getElementsByOffset(offsetStart: number, ...args: any[]): this;
+    /**
+     * Returns a new StreamIterator with the filter added.
+     */
+    addFilter(newFilter: StreamFilter): StreamIteratorBase<T>;
+    /**
+     * Returns a new StreamIterator with the filter removed.
+     */
+    removeFilter(oldFilter: StreamFilter): StreamIteratorBase<T>;
+    getElementsByClass(classFilterList: ClassFilterType): StreamIteratorBase<T>;
+    getElementsNotOfClass(classFilterList: ClassFilterType): StreamIteratorBase<T>;
+    getElementsByOffset(offsetStart: number, ...args: any[]): StreamIteratorBase<T>;
     get notes(): StreamIteratorBase<NotRest>;
     get notesAndRests(): StreamIteratorBase<GeneralNote>;
     get parts(): StreamIteratorBase<Part>;
-    get spanners(): this;
+    get spanners(): StreamIteratorBase<T>;
     get voices(): StreamIteratorBase<Voice>;
 }
 export declare class StreamIterator<T extends Music21Object = Music21Object> extends StreamIteratorBase<T> {

@@ -508,8 +508,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
 
         Called automatically before appendDOM routines are called.
      */
-    makeAccidentals({ pitchPast, pitchPastMeasure, useKeySignature, alteredPitches, searchKeySignatureByContext, // not yet used.
-    cautionaryPitchClass, cautionaryAll, inPlace, overrideStatus, cautionaryNotImmediateRepeat, tiePitchSet, }?: MakeAccidentalsParams): this;
+    makeAccidentals({ pitchPast, pitchPastMeasure, useKeySignature, alteredPitches, cautionaryPitchClass, cautionaryAll, inPlace, overrideStatus, cautionaryNotImmediateRepeat, tiePitchSet, }?: MakeAccidentalsParams): this;
     /**
      * Sets the render options for any substreams (such as placing them
      * in systems, etc.) DOES NOTHING for music21.stream.Stream, but is
@@ -527,7 +526,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * @returns {this}
      */
     resetRenderOptions(recursive?: boolean, preserveEvents?: boolean): this;
-    write(format?: string): string;
+    write(_format?: string): string;
     /**
      * Uses music21.vfShow.Renderer to render Vexflow onto an
      * existing canvas or SVG object.

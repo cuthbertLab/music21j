@@ -66,15 +66,7 @@ export declare class ProtoM21Object {
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
     isClassOrSubclass(testClass: string | string[] | (new () => ProtoM21Object) | (new () => ProtoM21Object)[]): boolean;
-    /**
-     *
-     * @returns {string}
-     */
     toString(): string;
-    /**
-     *
-     * @returns {string}
-     */
     stringInfo(): string;
     eq(other: this): boolean;
 }
