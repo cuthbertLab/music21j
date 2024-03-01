@@ -1,5 +1,5 @@
 /**
- * music21j version 0.14.9 built on 2024-03-01.
+ * music21j version 0.14.10 built on 2024-03-01.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -17788,13 +17788,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
       skipSelf = true
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     const includeSelf = !skipSelf;
-    const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_23__.RecursiveIterator(this, {
+    let ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_23__.RecursiveIterator(this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_22__.ClassFilter(classFilter));
+      ri = ri.getElementsByClass(classFilter);
     }
     return ri;
   }
@@ -18099,12 +18099,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
   }
   /**
    * Get the `index`th element from the Stream.  Equivalent to the
-   * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
+   * music21p format of s[index] using __getitem__.  Can use negative indexing
+   * to get from the end.
    *
-   * Once Proxy objects are supported by all operating systems for
+   * for the recursing by class method of `__getitem__` see `rc` below.
    *
-   * @param {number} index - can be -1, -2, to index from the end, like python
-   * @returns {Music21Object|undefined}
+   * index - can be -1, -2, to index from the end, like python
    */
   get(index) {
     // substitute for Python stream __getitem__; supports -1 indexing, etc.
@@ -18127,6 +18127,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
       el.activeSite = this;
       return el;
     }
+  }
+  /**
+   * Return a RecursiveIterator by class for a stream.  Equivalent to the
+   * music21p format of s[note.Note] using __getitem__.  (rc = recurse by class)
+   *
+   * for the get-by-index form of music21p's `__getitem__` see `get()`.
+   *
+   * See also `rcf(Class)` which returns the first item by class.  For
+   * quickly working.
+   */
+  rc(klass) {
+    return this.recurse().getElementsByClass(klass);
+  }
+  /**
+   * A pure convenience method for `s.recurse().getElementsByClass(klass).first()`
+   *
+   * Requires a Class (type), does not take a string.
+   */
+  rcf(klass) {
+    return this.rc(klass).first();
   }
   /**
    * Added for compatability with StreamIterator.  Gets the first element
@@ -18563,7 +18583,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
   //        return newSt;
   //    }
   /**
-   * Returns a new stream [StreamIterator does not yet exist in music21j]
+   * Returns a new StreamIterator
    * containing all Music21Objects that are found at a certain offset or
    * within a certain offset time range (given the offsetStart and
    * (optional) offsetEnd values).
@@ -18579,19 +18599,18 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
       includeElementsThatEndAtStart = true,
       classList = undefined
     } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    let s;
+    let si;
     if (classList !== undefined) {
-      s = this.iter.getElementsByClass(classList);
+      si = this.iter.getElementsByClass(classList);
     } else {
-      s = this.iter;
+      si = this.iter;
     }
-    s.getElementsByOffset(offsetStart, offsetEnd, {
+    return si.getElementsByOffset(offsetStart, offsetEnd, {
       includeEndBoundary,
       mustFinishInSpan,
       mustBeginInSpan,
       includeElementsThatEndAtStart
     });
-    return s;
   }
   /**
    *  Given an element (from another Stream) returns the single element
@@ -20903,7 +20922,7 @@ class StreamIteratorBase {
   /**
    * Returns a new StreamIterator with the filter removed.
    *
-   * Silently ignres
+   * Silently ignores
    */
   removeFilter(oldFilter) {
     const index = this.filters.indexOf(oldFilter);

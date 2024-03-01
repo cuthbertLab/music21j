@@ -48,7 +48,7 @@ export declare class StreamIteratorBase<T extends Music21Object = Music21Object>
     /**
      * Returns a new StreamIterator with the filter removed.
      *
-     * Silently ignres
+     * Silently ignores
      */
     removeFilter(oldFilter: filters.StreamFilter): StreamIteratorBase<T>;
     getElementsByClass(classFilterList: ClassFilterType): StreamIteratorBase<T>;

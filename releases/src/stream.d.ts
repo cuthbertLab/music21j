@@ -302,14 +302,30 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
     }): void;
     /**
      * Get the `index`th element from the Stream.  Equivalent to the
-     * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
+     * music21p format of s[index] using __getitem__.  Can use negative indexing
+     * to get from the end.
      *
-     * Once Proxy objects are supported by all operating systems for
+     * for the recursing by class method of `__getitem__` see `rc` below.
      *
-     * @param {number} index - can be -1, -2, to index from the end, like python
-     * @returns {Music21Object|undefined}
+     * index - can be -1, -2, to index from the end, like python
      */
     get(index: number): base.Music21Object;
+    /**
+     * Return a RecursiveIterator by class for a stream.  Equivalent to the
+     * music21p format of s[note.Note] using __getitem__.  (rc = recurse by class)
+     *
+     * for the get-by-index form of music21p's `__getitem__` see `get()`.
+     *
+     * See also `rcf(Class)` which returns the first item by class.  For
+     * quickly working.
+     */
+    rc<TT extends base.Music21Object = base.Music21Object>(klass: (new () => TT)): iterator.RecursiveIterator<TT>;
+    /**
+     * A pure convenience method for `s.recurse().getElementsByClass(klass).first()`
+     *
+     * Requires a Class (type), does not take a string.
+     */
+    rcf<TT extends base.Music21Object = base.Music21Object>(klass: (new () => TT)): TT;
     /**
      * Added for compatability with StreamIterator.  Gets the first element
      * or undefined if none.  No speedups from `.get(0)`, but makes coding
@@ -422,7 +438,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      */
     getElementsNotOfClass(classList: string | string[]): iterator.StreamIterator;
     /**
-     * Returns a new stream [StreamIterator does not yet exist in music21j]
+     * Returns a new StreamIterator
      * containing all Music21Objects that are found at a certain offset or
      * within a certain offset time range (given the offsetStart and
      * (optional) offsetEnd values).
@@ -435,7 +451,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
         mustBeginInSpan?: boolean;
         includeElementsThatEndAtStart?: boolean;
         classList?: any;
-    }): iterator.StreamIterator<base.Music21Object>;
+    }): iterator.StreamIterator;
     /**
      *  Given an element (from another Stream) returns the single element
      *  in this Stream that is sounding while the given element starts.
