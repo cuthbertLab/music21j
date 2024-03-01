@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "lib": ["es6", "dom", "es2018"],
+        "lib": ["es6", "dom", "es2023"],
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "sourceMap": true,
