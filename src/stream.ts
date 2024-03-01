@@ -49,6 +49,7 @@ import * as makeNotation from './stream/makeNotation';
 import type { KeySignature } from './key';
 import defaults from './defaults';
 import {to_el} from './common';
+import {ClassFilterType} from './types';
 
 export { filters };
 export { iterator };
@@ -393,12 +394,12 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     }
 
     get notes(): iterator.StreamIterator<note.NotRest> {
-        return this.getElementsByClass(['Note', 'Chord']) as
+        return this.getElementsByClass(note.NotRest) as
             iterator.StreamIterator<note.NotRest>;
     }
 
     get notesAndRests(): iterator.StreamIterator<note.GeneralNote> {
-        return this.getElementsByClass('GeneralNote') as iterator.StreamIterator<note.GeneralNote>;
+        return this.getElementsByClass(note.GeneralNote) as iterator.StreamIterator<note.GeneralNote>;
     }
 
     get tempo(): number {
@@ -1611,11 +1612,23 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     /**
      * Find all elements with a certain class; if an Array is given, then any
      * matching class will work.
-     *
-     * @param {string[]|string} classList - a list of classes to find
      */
-    getElementsByClass(classList: string|string[]): iterator.StreamIterator {
-        return this.iter.getElementsByClass(classList);
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>
+        (classList: new() => TT): iterator.StreamIterator<TT>;
+
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>
+        (classList: string): iterator.StreamIterator<TT>;
+
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>
+        (classList: string[]): iterator.StreamIterator<TT>;
+
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>
+        (classList: (new() => base.Music21Object)[]): iterator.StreamIterator<TT>;
+
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object
+    >(classList: ClassFilterType): iterator.StreamIterator<TT>
+    {
+        return this.iter.getElementsByClass(classList) as iterator.StreamIterator<TT>;
     }
 
     /**
@@ -1786,7 +1799,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         pitchPastMeasure=[],
         useKeySignature=true,
         alteredPitches=[],
-        searchKeySignatureByContext=false,  // not yet used.
+        // searchKeySignatureByContext=false,
         cautionaryPitchClass=true,
         cautionaryAll=false,
         inPlace=false,
@@ -1924,7 +1937,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
 
     //  * *********  VexFlow functionality
 
-    write(format='musicxml'): string {
+    write(_format='musicxml'): string {
         return _exportMusicXMLAsText(this);
     }
 
@@ -2148,7 +2161,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         let nLast: note.GeneralNote;
         let iLast: number;
 
-        const updateEndMatch = nInner => {
+        const updateEndMatch = (nInner: note.GeneralNote): boolean => {
             const ni_is_chord = nInner.classes.includes('Chord');
             const nLast_is_chord = nLast?.classes.includes('Chord');
 
@@ -2164,7 +2177,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
                 && nLast
                 && posConnected.includes(iLast)
                 && !nLast_is_chord
-                && (nLast as note.Note).pitch?.eq(nInner.pitch)
+                && (nLast as note.Note).pitch?.eq((nInner as note.Note).pitch)
             ) {
                 return true;
             }

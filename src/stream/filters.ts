@@ -84,13 +84,13 @@ export class ClassFilter extends StreamFilter {
         return 'getElementsByClass';
     }
 
-    classList: string[]|(typeof Music21Object)[];
+    classList: string[]|(new() => Music21Object)[];
 
     constructor(classList: ClassFilterType = []) {
         super();
-        let classListArray: string[]|typeof Music21Object[];
+        let classListArray: string[]|(new() => Music21Object)[];
         if (!Array.isArray(classList)) {
-            classListArray = <string[]|(typeof Music21Object)[]> [classList];
+            classListArray = <string[]|(new() => Music21Object)[]> [classList];
         } else {
             classListArray = classList;
         }

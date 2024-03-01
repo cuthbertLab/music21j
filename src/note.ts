@@ -103,7 +103,7 @@ export class Lyric extends prebase.ProtoM21Object {
     protected _identifier: string|number;
     syllabic: string;
     applyRaw: boolean;
-    style;
+    style: Record<string, any>;
 
     constructor(
         text: string,
@@ -245,6 +245,15 @@ export class GeneralNote extends base.Music21Object {
         /* Later: augmentOrDiminish, getGrace, */
     }
 
+    get pitches(): pitch.Pitch[] {
+        return [];
+    }
+
+    set pitches(_value: pitch.Pitch[]) {
+        // purposely does nothing
+    }
+
+
     get lyric() {
         if (this.lyrics.length > 0) {
             return this.lyrics[0].text;
@@ -330,7 +339,7 @@ export class GeneralNote extends base.Music21Object {
     /**
      * For subclassing.  Do not use this...
      */
-    vexflowNote(options): VFStaveNote {
+    vexflowNote(_options): VFStaveNote {
         return new VFStaveNote({
             keys: [],
             duration: this.duration.vexflowDuration + 'r',
@@ -353,7 +362,7 @@ export class GeneralNote extends base.Music21Object {
      *
      * options -- a set of VexFlow options
      */
-    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, options={}): void {
+    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, _options={}): void {
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
                 VFDot.buildAndAttach([vfn], { all: true });
@@ -388,11 +397,7 @@ export class GeneralNote extends base.Music21Object {
     playMidi(
         tempo: number = 120,
         _nextElement: base.Music21Object = undefined,
-        {
-            instrument=undefined,
-            channel=undefined,
-            playLegato=false,
-        }: {
+        _unused_options: {
             instrument?: instrument.Instrument,
             channel?: number,
             playLegato?: boolean,
@@ -430,15 +435,6 @@ export class NotRest extends GeneralNote {
         /* TODO: this.duration.linkage -- need durationUnits */
         /* TODO: check notehead, noteheadFill, noteheadParentheses */
     }
-
-    get pitches(): pitch.Pitch[] {
-        return [];
-    }
-
-    set pitches(_value: pitch.Pitch[]) {
-        // purposely does nothing
-    }
-
 
     get stemDirection() {
         return this._stemDirection;
@@ -761,7 +757,7 @@ export class Rest extends GeneralNote {
      * Corrects for bug in VexFlow that renders a whole rest too low.
      *
      */
-    override vexflowNote(options): VFStaveNote {
+    override vexflowNote(_options): VFStaveNote {
         let keyLine = 'b/4';
         const activeSiteSingleLine = (
             this.activeSite !== undefined
