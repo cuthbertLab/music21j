@@ -446,6 +446,19 @@ export default function tests() {
         c = s.getElementsByClass('GeneralNote');
         assert.equal(c.length, 3, 'got multiple subclasses');
     });
+    test('music21.stream.Stream.getElementsByOffset', assert => {
+        const s = new music21.stream.Stream();
+        const n1 = new music21.note.Note('C#5', 1.0);
+        const n2 = new music21.note.Note('D#5', 1.0);
+        s.append(n1);
+        s.append(n2);
+        const elements_at_0 = Array.from(s.getElementsByOffset(0.0));
+        const elements_at_1 = Array.from(s.getElementsByOffset(1.0));
+        assert.ok(elements_at_0.includes(n1), 'n1 is at 0.0');
+        assert.ok(elements_at_1.includes(n2), 'n2 is at 1.0');
+        assert.notOk(elements_at_0.includes(n2), 'n2 is not at 0.0');
+        assert.notOk(elements_at_1.includes(n1), 'n1 is not at 1.0');
+    });
     test('music21.stream.offsetMap', assert => {
         const n = new music21.note.Note('G3');
         const o = new music21.note.Note('A3');
