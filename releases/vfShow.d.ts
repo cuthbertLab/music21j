@@ -9,9 +9,10 @@
  */
 /// <reference types="jquery" />
 /// <reference types="jquery" />
-import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
+import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
 import * as stream from './stream';
 import type * as renderOptions from './renderOptions';
+import { StaveConnector } from './types';
 export declare const vexflowDefaults: {
     softmaxFactor: number;
 };
@@ -232,7 +233,7 @@ export declare class Renderer {
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */
     vexflowVoice(s: stream.Stream): VFVoice;
-    staffConnectorsMap(connectorType: any): any;
+    staffConnectorsMap(connectorType: StaveConnector): VFStaveConnectorType;
     /**
      * If a stream has parts (NOT CHECKED HERE) create and
      * draw an appropriate Vex.Flow.StaveConnector
@@ -244,11 +245,8 @@ export declare class Renderer {
      * each {@link Music21Object} -- see `applyFormatterInformationToNotes`
      *
      * You might want to remove this information; this routine does that.
-     *
-     * @param {Stream} s - can have parts, measures, etc.
-     * @param {boolean} [recursive=false]
      */
-    removeFormatterInformation(s: any, recursive?: boolean): void;
+    removeFormatterInformation(s: stream.Stream, recursive?: boolean): void;
     /**
      * Adds the following pieces of information to each Note
      *

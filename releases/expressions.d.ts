@@ -1,12 +1,12 @@
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  */
 import { Articulation as VFArticulation, Ornament as VFOrnament } from 'vexflow';
 import * as base from './base';
 import { ArticulationPlacement, VexflowArticulationParams } from './articulations';
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  * @property {string} name
  * @property {string} vexflowModifier

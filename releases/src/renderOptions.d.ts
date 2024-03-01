@@ -10,6 +10,7 @@
  * Options for rendering a stream
  *
  */
+import { StaveConnector } from './types';
 interface EventInterface {
     click: string | Function | undefined;
     dblclick: string | Function | undefined;
@@ -43,7 +44,7 @@ export declare class RenderOptions {
     leftBarline: string;
     rightBarline: string;
     staffLines: number;
-    staffConnectors: string[];
+    staffConnectors: StaveConnector[];
     staffPadding: number;
     events: EventInterface;
     useVexflowAutobeam: boolean;

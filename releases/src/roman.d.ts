@@ -77,10 +77,10 @@ export declare const functionalityScores: {
  *
  * N.B. this is NOT where abbreviations get expanded
  *
- * @param  {string} shorthand string of a figure w/o roman to parse
- * @return {Array<string>}           array of shorthands
+ * shorthand is a string of a figure w/o roman to parse
+ * returns an array of shorthands
  */
-export declare function expandShortHand(shorthand: any): any[];
+export declare function expandShortHand(shorthand: string): string[];
 /**
  * correctSuffixForChordQuality - Correct a given inversionString suffix given a
  *     chord of various qualities.
@@ -120,7 +120,7 @@ export declare const romanToNumber: string[];
 export declare class RomanNumeral extends harmony.Harmony {
     static get className(): string;
     _parsingComplete: boolean;
-    primaryFigure: any;
+    primaryFigure: string;
     secondaryRomanNumeral: RomanNumeral;
     secondaryRomanNumeralKey: key.Key;
     pivotChord: any;
@@ -131,9 +131,9 @@ export declare class RomanNumeral extends harmony.Harmony {
     frontAlterationString: string;
     frontAlterationTransposeInterval: interval.Interval;
     frontAlterationAccidental: pitch.Accidental;
-    romanNumeralAlone: any;
-    quality: any;
-    impliedQuality: any;
+    romanNumeralAlone: string;
+    quality: string;
+    impliedQuality: string;
     impliedScale: key.Key;
     scaleOffset: interval.Interval;
     useImpliedScale: boolean;
@@ -151,17 +151,15 @@ export declare class RomanNumeral extends harmony.Harmony {
     });
     stringInfo(): string;
     _parseFigure(): void;
-    _parseFrontAlterations(workingFigure: any): any;
+    _parseFrontAlterations(workingFigure: string): string;
     _correctBracketedPitches(): void;
-    _setImpliedQualityFromString(workingFigure: any): any;
+    _setImpliedQualityFromString(workingFigure: string): string;
     _fixMinorVIandVII(useScale: any): void;
-    _parseRNAloneAmidstAug6(workingFigure: any, useScale: any): any[];
+    _parseRNAloneAmidstAug6(workingFigure: string, useScale: any): [string, any];
     /**
      * get romanNumeral - return either romanNumeralAlone (II) or with frontAlterationAccidental (#II)
-     *
-     * @return {string}  new romanNumeral;
      */
-    get romanNumeral(): any;
+    get romanNumeral(): string;
     get scale(): scale.ConcreteScale;
     get key(): key.Key;
     set key(keyOrScale: key.Key);
@@ -175,11 +173,11 @@ export declare class RomanNumeral extends harmony.Harmony {
      */
     _updatePitches(): void;
     bassScaleDegreeFromNotation(notationObject: any): number;
-    _matchAccidentalsToQuality(impliedQuality: any): void;
+    _matchAccidentalsToQuality(impliedQuality: string): void;
     _correctForSecondaryRomanNumeral(useScale: any, figure?: any): any[];
-    _parseOmittedSteps(workingFigure: any): any;
-    _parseBracketedAlterations(workingFigure: any): any;
-    _findSemitoneSizeForQuality(impliedQuality: any): any;
+    _parseOmittedSteps(workingFigure: string): string;
+    _parseBracketedAlterations(workingFigure: string): string;
+    _findSemitoneSizeForQuality(impliedQuality: string): number[];
     /**
      * Gives a string display.  Note that since inversion is not yet supported
      * it needs to be given separately.

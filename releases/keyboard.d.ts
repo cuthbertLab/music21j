@@ -66,8 +66,6 @@ export declare class Key {
     addNoteName(labelOctaves?: boolean): this;
     /**
      * Removes the note name from the key (if exists)
-     *
-     * @returns {undefined}
      */
     removeNoteName(): void;
 }
@@ -128,8 +126,6 @@ export declare class Keyboard {
     constructor();
     /**
      * Redraws the SVG associated with this Keyboard
-     *
-     * @returns {SVGElement} new svgDOM
      */
     redrawSVG(): SVGSVGElement;
     /**
@@ -172,11 +168,8 @@ export declare class Keyboard {
      *
      * Do not call this directly, just use createSVG after changing the
      * hideable property on the keyboard to True.
-     *
-     * @param {Node} where
-     * @param {SVGElement} keyboardSVG
      */
-    appendHideableKeyboard(where: any, keyboardSVG: SVGSVGElement | HTMLElement): HTMLElement;
+    appendHideableKeyboard(where: HTMLElement, keyboardSVG: SVGSVGElement | HTMLElement): HTMLElement;
 }
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.

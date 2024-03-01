@@ -110,21 +110,14 @@ export declare class Duration extends prebase.ProtoM21Object {
      */
     get vexflowDuration(): string;
     cloneCallbacksTupletFunction(tupletKey: any, ret: any, obj: any, deep: any, memo: any): void;
-    /**
-     *
-     * @param {number} ql
-     * @returns {number}
-     * @private
-     */
-    _findDots(ql: any): number;
+    _findDots(ql: number): number;
     updateQlFromFeatures(): void;
     updateFeaturesFromQl(): void;
     /**
      * Add a tuplet to music21j
      *
-     * @param {Tuplet} newTuplet - tuplet to add to `.tuplets`
-     * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
-     * @returns {this}
+     * newTuplet - tuplet to add to `.tuplets`
+     * [skipUpdateQl=false] - update the quarterLength afterward?
      */
     appendTuplet(newTuplet: Tuplet, skipUpdateQl?: boolean): this;
 }
@@ -145,7 +138,7 @@ export declare class Tuplet extends prebase.ProtoM21Object {
     durationActual: Duration;
     durationNormal: Duration;
     frozen: boolean;
-    type: any;
+    type: string;
     bracket: boolean;
     placement: string;
     tupletActualShow: string;
@@ -168,23 +161,20 @@ export declare class Tuplet extends prebase.ProtoM21Object {
     /**
      * Sets the tuplet ratio.
      *
-     * @param {Number} actual - number of notes in actual (e.g., 3)
-     * @param {Number} normal - number of notes in normal (e.g., 2)
-     * @returns {undefined}
+     * actual - number of notes in actual (e.g., 3)
+     * normal - number of notes in normal (e.g., 2)
      */
-    setRatio(actual: any, normal: any): void;
+    setRatio(actual: number, normal: number): void;
     /**
      * Get the quarterLength corresponding to the total length that
      * the completed tuplet (i.e., 3 notes in a triplet) would occupy.
-     *
-     * @returns {Number} A quarter length.
      */
     totalTupletLength(): number;
     /**
      * The amount by which each quarter length is multiplied to get
      * the tuplet. For instance, in a normal triplet, this is 0.666
      *
-     * @returns {Number} A float of the multiplier
+     * Returns a float of the multiplier
      */
     tupletMultiplier(): number;
 }

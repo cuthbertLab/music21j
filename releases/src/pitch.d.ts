@@ -31,8 +31,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
-     * @param {number|string} accName - the name, number, or modifier to set
-     * @returns {undefined}
+     * accName - the name, number, or modifier to set
      */
     set(accName: number | string): void;
     /**
@@ -68,7 +67,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
      * @type {string}
      * @readonly
      */
-    get vexflowModifier(): "bb" | "b" | "#" | "n" | "##" | "###" | "bbb";
+    get vexflowModifier(): "n" | "#" | "b" | "##" | "bb" | "###" | "bbb";
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape

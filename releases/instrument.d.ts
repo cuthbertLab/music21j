@@ -59,11 +59,8 @@ export declare class Instrument extends base.Music21Object {
      * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
      * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
      * Skips 10 unless this.inGMPercMap is true
-     *
-     * @param {int[]} [usedChannels]
-     * @returns {number|undefined}
      */
-    autoAssignMidiChannel(usedChannels?: any): number;
+    autoAssignMidiChannel(usedChannels?: number[]): number;
     get oggSoundfont(): string;
     get mp3Soundfont(): string;
     get midiChannel(): any;

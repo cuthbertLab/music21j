@@ -37,14 +37,14 @@ export declare class Figure {
     number: number;
     modifierString: string;
     modifier: Modifier;
-    constructor(number: any, modifierString: any);
+    constructor(number: number, modifierString: string);
 }
 export declare class Modifier {
     modifierString: string;
     accidental: pitch.Accidental;
     constructor(modifierString: string);
     _toAccidental(): pitch.Accidental;
-    modifyPitchName(pitchNameToAlter: any): string;
-    modifyPitch(pitchToAlter: any, inPlace: any): any;
+    modifyPitchName(pitchNameToAlter: string): string;
+    modifyPitch(pitchToAlter: pitch.Pitch, inPlace: boolean): pitch.Pitch;
 }
 //# sourceMappingURL=figuredBass.d.ts.map

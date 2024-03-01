@@ -57,8 +57,6 @@ export declare class ProtoM21Object {
     /**
      * Check to see if an object is of this class or subclass.
      *
-     * @param {string|string[]} testClass - a class or Array of classes to test
-     * @returns {boolean}
      * @example
      * var n = new music21.note.Note();
      * n.isClassOrSubclass('Note'); // true
@@ -67,7 +65,7 @@ export declare class ProtoM21Object {
      * n.isClassOrSubclass(['Note', 'Rest']); // true
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
-    isClassOrSubclass(testClass: string | typeof ProtoM21Object | (string | typeof ProtoM21Object)[]): boolean;
+    isClassOrSubclass(testClass: string | string[] | (new () => ProtoM21Object) | (new () => ProtoM21Object)[]): boolean;
     /**
      *
      * @returns {string}

@@ -40,7 +40,7 @@ export declare class Chord extends note.NotRest {
     stringInfo(): string;
     get length(): number;
     get pitches(): pitch.Pitch[];
-    set pitches(tempPitches: pitch.Pitch[]);
+    set pitches(tempPitches: (pitch.Pitch | string | note.Note)[]);
     get notes(): note.Note[];
     set notes(newNotes: note.Note[]);
     vexflowNote({ clef }?: {
@@ -52,9 +52,9 @@ export declare class Chord extends note.NotRest {
     get forteClass(): string;
     get forteClassNumber(): any;
     get forteClassTnI(): string;
-    get(i: any): note.Note;
+    get(i: number): note.Note;
     [Symbol.iterator](): Generator<note.Note, void, unknown>;
-    areZRelations(other: any): boolean;
+    areZRelations(other: Chord): boolean;
     getZRelation(): Chord;
     get hasZRelation(): boolean;
     get intervalVector(): any;

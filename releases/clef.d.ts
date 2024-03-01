@@ -10,7 +10,7 @@
  */
 import * as base from './base';
 import * as pitch from './pitch';
-import { Stream } from './stream';
+import type { Stream } from './stream';
 type ClefName = 'treble' | 'soprano' | 'mezzo-soprano' | 'alto' | 'tenor' | 'bass' | 'percussion';
 export declare const lowestLines: Record<ClefName, number>;
 export declare const nameToLine: Record<ClefName, number>;

@@ -31,39 +31,21 @@ export declare class SiteRef {
 }
 export declare function getId(obj: any): number | string;
 export declare class Sites {
-    siteDict: any;
+    siteDict: Map<number | string, SiteRef>;
     protected _siteIndex: number;
     protected _lastID: number;
     constructor();
     get length(): number;
     includes(checkSite: Stream): boolean;
-    /**
-     *
-     * @returns {Array<*>}
-     */
     protected _keysByTime(newFirst?: boolean): any[];
     add(obj: any, idKey?: any, classString?: string): void;
-    /**
-     * @param obj
-     */
     remove(obj: any): boolean;
     clear(): void;
     /**
      */
     yieldSites(sortByCreationTime?: boolean | string, priorityTarget?: Stream, excludeNone?: boolean): Generator<Stream, void, void>;
     get(sortByCreationTime?: boolean, priorityTarget?: Stream, excludeNone?: boolean): Stream[];
-    /**
-     *
-     * @param {string} attrName
-     * @returns {undefined|*}
-     */
-    getAttrByName(attrName: any): any;
-    /**
-     *
-     * @param {string} className
-     * @param {Object} [options]
-     * @returns {Stream}
-     */
+    getAttrByName(attrName: string): any;
     getObjByClass(className: string, options?: {}): Stream;
 }
 //# sourceMappingURL=sites.d.ts.map

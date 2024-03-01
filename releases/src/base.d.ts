@@ -4,8 +4,8 @@ import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
 import * as style from './style';
-import { Stream } from './stream';
-import { TimeSignature } from './meter';
+import type { Stream } from './stream';
+import type { TimeSignature } from './meter';
 /**
  * Base class for any object that can be placed in a {@link Stream}.
  *
@@ -99,7 +99,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     set duration(newDuration: duration.Duration);
     get quarterLength(): number;
     set quarterLength(ql: number);
-    mergeAttributes(other: any): this;
+    mergeAttributes(other: Music21Object): this;
     /**
      * Return the offset of this element in a given site -- use .offset if you are sure that
      * site === activeSite.

@@ -82,8 +82,6 @@ export declare class Event {
     /**
      * Calls MIDI.noteOn or MIDI.noteOff for the note
      * represented by the Event (if appropriate)
-     *
-     * @returns {undefined}
      */
     sendToMIDIjs(): void;
     /**

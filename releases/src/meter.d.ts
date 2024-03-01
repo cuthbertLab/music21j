@@ -25,12 +25,12 @@ export declare class TimeSignature extends base.Music21Object {
     static get className(): string;
     _numerator: number;
     _denominator: number;
-    _overwrittenBarDuration: any;
+    _overwrittenBarDuration: duration.Duration;
     symbol: string;
     symbolizeDenominator: boolean;
     _beatGroups: number[][];
-    _overwrittenBeatCount: any;
-    _overwrittenBeatDuration: any;
+    _overwrittenBeatCount: number;
+    _overwrittenBeatDuration: duration.Duration;
     constructor(value?: string, divisions?: any);
     stringInfo(): string;
     resetValues(value?: string, divisions?: any): void;

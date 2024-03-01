@@ -19,6 +19,12 @@ export { iterator };
 export { makeNotation };
 export declare class StreamException extends Music21Exception {
 }
+export interface PlayStreamParams {
+    instrument?: instrument.Instrument;
+    tempo?: number;
+    done?: () => any;
+    startNote?: number;
+}
 interface MakeAccidentalsParams {
     pitchPast?: pitch.Pitch[];
     pitchPastMeasure?: pitch.Pitch[];
@@ -62,7 +68,7 @@ interface MakeAccidentalsParams {
  *     call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
-export declare class Stream extends base.Music21Object {
+export declare class Stream<ElementType extends base.Music21Object = base.Music21Object> extends base.Music21Object {
     static get className(): string;
     _offsetDict: WeakMap<base.Music21Object, number>;
     _svgEventMap: WeakMap<HTMLElement, Record<keyof HTMLElementEventMap, Array<(e: any) => any>>>;
@@ -106,8 +112,7 @@ export declare class Stream extends base.Music21Object {
     _overriddenDuration: Duration;
     constructor();
     /**
-     *
-     * @returns {IterableIterator<Music21Object>}
+     *  Iterator for use in `for (const x of new Stream())` contexts.
      */
     [Symbol.iterator](): IterableIterator<base.Music21Object>;
     forEach(callback: (el: base.Music21Object, i: number, innerThis: any) => void, thisArg?: any): void;
@@ -201,14 +206,14 @@ export declare class Stream extends base.Music21Object {
      * as a way of making the older music21j attributes still work while
      * transitioning to a more music21p-like approach.
      *
-     * May be removed
+     * May be removed.
      */
-    getSpecialContext(context: any, warnOnCall?: boolean): any;
+    getSpecialContext(context: string, warnOnCall?: boolean): any;
     /**
      * Map as if this were an Array
      */
-    map(func: any): unknown[];
-    filter(func: any): base.Music21Object[];
+    map(func: (el: ElementType) => any): any[];
+    filter(func: (el: ElementType) => boolean): ElementType[];
     clear(): void;
     coreElementsChanged({ updateIsFlat, clearIsSorted, memo, // unused
     keepIndex, }?: {
@@ -224,12 +229,10 @@ export declare class Stream extends base.Music21Object {
         skipSelf?: boolean;
     }): iterator.RecursiveIterator;
     /**
-     * Add an element to the end of the stream, setting its `.offset` accordingly
-     *
-     * @param elOrElList - element
-     * or list of elements to append
+     * Add an element (or a list of elements) to the end of the stream,
+     * setting each element's `.offset` accordingly
      */
-    append(elOrElList: base.Music21Object | base.Music21Object[]): this;
+    append(elOrElList: ElementType | ElementType[]): this;
     sort(): this;
     /**
      * Add an element to the specified place in the stream, setting its `.offset` accordingly
@@ -255,7 +258,7 @@ export declare class Stream extends base.Music21Object {
     n.duration.type = 'whole'
     a.repeatAppend(n, 10)
     */
-    repeatAppend(item: base.Music21Object, numberOfTimes: number): void;
+    repeatAppend(item: ElementType, numberOfTimes: number): void;
     /**
      * Inserts a single element at offset, shifting elements at or after it begins
      * later in the stream.
@@ -324,7 +327,7 @@ export declare class Stream extends base.Music21Object {
      */
     set(index: number, newEl: base.Music21Object): this;
     setElementOffset(el: base.Music21Object, value: number, addElement?: boolean): void;
-    elementOffset(element: any, stringReturns?: boolean): number;
+    elementOffset(element: base.Music21Object, _stringReturns?: boolean): number;
     /**
      * Takes a stream and places all of its elements into
      * measures (:class:`~music21.stream.Measure` objects)
@@ -351,7 +354,7 @@ export declare class Stream extends base.Music21Object {
         addPartIdAsGroup?: boolean;
         removeRedundantPitches?: boolean;
         toSoundingPitch?: boolean;
-    }): any;
+    }): Stream<base.Music21Object>;
     template({ fillWithRests, removeClasses, retainVoices, }?: {
         fillWithRests?: boolean;
         removeClasses?: any[];
@@ -396,8 +399,6 @@ export declare class Stream extends base.Music21Object {
     hasPartLikeStreams(): boolean;
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
-     *
-     * @returns {boolean}
      */
     hasLyrics(): boolean;
     /**
@@ -408,10 +409,11 @@ export declare class Stream extends base.Music21Object {
     /**
      * Find all elements with a certain class; if an Array is given, then any
      * matching class will work.
-     *
-     * @param {string[]|string} classList - a list of classes to find
      */
-    getElementsByClass(classList: string | string[]): iterator.StreamIterator;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: new () => TT): iterator.StreamIterator<TT>;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: string): iterator.StreamIterator<TT>;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: string[]): iterator.StreamIterator<TT>;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: (new () => base.Music21Object)[]): iterator.StreamIterator<TT>;
     /**
      * Find all elements NOT with a certain class; if an Array is given, then any
      * matching class will work.
@@ -433,7 +435,7 @@ export declare class Stream extends base.Music21Object {
         mustBeginInSpan?: boolean;
         includeElementsThatEndAtStart?: boolean;
         classList?: any;
-    }): any;
+    }): iterator.StreamIterator<base.Music21Object>;
     /**
      *  Given an element (from another Stream) returns the single element
      *  in this Stream that is sounding while the given element starts.
@@ -569,8 +571,6 @@ export declare class Stream extends base.Music21Object {
     /**
      * Returns True if there are no gaps between the lowest offset and the highest time.
      * Otherwise returns False
-     *
-     * @returns {boolean}
      */
     get isGapless(): boolean;
     /**
@@ -579,11 +579,8 @@ export declare class Stream extends base.Music21Object {
      * `options` can be an object containing:
      * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
-     *
-     * @param {Object} [options] - object of playback options
-     * @returns {this}
      */
-    playStream(options?: {}): this;
+    playStream(options?: PlayStreamParams): this;
     /**
      * Stops a stream from playing if it currently is.
      *
@@ -695,13 +692,8 @@ export declare class Stream extends base.Music21Object {
      * Returns the stream that is at X location xPxScaled and system systemIndex.
      *
      * Override in subclasses, always returns this; here.
-     *
-     * @param {number} xPxScaled
-     * @param {number} [systemIndex]
-     * @returns {this}
-     *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Stream;
+    getStreamFromScaledXandSystemIndex(_xPxScaled: number, _systemIndex?: number): Stream;
     /**
      *
      * Return the note (or chord or rest) at pixel X (or within allowablePixels [default 10])
@@ -713,12 +705,6 @@ export declare class Stream extends base.Music21Object {
      * note within the window even if it's beyond allowablePixels (default: true)
      * and 'backupMaximum' which specifies a maximum distance even for backup
      * (default: 70);
-     *
-     * @param {number} xPxScaled
-     * @param {number} [allowablePixels=10]
-     * @param {number} [systemIndex]
-     * @param {Object} [options]
-     * @returns {Music21Object|undefined}
      */
     noteElementFromScaledX(xPxScaled: number, allowablePixels?: number, systemIndex?: number, options?: {}): note.GeneralNote;
     /**
@@ -852,27 +838,19 @@ export declare class Part extends Stream {
     /**
      * systemIndexAndScaledY - given a scaled Y, return the systemIndex
      * and the scaledYRelativeToSystem
-     *
-     * @param  {number} y the scaled Y
-     * @return {number[]}  systemIndex, scaledYRelativeToSystem
      */
-    systemIndexAndScaledY(y: any): number[];
+    systemIndexAndScaledY(y: number): [number, number];
     /**
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
      *
-     * @returns {Array} [clickedDiatonicNoteNum, foundNote]
+     * returns a two element array of [clickedDiatonicNoteNum, foundNote]
      */
     findNoteForClick(svg?: HTMLElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.
-     *
-     * @param {number} [xPxScaled]
-     * @param {number} [systemIndex]
-     * @returns {Stream}
-     *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Stream;
+    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Measure;
 }
 /**
  * Scores with multiple parts
@@ -898,7 +876,7 @@ export declare class Score extends Stream {
      * @returns {Stream} usually a Measure
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Stream;
+    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Measure;
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions
      *
@@ -920,7 +898,7 @@ export declare class Score extends Stream {
      *
      * @param {Object} params -- passed to each part
      */
-    playStream(params: any): this;
+    playStream(params?: PlayStreamParams): this;
     /**
      * Overrides the default music21.stream.Stream#stopPlayScore()
      */
@@ -961,9 +939,6 @@ export declare class Score extends Stream {
      * if setLeft is true then also set the renderOptions.left
      *
      * This does not even out systems.
-     *
-     * @param {Object} options
-     * @param {boolean} [options.setLeft=true]
      */
     evenPartMeasureSpacing({ setLeft }?: {
         setLeft?: boolean;
