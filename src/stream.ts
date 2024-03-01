@@ -1661,7 +1661,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     //    }
 
     /**
-     * Returns a new stream [StreamIterator does not yet exist in music21j]
+     * Returns a new StreamIterator
      * containing all Music21Objects that are found at a certain offset or
      * within a certain offset time range (given the offsetStart and
      * (optional) offsetEnd values).
@@ -1678,7 +1678,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             includeElementsThatEndAtStart=true,
             classList=undefined,
         }={}
-    ) {
+    ): iterator.StreamIterator {
 
         let s: iterator.StreamIterator;
         if (classList !== undefined) {
@@ -1686,7 +1686,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         } else {
             s = this.iter;
         }
-        s.getElementsByOffset(
+        return s.getElementsByOffset(
             offsetStart,
             offsetEnd,
             {
@@ -1696,7 +1696,6 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
                 includeElementsThatEndAtStart,
             }
         );
-        return s;
     }
 
     /**
