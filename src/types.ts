@@ -1,6 +1,7 @@
 import type {Music21Object} from './base';
 
-export type ClassFilterType = string|string[]|typeof Music21Object|(typeof Music21Object)[]
+// note: mixing both string and types in a list is not supported.
+export type ClassFilterType = string|string[]|(new() => Music21Object)|(new() => Music21Object)[]
 
 export enum StaveConnector {
     SINGLE = 'single',

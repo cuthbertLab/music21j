@@ -21,7 +21,7 @@ export default function tests() {
         assert.ok(n.isClassOrSubclass('GeneralNote'));
         assert.ok(n.isClassOrSubclass('music21.note.Note'));
         assert.ok(n.isClassOrSubclass(music21.note.Note));
-        assert.ok(n.isClassOrSubclass(['Rest', music21.note.Note]));
+        assert.ok(n.isClassOrSubclass([music21.note.Rest, music21.note.Note]));
         assert.notOk(n.isClassOrSubclass('Rest'));
     });
     test('music21.prebase.ProtoM21Object.classSet', assert => {

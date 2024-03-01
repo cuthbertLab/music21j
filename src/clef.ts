@@ -10,7 +10,6 @@
  */
 import * as base from './base';
 import * as pitch from './pitch';
-import type * as note from './note';
 import type { Stream } from './stream';
 
 /*  music21.Clef
@@ -317,25 +316,19 @@ export function bestClef(st: Stream, { recurse=true }={}): Clef {
     } else {
         stFlat = st;
     }
-    let totalNotes = 0;
-    let totalPitch = 0.0;
-    for (let i = 0; i < stFlat.length; i++) {
-        const el = stFlat.get(i);
-        if ((<note.Note><any> el).pitch !== undefined) {
-            totalNotes += 1;
-            totalPitch += (<note.Note><any> el).pitch.diatonicNoteNum;
-        } else if ((<note.NotRest><any> el).pitches !== undefined) {
-            for (let j = 0; j < (<note.NotRest><any> el).pitches.length; j++) {
-                totalNotes += 1;
-                totalPitch += (<note.NotRest><any> el).pitches[j].diatonicNoteNum;
-            }
+    let totalPitches = 0;
+    let totalDNN = 0.0;
+    for (const n of stFlat.notes) {
+        for (const p of n.pitches) {
+            totalPitches += 1;
+            totalDNN += p.diatonicNoteNum;
         }
     }
     let averageHeight: number;
-    if (totalNotes === 0) {
+    if (totalPitches === 0) {
         averageHeight = 29;
     } else {
-        averageHeight = totalPitch / totalNotes;
+        averageHeight = totalDNN / totalPitches;
     }
     // console.log('bestClef: average height', averageHeight);
     if (averageHeight > 28) {

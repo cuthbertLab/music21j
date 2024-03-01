@@ -174,8 +174,6 @@ export class ProtoM21Object {
     /**
      * Check to see if an object is of this class or subclass.
      *
-     * @param {string|string[]} testClass - a class or Array of classes to test
-     * @returns {boolean}
      * @example
      * var n = new music21.note.Note();
      * n.isClassOrSubclass('Note'); // true
@@ -185,13 +183,13 @@ export class ProtoM21Object {
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
     isClassOrSubclass(
-        testClass: string|typeof ProtoM21Object|(string | typeof ProtoM21Object)[]
+        testClass: string|string[]|(new () => ProtoM21Object)|(new () => ProtoM21Object)[]
     ): boolean {
-        let useTestClass: (string | typeof ProtoM21Object)[];
+        let useTestClass: string[] | (new () => ProtoM21Object)[];
         if (!(testClass instanceof Array)) {
-            useTestClass = [testClass] as (string | typeof ProtoM21Object)[];
+            useTestClass = [testClass] as string[] | (new () => ProtoM21Object)[];
         } else {
-            useTestClass = testClass as (string | typeof ProtoM21Object)[];
+            useTestClass = testClass as string[] | (new () => ProtoM21Object)[];
         }
         for (const thisTestClass of useTestClass) {
             if (this.classSet.has(thisTestClass)) {
@@ -201,11 +199,7 @@ export class ProtoM21Object {
         return false;
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    toString() {
+    toString(): string {
         let si = this.stringInfo();
         if (si !== '') {
             si = ' ' + si;
@@ -213,11 +207,7 @@ export class ProtoM21Object {
         return `<${this.classes[0]}${si}>`;
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return '';
     }
 
