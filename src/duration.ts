@@ -91,7 +91,6 @@ export class Duration extends prebase.ProtoM21Object {
     protected _type: string = 'zero';
     protected _tuplets: Tuplet[] = [];
 
-
     constructor(ql: string|number = 0.0) {
         super();
         if (typeof ql === 'string') {
@@ -99,7 +98,15 @@ export class Duration extends prebase.ProtoM21Object {
         } else if (ql !== undefined) {
             this.quarterLength = ql;
         }
-        this._cloneCallbacks._tuplets = this.cloneCallbacksTupletFunction;
+        this._cloneCallbacks._tuplets = (_tupletKey, ret: this, _deep, _memo): void => {
+            // make sure that tuplets clone properly
+            const newTuplets: Tuplet[] = [];
+            for (const old_tuplet of this._tuplets) {
+                const newTuplet = old_tuplet.clone();
+                newTuplets.push(newTuplet);
+            }
+            ret._tuplets = newTuplets;
+        };
     }
 
     stringInfo(): string {
@@ -223,17 +230,6 @@ export class Duration extends prebase.ProtoM21Object {
             }
         }
         return vd;
-    }
-
-    cloneCallbacksTupletFunction(tupletKey, ret, obj, deep, memo) {
-        // make sure that tuplets clone properly
-        const newTuplets = [];
-        for (let i = 0; i < obj[tupletKey].length; i++) {
-            const newTuplet = obj[tupletKey][i].clone();
-            // console.log('cloning tuplets', obj[tupletKey][i], newTuplet);
-            newTuplets.push(newTuplet);
-        }
-        ret[tupletKey] = newTuplets;
     }
 
     _findDots(ql: number): number {
