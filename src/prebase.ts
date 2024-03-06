@@ -13,6 +13,13 @@ declare interface Constructable<T> {
     new() : T;
 }
 
+export type CloneCallbackFunctionType<T extends ProtoM21Object = ProtoM21Object> = (
+    key: string,
+    ret: T,
+    deep: boolean,
+    memo: WeakMap<any, any>,
+) => void;
+
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
  * everything in music21 should inherit from are given below.
@@ -31,7 +38,7 @@ export class ProtoM21Object {
     _cl: string;
     isProtoM21Object: boolean = true;
     isMusic21Object: boolean = false;
-    protected _cloneCallbacks: any = {};
+    protected _cloneCallbacks: Record<string, boolean|CloneCallbackFunctionType> = {};
 
     constructor() {
         // this exists for looking at Proxies of this object in Javascript
@@ -65,7 +72,7 @@ export class ProtoM21Object {
      *
      * Stored on the individual object, not the class, unlike music21p
      */
-    private _populateClassCaches() {
+    private _populateClassCaches(): void {
         const classSet = new Set();
         const classList = [];
         let thisConstructor = <ProtoM21ObjectConstructorInterface> this.constructor;
@@ -111,7 +118,7 @@ export class ProtoM21Object {
     clone(deep=true, memo=undefined): this {
         // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
         const classConstructor = <Constructable<ProtoM21Object>> this.constructor;
-        const ret = <Record<string, any>> new classConstructor();
+        const ret = <this><any> new classConstructor();
         if (memo === undefined) {
             memo = new WeakMap();
         }
@@ -129,7 +136,7 @@ export class ProtoM21Object {
                     ret[key] = undefined;
                 } else {
                     // call the cloneCallbacks function
-                    this._cloneCallbacks[key](key, ret, this, deep, memo);
+                    (this._cloneCallbacks[key] as CloneCallbackFunctionType)(key, ret, deep, memo);
                 }
             } else if (
                 Object.getOwnPropertyDescriptor(this, key).get !== undefined
@@ -146,13 +153,13 @@ export class ProtoM21Object {
             ) {
                 // console.log('cloning ', key);
                 const m21Obj = <ProtoM21Object><unknown> this[key];
-                let clonedVersion;
+                let clonedVersion: ProtoM21Object;
                 if (memo.has(m21Obj)) {
                     clonedVersion = memo.get(m21Obj);
                 } else {
                     clonedVersion = m21Obj.clone(deep, memo);
                 }
-                ret[key] = clonedVersion;
+                ret[key] = <any> clonedVersion;
             } else {
                 try {
                     // for deep this should be:

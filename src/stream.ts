@@ -189,40 +189,39 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     _overriddenDuration: Duration = undefined;
 
 
+    // noinspection GrazieInspection
     constructor() {
         super();
         this._cloneCallbacks.activeVexflowNote = false;
         this._cloneCallbacks.storedVexflowStave = false;
         this._cloneCallbacks._offsetDict = false;
-        this._cloneCallbacks.renderOptions = function cloneRenderOptions(
+        this._cloneCallbacks.renderOptions = (
             _keyName,
-            newObj,
-            self: Stream,
+            newObj: Stream,
             deep: boolean,
             _memo
-        ): void {
+        ): void => {
             if (!deep) {
-                newObj.renderOptions = self.renderOptions;
+                newObj.renderOptions = this.renderOptions;
             } else {
-                newObj.renderOptions = self.renderOptions.deepClone();
+                newObj.renderOptions = this.renderOptions.deepClone();
             }
         };
 
-        this._cloneCallbacks._elements = function cloneElements(
+        this._cloneCallbacks._elements = (
             _keyName,
-            newObj,
-            self,
+            newObj: Stream,
             deep,
             memo,
-        ): void {
+        ): void => {
             if (!deep) {
-                newObj.elements = self;
+                newObj.elements = this;
                 return;
             }
             newObj.clear();
-            for (let j = 0; j < self._elements.length; j++) {
-                const el = self._elements[j];
-                const elOffset = self.elementOffset(el);
+            for (let j = 0; j < this._elements.length; j++) {
+                const el = this._elements[j];
+                const elOffset = this.elementOffset(el);
                 // console.log('cloning el: ', el.name);
                 const elCopy = el.clone(true, memo);
                 // there may be more efficient ways to do this,
@@ -759,8 +758,8 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     coreElementsChanged({
         updateIsFlat=true,
         clearIsSorted=true,
-        memo=undefined, // unused
-        keepIndex=false, // unused
+        // memo=undefined, // unused
+        // keepIndex=false, // unused
     }={}): void {
         if (clearIsSorted) {
             this.isSorted = false;
@@ -1258,9 +1257,6 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
 
      * If `options.inPlace` is true, the original Stream is modified and lost
      * if `options.inPlace` is False, this returns a modified deep copy.
-
-     * @param {Object} [options]
-     * @returns {Stream}
      */
     makeMeasures(options?): Stream {
         const params = {
@@ -1421,7 +1417,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         const workObj = this;
         let templateStream: Stream;
         if (this.hasPartLikeStreams()) {
-            templateStream = workObj.getElementsByClass('Stream').get(0) as Stream;
+            templateStream = workObj.getElementsByClass(Stream).first();
         } else {
             templateStream = workObj;
         }
@@ -1659,8 +1655,6 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     /**
      * Find all elements NOT with a certain class; if an Array is given, then any
      * matching class will work.
-     *
-     * @param {string[]|string} classList - a list of classes to find
      */
     getElementsNotOfClass(classList: string|string[]): iterator.StreamIterator {
         return this.iter.getElementsNotOfClass(classList);
@@ -2402,8 +2396,8 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         const playNext = (elements: ElementType[], params): void => {
             if (currentNoteIndex <= lastNoteIndex && !this._stopPlaying) {
                 const el = elements[currentNoteIndex];
-                let nextNote;
-                let playDuration;
+                let nextNote: ElementType;
+                let playDuration: number;
                 if (currentNoteIndex < lastNoteIndex) {
                     nextNote = elements[currentNoteIndex + 1];
                     playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el);
@@ -2418,13 +2412,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
                 // const milliseconds = playDuration * 1000 * 60 / tempo;
 
                 if (debug) {
-                    console.log(
-                        'playing: ',
-                        el,
-                        playDuration,
-                        milliseconds,
-                        params.tempo
-                    );
+                    console.log(`playing: ${el} ${playDuration} ${milliseconds} ${params.tempo}`);
                 }
 
                 if ((<note.Note><any> el).playMidi !== undefined) {

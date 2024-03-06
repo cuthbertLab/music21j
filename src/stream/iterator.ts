@@ -253,8 +253,12 @@ export class StreamIteratorBase<T extends Music21Object = Music21Object> {
 
     // getElementsByGroup;
     // getElementsByOffset;
-    getElementsByOffset(offsetStart: number, ...args) {
-        return this.addFilter(new filters.OffsetFilter(offsetStart, ...args));
+    getElementsByOffset(
+        offsetStart: number,
+        offsetEnd?: number,
+        offsetOptions?: filters.OffsetFilterOptions,
+    ) {
+        return this.addFilter(new filters.OffsetFilter(offsetStart, offsetEnd, offsetOptions));
     }
 
 
