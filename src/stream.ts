@@ -1998,6 +1998,11 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         this.setRenderInteraction(canvasOrSVG);
         this.activeVFRenderer = vfr;
         if (!DOMContains) {
+            // Note that this line is one of the two places that in ModuleTests vfShow
+            // is causing the annoying Failed to load resource: net::ERR_FILE_NOT_FOUND
+            // bug in gruntTests -- not sure the other one.  Spent another 90 minutes
+            // diagnosing.  Need to stop for now.
+
             // remove the adding to DOM so that Firefox could measure it...
             document.querySelector(defaults.appendLocation).removeChild(canvasOrSVG);
         }

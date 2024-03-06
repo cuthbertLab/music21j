@@ -1008,7 +1008,7 @@ export default function tests() {
         // without flat
         const sc2 = music21.tinyNotation.TinyNotation('4/4 c1~ c1');
         const strip2 = sc2.stripTies();
-        assert.equal(strip2.recurse().notes.length, 1);
+        assert.equal(strip2.recurse().notes.length, 1, 'One note after stripTies w/o flat.');
         const breve = strip2.recurse().notes.get(0);
         assert.equal(breve.duration.quarterLength, 8.0);
         assert.ok(breve.tie === undefined);
