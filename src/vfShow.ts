@@ -15,14 +15,14 @@ import {
     Stave as VFStave, StaveConnector as VFStaveConnector,
     type StaveConnectorType as VFStaveConnectorType,
     StaveNote as VFStaveNote,
-    StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote,
+    StaveTie as VFStaveTie, SVGContext as VFSVGContext, // TextNote as VFTextNote,
     Tuplet as VFTuplet, Voice as VFVoice,
 } from 'vexflow';
-import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
+// import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 
 import { debug } from './debug';
 import * as clef from './clef';
-import * as duration from './duration';
+// import * as duration from './duration';
 import * as stream from './stream';  // this is able to be imported fine.
 
 import {coerceHTMLElement} from './common';
@@ -58,16 +58,16 @@ const _clefSingleton = new clef.TrebleClef();
 export class RenderStack {
     streams: stream.Stream[] = [];
     voices: VFVoice[] = [];  // for the music
-    textVoices: VFVoice[] = [];  // for lyrics
+    // textVoices: VFVoice[] = [];  // for lyrics
     voiceToStreamMapping: Map<VFVoice, stream.Stream> = new Map();
 
     /**
-     * returns this.voices and this.textVoices as one array
+     * returns this.voices as a new array
      */
     allTickables(): VFVoice[] {
         const t: VFVoice[] = [];
         t.push(...this.voices);
-        t.push(...this.textVoices);
+        // t.push(...this.textVoices);
         return t;
     }
 
@@ -352,9 +352,9 @@ export class Renderer {
         stack.streams.push(s);
         stack.voiceToStreamMapping.set(vf_voice, s);
 
-        if (s.hasLyrics()) {
-            stack.textVoices.push(...this.getLyricVoices(s, stave));
-        }
+        // if (s.hasLyrics()) {
+        //     stack.textVoices.push(...this.getLyricVoices(s, stave));
+        // }
         return stave;
     }
 
@@ -382,7 +382,7 @@ export class Renderer {
     }
 
     /**
-     * Draws the Voices (music and text) from `this.stacks`
+     * Draws the Voices (just music no longer text) from `this.stacks`
      *
      */
     drawMeasureStacks(): void {
@@ -538,20 +538,20 @@ export class Renderer {
      *
      * s -- usually a Measure or Voice
      */
-    getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[] {
-        const textVoices = [];
-        const max_lyric_depth = Math.max(...s.notesAndRests.map(
-            (gn => gn.lyrics.length)
-        ));
-        for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
-            const textVoice = this.vexflowVoice(s);
-            const lyrics: VFTextNote[] = this.vexflowLyrics(s, stave, depth);
-            textVoice.setStave(stave);
-            textVoice.addTickables(lyrics);
-            textVoices.push(textVoice);
-        }
-        return textVoices;
-    }
+    // getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[] {
+    //     const textVoices = [];
+    //     const max_lyric_depth = Math.max(...s.notesAndRests.map(
+    //         (gn => gn.lyrics.length)
+    //     ));
+    //     for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
+    //         const textVoice = this.vexflowVoice(s);
+    //         const lyrics: VFTextNote[] = this.vexflowLyrics(s, stave, depth);
+    //         textVoice.setStave(stave);
+    //         textVoice.addTickables(lyrics);
+    //         textVoices.push(textVoice);
+    //     }
+    //     return textVoices;
+    // }
 
     /**
      * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
@@ -953,56 +953,56 @@ export class Renderer {
         return notes;
     }
 
-    /**
-     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
-     */
-    vexflowLyrics(s: stream.Stream, stave?: VFStave, depth: number=0): VFTextNote[] {
-        // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
-        const lyricTextNotes: VFTextNote[] = [];
-        for (const el of s.notesAndRests) {
-            const lyricsArray = el.lyrics;
-            if (lyricsArray === undefined) {
-                continue;
-            }
-            let text: string = '';
-            let d = el.duration;
-
-            // connectors deal with hyphens.
-            let addConnector: boolean|string = false;
-            const font = {
-                family: 'Serif',
-                size: 12,
-                weight: '',
-            };
-
-            const lyricAtDepth = lyricsArray[depth];  // rename lyricAtDepth
-            if (lyricAtDepth) {
-                text = lyricAtDepth.text ?? '';
-                if (['middle', 'begin'].includes(lyricAtDepth.syllabic)) {
-                    addConnector = ' ' + lyricAtDepth.lyricConnector;
-                    const tempQl = el.duration.quarterLength / 2.0;
-                    d = new duration.Duration(tempQl);
-                }
-                if (lyricAtDepth.style.fontFamily) {
-                    font.family = lyricAtDepth.style.fontFamily;
-                }
-                if (lyricAtDepth.style.fontSize) {
-                    font.size = lyricAtDepth.style.fontSize;
-                }
-                if (lyricAtDepth.style.fontWeight) {
-                    font.weight = lyricAtDepth.style.fontWeight;
-                }
-            }
-            const line = 11 + (depth * 2);
-            const t1 = getTextNote(text, font, d, stave, lyricAtDepth, line);
-            lyricTextNotes.push(t1);
-            if (addConnector !== false) {
-                const connector = getTextNote(addConnector, font, d, stave, undefined, line);
-                lyricTextNotes.push(connector);
-            }
-        }
-        return lyricTextNotes;
-    }
+    // /**
+    //  * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
+    //  */
+    // vexflowLyrics(s: stream.Stream, stave?: VFStave, depth: number=0): VFTextNote[] {
+    //     // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
+    //     const lyricTextNotes: VFTextNote[] = [];
+    //     for (const el of s.notesAndRests) {
+    //         const lyricsArray = el.lyrics;
+    //         if (lyricsArray === undefined) {
+    //             continue;
+    //         }
+    //         let text: string = '';
+    //         let d = el.duration;
+    //
+    //         // connectors deal with hyphens.
+    //         let addConnector: boolean|string = false;
+    //         const font = {
+    //             family: 'Serif',
+    //             size: 12,
+    //             weight: '',
+    //         };
+    //
+    //         const lyricAtDepth = lyricsArray[depth];  // rename lyricAtDepth
+    //         if (lyricAtDepth) {
+    //             text = lyricAtDepth.text ?? '';
+    //             if (['middle', 'begin'].includes(lyricAtDepth.syllabic)) {
+    //                 addConnector = ' ' + lyricAtDepth.lyricConnector;
+    //                 const tempQl = el.duration.quarterLength / 2.0;
+    //                 d = new duration.Duration(tempQl);
+    //             }
+    //             if (lyricAtDepth.style.fontFamily) {
+    //                 font.family = lyricAtDepth.style.fontFamily;
+    //             }
+    //             if (lyricAtDepth.style.fontSize) {
+    //                 font.size = lyricAtDepth.style.fontSize;
+    //             }
+    //             if (lyricAtDepth.style.fontWeight) {
+    //                 font.weight = lyricAtDepth.style.fontWeight;
+    //             }
+    //         }
+    //         const line = 11 + (depth * 2);
+    //         const t1 = getTextNote(text, font, d, stave, lyricAtDepth, line);
+    //         lyricTextNotes.push(t1);
+    //         if (addConnector !== false) {
+    //             const connector = getTextNote(addConnector, font, d, stave, undefined, line);
+    //             lyricTextNotes.push(connector);
+    //         }
+    //     }
+    //     return lyricTextNotes;
+    // }
 
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
@@ -1248,32 +1248,32 @@ export class Renderer {
     }
 }
 
-export function getTextNote(
-    text: string,
-    font: VFFontInfo,
-    d: duration.Duration,
-    stave: VFStave,
-    lyricObj: note.Lyric = undefined,
-    line: number = 11,
-): VFTextNote {
-    // console.log(text, font, d);
-    // noinspection TypeScriptValidateJSTypes
-    const t1 = new VFTextNote({
-        text,
-        font,
-        duration: d.vexflowDuration,
-    })
-        .setLine(line)
-        .setStave(stave)
-        .setJustification(VFTextNote.Justification.LEFT);
-    if (lyricObj) {
-        t1.setStyle(lyricObj.style);
-    }
-    if (d.tuplets.length > 0) {
-        t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
-    }
-    return t1;
-}
+// export function getTextNote(
+//     text: string,
+//     font: VFFontInfo,
+//     d: duration.Duration,
+//     stave: VFStave,
+//     lyricObj: note.Lyric = undefined,
+//     line: number = 11,
+// ): VFTextNote {
+//     // console.log(text, font, d);
+//     // noinspection TypeScriptValidateJSTypes
+//     const t1 = new VFTextNote({
+//         text,
+//         font,
+//         duration: d.vexflowDuration,
+//     })
+//         .setLine(line)
+//         .setStave(stave)
+//         .setJustification(VFTextNote.Justification.LEFT);
+//     if (lyricObj) {
+//         t1.setStyle(lyricObj.style);
+//     }
+//     if (d.tuplets.length > 0) {
+//         t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
+//     }
+//     return t1;
+// }
 
 
 
