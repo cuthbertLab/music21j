@@ -76,11 +76,12 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._cloneCallbacks._derivation = (
             keyName,
             newObj: Music21Object,
+            self: Music21Object,
             _deep,
             _memo,
         ) => {
             const newDerivation = new derivation.Derivation(newObj);
-            newDerivation.origin = this;
+            newDerivation.origin = self;
             newDerivation.method = 'clone';
             newObj[keyName] = newDerivation;
         };
@@ -88,11 +89,12 @@ export class Music21Object extends prebase.ProtoM21Object {
         // noinspection JSUnusedLocalSymbols
         this._cloneCallbacks.sites = (
             _keyName,
-            newObj,
+            newObj: Music21Object,
+            _self: Music21Object,
             _deep,
-            _memo
+            _memo,
         ) => {
-            (newObj as Music21Object).sites = new sites.Sites();
+            newObj.sites = new sites.Sites();
         };
     }
 
@@ -394,6 +396,10 @@ export class Music21Object extends prebase.ProtoM21Object {
         const getElementMethod = params.getElementMethod;
         const sortByCreationTime = params.sortByCreationTime;
 
+        if (className !== undefined && !(className instanceof Array)) {
+            className = [className as any];
+        }
+
         if (
             getElementMethod.includes('At')
             && this.isClassOrSubclass(className)
@@ -441,7 +447,7 @@ export class Music21Object extends prebase.ProtoM21Object {
                     return contextEl;
                 }
                 if (getElementMethod.includes('Before')
-                    && (!className
+                    && (className === undefined
                         || site.isClassOrSubclass(className))) {
                     if (!getElementMethod.includes('NotSelf')
                            || this !== site) {

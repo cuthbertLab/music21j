@@ -98,10 +98,10 @@ export class Duration extends prebase.ProtoM21Object {
         } else if (ql !== undefined) {
             this.quarterLength = ql;
         }
-        this._cloneCallbacks._tuplets = (_tupletKey, ret: this, _deep, _memo): void => {
+        this._cloneCallbacks._tuplets = (_tupletKey, ret: this, self: this, _deep, _memo): void => {
             // make sure that tuplets clone properly
             const newTuplets: Tuplet[] = [];
-            for (const old_tuplet of this._tuplets) {
+            for (const old_tuplet of self._tuplets) {
                 const newTuplet = old_tuplet.clone();
                 newTuplets.push(newTuplet);
             }

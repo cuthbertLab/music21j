@@ -16,6 +16,7 @@ declare interface Constructable<T> {
 export type CloneCallbackFunctionType<T extends ProtoM21Object = ProtoM21Object> = (
     key: string,
     ret: T,
+    self: T,
     deep: boolean,
     memo: WeakMap<any, any>,
 ) => void;
@@ -38,7 +39,13 @@ export class ProtoM21Object {
     _cl: string;
     isProtoM21Object: boolean = true;
     isMusic21Object: boolean = false;
-    protected _cloneCallbacks: Record<string, boolean|CloneCallbackFunctionType> = {};
+
+    // constructor signifies: leave alone whatever the constructor did.
+    protected _cloneCallbacks:
+        Record<string, boolean|'constructor'|CloneCallbackFunctionType> = {
+            _cloneCallbacks: 'constructor',
+        };
+
 
     constructor() {
         // this exists for looking at Proxies of this object in Javascript
@@ -134,15 +141,17 @@ export class ProtoM21Object {
                     ret[key] = this[key];
                 } else if (this._cloneCallbacks[key] === false) {
                     ret[key] = undefined;
+                } else if (this._cloneCallbacks[key] === 'constructor') {
+                    continue;
                 } else {
                     // call the cloneCallbacks function
-                    (this._cloneCallbacks[key] as CloneCallbackFunctionType)(key, ret, deep, memo);
+                    (this._cloneCallbacks[key] as CloneCallbackFunctionType)(key, ret, this, deep, memo);
                 }
             } else if (
                 Object.getOwnPropertyDescriptor(this, key).get !== undefined
                 || Object.getOwnPropertyDescriptor(this, key).set !== undefined
             ) {
-                // do nothing
+                // do nothing for properties.
             } else if (typeof this[key] === 'function') {
                 // do nothing -- events might not be copied.
             } else if (
