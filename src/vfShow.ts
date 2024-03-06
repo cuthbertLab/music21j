@@ -387,10 +387,9 @@ export class Renderer {
      */
     drawMeasureStacks(): void {
         const ctx = this.ctx;
-        for (let i = 0; i < this.stacks.length; i++) {
-            const voices = this.stacks[i].allTickables();
-            for (let j = 0; j < voices.length; j++) {
-                const v = voices[j];
+        for (const stack of this.stacks) {
+            const voices = stack.allTickables();
+            for (const v of voices) {
                 v.draw(ctx);
             }
         }
@@ -413,8 +412,8 @@ export class Renderer {
      */
     drawTies(): void {
         const ctx = this.ctx;
-        for (let i = 0; i < this.vfTies.length; i++) {
-            this.vfTies[i].setContext(ctx).draw();
+        for (const vf_t of this.vfTies) {
+            vf_t.setContext(ctx).draw();
         }
     }
 
@@ -595,15 +594,15 @@ export class Renderer {
             return formatter;
         }
         let maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
-        for (let i = 0; i < allTickables.length; i++) {
+        for (const tick of allTickables) {
             // console.log(voices[i], voices[i].stave, i);
-            const stave = allTickables[i].getStave();
+            const stave = tick.getStave();
             if (stave !== undefined && stave.getNoteStartX() > maxGlyphStart) {
                 maxGlyphStart = stave.getNoteStartX();
             }
         }
-        for (let i = 0; i < allTickables.length; i++) {
-            const stave = allTickables[i].getStave();
+        for (const tick of allTickables) {
+            const stave = tick.getStave();
             stave?.setNoteStartX(maxGlyphStart); // corrected!
         }
         // TODO: should do the same for end_x -- for key sig changes, etc...
@@ -675,10 +674,10 @@ export class Renderer {
      * Draws the beam groups.
      *
      */
-    drawBeamGroups() {
+    drawBeamGroups(): void {
         const ctx = this.ctx;
-        for (let i = 0; i < this.beamGroups.length; i++) {
-            this.beamGroups[i].setContext(ctx).draw();
+        for (const bg of this.beamGroups) {
+            bg.setContext(ctx).draw();
         }
     }
 
@@ -708,14 +707,7 @@ export class Renderer {
         }
         // console.log('streamLength: ' + streamLength);
         if (debug) {
-            console.log(
-                'creating new stave: left:'
-                    + left
-                    + ' top: '
-                    + top
-                    + ' width: '
-                    + width
-            );
+            console.log(`creating new stave: left: ${left}, top: ${top}, width: ${width}`);
         }
         const stave = new VFStave(left, top, width);
         return stave;
@@ -732,7 +724,6 @@ export class Renderer {
         if (rendOp === undefined) {
             rendOp = s.renderOptions;
         }
-
 
         let sClef = s.getSpecialContext('clef')
             || s.getContextByClass('Clef');
@@ -795,11 +786,7 @@ export class Renderer {
         }
 
         if (displayTs) {
-            stave.addTimeSignature(
-                context_ts.numerator.toString()
-                    + '/'
-                    + context_ts.denominator.toString()
-            );
+            stave.addTimeSignature(`${context_ts.numerator}/${context_ts.denominator}`);
         }
         if (rendOp.leftBarline !== undefined) {
             const bl = rendOp.leftBarline;
@@ -944,14 +931,8 @@ export class Renderer {
                     // console.log(activeTupletLength, activeTuplet.totalTupletLength());
                     //
                     // Add tuplet when complete.
-                    if (
-                        activeTupletLength
-                            >= activeTuplet.totalTupletLength()
-                        || Math.abs(
-                            activeTupletLength
-                                - activeTuplet.totalTupletLength()
-                        ) < 0.001
-                    ) {
+                    if (activeTupletLength >= activeTuplet.totalTupletLength()
+                        || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
                         complete_active_tuplet_function();
                     }
                 } else if (activeTuplet !== undefined) {
@@ -1009,10 +990,10 @@ export class Renderer {
                 }
             }
             const line = 11 + (depth * 2);
-            const t1 = getTextNote(text, font, d, lyricAtDepth, line, stave);
+            const t1 = getTextNote(text, font, d, stave, lyricAtDepth, line);
             lyricTextNotes.push(t1);
             if (addConnector !== false) {
-                const connector = getTextNote(addConnector, font, d, undefined, line, stave);
+                const connector = getTextNote(addConnector, font, d, stave, undefined, line);
                 lyricTextNotes.push(connector);
             }
         }
@@ -1061,12 +1042,7 @@ export class Renderer {
         }
         // console.log('creating voice');
         if (debug) {
-            console.log(
-                'New voice, num_beats: '
-                    + num1024.toString()
-                    + ' beat_value: '
-                    + beatValue.toString()
-            );
+            console.log(`New voice, num_beats: ${num1024} beat_value: ${beatValue}`);
         }
         const vfv = new VFVoice({
             num_beats: num1024,
@@ -1155,16 +1131,11 @@ export class Renderer {
                         }
                     }
                 }
-                for (
-                    let i = 0;
-                    i < s.renderOptions.staffConnectors.length;
-                    i++
-                ) {
+                for (const scTypeM21 of s.renderOptions.staffConnectors) {
                     const sc = new VFStaveConnector(
                         topVFStaff,
                         bottomVFStaff
                     );
-                    const scTypeM21 = s.renderOptions.staffConnectors[i];
                     const scTypeVF = this.staffConnectorsMap(scTypeM21);
                     // noinspection TypeScriptValidateJSTypes
                     sc.setType(scTypeVF);
@@ -1221,10 +1192,7 @@ export class Renderer {
             noteOffsetLeft = noteStartX;
             if (debug) {
                 console.log(
-                    'noteOffsetLeft: '
-                        + noteOffsetLeft
-                        + ' ; stave.getNoteStartX(): '
-                        + noteStartX
+                    `noteOffsetLeft: ${noteOffsetLeft}; stave.getNoteStartX(): ${noteStartX}`
                 );
                 console.log('Bottom y: ' + stave.getBottomY());
             }
@@ -1257,10 +1225,9 @@ export class Renderer {
                 el.width = formatterNote.getWidth();
                 if (el.pitch !== undefined && stave !== undefined) {
                     // note only...
-                    el.y
-                        = stave.getBottomY()
-                        - (sClef.lowestLine - el.pitch.diatonicNoteNum)
-                            * stave.options.spacing_between_lines_px;
+                    el.y = stave.getBottomY()
+                        - ((sClef.lowestLine - el.pitch.diatonicNoteNum)
+                            * stave.options.spacing_between_lines_px);
                     // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }
             }
@@ -1269,13 +1236,7 @@ export class Renderer {
             for (const n of s) {
                 if ((n as note.Note).pitch !== undefined) {
                     const nn = <any> n;
-                    console.log(
-                        nn.pitch.diatonicNoteNum
-                            + ' '
-                            + nn.x
-                            + ' '
-                            + (nn.x + nn.width)
-                    );
+                    console.log(`${nn.pitch.diatonicNoteNum} ${nn.x} ${nn.x + nn.width}`);
                 }
             }
         }
@@ -1283,13 +1244,13 @@ export class Renderer {
     }
 }
 
-export function getTextNote (
+export function getTextNote(
     text: string,
     font: VFFontInfo,
     d: duration.Duration,
+    stave: VFStave,
     lyricObj: note.Lyric = undefined,
     line: number = 11,
-    stave: VFStave,
 ): VFTextNote {
     // console.log(text, font, d);
     // noinspection TypeScriptValidateJSTypes
