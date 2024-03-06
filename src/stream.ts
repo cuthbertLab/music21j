@@ -198,32 +198,30 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         this._cloneCallbacks.renderOptions = (
             _keyName,
             newObj: Stream,
-            self: Stream,
             deep: boolean,
             _memo,
         ): void => {
             if (!deep) {
-                newObj.renderOptions = self.renderOptions;
+                newObj.renderOptions = this.renderOptions;
             } else {
-                newObj.renderOptions = self.renderOptions.deepClone();
+                newObj.renderOptions = this.renderOptions.deepClone();
             }
         };
 
         this._cloneCallbacks._elements = (
             _keyName,
             newObj: Stream,
-            self: Stream,
             deep,
             memo,
         ): void => {
             if (!deep) {
-                newObj.elements = self;
+                newObj.elements = this;
                 return;
             }
             newObj.clear();
-            for (let j = 0; j < self._elements.length; j++) {
-                const el = self._elements[j];
-                const elOffset = self.elementOffset(el);
+            for (let j = 0; j < this._elements.length; j++) {
+                const el = this._elements[j];
+                const elOffset = this.elementOffset(el);
                 // console.log('cloning el: ', el.name);
                 const elCopy = el.clone(true, memo);
                 // there may be more efficient ways to do this,

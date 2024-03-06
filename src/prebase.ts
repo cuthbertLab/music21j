@@ -16,7 +16,6 @@ declare interface Constructable<T> {
 export type CloneCallbackFunctionType<T extends ProtoM21Object = ProtoM21Object> = (
     key: string,
     ret: T,
-    self: T,
     deep: boolean,
     memo: WeakMap<any, any>,
 ) => void;
@@ -137,15 +136,17 @@ export class ProtoM21Object {
                 continue;
             }
             if (key in this._cloneCallbacks) {
-                if (this._cloneCallbacks[key] === true) {
+                const cc = this._cloneCallbacks[key];
+                if (cc === true) {
                     ret[key] = this[key];
-                } else if (this._cloneCallbacks[key] === false) {
+                } else if (cc === false) {
+                    // false means wipe out the old!  like _activeSite, etc.
                     ret[key] = undefined;
-                } else if (this._cloneCallbacks[key] === 'constructor') {
-                    continue;
+                } else if (cc === 'constructor') {
+                    // leave alone whatever the constructor initially set up.
                 } else {
                     // call the cloneCallbacks function
-                    (this._cloneCallbacks[key] as CloneCallbackFunctionType)(key, ret, this, deep, memo);
+                    (cc as CloneCallbackFunctionType)(key, ret, deep, memo);
                 }
             } else if (
                 Object.getOwnPropertyDescriptor(this, key).get !== undefined

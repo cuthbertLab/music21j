@@ -76,12 +76,11 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._cloneCallbacks._derivation = (
             keyName,
             newObj: Music21Object,
-            self: Music21Object,
             _deep,
             _memo,
         ) => {
             const newDerivation = new derivation.Derivation(newObj);
-            newDerivation.origin = self;
+            newDerivation.origin = this;
             newDerivation.method = 'clone';
             newObj[keyName] = newDerivation;
         };
@@ -90,7 +89,6 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._cloneCallbacks.sites = (
             _keyName,
             newObj: Music21Object,
-            _self: Music21Object,
             _deep,
             _memo,
         ) => {
