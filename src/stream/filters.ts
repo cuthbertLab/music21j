@@ -114,6 +114,12 @@ export class ClassNotFilter extends ClassFilter {
 }
 
 // TODO: GroupFilter
+export interface OffsetFilterOptions {
+    includeEndBoundary?: boolean;
+    mustFinishInSpan?: boolean;
+    mustBeginInSpan?: boolean;
+    includeElementsThatEndAtStart?: boolean;
+}
 
 export class OffsetFilter extends StreamFilter {
     static override get derivationStr(): string {
@@ -130,13 +136,13 @@ export class OffsetFilter extends StreamFilter {
 
     constructor(
         offsetStart: number,
-        offsetEnd=undefined,
+        offsetEnd: number = undefined,
         {
             includeEndBoundary=true,
             mustFinishInSpan=false,
             mustBeginInSpan=true,
             includeElementsThatEndAtStart=true,
-        }={}
+        }: OffsetFilterOptions = {}
     ) {
         super();
         this.offsetStart = offsetStart;

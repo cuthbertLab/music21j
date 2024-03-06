@@ -858,14 +858,18 @@ export default function tests() {
     test('music21.stream.makeNotation setStemDirectionOneGroup', assert => {
         const p = music21.tinyNotation.TinyNotation(alla_breve_test);
         p.makeBeams({inPlace: true, setStemDirections: false});
-        const [a, b, c, d] = Array.from(
+        const [a, b, c, d] = <music21.note.NotRest[][]> Array.from(
             music21.stream.makeNotation.iterateBeamGroups(p)
         );
 
-        const testDirections = (group, expected) => {
+        const testDirections = (group: music21.note.NotRest[], expected: string[]): void => {
             assert.equal(group.length, expected.length, `${group.length} in group, not expected ${expected.length}`);
             for (let j = 0; j < group.length; j++) {
-                assert.equal(group[j].stemDirection, expected[j]);
+                assert.equal(
+                    group[j].stemDirection,
+                    expected[j],
+                    `Stem direction for ${j} was ${group[j].stemDirection}, expected ${expected[j]}`
+                );
             }
         };
 
@@ -969,14 +973,34 @@ export default function tests() {
         );
     });
 
+    test('music21.stream.clone', assert => {
+        const sc = music21.tinyNotation.TinyNotation('4/4 c2 d2');
+        assert.equal(sc.rc(music21.note.Note).length, 2);
+        const clone = sc.clone(true);
+        assert.equal(clone.rc(music21.note.Note).length, 2);
+        const flat = sc.flatten();
+        assert.equal(flat.rc(music21.note.Note).length, 2);
+        const flat_array = Array.from(flat.notes);
+        assert.equal(flat_array.length, 2, 'Array.from(flat.notes) gets all notes');
+        const flat_array2 = Array.from(flat.notes);
+        assert.equal(flat_array2.length, 2, 'Array.from(flat.notes) called again still works');
+        const flat_clone = flat.clone(true);
+        assert.equal(flat_clone.rc(music21.note.Note).length, 2);
+        const flat_notes = flat.notes;
+        assert.equal(flat_notes.length, 2, 'flat.notes maintains length');
+        const flat_clone_array = Array.from(flat_clone.notes);
+        assert.equal(flat_clone_array.length, 2, 'Array.from(flat_clone.notes) gets all notes');
+    });
+
     test('music21.stream.stripTies', assert => {
         const sc = music21.tinyNotation.TinyNotation('4/4 c2.~ c4');
         const n_before = sc.flatten().notes.get(0);
         assert.equal(n_before.duration.quarterLength, 3.0);
 
-        const strip = sc.flatten().stripTies();
+        const sc_flat = sc.flatten();
+        const strip = sc_flat.stripTies();
         const strip_n = Array.from(strip.notes) as music21.note.Note[];
-        assert.equal(strip_n.length, 1);
+        assert.equal(strip_n.length, 1, `Expected 1 note after stripping, got ${strip_n.length}`);
         const n_after = strip_n[0];
         assert.equal(n_after.pitch.nameWithOctave, 'C4');
         assert.equal(n_after.duration.quarterLength, 4.0, 'Duration one measure after stripping');
@@ -984,7 +1008,7 @@ export default function tests() {
         // without flat
         const sc2 = music21.tinyNotation.TinyNotation('4/4 c1~ c1');
         const strip2 = sc2.stripTies();
-        assert.equal(strip2.recurse().notes.length, 1);
+        assert.equal(strip2.recurse().notes.length, 1, 'One note after stripTies w/o flat.');
         const breve = strip2.recurse().notes.get(0);
         assert.equal(breve.duration.quarterLength, 8.0);
         assert.ok(breve.tie === undefined);

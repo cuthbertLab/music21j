@@ -88,8 +88,8 @@ export class Chord extends note.NotRest {
     // https://github.com/microsoft/TypeScript/issues/2521
     get pitches(): pitch.Pitch[] {
         const tempPitches = [];
-        for (let i = 0; i < this._notes.length; i++) {
-            tempPitches.push(this._notes[i].pitch);
+        for (const n of this._notes) {
+            tempPitches.push(n.pitch);
         }
         return tempPitches;
     }
@@ -657,7 +657,7 @@ export class Chord extends note.NotRest {
      * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
      * the `.root()`
      *
-     * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+     * In case there is more than one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      */
     getChordStep(chordStep: number, testRoot?: pitch.Pitch): pitch.Pitch|undefined {

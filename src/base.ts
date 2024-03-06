@@ -21,6 +21,7 @@ import {Music21Exception} from './exceptions21';
 // imports for typing only
 import type {Stream, Measure} from './stream';
 import type {TimeSignature} from './meter';
+import type {ClassFilterType} from './types';
 
 declare interface StreamRecursionLike {
     recursionType: string;
@@ -65,34 +66,32 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     protected static _styleClass: typeof style.Style = style.Style;
 
-    constructor(keywords={}) {
+    constructor(_keywords={}) {
         super();
         this._duration = new duration.Duration(0.0);
         this.id = sites.getId(this);
         this.sites = new sites.Sites();
         this._cloneCallbacks._activeSite = false;
         this._cloneCallbacks._activeSiteStoredOffset = false;
-        this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(
+        this._cloneCallbacks._derivation = (
             keyName,
-            newObj,
-            self,
-            deep,
-            memo
-        ) {
+            newObj: Music21Object,
+            _deep,
+            _memo,
+        ) => {
             const newDerivation = new derivation.Derivation(newObj);
-            newDerivation.origin = self;
+            newDerivation.origin = this;
             newDerivation.method = 'clone';
             newObj[keyName] = newDerivation;
         };
 
         // noinspection JSUnusedLocalSymbols
-        this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(
-            keyName,
-            newObj,
-            self,
-            deep,
-            memo
-        ) {
+        this._cloneCallbacks.sites = (
+            _keyName,
+            newObj: Music21Object,
+            _deep,
+            _memo,
+        ) => {
             newObj.sites = new sites.Sites();
         };
     }
@@ -372,7 +371,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             return <number> this.getOffsetBySite(site);
         } catch (e) {} // eslint-disable-line no-empty
         // noinspection JSUnusedLocalSymbols
-        for (const [csSite, csOffset, unused_csRecursionType] of this.contextSites()) {
+        for (const [csSite, csOffset, _csRecursionType] of this.contextSites()) {
             if (csSite === site) {
                 return csOffset;
             }
@@ -383,7 +382,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     // ---------- Contexts -------------
 
     getContextByClass(
-        className,
+        className: ClassFilterType,
         options={}
     ) {
         const params = {
@@ -396,8 +395,9 @@ export class Music21Object extends prebase.ProtoM21Object {
         const sortByCreationTime = params.sortByCreationTime;
 
         if (className !== undefined && !(className instanceof Array)) {
-            className = [className];
+            className = [className as any];
         }
+
         if (
             getElementMethod.includes('At')
             && this.isClassOrSubclass(className)
@@ -584,7 +584,7 @@ function getContextByClassPayloadExtractor(
     flatten: boolean|string,  // true, false, or semiflat
     positionStart: number,
     getElementMethod: string,
-    classList: string[]
+    classList: ClassFilterType,
 ) {
     // this should all be done as a tree...
     // do not use .flat or .semiFlat so as not

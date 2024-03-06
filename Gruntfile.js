@@ -208,6 +208,18 @@ module.exports = grunt => {
         },
         qunit: {
             files: ['tests/gruntTest.html'],
+            options: {
+                puppeteer: {
+                    ignoreDefaultArgs: true,
+                    // these are to get around CORS not loading
+                    // https://github.com/gruntjs/grunt-contrib-qunit/issues/158
+                    args: [
+                        '--headless',
+                        '--disable-web-security',
+                        '--allow-file-access-from-files',
+                    ]
+                }
+            }
         },
         watch: {
             scripts: {

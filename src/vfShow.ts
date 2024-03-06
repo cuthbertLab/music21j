@@ -23,7 +23,7 @@ import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 import { debug } from './debug';
 import * as clef from './clef';
 import * as duration from './duration';
-import * as stream from './stream';
+import * as stream from './stream';  // this is able to be imported fine.
 
 import {coerceHTMLElement} from './common';
 
@@ -540,7 +540,9 @@ export class Renderer {
      */
     getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[] {
         const textVoices = [];
-        const max_lyric_depth = Math.max(...(s.notesAndRests as any).map(gn => gn.lyrics.length));
+        const max_lyric_depth = Math.max(...s.notesAndRests.map(
+            (gn => gn.lyrics.length)
+        ));
         for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
             const textVoice = this.vexflowVoice(s);
             const lyrics: VFTextNote[] = this.vexflowLyrics(s, stave, depth);
@@ -964,6 +966,8 @@ export class Renderer {
             }
             let text: string = '';
             let d = el.duration;
+
+            // connectors deal with hyphens.
             let addConnector: boolean|string = false;
             const font = {
                 family: 'Serif',
@@ -1083,7 +1087,7 @@ export class Renderer {
         if (s === undefined) {
             s = (this.stream as stream.Score);
         }
-        const parts = s.parts;
+        const parts = s.parts;  // m21j currently has .parts on all Stream classes.
         const numParts = parts.length;
         if (numParts < 2) {
             return;

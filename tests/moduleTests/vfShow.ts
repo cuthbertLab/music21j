@@ -123,7 +123,7 @@ export default function tests() {
         s.appendNewDOM();
         assert.equal(
             // @ts-ignore
-            s.activeVFRenderer.vfTies[0].notes.first_note.keys[0], 
+            s.activeVFRenderer.vfTies[0].notes.first_note.keys[0],
             // @ts-ignore
             s.activeVFRenderer.vfTies[0].notes.last_note.keys[0]
         );
