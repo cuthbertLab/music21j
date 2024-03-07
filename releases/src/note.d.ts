@@ -15,6 +15,7 @@ import * as prebase from './prebase';
 import * as base from './base';
 import * as pitch from './pitch';
 import * as beam from './beam';
+import { VFLyricAnnotation } from './vfShims';
 import { Music21Exception } from './exceptions21';
 import type * as articulations from './articulations';
 import type * as clef from './clef';
@@ -27,6 +28,11 @@ export declare const noteheadTypeNames: string[];
 export declare const stemDirectionNames: string[];
 export interface VexflowNoteOptions {
     clef?: clef.Clef;
+}
+export interface VexflowLyricOptions {
+    lyric_line?: number;
+    note?: GeneralNote;
+    vfn?: VFStaveNote;
 }
 export declare const default_vf_lyric_style: Readonly<VFFontInfo>;
 /**
@@ -74,6 +80,7 @@ export declare class Lyric extends prebase.ProtoM21Object {
      * set applyRaw = false if hyphens should not be applied
      */
     setTextAndSyllabic(rawText: string, applyRaw?: boolean): this;
+    vexflowLyric({ lyric_line }?: VexflowLyricOptions): VFLyricAnnotation;
 }
 /**
  * Superclass for all Note values

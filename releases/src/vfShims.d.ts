@@ -8,7 +8,10 @@
 import { Annotation, type ModifierContextState } from 'vexflow';
 export declare class VFLyricAnnotation extends Annotation {
     static DEBUG: boolean;
+    fill: string;
     static format(annotations: VFLyricAnnotation[], state: ModifierContextState): boolean;
+    getFill(): string;
+    setFill(color: string): void;
     /** Render text below the note at the given staff line */
     draw(): void;
 }

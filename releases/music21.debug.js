@@ -1,5 +1,5 @@
 /**
- * music21j version 0.15.1 built on 2024-03-07.
+ * music21j version 0.15.3 built on 2024-03-07.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -10652,7 +10652,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.15.1';
+const VERSION = '0.15.3';
 _parseLoader__WEBPACK_IMPORTED_MODULE_34__.runConfiguration();
 
 /***/ }),
@@ -13605,19 +13605,22 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
     let identifier = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
     super();
     this.lyricConnector = '-'; // override to place something else between two notes...
+    this.style = {
+      color: '',
+      fontFamily: 'Serif',
+      fontSize: 12,
+      fontWeight: '',
+      align: 'center',
+      xShift: 0
+      // yShift: 0,
+    };
+
     this.text = text;
     this._number = number;
     this.syllabic = syllabic;
     this.applyRaw = applyRaw !== null && applyRaw !== void 0 ? applyRaw : false;
     this.setTextAndSyllabic(this.text, this.applyRaw);
     this._identifier = identifier;
-    this.style = {
-      fillStyle: 'black',
-      strokeStyle: 'black',
-      fontFamily: 'Serif',
-      fontSize: 12,
-      fontWeight: ''
-    };
   }
   get identifier() {
     return this._identifier || this._number;
@@ -13678,6 +13681,43 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
       }
     }
     return this;
+  }
+  vexflowLyric() {
+    let {
+      lyric_line = -3
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _a, _b;
+    const font = _extends({}, default_vf_lyric_style);
+    const style = this.style;
+    if (style.fontFamily) {
+      font.family = style.fontFamily;
+    }
+    if (style.fontSize) {
+      font.size = style.fontSize;
+    }
+    if (style.fontWeight) {
+      font.weight = style.fontWeight;
+    }
+    let text = (_a = this.text) !== null && _a !== void 0 ? _a : '';
+    if (['middle', 'begin'].includes(this.syllabic)) {
+      text += ' ' + this.lyricConnector;
+    }
+    const annotation = new _vfShims__WEBPACK_IMPORTED_MODULE_7__.VFLyricAnnotation(text);
+    annotation.setFont(font);
+    if (style.align === 'left') {
+      annotation.setJustification(vexflow__WEBPACK_IMPORTED_MODULE_1__.AnnotationHorizontalJustify.LEFT);
+    } else if (style.align === 'right') {
+      annotation.setJustification(vexflow__WEBPACK_IMPORTED_MODULE_1__.AnnotationHorizontalJustify.RIGHT);
+    }
+    if (style.color) {
+      annotation.setFill(style.color);
+    }
+    if (style.xShift) {
+      annotation.setXShift(-1 * style.xShift); // VF measures backwards
+    }
+
+    annotation.setTextLine(5 - lyric_line + ((_b = this.number) !== null && _b !== void 0 ? _b : 0) * 2);
+    return annotation;
   }
 }
 /* Notes and rests etc... */
@@ -13799,36 +13839,12 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
    * Add lyrics to the VFStaveNote as Annotation objects.
    */
   vexflowAddLyrics(vfn) {
-    var _a, _b, _c;
+    var _a, _b;
     const lyric_line = (_b = (_a = this.activeSite) === null || _a === void 0 ? void 0 : _a.renderOptions.lyricsLine) !== null && _b !== void 0 ? _b : -3;
-    let level = 0;
     for (const l of this.lyrics) {
-      let my_level;
-      if (l.number !== undefined) {
-        my_level = l.number - 1;
-        level = Math.max(level, my_level) + 1;
-      } else {
-        my_level = level;
-        level += 1;
-      }
-      const font = _extends({}, default_vf_lyric_style);
-      if (l.style.fontFamily) {
-        font.family = l.style.fontFamily;
-      }
-      if (l.style.fontSize) {
-        font.size = l.style.fontSize;
-      }
-      if (l.style.fontWeight) {
-        font.weight = l.style.fontWeight;
-      }
-      let text = (_c = l.text) !== null && _c !== void 0 ? _c : '';
-      if (['middle', 'begin'].includes(l.syllabic)) {
-        text += ' ' + l.lyricConnector;
-      }
-      const annotation = new _vfShims__WEBPACK_IMPORTED_MODULE_7__.VFLyricAnnotation(text);
-      annotation.setFont(font);
-      annotation.setTextLine(5 - lyric_line + my_level * 2);
-      vfn.addModifier(annotation, 0);
+      vfn.addModifier(l.vexflowLyric({
+        lyric_line
+      }), 0);
     }
   }
   /**
@@ -22421,40 +22437,53 @@ class VFLyricAnnotation extends vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation 
     }
     let leftWidth = 0;
     let rightWidth = 0;
-    let maxLeftGlyphWidth = 0;
-    let maxRightGlyphWidth = 0;
     for (let i = 0; i < annotations.length; ++i) {
       const annotation = annotations[i];
-      const textFormatter = vexflow__WEBPACK_IMPORTED_MODULE_0__.TextFormatter.create(annotation.textFont);
       const note = annotation.checkAttachedNote();
-      const glyphWidth = note.getGlyphProps().getWidth();
+      const ctx = note.checkContext();
+      ctx.save();
+      ctx.setFont(annotation.fontInfo);
+      if (annotation.fill) {
+        ctx.setFillStyle(annotation.fill);
+      }
+      const textWidth = ctx.measureText(annotation.text).width;
+      ctx.restore();
       // Get the text width from the font metrics.
-      const textWidth = textFormatter.getWidthForTextInPx(annotation.text);
-      if (annotation.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
-        maxLeftGlyphWidth = Math.max(glyphWidth, maxLeftGlyphWidth);
-        leftWidth = Math.max(leftWidth, textWidth) + vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.minAnnotationPadding;
-      } else if (annotation.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
-        maxRightGlyphWidth = Math.max(glyphWidth, maxRightGlyphWidth);
+      if (annotation.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
+        leftWidth = Math.max(leftWidth, textWidth + vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.minAnnotationPadding);
+      } else if (annotation.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
         rightWidth = Math.max(rightWidth, textWidth);
       } else {
-        leftWidth = Math.max(leftWidth, textWidth / 2) + vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.minAnnotationPadding;
+        leftWidth = Math.max(leftWidth, textWidth / 2 + vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.minAnnotationPadding);
         rightWidth = Math.max(rightWidth, textWidth / 2);
-        maxLeftGlyphWidth = Math.max(glyphWidth / 2, maxLeftGlyphWidth);
-        maxRightGlyphWidth = Math.max(glyphWidth / 2, maxRightGlyphWidth);
       }
     }
-    const rightOverlap = Math.min(Math.max(rightWidth - maxRightGlyphWidth, 0), Math.max(rightWidth - state.right_shift, 0));
-    const leftOverlap = Math.min(Math.max(leftWidth - maxLeftGlyphWidth, 0), Math.max(leftWidth - state.left_shift, 0));
+    const rightOverlap = Math.max(rightWidth - state.right_shift, 0);
+    const leftOverlap = Math.max(leftWidth - state.left_shift, 0);
     state.left_shift += leftOverlap;
     state.right_shift += rightOverlap;
     return true;
   }
+  getFill() {
+    return this.fill;
+  }
+  setFill(color) {
+    this.fill = color;
+  }
   /** Render text below the note at the given staff line */
   draw() {
     const ctx = this.checkContext();
+    if (ctx.svg === undefined) {
+      throw new Error('Can only add lyrics to SVG Context not Canvas');
+    }
     const note = this.checkAttachedNote();
-    const textFormatter = vexflow__WEBPACK_IMPORTED_MODULE_0__.TextFormatter.create(this.textFont);
-    const start_x = note.getModifierStartXY(vexflow__WEBPACK_IMPORTED_MODULE_0__.ModifierPosition.ABOVE, this.index).x;
+    let x = note.getModifierStartXY(vexflow__WEBPACK_IMPORTED_MODULE_0__.ModifierPosition.ABOVE, this.index).x;
+    if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
+      x -= note.getGlyphWidth() / 2;
+    }
+    if (this.getXShift()) {
+      x += this.getXShift();
+    }
     this.setRendered();
     // We're changing context parameters. Save current state.
     ctx.save();
@@ -22462,23 +22491,27 @@ class VFLyricAnnotation extends vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation 
     // still need to save context state just before this, since we will be
     // changing ctx parameters below.
     this.applyStyle();
-    ctx.openGroup('annotation', this.getAttribute('id'));
+    const g = ctx.openGroup('lyricannotation', this.getAttribute('id'));
     ctx.setFont(this.textFont);
-    const text_width = textFormatter.getWidthForTextInPx(this.text);
-    let x;
-    if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
-      x = start_x;
-    } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
-      x = start_x - text_width;
-    } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.CENTER) {
-      x = start_x - text_width / 2;
-    } /* CENTER_STEM */else {
-      x = note.getStemX() - text_width / 2;
+    if (this.fill) {
+      ctx.setFillStyle(this.fill);
     }
     const stave = note.checkStave();
     const y = stave.getYForLine(this.text_line);
     L('Rendering annotation: ', this.text, x, y);
     ctx.fillText(this.text, x, y);
+    const svg_text = g.lastElementChild;
+    if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
+      // left is default;
+    } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
+      svg_text.setAttribute('text-anchor', 'right');
+    } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.CENTER) {
+      svg_text.setAttribute('text-anchor', 'middle');
+    } /* CENTER_STEM */else {
+      // TODO: this should be slightly different.
+      // x = (note as StemmableNote).getStemX() - text_width / 2;
+      svg_text.setAttribute('text-anchor', 'middle');
+    }
     ctx.closeGroup();
     this.restoreStyle();
     ctx.restore();
