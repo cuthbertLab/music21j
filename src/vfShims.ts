@@ -8,10 +8,10 @@
 
 import {
     Annotation,
-    AnnotationHorizontalJustify, isStemmableNote, isTabNote,
+    AnnotationHorizontalJustify,
     log,
     type ModifierContextState,
-    ModifierPosition, Stave, Stem,
+    ModifierPosition,
     type StemmableNote,
     TextFormatter,
 } from 'vexflow';
@@ -50,9 +50,6 @@ export class VFLyricAnnotation extends Annotation {
         for (let i = 0; i < annotations.length; ++i) {
             const annotation = annotations[i];
             const textFormatter = TextFormatter.create(annotation.textFont);
-            // Text height is expressed in fractional stave spaces.
-            const textLines = (2 + textFormatter.getYForStringInPx(annotation.text).height) / 10;
-            let verticalSpaceNeeded = textLines;
 
             const note = annotation.checkAttachedNote();
             const glyphWidth = note.getGlyphProps().getWidth();
@@ -69,68 +66,6 @@ export class VFLyricAnnotation extends Annotation {
                 rightWidth = Math.max(rightWidth, textWidth / 2);
                 maxLeftGlyphWidth = Math.max(glyphWidth / 2, maxLeftGlyphWidth);
                 maxRightGlyphWidth = Math.max(glyphWidth / 2, maxRightGlyphWidth);
-            }
-
-            const stave: Stave | undefined = note.getStave();
-            const stemDirection = note.hasStem() ? note.getStemDirection() : Stem.UP;
-            let stemHeight = 0;
-            let lines = 5;
-
-            if (isTabNote(note)) {
-                if (note.render_options.draw_stem) {
-                    const stem = (note as StemmableNote).getStem();
-                    if (stem) {
-                        stemHeight = Math.abs(stem.getHeight()) / 10;
-                    }
-                } else {
-                    stemHeight = 0;
-                }
-            } else if (isStemmableNote(note)) {
-                const stem = note.getStem();
-                if (stem && note.getNoteType() === 'n') {
-                    stemHeight = Math.abs(stem.getHeight()) / 10;
-                }
-            }
-            if (stave) {
-                lines = stave.getNumLines();
-            }
-
-            if (annotation.verticalJustification === this.VerticalJustify.TOP) {
-                let noteLine = note.getLineNumber(true);
-                if (isTabNote(note)) {
-                    noteLine = lines - (note.leastString() - 0.5);
-                }
-                if (stemDirection === Stem.UP) {
-                    noteLine += stemHeight;
-                }
-                const curTop = noteLine + state.top_text_line + 0.5;
-                if (curTop < lines) {
-                    // annotation.setTextLine(lines - noteLine);
-                    verticalSpaceNeeded += lines - noteLine;
-                    state.top_text_line = verticalSpaceNeeded;
-                } else {
-                    // annotation.setTextLine(state.top_text_line);
-                    state.top_text_line += verticalSpaceNeeded;
-                }
-            } else if (annotation.verticalJustification === this.VerticalJustify.BOTTOM) {
-                let noteLine = lines - note.getLineNumber();
-                if (isTabNote(note)) {
-                    noteLine = note.greatestString() - 1;
-                }
-                if (stemDirection === Stem.DOWN) {
-                    noteLine += stemHeight;
-                }
-                const curBottom = noteLine + state.text_line + 1;
-                if (curBottom < lines) {
-                    // annotation.setTextLine(lines - curBottom);
-                    verticalSpaceNeeded += lines - curBottom;
-                    state.text_line = verticalSpaceNeeded;
-                } else {
-                    // annotation.setTextLine(state.text_line);
-                    state.text_line += verticalSpaceNeeded;
-                }
-            } else {
-                // annotation.setTextLine(state.text_line);
             }
         }
         const rightOverlap = Math.min(
