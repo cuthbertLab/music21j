@@ -12,8 +12,7 @@ import {
     log,
     type ModifierContextState,
     ModifierPosition,
-    type StemmableNote,
-    TextFormatter,
+    SVGContext,
 } from 'vexflow';
 
 // eslint-disable-next-line
@@ -38,6 +37,7 @@ Annotation.format = Annotation.format.bind(Annotation);
 
 export class VFLyricAnnotation extends Annotation {
     static DEBUG = false;
+    fill: string;
 
     static format(annotations: VFLyricAnnotation[], state: ModifierContextState): boolean {
         if (!annotations || annotations.length === 0) {
@@ -45,48 +45,58 @@ export class VFLyricAnnotation extends Annotation {
         }
         let leftWidth = 0;
         let rightWidth = 0;
-        let maxLeftGlyphWidth = 0;
-        let maxRightGlyphWidth = 0;
         for (let i = 0; i < annotations.length; ++i) {
             const annotation = annotations[i];
-            const textFormatter = TextFormatter.create(annotation.textFont);
 
             const note = annotation.checkAttachedNote();
-            const glyphWidth = note.getGlyphProps().getWidth();
+            const ctx = note.checkContext();
+            ctx.save();
+            ctx.setFont(annotation.fontInfo);
+            if (annotation.fill) {
+                ctx.setFillStyle(annotation.fill);
+            }
+            const textWidth = ctx.measureText(annotation.text).width;
+            ctx.restore();
+
             // Get the text width from the font metrics.
-            const textWidth = textFormatter.getWidthForTextInPx(annotation.text);
-            if (annotation.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
-                maxLeftGlyphWidth = Math.max(glyphWidth, maxLeftGlyphWidth);
-                leftWidth = Math.max(leftWidth, textWidth) + Annotation.minAnnotationPadding;
-            } else if (annotation.horizontalJustification === AnnotationHorizontalJustify.RIGHT) {
-                maxRightGlyphWidth = Math.max(glyphWidth, maxRightGlyphWidth);
+            if (annotation.horizontalJustification === AnnotationHorizontalJustify.RIGHT) {
+                leftWidth = Math.max(leftWidth, textWidth + Annotation.minAnnotationPadding);
+            } else if (annotation.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
                 rightWidth = Math.max(rightWidth, textWidth);
             } else {
-                leftWidth = Math.max(leftWidth, textWidth / 2) + Annotation.minAnnotationPadding;
+                leftWidth = Math.max(leftWidth, textWidth / 2 + Annotation.minAnnotationPadding);
                 rightWidth = Math.max(rightWidth, textWidth / 2);
-                maxLeftGlyphWidth = Math.max(glyphWidth / 2, maxLeftGlyphWidth);
-                maxRightGlyphWidth = Math.max(glyphWidth / 2, maxRightGlyphWidth);
             }
         }
-        const rightOverlap = Math.min(
-            Math.max(rightWidth - maxRightGlyphWidth, 0),
-            Math.max(rightWidth - state.right_shift, 0)
-        );
-        const leftOverlap = Math.min(
-            Math.max(leftWidth - maxLeftGlyphWidth, 0),
-            Math.max(leftWidth - state.left_shift, 0)
-        );
+        const rightOverlap = Math.max(rightWidth - state.right_shift, 0);
+        const leftOverlap = Math.max(leftWidth - state.left_shift, 0);
         state.left_shift += leftOverlap;
         state.right_shift += rightOverlap;
         return true;
     }
 
+    getFill(): string {
+        return this.fill;
+    }
+
+    setFill(color: string) {
+        this.fill = color;
+    }
+
     /** Render text below the note at the given staff line */
     draw(): void {
-        const ctx = this.checkContext();
+        const ctx = <SVGContext> this.checkContext();
+        if (ctx.svg === undefined) {
+            throw new Error('Can only add lyrics to SVG Context not Canvas');
+        }
         const note = this.checkAttachedNote();
-        const textFormatter = TextFormatter.create(this.textFont);
-        const start_x = note.getModifierStartXY(ModifierPosition.ABOVE, this.index).x;
+        let x = note.getModifierStartXY(ModifierPosition.ABOVE, this.index).x;
+        if (this.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
+            x -= note.getGlyphWidth() / 2;
+        }
+        if (this.getXShift()) {
+            x += this.getXShift();
+        }
 
         this.setRendered();
 
@@ -96,20 +106,10 @@ export class VFLyricAnnotation extends Annotation {
         // still need to save context state just before this, since we will be
         // changing ctx parameters below.
         this.applyStyle();
-        ctx.openGroup('annotation', this.getAttribute('id'));
+        const g: SVGGElement = ctx.openGroup('lyricannotation', this.getAttribute('id'));
         ctx.setFont(this.textFont);
-
-        const text_width = textFormatter.getWidthForTextInPx(this.text);
-        let x: number;
-
-        if (this.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
-            x = start_x;
-        } else if (this.horizontalJustification === AnnotationHorizontalJustify.RIGHT) {
-            x = start_x - text_width;
-        } else if (this.horizontalJustification === AnnotationHorizontalJustify.CENTER) {
-            x = start_x - text_width / 2;
-        } /* CENTER_STEM */ else {
-            x = (note as StemmableNote).getStemX() - text_width / 2;
+        if (this.fill) {
+            ctx.setFillStyle(this.fill);
         }
 
         const stave = note.checkStave();
@@ -117,6 +117,19 @@ export class VFLyricAnnotation extends Annotation {
 
         L('Rendering annotation: ', this.text, x, y);
         ctx.fillText(this.text, x, y);
+        const svg_text = g.lastElementChild as SVGTextElement;
+        if (this.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
+            // left is default;
+        } else if (this.horizontalJustification === AnnotationHorizontalJustify.RIGHT) {
+            svg_text.setAttribute('text-anchor', 'right');
+        } else if (this.horizontalJustification === AnnotationHorizontalJustify.CENTER) {
+            svg_text.setAttribute('text-anchor', 'middle');
+        } /* CENTER_STEM */ else {
+            // TODO: this should be slightly different.
+            // x = (note as StemmableNote).getStemX() - text_width / 2;
+            svg_text.setAttribute('text-anchor', 'middle');
+        }
+
         ctx.closeGroup();
         this.restoreStyle();
         ctx.restore();
