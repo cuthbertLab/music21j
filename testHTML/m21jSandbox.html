@@ -16,8 +16,8 @@
             border: 10px solid #afa;
             font-family: "Courier", monospace;
             font-size: 14px;
-            width: 1000px;
-            height: 200px;
+            width: 90%;
+            height: 300px;
         }
         div.editor-error .text {
             background: #faa;
@@ -47,10 +47,14 @@
         <p></p>
         <div class="example sandbox">
             <textarea id="sandbox" class="editor">
-const s = new music21.stream.Stream();
-const n = new music21.note.Note("C#");
+const s = new music21.stream.Measure();
+const n = new music21.note.Note("C#4");
+n.addLyric('lulli-');
+n.addLyric('sad');
 n.duration.type = "half";
-const n2 = new music21.note.Note("C#");
+const n2 = new music21.note.Note("A3");
+n2.addLyric('bye');
+n2.addLyric('day');
 n2.duration.type = "quarter";
 const n3 = new music21.note.Note("C#");
 n3.duration.type = "quarter";
@@ -58,11 +62,12 @@ s.append(new music21.meter.TimeSignature('4/4'));
 s.append(n);
 s.append(n2);
 s.append(n3);
-s.replaceDOM();
+s.renderOptions.marginBottom = 80;
+s.replaceDOM('#mainSVG');
 </textarea>
             <p></p>
             <div class='streamHolding' id='mainSVG'>
-                <svg width="625" height="360"></svg>
+                <svg width="525" height="220"></svg>
             </div>
             <p></p>
         </div>

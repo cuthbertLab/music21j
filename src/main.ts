@@ -78,6 +78,7 @@ import * as svgs from './svgs';
 import * as tempo from './tempo';
 import * as tie from './tie';
 import * as tinyNotation from './tinyNotation';
+import * as vfShims from './vfShims';
 import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
@@ -135,6 +136,7 @@ export {
     tempo,
     tie,
     tinyNotation,
+    vfShims,
     vfShow,
     voiceLeading,
     webmidi,
