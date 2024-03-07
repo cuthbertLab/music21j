@@ -11,6 +11,7 @@
  */
 import {
     Accidental as VFAccidental,
+    AnnotationHorizontalJustify as VFAnnotationHorizontalJustify,
     Dot as VFDot,
     StaveNote as VFStaveNote,
     Stem as VFStem,
@@ -83,6 +84,12 @@ export interface VexflowNoteOptions {
     clef?: clef.Clef,
 }
 
+export interface VexflowLyricOptions {
+    lyric_line?: number,
+    note?: GeneralNote,
+    vfn?: VFStaveNote,
+}
+
 export const default_vf_lyric_style = <Readonly<VFFontInfo>> {
     family: 'Serif',
     size: 12,
@@ -117,7 +124,15 @@ export class Lyric extends prebase.ProtoM21Object {
     protected _identifier: string|number;
     syllabic: string;
     applyRaw: boolean;
-    style: Record<string, any>;
+    style: Record<string, any> = {
+        color: '',
+        fontFamily: 'Serif',
+        fontSize: 12,
+        fontWeight: '',
+        align: 'center',
+        xShift: 0,
+        // yShift: 0,
+    };
 
     constructor(
         text: string,
@@ -133,13 +148,6 @@ export class Lyric extends prebase.ProtoM21Object {
         this.applyRaw = applyRaw ?? false;
         this.setTextAndSyllabic(this.text, this.applyRaw);
         this._identifier = identifier;
-        this.style = {
-            fillStyle: 'black',
-            strokeStyle: 'black',
-            fontFamily: 'Serif',
-            fontSize: 12,
-            fontWeight: '',
-        };
     }
 
     get identifier(): string|number {
@@ -211,6 +219,37 @@ export class Lyric extends prebase.ProtoM21Object {
             }
         }
         return this;
+    }
+
+    vexflowLyric({lyric_line=-3}: VexflowLyricOptions = {}): VFLyricAnnotation {
+        const font: VFFontInfo = {...default_vf_lyric_style};
+        const style = this.style;
+        if (style.fontFamily) {
+            font.family = style.fontFamily;
+        }
+        if (style.fontSize) {
+            font.size = style.fontSize;
+        }
+        if (style.fontWeight) {
+            font.weight = style.fontWeight;
+        }
+        let text = this.text ?? '';
+        if (['middle', 'begin'].includes(this.syllabic)) {
+            text += ' ' + this.lyricConnector;
+        }
+
+        const annotation = new VFLyricAnnotation(text);
+        annotation.setFont(font);
+        if (style.align === 'left') {
+            annotation.setJustification(VFAnnotationHorizontalJustify.LEFT);
+        } else if (style.align === 'right') {
+            annotation.setJustification(VFAnnotationHorizontalJustify.RIGHT);
+        }
+        if (style.color) {
+            annotation.setFill(style.color);
+        }
+        annotation.setTextLine(5 - lyric_line + (this.number ?? 0) * 2);
+        return annotation;
     }
 }
 
@@ -367,35 +406,8 @@ export class GeneralNote extends base.Music21Object {
      */
     vexflowAddLyrics(vfn: VFStaveNote): void {
         const lyric_line = this.activeSite?.renderOptions.lyricsLine ?? -3;
-        let level = 0;
         for (const l of this.lyrics) {
-            let my_level: number;
-            if (l.number !== undefined) {
-                my_level = l.number - 1;
-                level = Math.max(level, my_level) + 1;
-            } else {
-                my_level = level;
-                level += 1;
-            }
-            const font: VFFontInfo = {...default_vf_lyric_style};
-            if (l.style.fontFamily) {
-                font.family = l.style.fontFamily;
-            }
-            if (l.style.fontSize) {
-                font.size = l.style.fontSize;
-            }
-            if (l.style.fontWeight) {
-                font.weight = l.style.fontWeight;
-            }
-            let text = l.text ?? '';
-            if (['middle', 'begin'].includes(l.syllabic)) {
-                text += ' ' + l.lyricConnector;
-            }
-
-            const annotation = new VFLyricAnnotation(text);
-            annotation.setFont(font);
-            annotation.setTextLine(5 - lyric_line + my_level*2);
-            vfn.addModifier(annotation, 0);
+            vfn.addModifier(l.vexflowLyric({lyric_line}), 0);
         }
     }
 
