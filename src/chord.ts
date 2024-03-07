@@ -20,6 +20,7 @@ import * as chordTables from './chordTables';
 import type * as clef from './clef';
 import type * as instrument from './instrument';
 import type * as pitch from './pitch';
+import {VexflowNoteOptions} from './note';
 
 export { chordTables };
 
@@ -127,9 +128,9 @@ export class Chord extends note.NotRest {
         this._overrides = {};
     }
 
-    vexflowNote({ clef=undefined }={}): VFStaveNote {
+    vexflowNote(options: VexflowNoteOptions = {}): VFStaveNote {
         this.sortPitches();
-        return super.vexflowNote({ clef });
+        return super.vexflowNote(options);
     }
 
     get orderedPitchClasses(): number[] {

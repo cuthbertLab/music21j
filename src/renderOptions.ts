@@ -48,6 +48,8 @@ export class RenderOptions {
     // additional padding at the bottom of the stream
     // (not every system).
     marginBottom: number = 0;
+    lyricsLine: number = -3;
+    adjustMarginBottomForLyrics: boolean = true;  // not yet implemented.
 
     systemIndex: number = 0;
     partIndex: number = 0;

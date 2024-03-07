@@ -1083,7 +1083,7 @@ export class Renderer {
      * If a stream has parts (NOT CHECKED HERE) create and
      * draw an appropriate Vex.Flow.StaveConnector
      */
-    addStaffConnectors(s?: stream.Score) {
+    addStaffConnectors(s?: stream.Score): void {
         if (s === undefined) {
             s = (this.stream as stream.Score);
         }

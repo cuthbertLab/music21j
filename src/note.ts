@@ -2,27 +2,30 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/note -- Note, Rest, NotRest, GeneralNote
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Module for note classes. See the namespace music21.note
  *
  * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
- *
- * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
 import {
-    Accidental as VFAccidental, Dot as VFDot, StaveNote as VFStaveNote, Stem as VFStem, 
+    Accidental as VFAccidental,
+    Dot as VFDot,
+    StaveNote as VFStaveNote,
+    Stem as VFStem,
 } from 'vexflow';
+import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';
 import * as base from './base';
 import * as pitch from './pitch';
 import * as beam from './beam';
+import {VFLyricAnnotation} from './vfShims';
 
-import { debug } from './debug';
-import { Music21Exception } from './exceptions21';
+import {debug} from './debug';
+import {Music21Exception} from './exceptions21';
 
 // imports just for typechecking
 import type * as articulations from './articulations';
@@ -30,6 +33,7 @@ import type * as clef from './clef';
 import type * as expressions from './expressions';
 import type * as instrument from './instrument';
 import type * as tie from './tie';
+
 
 export class NotRestException extends Music21Exception {
     // thrown in a couple of places.
@@ -74,6 +78,16 @@ export const stemDirectionNames: string[] = [
     'unspecified',
     'up',
 ];
+
+export interface VexflowNoteOptions {
+    clef?: clef.Clef,
+}
+
+export const default_vf_lyric_style = <Readonly<VFFontInfo>> {
+    family: 'Serif',
+    size: 12,
+    weight: '',
+};
 
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
@@ -254,7 +268,7 @@ export class GeneralNote extends base.Music21Object {
     }
 
 
-    get lyric() {
+    get lyric(): string|undefined {
         if (this.lyrics.length > 0) {
             return this.lyrics[0].text;
         } else {
@@ -262,7 +276,7 @@ export class GeneralNote extends base.Music21Object {
         }
     }
 
-    set lyric(value) {
+    set lyric(value: string) {
         this.lyrics = [];
         if (value !== undefined) {
             this.lyrics.push(new Lyric(value));
@@ -339,11 +353,50 @@ export class GeneralNote extends base.Music21Object {
     /**
      * For subclassing.  Do not use this...
      */
-    vexflowNote(_options): VFStaveNote {
-        return new VFStaveNote({
+    vexflowNote(_options: VexflowNoteOptions = {}): VFStaveNote {
+        const vfn = new VFStaveNote({
             keys: [],
             duration: this.duration.vexflowDuration + 'r',
         });
+        this.vexflowAddLyrics(vfn);
+        return vfn;
+    }
+
+    /**
+     * Add lyrics to the VFStaveNote as Annotation objects.
+     */
+    vexflowAddLyrics(vfn: VFStaveNote): void {
+        const lyric_line = this.activeSite?.renderOptions.lyricsLine ?? -3;
+        let level = 0;
+        for (const l of this.lyrics) {
+            let my_level: number;
+            if (l.number !== undefined) {
+                my_level = l.number - 1;
+                level = Math.max(level, my_level) + 1;
+            } else {
+                my_level = level;
+                level += 1;
+            }
+            const font: VFFontInfo = {...default_vf_lyric_style};
+            if (l.style.fontFamily) {
+                font.family = l.style.fontFamily;
+            }
+            if (l.style.fontSize) {
+                font.size = l.style.fontSize;
+            }
+            if (l.style.fontWeight) {
+                font.weight = l.style.fontWeight;
+            }
+            let text = l.text ?? '';
+            if (['middle', 'begin'].includes(l.syllabic)) {
+                text += ' ' + l.lyricConnector;
+            }
+
+            const annotation = new VFLyricAnnotation(text);
+            annotation.setFont(font);
+            annotation.setTextLine(5 - lyric_line + my_level*2);
+            vfn.addModifier(annotation, 0);
+        }
     }
 
     /**
@@ -456,7 +509,7 @@ export class NotRest extends GeneralNote {
      *
      * clef to set the stem direction of.
      */
-    override vexflowNote({ clef=undefined }={}): VFStaveNote {
+    override vexflowNote({ clef=undefined }: VexflowNoteOptions = {}): VFStaveNote {
         let useStemDirection = this.stemDirection;
 
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
@@ -510,6 +563,7 @@ export class NotRest extends GeneralNote {
                 strokeStyle: this.noteheadColor,
             });
         }
+        this.vexflowAddLyrics(vfn);
         this.activeVexflowNote = vfn;
         return vfn;
     }
@@ -757,7 +811,7 @@ export class Rest extends GeneralNote {
      * Corrects for bug in VexFlow that renders a whole rest too low.
      *
      */
-    override vexflowNote(_options): VFStaveNote {
+    override vexflowNote(_options: VexflowNoteOptions = {}): VFStaveNote {
         let keyLine = 'b/4';
         const activeSiteSingleLine = (
             this.activeSite !== undefined
@@ -793,6 +847,7 @@ export class Rest extends GeneralNote {
                 strokeStyle: this.color,
             });
         }
+        this.vexflowAddLyrics(vfn);
         this.activeVexflowNote = vfn;
         return vfn;
     }
