@@ -102,7 +102,7 @@ const n = new music21.note.Note('F#');
 
 Version
 --------
-0.14.7 beta
+0.15 beta
 
 
 License
@@ -110,9 +110,6 @@ License
 Music21j is released under the BSD 3-Clause License. Essentially you
 can do with it what you want so long as you leave in my copyright statements
 and do not represent that I endorse your product.
-
-Or you can choose to use the GNU Lesser Public License if for some reason
-that suits your project better.
 
 Thanks
 -----------
@@ -175,7 +172,13 @@ Publishing a new version
 -------------------------
 You'll need to be part of the npm dev team.
 
-Two steps.  First run:
+Two steps.  First make sure you have run:
+
+```sh
+$ grunt
+```
+
+the latest build must have been made.
 
 ```sh
 $ grunt publish
