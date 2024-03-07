@@ -4,8 +4,8 @@
  *
  * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Options for rendering a stream
  *
@@ -36,6 +36,8 @@ export declare class RenderOptions {
     overriddenWidth: number;
     height: number;
     marginBottom: number;
+    lyricsLine: number;
+    adjustMarginBottomForLyrics: boolean;
     systemIndex: number;
     partIndex: number;
     measureIndex: number;

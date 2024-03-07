@@ -3,13 +3,13 @@
  *
  * See http://web.mit.edu/music21/ for more details.
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
@@ -70,10 +70,11 @@ import * as svgs from './svgs';
 import * as tempo from './tempo';
 import * as tie from './tie';
 import * as tinyNotation from './tinyNotation';
+import * as vfShims from './vfShims';
 import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
 import { debug } from './debug';
-export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, defaults, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, style, svgs, tempo, tie, tinyNotation, vfShow, voiceLeading, webmidi, };
-export declare const VERSION = "0.13.8";
+export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, defaults, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, style, svgs, tempo, tie, tinyNotation, vfShims, vfShow, voiceLeading, webmidi, };
+export declare const VERSION = "0.15.1";
 //# sourceMappingURL=main.d.ts.map

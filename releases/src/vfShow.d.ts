@@ -2,14 +2,15 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
 /// <reference types="jquery" />
 /// <reference types="jquery" />
-import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
+import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, // TextNote as VFTextNote,
+Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
 import * as stream from './stream';
 import type * as renderOptions from './renderOptions';
 import { StaveConnector } from './types';
@@ -26,10 +27,9 @@ export declare const vexflowDefaults: {
 export declare class RenderStack {
     streams: stream.Stream[];
     voices: VFVoice[];
-    textVoices: VFVoice[];
     voiceToStreamMapping: Map<VFVoice, stream.Stream>;
     /**
-     * returns this.voices and this.textVoices as one array
+     * returns this.voices as a new array
      */
     allTickables(): VFVoice[];
     /**
@@ -81,10 +81,8 @@ export declare class Renderer {
      *
      * if s is undefined, uses the stored Stream from
      * the constructor object.
-     *
-     * @param {Stream} [s=this.stream]
      */
-    render(s?: stream.Stream): void;
+    render(): void;
     /**
      * Prepares a scorelike stream (i.e., one with parts or
      * Streams that should be rendered vertically like parts)
@@ -117,7 +115,7 @@ export declare class Renderer {
      * * m - a measure object (w or w/o voices)
      * * stack - a RenderStack object to prepare into.
      */
-    prepareMeasure(m: stream.Measure, stack: RenderStack): RenderStack;
+    prepareMeasure(m: stream.Stream, stack: RenderStack): RenderStack;
     /**
      * Main internal routine to prepare a flat stream
      *
@@ -141,7 +139,7 @@ export declare class Renderer {
      */
     renderStave(m?: stream.Stream, optional_rendOp?: renderOptions.RenderOptions): VFStave;
     /**
-     * Draws the Voices (music and text) from `this.stacks`
+     * Draws the Voices (just music no longer text) from `this.stacks`
      *
      */
     drawMeasureStacks(): void;
@@ -176,7 +174,6 @@ export declare class Renderer {
      *
      * s -- usually a Measure or Voice
      */
-    getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[];
     /**
      * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
      *
@@ -225,10 +222,6 @@ export declare class Renderer {
      * Also changes `this.vfTuplets`.
      */
     vexflowNotes(s?: stream.Stream, stave?: VFStave): VFStaveNote[];
-    /**
-     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
-     */
-    vexflowLyrics(s?: stream.Stream, stave?: VFStave, depth?: number): VFTextNote[];
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */

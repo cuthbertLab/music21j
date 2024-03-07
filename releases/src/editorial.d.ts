@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/editorial -- Representations of editorial information
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 import { ProtoM21Object } from './prebase';
 export declare class Editorial extends ProtoM21Object implements Record<string, any> {

@@ -53,7 +53,7 @@ export declare class StreamIteratorBase<T extends Music21Object = Music21Object>
     removeFilter(oldFilter: filters.StreamFilter): StreamIteratorBase<T>;
     getElementsByClass(classFilterList: ClassFilterType): StreamIteratorBase<T>;
     getElementsNotOfClass(classFilterList: ClassFilterType): StreamIteratorBase<T>;
-    getElementsByOffset(offsetStart: number, ...args: any[]): StreamIteratorBase<T>;
+    getElementsByOffset(offsetStart: number, offsetEnd?: number, offsetOptions?: filters.OffsetFilterOptions): StreamIteratorBase<T>;
     get notes(): StreamIteratorBase<NotRest>;
     get notesAndRests(): StreamIteratorBase<GeneralNote>;
     get parts(): StreamIteratorBase<Part>;

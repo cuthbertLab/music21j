@@ -2,16 +2,15 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/note -- Note, Rest, NotRest, GeneralNote
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Module for note classes. See the namespace music21.note
  *
  * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
- *
- * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
 import { StaveNote as VFStaveNote } from 'vexflow';
+import type { FontInfo as VFFontInfo } from 'vexflow/src/font';
 import * as prebase from './prebase';
 import * as base from './base';
 import * as pitch from './pitch';
@@ -26,6 +25,10 @@ export declare class NotRestException extends Music21Exception {
 }
 export declare const noteheadTypeNames: string[];
 export declare const stemDirectionNames: string[];
+export interface VexflowNoteOptions {
+    clef?: clef.Clef;
+}
+export declare const default_vf_lyric_style: Readonly<VFFontInfo>;
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
  *
@@ -104,7 +107,7 @@ export declare class GeneralNote extends base.Music21Object {
     constructor(ql?: number);
     get pitches(): pitch.Pitch[];
     set pitches(_value: pitch.Pitch[]);
-    get lyric(): string;
+    get lyric(): string | undefined;
     set lyric(value: string);
     get midiVolume(): number;
     /**
@@ -119,7 +122,11 @@ export declare class GeneralNote extends base.Music21Object {
     /**
      * For subclassing.  Do not use this...
      */
-    vexflowNote(_options: any): VFStaveNote;
+    vexflowNote(_options?: VexflowNoteOptions): VFStaveNote;
+    /**
+     * Add lyrics to the VFStaveNote as Annotation objects.
+     */
+    vexflowAddLyrics(vfn: VFStaveNote): void;
     /**
      * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
      */
@@ -171,9 +178,7 @@ export declare class NotRest extends GeneralNote {
      *
      * clef to set the stem direction of.
      */
-    vexflowNote({ clef }?: {
-        clef?: any;
-    }): VFStaveNote;
+    vexflowNote({ clef }?: VexflowNoteOptions): VFStaveNote;
 }
 /**
  * A very, very important class! music21.note.Note objects combine a music21.pitch.Pitch
@@ -257,6 +262,6 @@ export declare class Rest extends GeneralNote {
      * Corrects for bug in VexFlow that renders a whole rest too low.
      *
      */
-    vexflowNote(_options: any): VFStaveNote;
+    vexflowNote(_options?: VexflowNoteOptions): VFStaveNote;
 }
 //# sourceMappingURL=note.d.ts.map

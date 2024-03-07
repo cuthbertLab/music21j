@@ -1,9 +1,10 @@
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit.
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  *
  */
+export type CloneCallbackFunctionType<T extends ProtoM21Object = ProtoM21Object> = (key: string, ret: T, deep: boolean, memo: WeakMap<any, any>) => void;
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
  * everything in music21 should inherit from are given below.
@@ -22,7 +23,7 @@ export declare class ProtoM21Object {
     _cl: string;
     isProtoM21Object: boolean;
     isMusic21Object: boolean;
-    protected _cloneCallbacks: any;
+    protected _cloneCallbacks: Record<string, boolean | 'constructor' | CloneCallbackFunctionType>;
     constructor();
     get classSet(): Set<any>;
     /**

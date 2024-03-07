@@ -5,8 +5,8 @@
  * note that Vex.Flow does not support Dynamics yet and we do not support MIDI dynamics,
  *  so currently of limited value...
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Dynamics related objects.
  *

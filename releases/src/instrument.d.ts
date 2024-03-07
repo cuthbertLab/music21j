@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/instrument -- instrument objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 import * as base from './base';
 import type * as interval from './interval';

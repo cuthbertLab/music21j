@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/chord -- Chord
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Chord related objects (esp. music21.chord.Chord) and methods.
  *
@@ -14,6 +14,7 @@ import * as chordTables from './chordTables';
 import type * as clef from './clef';
 import type * as instrument from './instrument';
 import type * as pitch from './pitch';
+import { VexflowNoteOptions } from './note';
 export { chordTables };
 /**
  * @param {Array<string|note.Note|pitch.Pitch>} [notes] -
@@ -43,9 +44,7 @@ export declare class Chord extends note.NotRest {
     set pitches(tempPitches: (pitch.Pitch | string | note.Note)[]);
     get notes(): note.Note[];
     set notes(newNotes: note.Note[]);
-    vexflowNote({ clef }?: {
-        clef?: any;
-    }): VFStaveNote;
+    vexflowNote(options?: VexflowNoteOptions): VFStaveNote;
     get orderedPitchClasses(): number[];
     get chordTablesAddress(): any;
     get commonName(): string;
@@ -133,7 +132,7 @@ export declare class Chord extends note.NotRest {
      * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
      * the `.root()`
      *
-     * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+     * In case there is more than one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      */
     getChordStep(chordStep: number, testRoot?: pitch.Pitch): pitch.Pitch | undefined;

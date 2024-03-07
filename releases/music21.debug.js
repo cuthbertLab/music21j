@@ -1,5 +1,5 @@
 /**
- * music21j version 0.14.12 built on 2024-03-01.
+ * music21j version 0.15.1 built on 2024-03-07.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -1038,8 +1038,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/bar -- Barline objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  */
 
@@ -1126,8 +1126,8 @@ __webpack_require__.r(__webpack_exports__);
  *
  * does not load the other modules.
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * module for Music21Objects
  */
@@ -1160,7 +1160,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
     return 'music21.base.Music21Object';
   }
   constructor() {
-    let keywords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    let _keywords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     super();
     this.classSortOrder = 20; // default;
     this._activeSiteStoredOffset = 0;
@@ -1175,14 +1175,14 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
     this.sites = new _sites__WEBPACK_IMPORTED_MODULE_6__.Sites();
     this._cloneCallbacks._activeSite = false;
     this._cloneCallbacks._activeSiteStoredOffset = false;
-    this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(keyName, newObj, self, deep, memo) {
+    this._cloneCallbacks._derivation = (keyName, newObj, _deep, _memo) => {
       const newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_2__.Derivation(newObj);
-      newDerivation.origin = self;
+      newDerivation.origin = this;
       newDerivation.method = 'clone';
       newObj[keyName] = newDerivation;
     };
     // noinspection JSUnusedLocalSymbols
-    this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self, deep, memo) {
+    this._cloneCallbacks.sites = (_keyName, newObj, _deep, _memo) => {
       newObj.sites = new _sites__WEBPACK_IMPORTED_MODULE_6__.Sites();
     };
   }
@@ -1430,7 +1430,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
       return this.getOffsetBySite(site);
     } catch (e) {} // eslint-disable-line no-empty
     // noinspection JSUnusedLocalSymbols
-    for (const [csSite, csOffset, unused_csRecursionType] of this.contextSites()) {
+    for (const [csSite, csOffset, _csRecursionType] of this.contextSites()) {
       if (csSite === site) {
         return csOffset;
       }
@@ -1671,8 +1671,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/beam -- Beams and Beam class
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Module holding beam materials.
  *
@@ -2118,8 +2118,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_5__.NotRest {
   // https://github.com/microsoft/TypeScript/issues/2521
   get pitches() {
     const tempPitches = [];
-    for (let i = 0; i < this._notes.length; i++) {
-      tempPitches.push(this._notes[i].pitch);
+    for (const n of this._notes) {
+      tempPitches.push(n.pitch);
     }
     return tempPitches;
   }
@@ -2152,13 +2152,9 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_5__.NotRest {
     this._overrides = {};
   }
   vexflowNote() {
-    let {
-      clef = undefined
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     this.sortPitches();
-    return super.vexflowNote({
-      clef
-    });
+    return super.vexflowNote(options);
   }
   get orderedPitchClasses() {
     const pcGroup = [];
@@ -2631,7 +2627,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_5__.NotRest {
    * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
    * the `.root()`
    *
-   * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+   * In case there is more than one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
    * the first one in `.pitches` is returned.
    */
   getChordStep(chordStep, testRoot) {
@@ -5539,8 +5535,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/clef -- Clef objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Clef related objects and properties
  *
@@ -6568,8 +6564,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/duration -- duration routines
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Duration module.
  *
@@ -6626,7 +6622,15 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
     } else if (ql !== undefined) {
       this.quarterLength = ql;
     }
-    this._cloneCallbacks._tuplets = this.cloneCallbacksTupletFunction;
+    this._cloneCallbacks._tuplets = (_tupletKey, ret, _deep, _memo) => {
+      // make sure that tuplets clone properly
+      const newTuplets = [];
+      for (const old_tuplet of this._tuplets) {
+        const newTuplet = old_tuplet.clone();
+        newTuplets.push(newTuplet);
+      }
+      ret._tuplets = newTuplets;
+    };
   }
   stringInfo() {
     return this.quarterLength.toString();
@@ -6742,16 +6746,6 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
     }
 
     return vd;
-  }
-  cloneCallbacksTupletFunction(tupletKey, ret, obj, deep, memo) {
-    // make sure that tuplets clone properly
-    const newTuplets = [];
-    for (let i = 0; i < obj[tupletKey].length; i++) {
-      const newTuplet = obj[tupletKey][i].clone();
-      // console.log('cloning tuplets', obj[tupletKey][i], newTuplet);
-      newTuplets.push(newTuplet);
-    }
-    ret[tupletKey] = newTuplets;
   }
   _findDots(ql) {
     if (ql === 0) {
@@ -6978,8 +6972,8 @@ __webpack_require__.r(__webpack_exports__);
  * note that Vex.Flow does not support Dynamics yet and we do not support MIDI dynamics,
  *  so currently of limited value...
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Dynamics related objects.
  *
@@ -7122,8 +7116,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/editorial -- Representations of editorial information
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 
 class Editorial extends _prebase__WEBPACK_IMPORTED_MODULE_0__.ProtoM21Object {
@@ -7576,8 +7570,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/fromPython -- Conversion from music21p jsonpickle streams
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Converter for taking a Python-encoded jsonpickle music21p stream
  * and loading it into music21j
@@ -7841,8 +7835,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/instrument -- instrument objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 
 const global_usedChannels = []; // differs from m21p -- stored midiProgram numbers
@@ -8533,8 +8527,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/interval -- Interval routines
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Interval related objects
  *
@@ -9321,8 +9315,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/key -- KeySignature and Key objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  */
 
@@ -9669,8 +9663,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/keyboard -- PianoKeyboard rendering and display objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Keyboard module
  *
@@ -10485,7 +10479,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   clef: () => (/* reexport module object */ _clef__WEBPACK_IMPORTED_MODULE_14__),
 /* harmony export */   common: () => (/* reexport module object */ _common__WEBPACK_IMPORTED_MODULE_6__),
 /* harmony export */   converter: () => (/* reexport module object */ _converter__WEBPACK_IMPORTED_MODULE_15__),
-/* harmony export */   debug: () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_49__.debug),
+/* harmony export */   debug: () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_50__.debug),
 /* harmony export */   defaults: () => (/* reexport safe */ _defaults__WEBPACK_IMPORTED_MODULE_16__["default"]),
 /* harmony export */   derivation: () => (/* reexport module object */ _derivation__WEBPACK_IMPORTED_MODULE_17__),
 /* harmony export */   duration: () => (/* reexport module object */ _duration__WEBPACK_IMPORTED_MODULE_18__),
@@ -10518,9 +10512,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   tempo: () => (/* reexport module object */ _tempo__WEBPACK_IMPORTED_MODULE_43__),
 /* harmony export */   tie: () => (/* reexport module object */ _tie__WEBPACK_IMPORTED_MODULE_44__),
 /* harmony export */   tinyNotation: () => (/* reexport module object */ _tinyNotation__WEBPACK_IMPORTED_MODULE_45__),
-/* harmony export */   vfShow: () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_46__),
-/* harmony export */   voiceLeading: () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_47__),
-/* harmony export */   webmidi: () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_48__)
+/* harmony export */   vfShims: () => (/* reexport module object */ _vfShims__WEBPACK_IMPORTED_MODULE_46__),
+/* harmony export */   vfShow: () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_47__),
+/* harmony export */   voiceLeading: () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_48__),
+/* harmony export */   webmidi: () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_49__)
 /* harmony export */ });
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__);
@@ -10570,22 +10565,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
 /* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
 /* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
-/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _vfShims__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./vfShims */ "./src/vfShims.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
+/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
 /**!
  * **music21j**: Javascript reimplementation of Core music21 features.
  *
  * See http://web.mit.edu/music21/ for more details.
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
@@ -10655,7 +10651,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.13.8';
+
+const VERSION = '0.15.1';
 _parseLoader__WEBPACK_IMPORTED_MODULE_34__.runConfiguration();
 
 /***/ }),
@@ -10685,8 +10682,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 
 
@@ -11128,7 +11125,7 @@ __webpack_require__.r(__webpack_exports__);
  * music21/miditools -- A collection of tools for midi.
  *
  * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * @author Michael Scott Asato Cuthbert
  *
@@ -13531,6 +13528,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NotRestException: () => (/* binding */ NotRestException),
 /* harmony export */   Note: () => (/* binding */ Note),
 /* harmony export */   Rest: () => (/* binding */ Rest),
+/* harmony export */   default_vf_lyric_style: () => (/* binding */ default_vf_lyric_style),
 /* harmony export */   noteheadTypeNames: () => (/* binding */ noteheadTypeNames),
 /* harmony export */   stemDirectionNames: () => (/* binding */ stemDirectionNames)
 /* harmony export */ });
@@ -13543,22 +13541,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base */ "./src/base.ts");
 /* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
 /* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+/* harmony import */ var _vfShims__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./vfShims */ "./src/vfShims.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/note -- Note, Rest, NotRest, GeneralNote
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Module for note classes. See the namespace music21.note
  *
  * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
- *
- * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
 
 
@@ -13568,10 +13565,16 @@ function _extends() { _extends = Object.assign ? Object.assign.bind() : function
 
 
 
-class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception {}
+
+class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_9__.Music21Exception {}
 // noinspection JSUnusedGlobalSymbols
 const noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 const stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
+const default_vf_lyric_style = {
+  family: 'Serif',
+  size: 12,
+  weight: ''
+};
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
  *
@@ -13783,11 +13786,50 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
   /**
    * For subclassing.  Do not use this...
    */
-  vexflowNote(_options) {
-    return new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveNote({
+  vexflowNote() {
+    let _options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveNote({
       keys: [],
       duration: this.duration.vexflowDuration + 'r'
     });
+    this.vexflowAddLyrics(vfn);
+    return vfn;
+  }
+  /**
+   * Add lyrics to the VFStaveNote as Annotation objects.
+   */
+  vexflowAddLyrics(vfn) {
+    var _a, _b, _c;
+    const lyric_line = (_b = (_a = this.activeSite) === null || _a === void 0 ? void 0 : _a.renderOptions.lyricsLine) !== null && _b !== void 0 ? _b : -3;
+    let level = 0;
+    for (const l of this.lyrics) {
+      let my_level;
+      if (l.number !== undefined) {
+        my_level = l.number - 1;
+        level = Math.max(level, my_level) + 1;
+      } else {
+        my_level = level;
+        level += 1;
+      }
+      const font = _extends({}, default_vf_lyric_style);
+      if (l.style.fontFamily) {
+        font.family = l.style.fontFamily;
+      }
+      if (l.style.fontSize) {
+        font.size = l.style.fontSize;
+      }
+      if (l.style.fontWeight) {
+        font.weight = l.style.fontWeight;
+      }
+      let text = (_c = l.text) !== null && _c !== void 0 ? _c : '';
+      if (['middle', 'begin'].includes(l.syllabic)) {
+        text += ' ' + l.lyricConnector;
+      }
+      const annotation = new _vfShims__WEBPACK_IMPORTED_MODULE_7__.VFLyricAnnotation(text);
+      annotation.setFont(font);
+      annotation.setTextLine(5 - lyric_line + my_level * 2);
+      vfn.addModifier(annotation, 0);
+    }
   }
   /**
    * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
@@ -13948,6 +13990,7 @@ class NotRest extends GeneralNote {
         strokeStyle: this.noteheadColor
       }));
     }
+    this.vexflowAddLyrics(vfn);
     this.activeVexflowNote = vfn;
     return vfn;
   }
@@ -14060,7 +14103,7 @@ class Note extends NotRest {
       stave,
       clef
     });
-    if (_debug__WEBPACK_IMPORTED_MODULE_7__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
       console.log(this.stemDirection);
     }
     if (this.stemDirection === 'noStem') {
@@ -14169,7 +14212,8 @@ class Rest extends GeneralNote {
    * Corrects for bug in VexFlow that renders a whole rest too low.
    *
    */
-  vexflowNote(_options) {
+  vexflowNote() {
+    let _options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     let keyLine = 'b/4';
     const activeSiteSingleLine = this.activeSite !== undefined && this.activeSite.renderOptions.staffLines === 1;
     if (this.duration.type === 'whole' && !activeSiteSingleLine) {
@@ -14205,6 +14249,7 @@ class Rest extends GeneralNote {
         strokeStyle: this.color
       }));
     }
+    this.vexflowAddLyrics(vfn);
     this.activeVexflowNote = vfn;
     return vfn;
   }
@@ -14394,8 +14439,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/pitch -- pitch routines
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Pitch related objects and methods
  */
@@ -15311,7 +15356,7 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit.
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  *
  */
 /**
@@ -15332,7 +15377,10 @@ class ProtoM21Object {
   constructor() {
     this.isProtoM21Object = true;
     this.isMusic21Object = false;
-    this._cloneCallbacks = {};
+    // constructor signifies: leave alone whatever the constructor did.
+    this._cloneCallbacks = {
+      _cloneCallbacks: 'constructor'
+    };
     // this exists for looking at Proxies of this object in Javascript
     // consoles.  Because Chrome prints a stream as:
     // Proxy {_cl: 'Stream', ... }
@@ -15416,16 +15464,20 @@ class ProtoM21Object {
         continue;
       }
       if (key in this._cloneCallbacks) {
-        if (this._cloneCallbacks[key] === true) {
+        const cc = this._cloneCallbacks[key];
+        if (cc === true) {
           ret[key] = this[key];
-        } else if (this._cloneCallbacks[key] === false) {
+        } else if (cc === false) {
+          // false means wipe out the old!  like _activeSite, etc.
           ret[key] = undefined;
+        } else if (cc === 'constructor') {
+          // leave alone whatever the constructor initially set up.
         } else {
           // call the cloneCallbacks function
-          this._cloneCallbacks[key](key, ret, this, deep, memo);
+          cc(key, ret, deep, memo);
         }
       } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {
-        // do nothing
+        // do nothing for properties.
       } else if (typeof this[key] === 'function') {
         // do nothing -- events might not be copied.
       } else if (deep && typeof this[key] === 'object' && this[key] !== null && this[key].isProtoM21Object) {
@@ -15519,8 +15571,8 @@ function _extends() { _extends = Object.assign ? Object.assign.bind() : function
  *
  * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Options for rendering a stream
  *
@@ -15548,6 +15600,8 @@ class RenderOptions {
     // additional padding at the bottom of the stream
     // (not every system).
     this.marginBottom = 0;
+    this.lyricsLine = -3;
+    this.adjustMarginBottomForLyrics = true; // not yet implemented.
     this.systemIndex = 0;
     this.partIndex = 0;
     this.measureIndex = 0;
@@ -15638,8 +15692,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/roman -- roman.RomanNumeral -- Chord subclass
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Roman numeral module. See  namespace
  * music21.roman -- namespace for dealing with RomanNumeral analysis.
@@ -16425,8 +16479,8 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Does not implement the full range of scales from music21p
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 
 
@@ -17150,8 +17204,8 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Does not implement the full features of music21p Streams by a long shot...
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * powerful stream module, See music21.stream namespace
  *
@@ -17229,6 +17283,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
   static get className() {
     return 'music21.stream.Stream';
   }
+  // noinspection GrazieInspection
   constructor() {
     super();
     // from music21p's core.py
@@ -17280,22 +17335,22 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
     this._cloneCallbacks.activeVexflowNote = false;
     this._cloneCallbacks.storedVexflowStave = false;
     this._cloneCallbacks._offsetDict = false;
-    this._cloneCallbacks.renderOptions = function cloneRenderOptions(_keyName, newObj, self, deep, _memo) {
+    this._cloneCallbacks.renderOptions = (_keyName, newObj, deep, _memo) => {
       if (!deep) {
-        newObj.renderOptions = self.renderOptions;
+        newObj.renderOptions = this.renderOptions;
       } else {
-        newObj.renderOptions = self.renderOptions.deepClone();
+        newObj.renderOptions = this.renderOptions.deepClone();
       }
     };
-    this._cloneCallbacks._elements = function cloneElements(_keyName, newObj, self, deep, memo) {
+    this._cloneCallbacks._elements = (_keyName, newObj, deep, memo) => {
       if (!deep) {
-        newObj.elements = self;
+        newObj.elements = this;
         return;
       }
       newObj.clear();
-      for (let j = 0; j < self._elements.length; j++) {
-        const el = self._elements[j];
-        const elOffset = self.elementOffset(el);
+      for (let j = 0; j < this._elements.length; j++) {
+        const el = this._elements[j];
+        const elOffset = this.elementOffset(el);
         // console.log('cloning el: ', el.name);
         const elCopy = el.clone(true, memo);
         // there may be more efficient ways to do this,
@@ -17762,10 +17817,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
   coreElementsChanged() {
     let {
       updateIsFlat = true,
-      clearIsSorted = true,
-      memo = undefined,
-      // unused
-      keepIndex = false // unused
+      clearIsSorted = true
+      // memo=undefined, // unused
+      // keepIndex=false, // unused
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     if (clearIsSorted) {
       this.isSorted = false;
@@ -18206,8 +18260,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
    * stream, a default of 4/4 is used.
     * If `options.inPlace` is true, the original Stream is modified and lost
    * if `options.inPlace` is False, this returns a modified deep copy.
-    * @param {Object} [options]
-   * @returns {Stream}
    */
   makeMeasures(options) {
     const params = {
@@ -18361,7 +18413,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
     const workObj = this;
     let templateStream;
     if (this.hasPartLikeStreams()) {
-      templateStream = workObj.getElementsByClass('Stream').get(0);
+      templateStream = workObj.getElementsByClass(Stream).first();
     } else {
       templateStream = workObj;
     }
@@ -18558,8 +18610,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
   /**
    * Find all elements NOT with a certain class; if an Array is given, then any
    * matching class will work.
-   *
-   * @param {string[]|string} classList - a list of classes to find
    */
   getElementsNotOfClass(classList) {
     return this.iter.getElementsNotOfClass(classList);
@@ -18871,6 +18921,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
     this.setRenderInteraction(canvasOrSVG);
     this.activeVFRenderer = vfr;
     if (!DOMContains) {
+      // Note that this line is one of the two places that in ModuleTests vfShow
+      // is causing the annoying Failed to load resource: net::ERR_FILE_NOT_FOUND
+      // bug in gruntTests -- not sure the other one.  Spent another 90 minutes
+      // diagnosing.  Need to stop for now.
       // remove the adding to DOM so that Firefox could measure it...
       document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_25__["default"].appendLocation).removeChild(canvasOrSVG);
     }
@@ -19238,7 +19292,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_7__.Music21Object {
         // const tempo = thisStream._averageTempo(el.offset, nextOffset);
         // const milliseconds = playDuration * 1000 * 60 / tempo;
         if (_debug__WEBPACK_IMPORTED_MODULE_6__.debug) {
-          console.log('playing: ', el, playDuration, milliseconds, params.tempo);
+          console.log(`playing: ${el} ${playDuration} ${milliseconds} ${params.tempo}`);
         }
         if (el.playMidi !== undefined) {
           el.playMidi(params.tempo, nextNote, params);
@@ -20639,7 +20693,6 @@ class ClassNotFilter extends ClassFilter {
     return !super.call(item, iterator);
   }
 }
-// TODO: GroupFilter
 class OffsetFilter extends StreamFilter {
   static get derivationStr() {
     return 'getElementsByOffset';
@@ -20943,11 +20996,8 @@ class StreamIteratorBase {
   }
   // getElementsByGroup;
   // getElementsByOffset;
-  getElementsByOffset(offsetStart) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_1__.OffsetFilter(offsetStart, ...args));
+  getElementsByOffset(offsetStart, offsetEnd, offsetOptions) {
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_1__.OffsetFilter(offsetStart, offsetEnd, offsetOptions));
   }
   get notes() {
     return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_1__.ClassFilter('NotRest'));
@@ -21527,8 +21577,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/tempo -- tempo and (not in music21p) metronome objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * tempo module,
  *
@@ -21918,8 +21968,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tie -- ties!
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  */
 
@@ -21992,8 +22042,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tinyNotation -- TinyNotation implementation
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * TinyNotation module
  */
@@ -22324,6 +22374,120 @@ var StaveConnector;
 
 /***/ }),
 
+/***/ "./src/vfShims.ts":
+/*!************************!*\
+  !*** ./src/vfShims.ts ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   VFLyricAnnotation: () => (/* binding */ VFLyricAnnotation)
+/* harmony export */ });
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
+/**
+ * music21j -- Javascript reimplementation of Core music21p features.
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
+ *
+ * The infamous vfShims returns!  To fix things that Vexflow makes hard to fix!
+ */
+
+// eslint-disable-next-line
+function L() {
+  if (VFLyricAnnotation.DEBUG) {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    (0,vexflow__WEBPACK_IMPORTED_MODULE_0__.log)('Vex.Flow.Annotation', args);
+  }
+}
+const original_Annotation_format = vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.format;
+vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.format = function format(annotations, state) {
+  if (!annotations || annotations.length === 0) {
+    return false;
+  }
+  if (!(annotations[0] instanceof VFLyricAnnotation)) {
+    return original_Annotation_format.bind(this)(annotations, state);
+  }
+  return VFLyricAnnotation.format.bind(this)(annotations, state);
+};
+vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.format = vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.format.bind(vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation);
+class VFLyricAnnotation extends vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation {
+  static format(annotations, state) {
+    if (!annotations || annotations.length === 0) {
+      return false;
+    }
+    let leftWidth = 0;
+    let rightWidth = 0;
+    let maxLeftGlyphWidth = 0;
+    let maxRightGlyphWidth = 0;
+    for (let i = 0; i < annotations.length; ++i) {
+      const annotation = annotations[i];
+      const textFormatter = vexflow__WEBPACK_IMPORTED_MODULE_0__.TextFormatter.create(annotation.textFont);
+      const note = annotation.checkAttachedNote();
+      const glyphWidth = note.getGlyphProps().getWidth();
+      // Get the text width from the font metrics.
+      const textWidth = textFormatter.getWidthForTextInPx(annotation.text);
+      if (annotation.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
+        maxLeftGlyphWidth = Math.max(glyphWidth, maxLeftGlyphWidth);
+        leftWidth = Math.max(leftWidth, textWidth) + vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.minAnnotationPadding;
+      } else if (annotation.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
+        maxRightGlyphWidth = Math.max(glyphWidth, maxRightGlyphWidth);
+        rightWidth = Math.max(rightWidth, textWidth);
+      } else {
+        leftWidth = Math.max(leftWidth, textWidth / 2) + vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.minAnnotationPadding;
+        rightWidth = Math.max(rightWidth, textWidth / 2);
+        maxLeftGlyphWidth = Math.max(glyphWidth / 2, maxLeftGlyphWidth);
+        maxRightGlyphWidth = Math.max(glyphWidth / 2, maxRightGlyphWidth);
+      }
+    }
+    const rightOverlap = Math.min(Math.max(rightWidth - maxRightGlyphWidth, 0), Math.max(rightWidth - state.right_shift, 0));
+    const leftOverlap = Math.min(Math.max(leftWidth - maxLeftGlyphWidth, 0), Math.max(leftWidth - state.left_shift, 0));
+    state.left_shift += leftOverlap;
+    state.right_shift += rightOverlap;
+    return true;
+  }
+  /** Render text below the note at the given staff line */
+  draw() {
+    const ctx = this.checkContext();
+    const note = this.checkAttachedNote();
+    const textFormatter = vexflow__WEBPACK_IMPORTED_MODULE_0__.TextFormatter.create(this.textFont);
+    const start_x = note.getModifierStartXY(vexflow__WEBPACK_IMPORTED_MODULE_0__.ModifierPosition.ABOVE, this.index).x;
+    this.setRendered();
+    // We're changing context parameters. Save current state.
+    ctx.save();
+    // Apply style might not save context, if this.style is undefined, so we
+    // still need to save context state just before this, since we will be
+    // changing ctx parameters below.
+    this.applyStyle();
+    ctx.openGroup('annotation', this.getAttribute('id'));
+    ctx.setFont(this.textFont);
+    const text_width = textFormatter.getWidthForTextInPx(this.text);
+    let x;
+    if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
+      x = start_x;
+    } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
+      x = start_x - text_width;
+    } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.CENTER) {
+      x = start_x - text_width / 2;
+    } /* CENTER_STEM */else {
+      x = note.getStemX() - text_width / 2;
+    }
+    const stave = note.checkStave();
+    const y = stave.getYForLine(this.text_line);
+    L('Rendering annotation: ', this.text, x, y);
+    ctx.fillText(this.text, x, y);
+    ctx.closeGroup();
+    this.restoreStyle();
+    ctx.restore();
+  }
+}
+VFLyricAnnotation.DEBUG = false;
+
+/***/ }),
+
 /***/ "./src/vfShow.ts":
 /*!***********************!*\
   !*** ./src/vfShow.ts ***!
@@ -22346,9 +22510,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
 /* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
 /* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 
 
 
@@ -22356,16 +22519,17 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
 
+// import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 
 
-
-
+// import * as duration from './duration';
+ // this is able to be imported fine.
 
 const barlineMap = {
   single: 'SINGLE',
@@ -22390,16 +22554,16 @@ class RenderStack {
   constructor() {
     this.streams = [];
     this.voices = []; // for the music
-    this.textVoices = []; // for lyrics
+    // textVoices: VFVoice[] = [];  // for lyrics
     this.voiceToStreamMapping = new Map();
   }
   /**
-   * returns this.voices and this.textVoices as one array
+   * returns this.voices as a new array
    */
   allTickables() {
     const t = [];
     t.push(...this.voices);
-    t.push(...this.textVoices);
+    // t.push(...this.textVoices);
     return t;
   }
   /**
@@ -22454,8 +22618,8 @@ class Renderer {
     this.systemBreakOffsets = []; // where to break the systems
     this.vfTuplets = [];
     this.stream = s;
-    this.div = (0,_common__WEBPACK_IMPORTED_MODULE_8__.coerceHTMLElement)(div);
-    this.where = (0,_common__WEBPACK_IMPORTED_MODULE_8__.coerceHTMLElement)(where);
+    this.div = (0,_common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement)(div);
+    this.where = (0,_common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement)(where);
   }
   get vfRenderer() {
     let backend;
@@ -22499,14 +22663,9 @@ class Renderer {
    *
    * if s is undefined, uses the stored Stream from
    * the constructor object.
-   *
-   * @param {Stream} [s=this.stream]
    */
   render() {
-    let s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    if (s === undefined) {
-      s = this.stream;
-    }
+    const s = this.stream;
     let isScorelike = false;
     let isPartlike = false;
     const isFlat = s.isFlat;
@@ -22609,7 +22768,7 @@ class Renderer {
    * * stack - a RenderStack object to prepare into.
    */
   prepareMeasure(m, stack) {
-    if (m.hasVoices === undefined || m.hasVoices() === false) {
+    if (m.hasVoices() === false) {
       this.prepareFlat(m, stack);
     } else {
       // get elements outside of voices;
@@ -22618,13 +22777,13 @@ class Renderer {
         firstVoiceCopy.insert(el.offset, el);
       }
       const rendOp = m.renderOptions; // get render options from Measure;
-      let stave;
-      for (const [i, voiceStream] of Array.from(m.getElementsByClass('Voice')).entries()) {
+      let stave = null;
+      const voices = Array.from(m.getElementsByClass('Voice'));
+      for (const [i, voiceStream] of voices.entries()) {
         let voiceToRender = voiceStream;
         if (i === 0) {
           voiceToRender = firstVoiceCopy;
         }
-        // noinspection JSUnusedAssignment
         stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
         if (i === 0) {
           voiceStream.activeVFStave = voiceToRender.activeVFStave;
@@ -22649,20 +22808,15 @@ class Renderer {
     s.makeNotation({
       overrideStatus: true
     });
-    let stave;
-    if (optionalStave !== undefined) {
-      stave = optionalStave;
-    } else {
-      stave = this.renderStave(s, optional_renderOp);
-    }
+    const stave = optionalStave !== null && optionalStave !== void 0 ? optionalStave : this.renderStave(s, optional_renderOp);
     s.activeVFStave = stave;
     const vf_voice = this.getVoice(s, stave);
     stack.voices.push(vf_voice);
     stack.streams.push(s);
     stack.voiceToStreamMapping.set(vf_voice, s);
-    if (s.hasLyrics()) {
-      stack.textVoices.push(...this.getLyricVoices(s, stave));
-    }
+    // if (s.hasLyrics()) {
+    //     stack.textVoices.push(...this.getLyricVoices(s, stave));
+    // }
     return stave;
   }
   /**
@@ -22687,15 +22841,14 @@ class Renderer {
     return stave;
   }
   /**
-   * Draws the Voices (music and text) from `this.stacks`
+   * Draws the Voices (just music no longer text) from `this.stacks`
    *
    */
   drawMeasureStacks() {
     const ctx = this.ctx;
-    for (let i = 0; i < this.stacks.length; i++) {
-      const voices = this.stacks[i].allTickables();
-      for (let j = 0; j < voices.length; j++) {
-        const v = voices[j];
+    for (const stack of this.stacks) {
+      const voices = stack.allTickables();
+      for (const v of voices) {
         v.draw(ctx);
       }
     }
@@ -22716,8 +22869,8 @@ class Renderer {
    */
   drawTies() {
     const ctx = this.ctx;
-    for (let i = 0; i < this.vfTies.length; i++) {
-      this.vfTies[i].setContext(ctx).draw();
+    for (const vf_t of this.vfTies) {
+      vf_t.setContext(ctx).draw();
     }
   }
   /**
@@ -22833,26 +22986,27 @@ class Renderer {
    *
    * s -- usually a Measure or Voice
    */
-  getLyricVoices(s, stave) {
-    const textVoices = [];
-    const max_lyric_depth = Math.max(...s.notesAndRests.map(gn => gn.lyrics.length));
-    for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
-      const textVoice = this.vexflowVoice(s);
-      const lyrics = this.vexflowLyrics(s, stave, depth);
-      textVoice.setStave(stave);
-      textVoice.addTickables(lyrics);
-      textVoices.push(textVoice);
-    }
-    return textVoices;
-  }
+  // getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[] {
+  //     const textVoices = [];
+  //     const max_lyric_depth = Math.max(...s.notesAndRests.map(
+  //         (gn => gn.lyrics.length)
+  //     ));
+  //     for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
+  //         const textVoice = this.vexflowVoice(s);
+  //         const lyrics: VFTextNote[] = this.vexflowLyrics(s, stave, depth);
+  //         textVoice.setStave(stave);
+  //         textVoice.addTickables(lyrics);
+  //         textVoices.push(textVoice);
+  //     }
+  //     return textVoices;
+  // }
   /**
    * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
    *
    */
   formatMeasureStacks() {
     // adds formats the voices, then adds the formatter information to every note in a voice...
-    for (let i = 0; i < this.stacks.length; i++) {
-      const stack = this.stacks[i];
+    for (const stack of this.stacks) {
       const vf_voices = stack.voices;
       const measuresOrVoices = stack.streams;
       const formatter = this.formatVoiceGroup(stack);
@@ -22888,15 +23042,15 @@ class Renderer {
       return formatter;
     }
     let maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
-    for (let i = 0; i < allTickables.length; i++) {
+    for (const tick of allTickables) {
       // console.log(voices[i], voices[i].stave, i);
-      const stave = allTickables[i].getStave();
+      const stave = tick.getStave();
       if (stave !== undefined && stave.getNoteStartX() > maxGlyphStart) {
         maxGlyphStart = stave.getNoteStartX();
       }
     }
-    for (let i = 0; i < allTickables.length; i++) {
-      const stave = allTickables[i].getStave();
+    for (const tick of allTickables) {
+      const stave = tick.getStave();
       stave === null || stave === void 0 ? void 0 : stave.setNoteStartX(maxGlyphStart); // corrected!
     }
     // TODO: should do the same for end_x -- for key sig changes, etc...
@@ -22960,8 +23114,8 @@ class Renderer {
    */
   drawBeamGroups() {
     const ctx = this.ctx;
-    for (let i = 0; i < this.beamGroups.length; i++) {
-      this.beamGroups[i].setContext(ctx).draw();
+    for (const bg of this.beamGroups) {
+      bg.setContext(ctx).draw();
     }
   }
   /**
@@ -22990,7 +23144,7 @@ class Renderer {
     }
     // console.log('streamLength: ' + streamLength);
     if (_debug__WEBPACK_IMPORTED_MODULE_4__.debug) {
-      console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
+      console.log(`creating new stave: left: ${left}, top: ${top}, width: ${width}`);
     }
     const stave = new vexflow__WEBPACK_IMPORTED_MODULE_3__.Stave(left, top, width);
     return stave;
@@ -23018,7 +23172,7 @@ class Renderer {
     sClef = sClef || _clefSingleton;
     this.setStafflines(s, stave);
     if (rendOp.showMeasureNumber) {
-      if (s instanceof _stream__WEBPACK_IMPORTED_MODULE_7__.Measure && s.number !== undefined) {
+      if (s instanceof _stream__WEBPACK_IMPORTED_MODULE_6__.Measure && s.number !== undefined) {
         stave.setMeasure(s.number);
       } else {
         stave.setMeasure(rendOp.measureIndex + 1);
@@ -23059,7 +23213,7 @@ class Renderer {
       }
     }
     if (displayTs) {
-      stave.addTimeSignature(context_ts.numerator.toString() + '/' + context_ts.denominator.toString());
+      stave.addTimeSignature(`${context_ts.numerator}/${context_ts.denominator}`);
     }
     if (rendOp.leftBarline !== undefined) {
       const bl = rendOp.leftBarline;
@@ -23222,80 +23376,56 @@ class Renderer {
     }
     return notes;
   }
-  /**
-   * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
-   */
-  vexflowLyrics(s, stave) {
-    let depth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    const getTextNote = function (text, font, d) {
-      let lyricObj = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-      let line = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 11;
-      // console.log(text, font, d);
-      // noinspection TypeScriptValidateJSTypes
-      const t1 = new vexflow__WEBPACK_IMPORTED_MODULE_3__.TextNote({
-        text,
-        font,
-        duration: d.vexflowDuration
-      }).setLine(line).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_3__.TextNote.Justification.LEFT);
-      if (lyricObj) {
-        t1.setStyle(lyricObj.style);
-      }
-      if (d.tuplets.length > 0) {
-        t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
-      }
-      return t1;
-    };
-    if (s === undefined) {
-      s = this.stream;
-    }
-    // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
-    const lyricsObjects = [];
-    for (const el of s.notesAndRests) {
-      const lyricsArray = el.lyrics;
-      if (lyricsArray === undefined) {
-        continue;
-      }
-      let text;
-      let d = el.duration;
-      let addConnector = false;
-      const font = {
-        family: 'Serif',
-        size: 12,
-        weight: ''
-      };
-      const lyricAtDepth = lyricsArray[depth]; // rename lyricAtDepth
-      if (lyricAtDepth === undefined) {
-        text = '';
-      } else {
-        text = lyricAtDepth.text;
-        if (text === undefined) {
-          text = '';
-        }
-        if (lyricAtDepth.syllabic === 'middle' || lyricAtDepth.syllabic === 'begin') {
-          addConnector = ' ' + lyricAtDepth.lyricConnector;
-          const tempQl = el.duration.quarterLength / 2.0;
-          d = new _duration__WEBPACK_IMPORTED_MODULE_6__.Duration(tempQl);
-        }
-        if (lyricAtDepth.style.fontFamily) {
-          font.family = lyricAtDepth.style.fontFamily;
-        }
-        if (lyricAtDepth.style.fontSize) {
-          font.size = lyricAtDepth.style.fontSize;
-        }
-        if (lyricAtDepth.style.fontWeight) {
-          font.weight = lyricAtDepth.style.fontWeight;
-        }
-      }
-      const line = 11 + depth * 2;
-      const t1 = getTextNote(text, font, d, lyricAtDepth, line);
-      lyricsObjects.push(t1);
-      if (addConnector !== false) {
-        const connector = getTextNote(addConnector, font, d, undefined, line);
-        lyricsObjects.push(connector);
-      }
-    }
-    return lyricsObjects;
-  }
+  // /**
+  //  * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
+  //  */
+  // vexflowLyrics(s: stream.Stream, stave?: VFStave, depth: number=0): VFTextNote[] {
+  //     // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
+  //     const lyricTextNotes: VFTextNote[] = [];
+  //     for (const el of s.notesAndRests) {
+  //         const lyricsArray = el.lyrics;
+  //         if (lyricsArray === undefined) {
+  //             continue;
+  //         }
+  //         let text: string = '';
+  //         let d = el.duration;
+  //
+  //         // connectors deal with hyphens.
+  //         let addConnector: boolean|string = false;
+  //         const font = {
+  //             family: 'Serif',
+  //             size: 12,
+  //             weight: '',
+  //         };
+  //
+  //         const lyricAtDepth = lyricsArray[depth];  // rename lyricAtDepth
+  //         if (lyricAtDepth) {
+  //             text = lyricAtDepth.text ?? '';
+  //             if (['middle', 'begin'].includes(lyricAtDepth.syllabic)) {
+  //                 addConnector = ' ' + lyricAtDepth.lyricConnector;
+  //                 const tempQl = el.duration.quarterLength / 2.0;
+  //                 d = new duration.Duration(tempQl);
+  //             }
+  //             if (lyricAtDepth.style.fontFamily) {
+  //                 font.family = lyricAtDepth.style.fontFamily;
+  //             }
+  //             if (lyricAtDepth.style.fontSize) {
+  //                 font.size = lyricAtDepth.style.fontSize;
+  //             }
+  //             if (lyricAtDepth.style.fontWeight) {
+  //                 font.weight = lyricAtDepth.style.fontWeight;
+  //             }
+  //         }
+  //         const line = 11 + (depth * 2);
+  //         const t1 = getTextNote(text, font, d, stave, lyricAtDepth, line);
+  //         lyricTextNotes.push(t1);
+  //         if (addConnector !== false) {
+  //             const connector = getTextNote(addConnector, font, d, stave, undefined, line);
+  //             lyricTextNotes.push(connector);
+  //         }
+  //     }
+  //     return lyricTextNotes;
+  // }
   /**
    * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
    */
@@ -23336,7 +23466,7 @@ class Renderer {
     }
     // console.log('creating voice');
     if (_debug__WEBPACK_IMPORTED_MODULE_4__.debug) {
-      console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
+      console.log(`New voice, num_beats: ${num1024} beat_value: ${beatValue}`);
     }
     const vfv = new vexflow__WEBPACK_IMPORTED_MODULE_3__.Voice({
       num_beats: num1024,
@@ -23374,7 +23504,7 @@ class Renderer {
     if (s === undefined) {
       s = this.stream;
     }
-    const parts = s.parts;
+    const parts = s.parts; // m21j currently has .parts on all Stream classes.
     const numParts = parts.length;
     if (numParts < 2) {
       return;
@@ -23411,9 +23541,8 @@ class Renderer {
             }
           }
         }
-        for (let i = 0; i < s.renderOptions.staffConnectors.length; i++) {
+        for (const scTypeM21 of s.renderOptions.staffConnectors) {
           const sc = new vexflow__WEBPACK_IMPORTED_MODULE_3__.StaveConnector(topVFStaff, bottomVFStaff);
-          const scTypeM21 = s.renderOptions.staffConnectors[i];
           const scTypeVF = this.staffConnectorsMap(scTypeM21);
           // noinspection TypeScriptValidateJSTypes
           sc.setType(scTypeVF);
@@ -23468,7 +23597,7 @@ class Renderer {
       const noteStartX = stave.getNoteStartX();
       noteOffsetLeft = noteStartX;
       if (_debug__WEBPACK_IMPORTED_MODULE_4__.debug) {
-        console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.getNoteStartX(): ' + noteStartX);
+        console.log(`noteOffsetLeft: ${noteOffsetLeft}; stave.getNoteStartX(): ${noteStartX}`);
         console.log('Bottom y: ' + stave.getBottomY());
       }
       // staveHeight = stave.height;
@@ -23507,13 +23636,39 @@ class Renderer {
       for (const n of s) {
         if (n.pitch !== undefined) {
           const nn = n;
-          console.log(nn.pitch.diatonicNoteNum + ' ' + nn.x + ' ' + (nn.x + nn.width));
+          console.log(`${nn.pitch.diatonicNoteNum} ${nn.x} ${nn.x + nn.width}`);
         }
       }
     }
     s.storedVexflowStave = stave;
   }
 }
+// export function getTextNote(
+//     text: string,
+//     font: VFFontInfo,
+//     d: duration.Duration,
+//     stave: VFStave,
+//     lyricObj: note.Lyric = undefined,
+//     line: number = 11,
+// ): VFTextNote {
+//     // console.log(text, font, d);
+//     // noinspection TypeScriptValidateJSTypes
+//     const t1 = new VFTextNote({
+//         text,
+//         font,
+//         duration: d.vexflowDuration,
+//     })
+//         .setLine(line)
+//         .setStave(stave)
+//         .setJustification(VFTextNote.Justification.LEFT);
+//     if (lyricObj) {
+//         t1.setStyle(lyricObj.style);
+//     }
+//     if (d.tuplets.length > 0) {
+//         t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
+//     }
+//     return t1;
+// }
 
 /***/ }),
 
@@ -23536,8 +23691,8 @@ __webpack_require__.r(__webpack_exports__);
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/voiceLeading -- voiceLeading objects
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21, Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 
 
@@ -23904,8 +24059,8 @@ __webpack_require__.r(__webpack_exports__);
  * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
  * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
  *
- * Copyright (c) 2013-23, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-23, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  */
 /**

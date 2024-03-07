@@ -215,12 +215,9 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
     map(func: (el: ElementType) => any): any[];
     filter(func: (el: ElementType) => boolean): ElementType[];
     clear(): void;
-    coreElementsChanged({ updateIsFlat, clearIsSorted, memo, // unused
-    keepIndex, }?: {
+    coreElementsChanged({ updateIsFlat, clearIsSorted, }?: {
         updateIsFlat?: boolean;
         clearIsSorted?: boolean;
-        memo?: any;
-        keepIndex?: boolean;
     }): void;
     recurse({ streamsOnly, restoreActiveSites, classFilter, skipSelf, }?: {
         streamsOnly?: boolean;
@@ -354,9 +351,6 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
 
      * If `options.inPlace` is true, the original Stream is modified and lost
      * if `options.inPlace` is False, this returns a modified deep copy.
-
-     * @param {Object} [options]
-     * @returns {Stream}
      */
     makeMeasures(options?: any): Stream;
     containerInHierarchy(el: base.Music21Object, { setActiveSite }?: {
@@ -433,8 +427,6 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
     /**
      * Find all elements NOT with a certain class; if an Array is given, then any
      * matching class will work.
-     *
-     * @param {string[]|string} classList - a list of classes to find
      */
     getElementsNotOfClass(classList: string | string[]): iterator.StreamIterator;
     /**

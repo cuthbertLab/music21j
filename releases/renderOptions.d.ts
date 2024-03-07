@@ -36,6 +36,8 @@ export declare class RenderOptions {
     overriddenWidth: number;
     height: number;
     marginBottom: number;
+    lyricsLine: number;
+    adjustMarginBottomForLyrics: boolean;
     systemIndex: number;
     partIndex: number;
     measureIndex: number;

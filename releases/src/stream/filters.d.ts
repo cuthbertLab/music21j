@@ -36,6 +36,12 @@ export declare class ClassNotFilter extends ClassFilter {
     static get derivationStr(): string;
     call(item: Music21Object, iterator: StreamIteratorBase): boolean;
 }
+export interface OffsetFilterOptions {
+    includeEndBoundary?: boolean;
+    mustFinishInSpan?: boolean;
+    mustBeginInSpan?: boolean;
+    includeElementsThatEndAtStart?: boolean;
+}
 export declare class OffsetFilter extends StreamFilter {
     static get derivationStr(): string;
     offsetStart: number;
@@ -45,12 +51,7 @@ export declare class OffsetFilter extends StreamFilter {
     mustBeginInSpan: boolean;
     includeElementsThatEndAtStart: boolean;
     zeroLengthSearch: boolean;
-    constructor(offsetStart: number, offsetEnd?: any, { includeEndBoundary, mustFinishInSpan, mustBeginInSpan, includeElementsThatEndAtStart, }?: {
-        includeEndBoundary?: boolean;
-        mustFinishInSpan?: boolean;
-        mustBeginInSpan?: boolean;
-        includeElementsThatEndAtStart?: boolean;
-    });
+    constructor(offsetStart: number, offsetEnd?: number, { includeEndBoundary, mustFinishInSpan, mustBeginInSpan, includeElementsThatEndAtStart, }?: OffsetFilterOptions);
     call(item: Music21Object, iterator: StreamIteratorBase): boolean;
     isElementOffsetInRange(e: Music21Object, offset: number): boolean;
 }

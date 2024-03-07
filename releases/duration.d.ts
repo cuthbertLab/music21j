@@ -109,7 +109,6 @@ export declare class Duration extends prebase.ProtoM21Object {
      * d.vexflowDuration == 'hdd'; // true;
      */
     get vexflowDuration(): string;
-    cloneCallbacksTupletFunction(tupletKey: any, ret: any, obj: any, deep: any, memo: any): void;
     _findDots(ql: number): number;
     updateQlFromFeatures(): void;
     updateFeaturesFromQl(): void;
