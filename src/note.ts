@@ -248,6 +248,9 @@ export class Lyric extends prebase.ProtoM21Object {
         if (style.color) {
             annotation.setFill(style.color);
         }
+        if (style.xShift) {
+            annotation.setXShift(-1 * style.xShift);  // VF measures backwards
+        }
         annotation.setTextLine(5 - lyric_line + (this.number ?? 0) * 2);
         return annotation;
     }

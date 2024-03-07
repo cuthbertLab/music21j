@@ -90,10 +90,12 @@ export class VFLyricAnnotation extends Annotation {
             throw new Error('Can only add lyrics to SVG Context not Canvas');
         }
         const note = this.checkAttachedNote();
-        // const textFormatter = TextFormatter.create(this.textFont);
         let x = note.getModifierStartXY(ModifierPosition.ABOVE, this.index).x;
         if (this.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
             x -= note.getGlyphWidth() / 2;
+        }
+        if (this.getXShift()) {
+            x += this.getXShift();
         }
 
         this.setRendered();
@@ -104,7 +106,7 @@ export class VFLyricAnnotation extends Annotation {
         // still need to save context state just before this, since we will be
         // changing ctx parameters below.
         this.applyStyle();
-        const g: SVGGElement = ctx.openGroup('annotation', this.getAttribute('id'));
+        const g: SVGGElement = ctx.openGroup('lyricannotation', this.getAttribute('id'));
         ctx.setFont(this.textFont);
         if (this.fill) {
             ctx.setFillStyle(this.fill);
