@@ -37,7 +37,7 @@ Annotation.format = Annotation.format.bind(Annotation);
 
 
 export class VFLyricAnnotation extends Annotation {
-    static DEBUG = true;
+    static DEBUG = false;
 
     static format(annotations: VFLyricAnnotation[], state: ModifierContextState): boolean {
         if (!annotations || annotations.length === 0) {
@@ -83,7 +83,6 @@ export class VFLyricAnnotation extends Annotation {
 
     /** Render text below the note at the given staff line */
     draw(): void {
-        L('text_line 1', this.text_line);
         const ctx = this.checkContext();
         const note = this.checkAttachedNote();
         const textFormatter = TextFormatter.create(this.textFont);
@@ -114,7 +113,6 @@ export class VFLyricAnnotation extends Annotation {
         }
 
         const stave = note.checkStave();
-        L('text_line', this.text_line);
         const y = stave.getYForLine(this.text_line);
 
         L('Rendering annotation: ', this.text, x, y);
