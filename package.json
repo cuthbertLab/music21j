@@ -1,23 +1,13 @@
 {
   "name": "music21j",
-  "version": "0.15.4",
+  "version": "0.15.5",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "releases/music21.debug.js",
   "typings": "releases/src/main.d.ts",
   "files": [
-    ".editorconfig",
-    ".eslintignore",
-    ".eslintrc.json",
-    ".gitignore",
-    ".jshintrc",
-    "Gruntfile.js",
-    "tsconfig.json",
     "/css",
     "/releases",
     "/scripts",
-    "/src",
-    "/testHTML",
-    "/tests",
     "/webResources"
   ],
   "dependencies": {
@@ -68,7 +58,7 @@
     "test": "tests"
   },
   "scripts": {
-    "prepublishOnly": "cp -rp build/* releases/",
+    "prepublishOnly": "rm -rf releases; cp -rp build/ releases/;",
     "postinstall": "sh scripts/postinstall.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
