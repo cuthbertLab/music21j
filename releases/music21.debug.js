@@ -1,5 +1,5 @@
 /**
- * music21j version 0.15.5 built on 2024-03-08.
+ * music21j version 0.15.8 built on 2024-03-08.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -10652,7 +10652,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.15.7';
+const VERSION = '0.15.8';
 _parseLoader__WEBPACK_IMPORTED_MODULE_34__.runConfiguration();
 
 /***/ }),
@@ -22426,6 +22426,43 @@ function L() {
     (0,vexflow__WEBPACK_IMPORTED_MODULE_0__.log)('Vex.Flow.Annotation', args);
   }
 }
+function getLyricWidthDifference(sn) {
+  const myModifierContext = sn.getModifierContext();
+  myModifierContext.preFormat(); // just in case it hasn't been done yet.
+  const myLeft = myModifierContext.getState().left_shift;
+  const myRight = myModifierContext.getState().right_shift;
+  const modifierContext2 = new vexflow__WEBPACK_IMPORTED_MODULE_0__.ModifierContext();
+  for (const cat of Object.keys(myModifierContext.members)) {
+    if (cat === vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.CATEGORY) {
+      continue;
+    }
+    for (const member of myModifierContext.getMembers(cat)) {
+      modifierContext2.addMember(member);
+    }
+  }
+  modifierContext2.preFormat();
+  const noLyricLeft = modifierContext2.getState().left_shift;
+  const noLyricRight = modifierContext2.getState().right_shift;
+  const out = {
+    left: myLeft - noLyricLeft,
+    right: myRight - noLyricRight
+  };
+  // if (out.left || out.right) {
+  //     console.log(out);
+  // }
+  return out;
+}
+const original_StaveNote_getTieRightX = vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveNote.prototype.getTieRightX;
+vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveNote.prototype.getTieRightX = function getTieRightX() {
+  const originalRight = original_StaveNote_getTieRightX.bind(this)();
+  return originalRight - getLyricWidthDifference(this).right;
+};
+// this is not needed because StaveNote.getTieLeftX() ignores width of note all together.
+// const original_StaveNote_getTieLeftX = StaveNote.prototype.getTieLeftX;
+// StaveNote.prototype.getTieLeftX = function getTieLeftX(): number {
+//     const originalLeft = original_StaveNote_getTieLeftX.bind(this)();
+//     return originalLeft + getLyricWidthDifference(this).left;
+// };
 const original_Annotation_format = vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.format;
 vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation.format = function format(annotations, state) {
   if (!annotations || annotations.length === 0) {
@@ -22487,6 +22524,8 @@ class VFLyricAnnotation extends vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation 
     let x = note.getModifierStartXY(vexflow__WEBPACK_IMPORTED_MODULE_0__.ModifierPosition.ABOVE, this.index).x;
     if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
       x -= note.getGlyphWidth() / 2;
+    } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
+      x += note.getGlyphWidth() / 2;
     }
     if (this.getXShift()) {
       x += this.getXShift();
@@ -22509,9 +22548,9 @@ class VFLyricAnnotation extends vexflow__WEBPACK_IMPORTED_MODULE_0__.Annotation 
     ctx.fillText(this.text, x, y);
     const svg_text = g.lastElementChild;
     if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT) {
-      // left is default;
+      svg_text.setAttribute('text-anchor', 'start'); // left = start is also default;
     } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT) {
-      svg_text.setAttribute('text-anchor', 'right');
+      svg_text.setAttribute('text-anchor', 'end');
     } else if (this.horizontalJustification === vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.CENTER) {
       svg_text.setAttribute('text-anchor', 'middle');
     } /* CENTER_STEM */else {
