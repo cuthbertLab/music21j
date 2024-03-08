@@ -80,7 +80,7 @@ export declare class Lyric extends prebase.ProtoM21Object {
      * set applyRaw = false if hyphens should not be applied
      */
     setTextAndSyllabic(rawText: string, applyRaw?: boolean): this;
-    vexflowLyric({ lyric_line }?: VexflowLyricOptions): VFLyricAnnotation;
+    vexflowLyric({ lyric_line }?: VexflowLyricOptions): VFLyricAnnotation | null;
 }
 /**
  * Superclass for all Note values

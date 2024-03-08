@@ -13687,6 +13687,9 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
       lyric_line = -3
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var _a, _b;
+    if (!this.text) {
+      return null;
+    }
     const font = _extends({}, default_vf_lyric_style);
     const style = this.style;
     if (style.fontFamily) {
@@ -13842,9 +13845,13 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     var _a, _b;
     const lyric_line = (_b = (_a = this.activeSite) === null || _a === void 0 ? void 0 : _a.renderOptions.lyricsLine) !== null && _b !== void 0 ? _b : -3;
     for (const l of this.lyrics) {
-      vfn.addModifier(l.vexflowLyric({
+      const vf_lyric = l.vexflowLyric({
         lyric_line
-      }), 0);
+      });
+      if (!vf_lyric) {
+        continue;
+      }
+      vfn.addModifier(vf_lyric, 0);
     }
   }
   /**

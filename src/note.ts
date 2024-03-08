@@ -221,7 +221,10 @@ export class Lyric extends prebase.ProtoM21Object {
         return this;
     }
 
-    vexflowLyric({lyric_line=-3}: VexflowLyricOptions = {}): VFLyricAnnotation {
+    vexflowLyric({lyric_line=-3}: VexflowLyricOptions = {}): VFLyricAnnotation|null {
+        if (!this.text) {
+            return null;
+        }
         const font: VFFontInfo = {...default_vf_lyric_style};
         const style = this.style;
         if (style.fontFamily) {
@@ -410,7 +413,11 @@ export class GeneralNote extends base.Music21Object {
     vexflowAddLyrics(vfn: VFStaveNote): void {
         const lyric_line = this.activeSite?.renderOptions.lyricsLine ?? -3;
         for (const l of this.lyrics) {
-            vfn.addModifier(l.vexflowLyric({lyric_line}), 0);
+            const vf_lyric = l.vexflowLyric({lyric_line});
+            if (!vf_lyric) {
+                continue;
+            }
+            vfn.addModifier(vf_lyric, 0);
         }
     }
 
