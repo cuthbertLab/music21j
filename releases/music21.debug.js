@@ -1,5 +1,5 @@
 /**
- * music21j version 0.14.12 built on 2024-03-07.
+ * music21j version 0.15.5 built on 2024-03-08.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -13716,7 +13716,7 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
       annotation.setXShift(-1 * style.xShift); // VF measures backwards
     }
 
-    annotation.setTextLine(5 - lyric_line + ((_b = this.number) !== null && _b !== void 0 ? _b : 0) * 2);
+    annotation.setTextLine(5 - lyric_line + (((_b = this.number) !== null && _b !== void 0 ? _b : 1) - 1) * 2);
     return annotation;
   }
 }

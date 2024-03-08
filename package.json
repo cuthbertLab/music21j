@@ -58,7 +58,7 @@
     "test": "tests"
   },
   "scripts": {
-    "prepublishOnly": "rm -rf releases; cp -rp build/ releases/;",
+    "prepublishOnly": "rm -rf releases; cp -rp build/ releases/; rm -rf releases/tests",
     "postinstall": "sh scripts/postinstall.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
