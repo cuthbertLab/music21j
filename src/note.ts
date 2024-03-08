@@ -96,6 +96,16 @@ export const default_vf_lyric_style = <Readonly<VFFontInfo>> {
     weight: '',
 };
 
+export interface LyricStyle {
+    color?: string,
+    fontFamily?: string,
+    fontSize?: number,
+    fontWeight?: string,
+    align?: string,
+    relativeX?: number,
+    relativeY?: number,
+}
+
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
  *
@@ -124,14 +134,14 @@ export class Lyric extends prebase.ProtoM21Object {
     protected _identifier: string|number;
     syllabic: string;
     applyRaw: boolean;
-    style: Record<string, any> = {
+    style: LyricStyle = {
         color: '',
         fontFamily: 'Serif',
         fontSize: 12,
         fontWeight: '',
         align: 'center',
-        xShift: 0,
-        // yShift: 0,
+        relativeX: 0,
+        relativeY: 0,  // does nothing right now.
     };
 
     constructor(
@@ -251,8 +261,8 @@ export class Lyric extends prebase.ProtoM21Object {
         if (style.color) {
             annotation.setFill(style.color);
         }
-        if (style.xShift) {
-            annotation.setXShift(-1 * style.xShift);  // VF measures backwards
+        if (style.relativeX) {
+            annotation.setXShift(-1 * style.relativeX);  // VF measures backwards
         }
         annotation.setTextLine(5 - lyric_line + ((this.number ?? 1) - 1) * 2);
         return annotation;

@@ -142,6 +142,6 @@ export {
     webmidi,
 };
 
-export const VERSION = '0.15.4';
+export const VERSION = '0.15.7';
 
 parseLoader.runConfiguration();

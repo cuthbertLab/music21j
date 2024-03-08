@@ -10652,7 +10652,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.15.4';
+const VERSION = '0.15.7';
 _parseLoader__WEBPACK_IMPORTED_MODULE_34__.runConfiguration();
 
 /***/ }),
@@ -13611,8 +13611,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
       fontSize: 12,
       fontWeight: '',
       align: 'center',
-      xShift: 0
-      // yShift: 0,
+      relativeX: 0,
+      relativeY: 0 // does nothing right now.
     };
 
     this.text = text;
@@ -13715,8 +13715,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
     if (style.color) {
       annotation.setFill(style.color);
     }
-    if (style.xShift) {
-      annotation.setXShift(-1 * style.xShift); // VF measures backwards
+    if (style.relativeX) {
+      annotation.setXShift(-1 * style.relativeX); // VF measures backwards
     }
 
     annotation.setTextLine(5 - lyric_line + (((_b = this.number) !== null && _b !== void 0 ? _b : 1) - 1) * 2);

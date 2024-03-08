@@ -35,6 +35,15 @@ export interface VexflowLyricOptions {
     vfn?: VFStaveNote;
 }
 export declare const default_vf_lyric_style: Readonly<VFFontInfo>;
+export interface LyricStyle {
+    color?: string;
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    align?: string;
+    relativeX?: number;
+    relativeY?: number;
+}
 /**
  * Class for a single Lyric attached to a {@link GeneralNote}
  *
@@ -62,7 +71,7 @@ export declare class Lyric extends prebase.ProtoM21Object {
     protected _identifier: string | number;
     syllabic: string;
     applyRaw: boolean;
-    style: Record<string, any>;
+    style: LyricStyle;
     constructor(text: string, number?: number, syllabic?: any, applyRaw?: boolean, identifier?: string | number);
     get identifier(): string | number;
     set identifier(i: string | number);
