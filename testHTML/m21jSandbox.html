@@ -32,6 +32,7 @@
 
 <body>
 <div class="header">
+    <button id="resetButton" role="button" style="float: right">Reset</button>
     <h1>Music21j Sandbox</h1>
     <div class="main">
         <label for="sandbox">
@@ -47,24 +48,7 @@
         <p></p>
         <div class="example sandbox">
             <textarea id="sandbox" class="editor">
-const s = new music21.stream.Measure();
-const n = new music21.note.Note("C#4");
-n.addLyric('lulli-');
-n.addLyric('sad');
-n.duration.type = "half";
-const n2 = new music21.note.Note("A3");
-n2.addLyric('bye');
-n2.addLyric('day');
-n2.duration.type = "quarter";
-const n3 = new music21.note.Note("C#");
-n3.duration.type = "quarter";
-s.append(new music21.meter.TimeSignature('4/4'));
-s.append(n);
-s.append(n2);
-s.append(n3);
-s.renderOptions.marginBottom = 80;
-s.replaceDOM('#mainSVG');
-</textarea>
+            </textarea>
             <p></p>
             <div class='streamHolding' id='mainSVG'>
                 <svg width="525" height="220"></svg>
@@ -74,14 +58,36 @@ s.replaceDOM('#mainSVG');
     </div>
 </div>
 <script>
-    Vex = undefined;
-    mainSVG = undefined;
     let timeout;
-    let msg = "";
 
-    mainSVG = document.querySelector("#mainSVG");
-    msg = document.querySelector('div.editor-error .text');
+    const default_text = `
+const s = new music21.stream.Measure();
+const n = new music21.note.Note("C#4");
+n.duration.type = "half";
+const n2 = new music21.note.Note("A4");
+n2.duration.type = "quarter";
+const n3 = new music21.note.Note("C#");
+n3.duration.type = "quarter";
+s.append(new music21.meter.TimeSignature('4/4'));
+s.append(n);
+s.append(n2);
+s.append(n3);
+s.renderOptions.marginBottom = 80;
+s.replaceDOM('#mainSVG');
+    `;
+
+    const mainSVG = document.querySelector("#mainSVG");
+    const msg = document.querySelector('div.editor-error .text');
     const sandbox = document.querySelector("#sandbox");
+    const localStorageKey = 'm21j_sandbox_code';
+    const local_storage_value = localStorage.getItem(localStorageKey);
+    sandbox.value = local_storage_value || default_text;
+    document.querySelector('#resetButton').addEventListener('click', () => {
+        sandbox.value = default_text;
+        localStorage.removeItem(localStorageKey);
+        live_code();
+    });
+
     live_code();
 
     for (const evt of ['blur', 'keyup', 'paste']) {
@@ -89,7 +95,7 @@ s.replaceDOM('#mainSVG');
             if (timeout) {
                 clearTimeout(timeout);
             }
-            timeout = setTimeout(live_code, 200);
+            timeout = setTimeout(live_code, 250);
         });
     }
 
@@ -100,6 +106,7 @@ s.replaceDOM('#mainSVG');
             eval(code);
             msg.innerHTML = '';
             msg.style.display = 'none';
+            localStorage.setItem(localStorageKey, code);
         } catch (e) {
             msg.innerHTML = e.toString();
             msg.style.display = 'block';
