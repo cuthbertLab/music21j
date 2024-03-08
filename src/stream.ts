@@ -55,6 +55,8 @@ export { filters };
 export { iterator };
 export { makeNotation };
 
+const MIN_DIST_BETWEEN_NOTES = 10;
+
 export class StreamException extends Music21Exception {}
 
 declare interface Constructable<T> {

@@ -10,8 +10,10 @@ import {
     Annotation,
     AnnotationHorizontalJustify,
     log,
+    ModifierContext,
     type ModifierContextState,
     ModifierPosition,
+    StaveNote,
     SVGContext,
 } from 'vexflow';
 
@@ -21,6 +23,49 @@ function L(...args: any[]) {
         log('Vex.Flow.Annotation', args);
     }
 }
+
+function getLyricWidthDifference(sn: StaveNote): {left: number, right: number} {
+    const myModifierContext = sn.getModifierContext();
+    myModifierContext.preFormat();  // just in case it hasn't been done yet.
+    const myLeft = myModifierContext.getState().left_shift;
+    const myRight = myModifierContext.getState().right_shift;
+
+    const modifierContext2 = new ModifierContext();
+    for (const cat of Object.keys((myModifierContext as any).members)) {
+        if (cat === Annotation.CATEGORY) {
+            continue;
+        }
+        for (const member of myModifierContext.getMembers(cat)) {
+            modifierContext2.addMember(member);
+        }
+    }
+    modifierContext2.preFormat();
+    const noLyricLeft = modifierContext2.getState().left_shift;
+    const noLyricRight = modifierContext2.getState().right_shift;
+    const out = {
+        left: myLeft - noLyricLeft,
+        right: myRight - noLyricRight,
+    };
+    // if (out.left || out.right) {
+    //     console.log(out);
+    // }
+    return out;
+}
+
+const original_StaveNote_getTieRightX = StaveNote.prototype.getTieRightX;
+StaveNote.prototype.getTieRightX = function getTieRightX(): number {
+    const originalRight = original_StaveNote_getTieRightX.bind(this)();
+    return originalRight - getLyricWidthDifference(this).right;
+};
+
+// this is not needed because StaveNote.getTieLeftX() ignores width of note all together.
+// const original_StaveNote_getTieLeftX = StaveNote.prototype.getTieLeftX;
+// StaveNote.prototype.getTieLeftX = function getTieLeftX(): number {
+//     const originalLeft = original_StaveNote_getTieLeftX.bind(this)();
+//     return originalLeft + getLyricWidthDifference(this).left;
+// };
+
+
 
 const original_Annotation_format = Annotation.format;
 Annotation.format = function format(annotations: Annotation[], state: ModifierContextState): boolean {
@@ -93,7 +138,10 @@ export class VFLyricAnnotation extends Annotation {
         let x = note.getModifierStartXY(ModifierPosition.ABOVE, this.index).x;
         if (this.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
             x -= note.getGlyphWidth() / 2;
+        } else if (this.horizontalJustification === AnnotationHorizontalJustify.RIGHT) {
+            x += note.getGlyphWidth() / 2;
         }
+
         if (this.getXShift()) {
             x += this.getXShift();
         }
@@ -119,9 +167,9 @@ export class VFLyricAnnotation extends Annotation {
         ctx.fillText(this.text, x, y);
         const svg_text = g.lastElementChild as SVGTextElement;
         if (this.horizontalJustification === AnnotationHorizontalJustify.LEFT) {
-            // left is default;
+            svg_text.setAttribute('text-anchor', 'start');  // left = start is also default;
         } else if (this.horizontalJustification === AnnotationHorizontalJustify.RIGHT) {
-            svg_text.setAttribute('text-anchor', 'right');
+            svg_text.setAttribute('text-anchor', 'end');
         } else if (this.horizontalJustification === AnnotationHorizontalJustify.CENTER) {
             svg_text.setAttribute('text-anchor', 'middle');
         } /* CENTER_STEM */ else {
@@ -135,3 +183,5 @@ export class VFLyricAnnotation extends Annotation {
         ctx.restore();
     }
 }
+
+
