@@ -591,7 +591,48 @@ export class Pitch extends prebase.ProtoM21Object {
     getLowerEnharmonic(inPlace=false) {
         return this._getEnharmonicHelper(inPlace, -1);
     }
-    /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
+
+    getEnharmonic(inPlace=false): Pitch|undefined {
+        let post = this;
+        if (!inPlace) {
+            post = this.clone();
+        }
+
+        if (post.accidental !== undefined) {
+            if (post.accidental.alter > 0) {
+                // we have a sharp, need to get the equivalent flat
+                post.getHigherEnharmonic(true);
+            }
+            else if (post.accidental.alter < 0) {
+                post.getLowerEnharmonic(true);
+            }
+            else {
+                // assume some direction, perhaps using a dictionary
+                if (this.step in ['C', 'D', 'G']) {
+                    post.getLowerEnharmonic(true);
+                }
+                else {
+                    post.getHigherEnharmonic(true);
+                }
+            }
+        }
+        else {
+            if (this.step in ['C', 'D', 'G']) {
+                post.getLowerEnharmonic(true);
+            }
+            else {
+                post.getHigherEnharmonic(true);
+            }
+        }
+
+        if (inPlace) {
+            return undefined;
+        }
+        else {
+            return post;
+        }
+    }
+    /* TODO: isEnharmonic, getAllCommonEnharmonics */
 
     protected _nameInKeySignature(alteredPitches: Pitch[]) : boolean {
         for (const p of alteredPitches) {  // all are altered tones, must have acc
