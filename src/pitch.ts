@@ -571,7 +571,7 @@ export class Pitch extends prebase.ProtoM21Object {
         } else {
             this.octave = p.octave;
         }
-        return p;
+        return this;
     }
 
     /**
@@ -592,7 +592,7 @@ export class Pitch extends prebase.ProtoM21Object {
         return this._getEnharmonicHelper(inPlace, -1);
     }
 
-    getEnharmonic(inPlace=false): Pitch|undefined {
+    getEnharmonic(inPlace=false): Pitch {
         let post = this;
         if (!inPlace) {
             post = this.clone();
@@ -602,35 +602,25 @@ export class Pitch extends prebase.ProtoM21Object {
             if (post.accidental.alter > 0) {
                 // we have a sharp, need to get the equivalent flat
                 post.getHigherEnharmonic(true);
-            }
-            else if (post.accidental.alter < 0) {
+            } else if (post.accidental.alter < 0) {
                 post.getLowerEnharmonic(true);
-            }
-            else {
+            } else {
                 // assume some direction, perhaps using a dictionary
-                if (this.step in ['C', 'D', 'G']) {
+                if (['C', 'D', 'G'].includes(this.step)) {
                     post.getLowerEnharmonic(true);
-                }
-                else {
+                } else {
                     post.getHigherEnharmonic(true);
                 }
             }
-        }
-        else {
-            if (this.step in ['C', 'D', 'G']) {
+        } else {
+            if (['C', 'D', 'G'].includes(this.step)) {
                 post.getLowerEnharmonic(true);
-            }
-            else {
+            } else {
                 post.getHigherEnharmonic(true);
             }
         }
 
-        if (inPlace) {
-            return undefined;
-        }
-        else {
-            return post;
-        }
+        return post;
     }
     /* TODO: isEnharmonic, getAllCommonEnharmonics */
 
