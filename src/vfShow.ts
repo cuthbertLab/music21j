@@ -669,6 +669,12 @@ export class Renderer {
                 }
             }
         }
+
+        // tuning apparently just makes it WORSE!
+        // for (let i = 0; i < 5; i++) {
+        //     formatter.tune();
+        // }
+
         return formatter;
     }
 

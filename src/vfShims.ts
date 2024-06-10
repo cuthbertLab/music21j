@@ -9,12 +9,16 @@
 import {
     Annotation,
     AnnotationHorizontalJustify,
+    Formatter,
     log,
     ModifierContext,
     type ModifierContextState,
     ModifierPosition,
+    RenderContext,
+    Stave,
     StaveNote,
     SVGContext,
+    Voice,
 } from 'vexflow';
 
 // eslint-disable-next-line
@@ -23,6 +27,27 @@ function L(...args: any[]) {
         log('Vex.Flow.Annotation', args);
     }
 }
+
+
+const original_Formatter_preFormat = Formatter.prototype.preFormat;
+Formatter.prototype.preFormat = function preFormat(
+    justifyWidth?: number,
+    renderingContext?: RenderContext,
+    voicesParam?: Voice[],
+    stave?: Stave
+): number {
+    console.log(justifyWidth);
+    const out = original_Formatter_preFormat.bind(this)(
+        justifyWidth,
+        renderingContext,  // unused,
+        voicesParam,
+        stave,
+    );
+    console.log(this.preCalculateMinTotalWidth(voicesParam));
+    console.log('....');
+    return out;
+};
+
 
 function getLyricWidthDifference(sn: StaveNote): {left: number, right: number} {
     const myModifierContext = sn.getModifierContext();
