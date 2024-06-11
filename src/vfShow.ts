@@ -345,7 +345,7 @@ export class Renderer {
         optionalStave?: VFStave,
         optional_renderOp?: renderOptions.RenderOptions,
     ): VFStave {
-        s.makeNotation({ overrideStatus: true });
+        s.makeNotation({ inPlace: true, overrideStatus: true });
         const stave: VFStave = optionalStave ?? this.renderStave(s, optional_renderOp);
         s.activeVFStave = stave;
         const vf_voice = this.getVoice(s, stave);
