@@ -4,6 +4,9 @@
  * Based on music21 (music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * The infamous vfShims returns!  To fix things that Vexflow makes hard to fix!
+ *
+ * These were used in 0.15.x on the new lyrics, but are currently unused, since
+ * the new lyrics in Vexflow would cause staves to overflow.
  */
 
 import {

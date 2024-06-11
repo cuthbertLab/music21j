@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-// import {TextNote as VFTextNote} from 'vexflow';
+import type {TextNote as VFTextNote} from 'vexflow';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
@@ -245,21 +245,23 @@ export default function tests() {
         m.appendNewDOM();
 
         assert.equal(n.lyrics.length, 2, 'note has two lyrics');
-        // const t1 = m.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0] as VFTextNote;
-        // assert.equal(
-        //     // Error: Property 'text' does not exist on type 'Tickable'.
-        //     // @ts-ignore
-        //     t1.text,
-        //     'first',
-        //     'first lyric is "first".'
-        // );
-        // const t2 = m.activeVFRenderer.stacks[0].textVoices[1].getTickables()[0] as VFTextNote;
-        // assert.equal(
-        //     // Error: Property 'text' does not exist on type 'Tickable'.
-        //     // @ts-ignore
-        //     t2.text,
-        //     'second',
-        //     'second lyric is "second".'
-        // );
+
+        // older lyric tests -- up to 0.14.xx and again from 0.16... for now.
+        const t1 = m.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0] as VFTextNote;
+        assert.equal(
+            // Error: Property 'text' does not exist on type 'Tickable'.
+            // @ts-ignore
+            t1.text,
+            'first',
+            'first lyric is "first".'
+        );
+        const t2 = m.activeVFRenderer.stacks[0].textVoices[1].getTickables()[0] as VFTextNote;
+        assert.equal(
+            // Error: Property 'text' does not exist on type 'Tickable'.
+            // @ts-ignore
+            t2.text,
+            'second',
+            'second lyric is "second".'
+        );
     });
 }

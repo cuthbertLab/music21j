@@ -232,6 +232,8 @@ export class Lyric extends prebase.ProtoM21Object {
     }
 
     vexflowLyric({lyric_line=-3}: VexflowLyricOptions = {}): VFLyricAnnotation|null {
+        // This was used in music21 0.15 and will be again in the future once
+        // VexFlow no longer spills into next measure.  For now, it is UNUSED.
         if (!this.text) {
             return null;
         }
@@ -413,7 +415,8 @@ export class GeneralNote extends base.Music21Object {
             keys: [],
             duration: this.duration.vexflowDuration + 'r',
         });
-        this.vexflowAddLyrics(vfn);
+        // not until later version
+        // this.vexflowAddLyrics(vfn);
         return vfn;
     }
 
@@ -421,6 +424,8 @@ export class GeneralNote extends base.Music21Object {
      * Add lyrics to the VFStaveNote as Annotation objects.
      */
     vexflowAddLyrics(vfn: VFStaveNote): void {
+        // This was used in music21 0.15 and will be again in the future once
+        // VexFlow no longer spills into next measure.  For now it is UNUSED.
         const lyric_line = this.activeSite?.renderOptions.lyricsLine ?? -3;
         for (const l of this.lyrics) {
             const vf_lyric = l.vexflowLyric({lyric_line});
@@ -595,7 +600,8 @@ export class NotRest extends GeneralNote {
                 strokeStyle: this.noteheadColor,
             });
         }
-        this.vexflowAddLyrics(vfn);
+        // not until next version...
+        // this.vexflowAddLyrics(vfn);
         this.activeVexflowNote = vfn;
         return vfn;
     }
@@ -879,7 +885,8 @@ export class Rest extends GeneralNote {
                 strokeStyle: this.color,
             });
         }
-        this.vexflowAddLyrics(vfn);
+        // not until next version of vexflow.
+        // this.vexflowAddLyrics(vfn);
         this.activeVexflowNote = vfn;
         return vfn;
     }
