@@ -139,7 +139,7 @@ module.exports = grunt => {
                 modules: false,  // do not transform modules; let webpack do it
                 targets: {
                     browsers: [
-                        'last 4 years',
+                        'last 2.5 years',
                         'not < 0.04% in US',
                         'not firefox < 39',
                         'not safari < 10',
@@ -254,8 +254,8 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
-    // Plugin for the jsdoc task
-    grunt.loadNpmTasks('grunt-jsdoc');
+    // Plugin for the jsdoc task -- currently has vulnerabilities.
+    //grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-bump');
     grunt.loadNpmTasks('grunt-eslint');
 
@@ -266,7 +266,8 @@ module.exports = grunt => {
     grunt.registerTask('test', 'Watch qunit tests', ['webpack:test']);
     grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test_no_watch', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and be ready to publish', () => {
-        grunt.task.run('jsdoc');
+        // vulnerable jsdoc versions only available.
+        // grunt.task.run('jsdoc');
         grunt.task.run('bump');
     });
 };
