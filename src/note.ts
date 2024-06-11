@@ -605,6 +605,15 @@ export class NotRest extends GeneralNote {
         this.activeVexflowNote = vfn;
         return vfn;
     }
+
+    override vexflowAccidentalsAndDisplay(vfn: VFStaveNote, _options: {} = {}): void {
+        super.vexflowAccidentalsAndDisplay(vfn, _options);
+        if (this.stemDirection === 'noStem') {
+            vfn.glyphProps.stem = false;
+            vfn.glyphProps.flag = false;
+            // vfn.render_options.stem_height = 0;
+        }
+    }
 }
 
 /* ------- Note ----------- */
@@ -727,10 +736,7 @@ export class Note extends NotRest {
         if (debug) {
             console.log(this.stemDirection);
         }
-        if (this.stemDirection === 'noStem') {
-            vfn.glyphProps.stem = false;
-            // vfn.render_options.stem_height = 0;
-        } else {
+        if (this.stemDirection !== 'noStem') {
             // correct VexFlow stem length for notes far from the center line;
             let staveDNNSpacing = 5;
             if (stave !== undefined) {
