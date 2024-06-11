@@ -280,7 +280,7 @@ export default function tests() {
             "4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4"
         ).flatten();
         // Function does not work, stream.ts 1353
-        //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
+        // convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
         const els = convertedNotes.elements as music21.note.Note[];
         assert.equal(els[2].pitch.accidental.name, 'natural', 'Natural');
         //assert.equal(els[2].pitch.accidental.displayStatus, 'True');

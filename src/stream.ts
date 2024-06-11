@@ -1523,11 +1523,13 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
 
     /**
      * makeNotation does not do anything yet, but it is a placeholder
-     * so it can start to be called.
+     * so it can start to be called.  NOTE: Currently assumes that
+     * it is being called on FLAT Stream!
      *
-     * TODO: move call to makeBeams from renderVexflow to here.
+     * TODO: move call to makeBeams from renderVexflow to here once
+     *     it works on recursive streams.
      */
-    makeNotation({ inPlace=true, overrideStatus=false }={}): this {
+    makeNotation({ inPlace=false, overrideStatus=false }={}): this {
         let out: this;
         if (inPlace) {
             out = this;
@@ -1535,6 +1537,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             out = this.clone(true);
         }
         // already made a copy
+        makeNotation.setStemDirectionForUnspecified(out);
         out.makeAccidentals({ inPlace: true, overrideStatus });
         return out;
     }
