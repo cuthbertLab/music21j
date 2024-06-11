@@ -9,8 +9,10 @@
  */
 /// <reference types="jquery" />
 /// <reference types="jquery" />
-import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, // TextNote as VFTextNote,
-Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
+import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
+import type { FontInfo as VFFontInfo } from 'vexflow/src/font';
+import * as duration from './duration';
+import * as note from './note';
 import * as stream from './stream';
 import type * as renderOptions from './renderOptions';
 import { StaveConnector } from './types';
@@ -27,9 +29,10 @@ export declare const vexflowDefaults: {
 export declare class RenderStack {
     streams: stream.Stream[];
     voices: VFVoice[];
+    textVoices: VFVoice[];
     voiceToStreamMapping: Map<VFVoice, stream.Stream>;
     /**
-     * returns this.voices as a new array
+     * returns this.voices and this.textVoices as one, new array.
      */
     allTickables(): VFVoice[];
     /**
@@ -139,7 +142,7 @@ export declare class Renderer {
      */
     renderStave(m?: stream.Stream, optional_rendOp?: renderOptions.RenderOptions): VFStave;
     /**
-     * Draws the Voices (just music no longer text) from `this.stacks`
+     * Draws the Voices (music and text) from `this.stacks`
      *
      */
     drawMeasureStacks(): void;
@@ -174,6 +177,7 @@ export declare class Renderer {
      *
      * s -- usually a Measure or Voice
      */
+    getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[];
     /**
      * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
      *
@@ -223,6 +227,10 @@ export declare class Renderer {
      */
     vexflowNotes(s?: stream.Stream, stave?: VFStave): VFStaveNote[];
     /**
+     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
+     */
+    vexflowLyrics(s: stream.Stream, stave?: VFStave, depth?: number): VFTextNote[];
+    /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */
     vexflowVoice(s: stream.Stream): VFVoice;
@@ -255,4 +263,5 @@ export declare class Renderer {
      */
     applyFormatterInformationToNotes(stave: VFStave, s?: stream.Stream, formatter?: VFFormatter): void;
 }
+export declare function getTextNote(text: string, font: VFFontInfo, d: duration.Duration, stave: VFStave, lyricObj?: note.Lyric, line?: number): VFTextNote;
 //# sourceMappingURL=vfShow.d.ts.map
