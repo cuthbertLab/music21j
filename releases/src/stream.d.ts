@@ -379,9 +379,11 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
     mergeAttributes(other: Stream): this;
     /**
      * makeNotation does not do anything yet, but it is a placeholder
-     * so it can start to be called.
+     * so it can start to be called.  NOTE: Currently assumes that
+     * it is being called on FLAT Stream!
      *
-     * TODO: move call to makeBeams from renderVexflow to here.
+     * TODO: move call to makeBeams from renderVexflow to here once
+     *     it works on recursive streams.
      */
     makeNotation({ inPlace, overrideStatus }?: {
         inPlace?: boolean;
@@ -543,7 +545,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
-     * Takes in a canvas or the div surrounding an SVG object
+     * Takes in the div surrounding an SVG object (or a canvas)
      */
     renderVexflow(where?: HTMLDivElement | HTMLCanvasElement): vfShow.Renderer;
     /**
