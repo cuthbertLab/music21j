@@ -3,7 +3,7 @@ Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-21, Michael Scott Asato Cuthbert, some rights reserved (BSD).
+Copyright (c) 2013-24, Michael Scott Asato Cuthbert, some rights reserved (BSD).
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
@@ -22,11 +22,9 @@ point we're focusing on documenting usage; developer docs will come
 later.
 
 Music21j requires your users to have a relatively recent web browser -- the project
-targets browsers no more than two years old.
-Safari 9+, Chrome since 2015 (v.32+), Edge 14+, or Firefox since 2014 (v. 26+).  
-Internet Explorer 11+ is currently supported, though timing of playback can be a bit off, but
-support for it will be removed soon.  Microsoft Edge is the only major desktop browser for which
-there is no support for MIDI devices.
+targets browsers no more than 30 months old.
+Safari is the only major desktop browser for which there is no out of the box 
+support for MIDI devices.
 
 Documentation
 -------------
@@ -102,7 +100,7 @@ const n = new music21.note.Note('F#');
 
 Version
 --------
-0.15 beta
+0.16 beta
 
 
 License

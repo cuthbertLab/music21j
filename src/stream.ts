@@ -1967,7 +1967,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
-     * Takes in a canvas or the div surrounding an SVG object
+     * Takes in the div surrounding an SVG object (or a canvas)
      */
     renderVexflow(where?: HTMLDivElement|HTMLCanvasElement): vfShow.Renderer {
         const canvasOrSVG = <HTMLDivElement|HTMLCanvasElement> common.coerceHTMLElement(where);
