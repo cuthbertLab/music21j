@@ -21,5 +21,8 @@ export declare function setStemDirectionForBeamGroups(s: stream.Stream, { setNew
  * they should have already had their stem directions set in setBeams
  */
 export declare function setStemDirectionForUnspecified(s: stream.Stream): void;
+/**
+ *  Set stem directions for all notes in a beam group.
+ */
 export declare function setStemDirectionOneGroup(group: note.NotRest[], { setNewStems, overrideConsistentStemDirections, }?: StemDirectionBeatGroupOptions): void;
 //# sourceMappingURL=makeNotation.d.ts.map

@@ -195,6 +195,7 @@ export declare class NotRest extends GeneralNote {
      * clef to set the stem direction of.
      */
     vexflowNote({ clef }?: VexflowNoteOptions): VFStaveNote;
+    vexflowAccidentalsAndDisplay(vfn: VFStaveNote, _options?: {}): void;
 }
 /**
  * A very, very important class! music21.note.Note objects combine a music21.pitch.Pitch

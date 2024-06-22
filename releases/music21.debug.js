@@ -1,5 +1,5 @@
 /**
- * music21j version 0.16.1 built on 2024-06-11.
+ * music21j version 0.16.2 built on 2024-06-22.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -13945,6 +13945,15 @@ class NotRest extends GeneralNote {
     this.activeVexflowNote = vfn;
     return vfn;
   }
+  vexflowAccidentalsAndDisplay(vfn) {
+    let _options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    super.vexflowAccidentalsAndDisplay(vfn, _options);
+    if (this.stemDirection === 'noStem') {
+      vfn.glyphProps.stem = false;
+      vfn.glyphProps.flag = false;
+      // vfn.render_options.stem_height = 0;
+    }
+  }
 }
 /* ------- Note ----------- */
 /**
@@ -14057,10 +14066,7 @@ class Note extends NotRest {
     if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
       console.log(this.stemDirection);
     }
-    if (this.stemDirection === 'noStem') {
-      vfn.glyphProps.stem = false;
-      // vfn.render_options.stem_height = 0;
-    } else {
+    if (this.stemDirection !== 'noStem') {
       // correct VexFlow stem length for notes far from the center line;
       let staveDNNSpacing = 5;
       if (stave !== undefined) {
@@ -21349,6 +21355,17 @@ function setStemDirectionForUnspecified(s) {
     single_clef_context = s.getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_2__.Clef);
   }
   for (const n of s.rc(_note__WEBPACK_IMPORTED_MODULE_3__.NotRest)) {
+    if (n.pitches.length > 1) {
+      const pitchSet = new Set(n.pitches.map(p => p.diatonicNoteNum));
+      if (pitchSet.size < n.pitches.length) {
+        // bug in Vexflow v4 at least -- chords with augmented seconds
+        // and down stems do no render properly.
+        // set their stems to 'unspecified' which Vexflow will currently
+        // render as upstems.
+        n.stemDirection = 'unspecified';
+        continue;
+      }
+    }
     if (n.stemDirection !== 'unspecified') {
       continue;
     }
@@ -21366,6 +21383,9 @@ function setStemDirectionForUnspecified(s) {
 }
 const _up_down = ['up', 'down'];
 const _up_down_unspecified = ['up', 'down', 'unspecified'];
+/**
+ *  Set stem directions for all notes in a beam group.
+ */
 function setStemDirectionOneGroup(group) {
   let {
     setNewStems = true,
