@@ -250,17 +250,28 @@ export default function tests() {
                 `${meterString} should have beat groups: ${expectedBeatGroups}`,
             );
         }
-        assertBeatGroups('2/8', [[1, 8]]);
-        assertBeatGroups('3/8', [[3, 8]]);
-        assertBeatGroups('4/8', [[1, 8]]);
-        assertBeatGroups('6/8', [[3, 8], [3, 8]]);
-        assertBeatGroups('9/8', [[3, 8], [3, 8], [3, 8]]);
-        assertBeatGroups('12/8', [[3, 8], [3, 8], [3, 8], [3, 8]]);
+        assertBeatGroups('2/2', [[1, 2]]);
+        assertBeatGroups('3/2', [[1, 2]]);
+        assertBeatGroups('4/2', [[1, 2]]);
         assertBeatGroups('2/4', [[2, 8]]);
         assertBeatGroups('3/4', [[2, 8]]);
         assertBeatGroups('4/4', [[2, 8]]);
+        assertBeatGroups('5/4', [[2, 8]]);
         assertBeatGroups('6/4', [[2, 8]]);
         assertBeatGroups('9/4', [[2, 8]]);
         assertBeatGroups('12/4', [[2, 8]]);
+        assertBeatGroups('2/8', [[1, 8]]);
+        assertBeatGroups('3/8', [[3, 8]]);
+        assertBeatGroups('4/8', [[1, 8]]);
+        assertBeatGroups('5/8', [[3, 8], [2, 8]]);
+        assertBeatGroups('6/8', [[3, 8], [3, 8]]);
+        assertBeatGroups('9/8', [[3, 8], [3, 8], [3, 8]]);
+        assertBeatGroups('12/8', [[3, 8], [3, 8], [3, 8], [3, 8]]);
+        assertBeatGroups('3/16', [[3, 16]]);
+        assertBeatGroups('4/16', [[1, 16]]);
+        assertBeatGroups('5/16', [[3, 16], [2, 16]]);
+        assertBeatGroups('6/16', [[3, 16], [3, 16]]);
+        assertBeatGroups('9/16', [[3, 16], [3, 16], [3, 16]]);
+        assertBeatGroups('12/16', [[3, 16], [3, 16], [3, 16], [3, 16]]);
     });
 }
