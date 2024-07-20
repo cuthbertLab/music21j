@@ -240,4 +240,27 @@ export default function tests() {
         );
         assert.equal(m.beatDuration.dots, 1, 'beatDuration has dot');
     });
+
+    test('music21.meter.TimeSignature.beatGroups', assert => {
+        function assertBeatGroups(meterString: string, expectedBeatGroups: number[][]) {
+            const m = new music21.meter.TimeSignature(meterString);
+            assert.deepEqual(
+                m.beatGroups,
+                expectedBeatGroups,
+                `${meterString} should have beat groups: ${expectedBeatGroups}`,
+            );
+        }
+        assertBeatGroups('2/8', [[1, 8]]);
+        assertBeatGroups('3/8', [[3, 8]]);
+        assertBeatGroups('4/8', [[1, 8]]);
+        assertBeatGroups('6/8', [[3, 8], [3, 8]]);
+        assertBeatGroups('9/8', [[3, 8], [3, 8], [3, 8]]);
+        assertBeatGroups('12/8', [[3, 8], [3, 8], [3, 8], [3, 8]]);
+        assertBeatGroups('2/4', [[2, 8]]);
+        assertBeatGroups('3/4', [[2, 8]]);
+        assertBeatGroups('4/4', [[2, 8]]);
+        assertBeatGroups('6/4', [[2, 8]]);
+        assertBeatGroups('9/4', [[2, 8]]);
+        assertBeatGroups('12/4', [[2, 8]]);
+    });
 }
