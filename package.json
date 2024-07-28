@@ -11,7 +11,9 @@
     "/webResources"
   ],
   "dependencies": {
+    "compute-lcm": "^1.1.2",
     "jsonpickle": "^1.1.2",
+    "lru-cache": "^11.0.0",
     "midicube": "^0.6.1",
     "vexflow": "^4.2.3"
   },

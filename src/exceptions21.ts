@@ -21,3 +21,5 @@ class ExtendableError extends Error {
 export class Music21Exception extends ExtendableError {}
 
 export class StreamException extends Music21Exception {}
+
+export class MeterException extends Music21Exception {}

@@ -263,6 +263,32 @@ export function makeSVGright(tag: string = 'svg', attrs: Record<string, any> = {
 }
 
 /**
+ * Given a string, extract any numbers.
+ * Return two strings, the numbers (as strings) and the remaining characters.
+ *
+ * @example
+ *     getNumFromStr('23a')          // ('23', 'a')
+ *     getNumFromStr('23a954Hello')  // ('23954', 'aHello')
+ *     getNumFromStr('')             // ('', '')
+*/
+export function getNumFromStr(usrStr: string, numbers: string = '0123456789'): [string, string] {
+    const found: string[] = [];
+    const remain: string[] = [];
+
+    for (const char of usrStr) {
+        if (numbers.includes(char)) {
+            found.push(char);
+        } else {
+            remain.push(char);
+        }
+    }
+
+    // returns numbers and then characters
+    return [found.join(''), remain.join('')];
+}
+
+
+/**
  * Take a number such as 32 and return a string such as "nd"
  * (for "32nd") etc.
  *
@@ -515,4 +541,63 @@ export function to_el(input_string: string): HTMLElement {
  */
 export function sleep(ms: number): Promise<number> {
     return new Promise(resolve => window.setTimeout(resolve, ms));
+}
+
+export function limit_denominator(n: number, d: number, maxDenominator: number): [number, number] {
+    if (d < maxDenominator) {
+        return [n, d]
+    }
+    let p0 = 0;
+    let q0 = 1;
+    let p1 = 1;
+    let q1 = 0;
+
+    while (true) {
+        const a = Math.floor(n / d);
+        const q2 = q0 + a * q1;
+
+        if (q2 > maxDenominator) {
+            break;
+        }
+
+        p0 = p1;
+        q0 = q1;
+        p1 = p0 + a * p1;
+        q1 = q2;
+        n = d;
+        d = n - a * d;
+    }
+
+    const k = Math.floor((maxDenominator - q0) / q1);
+
+    // from Python factions -- determine which is closer:
+    if (2 * d * (q0 + (k*q1)) < d) {
+        return [p1, q1]
+    } else {
+        return [p0 + (k * p1), q0 + (k * q1)];
+    }
+}
+
+export function decimalToFraction(original: number, limit: number = 1.0E-15): [number, number] {
+    let x = original;
+    let a = Math.floor(x);
+    let h1 = 1;
+    let k1 = 0;
+    let h = a;
+    let k = 1;
+    let h2 = 0;
+    let k2 = 0;
+
+    while (x-a > limit*k*k) {
+        x = 1 / (x-a);
+        a = Math.floor(x);
+        h2 = h1;
+        h1 = h;
+        k2 = k1;
+        k1 = k;
+        h = h2 + a*h1;
+        k = k2 + a*k1;
+    }
+
+    return [h, k];
 }
