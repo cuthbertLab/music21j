@@ -186,14 +186,7 @@ export class TimeSignature extends base.Music21Object {
     computeBeatGroups(): number[][] {
         const tempBeatGroups = [];
         let numBeats = this.numerator;
-        let beatValue = this.denominator;
-        if (beatValue < 8 && numBeats >= 5) {
-            const beatsToEighthNoteRatio = 8 / beatValue;
-            // hopefully beatValue is an int -- right Brian Ferneyhough?
-            beatValue = 8;
-            numBeats *= beatsToEighthNoteRatio;
-        }
-
+        const beatValue = this.denominator;
         if (beatValue >= 8) {
             if ([4, 2].includes(numBeats)) {  // 4/8 and 2/8 should have eighth beats
                 tempBeatGroups.push([1, beatValue]);
