@@ -170,28 +170,29 @@ Publishing a new version
 -------------------------
 You'll need to be part of the npm dev team.
 
-Two steps.  First make sure you have run:
+Two steps 
+
+1: Build the latest version by running:
 
 ```sh
 $ grunt
 ```
 
-the latest build must have been made.
+Then update the version number and commit with:
 
 ```sh
 $ grunt publish
 ```
 
-which will update the version number and tries to build the
+(It also tries to build the
 docs via `grunt jsdoc` (currently failing).
-
-The template is specified in jsdoc-template/jsdoc.conf.json
+The template is specified in jsdoc-template/jsdoc.conf.json)
 
 For a non-backwards compatible release, edit the minor 
-version number manually here, in main.ts, and of course in
-package.json.
+version number manually in this README.md, in main.ts, and in
+package.json.  Then do all the steps again from the start.  :-)
 
-Then run:
+Then run the copy script with:
 
 ```sh
 $ npm publish
