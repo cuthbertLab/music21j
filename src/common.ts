@@ -545,13 +545,14 @@ export function sleep(ms: number): Promise<number> {
 
 export function limit_denominator(n: number, d: number, maxDenominator: number): [number, number] {
     if (d < maxDenominator) {
-        return [n, d]
+        return [n, d];
     }
     let p0 = 0;
     let q0 = 1;
     let p1 = 1;
     let q1 = 0;
 
+    /*eslint no-constant-condition: "off"*/
     while (true) {
         const a = Math.floor(n / d);
         const q2 = q0 + a * q1;
@@ -572,7 +573,7 @@ export function limit_denominator(n: number, d: number, maxDenominator: number):
 
     // from Python factions -- determine which is closer:
     if (2 * d * (q0 + (k*q1)) < d) {
-        return [p1, q1]
+        return [p1, q1];
     } else {
         return [p0 + (k * p1), q0 + (k * q1)];
     }
