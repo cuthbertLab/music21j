@@ -587,10 +587,16 @@ export class NotRest extends GeneralNote {
             }
         }
         for (const art of this.articulations) {
-            vfn.addModifier(art.vexflow({stemDirection: useStemDirection}));
+            const vf_art = art.vexflow({stemDirection: useStemDirection});
+            if (vf_art) {
+                vfn.addModifier(vf_art);
+            }
         }
         for (const exp of this.expressions) {
-            vfn.addModifier(exp.vexflow({stemDirection: useStemDirection}));
+            const vf_exp = exp.vexflow({stemDirection: useStemDirection});
+            if (vf_exp) {
+                vfn.addModifier(vf_exp);
+            }
         }
         if (this.noteheadColor !== undefined) {
             vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
@@ -783,6 +789,10 @@ export class Note extends NotRest {
         // Note, not rest
         const midNum = this.pitch.midi;
         let stopTime = milliseconds / 1000;
+        for (const art of this.articulations) {
+            stopTime *= art.lengthScale;
+        }
+
         if (nextElement instanceof Note) {
             if (nextElement.pitch.midi !== this.pitch.midi && playLegato) {
                 stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
