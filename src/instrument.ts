@@ -180,48 +180,35 @@ export const info: InstrumentFileInfo[] = [
 /**
  * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
  *
+ * Note that unlike music21p -- for now there is only one instrument object: Instrument
+ * there are no Piano, Flute, etc. objects
+ *
  * See music21.miditools and esp. `loadSoundfont` for a way of loading soundfonts into
  * instruments.
- *
- * @param {string} instrumentName
- * @property {string|undefined} partId
- * @property {string|undefined} partName
- * @property {string|undefined} partAbbreviation
- * @property {string|undefined} instrumentId
- * @property {string|undefined} instrumentName
- * @property {string|undefined} instrumentAbbreviation
- * @property {int|undefined} midiProgram
- * @property {int|undefined} midiChannel
- * @property {int|undefined} lowestNote
- * @property {int|undefined} highestNote
- * @property {Boolean} inGMPercMap=false
- * @property {string|undefined} soundfontFn
- * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
- * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
  */
 export class Instrument extends base.Music21Object {
     static get className() { return 'music21.instrument.Instrument'; }
 
-    partId = undefined;
-    partName = undefined;
-    partAbbreviation = undefined;
+    partId: string = undefined;
+    partName: string = undefined;
+    partAbbreviation: string = undefined;
 
-    instrumentId = undefined;
-    instrumentName = '';
-    instrumentAbbreviation = undefined;
-    midiProgram = undefined;
-    _midiChannel = undefined;
+    instrumentId: string = undefined;
+    instrumentName: string = '';
+    instrumentAbbreviation: string = undefined;
+    midiProgram: number|undefined = undefined;
+    _midiChannel: number|undefined = undefined;
 
-    lowestNote = undefined;
-    highestNote = undefined;
+    lowestNote: number = undefined;
+    highestNote: number = undefined;
 
     transposition: interval.Interval;
 
-    inGMPercMap = false;
-    soundfontFn = undefined;
+    inGMPercMap: boolean = false;
+    soundfontFn: string = undefined;
 
 
-    constructor(instrumentName='') {
+    constructor(instrumentName: string = '') {
         super();
         this.classSortOrder = -25;
         this.instrumentName = instrumentName;
@@ -263,22 +250,22 @@ export class Instrument extends base.Music21Object {
         return undefined;
     }
 
-    get oggSoundfont() {
+    get oggSoundfont(): string {
         return this.soundfontFn + '-ogg.js';
     }
 
-    get mp3Soundfont() {
+    get mp3Soundfont(): string {
         return this.soundfontFn + '-mp3.js';
     }
 
-    get midiChannel() {
+    get midiChannel(): number {
         if (this._midiChannel === undefined) {
             this.autoAssignMidiChannel();
         }
         return this._midiChannel;
     }
 
-    set midiChannel(ch) {
+    set midiChannel(ch: number) {
         this._midiChannel = ch;
     }
 }
@@ -290,7 +277,7 @@ export class Instrument extends base.Music21Object {
  * fn - name or filename of instrument
  * [inst] - instrument object to load into
  */
-export function find(fn: string, inst?: Instrument): Instrument {
+export function find(fn: string, inst?: Instrument): Instrument|undefined {
     if (inst === undefined) {
         inst = new Instrument();
     }
