@@ -1,6 +1,6 @@
-import $ from 'jquery';
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/main';
+import {StaveConnector} from '../../src/types';
 
 const { test } = QUnit;
 
@@ -126,14 +126,31 @@ export default function tests() {
         assert.throws(() => { cs.getOffsetBySite(s); }, /not stored/, 'cs is no longer in s');
     });
 
+    test('music21.stream.Stream rc, rcf', assert => {
+        const nested = music21.tinyNotation.TinyNotation('4/4 c1 d1 /chord{e1 g b} r2. f4');
+        assert.equal(nested.getElementsByClass(music21.stream.Measure).length, 4);
+        const just_notes = nested.rc(music21.note.Note);
+        assert.ok(
+            just_notes instanceof music21.stream.iterator.RecursiveIterator,
+            'just_notes is a recursive iterator'
+        );
+        assert.equal(just_notes.length, 3, 'just_notes.length');
+        const the_chord = nested.rcf(music21.chord.Chord);
+        assert.equal(the_chord.notes.length, 3, 'the_chord.notes.length');
+        const the_rest = nested.rcf(music21.note.Rest);
+        assert.equal(the_rest.quarterLength, 3.0, 'the_rest.quarterLength');
+        const note_found = nested.rcf(music21.roman.RomanNumeral);
+        assert.notOk(note_found, 'no roman numerals found');
+    });
+
     test('music21.stream.Stream remove recursive', assert => {
         const p = music21.tinyNotation.TinyNotation('4/4 c1 d1 e1 f1');
-        assert.equal(p.flat.notes.length, 4);
-        const d = p.recurse().notes.get(1);
+        assert.equal(p.flatten().notes.length, 4);
+        const d = p.recurse().notes.get(1) as music21.note.Note;
         assert.equal(d.name, 'D');
         p.remove(d, {recurse: true});
-        assert.equal(p.flat.notes.length, 3);
-        const array_notes = Array.from(p.flat.notes) as music21.note.Note[];
+        assert.equal(p.flatten().notes.length, 3);
+        const array_notes = Array.from(p.flatten().notes) as music21.note.Note[];
         assert.deepEqual(
             array_notes.map(n => n.pitch.name),
             ['C', 'E', 'F']
@@ -175,8 +192,6 @@ export default function tests() {
         assert.equal(s.highestTime, 3.0);
         assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
 
-        // noinspection TypeScriptValidateJSTypes
-        // @ts-ignore
         s.duration = new music21.duration.Duration(3.0);
         s.append(new music21.note.Note('D#5'));
         assert.equal(
@@ -211,7 +226,7 @@ export default function tests() {
             'duration of streams with nested parts'
         );
         assert.equal(
-            sc.flat.duration.quarterLength,
+            sc.flatten().duration.quarterLength,
             4.0,
             'duration of flat stream with overlapping notes'
         );
@@ -222,7 +237,7 @@ export default function tests() {
             'new music21.duration with nested parts'
         );
         assert.equal(
-            sc.flat.duration.quarterLength,
+            sc.flatten().duration.quarterLength,
             3.5,
             'new music21.duration of flat stream'
         );
@@ -287,12 +302,12 @@ export default function tests() {
 
         assert.equal((p.get(0) as music21.stream.Stream).get(0).offset, 0.0);
         assert.notOk(p.isFlat, 'part has substreams');
-        const pf = p.flat;
+        const pf = p.flatten();
         assert.equal(pf.get(0).offset, 0.0);
         assert.equal(pf.get(1).offset, 4.0);
         assert.ok(pf.isFlat, 'flat has no substreams');
 
-        const pf2 = p.flat; // repeated calls do not change
+        const pf2 = p.flatten(); // repeated calls do not change
         assert.ok(pf2.isFlat, 'flat has no substreams');
         assert.equal(
             pf2.get(0).offset,
@@ -304,11 +319,11 @@ export default function tests() {
             4.0,
             'repeated calls do not change offset 2'
         );
-        const pf3 = pf2.flat;
+        const pf3 = pf2.flatten();
         assert.equal(
             pf3.get(1).offset,
             4.0,
-            '.flat.flat does not change offset'
+            '.flatten().flatten() does not change offset'
         );
 
         const semiFlatP = p.semiFlat;
@@ -419,8 +434,16 @@ export default function tests() {
         n.duration.type = 'half';
         s.append(n);
         const c = s.createNewDOM(100, 50);
-        assert.equal(c.attr('width'), 100, 'stored width matches');
-        assert.equal(c.attr('height'), 50, 'stored height matches');
+        assert.equal(c.getAttribute('width'), 100, 'stored width matches');
+        assert.equal(c.getAttribute('height'), 50, 'stored height matches');
+    });
+
+    test('music21.stream.Stream.DOM voice with no notes', assert => {
+        const s = new music21.stream.Stream();
+        const where = s.createNewDOM(100, 50);
+        // Should not raise an error even though the voice is empty.
+        s.replaceDOM(where);
+        assert.ok(true);
     });
 
     test('music21.stream.Stream.getElementsByClass', assert => {
@@ -443,6 +466,19 @@ export default function tests() {
         assert.equal(c.length, 3, 'got multiple classes');
         c = s.getElementsByClass('GeneralNote');
         assert.equal(c.length, 3, 'got multiple subclasses');
+    });
+    test('music21.stream.Stream.getElementsByOffset', assert => {
+        const s = new music21.stream.Stream();
+        const n1 = new music21.note.Note('C#5', 1.0);
+        const n2 = new music21.note.Note('D#5', 1.0);
+        s.append(n1);
+        s.append(n2);
+        const elements_at_0 = Array.from(s.getElementsByOffset(0.0));
+        const elements_at_1 = Array.from(s.getElementsByOffset(1.0));
+        assert.ok(elements_at_0.includes(n1), 'n1 is at 0.0');
+        assert.ok(elements_at_1.includes(n2), 'n2 is at 1.0');
+        assert.notOk(elements_at_0.includes(n2), 'n2 is not at 0.0');
+        assert.notOk(elements_at_1.includes(n1), 'n1 is not at 1.0');
     });
     test('music21.stream.offsetMap', assert => {
         const n = new music21.note.Note('G3');
@@ -470,7 +506,7 @@ export default function tests() {
         const n = new music21.note.Note('G3');
         const s = new music21.stream.Measure();
         s.append(n);
-        s.appendNewDOM(document.body);
+        s.appendNewDOM();
         assert.equal(s.length, 1, 'ensure that should have one note');
         const n1 = new music21.note.Note('G3');
         const s1 = new music21.stream.Measure();
@@ -482,7 +518,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
-        $(document.body).append(div1);
+        globalThis.document.querySelector(music21.defaults.appendLocation).appendChild(div1);
     });
     test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');
@@ -556,6 +592,22 @@ export default function tests() {
         assert.ok(n0.pitch.accidental.displayStatus);  // natural created
         assert.notOk(n1.pitch.accidental.displayStatus);  // not reiterated
         assert.ok(n2.pitch.accidental.displayStatus);  // different note
+    });
+
+    test('music21.stream.Stream makeAccidentals augmented unison in chord', assert => {
+        const m = new music21.stream.Measure();
+        const c = new music21.chord.Chord('G G#');
+        m.append(c);
+        m.makeAccidentals({inPlace: true});
+        assert.ok(c.pitches[0].accidental.displayStatus);
+    });
+
+    test('music21.stream.Stream makeAccidentals perfect octave in chord', assert => {
+        const m = new music21.stream.Measure();
+        const c = new music21.chord.Chord('G4 G5');
+        m.append(c);
+        m.makeAccidentals({inPlace: true});
+        assert.notOk(c.pitches[0].accidental?.displayStatus);
     });
 
     test('music21.stream.Stream makeBeams with stemDirection', assert => {
@@ -663,11 +715,14 @@ export default function tests() {
     test('music21.stream.Stream makeAccidentals.KeySignature Context', assert => {
         let p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 f#2 f#2 g2 b-2 b1');
         p1.makeAccidentals({ inPlace: true });
-        let p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
+        let p_list = p1.recurse().notes.map(n => n.pitches[0]) as music21.pitch.Pitch[];
         assert.notOk(p_list[0].accidental, 'p_list[0].accidental should not exist');
         assert.notOk(p_list[1].accidental, 'p_list[1].accidental should not exist');
         assert.ok(p_list[2].accidental.displayStatus);
-        assert.notOk(p_list[3].accidental.displayStatus, '2nd F# accidental should not display');  // same measure
+        assert.notOk(
+            p_list[3].accidental.displayStatus,
+            '2nd F# accidental should not display'
+        );  // same measure
         assert.notOk(p_list[4].accidental, 'G should not have accidental');
         assert.ok(p_list[5].accidental.displayStatus);  // B flat
         assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
@@ -677,19 +732,19 @@ export default function tests() {
         const f_maj = new music21.key.Key('F');
         m1.insert(0, f_maj);
         p1.makeAccidentals({ inPlace: true });
-        p_list = p1.recurse().notes.map(n => n.pitch) as music21.pitch.Pitch[];
+        p_list = p1.recurse().notes.map(n => n.pitches[0]) as music21.pitch.Pitch[];
 
         assert.notOk(p_list[5].accidental.displayStatus, 'first b-flat should not display');  // B flat
         assert.ok(p_list[6].accidental.displayStatus);  // B natural after b-flat different measures
     });
 
-    test('music21.stream.Stream.flat', assert => {
+    test('music21.stream.Stream.flatten()', assert => {
         const p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
         const p2 = music21.tinyNotation.TinyNotation('4/4 A1    C#1   E#1');
         const s = new music21.stream.Score();
         s.insert(0, p1);
         s.insert(0, p2);
-        const sf = s.flat.notes;
+        const sf = s.flatten().notes;
         const sf_names = (Array.from(sf) as music21.note.Note[]).map(n => n.name);
         assert.deepEqual(sf_names, ['C', 'A', 'D', 'E', 'C#', 'F', 'G', 'E#']);
         const sf_offsets = Array.from(sf).map(n => n.offset);
@@ -727,7 +782,7 @@ export default function tests() {
         const one_options = testOne.renderOptions;
         one_options.staffLines = 4;
         one_options.scaleFactor.x = 1.5;
-        one_options.staffConnectors = ['double'];
+        one_options.staffConnectors = [StaveConnector.DOUBLE];
         one_options.events.click = 'fake_event';
         one_options.events.dblclick = e => {};
         const testTwo = testOne.clone(true);  // deepcopy
@@ -745,7 +800,7 @@ export default function tests() {
         assert.equal(two_options.staffLines, 4);
         one_options.scaleFactor.x = 1.0;
         assert.equal(two_options.scaleFactor.x, 1.5);
-        one_options.staffConnectors.push('brace');
+        one_options.staffConnectors.push(StaveConnector.BRACE);
         assert.deepEqual(two_options.staffConnectors, ['double']);
         one_options.events.click = 'faker_event';
 
@@ -766,13 +821,13 @@ export default function tests() {
         let y = 20;
         let [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 43);
-        assert.strictEqual(foundNote, p1.flat.notes.get(0));
+        assert.strictEqual(foundNote, p1.flatten().notes.get(0));
         y = 100;
         [clickedDNN, foundNote] = s.findNoteForClick(undefined, undefined, x, y);
         assert.equal(clickedDNN, 27);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p1.flat.notes.get(0) as music21.note.Note).pitch.name
+            (p1.flatten().notes.get(0) as music21.note.Note).pitch.name
         );
 
         // check that we eventually move to p2
@@ -781,7 +836,7 @@ export default function tests() {
         assert.equal(clickedDNN, 29);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p2.flat.notes.get(0) as music21.note.Note).pitch.name
+            (p2.flatten().notes.get(0) as music21.note.Note).pitch.name
         );
 
         // check that we can access last note in measure after a triplet
@@ -790,7 +845,7 @@ export default function tests() {
         assert.equal(clickedDNN, 29);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p2.flat.notes.get(4) as music21.note.Note).pitch.name
+            (p2.flatten().notes.get(4) as music21.note.Note).pitch.name
         );
         x = 100;
 
@@ -800,21 +855,25 @@ export default function tests() {
         assert.equal(clickedDNN, -1);
         assert.equal(
             (foundNote as music21.note.Note).pitch.name,
-            (p2.flat.notes.get(0) as music21.note.Note).pitch.name
+            (p2.flatten().notes.get(0) as music21.note.Note).pitch.name
         );
     });
 
     test('music21.stream.makeNotation setStemDirectionOneGroup', assert => {
         const p = music21.tinyNotation.TinyNotation(alla_breve_test);
         p.makeBeams({inPlace: true, setStemDirections: false});
-        const [a, b, c, d] = Array.from(
+        const [a, b, c, d] = <music21.note.NotRest[][]> Array.from(
             music21.stream.makeNotation.iterateBeamGroups(p)
         );
 
-        const testDirections = (group, expected) => {
+        const testDirections = (group: music21.note.NotRest[], expected: string[]): void => {
             assert.equal(group.length, expected.length, `${group.length} in group, not expected ${expected.length}`);
             for (let j = 0; j < group.length; j++) {
-                assert.equal(group[j].stemDirection, expected[j]);
+                assert.equal(
+                    group[j].stemDirection,
+                    expected[j],
+                    `Stem direction for ${j} was ${group[j].stemDirection}, expected ${expected[j]}`
+                );
             }
         };
 
@@ -855,7 +914,7 @@ export default function tests() {
         d[3].stemDirection = 'up';
 
         music21.stream.makeNotation.setStemDirectionForBeamGroups(p);
-        const pn2 = Array.from(p.flat.notes) as music21.note.Note[];
+        const pn2 = Array.from(p.flatten().notes) as music21.note.Note[];
         const stemDirections = pn2.map(n => n.stemDirection);
         assert.deepEqual(
             stemDirections,
@@ -871,7 +930,7 @@ export default function tests() {
     test('music21.stream.makeNotation testSetStemDirectionConsistency', assert => {
         const p = music21.tinyNotation.TinyNotation('2/4 b8 f8 a8 b8');
         p.makeBeams({inPlace: true, setStemDirections: false});
-        const note_array = Array.from(p.flat.notes) as music21.note.Note[];
+        const note_array = Array.from(p.flatten().notes) as music21.note.Note[];
         note_array[0].stemDirection = 'down';
         note_array[1].stemDirection = 'unspecified';
         note_array[2].stemDirection = 'down';
@@ -884,14 +943,14 @@ export default function tests() {
 
     test('music21.stream.makeNotation testMakeBeamsWithStemDirection', assert => {
         const p = music21.tinyNotation.TinyNotation(alla_breve_test);
-        const pn = Array.from(p.flat.notes) as music21.note.Note[];
+        const pn = Array.from(p.flatten().notes) as music21.note.Note[];
         pn[14].stemDirection = 'down';
         pn[15].stemDirection = 'noStem';
         pn[16].stemDirection = 'double';
         pn[17].stemDirection = 'up';
 
         p.makeBeams({inPlace: true});
-        const pn2 = Array.from(p.flat.notes) as music21.note.Note[];
+        const pn2 = Array.from(p.flatten().notes) as music21.note.Note[];
         const stemDirections = pn2.map(n => n.stemDirection);
         assert.deepEqual(
             stemDirections,
@@ -904,14 +963,48 @@ export default function tests() {
         );
     });
 
+    test('music21.stream.makeNotation testMakeBeamsFromContextTS', assert => {
+        const p = music21.tinyNotation.TinyNotation(alla_breve_test);
+        const m_iter = p.getElementsByClass('Measure');
+        const m0 = m_iter.get(0) as music21.stream.Measure;
+        const m1 = m_iter.get(1) as music21.stream.Measure;
+
+        m1.makeBeams({inPlace: true, failOnNoTimeSignature: true});
+        m0.remove(m0.timeSignature);
+        m0._timeSignature = undefined;
+        assert.throws(
+            () => { m1.makeBeams({inPlace: true, failOnNoTimeSignature: true}); }
+        );
+    });
+
+    test('music21.stream.clone', assert => {
+        const sc = music21.tinyNotation.TinyNotation('4/4 c2 d2');
+        assert.equal(sc.rc(music21.note.Note).length, 2);
+        const clone = sc.clone(true);
+        assert.equal(clone.rc(music21.note.Note).length, 2);
+        const flat = sc.flatten();
+        assert.equal(flat.rc(music21.note.Note).length, 2);
+        const flat_array = Array.from(flat.notes);
+        assert.equal(flat_array.length, 2, 'Array.from(flat.notes) gets all notes');
+        const flat_array2 = Array.from(flat.notes);
+        assert.equal(flat_array2.length, 2, 'Array.from(flat.notes) called again still works');
+        const flat_clone = flat.clone(true);
+        assert.equal(flat_clone.rc(music21.note.Note).length, 2);
+        const flat_notes = flat.notes;
+        assert.equal(flat_notes.length, 2, 'flat.notes maintains length');
+        const flat_clone_array = Array.from(flat_clone.notes);
+        assert.equal(flat_clone_array.length, 2, 'Array.from(flat_clone.notes) gets all notes');
+    });
+
     test('music21.stream.stripTies', assert => {
         const sc = music21.tinyNotation.TinyNotation('4/4 c2.~ c4');
-        const n_before = sc.flat.notes.get(0);
+        const n_before = sc.flatten().notes.get(0);
         assert.equal(n_before.duration.quarterLength, 3.0);
 
-        const strip = sc.flat.stripTies();
+        const sc_flat = sc.flatten();
+        const strip = sc_flat.stripTies();
         const strip_n = Array.from(strip.notes) as music21.note.Note[];
-        assert.equal(strip_n.length, 1);
+        assert.equal(strip_n.length, 1, `Expected 1 note after stripping, got ${strip_n.length}`);
         const n_after = strip_n[0];
         assert.equal(n_after.pitch.nameWithOctave, 'C4');
         assert.equal(n_after.duration.quarterLength, 4.0, 'Duration one measure after stripping');
@@ -919,7 +1012,7 @@ export default function tests() {
         // without flat
         const sc2 = music21.tinyNotation.TinyNotation('4/4 c1~ c1');
         const strip2 = sc2.stripTies();
-        assert.equal(strip2.recurse().notes.length, 1);
+        assert.equal(strip2.recurse().notes.length, 1, 'One note after stripTies w/o flat.');
         const breve = strip2.recurse().notes.get(0);
         assert.equal(breve.duration.quarterLength, 8.0);
         assert.ok(breve.tie === undefined);
@@ -957,7 +1050,7 @@ export default function tests() {
                 const p2m = p2.measures.get(i);
                 const p1m_renderOp_clone = p1m.renderOptions.deepClone();
                 const p2m_renderOp_clone = p2m.renderOptions.deepClone();
-                // we copied precisely so we can hack this to avoid busting the test
+                // we copied precisely, so we can hack this to avoid busting the test
                 p2m_renderOp_clone.partIndex = 0;
                 assert.deepEqual(p1m_renderOp_clone, p1m_renderOp_clone);
             }
@@ -1036,18 +1129,65 @@ export default function tests() {
         v.append(n);
         const m = new music21.stream.Measure();
         m.append(v);
-        const original_width = m.estimateStaffLength();
+        const originalWidth = m.estimateStaffLength();
         const ks = new music21.key.KeySignature(-6);
         m.append(ks);
         m.renderOptions.displayKeySignature = true;
-        assert.equal(m.estimateStaffLength(), original_width + ks.width);
+        assert.equal(m.estimateStaffLength(), originalWidth + ks.width);
 
         // Also test getting KeySignature from the context
-        const previous_measure = m.clone();
+        const previousMeasure = m.clone();
         m.remove(ks);
         const p = new music21.stream.Part();
-        p.append(previous_measure);
+        p.append(previousMeasure);
         p.append(m);
-        assert.equal(m.estimateStaffLength(), original_width + ks.width);
+        assert.equal(m.estimateStaffLength(), originalWidth + ks.width);
+
+        n.lyric = 'lorem';  // (7px * 5 letters + 2) = 37, original width otherwise starts at 30
+        assert.equal(m.estimateStaffLength(), originalWidth + 7 + ks.width);
+
+        const previousMeasureOverallLength =
+            previousMeasure.estimateStaffLength() + previousMeasure.renderOptions.staffPadding;
+        const measureOverallLength = m.estimateStaffLength() + m.renderOptions.staffPadding;
+        assert.equal(p.estimateStaffLength(), previousMeasureOverallLength + measureOverallLength);
+
+        m.renderOptions.startNewSystem = true;
+        assert.ok(previousMeasureOverallLength < measureOverallLength);
+        assert.equal(p.estimateStaffLength(), measureOverallLength);
+    });
+
+    test('music21.stream.Stream cloneEmpty', assert => {
+        const p = music21.tinyNotation.TinyNotation('3/4 c4 BB c d4 e2.');
+        const empty = p.cloneEmpty();
+        assert.true(empty instanceof music21.stream.Part);
+        assert.equal(empty.elements.length, 0);
+        assert.equal(empty.derivation.method, 'cloneEmpty');
+    });
+
+    test('music21.stream.Stream noteElementFromScaledX overlapping notes', assert => {
+        const n1 = new music21.note.Note();
+        const n2 = new music21.note.Note();
+
+        // mock Note x positions to simulate post-rendered state
+        // note widths overlap intentionally
+        (n1 as any).x = 100;
+        (n1 as any).width = 23;
+        (n2 as any).x = 120;
+        (n2 as any).width = 23;
+
+        const s = new music21.stream.Stream();
+        s.renderOptions.scaleFactor = { x: 1.0, y: 1.0 };
+        s.append([n1, n2]);
+
+        assert.deepEqual(s.noteElementFromScaledX(118), n1);
+        assert.deepEqual(s.noteElementFromScaledX(119), n1);
+        assert.deepEqual(s.noteElementFromScaledX(120), n2);
+        assert.deepEqual(s.noteElementFromScaledX(121), n2);
+
+        // even though 122 is closer to the end of n1 (123)
+        // than the beginning of n2 (120), it should still return n2
+        // since we truncate note widths that overflow into the following note
+        assert.deepEqual(s.noteElementFromScaledX(122), n2);
+        assert.deepEqual(s.noteElementFromScaledX(123), n2);
     });
 }

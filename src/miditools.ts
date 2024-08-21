@@ -3,7 +3,7 @@
  * music21/miditools -- A collection of tools for midi.
  *
  * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * @author Michael Scott Asato Cuthbert
  *
@@ -12,7 +12,6 @@
  * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
  * events from the Jazz plugin or the WebMIDI protocol.
  */
-import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
 import { debug } from './debug';
@@ -20,11 +19,11 @@ import '../css/midiPlayer.css';
 
 import * as chord from './chord';
 import * as common from './common';
+import defaults from './defaults';
 import * as instrument from './instrument';
 import * as note from './note';
 import {to_el} from './common';
 
-// imports for typechecking only
 import type * as tempo from './tempo';
 
 declare interface MIDIWindow extends Window {
@@ -138,10 +137,8 @@ export class Event {
     /**
      * Calls MIDI.noteOn or MIDI.noteOff for the note
      * represented by the Event (if appropriate)
-     *
-     * @returns {undefined}
      */
-    sendToMIDIjs() {
+    sendToMIDIjs(): void {
         if (MIDI.config.is_connected) {
             // noteOn check because does not exist if no audio context
             // or soundfont has been loaded, such as if a play event
@@ -223,8 +220,8 @@ export function makeChords(jEvent: Event): void {
  * Take the list of Notes and makes a chord out of it, if appropriate and call
  * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
-export function sendOutChord(chordNoteList: note.Note[]): note.Note|chord.Chord|undefined {
-    let appendObject;
+export function sendOutChord(chordNoteList: note.Note[]): note.Note|chord.Chord {
+    let appendObject: note.Note|chord.Chord;
     if (chordNoteList.length > 1) {
         // console.log(chordNoteList[0].name, chordNoteList[1].name);
         appendObject = new chord.Chord(chordNoteList);
@@ -405,12 +402,11 @@ export function loadSoundfont(
         if (debug) {
             console.log('waiting for document ready');
         }
-        // this is the JQuery 3.0 equivalent to $(document).ready()...
-        $(() => {
+        const sf_loader_on_ready = () => {
             if (debug) {
                 console.log('Document ready, waiting to load soundfont');
             }
-            document.body.append(
+            document.querySelector(defaults.appendLocation).append(
                 to_el(
                     "<div class='loadingSoundfont'><b>Loading Instrument</b>: "
                         + 'audio will begin when this message disappears.</div>'
@@ -425,7 +421,13 @@ export function loadSoundfont(
                     callback
                 ),
             });
-        });
+        };
+
+        if (document.readyState !== 'loading') {
+            sf_loader_on_ready();
+        } else {
+            document.addEventListener('DOMContentLoaded', sf_loader_on_ready);
+        }
     }
 }
 
@@ -448,6 +450,10 @@ export class MidiPlayer {
     }
 
     addPlayer(where: HTMLElement): HTMLElement {
+        if (typeof where === 'string') {
+            // obsolete usage
+            where = document.querySelector(where) as HTMLElement;
+        }
         const playDiv = to_el('<div class="midiPlayer"></div>');
         const controls = to_el('<div class="positionControls"></div>');
         const playPause = to_el(
@@ -515,11 +521,11 @@ export class MidiPlayer {
             this.player.pause(true);
         } else {
             d.src = this.pausePng();
-            this.player.resume().catch(console.error);
+            this.player.resume();
         }
     }
 
-    base64Load(b64data) {
+    base64Load(b64data): void {
         const player = this.player;
         player.timeWarp = this.speed;
 
@@ -567,7 +573,9 @@ export class MidiPlayer {
         //
         capsule.addEventListener('dragstart', event => {
             const e = <DragEvent> event;
-            player.currentTime = (e.pageX - $(capsule).offset().left) / 420 * player.endTime;
+            player.currentTime = (
+                e.pageX - (capsule.getBoundingClientRect().left + window.scrollX))
+                / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
             }
@@ -581,7 +589,7 @@ export class MidiPlayer {
             }
         });
         //
-        const timeFormatting = n => {
+        const timeFormatting = (n: number): string => {
             const minutes = Math.floor(n / 60);
             let seconds = String(Math.floor(n - minutes * 60));
             if (seconds.length === 1) {

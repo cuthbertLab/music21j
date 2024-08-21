@@ -1,7 +1,7 @@
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit.
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  *
  */
 
@@ -14,6 +14,13 @@ declare interface ProtoM21ObjectConstructorInterface extends Function {
 declare interface Constructable<T> {
     new() : T;
 }
+
+export type CloneCallbackFunctionType<T extends ProtoM21Object = ProtoM21Object> = (
+    key: string,
+    ret: T,
+    deep: boolean,
+    memo: WeakMap<any, any>,
+) => void;
 
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
@@ -33,7 +40,13 @@ export class ProtoM21Object {
     _cl: string;
     isProtoM21Object: boolean = true;
     isMusic21Object: boolean = false;
-    protected _cloneCallbacks: any = {};
+
+    // constructor signifies: leave alone whatever the constructor did.
+    protected _cloneCallbacks:
+        Record<string, boolean|'constructor'|CloneCallbackFunctionType> = {
+            _cloneCallbacks: 'constructor',
+        };
+
 
     constructor() {
         // this exists for looking at Proxies of this object in Javascript
@@ -67,7 +80,7 @@ export class ProtoM21Object {
      *
      * Stored on the individual object, not the class, unlike music21p
      */
-    private _populateClassCaches() {
+    private _populateClassCaches(): void {
         const classSet = new Set();
         const classList = [];
         let thisConstructor = <ProtoM21ObjectConstructorInterface> this.constructor;
@@ -113,7 +126,7 @@ export class ProtoM21Object {
     clone(deep=true, memo=undefined): this {
         // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
         const classConstructor = <Constructable<ProtoM21Object>> this.constructor;
-        const ret = <Record<string, any>> new classConstructor();
+        const ret = <this><any> new classConstructor();
         if (memo === undefined) {
             memo = new WeakMap();
         }
@@ -124,19 +137,23 @@ export class ProtoM21Object {
                 continue;
             }
             if (key in this._cloneCallbacks) {
-                if (this._cloneCallbacks[key] === true) {
+                const cc = this._cloneCallbacks[key];
+                if (cc === true) {
                     ret[key] = this[key];
-                } else if (this._cloneCallbacks[key] === false) {
+                } else if (cc === false) {
+                    // false means wipe out the old!  like _activeSite, etc.
                     ret[key] = undefined;
+                } else if (cc === 'constructor') {
+                    // leave alone whatever the constructor initially set up.
                 } else {
                     // call the cloneCallbacks function
-                    this._cloneCallbacks[key](key, ret, this, deep, memo);
+                    (cc as CloneCallbackFunctionType)(key, ret, deep, memo);
                 }
             } else if (
                 Object.getOwnPropertyDescriptor(this, key).get !== undefined
                 || Object.getOwnPropertyDescriptor(this, key).set !== undefined
             ) {
-                // do nothing
+                // do nothing for properties.
             } else if (typeof this[key] === 'function') {
                 // do nothing -- events might not be copied.
             } else if (
@@ -147,18 +164,18 @@ export class ProtoM21Object {
             ) {
                 // console.log('cloning ', key);
                 const m21Obj = <ProtoM21Object><unknown> this[key];
-                let clonedVersion;
+                let clonedVersion: ProtoM21Object;
                 if (memo.has(m21Obj)) {
                     clonedVersion = memo.get(m21Obj);
                 } else {
                     clonedVersion = m21Obj.clone(deep, memo);
                 }
-                ret[key] = clonedVersion;
+                ret[key] = <any> clonedVersion;
             } else if (
                 deep
                 && this[key] instanceof Array
             ) {
-                ret[key] = Array.from(this[key] as any);
+                ret[key] = <any[]> Array.from(this[key] as any);
             } else {
                 try {
                     if (deep && typeof this[key] !== 'string') {
@@ -182,8 +199,6 @@ export class ProtoM21Object {
     /**
      * Check to see if an object is of this class or subclass.
      *
-     * @param {string|string[]} testClass - a class or Array of classes to test
-     * @returns {boolean}
      * @example
      * var n = new music21.note.Note();
      * n.isClassOrSubclass('Note'); // true
@@ -193,13 +208,13 @@ export class ProtoM21Object {
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
     isClassOrSubclass(
-        testClass: string|typeof ProtoM21Object|(string | typeof ProtoM21Object)[]
+        testClass: string|string[]|(new () => ProtoM21Object)|(new () => ProtoM21Object)[]
     ): boolean {
-        let useTestClass: (string | typeof ProtoM21Object)[];
+        let useTestClass: string[] | (new () => ProtoM21Object)[];
         if (!(testClass instanceof Array)) {
-            useTestClass = [testClass] as (string | typeof ProtoM21Object)[];
+            useTestClass = [testClass] as string[] | (new () => ProtoM21Object)[];
         } else {
-            useTestClass = testClass as (string | typeof ProtoM21Object)[];
+            useTestClass = testClass as string[] | (new () => ProtoM21Object)[];
         }
         for (const thisTestClass of useTestClass) {
             if (this.classSet.has(thisTestClass)) {
@@ -209,11 +224,7 @@ export class ProtoM21Object {
         return false;
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    toString() {
+    toString(): string {
         let si = this.stringInfo();
         if (si !== '') {
             si = ' ' + si;
@@ -221,11 +232,7 @@ export class ProtoM21Object {
         return `<${this.classes[0]}${si}>`;
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return '';
     }
 

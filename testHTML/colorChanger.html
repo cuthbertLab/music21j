@@ -2,6 +2,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>Music21j Color Picker</title>
+  <link rel="stylesheet" href="../css/m21.css" type="text/css" />
   <script src="../build/music21.debug.js"></script>
 </head>
 <body>
@@ -10,12 +11,10 @@
 
 <script>
 function getColorDOM(s, width, height) {
-    const $d = $('<div/>')
-        .css('text-align', 'left')
-        .css('position', 'relative');
-    const $buttonDiv = getColorToolbar(s);
-    $d.append($buttonDiv);
-    $d.append($("<br clear='all'/>"));
+    const d = music21.common.to_el('<div style="text-align: left; position: relative"></div>');
+    const buttonDiv = getColorToolbar(s);
+    d.appendChild(buttonDiv);
+    d.appendChild(music21.common.to_el("<br style='clear:both'>"));
     s.renderOptions.events.click = e => {
         const SVGElement = e.currentTarget;
         const [clickedDiatonicNoteNum, foundNote] = s.findNoteForClick(
@@ -28,26 +27,23 @@ function getColorDOM(s, width, height) {
             s.activeNote = foundNote;
         }
     };
-    s.appendNewDOM($d, width, height); // var can =
-    return $d;
+    s.appendNewDOM(d, width, height); // var can =
+    return d;
 }
 
-function getColorToolbar(s, $siblingDOM) {
+function getColorToolbar(s, siblingDOM) {
     const addColor = (newColor, clickEvent) => {
         /*
          * To be called on a button...
          */
-        let $useDOM = $siblingDOM;
-        if ($useDOM === undefined) {
-            let $searchParent = $(clickEvent.target).parent();
-            while (
-                $searchParent !== undefined &&
-                ($useDOM === undefined || $useDOM[0] === undefined)
-            ) {
-                $useDOM = $searchParent.find('.streamHolding');
-                $searchParent = $searchParent.parent();
+        let useDOM = siblingDOM;
+        if (!useDOM) {
+            let searchParent = clickEvent.target.parentElement;
+            while (searchParent && !useDOM) {
+                useDOM = searchParent.querySelector('.streamHolding');
+                searchParent = searchParent.parentElement;
             }
-            if ($useDOM[0] === undefined) {
+            if (!useDOM) {
                 console.log('Could not find a SVG...');
                 return;
             }
@@ -56,17 +52,14 @@ function getColorToolbar(s, $siblingDOM) {
             const n = s.activeNote;
             n.noteheadColor = newColor;
             /* console.log(n.pitch.name); */
-            const $newSvg = s.redrawDOM($useDOM[0]);
+            const newSvg = s.redrawDOM(useDOM);
             if (s.changedCallbackFunction !== undefined) {
-                s.changedCallbackFunction({ svg: $newSvg });
+                s.changedCallbackFunction({ svg: newSvg });
             }
         }
     };
 
-    const $buttonDiv = $('<div/>').attr(
-        'class',
-        'accidentalToolbar scoreToolbar'
-    );
+    const buttonDiv = music21.common.to_el('<div class="accidentalToolbar scoreToolbar">');
     const info = [
         ['black', 'white', 'harmonic'],
         ['green', 'white', 'passing'],
@@ -76,16 +69,16 @@ function getColorToolbar(s, $siblingDOM) {
 
     for (let i = 0; i < info.length; i++) {
         const [thisColor, textColor, thisFunction] = info[i];
-        const $b = $(
+        const b = music21.common.to_el(
             `<button style='background-color: ${thisColor}; color: ${textColor}'>${thisFunction}</button>`
         );
-        $b.click(e => addColor(thisColor, e));
-        $buttonDiv.append($b);
+        b.addEventListener('click', e => addColor(thisColor, e));
+        buttonDiv.appendChild(b);
     }
-    return $buttonDiv;
+    return buttonDiv;
 }
 
-s = undefined;
+    s = undefined;
 
     const k = new music21.key.Key('D');
 
@@ -100,8 +93,8 @@ s = undefined;
     const n3 = new music21.note.Note('B4');
     s.append(n3);
     s.autoBeam = false;
-    const $d = getColorDOM(s);
-    $('#SVGDiv').append($d);
+    const d = getColorDOM(s);
+    document.querySelector('#SVGDiv').appendChild(d);
 
     const sChord = new music21.stream.Measure();
     sChord.timeSignature = new music21.meter.TimeSignature('4/4');
@@ -109,7 +102,7 @@ s = undefined;
     ch.duration.type = 'whole';
     sChord.keySignature = k;
     sChord.append(ch);
-    sChord.appendNewDOM($('#SVGDiv'));
+    sChord.appendNewDOM(document.querySelector('#SVGDiv'));
 </script>
 
 </body>

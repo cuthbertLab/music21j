@@ -4,7 +4,8 @@
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
+        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+        <script src="../build/music21.debug.js"></script>
     </head>
     <body>
 	<div style='text-align: center; font-size: 8pt'>
@@ -29,7 +30,7 @@
     </div>
     <div id="svgDivGrandStaff" style='text-align: center' class='streamHolding'>
     </div>
-        <script src="../build/music21.debug.js"></script>
+    <div id="metronomeDiv"></div>
 		<script>
 		let m; // will become Measure object soon...
         let m1; // will become Measure object soon...
@@ -148,7 +149,7 @@
 
 
         metro = new music21.tempo.Metronome();
-        // metro.addDiv($("#metronomeDiv"));
+        metro.addDiv(document.querySelector("#metronomeDiv"));
 
         music21.miditools.config.metronome = metro;
         k = new music21.keyboard.Keyboard();
@@ -160,8 +161,8 @@
         k.scrollable = true;
         k.hideable = true;
 
-        const $kd = $('#keyboardDiv');
-        k.appendKeyboard($kd); // 25key keyboard
+        const kd = document.querySelector('#keyboardDiv');
+        k.appendKeyboard(kd); // 25key keyboard
 
         music21.miditools.config.maxDelay = 200;
 
@@ -175,33 +176,45 @@
             music21.keyboard.jazzHighlight.bind(k)
         ];
 
-        music21.webmidi.createSelector($("#putMidiSelectHere"));
+        music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
         music21.miditools.callbacks.general = midiCallbacksPlay;
 
-        $('#markC').bind('click', function () { k.markC = this.checked; k.redrawSVG() });
-        $('#showNames').bind('click', function () { k.showNames = this.checked; k.redrawSVG() });
-        $('#showOctaves').bind('click', function () { k.showOctaves = this.checked; k.redrawSVG() });
-        $('#playSound').bind('click', function() {
-            if (this.checked) {
+        document.querySelector('#markC').addEventListener('click', e => {
+            k.markC = e.target.checked;
+            k.redrawSVG();
+        });
+        document.querySelector('#showNames').addEventListener('click', e => {
+            k.showNames = e.target.checked;
+            k.redrawSVG();
+        });
+        document.querySelector('#showOctaves').addEventListener('click', e => {
+            k.showOctaves = e.target.checked;
+            k.redrawSVG();
+        });
+        document.querySelector('#playSound').addEventListener('click', e => {
+            if (e.target.checked) {
                 music21.miditools.callbacks.general = midiCallbacksPlay;
             } else {
                 music21.miditools.callbacks.general = midiCallbacksNoPlay;
             }
         });
-        $('input[type=radio][name=staffNumberSelector]').change(function() {
-            if (this.value === 'singleStaff') {
-                $("#svgDiv").css('display', 'block');
-                $("#svgDivGrandStaff").css('display', 'none');
+        const staffRadio = document.querySelector('input[type=radio][name=staffNumberSelector]')
+        staffRadio.addEventListener('change', e => {
+            if (e.target.value === 'singleStaff') {
+                document.querySelector("#svgDiv").style.display = 'block';
+                document.querySelector("#svgDivGrandStaff").style.display = 'none';
                 music21.miditools.callbacks.sendOutChord = appendElement;
             }
-            else if (this.value === 'grandStaff') {
-                $("#svgDiv").css('display', 'none');
-                $("#svgDivGrandStaff").css('display', 'block');
+            else if (e.target.value === 'grandStaff') {
+                document.querySelector("#svgDiv").style.display = 'none';
+                document.querySelector("#svgDivGrandStaff").style.display = 'block';
                 music21.miditools.callbacks.sendOutChord = appendElementGrandStaff;
             } else {
-                console.log("What value is this? " + this.value);
+                console.log("What value is this? " + e.target.value);
             }
-        }).trigger('change');
+        });
+        const evt = new Event('change', {bubbles: true});
+        staffRadio.dispatchEvent(evt);
 
 		</script>
 

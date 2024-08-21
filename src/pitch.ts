@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/pitch -- pitch routines
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Pitch related objects and methods
  */
@@ -18,6 +18,7 @@ import type * as clef from './clef';
 interface UpdateAccidentalDisplayParams {
     pitchPast?: Pitch[],
     pitchPastMeasure?: Pitch[],
+    otherSimultaneousPitches?: Pitch[],
     alteredPitches?: Pitch[],
     cautionaryPitchClass?: boolean,
     cautionaryAll?: boolean,
@@ -67,10 +68,9 @@ export class Accidental extends prebase.ProtoM21Object {
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
-     * @param {number|string} accName - the name, number, or modifier to set
-     * @returns {undefined}
+     * accName - the name, number, or modifier to set
      */
-    set(accName: number|string) {
+    set(accName: number|string): void {
         if (typeof accName === 'string') {
             accName = accName.toLowerCase();
         }
@@ -540,7 +540,7 @@ export class Pitch extends prebase.ProtoM21Object {
      * @param {int} directionInt -- -1 = down, 1 = up
      * @returns {Pitch}
      */
-    _getEnharmonicHelper(inPlace=false, directionInt) {
+    _getEnharmonicHelper(inPlace=false, directionInt=0) {
         // differs from Python version because
         // cannot import interval here.
         let octaveStored = true;
@@ -618,6 +618,7 @@ export class Pitch extends prebase.ProtoM21Object {
         {
             pitchPast = [],
             pitchPastMeasure = [],
+            otherSimultaneousPitches = [],
             alteredPitches = [],
             cautionaryPitchClass = true,
             cautionaryAll = false,
@@ -626,10 +627,6 @@ export class Pitch extends prebase.ProtoM21Object {
             lastNoteWasTied = false,
         }: UpdateAccidentalDisplayParams = {}
     ) {
-        // TODO: this presently deals with chords as simply a list
-        //   we might permit pitchPast to contain a list of pitches, to represent
-        //    a simultaneity?
-
         // should we display accidental if no previous accidentals have been displayed
         // i.e. if it's the first instance of an accidental after a tie
         let displayAccidentalIfNoPreviousAccidentals = false;
@@ -667,6 +664,28 @@ export class Pitch extends prebase.ProtoM21Object {
             } else {
                 return;  // exit: nothing more to do
             }
+        }
+
+        function same_step_different_pitch(p: Pitch) {
+            if (p.step !== this.step) {
+                return false;
+            }
+            return p.pitchClass !== this.pitchClass;
+        }
+
+        if (
+            cautionaryPitchClass
+            && otherSimultaneousPitches !== undefined
+            && otherSimultaneousPitches.length > 0
+            && otherSimultaneousPitches.filter(same_step_different_pitch, this).length > 0
+        ) {
+            if (acc_orig !== undefined) {
+                acc_orig.displayStatus = true;
+            } else {
+                this.accidental = new Accidental('natural');
+                this.accidental.displayStatus = true;
+            }
+            return;
         }
 
         // no pitches in past...

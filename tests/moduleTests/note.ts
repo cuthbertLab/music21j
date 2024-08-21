@@ -12,6 +12,17 @@ export default function tests() {
         assert.equal(n.pitch.octave, 5, 'Pitch octave set to 5');
     });
 
+    test('music21.note.Note.vexflowNote stems', assert => {
+        const n1 = new music21.note.Note('C');
+        const vfn1 = n1.vexflowNote();
+        assert.ok(vfn1.hasStem());
+
+        const n2 = new music21.note.Note('C');
+        n2.stemDirection = 'noStem';
+        const vfn2 = n2.vexflowNote();
+        assert.notOk(vfn2.hasStem());
+    });
+
     test('music21.note.Rest.vexflowNote whole rest', assert => {
         const r = new music21.note.Rest();
         r.duration.type = 'whole';

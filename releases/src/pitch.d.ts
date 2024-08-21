@@ -3,6 +3,7 @@ import type * as clef from './clef';
 interface UpdateAccidentalDisplayParams {
     pitchPast?: Pitch[];
     pitchPastMeasure?: Pitch[];
+    otherSimultaneousPitches?: Pitch[];
     alteredPitches?: Pitch[];
     cautionaryPitchClass?: boolean;
     cautionaryAll?: boolean;
@@ -30,8 +31,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
-     * @param {number|string} accName - the name, number, or modifier to set
-     * @returns {undefined}
+     * accName - the name, number, or modifier to set
      */
     set(accName: number | string): void;
     /**
@@ -67,7 +67,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
      * @type {string}
      * @readonly
      */
-    get vexflowModifier(): "bb" | "b" | "#" | "n" | "##" | "###" | "bbb";
+    get vexflowModifier(): "n" | "#" | "##" | "###" | "bb" | "b" | "bbb";
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
@@ -212,7 +212,7 @@ export declare class Pitch extends prebase.ProtoM21Object {
      * @param {int} directionInt -- -1 = down, 1 = up
      * @returns {Pitch}
      */
-    _getEnharmonicHelper(inPlace: boolean, directionInt: any): this;
+    _getEnharmonicHelper(inPlace?: boolean, directionInt?: number): this;
     /**
      *
      * @param {boolean} [inPlace=false]
@@ -227,7 +227,7 @@ export declare class Pitch extends prebase.ProtoM21Object {
     getLowerEnharmonic(inPlace?: boolean): this;
     protected _nameInKeySignature(alteredPitches: Pitch[]): boolean;
     protected _stepInKeySignature(alteredPitches: Pitch[]): boolean;
-    updateAccidentalDisplay({ pitchPast, pitchPastMeasure, alteredPitches, cautionaryPitchClass, cautionaryAll, overrideStatus, cautionaryNotImmediateRepeat, lastNoteWasTied, }?: UpdateAccidentalDisplayParams): void;
+    updateAccidentalDisplay({ pitchPast, pitchPastMeasure, otherSimultaneousPitches, alteredPitches, cautionaryPitchClass, cautionaryAll, overrideStatus, cautionaryNotImmediateRepeat, lastNoteWasTied, }?: UpdateAccidentalDisplayParams): void;
     /**
      * Returns the vexflow name for the pitch in the given clef.
      *

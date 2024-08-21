@@ -4,8 +4,8 @@
  *
  * does not load the other modules.
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * module for Music21Objects
  */
@@ -16,12 +16,12 @@ import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
 import * as style from './style';
+import {Music21Exception} from './exceptions21';
 
 // imports for typing only
-import { Stream, Measure } from './stream';
-import {Music21Exception} from './exceptions21';
-import { TimeSignature } from './meter';
-
+import type {Stream, Measure} from './stream';
+import type {TimeSignature} from './meter';
+import type {ClassFilterType} from './types';
 
 declare interface StreamRecursionLike {
     recursionType: string;
@@ -52,7 +52,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     protected _naiveOffset: number = 0;
     // _derivation = undefined;
     protected _style: style.Style;
-    protected _editorial: editorial.Editorial;
+    protected _editorial: Record<string, any>;  // actually editorial.Editorial
     protected _duration: duration.Duration;
     protected _derivation: derivation.Derivation;
     protected _priority: number = 0;
@@ -66,34 +66,32 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     protected static _styleClass: typeof style.Style = style.Style;
 
-    constructor(keywords={}) {
+    constructor(_keywords={}) {
         super();
         this._duration = new duration.Duration(0.0);
         this.id = sites.getId(this);
         this.sites = new sites.Sites();
         this._cloneCallbacks._activeSite = false;
         this._cloneCallbacks._activeSiteStoredOffset = false;
-        this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(
+        this._cloneCallbacks._derivation = (
             keyName,
-            newObj,
-            self,
-            deep,
-            memo
-        ) {
+            newObj: Music21Object,
+            _deep,
+            _memo,
+        ) => {
             const newDerivation = new derivation.Derivation(newObj);
-            newDerivation.origin = self;
+            newDerivation.origin = this;
             newDerivation.method = 'clone';
             newObj[keyName] = newDerivation;
         };
 
         // noinspection JSUnusedLocalSymbols
-        this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(
-            keyName,
-            newObj,
-            self,
-            deep,
-            memo
-        ) {
+        this._cloneCallbacks.sites = (
+            _keyName,
+            newObj: Music21Object,
+            _deep,
+            _memo,
+        ) => {
             newObj.sites = new sites.Sites();
         };
     }
@@ -157,15 +155,19 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._derivation = newDerivation;
     }
 
-    get editorial(): editorial.Editorial {
+    /**
+     * Note that the editorial is typed as Record<string, any>
+     *     but actually returns an editorial object
+     */
+    get editorial(): Record<string, any> {
         if (this._editorial === undefined) {
             this._editorial = new editorial.Editorial();
         }
         return this._editorial;
     }
 
-    set editorial(newEditorial: editorial.Editorial) {
-        this._editorial = newEditorial;
+    set editorial(newEditorial: editorial.Editorial|Record<string, any>) {
+        this._editorial = newEditorial as any;
     }
 
     get hasEditorialInformation(): boolean {
@@ -307,7 +309,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.duration.quarterLength = ql;
     }
 
-    mergeAttributes(other) {
+    mergeAttributes(other: Music21Object): this {
         // id;
         this.groups = other.groups.slice();
         return this;
@@ -369,7 +371,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             return <number> this.getOffsetBySite(site);
         } catch (e) {} // eslint-disable-line no-empty
         // noinspection JSUnusedLocalSymbols
-        for (const [csSite, csOffset, unused_csRecursionType] of this.contextSites()) {
+        for (const [csSite, csOffset, _csRecursionType] of this.contextSites()) {
             if (csSite === site) {
                 return csOffset;
             }
@@ -380,7 +382,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     // ---------- Contexts -------------
 
     getContextByClass(
-        className,
+        className: ClassFilterType,
         options={}
     ) {
         const params = {
@@ -393,8 +395,9 @@ export class Music21Object extends prebase.ProtoM21Object {
         const sortByCreationTime = params.sortByCreationTime;
 
         if (className !== undefined && !(className instanceof Array)) {
-            className = [className];
+            className = [className as any];
         }
+
         if (
             getElementMethod.includes('At')
             && this.isClassOrSubclass(className)
@@ -557,7 +560,8 @@ export class Music21Object extends prebase.ProtoM21Object {
     _getTimeSignatureForBeat(): TimeSignature {
         // note: getContextByClass does not full support BeforeOffset yet.
         const ts: TimeSignature = this.getContextByClass(
-            'TimeSignature', {getElementMethod: 'getElementAtOrBeforeOffset'}
+            'TimeSignature',
+            {getElementMethod: 'getElementAtOrBeforeOffset'},
         );
         if (ts === undefined) {
             throw new Music21Exception('this object does not have a TimeSignature in Sites');
@@ -580,7 +584,7 @@ function getContextByClassPayloadExtractor(
     flatten: boolean|string,  // true, false, or semiflat
     positionStart: number,
     getElementMethod: string,
-    classList: string[]
+    classList: ClassFilterType,
 ) {
     // this should all be done as a tree...
     // do not use .flat or .semiFlat so as not

@@ -2,10 +2,10 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
-import Vex from 'vexflow';
+import { Fraction as VFFraction } from 'vexflow';
 
 import * as base from './base';
 import * as beam from './beam';
@@ -20,6 +20,7 @@ import {opFrac} from './common';
 
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
+ * divisions is currently not used.
  *
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
@@ -32,16 +33,16 @@ export class TimeSignature extends base.Music21Object {
 
     _numerator: number = 4;
     _denominator: number = 4;
-    _overwrittenBarDuration;
+    _overwrittenBarDuration: duration.Duration;
     symbol: string = '';
     symbolizeDenominator: boolean = false;
 
     // music21j simple attributes;
     _beatGroups: number[][] = [];
-    _overwrittenBeatCount;
-    _overwrittenBeatDuration;
+    _overwrittenBeatCount: number;
+    _overwrittenBeatDuration: duration.Duration;
 
-    constructor(value: string = '4/4', divisions?) {
+    constructor(value: string = '4/4', divisions=undefined) {
         super();
         this.classSortOrder = 4;
         this.resetValues(value, divisions);
@@ -51,7 +52,7 @@ export class TimeSignature extends base.Music21Object {
         return this.ratioString;
     }
 
-    resetValues(value: string = '4/4', divisions?) {
+    resetValues(value: string = '4/4', divisions=undefined) {
         this.symbol = '';
         this.symbolizeDenominator = false;
         this._overwrittenBarDuration = undefined;
@@ -64,7 +65,8 @@ export class TimeSignature extends base.Music21Object {
         this.load(value, divisions);
     }
 
-    load(value: string, divisions?) {
+    load(value: string, divisions?): void {
+        // "divisions" is unused.
         const valueLower = value.toLowerCase();
         if (valueLower === 'common' || valueLower === 'c') {
             value = '4/4';
@@ -184,24 +186,21 @@ export class TimeSignature extends base.Music21Object {
     computeBeatGroups(): number[][] {
         const tempBeatGroups = [];
         let numBeats = this.numerator;
-        let beatValue = this.denominator;
-        if (beatValue < 8 && numBeats >= 5) {
-            const beatsToEighthNoteRatio = 8 / beatValue;
-            // hopefully beatValue is an int -- right Brian Ferneyhough?
-            beatValue = 8;
-            numBeats *= beatsToEighthNoteRatio;
-        }
-
+        const beatValue = this.denominator;
         if (beatValue >= 8) {
-            while (numBeats >= 5) {
-                tempBeatGroups.push([3, beatValue]);
-                numBeats -= 3;
-            }
-            if (numBeats === 4) {
-                tempBeatGroups.push([2, beatValue]);
-                tempBeatGroups.push([2, beatValue]);
-            } else if (numBeats > 0) {
-                tempBeatGroups.push([numBeats, beatValue]);
+            if ([4, 2].includes(numBeats)) {  // 4/8 and 2/8 should have eighth beats
+                tempBeatGroups.push([1, beatValue]);
+            } else {
+                while (numBeats >= 5) {
+                    tempBeatGroups.push([3, beatValue]);
+                    numBeats -= 3;
+                }
+                if (numBeats === 4) {
+                    tempBeatGroups.push([2, beatValue]);
+                    tempBeatGroups.push([2, beatValue]);
+                } else if (numBeats > 0) {
+                    tempBeatGroups.push([numBeats, beatValue]);
+                }
             }
         } else if (beatValue === 2) {
             tempBeatGroups.push([1, 2]);
@@ -212,6 +211,27 @@ export class TimeSignature extends base.Music21Object {
             tempBeatGroups.push([2, 8]);
         }
         return tempBeatGroups;
+    }
+
+    _beat_group_as_ql(beatGroup: number[]): number {
+        const temp_ts = new TimeSignature();
+        temp_ts.numerator = beatGroup[0];
+        temp_ts.denominator = beatGroup[1];
+        return temp_ts.barDuration.quarterLength;
+    }
+
+    _beat_groups_to_fill_bar(): number[][] {
+        const post = [];
+        if (this.beatGroups.length === 1) {
+            for (let i = 0; i < this.beatCount; i++) {
+                post.push(this.beatGroups[0]);
+            }
+        } else {
+            for (const beatGroup of this.beatGroups) {
+                post.push(beatGroup);
+            }
+        }
+        return post;
     }
 
     offsetToIndex(
@@ -225,20 +245,39 @@ export class TimeSignature extends base.Music21Object {
                 + `where total duration is ${this.barDuration.quarterLength}`
             );
         }
-        // DOES NOT SUPPORT irregular beats yet...
-        const beatDuration = this.beatDuration;
-        // does not support includeCoincidentBoundaries yet.
-        return Math.floor(qLenPos / beatDuration.quarterLength);
+
+        let accumulated_time = 0.0;
+        let index = -1;  // first beatGroup increments to 0
+
+        for (const beatGroup of this._beat_groups_to_fill_bar()) {
+            index += 1;
+            const beat_group_ql = this._beat_group_as_ql(beatGroup);
+            accumulated_time = opFrac(accumulated_time + beat_group_ql);
+            if (
+                accumulated_time > qLenPos
+                || (includeCoincidentBoundaries && accumulated_time === qLenPos)
+            ) {
+                break;
+            }
+        }
+        return index;
     }
 
     /**
      * Return a span of [start, end] for the current beat/beam grouping
      */
     offsetToSpan(offset: number): number[] {
-        const beatDuration = this.beatDuration.quarterLength;
-        const beatsFromStart = Math.floor(offset / beatDuration);
-        const start = beatsFromStart * beatDuration;
-        const end = start + beatDuration;
+        let start = 0.0;
+        let end = 0.0;
+
+        for (const beatGroup of this._beat_groups_to_fill_bar()) {
+            const beat_group_ql = this._beat_group_as_ql(beatGroup);
+            start = end;
+            end = opFrac(start + beat_group_ql);
+            if (end > offset) {
+                break;
+            }
+        }
         return [start, end];
     }
 
@@ -250,15 +289,15 @@ export class TimeSignature extends base.Music21Object {
         const params = { measureStartOffset: 0.0 };
         common.merge(params, options);
         const measureStartOffset = params.measureStartOffset;
-        let beamsList = beam.Beams.naiveBeams(srcStream);
+        let beamsList: beam.Beams[] = beam.Beams.naiveBeams(srcStream);
         beamsList = beam.Beams.removeSandwichedUnbeamables(beamsList);
-        const fixBeamsOneElementDepth = (i, el, depth) => {
+        const fixBeamsOneElementDepth = (i: number, el, depth) => {
             const beams = beamsList[i];
             if (!beams) {
                 return;
             }
 
-            if (el.duration.quarterLength >= this.beatDuration.quarterLength) {
+            if (el.quarterLength >= this._beat_group_as_ql(this.beatGroups[0])) {
                 beamsList[i] = undefined;
                 return;
             }
@@ -275,8 +314,8 @@ export class TimeSignature extends base.Music21Object {
             const startNext = end;
             const isLast = (i === srcStream.length - 1);
             const isFirst = (i === 0);
-            let beamNext;
-            let beamPrevious;
+            let beamNext: beam.Beams;
+            let beamPrevious: beam.Beams;
             if (!isFirst) {
                 beamPrevious = beamsList[i - 1];
             }
@@ -294,17 +333,20 @@ export class TimeSignature extends base.Music21Object {
                 return;
             }
 
-            let beamType;
+            let beamType: string;
             if (isFirst && measureStartOffset === 0.0) {
                 beamType = 'start';
                 if (beamNext === undefined || !(beamNext.getNumbers().includes(beamNumber))) {
                     beamType = 'partial-right';
                 }
-            } else if (isLast) {
+            } else if (isLast && (!(srcStream instanceof stream.Measure) || srcStream.paddingRight === 0.0)) {
                 beamType = 'stop';
                 if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
                     beamType = 'partial-left';
-                } else if (beamPrevious && beamPrevious.getTypeByNumber(beamNumber) === 'stop') {
+                } else if (
+                    beamPrevious
+                    && ['stop', 'partial-left'].includes(beamPrevious.getTypeByNumber(beamNumber))
+                ) {
                     beamsList[i] = undefined;
                 }
             } else if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
@@ -394,12 +436,12 @@ export class TimeSignature extends base.Music21Object {
      *
      * returns a list of numerator and denominator groups, for VexFlow, as Vex.Flow.Fraction[]
      */
-    vexflowBeatGroups(): Vex.Flow.Fraction[] {
+    vexflowBeatGroups(): VFFraction[] {
         const tempBeatGroups = this.beatGroups;
         const vfBeatGroups = [];
         for (let i = 0; i < tempBeatGroups.length; i++) {
             const [bg_numerator, bg_denominator] = tempBeatGroups[i];
-            vfBeatGroups.push(new Vex.Flow.Fraction(bg_numerator, bg_denominator));
+            vfBeatGroups.push(new VFFraction(bg_numerator, bg_denominator));
         }
         return vfBeatGroups;
 

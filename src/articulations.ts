@@ -1,7 +1,7 @@
 /**
  * articulations module.
  */
-import Vex from 'vexflow';
+import { Articulation as VFArticulation, Modifier as VFModifier, Ornament as VFOrnament } from 'vexflow';
 
 import * as common from './common';
 import * as prebase from './prebase';
@@ -17,10 +17,10 @@ export enum ArticulationPlacement {
 
 export const ArticulationPlacementToVexFlowModifierPosition = new Map(
     [
-        [ArticulationPlacement.ABOVE, Vex.Flow.Modifier.Position.ABOVE],
-        [ArticulationPlacement.BELOW, Vex.Flow.Modifier.Position.BELOW],
-        [ArticulationPlacement.LEFT, Vex.Flow.Modifier.Position.LEFT],
-        [ArticulationPlacement.RIGHT, Vex.Flow.Modifier.Position.RIGHT],
+        [ArticulationPlacement.ABOVE, VFModifier.Position.ABOVE],
+        [ArticulationPlacement.BELOW, VFModifier.Position.BELOW],
+        [ArticulationPlacement.LEFT, VFModifier.Position.LEFT],
+        [ArticulationPlacement.RIGHT, VFModifier.Position.RIGHT],
     ]
 );
 
@@ -32,10 +32,10 @@ export interface VexflowArticulationParams {
  * This works the same for music21 Articulations and Expressions
  */
 export function setPlacementOnVexFlowArticulation(
-    vfa: Vex.Flow.Articulation|Vex.Flow.Ornament,
+    vfa: VFArticulation|VFOrnament,
     placement: ArticulationPlacement,
     stemDirection: string,
-) {
+): void {
     if (placement === undefined) {
         return;
     }
@@ -77,15 +77,19 @@ export class Articulation extends prebase.ProtoM21Object {
 
     name: string;
     placement: ArticulationPlacement = ArticulationPlacement.NOTE_SIDE;
-    vexflowModifier: string;
+    vexflowModifier: string = '';
     dynamicScale: number = 1.0;
     lengthScale: number = 1.0;
 
     /**
-     * Generates a Vex.Flow.Articulation for this articulation.
+     * Generates a Vex.Flow.Articulation for this articulation if it is something
+     * vexflow can display.
      */
-    vexflow({stemDirection}: VexflowArticulationParams = {}): Vex.Flow.Articulation {
-        const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
+    vexflow({stemDirection}: VexflowArticulationParams = {}): VFArticulation|null {
+        if (!this.vexflowModifier) {
+            return null;
+        }
+        const vfa = new VFArticulation(this.vexflowModifier);
         setPlacementOnVexFlowArticulation(vfa, this.placement, stemDirection);
         return vfa;
     }
@@ -97,10 +101,7 @@ export class Articulation extends prebase.ProtoM21Object {
 export class LengthArticulation extends Articulation {
     static get className() { return 'music21.articulation.LengthArticulation'; }
 
-    constructor() {
-        super();
-        this.name = 'length-articulation';
-    }
+    override name = 'length-articulation';
 }
 
 /**
@@ -109,10 +110,7 @@ export class LengthArticulation extends Articulation {
 export class DynamicArticulation extends Articulation {
     static get className() { return 'music21.articulation.DynamicArticulation'; }
 
-    constructor() {
-        super();
-        this.name = 'dynamic-articulation';
-    }
+    override name ='dynamic-articulation';
 }
 
 /**
@@ -121,10 +119,7 @@ export class DynamicArticulation extends Articulation {
 export class PitchArticulation extends Articulation {
     static get className() { return 'music21.articulation.PitchArticulation'; }
 
-    constructor() {
-        super();
-        this.name = 'pitch-articulation';
-    }
+    override name = 'pitch-articulation';
 }
 
 /**
@@ -133,10 +128,7 @@ export class PitchArticulation extends Articulation {
 export class TimbreArticulation extends Articulation {
     static get className() { return 'music21.articulation.TimbreArticulation'; }
 
-    constructor() {
-        super();
-        this.name = 'timbre-articulation';
-    }
+    override name = 'timbre-articulation';
 }
 
 /**
@@ -145,12 +137,9 @@ export class TimbreArticulation extends Articulation {
 export class Accent extends DynamicArticulation {
     static get className() { return 'music21.articulation.Accent'; }
 
-    constructor() {
-        super();
-        this.name = 'accent';
-        this.vexflowModifier = 'a>';
-        this.dynamicScale = 1.5;
-    }
+    override name = 'accent';
+    override vexflowModifier = 'a>';
+    override dynamicScale = 1.5;
 }
 
 /**
@@ -159,51 +148,35 @@ export class Accent extends DynamicArticulation {
 export class StrongAccent extends Accent {
     static get className() { return 'music21.articulation.StrongAccent'; }
 
-    constructor() {
-        super();
-        this.name = 'strong accent';
-        this.vexflowModifier = 'a^';
-        this.dynamicScale = 2.0;
-    }
+    override name = 'strong accent';
+    override vexflowModifier = 'a^';
+    override dynamicScale = 2.0;
 }
 
-/**
- * no playback for now.
- */
 export class Staccato extends LengthArticulation {
     static get className() { return 'music21.articulation.Staccato'; }
 
-    constructor() {
-        super();
-        this.name = 'staccato';
-        this.vexflowModifier = 'a.';
-    }
+    override name = 'staccato';
+    override vexflowModifier = 'a.';
+    override lengthScale = 0.6;
 }
 
-/**
- * no playback for now.
- */
 export class Staccatissimo extends Staccato {
     static get className() { return 'music21.articulation.Staccatissimo'; }
 
-    constructor() {
-        super();
-        this.name = 'staccatissimo';
-        this.vexflowModifier = 'av';
-    }
+    override name = 'staccatissimo';
+    override vexflowModifier = 'av';
+    override lengthScale = 0.3;
 }
 
 /**
- * no playback or display for now.
+ * no difference in playback from staccato.  no display.
  */
 export class Spiccato extends Staccato {
     static get className() { return 'music21.articulation.Spiccato'; }
 
-    constructor() {
-        super();
-        this.name = 'spiccato';
-        this.vexflowModifier = undefined;
-    }
+    override name = 'spiccato';
+    override vexflowModifier = '';
 }
 
 /**
@@ -225,9 +198,6 @@ export class Marcato extends DynamicArticulation {
 export class Tenuto extends LengthArticulation {
     static get className() { return 'music21.articulation.Tenuto'; }
 
-    constructor() {
-        super();
-        this.name = 'tenuto';
-        this.vexflowModifier = 'a-';
-    }
+    override name = 'tenuto';
+    override vexflowModifier = 'a-';
 }

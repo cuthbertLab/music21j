@@ -1,10 +1,11 @@
 <html><head>
+   <link rel="stylesheet" href="../css/m21.css" type="text/css" />
    <script src="//localhost:8000/build/music21.debug.js"></script>
 </head>
 <body>
    <script>
-       var n = new music21.note.Note("F#");
-       var s = new music21.stream.Stream();
+       const n = new music21.note.Note("F#");
+       const s = new music21.stream.Stream();
        s.append(n);
        s.appendNewDOM();
    </script>

@@ -29,7 +29,6 @@ export default function tests() {
         });
         assert.strictEqual(mark.referent.quarterLength, 2);
 
-        // @ts-ignore
         mark = new music21.tempo.MetronomeMark({
             referent: new music21.duration.Duration(2),
         });

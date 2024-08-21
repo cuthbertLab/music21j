@@ -1,4 +1,5 @@
 /// <reference types="jquery" />
+/// <reference types="jquery" />
 import * as miditools from './miditools';
 import * as pitch from './pitch';
 /**
@@ -65,8 +66,6 @@ export declare class Key {
     addNoteName(labelOctaves?: boolean): this;
     /**
      * Removes the note name from the key (if exists)
-     *
-     * @returns {undefined}
      */
     removeNoteName(): void;
 }
@@ -127,10 +126,8 @@ export declare class Keyboard {
     constructor();
     /**
      * Redraws the SVG associated with this Keyboard
-     *
-     * @returns {SVGElement} new svgDOM
      */
-    redrawSVG(): SVGElement;
+    redrawSVG(): SVGSVGElement;
     /**
      * Appends a keyboard to the where parameter
      */
@@ -146,7 +143,7 @@ export declare class Keyboard {
     /**
      * Draws the SVG associated with this Keyboard
      */
-    createSVG(): SVGElement;
+    createSVG(): SVGSVGElement;
     /**
      * Puts a circle on middle c.
      */
@@ -165,17 +162,14 @@ export declare class Keyboard {
      * Do not call this directly, just use createSVG after changing the
      * scrollable property on the keyboard to True.
      */
-    wrapScrollable(svgDOM: SVGElement): JQuery;
+    wrapScrollable(svgDOM: SVGSVGElement): HTMLElement;
     /**
      * Puts a hideable keyboard inside a Div with the proper controls.
      *
      * Do not call this directly, just use createSVG after changing the
      * hideable property on the keyboard to True.
-     *
-     * @param {Node} where
-     * @param {SVGElement} keyboardSVG
      */
-    appendHideableKeyboard(where: any, keyboardSVG: any): JQuery<HTMLElement>;
+    appendHideableKeyboard(where: HTMLElement, keyboardSVG: SVGSVGElement | HTMLElement): HTMLElement;
 }
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.

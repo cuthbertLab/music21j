@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/keyboard -- PianoKeyboard rendering and display objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Keyboard module
  *
@@ -195,10 +195,8 @@ export class Key {
 
     /**
      * Removes the note name from the key (if exists)
-     *
-     * @returns {undefined}
      */
-    removeNoteName() {
+    removeNoteName(): void {
         if (
             this.svgObj === undefined
             || this.parent === undefined
@@ -308,10 +306,8 @@ export class Keyboard {
 
     /**
      * Redraws the SVG associated with this Keyboard
-     *
-     * @returns {SVGElement} new svgDOM
      */
-    redrawSVG() {
+    redrawSVG(): SVGSVGElement {
         if (this.svgObj === undefined) {
             return undefined;
         }
@@ -351,7 +347,7 @@ export class Keyboard {
      *
      * @param {SVGElement} keyRect - the dom object with the keyboard.
      */
-    clickHandler(keyRect) {
+    clickHandler(keyRect): void {
         // to-do : integrate with jazzHighlight...
         const id = parseInt(keyRect.getAttribute('id'));
         const thisKeyObject = this.keyObjects.get(id);
@@ -560,11 +556,8 @@ export class Keyboard {
      *
      * Do not call this directly, just use createSVG after changing the
      * hideable property on the keyboard to True.
-     *
-     * @param {Node} where
-     * @param {SVGElement} keyboardSVG
      */
-    appendHideableKeyboard(where, keyboardSVG: SVGSVGElement|HTMLElement) {
+    appendHideableKeyboard(where: HTMLElement, keyboardSVG: SVGSVGElement|HTMLElement): HTMLElement {
         const container = to_el('<div class="keyboardHideableContainer"></div>');
         const bInside = to_el(`
             <div class='keyboardToggleInside'

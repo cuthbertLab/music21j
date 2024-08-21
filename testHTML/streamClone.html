@@ -9,11 +9,11 @@
 <body>
 <h1>Stream.clone() tests...</h1>
 <script type="text/javascript">
-
+    const to_el = music21.common.to_el;
     let allStream;
 
-    const $b = $('body');
-    $b.append("<div>s = one measure</div>");
+    const b = document.body;
+    b.appendChild(to_el("<div>s = one measure</div>"));
 
     const s = new music21.stream.Measure();
     s.append(new music21.clef.BassClef());
@@ -26,23 +26,23 @@
 
     const s1 = s.clone(true);
     s1.appendNewDOM();
-    $b.append("<div>clone and change step from C to E</div>");
+    b.appendChild(to_el("<div>clone and change step from C to E</div>"));
 
     const y = s1.clone(true);
     y.flat.notes.get(0).pitch.step = 'E';
     y.flat.notes.get(0).stemDirection = undefined;
     y.appendNewDOM();
-    $b.append("<div>s (original) unchanged?</div>");
+    b.appendChild(to_el("<div>s (original) unchanged?</div>"));
     s1.appendNewDOM();
 
-    $b.append("<div><h1>three measure tiny notation Part</h1></div>");
+    b.appendChild(to_el("<div><h1>three measure tiny notation Part</h1></div>"));
     const s2 = music21.tinyNotation.TinyNotation('3/4 b2. a2. g2.');
     s2.appendNewDOM();
-    $b.append("<div>cloned right?</div>");
+    b.appendChild(to_el("<div>cloned right?</div>"));
     const y2 = s2.clone(true);
     y2.appendNewDOM();
 
-    $b.append("<div>s3 = three measure tiny notation Part (s.clone(), s.clone([D=A]), s.clone())</div>");
+    b.appendChild(to_el("<div>s3 = three measure tiny notation Part (s.clone(), s.clone([D=A]), s.clone())</div>"));
     const s3 = new music21.stream.Part();
     const m1 = s.clone(true);
     m1.renderOptions.left = 0;
@@ -57,7 +57,7 @@
     s3.append(m3);
     s3.appendNewDOM();
 
-    $b.append("<h1>Score</h1><div>s4 = three parts (s3.clone(), s3.clone()-inverted, s3.clone()</div>");
+    b.appendChild(to_el("<h1>Score</h1><div>s4 = three parts (s3.clone(), s3.clone()-inverted, s3.clone()</div>"));
 
     const s4 = new music21.stream.Score();
     s4.insert(0, s3.clone(true));
@@ -73,9 +73,9 @@
     s4.insert(0, s3.clone(true));
     s4.appendNewDOM();
 
-    $b.append("<div>is s3Second activeSite s4? " + (s3Second.activeSite === s4).toString() + "</div>");
+    b.appendChild(to_el("<div>is s3Second activeSite s4? " + (s3Second.activeSite === s4).toString() + "</div>"));
 
-    $b.append("<div>s3 unchanged?</div>");
+    b.appendChild(to_el("<div>s3 unchanged?</div>"));
     s3.appendNewDOM();
 </script>
 </body>

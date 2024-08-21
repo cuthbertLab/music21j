@@ -1,10 +1,23 @@
-/// <reference types="jquery" />
+/**
+ * music21j -- Javascript reimplementation of Core music21p features.
+ * music21/miditools -- A collection of tools for midi.
+ *
+ * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
+ *
+ * @author Michael Scott Asato Cuthbert
+ *
+ * A collection of tools for midi. See the namespace.
+ *
+ * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
+ * events from the Jazz plugin or the WebMIDI protocol.
+ */
 import * as MIDI from 'midicube';
 import '../css/midiPlayer.css';
 import * as chord from './chord';
 import * as instrument from './instrument';
 import * as note from './note';
-import * as tempo from './tempo';
+import type * as tempo from './tempo';
 export interface CallbackInterface {
     raw: (t: any, a: any, b: any, c: any) => Event;
     general: Function | Function[];
@@ -69,8 +82,6 @@ export declare class Event {
     /**
      * Calls MIDI.noteOn or MIDI.noteOff for the note
      * represented by the Event (if appropriate)
-     *
-     * @returns {undefined}
      */
     sendToMIDIjs(): void;
     /**
@@ -101,7 +112,7 @@ export declare function makeChords(jEvent: Event): void;
  * Take the list of Notes and makes a chord out of it, if appropriate and call
  * music21.miditools.callbacks.sendOutChord callback with the Chord or Note as a parameter.
  */
-export declare function sendOutChord(chordNoteList: note.Note[]): note.Note | chord.Chord | undefined;
+export declare function sendOutChord(chordNoteList: note.Note[]): note.Note | chord.Chord;
 /**
  * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
  *
@@ -149,10 +160,10 @@ export declare class MidiPlayer {
      * playback speed scaling (1=default)
      */
     speed: number;
-    $playDiv: JQuery;
+    playDiv: HTMLElement;
     state: string;
     constructor();
-    addPlayer(where: JQuery | HTMLElement): JQuery;
+    addPlayer(where: HTMLElement): HTMLElement;
     stopButton(): void;
     playPng(): string;
     pausePng(): string;

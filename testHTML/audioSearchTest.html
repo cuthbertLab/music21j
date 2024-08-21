@@ -1,4 +1,4 @@
-<html><head>
+<html lang="en-us"><head>
 <title>HTML5 Pitch Detector</title>
     <script src="../build/music21.debug.js"></script>
     <link rel="stylesheet" href="../css/m21.css" type="text/css" />
@@ -32,35 +32,35 @@
        sss.append(nnn);
        sss.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
        sss.appendNewDOM('#SVGDiv');
-       $('#startListening').on('click', function () { music21.audioSearch.getUserMedia() });
-       $('#stopListening').on('click', function () { window.cancelAnimationFrame(music21.audioSearch.animationFrameCallbackId); });
-       $nn = $('#noteName');
-       $centsDiv = $('#centsDiv');
-       $counter = $('#counter');
-       $('#bassClef').on('click', function () {
+       document.querySelector('#startListening').addEventListener('click', () => music21.audioSearch.getUserMedia());
+       document.querySelector('#stopListening').addEventListener('click', () => {
+           window.cancelAnimationFrame(music21.audioSearch.animationFrameCallbackId);
+       });
+       const nn = document.querySelector('#noteName');
+       const centsDiv = document.querySelector('#centsDiv');
+       const counter = document.querySelector('#counter');
+       document.querySelector('#bassClef').addEventListener('click', () => {
            sss.clef = new music21.clef.Clef('bass');
            music21.audioSearch.minFrequency = new music21.pitch.Pitch('F2').frequency;
            music21.audioSearch.maxFrequency = new music21.pitch.Pitch('F4').frequency;
            sss.replaceDOM();
-       })
-       $('#trebleClef').on('click', function () {
+       });
+       document.querySelector('#trebleClef').addEventListener('click', () => {
            sss.clef = new music21.clef.Clef('treble');
            music21.audioSearch.minFrequency = new music21.pitch.Pitch('G3').frequency;
            music21.audioSearch.maxFrequency = new music21.pitch.Pitch('A5').frequency;
            sss.replaceDOM();
-       })
-       var lastNote = 0;
-       var lastLeft = 150;
-       sampleCallback = function(frequency) {
-           var _ = music21.audioSearch.smoothPitchExtraction(frequency),
-                      midiNum = _[0],
-                      centsOff = _[1];
-	       if (midiNum != -1) {
-	           if (midiNum != lastNote) {
+       });
+       let lastNote = 0;
+       let lastLeft = 150;
+       sampleCallback = frequency => {
+           const [midiNum, centsOff] = music21.audioSearch.smoothPitchExtraction(frequency);
+	       if (midiNum !== -1) {
+	           if (midiNum !== lastNote) {
 	               lastNote = midiNum;
-	               var p = new music21.pitch.Pitch(midiNum);
-	               var a = p.accidental;
-	               var name = p.step;
+	               const p = new music21.pitch.Pitch(midiNum);
+	               const a = p.accidental;
+	               let name = p.step;
 	               if (a !== undefined && a.alter !== 0) {
 	                   name += "<span style='font-size: 70%; position: relative; left: -10px; margin-right: -20px'>" + a.unicodeModifier + "</span>";
 	               }
@@ -69,18 +69,17 @@
 	               sss.replaceDOM();
 	           }
 	           // 0 = red; 120 = green; 240 = blue
-	           var hue = ((-1 * centsOff) + 50) * 2.4;
+	           const hue = ((-1 * centsOff) + 50) * 2.4;
 	           // highly saturated at the extremes;
-	           var saturation = Math.round(50 + 2 * Math.abs(Math.abs(centsOff) - 25));
-	           var colorString = 'hsl(' + hue + ', ' + saturation + '%, 50%)';
-	           var newLeft = 3*(50+centsOff);
+	           const saturation = Math.round(50 + 2 * Math.abs(Math.abs(centsOff) - 25));
+	           const colorString = 'hsl(' + hue + ', ' + saturation + '%, 50%)';
+	           const newLeft = 3*(50+centsOff);
 	           lastLeft = (lastLeft*9 + newLeft)/10;
-	           $counter.css('background-color', colorString)
-	                   .css('left', lastLeft.toString() + 'px');
+	           counter.style.backgroundColor = colorString;
+               counter.style.left = lastLeft.toString() + 'px';
 	       }
        };
        music21.audioSearch.sampleCallback = sampleCallback;
    </script>
-
 </body>
 </html>

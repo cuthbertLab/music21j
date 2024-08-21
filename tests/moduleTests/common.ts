@@ -43,5 +43,6 @@ export default function tests() {
             n.offset += 0.333333333333;
         }
         assert.equal(n.offset, 1, 'offset uses opFrac');
+        assert.equal(common.opFrac(0.000001), 0);
     });
 }

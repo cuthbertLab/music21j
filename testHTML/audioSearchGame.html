@@ -1,4 +1,4 @@
-<html><head>
+<html lang="en-us"><head>
     <title>Match pitches</title>
     <script src="../build/music21.debug.js"></script>
     <link rel="stylesheet" href="../css/m21.css" type="text/css" />
@@ -51,48 +51,46 @@
        sss.append(nnn);
        sss.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
        sss.appendNewDOM('#SVGDiv');
-       playNotes = true;
-       $('#playNotes').on('click', function() {
+       let playNotes = true;
+       document.querySelector('#playNotes').addEventListener('click', () => {
            playNotes = true;
        });
-       $('#muteNotes').on('click', function() {
+       document.querySelector('#muteNotes').addEventListener('click', () => {
            playNotes = false;
        });
-       keyOfC = true;
-       $('#naturals').on('click', function() {
+       let keyOfC = true;
+       document.querySelector('#naturals').addEventListener('click', () => {
            keyOfC = true;
        });
-       $('#accidentals').on('click', function() {
+       document.querySelector('#accidentals').addEventListener('click', () => {
            keyOfC = false;
        });
 
-
-       $('#startListening').on('click', function () {
+       document.querySelector('#startListening').addEventListener('click', () => {
            playingGame = true;
            randNote();
            music21.audioSearch.getUserMedia()
        });
-       $('#stopListening').on('click', function () {
+       document.querySelector('#stopListening').addEventListener('click', () => {
            playingGame = false;
            window.cancelAnimationFrame(music21.audioSearch.animationFrameCallbackId);
        });
 
-
-       $nn = $('#noteName');
-       $centsDiv = $('#centsDiv');
-       $counter = $('#counter');
-       minPitch = new music21.pitch.Pitch('C4');
-       maxPitch = new music21.pitch.Pitch('C5');
-       expectedMidi = 60;
+       nn = document.querySelector('#noteName');
+       centsDiv = document.querySelector('#centsDiv');
+       counter = document.querySelector('#counter');
+       let minPitch = new music21.pitch.Pitch('C4');
+       let maxPitch = new music21.pitch.Pitch('C5');
+       let expectedMidi = 60;
 
        randNote = function() {
-           var randomRange = maxPitch.midi - minPitch.midi;
-           var rn = Math.round(Math.random() * randomRange) + minPitch.midi;
-           var p = new music21.pitch.Pitch(rn);
-           var counter = 0;
-           while (expectedMidi == rn
+           const randomRange = maxPitch.midi - minPitch.midi;
+           let rn = Math.round(Math.random() * randomRange) + minPitch.midi;
+           let p = new music21.pitch.Pitch(rn);
+           let counter = 0;
+           while (expectedMidi === rn
                    || (p.accidental
-                           && p.accidental.alter != 0
+                           && p.accidental.alter !== 0
                            && keyOfC)) {
                rn = Math.round(Math.random() * randomRange) + minPitch.midi
                p = new music21.pitch.Pitch(rn);
@@ -102,7 +100,7 @@
            sg.replaceDOM('#givenSVGDiv');
        }
 
-       $('#bassClef').on('click', function () {
+       document.querySelector('#bassClef').addEventListener('click', () => {
            sss.clef = new music21.clef.Clef('bass');
            sg.clef = new music21.clef.Clef('bass');
            minPitch = new music21.pitch.Pitch('C3');
@@ -113,7 +111,7 @@
            sss.replaceDOM();
        });
 
-       $('#trebleClef').on('click', function () {
+       const chooseTrebleClef = () => {
            sss.clef = new music21.clef.Clef('treble');
            sg.clef = new music21.clef.Clef('treble');
            minPitch = new music21.pitch.Pitch('B-3');
@@ -122,17 +120,18 @@
            music21.audioSearch.maxFrequency = maxPitch.frequency;
            randNote();
            sss.replaceDOM();
-       }).click();
+       }
+       document.querySelector('#trebleClef').addEventListener('click', chooseTrebleClef);
+       chooseTrebleClef();
 
-       var lastNote = 0;
-       var lastLeft = 150;
-       var consecutiveRight = 0;
-       var triggerRight = 20;
-       var playingGame = false;
+       let lastNote = 0;
+       let lastLeft = 150;
+       let consecutiveRight = 0;
+       let triggerRight = 20;
+       let playingGame = false;
 
        sss.renderOptions.events.click = undefined;
-
-       sg.renderOptions.events.click = (function () {
+       sg.renderOptions.events.click = () => {
            consecutiveRight = 0;
            if (playingGame) {
                playingGame = false;
@@ -144,9 +143,9 @@
            } else {
                sg.playStream();
            }
-       }).bind(sg);
+       };
 
-       newNote = function() {
+       newNote = () => {
            randNote();
            consecutiveRight = 0;
            if (playNotes) {
@@ -161,27 +160,25 @@
            }
        }
 
-       sampleCallback = function(frequency) {
-           if (playingGame == false) {
+       sampleCallback = frequency => {
+           if (playingGame === false) {
                return -1;
            }
-           var _ = music21.audioSearch.smoothPitchExtraction(frequency),
-                      midiNum = _[0],
-                      centsOff = _[1];
-	       if (midiNum != -1) {
-	           if (midiNum != lastNote) {
+           const [midiNum, centsOff] = music21.audioSearch.smoothPitchExtraction(frequency);
+	       if (midiNum !== -1) {
+	           if (midiNum !== lastNote) {
 	               lastNote = midiNum;
-	               var p = new music21.pitch.Pitch(midiNum);
-	               var a = p.accidental;
-	               var name = p.step;
+	               let p = new music21.pitch.Pitch(midiNum);
+	               let a = p.accidental;
+	               let name = p.step;
 	               if (a !== undefined && a.alter !== 0) {
 	                   name += "<span style='font-size: 70%; position: relative; left: -10px; margin-right: -20px'>" + a.unicodeModifier + "</span>";
 	               }
 	               name += p.octave.toString();
 	               nnn.pitch = p
-	               sss.replaceCanvas();
+	               sss.replaceDOM();
 	           }
-	           if (midiNum == expectedMidi) {
+	           if (midiNum === expectedMidi) {
 	               consecutiveRight += 1;
 	               if (consecutiveRight > triggerRight) {
 	                   newNote();
@@ -194,19 +191,17 @@
 	               }
 	           }
 	           // 0 = red; 120 = green; 240 = blue
-	           var hue = ((-1 * centsOff) + 50) * 2.4;
+	           const hue = ((-1 * centsOff) + 50) * 2.4;
 	           // highly saturated at the extremes;
-	           var saturation = Math.round(50 + 2 * Math.abs(Math.abs(centsOff) - 25));
-	           var colorString = 'hsl(' + hue + ', ' + saturation + '%, 50%)';
-	           var newLeft = 3*(50+centsOff);
+	           const saturation = Math.round(50 + 2 * Math.abs(Math.abs(centsOff) - 25));
+	           const colorString = 'hsl(' + hue + ', ' + saturation + '%, 50%)';
+	           const newLeft = 3*(50+centsOff);
 	           lastLeft = (lastLeft*9 + newLeft)/10;
-	           $counter.css('background-color', colorString)
-	                   .css('left', lastLeft.toString() + 'px');
+	           counter.style.backgroundColor = colorString
+               counter.style.left = lastLeft.toString() + 'px';
 	       }
        };
        music21.audioSearch.sampleCallback = sampleCallback;
    </script>
-
-
 </body>
 </html>

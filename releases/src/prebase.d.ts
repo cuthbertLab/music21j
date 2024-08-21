@@ -1,9 +1,10 @@
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit.
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  *
  */
+export type CloneCallbackFunctionType<T extends ProtoM21Object = ProtoM21Object> = (key: string, ret: T, deep: boolean, memo: WeakMap<any, any>) => void;
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
  * everything in music21 should inherit from are given below.
@@ -22,7 +23,7 @@ export declare class ProtoM21Object {
     _cl: string;
     isProtoM21Object: boolean;
     isMusic21Object: boolean;
-    protected _cloneCallbacks: any;
+    protected _cloneCallbacks: Record<string, boolean | 'constructor' | CloneCallbackFunctionType>;
     constructor();
     get classSet(): Set<any>;
     /**
@@ -57,8 +58,6 @@ export declare class ProtoM21Object {
     /**
      * Check to see if an object is of this class or subclass.
      *
-     * @param {string|string[]} testClass - a class or Array of classes to test
-     * @returns {boolean}
      * @example
      * var n = new music21.note.Note();
      * n.isClassOrSubclass('Note'); // true
@@ -67,16 +66,8 @@ export declare class ProtoM21Object {
      * n.isClassOrSubclass(['Note', 'Rest']); // true
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
-    isClassOrSubclass(testClass: string | typeof ProtoM21Object | (string | typeof ProtoM21Object)[]): boolean;
-    /**
-     *
-     * @returns {string}
-     */
+    isClassOrSubclass(testClass: string | string[] | (new () => ProtoM21Object) | (new () => ProtoM21Object)[]): boolean;
     toString(): string;
-    /**
-     *
-     * @returns {string}
-     */
     stringInfo(): string;
     eq(other: this): boolean;
 }

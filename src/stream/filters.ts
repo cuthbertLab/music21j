@@ -1,7 +1,8 @@
 import { Music21Exception } from '../exceptions21';
-import {Music21Object} from '../base';
+import type {Music21Object} from '../base';
+import type {StreamIteratorBase} from './iterator';
+import type {ClassFilterType} from '../types';
 
-// noinspection JSUnusedGlobalSymbols
 export class FilterException extends Music21Exception {}
 
 class _StopIteration {}
@@ -9,19 +10,19 @@ class _StopIteration {}
 export const StopIterationSingleton = new _StopIteration();
 
 export class StreamFilter {
-    static get derivationStr() {
+    static get derivationStr(): string {
         return 'streamFilter';
     }
 
     reset() {}
 
-    call(item, iterator): boolean|_StopIteration {
+    call(_item: Music21Object, _iterator: StreamIteratorBase): boolean|_StopIteration {
         return true;
     }
 }
 
 export class IsFilter extends StreamFilter {
-    static get derivationStr() {
+    static override get derivationStr() {
         return 'is';
     }
 
@@ -37,11 +38,11 @@ export class IsFilter extends StreamFilter {
         this.numToFind = target.length;
     }
 
-    reset() {
+    override reset(): void {
         this.numToFind = this.target.length;
     }
 
-    call(item, iterator): boolean|_StopIteration {
+    override call(item: Music21Object, _iterator: StreamIteratorBase): boolean|_StopIteration {
         if (this.numToFind === 0) {
             return StopIterationSingleton;
         }
@@ -55,18 +56,18 @@ export class IsFilter extends StreamFilter {
 }
 
 export class IsNotFilter extends IsFilter {
-    static get derivationStr() {
+    static override get derivationStr(): string {
         return 'IsNot';
     }
 
-    constructor(target) {
+    constructor(target: any|any[] =[]) {
         super(target);
         this.numToFind = Number.MAX_SAFE_INTEGER;
     }
 
-    reset() {}
+    override reset(): void {}
 
-    call(item, iterator) {
+    override call(item: Music21Object, iterator: StreamIteratorBase): boolean|_StopIteration {
         const ret = super.call(item, iterator);
         if (ret === StopIterationSingleton) {
             return ret;
@@ -83,13 +84,13 @@ export class ClassFilter extends StreamFilter {
         return 'getElementsByClass';
     }
 
-    classList: string[]|(typeof Music21Object)[];
+    classList: string[]|(new() => Music21Object)[];
 
-    constructor(classList: string|string[]|typeof Music21Object|(typeof Music21Object)[] =[]) {
+    constructor(classList: ClassFilterType = []) {
         super();
-        let classListArray: string[]|typeof Music21Object[];
+        let classListArray: string[]|(new() => Music21Object)[];
         if (!Array.isArray(classList)) {
-            classListArray = <string[]|(typeof Music21Object)[]> [classList];
+            classListArray = <string[]|(new() => Music21Object)[]> [classList];
         } else {
             classListArray = classList;
         }
@@ -97,25 +98,31 @@ export class ClassFilter extends StreamFilter {
     }
     // TODO: __eq__
 
-    call(item, iterator) {
+    override call(item: Music21Object, _iterator: StreamIteratorBase): boolean {
         return item.isClassOrSubclass(this.classList);
     }
 }
 
 export class ClassNotFilter extends ClassFilter {
-    static get derivationStr() {
+    static override get derivationStr(): string {
         return 'getElementsNotOfClass';
     }
 
-    call(item, iterator) {
+    override call(item: Music21Object, iterator: StreamIteratorBase): boolean {
         return !(super.call(item, iterator));
     }
 }
 
 // TODO: GroupFilter
+export interface OffsetFilterOptions {
+    includeEndBoundary?: boolean;
+    mustFinishInSpan?: boolean;
+    mustBeginInSpan?: boolean;
+    includeElementsThatEndAtStart?: boolean;
+}
 
 export class OffsetFilter extends StreamFilter {
-    static get derivationStr() {
+    static override get derivationStr(): string {
         return 'getElementsByOffset';
     }
 
@@ -129,13 +136,13 @@ export class OffsetFilter extends StreamFilter {
 
     constructor(
         offsetStart: number,
-        offsetEnd=undefined,
+        offsetEnd: number = undefined,
         {
             includeEndBoundary=true,
             mustFinishInSpan=false,
             mustBeginInSpan=true,
             includeElementsThatEndAtStart=true,
-        }={}
+        }: OffsetFilterOptions = {}
     ) {
         super();
         this.offsetStart = offsetStart;
@@ -155,7 +162,7 @@ export class OffsetFilter extends StreamFilter {
 
     }
 
-    call(item, iterator) {
+    override call(item: Music21Object, iterator: StreamIteratorBase): boolean {
         // N.B. iterator.srcStream.elementOffset is necessary instead
         // of elementOffset, because we have not set activeSite yet.
         return this.isElementOffsetInRange(
@@ -164,7 +171,7 @@ export class OffsetFilter extends StreamFilter {
         );
     }
 
-    isElementOffsetInRange(e, offset) {
+    isElementOffsetInRange(e: Music21Object, offset: number): boolean {
         if (offset > this.offsetEnd) {
             // anything that begins after the span is definitely out.
             return false;

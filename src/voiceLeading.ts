@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/voiceLeading -- voiceLeading objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 
 import * as interval from './interval';
@@ -378,12 +378,12 @@ export class VoiceLeadingQuartet extends Music21Object {
             return true;
         }
         let scale;
-        let n1degree;
-        let n2degree;
+        let n1degree: number;
+        let n2degree: number;
         if (this.key !== undefined) {
             scale = this.key.getScale();
-            n1degree = scale.getScaleDegreeFromPitch(this.v2n1);
-            n2degree = scale.getScaleDegreeFromPitch(this.v2n2);
+            n1degree = scale.getScaleDegreeFromPitch(this.v2n1.pitch);
+            n2degree = scale.getScaleDegreeFromPitch(this.v2n2.pitch);
         }
 
         // catches case of #7 in minor
@@ -394,10 +394,10 @@ export class VoiceLeadingQuartet extends Music21Object {
         ) {
             const scale2 = <ConcreteScale> this.key.getScale('melodic-minor'); // gets ascending form
             if (n1degree === undefined) {
-                n1degree = scale2.getScaleDegreeFromPitch(this.v2n1);
+                n1degree = scale2.getScaleDegreeFromPitch(this.v2n1.pitch);
             }
             if (n2degree === undefined) {
-                n2degree = scale2.getScaleDegreeFromPitch(this.v2n2);
+                n2degree = scale2.getScaleDegreeFromPitch(this.v2n2.pitch);
             }
         }
 

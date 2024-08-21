@@ -2,24 +2,37 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
 
-import Vex from 'vexflow';
+import {
+    BarlineType as VFBarlineType, Beam as VFBeam,
+    Formatter as VFFormatter, Fraction as VFFraction, Renderer as VFRenderer,
+    type RendererBackends as VFRendererBackends,
+    Stave as VFStave, StaveConnector as VFStaveConnector,
+    type StaveConnectorType as VFStaveConnectorType,
+    StaveNote as VFStaveNote,
+    StaveTie as VFStaveTie, SVGContext as VFSVGContext,
+    TextNote as VFTextNote,
+    Tuplet as VFTuplet, Voice as VFVoice,
+} from 'vexflow';
+import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 
 import { debug } from './debug';
 import * as clef from './clef';
 import * as duration from './duration';
+import * as note from './note';  // for default_vf_lyric_style -- can move later if import prob.
+import * as stream from './stream';  // this is able to be imported fine.
+
+import {coerceHTMLElement} from './common';
 
 // imports for typechecking only
-import * as note from './note';
-import * as stream from './stream';
-import {coerceJQuery, jQueryAndHTMLVersion} from './common';
-
 import type * as renderOptions from './renderOptions';
+import type {Tuplet} from './duration';
+import {StaveConnector} from './types';
 
 const barlineMap = {
     single: 'SINGLE',
@@ -27,6 +40,10 @@ const barlineMap = {
     end: 'END',
     none: 'NONE',
     // TODO: Repeats
+};
+
+export const vexflowDefaults = {
+    softmaxFactor: 10,
 };
 
 
@@ -41,15 +58,15 @@ const _clefSingleton = new clef.TrebleClef();
  */
 export class RenderStack {
     streams: stream.Stream[] = [];
-    voices: Vex.Flow.Voice[] = [];  // for the music
-    textVoices: Vex.Flow.Voice[] = [];  // for lyrics
-    voiceToStreamMapping: Map<Vex.Flow.Voice, stream.Stream> = new Map();
+    voices: VFVoice[] = [];  // for the music
+    textVoices: VFVoice[] = [];  // for lyrics
+    voiceToStreamMapping: Map<VFVoice, stream.Stream> = new Map();
 
     /**
-     * returns this.voices and this.textVoices as one array
+     * returns this.voices and this.textVoices as one, new array.
      */
-    allTickables(): Vex.Flow.Voice[] {
-        const t: Vex.Flow.Voice[] = [];
+    allTickables(): VFVoice[] {
+        const t: VFVoice[] = [];
         t.push(...this.voices);
         t.push(...this.textVoices);
         return t;
@@ -61,13 +78,13 @@ export class RenderStack {
      */
     tickablesByStave() {
         const tickablesByStave = []; // a list of lists of tickables being placed on the same Stave.
-        const knownStaves = []; // a list of Vex.Flow.Stave objects...
+        const knownStaves: VFStave[] = []; // a list of Vex.Flow.Stave objects...
 
         for (const t of this.allTickables()) {
-            const thisStaveIndex = knownStaves.indexOf(t.stave);
+            const thisStaveIndex = knownStaves.indexOf(t.getStave());
             let currentStaveHolder;
             if (thisStaveIndex === -1) {
-                knownStaves.push(t.stave);
+                knownStaves.push(t.getStave());
                 currentStaveHolder = [];
                 tickablesByStave.push(currentStaveHolder);
             } else {
@@ -89,75 +106,70 @@ export class RenderStack {
  *
  * "s" can be any type of Stream.
  *
- * "div" and "where" can be either a DOM
- * element or a jQuery object.
+ * "div" and "where" should be a DOM element.
  *
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
- * @param {Node|jQuery} [where=document.body] - where to render the stream
+ * @param {HTMLElement} [where=document.body] - where to render the stream
  * @property {div} div - div-with-svg-or-canvas element
- * @property {jQuery} $div - jQuery div or canvas element
- * @property {jQuery} $where - jQuery element to render onto
+ * @property {HTMLElement} where - HTMLElement to render onto
  * @property {Array<number>} systemBreakOffsets - where to break the systems
  */
 export class Renderer {
     stream: stream.Stream;
     rendererType: string = 'svg';
     div: HTMLElement;
-    $div: JQuery;
-    $where: JQuery;
-    activeFormatter: Vex.Flow.Formatter;
-    _vfRenderer: Vex.Flow.Renderer;
-    _ctx: Vex.Flow.SVGContext;  // removing CanvasContext
-    beamGroups: Vex.Flow.Beam[] = [];
+    where: HTMLElement;
+    activeFormatter: VFFormatter;
+    _vfRenderer: VFRenderer;
+    _ctx: VFSVGContext;  // removing CanvasContext
+    beamGroups: VFBeam[] = [];
     stacks: RenderStack[] = []; // array of: {voices: [Array of Vex.Flow.Voice objects],
     //                                        streams: [Array of Streams, usually Measures]}
-    vfTies: Vex.Flow.StaveTie[] = [];
+    vfTies: VFStaveTie[] = [];
     systemBreakOffsets: number[] = [];  // where to break the systems
-    vfTuplets: Vex.Flow.Tuplet[] = [];
+    vfTuplets: VFTuplet[] = [];
     // measureFormatters = [];
 
-    constructor(s, div?: HTMLElement|JQuery, where?: HTMLElement|JQuery) {
+    constructor(s: stream.Stream, div?: HTMLElement, where?: HTMLElement|JQuery) {
         this.stream = s;
-        const [$j_div, html_div] = jQueryAndHTMLVersion(div);
-        this.$div = $j_div;
-        this.div = html_div;
-        this.$where = coerceJQuery(where);
+        this.div = coerceHTMLElement(div);
+        this.where = coerceHTMLElement(where);
     }
 
-    get vfRenderer(): Vex.Flow.Renderer {
-        let backend;
+    get vfRenderer(): VFRenderer {
+        let backend: VFRendererBackends;
         if (this.rendererType === 'canvas') {
-            backend = Vex.Flow.Renderer.Backends.CANVAS;
+            backend = VFRenderer.Backends.CANVAS;
         } else {
-            backend = Vex.Flow.Renderer.Backends.SVG;
+            backend = VFRenderer.Backends.SVG;
         }
 
         if (this._vfRenderer !== undefined) {
             return this._vfRenderer;
         } else {
-            this._vfRenderer = <any> new Vex.Flow.Renderer(this.div, backend);
+            this._vfRenderer = <any> new VFRenderer(this.div as HTMLDivElement, backend);
             if (this.rendererType === 'svg') {
                 // this is NOT NOT NOT a JQuery object.
                 // noinspection JSDeprecatedSymbols
                 this._vfRenderer.resize(
-                    this.$div.attr('width'),
-                    this.$div.attr('height')
+                    parseInt(this.div.getAttribute('width')),
+                    parseInt(this.div.getAttribute('height'))
                 );
             }
-            return this._vfRenderer as Vex.Flow.Renderer;
+            return this._vfRenderer as VFRenderer;
         }
     }
 
-    set vfRenderer(vfr: Vex.Flow.Renderer) {
+    set vfRenderer(vfr: VFRenderer) {
         this._vfRenderer = vfr;
     }
 
-    get ctx() {
+    get ctx(): VFSVGContext {
         if (this._ctx !== undefined) {
             return this._ctx;
         } else {
-            this._ctx = this.vfRenderer.getContext();
+            this._ctx = this.vfRenderer.getContext() as VFSVGContext;
             if (
                 this.stream
                 && this.stream.renderOptions
@@ -173,7 +185,7 @@ export class Renderer {
         }
     }
 
-    set ctx(ctx) {
+    set ctx(ctx: VFSVGContext) {
         this._ctx = ctx;
     }
 
@@ -183,13 +195,9 @@ export class Renderer {
      *
      * if s is undefined, uses the stored Stream from
      * the constructor object.
-     *
-     * @param {Stream} [s=this.stream]
      */
-    render(s: stream.Stream = undefined) {
-        if (s === undefined) {
-            s = this.stream;
-        }
+    render(): void {
+        const s = this.stream;
 
         let isScorelike = false;
         let isPartlike = false;
@@ -197,16 +205,21 @@ export class Renderer {
 
         if (s.isClassOrSubclass('Score')) {
             isScorelike = true;
+        } else if (s.isClassOrSubclass('Part')) {
+            // might be a Part with measures and voices.
+            isPartlike = true;
         } else if (!isFlat && !(s.get(0) as stream.Stream).isFlat) {
             isScorelike = true;
         } else if (!isFlat) {
             isPartlike = true;
         }
         // requires organization Score -> Part -> Measure -> elements...
-        if (isScorelike) {
+        if (isFlat) {
+            this.prepareArrivedFlat(s);
+        } else if (isScorelike) {
             this.prepareScorelike(s as stream.Score);
         } else if (isPartlike) {
-            this.preparePartlike(s as stream.Part);
+            this.preparePartlike(s as stream.Part, {multipart: false});
         } else {
             this.prepareArrivedFlat(s);
         }
@@ -222,12 +235,12 @@ export class Renderer {
      * Streams that should be rendered vertically like parts)
      * for rendering and adds Staff Connectors
      */
-    prepareScorelike(s: stream.Score) {
+    prepareScorelike(s: stream.Score): void {
         // console.log('prepareScorelike called');
         //
         const parts = s.parts;
         for (const subStream of parts) {
-            this.preparePartlike(subStream);
+            this.preparePartlike(subStream, {multipart: s.parts.length > 1});
         }
         this.addStaffConnectors(s);
     }
@@ -238,7 +251,10 @@ export class Renderer {
      * or substreams that should be considered like Measures)
      * for rendering.
      */
-    preparePartlike(p: stream.Part) {
+    preparePartlike(
+        p: stream.Part,
+        {multipart = false}: {multipart?: boolean} = {}
+    ): void {
         // console.log('preparePartlike called');
         this.systemBreakOffsets = [];
         const measureList = p.measures;
@@ -246,6 +262,9 @@ export class Renderer {
             const subStream = measureList.get(i);
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
+                if (!multipart) {
+                    subStream.renderOptions.leftBarline = 'none';
+                }
             }
             if (i === p.length - 1 && subStream.renderOptions.rightBarline === undefined) {
                 subStream.renderOptions.rightBarline = 'end';
@@ -265,8 +284,9 @@ export class Renderer {
      *
      * @param {Stream} m - a flat stream (maybe a measure or voice)
      */
-    prepareArrivedFlat(m: stream.Stream) {
+    prepareArrivedFlat(m: stream.Stream): void {
         const stack = new RenderStack();
+        m.renderOptions.leftBarline = 'none';
         this.prepareMeasure(m as stream.Measure, stack);
         this.stacks[0] = stack;
         this.prepareTies(m);
@@ -281,8 +301,8 @@ export class Renderer {
      * * m - a measure object (w or w/o voices)
      * * stack - a RenderStack object to prepare into.
      */
-    prepareMeasure(m: stream.Measure, stack: RenderStack): RenderStack {
-        if (m.hasVoices === undefined || m.hasVoices() === false) {
+    prepareMeasure(m: stream.Stream, stack: RenderStack): RenderStack {
+        if (m.hasVoices() === false) {
             this.prepareFlat(m, stack);
         } else {
             // get elements outside of voices;
@@ -291,17 +311,17 @@ export class Renderer {
                 firstVoiceCopy.insert(el.offset, el);
             }
             const rendOp = m.renderOptions; // get render options from Measure;
-            let stave;
-            for (const [i, voiceStream] of Array.from(m.getElementsByClass('Voice')).entries()) {
-                let voiceToRender = <stream.Voice> voiceStream;
+            let stave: VFStave|null = null;
+            const voices = <stream.Voice[]> Array.from(m.getElementsByClass('Voice'));
+            for (const [i, voiceStream] of voices.entries()) {
+                let voiceToRender = voiceStream;
                 if (i === 0) {
                     voiceToRender = firstVoiceCopy;
                 }
-                // noinspection JSUnusedAssignment
                 stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
                 if (i === 0) {
-                    (<stream.Voice> voiceStream).activeVFStave = voiceToRender.activeVFStave;
-                    (<stream.Voice> voiceStream).storedVexflowStave = voiceToRender.activeVFStave;
+                    voiceStream.activeVFStave = voiceToRender.activeVFStave;
+                    voiceStream.storedVexflowStave = voiceToRender.activeVFStave;
                 }
             }
         }
@@ -322,16 +342,11 @@ export class Renderer {
     prepareFlat(
         s: stream.Stream,
         stack: RenderStack,
-        optionalStave?: Vex.Flow.Stave,
+        optionalStave?: VFStave,
         optional_renderOp?: renderOptions.RenderOptions,
-    ): Vex.Flow.Stave {
-        s.makeNotation({ overrideStatus: true });
-        let stave: Vex.Flow.Stave;
-        if (optionalStave !== undefined) {
-            stave = optionalStave;
-        } else {
-            stave = this.renderStave(s, optional_renderOp);
-        }
+    ): VFStave {
+        s.makeNotation({ inPlace: true, overrideStatus: true });
+        const stave: VFStave = optionalStave ?? this.renderStave(s, optional_renderOp);
         s.activeVFStave = stave;
         const vf_voice = this.getVoice(s, stave);
         stack.voices.push(vf_voice);
@@ -339,9 +354,8 @@ export class Renderer {
         stack.voiceToStreamMapping.set(vf_voice, s);
 
         if (s.hasLyrics()) {
-            stack.textVoices.push(this.getLyricVoice(s, stave));
+            stack.textVoices.push(...this.getLyricVoices(s, stave));
         }
-
         return stave;
     }
 
@@ -354,7 +368,7 @@ export class Renderer {
      * optional_rendOp - renderOptions, passed to Renderer#newStave
      * and Renderer#setClefEtc
      */
-    renderStave(m?: stream.Stream, optional_rendOp?: renderOptions.RenderOptions): Vex.Flow.Stave {
+    renderStave(m?: stream.Stream, optional_rendOp?: renderOptions.RenderOptions): VFStave {
         if (m === undefined) {
             m = this.stream;
         }
@@ -372,12 +386,11 @@ export class Renderer {
      * Draws the Voices (music and text) from `this.stacks`
      *
      */
-    drawMeasureStacks() {
+    drawMeasureStacks(): void {
         const ctx = this.ctx;
-        for (let i = 0; i < this.stacks.length; i++) {
-            const voices = this.stacks[i].allTickables();
-            for (let j = 0; j < voices.length; j++) {
-                const v = voices[j];
+        for (const stack of this.stacks) {
+            const voices = stack.allTickables();
+            for (const v of voices) {
                 v.draw(ctx);
             }
         }
@@ -387,7 +400,7 @@ export class Renderer {
      * draws the tuplets.
      *
      */
-    drawTuplets() {
+    drawTuplets(): void {
         const ctx = this.ctx;
         this.vfTuplets.forEach(vft => {
             vft.setContext(ctx).draw();
@@ -398,10 +411,10 @@ export class Renderer {
      * draws the vfTies
      *
      */
-    drawTies() {
+    drawTies(): void {
         const ctx = this.ctx;
-        for (let i = 0; i < this.vfTies.length; i++) {
-            this.vfTies[i].setContext(ctx).draw();
+        for (const vf_t of this.vfTies) {
+            vf_t.setContext(ctx).draw();
         }
     }
 
@@ -411,7 +424,7 @@ export class Renderer {
      *
      * @param {Stream} p - a Part or similar object
      */
-    prepareTies(p: stream.Stream) {
+    prepareTies(p: stream.Stream): void {
         const p_recursed = <note.GeneralNote[]> [];
         // Determine order for bridging voices: from earliest appearance
         const voice_ids_in_order_first_encountered = [];
@@ -465,7 +478,7 @@ export class Renderer {
                 }
             }
             if (onSameSystem) {
-                const vfTie = new Vex.Flow.StaveTie({
+                const vfTie = new VFStaveTie({
                     first_note: thisNote.activeVexflowNote,
                     last_note: nextNote.activeVexflowNote,
                     first_indices: [0],
@@ -474,12 +487,12 @@ export class Renderer {
                 this.vfTies.push(vfTie);
             } else {
                 // console.log('got me a tie across systemBreaks!');
-                const vfTie1 = new Vex.Flow.StaveTie({
+                const vfTie1 = new VFStaveTie({
                     first_note: thisNote.activeVexflowNote,
                     first_indices: [0],
                 });
                 this.vfTies.push(vfTie1);
-                const vfTie2 = new Vex.Flow.StaveTie({
+                const vfTie2 = new VFStaveTie({
                     last_note: nextNote.activeVexflowNote,
                     first_indices: [0],
                 });
@@ -496,7 +509,7 @@ export class Renderer {
      * [s=this.stream] -- usually a Measure or Voice
      * stave - not actually optional.
      */
-    getVoice(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.Voice|undefined {
+    getVoice(s?: stream.Stream, stave?: VFStave): VFVoice|undefined {
         if (stave === undefined) {
             return undefined;
         }
@@ -505,43 +518,56 @@ export class Renderer {
             s = this.stream;
         }
 
+        const totalLength = s.duration.quarterLength;
+        if (totalLength === 0) {
+            // Return an empty voice, since the stream is empty.
+            const emptyVoice = new VFVoice().setMode(VFVoice.Mode.SOFT);
+            emptyVoice.setStave(stave);
+            return emptyVoice;
+        }
+
         // gets a group of notes as a voice, but completely un-formatted and not drawn.
         const notes = this.vexflowNotes(s, stave);
         const voice = this.vexflowVoice(s);
         voice.setStave(stave);
-
         voice.addTickables(notes);
         return voice;
     }
 
     /**
-     * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
+     * Returns Vex.Flow.Voices with the lyrics set to render in the proper place.
      *
      * s -- usually a Measure or Voice
      */
-    getLyricVoice(s: stream.Stream, stave: Vex.Flow.Stave): Vex.Flow.Voice {
-        const textVoice = this.vexflowVoice(s);
-        const lyrics = this.vexflowLyrics(s, stave);
-        textVoice.setStave(stave);
-        textVoice.addTickables(lyrics);
-        return textVoice;
+    getLyricVoices(s: stream.Stream, stave: VFStave): VFVoice[] {
+        const textVoices = [];
+        const max_lyric_depth = Math.max(...s.notesAndRests.map(
+            (gn => gn.lyrics.length)
+        ));
+        for (let depth = 0; depth < max_lyric_depth + 1; depth++) {
+            const textVoice = this.vexflowVoice(s);
+            const lyrics: VFTextNote[] = this.vexflowLyrics(s, stave, depth);
+            textVoice.setStave(stave);
+            textVoice.addTickables(lyrics);
+            textVoices.push(textVoice);
+        }
+        return textVoices;
     }
 
     /**
      * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
      *
      */
-    formatMeasureStacks() {
+    formatMeasureStacks(): void {
         // adds formats the voices, then adds the formatter information to every note in a voice...
-        for (let i = 0; i < this.stacks.length; i++) {
-            const stack = this.stacks[i];
+        for (const stack of this.stacks) {
             const vf_voices = stack.voices;
             const measuresOrVoices = stack.streams;
             const formatter = this.formatVoiceGroup(stack);
             for (let j = 0; j < measuresOrVoices.length; j++) {
                 const m = measuresOrVoices[j];
                 const v = vf_voices[j];
-                this.applyFormatterInformationToNotes(v.stave, m, formatter);
+                this.applyFormatterInformationToNotes(v.getStave(), m, formatter);
             }
         }
     }
@@ -551,11 +577,12 @@ export class Renderer {
      *
      * if autoBeam is undefined, reads from measures[0].autoBeam]
      */
-    formatVoiceGroup(stack: RenderStack, autoBeam?: boolean|undefined): Vex.Flow.Formatter {
+    formatVoiceGroup(stack: RenderStack, autoBeam?: boolean|undefined): VFFormatter {
         // formats a group of voices to use the same formatter; returns the formatter
         // if autoBeam is true then it will apply beams for each voice and put them in
         // this.beamGroups;
         const allTickables = stack.allTickables();
+        
         const vf_voices = stack.voices;
         const measuresOrVoices = stack.streams;
         const useVexflowAutobeam = this.stream.renderOptions.useVexflowAutobeam;
@@ -563,37 +590,45 @@ export class Renderer {
             autoBeam = measuresOrVoices[0].autoBeam;
         }
 
-        const formatter = new Vex.Flow.Formatter();
+        const formatter = new VFFormatter({softmaxFactor: vexflowDefaults.softmaxFactor});
         // var minLength = formatter.preCalculateMinTotalWidth([voices]);
         // console.log(minLength);
         if (vf_voices.length === 0) {
             return formatter;
         }
         let maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
-        for (let i = 0; i < allTickables.length; i++) {
+        for (const tick of allTickables) {
             // console.log(voices[i], voices[i].stave, i);
-            if (allTickables[i].stave.getNoteStartX() > maxGlyphStart) {
-                maxGlyphStart = allTickables[i].stave.getNoteStartX();
+            const stave = tick.getStave();
+            if (stave !== undefined && stave.getNoteStartX() > maxGlyphStart) {
+                maxGlyphStart = stave.getNoteStartX();
             }
         }
-        for (let i = 0; i < allTickables.length; i++) {
-            allTickables[i].stave.setNoteStartX(maxGlyphStart); // corrected!
+        for (const tick of allTickables) {
+            const stave = tick.getStave();
+            stave?.setNoteStartX(maxGlyphStart); // corrected!
         }
         // TODO: should do the same for end_x -- for key sig changes, etc...
 
-        const stave = vf_voices[0].stave; // all staves should be same length, so does not matter;
+        const stave = vf_voices[0].getStave(); // all staves should be same length, so does not matter;
         const tickablesByStave = stack.tickablesByStave();
         for (const staveTickables of tickablesByStave) {
             formatter.joinVoices(staveTickables);
         }
-        formatter.formatToStave(allTickables, stave);
+        if (stave === undefined) {
+            return formatter;
+        }
+
+        if (allTickables.length >= 1 && allTickables[0].getTickables().length) {
+            formatter.formatToStave(allTickables, stave);
+        }
 
         // VexFlow and native autobeam both wipe out stemDirection. worth it usually...
         if (autoBeam && useVexflowAutobeam) {
             for (let i = 0; i < vf_voices.length; i++) {
                 const vf_voice = vf_voices[i];
                 const associatedStream = stack.voiceToStreamMapping.get(vf_voice);
-                let beatGroups;
+                let beatGroups: VFFraction[];
                 if (
                     associatedStream !== undefined
                     && associatedStream.getSpecialContext('timeSignature') !== undefined
@@ -602,9 +637,9 @@ export class Renderer {
                     // TODO: getContextByClass...
                     // console.log(beatGroups);
                 } else {
-                    beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
+                    beatGroups = [new VFFraction(2, 8)]; // default beam groups
                 }
-                const beamGroups = Vex.Flow.Beam.applyAndGetBeams(
+                const beamGroups = VFBeam.applyAndGetBeams(
                     vf_voice,
                     undefined,
                     beatGroups
@@ -613,7 +648,7 @@ export class Renderer {
             }
         } else {
             for (const s of stack.streams) {
-                const notes = s.flat.notes;
+                const notes = s.flatten().notes;
                 let activeBeamGroupNotes = [];
                 for (const n of notes) {
                     if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
@@ -626,8 +661,10 @@ export class Renderer {
                         activeBeamGroupNotes.push(n.activeVexflowNote);
                     }
                     if (eighthNoteBeam.type === 'stop') {
-                        const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, false);
-                        this.beamGroups.push(vfBeam);
+                        if (activeBeamGroupNotes.length > 1) {
+                            const vfBeam = new VFBeam(activeBeamGroupNotes, false);
+                            this.beamGroups.push(vfBeam);
+                        }
                         activeBeamGroupNotes = [];
                     }
                 }
@@ -640,10 +677,10 @@ export class Renderer {
      * Draws the beam groups.
      *
      */
-    drawBeamGroups() {
+    drawBeamGroups(): void {
         const ctx = this.ctx;
-        for (let i = 0; i < this.beamGroups.length; i++) {
-            this.beamGroups[i].setContext(ctx).draw();
+        for (const bg of this.beamGroups) {
+            bg.setContext(ctx).draw();
         }
     }
 
@@ -651,7 +688,7 @@ export class Renderer {
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
      */
-    newStave(s?: stream.Stream, rendOp?: renderOptions.RenderOptions): Vex.Flow.Stave {
+    newStave(s?: stream.Stream, rendOp?: renderOptions.RenderOptions): VFStave {
         if (s === undefined) {
             s = this.stream;
         }
@@ -673,16 +710,9 @@ export class Renderer {
         }
         // console.log('streamLength: ' + streamLength);
         if (debug) {
-            console.log(
-                'creating new stave: left:'
-                    + left
-                    + ' top: '
-                    + top
-                    + ' width: '
-                    + width
-            );
+            console.log(`creating new stave: left: ${left}, top: ${top}, width: ${width}`);
         }
-        const stave = new Vex.Flow.Stave(left, top, width);
+        const stave = new VFStave(left, top, width);
         return stave;
     }
 
@@ -693,11 +723,10 @@ export class Renderer {
      * RenderOptions object might have
      * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
      */
-    setClefEtc(s: stream.Stream, stave: Vex.Flow.Staves, rendOp?: renderOptions.RenderOptions) {
+    setClefEtc(s: stream.Stream, stave: VFStave, rendOp?: renderOptions.RenderOptions) {
         if (rendOp === undefined) {
             rendOp = s.renderOptions;
         }
-
 
         let sClef = s.getSpecialContext('clef')
             || s.getContextByClass('Clef');
@@ -729,7 +758,7 @@ export class Renderer {
         }
 
         if (displayClef) {
-            let ottava;
+            let ottava: string;
             const size = 'default';
             if (sClef.octaveChange === 1) {
                 ottava = '8va';
@@ -760,27 +789,23 @@ export class Renderer {
         }
 
         if (displayTs) {
-            stave.addTimeSignature(
-                context_ts.numerator.toString()
-                    + '/'
-                    + context_ts.denominator.toString()
-            );
+            stave.addTimeSignature(`${context_ts.numerator}/${context_ts.denominator}`);
         }
         if (rendOp.leftBarline !== undefined) {
             const bl = rendOp.leftBarline;
 
-            const vxBL = barlineMap[bl];
+            const vxBL:string = barlineMap[bl];
             if (vxBL !== undefined) {
-                stave.setBegBarType(Vex.Flow.Barline.type[vxBL]);
+                stave.setBegBarType(VFBarlineType[vxBL]);
             }
         }
 
         if (rendOp.rightBarline !== undefined) {
             const bl = rendOp.rightBarline;
 
-            const vxBL = barlineMap[bl];
+            const vxBL:string = barlineMap[bl];
             if (vxBL !== undefined) {
-                stave.setEndBarType(Vex.Flow.Barline.type[vxBL]);
+                stave.setEndBarType(VFBarlineType[vxBL]);
             }
         }
     }
@@ -797,7 +822,7 @@ export class Renderer {
      *
      * vexflowStave is the Stave to set lines for.
      */
-    setStafflines(s: stream.Stream, vexflowStave: Vex.Flow.Stave): void {
+    setStafflines(s: stream.Stream, vexflowStave: VFStave): void {
         const rendOp = s.renderOptions;
         if (rendOp.staffLines !== 5) {
             if (rendOp.staffLines === 0) {
@@ -805,29 +830,29 @@ export class Renderer {
             } else if (rendOp.staffLines === 1) {
                 // Vex.Flow.Stave.setNumLines hides all but the top line.
                 // this is better
-                vexflowStave.options.line_config = [
+                vexflowStave.setConfigForLines([
                     { visible: false },
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: false },
                     { visible: false },
-                ];
+                ]);
             } else if (rendOp.staffLines === 2) {
-                vexflowStave.options.line_config = [
+                vexflowStave.setConfigForLines([
                     { visible: false },
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: true },
                     { visible: false },
-                ];
+                ]);
             } else if (rendOp.staffLines === 3) {
-                vexflowStave.options.line_config = [
+                vexflowStave.setConfigForLines([
                     { visible: false },
                     { visible: true },
                     { visible: true }, // show middle
                     { visible: true },
                     { visible: false },
-                ];
+                ]);
             } else {
                 vexflowStave.setNumLines(rendOp.staffLines);
             }
@@ -839,14 +864,14 @@ export class Renderer {
      *
      * Also changes `this.vfTuplets`.
      */
-    vexflowNotes(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.StaveNote[] {
+    vexflowNotes(s?: stream.Stream, stave?: VFStave): VFStaveNote[] {
         if (s === undefined) {
             s = this.stream;
         }
         // runs on a flat stream, returns a list of voices...
         const notes = [];
         const vfTuplets = [];
-        let activeTuplet;
+        let activeTuplet: Tuplet;
         let activeTupletLength = 0.0;
         let activeTupletVexflowNotes = [];
         let sClef = s.getSpecialContext('clef') || s.getContextByClass('Clef');
@@ -866,7 +891,7 @@ export class Renderer {
                 notes_occupied: activeTuplet.numberNotesNormal,
             };
             // console.log('tupletOptions', tupletOptions);
-            const vfTuplet = new Vex.Flow.Tuplet(
+            const vfTuplet = new VFTuplet(
                 activeTupletVexflowNotes,
                 tupletOptions
             );
@@ -884,6 +909,7 @@ export class Renderer {
             if (
                 thisEl.isClassOrSubclass('GeneralNote')
                 && thisEl.duration !== undefined
+                && !(thisEl.style.hideObjectOnPrint)
             ) {
                 // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                 const vfn = (thisEl as note.GeneralNote).vexflowNote(options);
@@ -908,14 +934,8 @@ export class Renderer {
                     // console.log(activeTupletLength, activeTuplet.totalTupletLength());
                     //
                     // Add tuplet when complete.
-                    if (
-                        activeTupletLength
-                            >= activeTuplet.totalTupletLength()
-                        || Math.abs(
-                            activeTupletLength
-                                - activeTuplet.totalTupletLength()
-                        ) < 0.001
-                    ) {
+                    if (activeTupletLength >= activeTuplet.totalTupletLength()
+                        || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
                         complete_active_tuplet_function();
                     }
                 } else if (activeTuplet !== undefined) {
@@ -935,90 +955,60 @@ export class Renderer {
     }
 
     /**
-     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
+     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
      */
-    vexflowLyrics(s?: stream.Stream, stave?: Vex.Flow.Stave): Vex.Flow.TextNote[] {
-        const getTextNote = (text, font, d, lyricObj=undefined) => {
-            // console.log(text, font, d);
-            // noinspection TypeScriptValidateJSTypes
-            const t1 = new Vex.Flow.TextNote({
-                text,
-                font,
-                duration: d.vexflowDuration,
-            })
-                .setLine(11)
-                .setStave(stave)
-                .setJustification(Vex.Flow.TextNote.Justification.LEFT);
-            if (lyricObj) {
-                t1.setStyle(lyricObj.style);
-            }
-            if (d.tuplets.length > 0) {
-                t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
-            }
-            return t1;
-        };
-
-        if (s === undefined) {
-            s = this.stream;
-        }
+    vexflowLyrics(s: stream.Stream, stave?: VFStave, depth: number=0): VFTextNote[] {
         // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
-        const lyricsObjects = [];
+        const lyricTextNotes: VFTextNote[] = [];
         for (const el of s.notesAndRests) {
             const lyricsArray = el.lyrics;
             if (lyricsArray === undefined) {
                 continue;
             }
-            let text;
+            let text: string = '';
             let d = el.duration;
-            let addConnector: boolean|string = false;
-            let firstLyric;
-            const font = {
-                family: 'Serif',
-                size: 12,
-                weight: '',
-            };
 
-            if (lyricsArray.length === 0) {
-                text = '';
-            } else {
-                firstLyric = lyricsArray[0];
-                text = firstLyric.text;
-                if (text === undefined) {
-                    text = '';
-                }
-                if (
-                    firstLyric.syllabic === 'middle'
-                    || firstLyric.syllabic === 'begin'
-                ) {
-                    addConnector = ' ' + firstLyric.lyricConnector;
+            // connectors deal with hyphens.
+            let addConnector: boolean|string = false;
+            const font = {...note.default_vf_lyric_style} as VFFontInfo;
+
+            const lyricAtDepth = lyricsArray[depth];  // rename lyricAtDepth
+            if (lyricAtDepth) {
+                text = lyricAtDepth.text ?? '';
+                if (['middle', 'begin'].includes(lyricAtDepth.syllabic)) {
+                    addConnector = ' ' + lyricAtDepth.lyricConnector;
                     const tempQl = el.duration.quarterLength / 2.0;
                     d = new duration.Duration(tempQl);
                 }
-                if (firstLyric.style.fontFamily) {
-                    font.family = firstLyric.style.fontFamily;
+                if (lyricAtDepth.style.fontFamily) {
+                    font.family = lyricAtDepth.style.fontFamily;
                 }
-                if (firstLyric.style.fontSize) {
-                    font.size = firstLyric.style.fontSize;
+                if (lyricAtDepth.style.fontSize) {
+                    font.size = lyricAtDepth.style.fontSize;
                 }
-                if (firstLyric.style.fontWeight) {
-                    font.weight = firstLyric.style.fontWeight;
+                if (lyricAtDepth.style.fontWeight) {
+                    font.weight = lyricAtDepth.style.fontWeight;
                 }
             }
-            const t1 = getTextNote(text, font, d, firstLyric);
-            lyricsObjects.push(t1);
+            const line = 11 + (depth * 2);
+            const t1 = getTextNote(text, font, d, stave, lyricAtDepth, line);
+            lyricTextNotes.push(t1);
             if (addConnector !== false) {
-                const connector = getTextNote(addConnector, font, d);
-                lyricsObjects.push(connector);
+                const connector = getTextNote(addConnector, font, d, stave, undefined, line);
+                lyricTextNotes.push(connector);
             }
         }
-        return lyricsObjects;
+        return lyricTextNotes;
     }
 
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */
-    vexflowVoice(s: stream.Stream): Vex.Flow.Voice {
+    vexflowVoice(s: stream.Stream): VFVoice {
         const totalLength = s.duration.quarterLength;
+        if (totalLength === 0) {
+            return new VFVoice().setMode(VFVoice.Mode.SOFT);
+        }
 
         let num1024 = Math.round(totalLength / (1 / 256));
         let beatValue = 1024;
@@ -1053,17 +1043,13 @@ export class Renderer {
         }
         // console.log('creating voice');
         if (debug) {
-            console.log(
-                'New voice, num_beats: '
-                    + num1024.toString()
-                    + ' beat_value: '
-                    + beatValue.toString()
-            );
+            console.log(`New voice, num_beats: ${num1024} beat_value: ${beatValue}`);
         }
-        const vfv = new Vex.Flow.Voice({
+        const vfv = new VFVoice({
             num_beats: num1024,
             beat_value: beatValue,
-            resolution: Vex.Flow.RESOLUTION,
+            // this is the default
+            // resolution: VexFlow.RESOLUTION,
         });
 
         // from vexflow/src/voice.js
@@ -1075,16 +1061,17 @@ export class Renderer {
         // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
         //         tick length.
         // noinspection TypeScriptValidateJSTypes
-        vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
+        vfv.setMode(VFVoice.Mode.SOFT);
+        vfv.setSoftmaxFactor(vexflowDefaults.softmaxFactor);  // will be wiped out later...
         return vfv;
     }
 
-    staffConnectorsMap(connectorType) {
+    staffConnectorsMap(connectorType: StaveConnector): VFStaveConnectorType  {
         const connectorMap = {
-            brace: Vex.Flow.StaveConnector.type.BRACE,
-            single: Vex.Flow.StaveConnector.type.SINGLE,
-            double: Vex.Flow.StaveConnector.type.DOUBLE,
-            bracket: Vex.Flow.StaveConnector.type.BRACKET,
+            brace: VFStaveConnector.type.BRACE,
+            single: VFStaveConnector.type.SINGLE,
+            double: VFStaveConnector.type.DOUBLE,
+            bracket: VFStaveConnector.type.BRACKET,
         };
         return connectorMap[connectorType];
     }
@@ -1093,11 +1080,11 @@ export class Renderer {
      * If a stream has parts (NOT CHECKED HERE) create and
      * draw an appropriate Vex.Flow.StaveConnector
      */
-    addStaffConnectors(s?: stream.Score) {
+    addStaffConnectors(s?: stream.Score): void {
         if (s === undefined) {
             s = (this.stream as stream.Score);
         }
-        const parts = s.parts;
+        const parts = s.parts;  // m21j currently has .parts on all Stream classes.
         const numParts = parts.length;
         if (numParts < 2) {
             return;
@@ -1145,16 +1132,11 @@ export class Renderer {
                         }
                     }
                 }
-                for (
-                    let i = 0;
-                    i < s.renderOptions.staffConnectors.length;
-                    i++
-                ) {
-                    const sc = new Vex.Flow.StaveConnector(
+                for (const scTypeM21 of s.renderOptions.staffConnectors) {
+                    const sc = new VFStaveConnector(
                         topVFStaff,
                         bottomVFStaff
                     );
-                    const scTypeM21 = s.renderOptions.staffConnectors[i];
                     const scTypeVF = this.staffConnectorsMap(scTypeM21);
                     // noinspection TypeScriptValidateJSTypes
                     sc.setType(scTypeVF);
@@ -1171,20 +1153,17 @@ export class Renderer {
      * each {@link Music21Object} -- see `applyFormatterInformationToNotes`
      *
      * You might want to remove this information; this routine does that.
-     *
-     * @param {Stream} s - can have parts, measures, etc.
-     * @param {boolean} [recursive=false]
      */
-    removeFormatterInformation(s, recursive=false) {
+    removeFormatterInformation(s: stream.Stream, recursive: boolean = false): void {
         s.storedVexflowStave = undefined;
         for (const el of s) {
-            el.x = undefined;
-            el.y = undefined;
-            el.width = undefined;
-            el.systemIndex = undefined;
-            el.activeVexflowNote = undefined;
+            (el as any).x = undefined;
+            (el as any).y = undefined;
+            (el as any).width = undefined;
+            (el as any).systemIndex = undefined;
+            (el as any).activeVexflowNote = undefined;
             if (recursive && el.isClassOrSubclass('Stream')) {
-                this.removeFormatterInformation(el, recursive);
+                this.removeFormatterInformation((<stream.Stream><any> el), recursive);
             }
         }
     }
@@ -1202,11 +1181,7 @@ export class Renderer {
      *
      * Also sets s.storedVexflowStave to stave.
      */
-    applyFormatterInformationToNotes(
-        stave: Vex.Flow.Stave,
-        s?: stream.Stream,
-        formatter?: Vex.Flow.Formatter,
-    ) {
+    applyFormatterInformationToNotes(stave: VFStave, s?: stream.Stream, formatter?: VFFormatter): void {
         if (s === undefined) {
             s = this.stream;
         }
@@ -1214,13 +1189,11 @@ export class Renderer {
         let noteOffsetLeft = 0;
         // var staveHeight = 80;
         if (stave !== undefined) {
-            noteOffsetLeft = stave.start_x + stave.glyph_start_x;
+            const noteStartX = stave.getNoteStartX();
+            noteOffsetLeft = noteStartX;
             if (debug) {
                 console.log(
-                    'noteOffsetLeft: '
-                        + noteOffsetLeft
-                        + ' ; stave.start_x: '
-                        + stave.start_x
+                    `noteOffsetLeft: ${noteOffsetLeft}; stave.getNoteStartX(): ${noteStartX}`
                 );
                 console.log('Bottom y: ' + stave.getBottomY());
             }
@@ -1235,9 +1208,10 @@ export class Renderer {
                 if (vfn === undefined) {
                     continue;
                 }
-                const formatterNote = formatter.tickContexts.map[nextTicks];
+                const formatterNote = formatter.getTickContext(nextTicks);
                 const nTicks = (
-                    (vfn.ticks.numerator / vfn.ticks.denominator) * formatter.tickContexts.resolutionMultiplier
+                    // @ts-ignore
+                    vfn.getTicks().value() * formatter.tickContexts.resolutionMultiplier
                 );
                 nextTicks += nTicks;
                 el.x = vfn.getAbsoluteX();
@@ -1249,13 +1223,12 @@ export class Renderer {
                     continue;
                 }
 
-                el.width = formatterNote.width;
+                el.width = formatterNote.getWidth();
                 if (el.pitch !== undefined && stave !== undefined) {
                     // note only...
-                    el.y
-                        = stave.getBottomY()
-                        - (sClef.lowestLine - el.pitch.diatonicNoteNum)
-                            * stave.options.spacing_between_lines_px;
+                    el.y = stave.getBottomY()
+                        - ((sClef.lowestLine - el.pitch.diatonicNoteNum)
+                            * stave.options.spacing_between_lines_px);
                     // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }
             }
@@ -1264,16 +1237,40 @@ export class Renderer {
             for (const n of s) {
                 if ((n as note.Note).pitch !== undefined) {
                     const nn = <any> n;
-                    console.log(
-                        nn.pitch.diatonicNoteNum
-                            + ' '
-                            + nn.x
-                            + ' '
-                            + (nn.x + nn.width)
-                    );
+                    console.log(`${nn.pitch.diatonicNoteNum} ${nn.x} ${nn.x + nn.width}`);
                 }
             }
         }
         s.storedVexflowStave = stave;
     }
 }
+
+export function getTextNote(
+    text: string,
+    font: VFFontInfo,
+    d: duration.Duration,
+    stave: VFStave,
+    lyricObj: note.Lyric = undefined,
+    line: number = 11,
+): VFTextNote {
+    // console.log(text, font, d);
+    // noinspection TypeScriptValidateJSTypes
+    const t1 = new VFTextNote({
+        text,
+        font,
+        duration: d.vexflowDuration,
+    })
+        .setLine(line)
+        .setStave(stave)
+        .setJustification(VFTextNote.Justification.LEFT);
+    if (lyricObj) {
+        t1.setStyle({fillStyle: lyricObj.style.color});
+    }
+    if (d.tuplets.length > 0) {
+        t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
+    }
+    return t1;
+}
+
+
+

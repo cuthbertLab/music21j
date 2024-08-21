@@ -4,6 +4,24 @@ const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const package_json = require('./package.json');
+const {spawn} = require('child_process');
+
+
+// run qunit code while grunt watching.
+class QUnitInWatch {
+    apply(compiler) {
+        compiler.hooks.done.tap('QUnitInWatch', stats => {
+            const child = spawn('grunt', ['qunit'], {cwd: __dirname});
+            child.stdout.on('data', function (data) {
+                process.stdout.write(data);
+            });
+            child.stderr.on('data', function (data) {
+                process.stderr.write(data);
+            });
+        });
+    }
+}
+
 
 module.exports = grunt => {
 
@@ -15,7 +33,7 @@ module.exports = grunt => {
         + 'Michael Scott Asato Cuthbert\n'
         + ' * BSD License, see LICENSE\n'
         + ' *\n'
-        + ' * http://github.com/cuthbertLab/music21j\n'
+        + ' * https://github.com/cuthbertLab/music21j\n'
         + ' */\n';
     const BASE_DIR = __dirname;
     const BUILD_DIR = path.join(BASE_DIR, 'build');
@@ -121,7 +139,7 @@ module.exports = grunt => {
                 modules: false,  // do not transform modules; let webpack do it
                 targets: {
                     browsers: [
-                        'last 4 years',
+                        'last 2.5 years',
                         'not < 0.04% in US',
                         'not firefox < 39',
                         'not safari < 10',
@@ -149,7 +167,8 @@ module.exports = grunt => {
     webpackTests.entry = TEST_ENTRY;
     webpackTests.output.path = TEST_DIR;
     webpackTests.output.library = 'm21Tests';
-    webpackTests.watch = false;
+    webpackTests.devtool = 'eval-source-map';
+    webpackTests.plugins.push(new QUnitInWatch());
     // webpackTests.cache = true;
 
     // Project configuration.
@@ -164,6 +183,7 @@ module.exports = grunt => {
                 mode: 'development',
             }, webpackCommon),
             test: webpackTests,
+            test_no_watch: {...webpackTests, watch: false},
         },
         jsdoc: {
             dist: {
@@ -183,11 +203,23 @@ module.exports = grunt => {
         eslint: {
             target: SOURCES.concat(TEST_SOURCES),
             options: {
-                configFile: '.eslintrc.json',
+                overrideConfigFile: '.eslintrc.json',
             },
         },
         qunit: {
             files: ['tests/gruntTest.html'],
+            options: {
+                puppeteer: {
+                    ignoreDefaultArgs: true,
+                    // these are to get around CORS not loading
+                    // https://github.com/gruntjs/grunt-contrib-qunit/issues/158
+                    args: [
+                        '--headless',
+                        '--disable-web-security',
+                        '--allow-file-access-from-files',
+                    ]
+                }
+            }
         },
         watch: {
             scripts: {
@@ -222,17 +254,20 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
-    // Plugin for the jsdoc task
-    grunt.loadNpmTasks('grunt-jsdoc');
+    // Plugin for the jsdoc task -- currently has vulnerabilities.
+    //grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-bump');
     grunt.loadNpmTasks('grunt-eslint');
 
     // Default task(s).
     grunt.registerTask('default', ['webpack:build']);
-    grunt.registerTask('test', 'Watch qunit tests', ['watch:test']);
-    grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
-    grunt.registerTask('publish', 'Raise the version and publish', () => {
-        grunt.task.run('jsdoc');
+    // grunt.registerTask('test', 'Watch qunit tests', ['watch:test']);
+    // grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
+    grunt.registerTask('test', 'Watch qunit tests', ['webpack:test']);
+    grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test_no_watch', 'qunit']);
+    grunt.registerTask('publish', 'Raise the version and be ready to publish', () => {
+        // vulnerable jsdoc versions only available.
+        // grunt.task.run('jsdoc');
         grunt.task.run('bump');
     });
 };

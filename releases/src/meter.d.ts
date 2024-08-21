@@ -2,10 +2,10 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
-import Vex from 'vexflow';
+import { Fraction as VFFraction } from 'vexflow';
 import * as base from './base';
 import * as beam from './beam';
 import * as duration from './duration';
@@ -13,6 +13,7 @@ import * as stream from './stream';
 import { Music21Object } from './base';
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
+ * divisions is currently not used.
  *
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
@@ -24,12 +25,12 @@ export declare class TimeSignature extends base.Music21Object {
     static get className(): string;
     _numerator: number;
     _denominator: number;
-    _overwrittenBarDuration: any;
+    _overwrittenBarDuration: duration.Duration;
     symbol: string;
     symbolizeDenominator: boolean;
     _beatGroups: number[][];
-    _overwrittenBeatCount: any;
-    _overwrittenBeatDuration: any;
+    _overwrittenBeatCount: number;
+    _overwrittenBeatDuration: duration.Duration;
     constructor(value?: string, divisions?: any);
     stringInfo(): string;
     resetValues(value?: string, divisions?: any): void;
@@ -72,6 +73,8 @@ export declare class TimeSignature extends base.Music21Object {
      *     find a list of beat groups.
      */
     computeBeatGroups(): number[][];
+    _beat_group_as_ql(beatGroup: number[]): number;
+    _beat_groups_to_fill_bar(): number[][];
     offsetToIndex(qLenPos: number, { includeCoincidentBoundaries }?: {
         includeCoincidentBoundaries?: boolean;
     }): number;
@@ -106,6 +109,6 @@ export declare class TimeSignature extends base.Music21Object {
      *
      * returns a list of numerator and denominator groups, for VexFlow, as Vex.Flow.Fraction[]
      */
-    vexflowBeatGroups(): Vex.Flow.Fraction[];
+    vexflowBeatGroups(): VFFraction[];
 }
 //# sourceMappingURL=meter.d.ts.map

@@ -4,6 +4,7 @@
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
     </head>
     <body>
         <h1>layout tests -- experimental.  The <code>ls</code> object has a LayoutScore</h1>
@@ -15,7 +16,7 @@
         p2 = music21.tinyNotation.TinyNotation('2/4 a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 b2 b2 c2');
         s.append(p);
         s.append(p2);
-        s.appendNewDOM($("#scoreDiv"));
+        s.appendNewDOM(document.querySelector("#scoreDiv"));
         ps = s.parts;
         ls = music21.layout.makeLayoutFromScore(s);
         </script>

@@ -4,12 +4,13 @@
  *
  * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Options for rendering a stream
  *
  */
+import {StaveConnector} from './types';
 
 interface EventInterface {
     click: string|Function|undefined,
@@ -47,6 +48,8 @@ export class RenderOptions {
     // additional padding at the bottom of the stream
     // (not every system).
     marginBottom: number = 0;
+    lyricsLine: number = -3;
+    adjustMarginBottomForLyrics: boolean = true;  // not yet implemented.
 
     systemIndex: number = 0;
     partIndex: number = 0;
@@ -61,11 +64,11 @@ export class RenderOptions {
     // scaleFactors.
     maxSystemWidth: number = undefined;
 
-    leftBarline: string = undefined;  // normally not used.
+    leftBarline: string = undefined;  // render() sets to 'none' for system beginnings
     rightBarline: string = undefined;
 
     staffLines: number = 5;
-    staffConnectors: string[] = ['single', 'brace'];
+    staffConnectors: StaveConnector[] = [StaveConnector.SINGLE, StaveConnector.BRACE];
     staffPadding: number = 60; // width...
     events: EventInterface = {
         click: 'play',

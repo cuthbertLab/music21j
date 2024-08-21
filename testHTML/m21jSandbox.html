@@ -3,8 +3,9 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Music21j Sandbox</title>
+    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
     <script src="../build/music21.debug.js"></script>
-    <style type="text/css">
+    <style>
         .streamHolding {
             background: #eed;
             padding: 10px;
@@ -15,8 +16,8 @@
             border: 10px solid #afa;
             font-family: "Courier", monospace;
             font-size: 14px;
-            width: 1000px;
-            height: 180px;
+            width: 90%;
+            height: 300px;
         }
         div.editor-error .text {
             background: #faa;
@@ -31,6 +32,7 @@
 
 <body>
 <div class="header">
+    <button id="resetButton" role="button" style="float: right">Reset</button>
     <h1>Music21j Sandbox</h1>
     <div class="main">
         <label for="sandbox">
@@ -46,46 +48,69 @@
         <p></p>
         <div class="example sandbox">
             <textarea id="sandbox" class="editor">
-const n = new music21.note.Note("C#");
-n.duration.type = "whole";
-const s = new music21.stream.Stream();
-s.append(n);
-s.replaceDOM();
-</textarea>
+            </textarea>
             <p></p>
             <div class='streamHolding' id='mainSVG'>
-                <svg width="625" height="360"></svg>
+                <svg width="525" height="220"></svg>
             </div>
             <p></p>
         </div>
     </div>
 </div>
 <script>
-    Vex = undefined;
-    mainSVG = undefined;
     let timeout;
-    let msg = "";
 
-    mainSVG = $("#mainSVG")[0];
-    msg = $('div.editor-error .text');
+    const default_text = `
+const s = new music21.stream.Measure();
+const n = new music21.note.Note("C#4");
+n.duration.type = "half";
+const n2 = new music21.note.Note("A4");
+n2.duration.type = "quarter";
+const n3 = new music21.note.Note("C#");
+n3.duration.type = "quarter";
+s.append(new music21.meter.TimeSignature('4/4'));
+s.append(n);
+s.append(n2);
+s.append(n3);
+s.renderOptions.marginBottom = 80;
+s.replaceDOM('#mainSVG');
+    `;
+
+    const mainSVG = document.querySelector("#mainSVG");
+    const msg = document.querySelector('div.editor-error .text');
+    const sandbox = document.querySelector("#sandbox");
+    const localStorageKey = 'm21j_sandbox_code';
+    const local_storage_value = localStorage.getItem(localStorageKey);
+    sandbox.value = local_storage_value || default_text;
+    document.querySelector('#resetButton').addEventListener('click', () => {
+        sandbox.value = default_text;
+        localStorage.removeItem(localStorageKey);
+        live_code();
+    });
+
     live_code();
 
-    $('#sandbox').on('blur keyup paste', function() {
-        if (timeout) {
-            clearTimeout(timeout)
-        };
-        timeout = setTimeout(live_code, 200);
-    });
+    for (const evt of ['blur', 'keyup', 'paste']) {
+        sandbox.addEventListener(evt, () => {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(live_code, 250);
+        });
+    }
+
     function live_code() {
-        let code = $("#sandbox").val();
+        let code = sandbox.value;
 
         try {
             eval(code);
-            msg.html('').hide();
+            msg.innerHTML = '';
+            msg.style.display = 'none';
+            localStorage.setItem(localStorageKey, code);
         } catch (e) {
-            msg.html(e.toString()).show();
+            msg.innerHTML = e.toString();
+            msg.style.display = 'block';
         }
-
     }
 </script>
 </body>

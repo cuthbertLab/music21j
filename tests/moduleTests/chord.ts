@@ -30,6 +30,9 @@ export default function tests() {
         assert.equal(pitches[0].nameWithOctave, 'G3');
         assert.equal(pitches[2].nameWithOctave, 'C5');
 
+        const s = new music21.stream.Measure();
+        s.append(c);
+        s.appendNewDOM();
     });
 
     test('music21.chord.Chord sortPitches', assert => {

@@ -1,12 +1,12 @@
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  */
-import Vex from 'vexflow';
+import { Articulation as VFArticulation, Ornament as VFOrnament } from 'vexflow';
 import * as base from './base';
 import { ArticulationPlacement, VexflowArticulationParams } from './articulations';
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  * @property {string} name
  * @property {string} vexflowModifier
@@ -22,7 +22,7 @@ export declare class Expression extends base.Music21Object {
      *
      * (this is not right for all cases)
      */
-    vexflow({ stemDirection }?: VexflowArticulationParams): Vex.Flow.Articulation;
+    vexflow({ stemDirection }?: VexflowArticulationParams): VFArticulation | VFOrnament | null;
 }
 /**
  * A fermata...
@@ -35,7 +35,7 @@ export declare class Fermata extends Expression {
 export declare class Ornament extends Expression {
     static get className(): string;
     name: string;
-    vexflow({ stemDirection }?: VexflowArticulationParams): Vex.Flow.Articulation;
+    vexflow({ stemDirection }?: VexflowArticulationParams): VFOrnament | null;
 }
 export declare class Trill extends Ornament {
     static get className(): string;

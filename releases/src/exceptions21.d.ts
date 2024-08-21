@@ -1,5 +1,5 @@
 declare class ExtendableError extends Error {
-    constructor(message: any);
+    constructor(message: string);
 }
 export declare class Music21Exception extends ExtendableError {
 }

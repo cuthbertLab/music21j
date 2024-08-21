@@ -5,6 +5,7 @@ import * as filters from './filters';
 import type { Music21Object } from '../base';
 import type { GeneralNote, NotRest } from '../note';
 import type { Part, Stream, Voice } from '../stream';
+import type {ClassFilterType} from '../types';
 
 const StopIterationSingleton = filters.StopIterationSingleton;
 
@@ -13,25 +14,25 @@ export class StreamIteratorException extends StreamException {
 
 }
 
-class _StreamIteratorBase<T = Music21Object> {
-    srcStream: Stream;
+export class StreamIteratorBase<T extends Music21Object = Music21Object> {
+    srcStream: Stream<T>;
     index: number = 0;
-    srcStreamElements: Music21Object[];
+    srcStreamElements: T[];
     streamLength: number;
     iterSection: string = '_elements';
     cleanupOnStop: boolean = false;
     restoreActiveSites: boolean;
     overrideDerivation;
-    filters: any[];
+    filters: filters.StreamFilter[];
 
     protected _len: number;
-    protected _matchingElements: Music21Object[];
+    protected _matchingElements: T[];
 
     sectionIndex: number = 0;
     activeInformation: any;
 
     constructor(
-        srcStream: Stream,
+        srcStream: Stream<T>,
         {
             filterList = [],
             restoreActiveSites=true,
@@ -43,7 +44,7 @@ class _StreamIteratorBase<T = Music21Object> {
             srcStream.sort();
         }
         this.srcStream = srcStream;
-        this.srcStreamElements = srcStream.elements as Music21Object[];
+        this.srcStreamElements = srcStream.elements as T[];
         this.streamLength = this.srcStreamElements.length;
 
         this.restoreActiveSites = restoreActiveSites;
@@ -70,12 +71,25 @@ class _StreamIteratorBase<T = Music21Object> {
         }
     }
 
-    map(func) {
+    clone<TT extends Music21Object = T>(): StreamIteratorBase<TT> {
+        const constructor = <typeof StreamIteratorBase><unknown> this.constructor;
+        return <StreamIteratorBase<TT>><unknown> new constructor(
+            this.srcStream,
+            {
+                filterList: [...this.filters],
+                restoreActiveSites: this.restoreActiveSites,
+                activeInformation: {...this.activeInformation},
+            }
+        );
+    }
+
+    map(func: (el: T) => any): any[] {
         return Array.from(this).map(func);
     }
 
     first(): T {
-        for (const el of this) {
+        // noinspection LoopStatementThatDoesntLoopJS
+        for (const el of this) {  // eslint-disable-line no-unreachable-loop
             return el;
         }
         return undefined;
@@ -89,7 +103,7 @@ class _StreamIteratorBase<T = Music21Object> {
         return fe[fe.length - 1];
     }
 
-    get(k): T {
+    get(k: number): T {
         const fe = this.matchingElements();
         if (k < 0) {
             k = fe.length + k;
@@ -106,7 +120,7 @@ class _StreamIteratorBase<T = Music21Object> {
         return this._len;
     }
 
-    updateActiveInformation() {
+    updateActiveInformation(): void {
         const ai = this.activeInformation;
         ai.stream = this.srcStream;
         ai.index = this.index - 1;
@@ -114,7 +128,7 @@ class _StreamIteratorBase<T = Music21Object> {
         ai.sectionIndex = this.sectionIndex;
     }
 
-    reset() {
+    reset(): void {
         this.index = 0;
         this.iterSection = '_elements';
         this.updateActiveInformation();
@@ -125,12 +139,12 @@ class _StreamIteratorBase<T = Music21Object> {
         }
     }
 
-    resetCaches() {
+    resetCaches(): void {
         this._len = undefined;
         this._matchingElements = undefined;
     }
 
-    cleanup() {
+    cleanup(): void {
         if (this.cleanupOnStop) {
             this.reset();
             this.srcStream = undefined;
@@ -171,7 +185,7 @@ class _StreamIteratorBase<T = Music21Object> {
         return true;
     }
 
-    stream() {
+    stream(): Stream<T> {
         const ss = this.srcStream;
         // let clearIsSorted = false;
 
@@ -197,56 +211,67 @@ class _StreamIteratorBase<T = Music21Object> {
         return this.activeInformation.stream[this.activeInformation.iterSection];
     }
 
-    addFilter(newFilter) {
+    /**
+     * Returns a new StreamIterator with the filter added.
+     */
+    addFilter(newFilter: filters.StreamFilter): StreamIteratorBase<T> {
         for (const f of this.filters) {
             if (newFilter === f) {
-                return this; // will not work... because == overrides.
+                return this.clone(); // will not work... because == overrides.
             }
         }
-        this.filters.push(newFilter);
-        this.resetCaches();
-        return this;
+        const clone = this.clone();
+        clone.filters = [...clone.filters, newFilter];
+        return clone;
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    removeFilter(oldFilter) {
+    /**
+     * Returns a new StreamIterator with the filter removed.
+     *
+     * Silently ignores
+     */
+    removeFilter(oldFilter: filters.StreamFilter): StreamIteratorBase<T> {
         const index = this.filters.indexOf(oldFilter);
+        const clone = this.clone();
         if (index !== -1) {
-            this.filters.splice(index, 1);
+            clone.filters = clone.filters.toSpliced(index, 1);
         }
-        this.resetCaches();
-        return this;
+        return clone;
     }
 
     // getElementById(elementId) {
     //
     // }
 
-    getElementsByClass(classFilterList: string|string[]|typeof Music21Object|(typeof Music21Object)[]) {
+    getElementsByClass(classFilterList: ClassFilterType) {
         return this.addFilter(new filters.ClassFilter(classFilterList));
     }
 
-    getElementsNotOfClass(classFilterList) {
+    getElementsNotOfClass(classFilterList: ClassFilterType) {
         return this.addFilter(new filters.ClassNotFilter(classFilterList));
     }
 
     // getElementsByGroup;
     // getElementsByOffset;
-    getElementsByOffset(offsetStart, ...args) {
-        return this.addFilter(new filters.OffsetFilter(offsetStart, ...args));
+    getElementsByOffset(
+        offsetStart: number,
+        offsetEnd?: number,
+        offsetOptions?: filters.OffsetFilterOptions,
+    ) {
+        return this.addFilter(new filters.OffsetFilter(offsetStart, offsetEnd, offsetOptions));
     }
 
 
     get notes() {
-        return this.addFilter(new filters.ClassFilter('NotRest')) as unknown as _StreamIteratorBase<NotRest>;
+        return this.addFilter(new filters.ClassFilter('NotRest')) as unknown as StreamIteratorBase<NotRest>;
     }
 
     get notesAndRests() {
-        return this.addFilter(new filters.ClassFilter('GeneralNote')) as unknown as _StreamIteratorBase<GeneralNote>;
+        return this.addFilter(new filters.ClassFilter('GeneralNote')) as unknown as StreamIteratorBase<GeneralNote>;
     }
 
     get parts() {
-        return this.addFilter(new filters.ClassFilter('Part')) as unknown as _StreamIteratorBase<Part>;
+        return this.addFilter(new filters.ClassFilter('Part')) as unknown as StreamIteratorBase<Part>;
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -255,18 +280,18 @@ class _StreamIteratorBase<T = Music21Object> {
     }
 
     get voices() {
-        return this.addFilter(new filters.ClassFilter('Voice')) as unknown as _StreamIteratorBase<Voice>;
+        return this.addFilter(new filters.ClassFilter('Voice')) as unknown as StreamIteratorBase<Voice>;
     }
 }
 
-export class StreamIterator<T = Music21Object> extends _StreamIteratorBase<T> {
+export class StreamIterator<T extends Music21Object = Music21Object> extends StreamIteratorBase<T> {
 
     * [Symbol.iterator](): Generator<T, void, void> {
         this.reset();
         while (this.index < this.streamLength) {
             // noinspection DuplicatedCode
             this.index += 1;
-            let e;
+            let e: T;
             try {
                 e = this.srcStreamElements[this.index - 1];
             } catch (exc) {
@@ -290,14 +315,7 @@ export class StreamIterator<T = Music21Object> extends _StreamIteratorBase<T> {
 
 }
 
-export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
-    nextToYield: T[];
-    nextOffsetToYield: number;
-
-    constructor(srcStream, options={}) {
-        super(srcStream, options);
-        this.nextToYield = [];
-    }
+export class OffsetIterator<T extends Music21Object = Music21Object> extends StreamIteratorBase<T> {
 
     * [Symbol.iterator](): Generator<T[], void, void> {
         this.reset();
@@ -305,10 +323,10 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
 
         while (this.index < this.streamLength) {
             // noinspection DuplicatedCode
-            this.index += 1;
-            let e;
+            this.index += 1;  // advance early
+            let e: T;
             try {
-                e = this.srcStreamElements[this.index - 1];
+                e = this.srcStreamElements[this.index - 1];  // backtrack
             } catch (exc) {
                 continue;
             }
@@ -322,25 +340,24 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
             const yieldEls = [e];
             const eOffset = this.srcStream.elementOffset(e);
 
-            for (let forwardIndex = this.index; forwardIndex < this.streamLength; forwardIndex++) {
-                let nextE;
-                try {
-                    nextE = this.srcStreamElements[this.index - 1];
-                } catch (exc) {
+            // allow forwardIndex == this.streamLength because this.index needs
+            // to be incremented inside the loop before being decremented by updateActiveInformation
+            // (when yielding whatever is in yieldEls)
+            for (let forwardIndex = this.index; forwardIndex <= this.streamLength; forwardIndex++) {
+                this.index = forwardIndex;
+                const nextE = this.srcStreamElements[this.index];
+                if (nextE === undefined) {
                     continue;
                 }
                 const nextOffset = this.srcStream.elementOffset(nextE);
                 if (nextOffset !== eOffset) {
-                    this.nextToYield = [nextE];
-                    this.nextOffsetToYield = nextOffset;
                     break;
                 }
                 if (!this.matchesFilters(nextE)) {
                     continue;
                 }
 
-                yieldEls.push(e);
-                this.index = forwardIndex;
+                yieldEls.push(nextE);
             }
 
             if (this.restoreActiveSites) {
@@ -354,14 +371,11 @@ export class OffsetIterator<T = Music21Object> extends _StreamIteratorBase<T> {
         this.cleanup();
     }
 
-    reset() {
-        super.reset();
-        this.nextToYield = [];
-        this.nextOffsetToYield = undefined;
-    }
 }
 
-export class RecursiveIterator<T = Music21Object> extends _StreamIteratorBase<T> {
+export class RecursiveIterator<T extends Music21Object = Music21Object>
+    extends StreamIteratorBase<T> {
+
     returnSelf: boolean;
     includeSelf: boolean;
     ignoreSorting: boolean;
@@ -369,7 +383,7 @@ export class RecursiveIterator<T = Music21Object> extends _StreamIteratorBase<T>
     childRecursiveIterator: RecursiveIterator<T>;
 
     constructor(
-        srcStream: Stream,
+        srcStream: Stream<T>,
         {
             filterList=[],
             restoreActiveSites=true,
@@ -432,8 +446,8 @@ export class RecursiveIterator<T = Music21Object> extends _StreamIteratorBase<T>
             }
 
             if (e.isStream) {
-                this.childRecursiveIterator = new RecursiveIterator(
-                    <Stream><any> e,
+                this.childRecursiveIterator = new RecursiveIterator<T>(
+                    <Stream<T>><any> e,
                     {
                         restoreActiveSites: this.restoreActiveSites,
                         filterList: this.filters, // shared list
@@ -511,6 +525,16 @@ export class RecursiveIterator<T = Music21Object> extends _StreamIteratorBase<T>
             return lastStartOffset + lastStream.elementOffset(lastYield);
         }
     }
+
+    override getElementsByClass<TT extends T = T>(classFilterList: string): RecursiveIterator<TT>;
+    override getElementsByClass<TT extends T = T>(classFilterList: string[]): RecursiveIterator<TT>;
+    override getElementsByClass<TT extends T = T>(classFilterList: (new () => TT)): RecursiveIterator<TT>;
+    override getElementsByClass<TT extends T = T>(classFilterList: (new () => T)[]): RecursiveIterator<TT>;
+    override getElementsByClass<TT extends T = T>(classFilterList: ClassFilterType): RecursiveIterator<TT> {
+        return super.getElementsByClass(classFilterList) as RecursiveIterator<TT>;
+    }
+
+
     // TODO(msc): getElementsByOffsetInHierarchy
 
 

@@ -4,12 +4,13 @@
  *
  * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Options for rendering a stream
  *
  */
+import { StaveConnector } from './types';
 interface EventInterface {
     click: string | Function | undefined;
     dblclick: string | Function | undefined;
@@ -35,6 +36,8 @@ export declare class RenderOptions {
     overriddenWidth: number;
     height: number;
     marginBottom: number;
+    lyricsLine: number;
+    adjustMarginBottomForLyrics: boolean;
     systemIndex: number;
     partIndex: number;
     measureIndex: number;
@@ -43,7 +46,7 @@ export declare class RenderOptions {
     leftBarline: string;
     rightBarline: string;
     staffLines: number;
-    staffConnectors: string[];
+    staffConnectors: StaveConnector[];
     staffPadding: number;
     events: EventInterface;
     useVexflowAutobeam: boolean;

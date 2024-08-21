@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "lib": ["es6", "dom", "es2018"],
+        "lib": ["dom", "dom.iterable", "es2023"],
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "sourceMap": true,
@@ -12,7 +12,8 @@
         "target": "es6"
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "tests/**/*",
     ],
     "exclude": [
         "node_modules"

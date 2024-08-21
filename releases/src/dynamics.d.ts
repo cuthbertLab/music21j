@@ -5,8 +5,8 @@
  * note that Vex.Flow does not support Dynamics yet and we do not support MIDI dynamics,
  *  so currently of limited value...
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Dynamics related objects.
  *
@@ -68,7 +68,7 @@ export declare class Dynamic extends base.Music21Object {
     longName: string;
     englishName: string;
     constructor(value: string | number);
-    get value(): string | number;
+    get value(): string;
     set value(value: string | number);
     get volumeScalar(): number;
     set volumeScalar(value: number);

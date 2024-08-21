@@ -5,15 +5,17 @@ const { test } = QUnit;
 
 export default function tests() {
     test('music21.duration.Duration 0', assert => {
-        // @ts-ignore
         const d = new music21.duration.Duration(0.0);
         assert.equal(d.type, 'zero', 'got zero');
         assert.equal(d.dots, 0, 'got no dots');
         assert.equal(d.quarterLength, 0.0, 'got 0.0');
+
+        d.dots = 0;
+        assert.equal(d.dots, 0, 'still no dots');
+        assert.equal(d.quarterLength, 0.0, 'still 0.0');
     });
 
     test('music21.duration.Duration', assert => {
-        // @ts-ignore
         const d = new music21.duration.Duration(1.0);
         assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
         assert.equal(d.dots, 0, 'got no dots');
@@ -36,17 +38,16 @@ export default function tests() {
     });
 
     test('music21.duration.Tuplet', assert => {
-        // @ts-ignore
         const d = new music21.duration.Duration(0.5);
         const t = new music21.duration.Tuplet(5, 4);
         assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier should be 0.8');
         d.appendTuplet(t);
         assert.equal(t.frozen, true, 'tuplet is frozen');
+
         // @ts-ignore
         assert.equal(d._tuplets[0], t, 'tuplet appended');
         assert.equal(d.quarterLength, 0.4, 'quarterLength Updated');
 
-        // @ts-ignore
         const d2 = new music21.duration.Duration(1 / 3);
         assert.equal(d2.type, 'eighth', 'got eighth note from 1/3');
         assert.equal(d2.dots, 0, 'got no dots');

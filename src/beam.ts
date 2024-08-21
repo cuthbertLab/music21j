@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/beam -- Beams and Beam class
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Module holding beam materials.
  *
@@ -12,6 +12,8 @@ import { Music21Exception } from './exceptions21';
 
 import * as prebase from './prebase';
 import * as duration from './duration';
+import type * as base from './base';
+import type * as note from './note';
 
 export const validBeamTypes = {
     start: true,
@@ -46,7 +48,7 @@ export class Beam extends prebase.ProtoM21Object {
     number: number;
     independentAngle: number;
 
-    constructor(type, direction=undefined) {
+    constructor(type: string, direction=undefined) {
         super();
         this.type = type;
         this.direction = direction;
@@ -63,12 +65,12 @@ export class Beam extends prebase.ProtoM21Object {
 export class Beams extends prebase.ProtoM21Object {
     static get className() { return 'music21.beam.Beams'; }
 
-    static naiveBeams(srcList): Beams[] {
+    static naiveBeams(srcList: Iterable<base.Music21Object>): Beams[] {
         const beamsList = [];
         for (const el of srcList) {
             if (!beamableDurationTypes.includes(el.duration.type)) {
                 beamsList.push(undefined);
-            } else if (el.isRest) {
+            } else if ((<note.GeneralNote><any> el).isRest) {
                 beamsList.push(undefined);
             } else {
                 const b = new Beams();
@@ -79,9 +81,9 @@ export class Beams extends prebase.ProtoM21Object {
         return beamsList;
     }
 
-    static removeSandwichedUnbeamables(beamsList) {
-        let beamLast;
-        let beamNext;
+    static removeSandwichedUnbeamables(beamsList: Beams[]): Beams[] {
+        let beamLast: Beams;
+        let beamNext: Beams;
         for (let i = 0; i < beamsList.length; i++) {
             if (i !== beamsList.length - 1) {
                 beamNext = beamsList[i + 1];

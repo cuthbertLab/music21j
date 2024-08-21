@@ -3,13 +3,13 @@
  *
  * See http://web.mit.edu/music21/ for more details.
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
@@ -28,7 +28,6 @@
 // webpack loader for music21j.
 import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';  // to be removed when export * from is okay.
-import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
 // order below doesn't matter, but good to give a sense
@@ -49,6 +48,7 @@ import * as chord from './chord';
 import * as chordTables from './chordTables';
 import * as clef from './clef';
 import * as converter from './converter';
+import defaults from './defaults';
 import * as derivation from './derivation';
 import * as duration from './duration';
 import * as dynamics from './dynamics';
@@ -78,6 +78,7 @@ import * as svgs from './svgs';
 import * as tempo from './tempo';
 import * as tie from './tie';
 import * as tinyNotation from './tinyNotation';
+import * as vfShims from './vfShims';
 import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
@@ -105,6 +106,7 @@ export {
     chordTables,
     clef,
     converter,
+    defaults,
     derivation,
     duration,
     dynamics,
@@ -134,16 +136,12 @@ export {
     tempo,
     tie,
     tinyNotation,
+    vfShims,
     vfShow,
     voiceLeading,
     webmidi,
 };
 
-export const VERSION = '0.12.1';
-
-if (typeof window !== 'undefined') {
-    (window as any).$ = $;
-    (window as any).jQuery = $;
-}
+export const VERSION = '0.16.0';
 
 parseLoader.runConfiguration();

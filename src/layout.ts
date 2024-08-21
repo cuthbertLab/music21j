@@ -5,8 +5,6 @@
  *
  */
 // future -- rewrite of Score and Part to Page, System, SystemPart
-// not currently used
-// import * as $ from 'jquery';
 //
 // import { base } from './base';
 // import { renderOptions } from './renderOptions';
@@ -50,7 +48,7 @@ export function makeLayoutFromScore(
     currentSystem.measureStart = 1;
     let currentStaves: Staff[] = [];
 
-    const staffMaker = (staffHolder, numParts, measureStart) => {
+    const staffMaker = (staffHolder, numParts: number, measureStart): void => {
         for (let pNum = 0; pNum < numParts; pNum++) {
             const staff = new Staff();
             staff.measureStart = measureStart;

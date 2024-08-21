@@ -5,7 +5,6 @@
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" />
         <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-
     </head>
     <body>
 		<div>
@@ -15,7 +14,7 @@
 	    </div>
     	<script src="../build/music21.debug.js"></script>
 		<script>
-        music21.webmidi.createSelector($("#putMidiSelectHere"));
+        music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
         music21.miditools.callbacks.general = music21.miditools.sendToMIDIjs;
 		</script>
 

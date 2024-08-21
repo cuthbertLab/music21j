@@ -1,10 +1,7 @@
-import $ from 'jquery';
-
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/main';
 
 const { test } = QUnit;
-
 
 export default function tests() {
     test('music21.clef.Clef', assert => {
@@ -34,7 +31,7 @@ export default function tests() {
         const s = new music21.stream.Stream();
         s.clef = ac;
         s.append(n);
-        s.appendNewDOM($('body'));
+        s.appendNewDOM();
     });
     test('music21.clef clefFromString', assert => {
         const tc = music21.clef.clefFromString('treble');
@@ -43,5 +40,20 @@ export default function tests() {
         assert.ok(tc2.isClassOrSubclass('Treble8vaClef'), 'tc2 is Treble8vaClef');
         const bc = music21.clef.clefFromString('F4');
         assert.ok(bc.isClassOrSubclass('BassClef'), 'bc is BassClef');
+    });
+    test('music21.clef bestClef', assert => {
+        const s = new music21.stream.Stream();
+        s.append(new music21.note.Note('C5'));
+        assert.ok(music21.clef.bestClef(s).isClassOrSubclass('TrebleClef'), 'best clef is treble');
+        s.append(new music21.chord.Chord(['C2', 'E2', 'G2']));
+        assert.ok(music21.clef.bestClef(s).isClassOrSubclass('BassClef'), 'best clef is bass');
+        const m = new music21.stream.Measure();
+        m.append(new music21.chord.Chord(['E7', 'F7', 'G7', 'A7', 'B7', 'C8']));
+        s.append(m);
+        assert.ok(music21.clef.bestClef(s).isClassOrSubclass('TrebleClef'), 'best clef is treble');
+        assert.ok(
+            music21.clef.bestClef(s, {recurse: false}).isClassOrSubclass('BassClef'),
+            'best clef is bass'
+        );
     });
 }

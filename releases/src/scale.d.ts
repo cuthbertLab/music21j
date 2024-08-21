@@ -46,9 +46,9 @@ export declare class AbstractScale extends Scale {
     equals(other: AbstractScale): boolean;
     buildNetworkFromPitches(pitchList: string[] | pitch.Pitch[] | note.Note[]): void;
     getDegreeMaxUnique(): number;
-    getRealization(pitchObj: any, unused_stepOfPitch?: any, unused_minPitch?: any, unused_maxPitch?: any, unused_direction?: any, unused_reverse?: any): any[];
-    getPitchFromNodeDegree(pitchReference: any, unused_nodeName: any, nodeDegreeTarget: any): any;
-    getRelativeNodeDegree(pitchReference: any, unused_nodeName: any, pitchTarget: any, unused_comparisonAttribute?: any, unused_direction?: any): number;
+    getRealization(pitchObj: pitch.Pitch, unused_stepOfPitch?: any, unused_minPitch?: any, unused_maxPitch?: any, unused_direction?: any, unused_reverse?: any): pitch.Pitch[];
+    getPitchFromNodeDegree(pitchReference: pitch.Pitch, _nodeName: string | number, nodeDegreeTarget: number): pitch.Pitch;
+    getRelativeNodeDegree(pitchReference: pitch.Pitch, unused_nodeName: string | number, pitchTarget: pitch.Pitch, unused_comparisonAttribute?: any, unused_direction?: any): number;
 }
 export declare class AbstractDiatonicScale extends AbstractScale {
     static get className(): string;
@@ -57,7 +57,6 @@ export declare class AbstractDiatonicScale extends AbstractScale {
     relativeMinorDegree: number;
     /**
      *
-     * @param {string} [mode]
      * @property {string} type
      * @property {number|undefined} tonicDegree
      * @property {number|undefined} dominantDegree
@@ -80,32 +79,32 @@ export declare class ConcreteScale extends Scale {
     static get className(): string;
     tonic: pitch.Pitch;
     abstract: AbstractScale;
-    constructor(tonic: any);
+    constructor(tonic: string | pitch.Pitch);
     get isConcrete(): boolean;
     getTonic(): pitch.Pitch;
-    getPitches(unused_minPitch?: any, unused_maxPitch?: any, unused_direction?: any): any[];
-    pitchFromDegree(degree: any, unused_minPitch?: any, unused_maxPitch?: any, unused_direction?: any, unused_equateTermini?: any): any;
-    getScaleDegreeFromPitch(pitchTarget: any, unused_direction?: any, unused_comparisonAttribute?: any): number;
+    getPitches(unused_minPitch?: any, unused_maxPitch?: any, unused_direction?: any): pitch.Pitch[];
+    pitchFromDegree(degree: number, unused_minPitch?: any, unused_maxPitch?: any, unused_direction?: any, unused_equateTermini?: any): pitch.Pitch;
+    getScaleDegreeFromPitch(pitchTarget: pitch.Pitch, unused_direction?: any, unused_comparisonAttribute?: any): number;
 }
 export declare class DiatonicScale extends ConcreteScale {
     static get className(): string;
-    constructor(tonic: any);
+    constructor(tonic: string | pitch.Pitch);
 }
 export declare class MajorScale extends DiatonicScale {
     static get className(): string;
-    constructor(tonic: any);
+    constructor(tonic: string | pitch.Pitch);
 }
 export declare class MinorScale extends DiatonicScale {
     static get className(): string;
-    constructor(tonic: any);
+    constructor(tonic: string | pitch.Pitch);
 }
 export declare class HarmonicMinorScale extends ConcreteScale {
     static get className(): string;
-    constructor(tonic: any);
+    constructor(tonic: string | pitch.Pitch);
 }
 export declare class AscendingMelodicMinorScale extends ConcreteScale {
     static get className(): string;
-    constructor(tonic: any);
+    constructor(tonic: string | pitch.Pitch);
 }
 /**
  * Function, not class.  DEPRECATED: to be removed.
