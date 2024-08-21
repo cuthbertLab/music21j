@@ -1,5 +1,4 @@
-Music21j
-=========
+# Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
@@ -26,8 +25,7 @@ targets browsers no more than 30 months old.
 Safari is the only major desktop browser for which there is no out of the box 
 support for MIDI devices.
 
-Documentation
--------------
+## Documentation
 This README appears in both the GitHub home page and the documentation
 home page; to make the following links work, go to the documentation
 page at http://web.mit.edu/music21/music21j/doc/ .
@@ -39,14 +37,12 @@ or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}.
 
 (Ignore "Modules" they're not useful and duplicate the namespace pages).
 
-Example
---------
+## Example
 Install by downloading a copy of the music21 code to your own webserver.
 
 ```sh
 % npm install music21j
 ```
-
 
 If this line (`npm install`) doesn't work, download the
 latest version of `node.js` from https://nodejs.org/en/download/
@@ -98,19 +94,49 @@ const n = new music21.note.Note('F#');
 // etc.
 ```
 
-Version
---------
+### Embedding, etc.
+Music21j was originally intended for self-hosting, so embedding is not
+yet as simple as it should be.
+
+To load soundfonts from other locations (like in a CDN), 
+(1) set a global `m21conf` variable to disable loading soundfonts,
+(2) load the music21j script, and (3) set the new soundfont location,
+and (4) load the soundfont.
+
+This fragment shows how to do it.  A working implementation is in the
+testHTML directory as `sfElsewhereCDN.html`.
+
+```html
+<body>
+<script>
+    window.m21conf = { loadSoundfont: false };
+</script>
+<script 
+    src="https://cdn.jsdelivr.net/npm/music21j/releases/music21.debug.min.js"
+></script>
+<script>
+    music21.common.urls.soundfontUrl = 'https://raw.githubusercontent.com/gleitz/midi-js-soundfonts/gh-pages/FluidR3_GM/';
+    music21.miditools.loadSoundfont('clarinet', i => {
+       const tn = music21.tinyNotation.TinyNotation('4/4 c4 d e f g1');
+       tn.instrument = i;
+       tn.playStream();
+    });
+</script>
+</body>
+```
+
+
+
+## Version
 0.16 beta
 
 
-License
---------
+## License
 Music21j is released under the BSD 3-Clause License. Essentially you
 can do with it what you want so long as you leave in my copyright statements
 and do not represent that I endorse your product.
 
-Thanks
------------
+## Thanks
 
 Thanks to the following packages (among others) for making music21j possible:
 
@@ -135,8 +161,7 @@ and supported by the Music and Theater Arts section of [MIT].
 [jsdoc]:http://usejsdoc.org
 
 
-Dev Notes
-----------------
+## Dev Notes
 Build and watch with
 
 ```sh
@@ -166,8 +191,7 @@ for running tests one time without watch, you can use:
 $ grunt test_no_watch
 ```
 
-Publishing a new version
--------------------------
+### Publishing a new version
 You'll need to be part of the npm dev team.
 
 Two steps.  First make sure you have run:
@@ -214,6 +238,4 @@ $ npm install
 ```
 
 
-These docs will be changing in preparation for v. 1.0 release.
-
-
+These docs may change someday in preparation for v.1.0 release.
