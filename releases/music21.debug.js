@@ -1,5 +1,5 @@
 /**
- * music21j version 0.16.2 built on 2024-06-22.
+ * music21j version 0.16.4 built on 2024-08-21.
  * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -104,6 +104,7 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object 
   constructor() {
     super(...arguments);
     this.placement = ArticulationPlacement.NOTE_SIDE;
+    this.vexflowModifier = '';
     this.dynamicScale = 1.0;
     this.lengthScale = 1.0;
   }
@@ -111,12 +112,16 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object 
     return 'music21.articulation.Articulation';
   }
   /**
-   * Generates a Vex.Flow.Articulation for this articulation.
+   * Generates a Vex.Flow.Articulation for this articulation if it is something
+   * vexflow can display.
    */
   vexflow() {
     let {
       stemDirection
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    if (!this.vexflowModifier) {
+      return null;
+    }
     const vfa = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Articulation(this.vexflowModifier);
     setPlacementOnVexFlowArticulation(vfa, this.placement, stemDirection);
     return vfa;
@@ -126,115 +131,111 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object 
  * base class for articulations that change the length of a note...
  */
 class LengthArticulation extends Articulation {
+  constructor() {
+    super(...arguments);
+    this.name = 'length-articulation';
+  }
   static get className() {
     return 'music21.articulation.LengthArticulation';
-  }
-  constructor() {
-    super();
-    this.name = 'length-articulation';
   }
 }
 /**
  * base class for articulations that change the dynamic of a note...
  */
 class DynamicArticulation extends Articulation {
+  constructor() {
+    super(...arguments);
+    this.name = 'dynamic-articulation';
+  }
   static get className() {
     return 'music21.articulation.DynamicArticulation';
-  }
-  constructor() {
-    super();
-    this.name = 'dynamic-articulation';
   }
 }
 /**
  * base class for articulations that change the pitch of a note...
  */
 class PitchArticulation extends Articulation {
+  constructor() {
+    super(...arguments);
+    this.name = 'pitch-articulation';
+  }
   static get className() {
     return 'music21.articulation.PitchArticulation';
-  }
-  constructor() {
-    super();
-    this.name = 'pitch-articulation';
   }
 }
 /**
  * base class for articulations that change the timbre of a note...
  */
 class TimbreArticulation extends Articulation {
+  constructor() {
+    super(...arguments);
+    this.name = 'timbre-articulation';
+  }
   static get className() {
     return 'music21.articulation.TimbreArticulation';
-  }
-  constructor() {
-    super();
-    this.name = 'timbre-articulation';
   }
 }
 /**
  * 50% louder than usual
  */
 class Accent extends DynamicArticulation {
-  static get className() {
-    return 'music21.articulation.Accent';
-  }
   constructor() {
-    super();
+    super(...arguments);
     this.name = 'accent';
     this.vexflowModifier = 'a>';
     this.dynamicScale = 1.5;
+  }
+  static get className() {
+    return 'music21.articulation.Accent';
   }
 }
 /**
  * 100% louder than usual
  */
 class StrongAccent extends Accent {
-  static get className() {
-    return 'music21.articulation.StrongAccent';
-  }
   constructor() {
-    super();
+    super(...arguments);
     this.name = 'strong accent';
     this.vexflowModifier = 'a^';
     this.dynamicScale = 2.0;
   }
+  static get className() {
+    return 'music21.articulation.StrongAccent';
+  }
 }
-/**
- * no playback for now.
- */
 class Staccato extends LengthArticulation {
+  constructor() {
+    super(...arguments);
+    this.name = 'staccato';
+    this.vexflowModifier = 'a.';
+    this.lengthScale = 0.6;
+  }
   static get className() {
     return 'music21.articulation.Staccato';
   }
-  constructor() {
-    super();
-    this.name = 'staccato';
-    this.vexflowModifier = 'a.';
-  }
 }
-/**
- * no playback for now.
- */
 class Staccatissimo extends Staccato {
+  constructor() {
+    super(...arguments);
+    this.name = 'staccatissimo';
+    this.vexflowModifier = 'av';
+    this.lengthScale = 0.3;
+  }
   static get className() {
     return 'music21.articulation.Staccatissimo';
   }
-  constructor() {
-    super();
-    this.name = 'staccatissimo';
-    this.vexflowModifier = 'av';
-  }
 }
 /**
- * no playback or display for now.
+ * no difference in playback from staccato.  no display.
  */
 class Spiccato extends Staccato {
+  constructor() {
+    super(...arguments);
+    this.name = 'spiccato';
+    this.vexflowModifier = '';
+  }
   static get className() {
     return 'music21.articulation.Spiccato';
-  }
-  constructor() {
-    super();
-    this.name = 'spiccato';
-    this.vexflowModifier = undefined;
   }
 }
 /**
@@ -254,13 +255,13 @@ class Marcato extends DynamicArticulation {
   }
 }
 class Tenuto extends LengthArticulation {
-  static get className() {
-    return 'music21.articulation.Tenuto';
-  }
   constructor() {
-    super();
+    super(...arguments);
     this.name = 'tenuto';
     this.vexflowModifier = 'a-';
+  }
+  static get className() {
+    return 'music21.articulation.Tenuto';
   }
 }
 
@@ -7176,6 +7177,9 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
     let {
       stemDirection
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    if (!this.vexflowModifier) {
+      return null;
+    }
     const vfe = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Articulation(this.vexflowModifier);
     (0,_articulations__WEBPACK_IMPORTED_MODULE_2__.setPlacementOnVexFlowArticulation)(vfe, this.placement, stemDirection);
     return vfe;
@@ -7207,6 +7211,9 @@ class Ornament extends Expression {
     let {
       stemDirection
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    if (!this.vexflowModifier) {
+      return null;
+    }
     const vfe = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Ornament(this.vexflowModifier);
     (0,_articulations__WEBPACK_IMPORTED_MODULE_2__.setPlacementOnVexFlowArticulation)(vfe, this.placement, stemDirection);
     return vfe;
@@ -8291,24 +8298,11 @@ const info = [{
 /**
  * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
  *
+ * Note that unlike music21p -- for now there is only one instrument object: Instrument
+ * there are no Piano, Flute, etc. objects
+ *
  * See music21.miditools and esp. `loadSoundfont` for a way of loading soundfonts into
  * instruments.
- *
- * @param {string} instrumentName
- * @property {string|undefined} partId
- * @property {string|undefined} partName
- * @property {string|undefined} partAbbreviation
- * @property {string|undefined} instrumentId
- * @property {string|undefined} instrumentName
- * @property {string|undefined} instrumentAbbreviation
- * @property {int|undefined} midiProgram
- * @property {int|undefined} midiChannel
- * @property {int|undefined} lowestNote
- * @property {int|undefined} highestNote
- * @property {Boolean} inGMPercMap=false
- * @property {string|undefined} soundfontFn
- * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
- * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
  */
 class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
   static get className() {
@@ -10763,13 +10757,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
   computeBeatGroups() {
     const tempBeatGroups = [];
     let numBeats = this.numerator;
-    let beatValue = this.denominator;
-    if (beatValue < 8 && numBeats >= 5) {
-      const beatsToEighthNoteRatio = 8 / beatValue;
-      // hopefully beatValue is an int -- right Brian Ferneyhough?
-      beatValue = 8;
-      numBeats *= beatsToEighthNoteRatio;
-    }
+    const beatValue = this.denominator;
     if (beatValue >= 8) {
       if ([4, 2].includes(numBeats)) {
         // 4/8 and 2/8 should have eighth beats
@@ -13921,14 +13909,20 @@ class NotRest extends GeneralNote {
       }
     }
     for (const art of this.articulations) {
-      vfn.addModifier(art.vexflow({
+      const vf_art = art.vexflow({
         stemDirection: useStemDirection
-      }));
+      });
+      if (vf_art) {
+        vfn.addModifier(vf_art);
+      }
     }
     for (const exp of this.expressions) {
-      vfn.addModifier(exp.vexflow({
+      const vf_exp = exp.vexflow({
         stemDirection: useStemDirection
-      }));
+      });
+      if (vf_exp) {
+        vfn.addModifier(vf_exp);
+      }
     }
     if (this.noteheadColor !== undefined) {
       vfn.setStyle({
@@ -14105,6 +14099,9 @@ class Note extends NotRest {
     // Note, not rest
     const midNum = this.pitch.midi;
     let stopTime = milliseconds / 1000;
+    for (const art of this.articulations) {
+      stopTime *= art.lengthScale;
+    }
     if (nextElement instanceof Note) {
       if (nextElement.pitch.midi !== this.pitch.midi && playLegato) {
         stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
@@ -14230,8 +14227,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   loadConfiguration: () => (/* binding */ loadConfiguration),
 /* harmony export */   loadDefaultSoundfont: () => (/* binding */ loadDefaultSoundfont),
 /* harmony export */   renderHTML: () => (/* binding */ renderHTML),
-/* harmony export */   runConfiguration: () => (/* binding */ runConfiguration),
-/* harmony export */   warnBanner: () => (/* binding */ warnBanner)
+/* harmony export */   runConfiguration: () => (/* binding */ runConfiguration)
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
 /* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
@@ -14249,7 +14245,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function runConfiguration() {
-  let conf;
+  let conf = {};
   // noinspection JSUnresolvedVariable
   if (typeof window.m21conf !== 'undefined') {
     // noinspection JSUnresolvedVariable
@@ -14257,7 +14253,6 @@ function runConfiguration() {
   } else {
     conf = loadConfiguration();
   }
-  conf.warnBanner = conf.warnBanner !== undefined ? conf.warnBanner : warnBanner();
   conf.loadSoundfont = conf.loadSoundfont !== undefined ? conf.loadSoundfont : getM21attribute('loadSoundFont') || true;
   conf.renderHTML = conf.renderHTML !== undefined ? conf.renderHTML : getM21attribute('renderHTML');
   if (conf.renderHTML === undefined) {
@@ -14315,8 +14310,7 @@ function loadDefaultSoundfont(conf) {
   return _miditools__WEBPACK_IMPORTED_MODULE_3__.loadSoundfont(instrument);
 }
 /**
- *
- * @returns {{}}
+ * Find the configuration as a JSON-encoded m21conf attribute on the script tag.
  */
 function loadConfiguration() {
   const rawConf = getM21attribute('m21conf');
@@ -14351,13 +14345,6 @@ function getM21attribute() {
     }
   }
   return undefined;
-}
-/**
- *
- * @returns {boolean}
- */
-function warnBanner() {
-  return getM21attribute('warnBanner') !== 'no';
 }
 
 /***/ }),

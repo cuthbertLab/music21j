@@ -37,72 +37,76 @@ export declare class Articulation extends prebase.ProtoM21Object {
     dynamicScale: number;
     lengthScale: number;
     /**
-     * Generates a Vex.Flow.Articulation for this articulation.
+     * Generates a Vex.Flow.Articulation for this articulation if it is something
+     * vexflow can display.
      */
-    vexflow({ stemDirection }?: VexflowArticulationParams): VFArticulation;
+    vexflow({ stemDirection }?: VexflowArticulationParams): VFArticulation | null;
 }
 /**
  * base class for articulations that change the length of a note...
  */
 export declare class LengthArticulation extends Articulation {
     static get className(): string;
-    constructor();
+    name: string;
 }
 /**
  * base class for articulations that change the dynamic of a note...
  */
 export declare class DynamicArticulation extends Articulation {
     static get className(): string;
-    constructor();
+    name: string;
 }
 /**
  * base class for articulations that change the pitch of a note...
  */
 export declare class PitchArticulation extends Articulation {
     static get className(): string;
-    constructor();
+    name: string;
 }
 /**
  * base class for articulations that change the timbre of a note...
  */
 export declare class TimbreArticulation extends Articulation {
     static get className(): string;
-    constructor();
+    name: string;
 }
 /**
  * 50% louder than usual
  */
 export declare class Accent extends DynamicArticulation {
     static get className(): string;
-    constructor();
+    name: string;
+    vexflowModifier: string;
+    dynamicScale: number;
 }
 /**
  * 100% louder than usual
  */
 export declare class StrongAccent extends Accent {
     static get className(): string;
-    constructor();
+    name: string;
+    vexflowModifier: string;
+    dynamicScale: number;
 }
-/**
- * no playback for now.
- */
 export declare class Staccato extends LengthArticulation {
     static get className(): string;
-    constructor();
+    name: string;
+    vexflowModifier: string;
+    lengthScale: number;
 }
-/**
- * no playback for now.
- */
 export declare class Staccatissimo extends Staccato {
     static get className(): string;
-    constructor();
+    name: string;
+    vexflowModifier: string;
+    lengthScale: number;
 }
 /**
- * no playback or display for now.
+ * no difference in playback from staccato.  no display.
  */
 export declare class Spiccato extends Staccato {
     static get className(): string;
-    constructor();
+    name: string;
+    vexflowModifier: string;
 }
 /**
  * should be both a DynamicArticulation and a LengthArticulation
@@ -114,6 +118,7 @@ export declare class Marcato extends DynamicArticulation {
 }
 export declare class Tenuto extends LengthArticulation {
     static get className(): string;
-    constructor();
+    name: string;
+    vexflowModifier: string;
 }
 //# sourceMappingURL=articulations.d.ts.map
