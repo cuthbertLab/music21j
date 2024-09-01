@@ -208,7 +208,14 @@ export class TimeSignature extends base.Music21Object {
             tempBeatGroups.push([1, 1]);
         } else {
             // 4/4, 2/4, 3/4, standard stuff
-            tempBeatGroups.push([2, 8]);
+            if (numBeats % 3 === 0 && numBeats > 3) {
+                while (numBeats) {
+                    tempBeatGroups.push([3, beatValue]);
+                    numBeats -= 3;
+                }
+            } else {
+                tempBeatGroups.push([2, 8]);
+            }
         }
         return tempBeatGroups;
     }

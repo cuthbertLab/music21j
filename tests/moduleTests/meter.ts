@@ -257,10 +257,10 @@ export default function tests() {
         assertBeatGroups('3/4', [[2, 8]]);
         assertBeatGroups('4/4', [[2, 8]]);
         assertBeatGroups('5/4', [[2, 8]]);
-        assertBeatGroups('6/4', [[2, 8]]);
+        assertBeatGroups('6/4', [[3, 4], [3, 4]]);
         assertBeatGroups('7/4', [[2, 8]]);
-        assertBeatGroups('9/4', [[2, 8]]);
-        assertBeatGroups('12/4', [[2, 8]]);
+        assertBeatGroups('9/4', [[3, 4], [3, 4], [3, 4]]);
+        assertBeatGroups('12/4', [[3, 4], [3, 4], [3, 4], [3, 4]]);
         assertBeatGroups('2/8', [[1, 8]]);
         assertBeatGroups('3/8', [[3, 8]]);
         assertBeatGroups('4/8', [[1, 8]]);
