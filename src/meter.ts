@@ -185,30 +185,38 @@ export class TimeSignature extends base.Music21Object {
      */
     computeBeatGroups(): number[][] {
         const tempBeatGroups = [];
-        let numBeats = this.numerator;
-        const beatValue = this.denominator;
-        if (beatValue >= 8) {
-            if ([4, 2].includes(numBeats)) {  // 4/8 and 2/8 should have eighth beats
-                tempBeatGroups.push([1, beatValue]);
+        const meterNumerator = this.numerator;
+        const meterDenominator = this.denominator;
+        if (meterDenominator >= 8) {
+            if ([4, 2].includes(meterNumerator)) {  // 4/8 and 2/8 should have eighth beats
+                tempBeatGroups.push([1, meterDenominator]);
             } else {
-                while (numBeats >= 5) {
-                    tempBeatGroups.push([3, beatValue]);
-                    numBeats -= 3;
+                let remainingUnitsInMeter: number = meterNumerator;
+                while (remainingUnitsInMeter >= 5) {
+                    tempBeatGroups.push([3, meterDenominator]);
+                    remainingUnitsInMeter -= 3;
                 }
-                if (numBeats === 4) {
-                    tempBeatGroups.push([2, beatValue]);
-                    tempBeatGroups.push([2, beatValue]);
-                } else if (numBeats > 0) {
-                    tempBeatGroups.push([numBeats, beatValue]);
+                if (remainingUnitsInMeter === 4) {
+                    tempBeatGroups.push([2, meterDenominator]);
+                    tempBeatGroups.push([2, meterDenominator]);
+                } else if (remainingUnitsInMeter > 0) {
+                    tempBeatGroups.push([remainingUnitsInMeter, meterDenominator]);
                 }
             }
-        } else if (beatValue === 2) {
+        } else if (meterDenominator === 2) {
             tempBeatGroups.push([1, 2]);
-        } else if (beatValue <= 1) {
+        } else if (meterDenominator <= 1) {
             tempBeatGroups.push([1, 1]);
         } else {
             // 4/4, 2/4, 3/4, standard stuff
-            tempBeatGroups.push([2, 8]);
+            if (meterNumerator % 3 === 0 && meterNumerator > 3) {
+                const numBeats = meterNumerator / 3;
+                for (let i = 0; i < numBeats; i++) {
+                    tempBeatGroups.push([3, meterDenominator]);
+                }
+            } else {
+                tempBeatGroups.push([2, 8]);
+            }
         }
         return tempBeatGroups;
     }
