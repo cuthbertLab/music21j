@@ -19,7 +19,7 @@ import * as tie from './tie';
 /**
  * Regular expressions object
  */
-const regularExpressions: { [k: string]: RegExp } = {
+export const regularExpressions: { [k: string]: RegExp } = {
     REST: /r/,
     OCTAVE2: /([A-G])[A-G]+/,
     OCTAVE3: /([A-G])/,
@@ -33,7 +33,7 @@ const regularExpressions: { [k: string]: RegExp } = {
     NAT: /^[A-Ga-g]+'*n/,  // explicit naturals
     TYPE: /(\d+)/,
     TIE: /.~/,  // not preceding ties
-    PRECTIE: /~/,  // front ties
+    PRECTIE: /~/,  // front ties   // TODO: remove these...
     ID_EL: /=([A-Za-z0-9]*)/,
     LYRIC: /_(.*)/,
     DOT: /\.+/,
@@ -72,7 +72,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
         textIn = textIn.slice(14);
     }
 
-    const tokens: string[] = textIn.split(' ');
+    const tokens: string[] = textIn.split(/\s+/);
 
     let optionalScore: stream.Score;
 
@@ -110,7 +110,7 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
                 p.append(m);
                 m = new stream.Measure();
             }
-            if (optionalScore === undefined) {
+            if (!optionalScore) {
                 optionalScore = new stream.Score();
             }
             optionalScore.insert(0, p);
