@@ -56,10 +56,8 @@ import getpass, os
 def main():
 
     # this needs to be on level higher then the level of the source
-    #DST_MIT = 'athena.dialup.mit.edu:/afs/athena.mit.edu/org/m/music21/music21j/doc/'
-    remoteHost = 'athena.dialup.mit.edu'
-    remoteDir = '/afs/athena.mit.edu/org/m/music21/music21j/doc/'
-    #tar czpf - -C build/html/ . | ssh cuthbert@linux.mit.edu "tar xzpf - -C /afs/athena.mit.edu/org/m/music21/music21j/doc/"
+    remoteHost = 'trecento.com'
+    remoteDir = 'music21docs/music21j/doc/'
 
     user = getpass.getpass('provide user name : ')
 
@@ -67,7 +65,6 @@ def main():
     src = './doc'
     # -r flag makes this recursive
     cmdStr = 'tar czpf - -C %s . | ssh %s@%s "tar xzpf - -C %s"' % (src, user, remoteHost, remoteDir)
-    #cmdStr = 'scp -r "%s" %s@%s' % (src + "/*", user, DST_MIT)
     print(cmdStr)
 
     os.system(cmdStr)

@@ -27,8 +27,7 @@ support for MIDI devices.
 
 ## Documentation
 This README appears in both the GitHub home page and the documentation
-home page; to make the following links work, go to the documentation
-page at http://web.mit.edu/music21/music21j/doc/ .
+home page; currently building docs is broken
 
 Begin at the {@link music21} namespace (click the link or use the
 menu above), or start with
@@ -147,12 +146,11 @@ Thanks to the following packages (among others) for making music21j possible:
 * [jsdoc] - makes this documentation possible
 
 The Python version of music21 was supported by grants from
-the Seaver Institute and the National Endowment for the Humanities
-and supported by the Music and Theater Arts section of [MIT].
+the Seaver Institute and the National Endowment for the Humanities.  Earlier versions of music21 were supported by the Music and Theater Arts section of [MIT] (when Cuthbert was a professor there).
 
 
 [MIT]:http://web.mit.edu
-[music21 python]:http://web.mit.edu/music21/
+[music21 python]:https://www.music21.org/music21docs/
 [midicube]:https://github.com/mscuthbert/midicube
 [Vexflow]:http://www.vexflow.com
 [MIDI.js]:http://mudcu.be/midi-js/
