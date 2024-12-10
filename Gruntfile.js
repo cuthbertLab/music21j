@@ -1,5 +1,5 @@
 // Gruntfile for music21j
-// Copyright Michael Scott Asato Cuthbert (cuthbert@mit.edu), BSD License
+// Copyright Michael Scott Asato Cuthbert (michael.asato.cuthbert@gmail.com), BSD License
 const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -123,7 +123,6 @@ module.exports = grunt => {
                 new ESLintPlugin(
                     {
                         failOnError: false,
-                        emitWarning: true,
                         extensions: ['ts', 'js'],
                     }
                 ),
