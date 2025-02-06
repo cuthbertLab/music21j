@@ -72,7 +72,8 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
         textIn = textIn.slice(14);
     }
 
-    const tokens: string[] = textIn.split(/\s+/);
+    // whitespace that is not non-breaking space.
+    const tokens: string[] = textIn.split(/[ \t\r\n]+/);
 
     let optionalScore: stream.Score;
 
