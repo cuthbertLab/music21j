@@ -1,5 +1,11 @@
 import * as stream from './stream';
 /**
+ * Regular expressions object
+ */
+export declare const regularExpressions: {
+    [k: string]: RegExp;
+};
+/**
  * **Function, not class**.
  *
  * Converts a TinyNotation String into a music21 Stream

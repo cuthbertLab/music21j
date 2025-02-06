@@ -1,6 +1,6 @@
 /**
- * music21j version 0.16.4 built on 2024-08-21.
- * Copyright (c) 2013-2024 Michael Scott Asato Cuthbert
+ * music21j version 0.16.6 built on 2025-02-06.
+ * Copyright (c) 2013-2025 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
  * https://github.com/cuthbertLab/music21j
@@ -1000,11 +1000,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Barline: () => (/* binding */ Barline),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/bar -- Barline objects
@@ -1024,7 +1021,7 @@ const reverseBarTypeDict = {
   'double': 'light-light',
   'final': 'light-heavy'
 };
-class BarException extends _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception {}
+class BarException extends _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception {}
 function typeToMusicXMLBarStyle(value) {
   if (reverseBarTypeDict[value] !== undefined) {
     return reverseBarTypeDict[value];
@@ -1043,7 +1040,7 @@ function standardizeBarType() {
   }
   throw new BarException(`cannot process style: ${value}`);
 }
-class Barline extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
+class Barline extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
   static get className() {
     return 'music21.bar.Barline';
   }
@@ -1080,17 +1077,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Music21Object: () => (/* binding */ Music21Object)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./editorial */ "./src/editorial.ts");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
-/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./style */ "./src/style.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editorial */ "./src/editorial.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
+/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./style */ "./src/style.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/base -- objects in base in music21p routines
@@ -1126,7 +1120,7 @@ __webpack_require__.r(__webpack_exports__);
  * @property {number} priority - The priority (lower = earlier or more left) for
  *     elements at the same offset. (default 0)
  */
-class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object {
+class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
   static get className() {
     return 'music21.base.Music21Object';
   }
@@ -1141,20 +1135,20 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
     this.groups = []; // custom object in m21p
     this.isMusic21Object = true;
     this.isStream = false;
-    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_3__.Duration(0.0);
-    this.id = _sites__WEBPACK_IMPORTED_MODULE_6__.getId(this);
-    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_6__.Sites();
+    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_2__.Duration(0.0);
+    this.id = _sites__WEBPACK_IMPORTED_MODULE_5__.getId(this);
+    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_5__.Sites();
     this._cloneCallbacks._activeSite = false;
     this._cloneCallbacks._activeSiteStoredOffset = false;
     this._cloneCallbacks._derivation = (keyName, newObj, _deep, _memo) => {
-      const newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_2__.Derivation(newObj);
+      const newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_1__.Derivation(newObj);
       newDerivation.origin = this;
       newDerivation.method = 'clone';
       newObj[keyName] = newDerivation;
     };
     // noinspection JSUnusedLocalSymbols
     this._cloneCallbacks.sites = (_keyName, newObj, _deep, _memo) => {
-      newObj.sites = new _sites__WEBPACK_IMPORTED_MODULE_6__.Sites();
+      newObj.sites = new _sites__WEBPACK_IMPORTED_MODULE_5__.Sites();
     };
   }
   /**
@@ -1164,7 +1158,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
     let deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     let memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     const ret = super.clone(deep, memo);
-    const newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_2__.Derivation(ret);
+    const newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_1__.Derivation(ret);
     newDerivation.origin = this;
     newDerivation.method = 'clone'; // '__deepcopy__' in m21p
     ret.derivation = newDerivation;
@@ -1194,7 +1188,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
       try {
         offset = site.elementOffset(this);
       } catch (e) {
-        throw new _sites__WEBPACK_IMPORTED_MODULE_6__.SitesException('activeSite cannot be set for an object not in the stream');
+        throw new _sites__WEBPACK_IMPORTED_MODULE_5__.SitesException('activeSite cannot be set for an object not in the stream');
       }
       this._activeSite = site;
       this._activeSiteStoredOffset = offset;
@@ -1202,7 +1196,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
   }
   get derivation() {
     if (this._derivation === undefined) {
-      this._derivation = new _derivation__WEBPACK_IMPORTED_MODULE_2__.Derivation(this);
+      this._derivation = new _derivation__WEBPACK_IMPORTED_MODULE_1__.Derivation(this);
     }
     return this._derivation;
   }
@@ -1215,7 +1209,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
    */
   get editorial() {
     if (this._editorial === undefined) {
-      this._editorial = new _editorial__WEBPACK_IMPORTED_MODULE_4__.Editorial();
+      this._editorial = new _editorial__WEBPACK_IMPORTED_MODULE_3__.Editorial();
     }
     return this._editorial;
   }
@@ -1315,7 +1309,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
     }
   }
   set offset(newOffset) {
-    newOffset = _common__WEBPACK_IMPORTED_MODULE_1__.opFrac(newOffset);
+    newOffset = _common__WEBPACK_IMPORTED_MODULE_0__.opFrac(newOffset);
     if (this.activeSite === undefined) {
       this._naiveOffset = newOffset;
     } else {
@@ -1415,7 +1409,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
       getElementMethod: 'getElementAtOrBefore',
       sortByCreationTime: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_1__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_0__.merge(params, options);
     const getElementMethod = params.getElementMethod;
     const sortByCreationTime = params.sortByCreationTime;
     if (className !== undefined && !(className instanceof Array)) {
@@ -1468,7 +1462,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
         returnSortTuples: false,
         followDerivation: true
       };
-      _common__WEBPACK_IMPORTED_MODULE_1__.merge(params, options);
+      _common__WEBPACK_IMPORTED_MODULE_0__.merge(params, options);
       const memo = params.memo;
       if (params.callerFirst === undefined) {
         params.callerFirst = _this;
@@ -1546,7 +1540,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
       getElementMethod: 'getElementAtOrBeforeOffset'
     });
     if (ts === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception('this object does not have a TimeSignature in Sites');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception('this object does not have a TimeSignature in Sites');
     }
     return ts;
   }
@@ -1561,7 +1555,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_5__.ProtoM21Object
 }
 // beat, etc.
 // lots to do...
-Music21Object._styleClass = _style__WEBPACK_IMPORTED_MODULE_7__.Style;
+Music21Object._styleClass = _style__WEBPACK_IMPORTED_MODULE_6__.Style;
 function getContextByClassPayloadExtractor(useSite, flatten,
 // true, false, or semiflat
 positionStart, getElementMethod, classList) {
@@ -1632,12 +1626,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   beamableDurationTypes: () => (/* binding */ beamableDurationTypes),
 /* harmony export */   validBeamTypes: () => (/* binding */ validBeamTypes)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/beam -- Beams and Beam class
@@ -1657,7 +1648,7 @@ const validBeamTypes = {
   continue: true,
   partial: true
 };
-const beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[8], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[16], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[32], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[64], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[128], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[256], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[512], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[1024], _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[2048]];
+const beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[8], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[16], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[32], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[64], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[128], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[256], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[512], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[1024], _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[2048]];
 /**
  * Object representing a single beam (e.g., a 16th note that is beamed needs two)
  *
@@ -1668,7 +1659,7 @@ const beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNu
  * @property {number|undefined} independentAngle - the angle of this beam
  *     if it is different than others (feathered beams)
  */
-class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
+class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   static get className() {
     return 'music21.beam.Beam';
   }
@@ -1686,7 +1677,7 @@ class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
  * @property {boolean} [feathered=false] - is this a feathered beam.
  * @property {number} length - length of beamsList
  */
-class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
+class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   constructor() {
     super(...arguments);
     this.beamsList = [];
@@ -1860,26 +1851,26 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     let type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     this.beamsList = [];
     let count = 1;
-    if (level === 1 || level === '8th' || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[8]) {
+    if (level === 1 || level === '8th' || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[8]) {
       count = 1;
-    } else if (level === 2 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[16]) {
+    } else if (level === 2 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[16]) {
       count = 2;
-    } else if (level === 3 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[32]) {
+    } else if (level === 3 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[32]) {
       count = 3;
-    } else if (level === 4 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[64]) {
+    } else if (level === 4 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[64]) {
       count = 4;
-    } else if (level === 5 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[128]) {
+    } else if (level === 5 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[128]) {
       count = 5;
-    } else if (level === 6 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[256]) {
+    } else if (level === 6 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[256]) {
       count = 6;
-    } else if (level === 7 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[512]) {
+    } else if (level === 7 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[512]) {
       count = 7;
-    } else if (level === 8 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[1024]) {
+    } else if (level === 8 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[1024]) {
       count = 8;
-    } else if (level === 9 || level === _duration__WEBPACK_IMPORTED_MODULE_3__.typeFromNumDict[2048]) {
+    } else if (level === 9 || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[2048]) {
       count = 9;
     } else {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('cannot fill beams for level ' + level);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('cannot fill beams for level ' + level);
     }
     for (let i = 1; i <= count; i++) {
       const obj = new Beam(type);
@@ -1896,7 +1887,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
    */
   getByNumber(number) {
     if (!this.getNumbers().includes(number)) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('beam number ' + number + ' cannot be accessed');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('beam number ' + number + ' cannot be accessed');
     }
     for (const thisBeam of this.beamsList) {
       if (thisBeam.number === number) {
@@ -1958,7 +1949,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
   setAll(type) {
     let direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     if (validBeamTypes[type] === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('invalid beam type: ' + type);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('invalid beam type: ' + type);
     }
     for (let i = 0; i < this.length; i++) {
       const b = this.beamsList[i];
@@ -1984,7 +1975,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     }
 
     if (validBeamTypes[type] === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('invalid beam type: ' + type);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('invalid beam type: ' + type);
     }
     for (let i = 0; i < this.length; i++) {
       if (this.beamsList[i].number === number) {
@@ -2009,17 +2000,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Chord: () => (/* binding */ Chord),
 /* harmony export */   chordDefinitions: () => (/* binding */ chordDefinitions),
-/* harmony export */   chordTables: () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_5__)
+/* harmony export */   chordTables: () => (/* reexport module object */ _chordTables__WEBPACK_IMPORTED_MODULE_4__)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./chordTables */ "./src/chordTables.ts");
-
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chordTables */ "./src/chordTables.ts");
 
 
 
@@ -2037,7 +2025,7 @@ __webpack_require__.r(__webpack_exports__);
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=false]
  */
-class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
+class Chord extends _note__WEBPACK_IMPORTED_MODULE_3__.NotRest {
   static get className() {
     return 'music21.chord.Chord';
   }
@@ -2066,7 +2054,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     }
     if (arrayNotes.length > 0) {
       const n0 = arrayNotes[0];
-      if (n0 instanceof _note__WEBPACK_IMPORTED_MODULE_4__.Note) {
+      if (n0 instanceof _note__WEBPACK_IMPORTED_MODULE_3__.Note) {
         if (n0.duration.quarterLength !== this.duration.quarterLength) {
           this.duration = n0.duration;
         }
@@ -2096,15 +2084,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     for (let i = 0; i < tempPitches.length; i++) {
       let addNote;
       if (typeof tempPitches[i] === 'string') {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_4__.Note(tempPitches[i]);
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_3__.Note(tempPitches[i]);
       } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_4__.Note();
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_3__.Note();
         addNote.pitch = tempPitches[i];
       } else if (tempPitches[i].isClassOrSubclass('Note')) {
         addNote = tempPitches[i];
       } else {
         console.warn('bad pitch', tempPitches[i]);
-        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception('Cannot add pitch from ' + tempPitches[i]);
+        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('Cannot add pitch from ' + tempPitches[i]);
       }
       this._notes.push(addNote);
     }
@@ -2137,7 +2125,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
   }
   get chordTablesAddress() {
     if (this._chordTablesAddressNeedsUpdating) {
-      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_5__.seekChordTablesAddress(this);
+      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_4__.seekChordTablesAddress(this);
     }
     this._chordTablesAddressNeedsUpdating = false;
     return this._chordTablesAddress;
@@ -2145,7 +2133,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
   get commonName() {
     // TODO: many more exemptions from music21p
     const cta = this.chordTablesAddress;
-    const ctn = _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToCommonNames(cta);
+    const ctn = _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToCommonNames(cta);
     const forteClass = this.forteClass;
     const enharmonicTests = {
       '3-11A': () => this.isMinorTriad(),
@@ -2168,13 +2156,13 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     }
   }
   get forteClass() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToForteName(this.chordTablesAddress, 'tn');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToForteName(this.chordTablesAddress, 'tn');
   }
   get forteClassNumber() {
     return this.chordTablesAddress.forteClass;
   }
   get forteClassTnI() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToForteName(this.chordTablesAddress, 'tni');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToForteName(this.chordTablesAddress, 'tni');
   }
   get(i) {
     if (typeof i === 'number') {
@@ -2190,7 +2178,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     }
   }
   areZRelations(other) {
-    const zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToZAddress(this.chordTablesAddress);
+    const zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToZAddress(this.chordTablesAddress);
     if (zRelationAddress === undefined) {
       return false;
     }
@@ -2206,8 +2194,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
       return undefined;
     }
     const chordTablesAddress = this.chordTablesAddress;
-    const v = _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToIntervalVector(chordTablesAddress);
-    const addresses = _chordTables__WEBPACK_IMPORTED_MODULE_5__.intervalVectorToAddress(v);
+    const v = _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToIntervalVector(chordTablesAddress);
+    const addresses = _chordTables__WEBPACK_IMPORTED_MODULE_4__.intervalVectorToAddress(v);
     let other;
     for (const thisAddress of addresses) {
       if (thisAddress.forteClass !== chordTablesAddress.forteClass) {
@@ -2215,11 +2203,11 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
       }
     }
     // other should always be defined;
-    const prime = _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToTransposedNormalForm(other);
+    const prime = _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToTransposedNormalForm(other);
     return new Chord(prime);
   }
   get hasZRelation() {
-    const post = _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToZAddress(this.chordTablesAddress);
+    const post = _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToZAddress(this.chordTablesAddress);
     if (post !== undefined) {
       return true;
     } else {
@@ -2227,7 +2215,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     }
   }
   get intervalVector() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_5__.addressToIntervalVector(this.chordTablesAddress);
+    return _chordTables__WEBPACK_IMPORTED_MODULE_4__.addressToIntervalVector(this.chordTablesAddress);
   }
   //    get intervalVectorString() {
   //
@@ -2277,10 +2265,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
       // takes in either a note or a pitch
       let noteObj;
       if (typeof noteObj_StrOrNote === 'string') {
-        noteObj = new _note__WEBPACK_IMPORTED_MODULE_4__.Note(noteObj_StrOrNote);
+        noteObj = new _note__WEBPACK_IMPORTED_MODULE_3__.Note(noteObj_StrOrNote);
       } else if (noteObj_StrOrNote.isClassOrSubclass('Pitch')) {
         const pitchObj = noteObj_StrOrNote;
-        const noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_4__.Note();
+        const noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_3__.Note();
         noteObj2.pitch = pitchObj;
         noteObj = noteObj2;
       } else {
@@ -2344,7 +2332,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     /* var chordBass = closedChord.bass(); */
     const closedPitches = closedChord.pitches;
     if (closedPitches.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception('No notes in Chord!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('No notes in Chord!');
     } else if (closedPitches.length === 1) {
       return this.pitches[0];
     }
@@ -2510,7 +2498,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     }
     const root = this.root();
     for (const thisPitch of this.pitches) {
-      const thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(root, thisPitch);
+      const thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_2__.Interval(root, thisPitch);
       if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
         return false;
       }
@@ -2583,8 +2571,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_4__.NotRest {
     for (let j = 0; j < this._notes.length; j++) {
       midNum = this._notes[j].pitch.midi;
       try {
-        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOn(channel, midNum, volume, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOff(channel, midNum, milliseconds / 1000);
+        midicube__WEBPACK_IMPORTED_MODULE_0__.noteOn(channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_0__.noteOff(channel, midNum, milliseconds / 1000);
       } catch (e) {
         // do nothing -- might not have an output channel because of audio not connected
       }
@@ -2668,10 +2656,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   intervalVectorToAddress: () => (/* binding */ intervalVectorToAddress),
 /* harmony export */   seekChordTablesAddress: () => (/* binding */ seekChordTablesAddress)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 
 let t1;
 let t2;
@@ -5338,7 +5323,7 @@ function intervalVectorToAddress(vector) {
         continue; // first, used for spacing
       }
       // index 1 is vector
-      if ((0,_common__WEBPACK_IMPORTED_MODULE_1__.arrayEquals)(sc[1], vector)) {
+      if ((0,_common__WEBPACK_IMPORTED_MODULE_0__.arrayEquals)(sc[1], vector)) {
         post.push(_chordTableAddress(card, num));
       }
       num += 1;
@@ -5408,19 +5393,19 @@ function seekChordTablesAddress(c) {
     const testSetOriginalPC = testSetOrig[0];
     const testSet = [];
     for (const x of testSetOrig) {
-      const zeroTransposed = (0,_common__WEBPACK_IMPORTED_MODULE_1__.posMod)(x - testSetOriginalPC, 12);
+      const zeroTransposed = (0,_common__WEBPACK_IMPORTED_MODULE_0__.posMod)(x - testSetOriginalPC, 12);
       testSet.push(zeroTransposed);
     }
     // create inversion; first take difference from 12 mod 12
     const testSetInvert = [];
     for (const x of testSet) {
-      testSetInvert.push((0,_common__WEBPACK_IMPORTED_MODULE_1__.posMod)(12 - x, 12));
+      testSetInvert.push((0,_common__WEBPACK_IMPORTED_MODULE_0__.posMod)(12 - x, 12));
     }
     testSetInvert.reverse(); // reverse order (first steps now last)
     // transpose all steps (were last) to zero, mod 12
     const testSetInvertOriginalPC = testSetInvert[0];
     for (let i = 0; i < testSetInvert.length; i++) {
-      testSetInvert[i] = (0,_common__WEBPACK_IMPORTED_MODULE_1__.posMod)(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
+      testSetInvert[i] = (0,_common__WEBPACK_IMPORTED_MODULE_0__.posMod)(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
     }
     const candidateTuple = [testSet, testSetInvert, testSetOriginalPC];
     candidates.push(candidateTuple);
@@ -5439,7 +5424,7 @@ function seekChordTablesAddress(c) {
     const dataLinePcs = dataLine[0];
     const inversionsAvailable = forteIndexToInversionsAvailable(card, indexCandidate);
     for (const [candidate, candidateInversion, candidateOriginalPC] of candidates) {
-      if ((0,_common__WEBPACK_IMPORTED_MODULE_1__.arrayEquals)(dataLinePcs, candidate)) {
+      if ((0,_common__WEBPACK_IMPORTED_MODULE_0__.arrayEquals)(dataLinePcs, candidate)) {
         index = indexCandidate;
         if (inversionsAvailable.includes(0)) {
           inversion = 0;
@@ -5449,7 +5434,7 @@ function seekChordTablesAddress(c) {
         matchedPCOriginal = candidateOriginalPC;
         match = true;
         break;
-      } else if ((0,_common__WEBPACK_IMPORTED_MODULE_1__.arrayEquals)(dataLinePcs, candidateInversion)) {
+      } else if ((0,_common__WEBPACK_IMPORTED_MODULE_0__.arrayEquals)(dataLinePcs, candidateInversion)) {
         index = indexCandidate;
         if (inversionsAvailable.includes(0)) {
           inversion = 0;
@@ -5909,10 +5894,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   urlParam: () => (/* binding */ urlParam),
 /* harmony export */   urls: () => (/* binding */ urls)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
-
+/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
 /**
  * common functions.
  * functions that are useful everywhere...
@@ -5925,7 +5907,7 @@ function coerceHTMLElement(el) {
   } else if (el instanceof HTMLElement) {
     htmlElement = el;
   } else {
-    htmlElement = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_1__["default"].appendLocation);
+    htmlElement = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_0__["default"].appendLocation);
   }
   return htmlElement;
 }
@@ -7294,10 +7276,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Modifier: () => (/* binding */ Modifier),
 /* harmony export */   Notation: () => (/* binding */ Notation)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
 
 const shorthandNotation = {
   '': [5, 3],
@@ -7472,11 +7451,11 @@ class Modifier {
     if (specialModifiers[modStr] !== undefined) {
       modStr = specialModifiers[modStr];
     }
-    const a = new _pitch__WEBPACK_IMPORTED_MODULE_1__.Accidental(modStr);
+    const a = new _pitch__WEBPACK_IMPORTED_MODULE_0__.Accidental(modStr);
     return a;
   }
   modifyPitchName(pitchNameToAlter) {
-    const pitchToAlter = new _pitch__WEBPACK_IMPORTED_MODULE_1__.Pitch(pitchNameToAlter);
+    const pitchToAlter = new _pitch__WEBPACK_IMPORTED_MODULE_0__.Pitch(pitchNameToAlter);
     this.modifyPitch(pitchToAlter, true);
     return pitchToAlter.name;
   }
@@ -7491,7 +7470,7 @@ class Modifier {
       pitchToAlter.accidental = this.accidental.clone();
     } else {
       const newAlter = pitchToAlter.accidental.alter + this.accidental.alter;
-      const newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_1__.Accidental(newAlter);
+      const newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_0__.Accidental(newAlter);
       pitchToAlter.accidental = newAccidental;
     }
     return pitchToAlter;
@@ -8437,14 +8416,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   notesToChromatic: () => (/* binding */ notesToChromatic),
 /* harmony export */   notesToGeneric: () => (/* binding */ notesToGeneric)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/interval -- Interval routines
@@ -8549,7 +8525,7 @@ const MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth', 'Fifth'
  * // 2  // sevenths invert to seconds
  *
  */
-class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
+class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   static get className() {
     return 'music21.interval.GenericInterval';
   }
@@ -8585,7 +8561,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Obje
     } else {
       this.isUnison = false;
     }
-    let tempSteps = _common__WEBPACK_IMPORTED_MODULE_2__.posMod(this.undirected, 7);
+    let tempSteps = _common__WEBPACK_IMPORTED_MODULE_1__.posMod(this.undirected, 7);
     let tempOctaves = Math.floor(this.undirected / 7);
     if (tempSteps === 0) {
       tempOctaves -= 1;
@@ -8669,7 +8645,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Obje
    * Transpose a pitch by this generic interval, maintaining accidentals
    */
   transposePitch(p) {
-    const pitch2 = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch();
+    const pitch2 = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch();
     pitch2.step = p.step;
     pitch2.octave = p.octave;
     const oldDiatonicNum = p.diatonicNoteNum;
@@ -8680,7 +8656,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Obje
     pitch2.step = newStep;
     pitch2.octave = newOctave;
     if (p.accidental !== undefined) {
-      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Accidental(p.accidental.name);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Accidental(p.accidental.name);
     }
     return pitch2;
   }
@@ -8759,7 +8735,7 @@ const IntervalAdjustImperf = {
  *
  * // See music21p for more possibilities.
  */
-class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
+class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   static get className() {
     return 'music21.interval.DiatonicInterval';
   }
@@ -8845,7 +8821,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Obj
     if (this.generic.direction === Direction.DESCENDING) {
       semitones *= -1;
     }
-    if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_0__.debug) {
       console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
       console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
       console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
@@ -8865,7 +8841,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Obj
     return this.getChromatic().cents;
   }
 }
-class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
+class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   static get className() {
     return 'music21.interval.ChromaticInterval';
   }
@@ -8883,8 +8859,8 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Ob
     } else {
       this.direction = Direction.DESCENDING;
     }
-    this.mod12 = _common__WEBPACK_IMPORTED_MODULE_2__.posMod(this.semitones, 12);
-    this.simpleUndirected = _common__WEBPACK_IMPORTED_MODULE_2__.posMod(this.undirected, 12);
+    this.mod12 = _common__WEBPACK_IMPORTED_MODULE_1__.posMod(this.semitones, 12);
+    this.simpleUndirected = _common__WEBPACK_IMPORTED_MODULE_1__.posMod(this.undirected, 12);
     if (this.direction === Direction.DESCENDING) {
       this.simpleDirected = -1 * this.simpleUndirected;
     } else {
@@ -8914,7 +8890,7 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Ob
       useImplicitOctave = true;
     }
     const pps = p.ps;
-    const newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch();
+    const newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch();
     newPitch.ps = pps + this.semitones;
     if (useImplicitOctave) {
       newPitch.octave = undefined;
@@ -8961,7 +8937,7 @@ function convertDiatonicNumberToStep(dn) {
  * iv.niceName
  * // "Augmented Eleventh"
  */
-class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
+class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   static get className() {
     return 'music21.interval.Interval';
   }
@@ -9002,12 +8978,12 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
         let n2 = restArgs[1];
         if (n1.classes !== undefined && n1.classes.includes('Pitch')) {
           const p1 = n1;
-          n1 = new _note__WEBPACK_IMPORTED_MODULE_3__.Note();
+          n1 = new _note__WEBPACK_IMPORTED_MODULE_2__.Note();
           n1.pitch = p1;
         }
         if (n2.classes !== undefined && n2.classes.includes('Pitch')) {
           const p2 = n2;
-          n2 = new _note__WEBPACK_IMPORTED_MODULE_3__.Note();
+          n2 = new _note__WEBPACK_IMPORTED_MODULE_2__.Note();
           n2.pitch = p2;
         }
         const gInt = notesToGeneric(n1, n2);
@@ -9108,9 +9084,9 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object {
       halfStepsToFix = -1 * this.chromatic.semitones - Math.floor(pitch2.ps - p.ps);
     }
     if (halfStepsToFix !== 0) {
-      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Accidental(halfStepsToFix);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Accidental(halfStepsToFix);
     }
-    if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_0__.debug) {
       console.log('Interval.transposePitch -- new step ' + pitch2.step);
       console.log('Interval.transposePitch -- new octave ' + pitch2.octave);
       console.log('Interval.transposePitch -- fixing half steps for ' + halfStepsToFix);
@@ -9194,8 +9170,8 @@ function _getSpecifierFromGenericChromatic(gInt, cInt) {
   return specifier;
 }
 function add(intervalList) {
-  const p1 = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch('C4');
-  let p2 = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch('C4');
+  const p1 = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch('C4');
+  let p2 = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch('C4');
   for (const i of intervalList) {
     p2 = i.transposePitch(p2);
   }
@@ -9218,15 +9194,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   convertKeyStringToMusic21KeyString: () => (/* binding */ convertKeyStringToMusic21KeyString),
 /* harmony export */   modeSharpsAlter: () => (/* binding */ modeSharpsAlter)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
-
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/key -- KeySignature and Key objects
@@ -9274,7 +9247,7 @@ function convertKeyStringToMusic21KeyString(textString) {
  * s.append(n);
  * s.appendNewDOM();
  */
-class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
+class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
   static get className() {
     return 'music21.key.KeySignature';
   }
@@ -9344,9 +9317,9 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       transStr = 'P4';
       startPitch = 'F';
     }
-    const transInterval = new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval(transStr);
+    const transInterval = new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval(transStr);
     const post = [];
-    let pKeep = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(startPitch);
+    let pKeep = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch(startPitch);
     for (let i = 0; i < Math.abs(this.sharps); i++) {
       pKeep = transInterval.transposePitch(pKeep);
       pKeep.octave = 4;
@@ -9409,7 +9382,7 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
           return undefined;
         }
         // make a new accidental;
-        return new _pitch__WEBPACK_IMPORTED_MODULE_5__.Accidental(aps[i].accidental.alter);
+        return new _pitch__WEBPACK_IMPORTED_MODULE_4__.Accidental(aps[i].accidental.alter);
       }
     }
     return undefined;
@@ -9436,13 +9409,13 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     let transInterval;
     let transTimes;
     if (this.sharps === 0) {
-      return new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(p.nameWithOctave);
+      return new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch(p.nameWithOctave);
     } else if (this.sharps < 0) {
       transTimes = Math.abs(this.sharps);
-      transInterval = new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval('P4');
+      transInterval = new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval('P4');
     } else {
       transTimes = this.sharps;
-      transInterval = new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval('P5');
+      transInterval = new _interval__WEBPACK_IMPORTED_MODULE_3__.Interval('P5');
     }
     let newPitch = p;
     for (let i = 0; i < transTimes; i++) {
@@ -9482,15 +9455,15 @@ class Key extends KeySignature {
     const sharpsArray = 'A-- E-- B-- F- C- G- D- A- E- B- F C G D A E B F# C# G# D# A# E# B#'.split(' ');
     const sharpsIndex = sharpsArray.indexOf(keyName.toUpperCase());
     if (sharpsIndex === -1) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('Cannot find the key for ' + keyName);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('Cannot find the key for ' + keyName);
     }
     const modeShift = modeSharpsAlter[mode] || 0;
     const sharps = sharpsIndex + modeShift - 11;
-    if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
       console.log('Found sharps ' + sharps + ' for key: ' + keyName);
     }
     super(sharps);
-    this.tonic = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(keyName);
+    this.tonic = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch(keyName);
     this.mode = mode;
     this._scale = this.getScale();
   }
@@ -9519,15 +9492,15 @@ class Key extends KeySignature {
     }
     const pitchObj = this.tonic;
     if (scaleType === 'major') {
-      return new _scale__WEBPACK_IMPORTED_MODULE_6__.MajorScale(pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_5__.MajorScale(pitchObj);
     } else if (scaleType === 'minor') {
-      return new _scale__WEBPACK_IMPORTED_MODULE_6__.MinorScale(pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_5__.MinorScale(pitchObj);
     } else if (['harmonic minor', 'harmonic-minor'].includes(scaleType)) {
-      return new _scale__WEBPACK_IMPORTED_MODULE_6__.HarmonicMinorScale(pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_5__.HarmonicMinorScale(pitchObj);
     } else if (['melodic minor', 'melodic-minor'].includes(scaleType)) {
-      return new _scale__WEBPACK_IMPORTED_MODULE_6__.AscendingMelodicMinorScale(pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_5__.AscendingMelodicMinorScale(pitchObj);
     } else {
-      return new _scale__WEBPACK_IMPORTED_MODULE_6__.ConcreteScale(pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_5__.ConcreteScale(pitchObj);
     }
   }
   // Because of lack of multiple inheritance,
@@ -10584,16 +10557,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TimeSignature: () => (/* binding */ TimeSignature)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
@@ -10620,7 +10590,7 @@ __webpack_require__.r(__webpack_exports__);
  * @property {number[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
  */
-class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
+class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
   static get className() {
     return 'music21.meter.TimeSignature';
   }
@@ -10690,7 +10660,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
       return this._overwrittenBarDuration;
     }
     const ql = 4.0 * this._numerator / this._denominator;
-    return new _duration__WEBPACK_IMPORTED_MODULE_5__.Duration(ql);
+    return new _duration__WEBPACK_IMPORTED_MODULE_4__.Duration(ql);
   }
   set barDuration(value) {
     this._overwrittenBarDuration = value;
@@ -10756,31 +10726,39 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
    */
   computeBeatGroups() {
     const tempBeatGroups = [];
-    let numBeats = this.numerator;
-    const beatValue = this.denominator;
-    if (beatValue >= 8) {
-      if ([4, 2].includes(numBeats)) {
+    const meterNumerator = this.numerator;
+    const meterDenominator = this.denominator;
+    if (meterDenominator >= 8) {
+      if ([4, 2].includes(meterNumerator)) {
         // 4/8 and 2/8 should have eighth beats
-        tempBeatGroups.push([1, beatValue]);
+        tempBeatGroups.push([1, meterDenominator]);
       } else {
-        while (numBeats >= 5) {
-          tempBeatGroups.push([3, beatValue]);
-          numBeats -= 3;
+        let remainingUnitsInMeter = meterNumerator;
+        while (remainingUnitsInMeter >= 5) {
+          tempBeatGroups.push([3, meterDenominator]);
+          remainingUnitsInMeter -= 3;
         }
-        if (numBeats === 4) {
-          tempBeatGroups.push([2, beatValue]);
-          tempBeatGroups.push([2, beatValue]);
-        } else if (numBeats > 0) {
-          tempBeatGroups.push([numBeats, beatValue]);
+        if (remainingUnitsInMeter === 4) {
+          tempBeatGroups.push([2, meterDenominator]);
+          tempBeatGroups.push([2, meterDenominator]);
+        } else if (remainingUnitsInMeter > 0) {
+          tempBeatGroups.push([remainingUnitsInMeter, meterDenominator]);
         }
       }
-    } else if (beatValue === 2) {
+    } else if (meterDenominator === 2) {
       tempBeatGroups.push([1, 2]);
-    } else if (beatValue <= 1) {
+    } else if (meterDenominator <= 1) {
       tempBeatGroups.push([1, 1]);
     } else {
       // 4/4, 2/4, 3/4, standard stuff
-      tempBeatGroups.push([2, 8]);
+      if (meterNumerator % 3 === 0 && meterNumerator > 3) {
+        const numBeats = meterNumerator / 3;
+        for (let i = 0; i < numBeats; i++) {
+          tempBeatGroups.push([3, meterDenominator]);
+        }
+      } else {
+        tempBeatGroups.push([2, 8]);
+      }
     }
     return tempBeatGroups;
   }
@@ -10809,14 +10787,14 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     // This should be a method on a MeterSequence.
     if (qLenPos >= this.barDuration.quarterLength || qLenPos < 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_7__.Music21Exception(`cannot access from qLenPos ${qLenPos} ` + `where total duration is ${this.barDuration.quarterLength}`);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__.Music21Exception(`cannot access from qLenPos ${qLenPos} ` + `where total duration is ${this.barDuration.quarterLength}`);
     }
     let accumulated_time = 0.0;
     let index = -1; // first beatGroup increments to 0
     for (const beatGroup of this._beat_groups_to_fill_bar()) {
       index += 1;
       const beat_group_ql = this._beat_group_as_ql(beatGroup);
-      accumulated_time = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(accumulated_time + beat_group_ql);
+      accumulated_time = (0,_common__WEBPACK_IMPORTED_MODULE_3__.opFrac)(accumulated_time + beat_group_ql);
       if (accumulated_time > qLenPos || includeCoincidentBoundaries && accumulated_time === qLenPos) {
         break;
       }
@@ -10832,7 +10810,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     for (const beatGroup of this._beat_groups_to_fill_bar()) {
       const beat_group_ql = this._beat_group_as_ql(beatGroup);
       start = end;
-      end = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(start + beat_group_ql);
+      end = (0,_common__WEBPACK_IMPORTED_MODULE_3__.opFrac)(start + beat_group_ql);
       if (end > offset) {
         break;
       }
@@ -10848,10 +10826,10 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     const params = {
       measureStartOffset: 0.0
     };
-    _common__WEBPACK_IMPORTED_MODULE_4__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_3__.merge(params, options);
     const measureStartOffset = params.measureStartOffset;
-    let beamsList = _beam__WEBPACK_IMPORTED_MODULE_3__.Beams.naiveBeams(srcStream);
-    beamsList = _beam__WEBPACK_IMPORTED_MODULE_3__.Beams.removeSandwichedUnbeamables(beamsList);
+    let beamsList = _beam__WEBPACK_IMPORTED_MODULE_2__.Beams.naiveBeams(srcStream);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_2__.Beams.removeSandwichedUnbeamables(beamsList);
     const fixBeamsOneElementDepth = (i, el, depth) => {
       const beams = beamsList[i];
       if (!beams) {
@@ -10866,9 +10844,9 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
         return;
       }
       const dur = el.duration;
-      const pos = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(el.offset + measureStartOffset);
-      const start = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(pos);
-      const end = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(pos + dur.quarterLength);
+      const pos = (0,_common__WEBPACK_IMPORTED_MODULE_3__.opFrac)(el.offset + measureStartOffset);
+      const start = (0,_common__WEBPACK_IMPORTED_MODULE_3__.opFrac)(pos);
+      const end = (0,_common__WEBPACK_IMPORTED_MODULE_3__.opFrac)(pos + dur.quarterLength);
       const startNext = end;
       const isLast = i === srcStream.length - 1;
       const isFirst = i === 0;
@@ -10895,7 +10873,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
         if (beamNext === undefined || !beamNext.getNumbers().includes(beamNumber)) {
           beamType = 'partial-right';
         }
-      } else if (isLast && (!(srcStream instanceof _stream__WEBPACK_IMPORTED_MODULE_6__.Measure) || srcStream.paddingRight === 0.0)) {
+      } else if (isLast && (!(srcStream instanceof _stream__WEBPACK_IMPORTED_MODULE_5__.Measure) || srcStream.paddingRight === 0.0)) {
         beamType = 'stop';
         if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
           beamType = 'partial-left';
@@ -10934,14 +10912,14 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
       beams.setByNumber(beamNumber, beamType);
     };
     const elList = Array.from(srcStream);
-    for (let depth = 0; depth < _beam__WEBPACK_IMPORTED_MODULE_3__.beamableDurationTypes.length; depth++) {
+    for (let depth = 0; depth < _beam__WEBPACK_IMPORTED_MODULE_2__.beamableDurationTypes.length; depth++) {
       for (let i = 0; i < elList.length; i++) {
         const el = elList[i];
         fixBeamsOneElementDepth(i, el, depth);
       }
     }
-    beamsList = _beam__WEBPACK_IMPORTED_MODULE_3__.Beams.sanitizePartialBeams(beamsList);
-    beamsList = _beam__WEBPACK_IMPORTED_MODULE_3__.Beams.mergeConnectingPartialBeams(beamsList);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_2__.Beams.sanitizePartialBeams(beamsList);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_2__.Beams.mergeConnectingPartialBeams(beamsList);
     return beamsList;
   }
   /**
@@ -10956,7 +10934,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     if (mOffset + tsMeasureOffset < this.barDuration.quarterLength) {
       return mOffset;
     } else {
-      const post = _common__WEBPACK_IMPORTED_MODULE_4__.posMod(mOffset - tsMeasureOffset, this.barDuration.quarterLength);
+      const post = _common__WEBPACK_IMPORTED_MODULE_3__.posMod(mOffset - tsMeasureOffset, this.barDuration.quarterLength);
       return post;
     }
   }
@@ -10985,7 +10963,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     const vfBeatGroups = [];
     for (let i = 0; i < tempBeatGroups.length; i++) {
       const [bg_numerator, bg_denominator] = tempBeatGroups[i];
-      vfBeatGroups.push(new vexflow__WEBPACK_IMPORTED_MODULE_1__.Fraction(bg_numerator, bg_denominator));
+      vfBeatGroups.push(new vexflow__WEBPACK_IMPORTED_MODULE_0__.Fraction(bg_numerator, bg_denominator));
     }
     return vfBeatGroups;
     //  if (numBeats % 3 == 0 && beatValue < 4) {
@@ -11599,20 +11577,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ScoreExporter: () => (/* binding */ ScoreExporter),
 /* harmony export */   XMLExporterBase: () => (/* binding */ XMLExporterBase)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common */ "./src/common.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../note */ "./src/note.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common */ "./src/common.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../note */ "./src/note.ts");
 
 
 
 
 
-
-class MusicXMLExportException extends _exceptions21__WEBPACK_IMPORTED_MODULE_4__.Music21Exception {}
+class MusicXMLExportException extends _exceptions21__WEBPACK_IMPORTED_MODULE_3__.Music21Exception {}
 function typeToMusicXMLType(value) {
   if (value === 'longa') {
     return 'long';
@@ -11820,7 +11795,7 @@ class GeneralObjectExporter {
     if (p.isFlat) {
       p = p.makeMeasures();
     }
-    const s = new _stream__WEBPACK_IMPORTED_MODULE_3__.Score();
+    const s = new _stream__WEBPACK_IMPORTED_MODULE_2__.Score();
     s.insert(0, p);
     // metadata...;
     return this.fromScore(s);
@@ -11828,17 +11803,17 @@ class GeneralObjectExporter {
   fromMeasure(m) {
     const mCopy = m.makeNotation();
     if (m.clef === undefined) {
-      mCopy.clef = _clef__WEBPACK_IMPORTED_MODULE_1__.bestClef(mCopy, {
+      mCopy.clef = _clef__WEBPACK_IMPORTED_MODULE_0__.bestClef(mCopy, {
         recurse: true
       });
     }
-    const p = new _stream__WEBPACK_IMPORTED_MODULE_3__.Part();
+    const p = new _stream__WEBPACK_IMPORTED_MODULE_2__.Part();
     p.append(mCopy);
     // TODO(msc): metadata;
     return this.fromPart(p);
   }
   fromVoice(v) {
-    const m = new _stream__WEBPACK_IMPORTED_MODULE_3__.Measure();
+    const m = new _stream__WEBPACK_IMPORTED_MODULE_2__.Measure();
     m.number = 1;
     m.insert(0, v);
     return this.fromMeasure(m);
@@ -11852,7 +11827,7 @@ class GeneralObjectExporter {
   fromGeneralNote(n) {
     const nCopy = n.clone(true);
     // makeTupletBrackets;
-    const out = new _stream__WEBPACK_IMPORTED_MODULE_3__.Measure();
+    const out = new _stream__WEBPACK_IMPORTED_MODULE_2__.Measure();
     out.number = 1;
     out.append(nCopy);
     return this.fromMeasure(out);
@@ -11889,7 +11864,7 @@ class XMLExporterBase {
       forceEmpty = false
     } = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
     if (attributeName === undefined) {
-      attributeName = _common__WEBPACK_IMPORTED_MODULE_2__.hyphenToCamelCase(tag);
+      attributeName = _common__WEBPACK_IMPORTED_MODULE_1__.hyphenToCamelCase(tag);
     }
     let value = m21El[attributeName];
     if (transform !== undefined) {
@@ -11914,7 +11889,7 @@ class XMLExporterBase {
       transform = undefined
     } = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
     if (attributeName === undefined) {
-      attributeName = _common__WEBPACK_IMPORTED_MODULE_2__.hyphenToCamelCase(xmlAttributeName);
+      attributeName = _common__WEBPACK_IMPORTED_MODULE_1__.hyphenToCamelCase(xmlAttributeName);
     }
     let value = m21El[attributeName];
     if (value === undefined) {
@@ -12015,7 +11990,7 @@ class ScoreExporter extends XMLExporterBase {
     this.midiChannelList = [];
     this.parts = [];
     if (score === undefined) {
-      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_3__.Score();
+      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_2__.Score();
     } else {
       this.stream = score;
     }
@@ -12116,7 +12091,7 @@ class PartExporter extends XMLExporterBase {
     this.parent = parent;
     this.xmlRoot = this.doc.createElement('part');
     if (parent === undefined) {
-      this.meterStream = new _stream__WEBPACK_IMPORTED_MODULE_3__.Stream();
+      this.meterStream = new _stream__WEBPACK_IMPORTED_MODULE_2__.Stream();
       this.refStreamOrTimeRange = [0.0, 0.0];
       this.midiChannelList = [];
     } else {
@@ -12353,7 +12328,7 @@ class MeasureExporter extends XMLExporterBase {
       this.subElement(mxNote, 'dot');
     }
     // components.
-    if (n instanceof _note__WEBPACK_IMPORTED_MODULE_5__.Note && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
+    if (n instanceof _note__WEBPACK_IMPORTED_MODULE_4__.Note && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
       const mxAccidental = this.accidentalToMx(n.pitch.accidental);
       mxNote.appendChild(mxAccidental);
     }
@@ -12365,7 +12340,7 @@ class MeasureExporter extends XMLExporterBase {
     let stemDirection;
     if (!addChordTag && ![undefined, 'unspecified'].includes(chordOrN.stemDirection)) {
       stemDirection = chordOrN.stemDirection;
-    } else if (chordOrN !== n && n instanceof _note__WEBPACK_IMPORTED_MODULE_5__.Note && ![undefined, 'unspecified'].includes(n.stemDirection)) {
+    } else if (chordOrN !== n && n instanceof _note__WEBPACK_IMPORTED_MODULE_4__.Note && ![undefined, 'unspecified'].includes(n.stemDirection)) {
       stemDirection = n.stemDirection;
     }
     if (stemDirection !== undefined) {
@@ -12422,7 +12397,7 @@ class MeasureExporter extends XMLExporterBase {
     this._setTagTextFromAttribute(p, mxPitch, 'step');
     if (p.accidental !== undefined) {
       const mxAlter = this.subElement(mxPitch, 'alter');
-      mxAlter.innerHTML = _common__WEBPACK_IMPORTED_MODULE_2__.numToIntOrFloat(p.accidental.alter).toString();
+      mxAlter.innerHTML = _common__WEBPACK_IMPORTED_MODULE_1__.numToIntOrFloat(p.accidental.alter).toString();
     }
     this._setTagTextFromAttribute(p, mxPitch, 'octave', 'implicitOctave');
     return mxPitch;
@@ -12619,19 +12594,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ScoreParser: () => (/* binding */ ScoreParser),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common */ "./src/common.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../chord */ "./src/chord.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../duration */ "./src/duration.ts");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../key */ "./src/key.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../meter */ "./src/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../note */ "./src/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../pitch */ "./src/pitch.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../tie */ "./src/tie.ts");
-
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common */ "./src/common.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../chord */ "./src/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../duration */ "./src/duration.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../key */ "./src/key.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../meter */ "./src/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../note */ "./src/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../pitch */ "./src/pitch.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../tie */ "./src/tie.ts");
 var __awaiter = undefined && undefined.__awaiter || function (thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function (resolve) {
@@ -12697,7 +12669,7 @@ function seta(m21El, xmlEl, tag) {
     value = transform(value);
   }
   if (attributeName === undefined) {
-    attributeName = (0,_common__WEBPACK_IMPORTED_MODULE_1__.hyphenToCamelCase)(tag);
+    attributeName = (0,_common__WEBPACK_IMPORTED_MODULE_0__.hyphenToCamelCase)(tag);
   }
   m21El[attributeName] = value;
 }
@@ -12710,7 +12682,7 @@ class ScoreParser {
     this.partGroupList = [];
     this.parts = [];
     this.musicXmlVersion = '1.0';
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_9__.Score();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_8__.Score();
   }
   scoreFromUrl(url) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -12732,7 +12704,7 @@ class ScoreParser {
     return this.stream;
   }
   xmlRootToScore(mxScore, inputM21) {
-    const s = inputM21 !== null && inputM21 !== void 0 ? inputM21 : new _stream__WEBPACK_IMPORTED_MODULE_9__.Score();
+    const s = inputM21 !== null && inputM21 !== void 0 ? inputM21 : new _stream__WEBPACK_IMPORTED_MODULE_8__.Score();
     // version
     // defaults
     // credit
@@ -12808,7 +12780,7 @@ class PartParser {
       // ignore empty partId for now
     }
     // TODO(msc): spannerBundles
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_9__.Part();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_8__.Part();
     this.lastClefs = {};
   }
   parse() {
@@ -12870,7 +12842,7 @@ class PartParser {
     if (m.timeSignature !== undefined) {
       this.lastTimeSignature = m.timeSignature;
     } else if (this.lastTimeSignature === undefined) {
-      this.lastTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_6__.TimeSignature('4/4');
+      this.lastTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_5__.TimeSignature('4/4');
     }
   }
   adjustTimeAttributesFromMeasure(m) {
@@ -12992,7 +12964,7 @@ class MeasureParser {
 
     this.mxMeasure = mxMeasure;
     this.parent = parent;
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_9__.Measure();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_8__.Measure();
     this.voiceIndices = new Set();
     this.staves = 1;
     this.attributesAreInternal = true;
@@ -13106,7 +13078,7 @@ class MeasureParser {
       const freeSpanners = false;
       notes.push(this.xmlToSimpleNote(mxNote, freeSpanners));
     }
-    const c = new _chord__WEBPACK_IMPORTED_MODULE_2__.Chord(notes);
+    const c = new _chord__WEBPACK_IMPORTED_MODULE_1__.Chord(notes);
     // move beams from first note;
     // move articulations;
     // move expressions;
@@ -13115,7 +13087,7 @@ class MeasureParser {
   }
   xmlToSimpleNote(mxNote) {
     let freeSpanners = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-    const n = new _note__WEBPACK_IMPORTED_MODULE_7__.Note();
+    const n = new _note__WEBPACK_IMPORTED_MODULE_6__.Note();
     this.xmlToPitch(mxNote, n.pitch);
     // beams;
     // stems;
@@ -13128,7 +13100,7 @@ class MeasureParser {
   xmlToPitch(mxNote, inputM21) {
     let p = inputM21;
     if (inputM21 === undefined) {
-      p = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch();
+      p = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch();
     }
     let mxPitch;
     if (mxNote.tagName === 'pitch') {
@@ -13155,13 +13127,13 @@ class MeasureParser {
       p.accidental.displayStatus = true;
       // independent accidental from alter
     } else if (accAlter !== undefined && !Number.isNaN(Number(accAlter))) {
-      p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(accAlter);
+      p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(accAlter);
       p.accidental.displayStatus = false;
     }
     return p;
   }
   xmlToAccidental(mxAccidental) {
-    const acc = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(0);
+    const acc = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(0);
     // to-do m21/musicxml accidental name differences;
     let name = mxAccidental.textContent.trim().toLowerCase();
     if (name === 'flat-flat') {
@@ -13175,7 +13147,7 @@ class MeasureParser {
     return acc;
   }
   xmlToRest(mxRest) {
-    const r = new _note__WEBPACK_IMPORTED_MODULE_7__.Rest();
+    const r = new _note__WEBPACK_IMPORTED_MODULE_6__.Rest();
     // full measure rest
     // apply multi-measure rest
     // display-step, octave, etc.
@@ -13205,7 +13177,7 @@ class MeasureParser {
   xmlToDuration(mxNote, inputM21) {
     let d = inputM21;
     if (inputM21 === undefined) {
-      d = new _duration__WEBPACK_IMPORTED_MODULE_4__.Duration();
+      d = new _duration__WEBPACK_IMPORTED_MODULE_3__.Duration();
     }
     const divisions = this.divisions;
     const mxDuration = mxNote.querySelector('duration');
@@ -13227,12 +13199,12 @@ class MeasureParser {
         const normalType = mxTimeModification.querySelector('normal-type');
         let normalDur;
         if (normalType) {
-          normalDur = new _duration__WEBPACK_IMPORTED_MODULE_4__.Duration(normalType.textContent.trim());
+          normalDur = new _duration__WEBPACK_IMPORTED_MODULE_3__.Duration(normalType.textContent.trim());
           normalDur.dots = mxTimeModification.querySelectorAll('normal-dot').length;
         } else {
           normalDur = d.clone();
         }
-        const tuplet = new _duration__WEBPACK_IMPORTED_MODULE_4__.Tuplet(parseInt(mxTimeModification.querySelector('actual-notes').textContent.trim()), parseInt(mxTimeModification.querySelector('normal-notes').textContent.trim()), normalDur);
+        const tuplet = new _duration__WEBPACK_IMPORTED_MODULE_3__.Tuplet(parseInt(mxTimeModification.querySelector('actual-notes').textContent.trim()), parseInt(mxTimeModification.querySelector('normal-notes').textContent.trim()), normalDur);
         d.appendTuplet(tuplet);
       }
     } else {
@@ -13243,12 +13215,12 @@ class MeasureParser {
   xmlBackup(mxBackup) {
     const mxDuration = mxBackup.querySelector('duration');
     const change = parseFloat(mxDuration.textContent.trim()) / this.divisions;
-    this.offsetMeasureNote -= Math.max((0,_common__WEBPACK_IMPORTED_MODULE_1__.opFrac)(change), 0.0);
+    this.offsetMeasureNote -= Math.max((0,_common__WEBPACK_IMPORTED_MODULE_0__.opFrac)(change), 0.0);
   }
   xmlForward(mxForward) {
     const mxDuration = mxForward.querySelector('duration');
     const change = parseFloat(mxDuration.textContent.trim()) / this.divisions;
-    this.offsetMeasureNote += Math.min((0,_common__WEBPACK_IMPORTED_MODULE_1__.opFrac)(change), 0.0);
+    this.offsetMeasureNote += Math.min((0,_common__WEBPACK_IMPORTED_MODULE_0__.opFrac)(change), 0.0);
   }
   // xmlGraceToGrace
   // xmlNotations
@@ -13262,7 +13234,7 @@ class MeasureParser {
   // xmlToTremolo
   // xmlOneSpanner
   xmlToTie(mxNote) {
-    const t = new _tie__WEBPACK_IMPORTED_MODULE_10__.Tie();
+    const t = new _tie__WEBPACK_IMPORTED_MODULE_9__.Tie();
     const allTies = mxNote.querySelectorAll('tie');
     if (allTies.length > 1) {
       t.type = 'continue';
@@ -13291,7 +13263,7 @@ class MeasureParser {
   xmlToLyric(mxLyric, inputM21) {
     let l = inputM21;
     if (inputM21 === undefined) {
-      l = new _note__WEBPACK_IMPORTED_MODULE_7__.Lyric('');
+      l = new _note__WEBPACK_IMPORTED_MODULE_6__.Lyric('');
     }
     try {
       l.text = mxLyric.querySelector('text').textContent.trim();
@@ -13374,7 +13346,7 @@ class MeasureParser {
     // simple time signature only;
     const numerator = mxTime.querySelector('beats').textContent.trim();
     const denominator = mxTime.querySelector('beat-type').textContent.trim();
-    return new _meter__WEBPACK_IMPORTED_MODULE_6__.TimeSignature(numerator + '/' + denominator);
+    return new _meter__WEBPACK_IMPORTED_MODULE_5__.TimeSignature(numerator + '/' + denominator);
     // symbol
   }
 
@@ -13391,7 +13363,7 @@ class MeasureParser {
   xmlToClef(mxClef) {
     const sign = mxClef.querySelector('sign').textContent.trim();
     if (sign === 'percussion') {
-      return _clef__WEBPACK_IMPORTED_MODULE_3__.clefFromString(sign);
+      return _clef__WEBPACK_IMPORTED_MODULE_2__.clefFromString(sign);
     }
     const line = mxClef.querySelector('line').textContent.trim();
     let clefOctaveChange = 0;
@@ -13399,7 +13371,7 @@ class MeasureParser {
     if (coc) {
       clefOctaveChange = parseInt(coc.textContent.trim());
     }
-    return _clef__WEBPACK_IMPORTED_MODULE_3__.clefFromString(sign + line, clefOctaveChange);
+    return _clef__WEBPACK_IMPORTED_MODULE_2__.clefFromString(sign + line, clefOctaveChange);
   }
   handleKeySignature(mxKey) {
     const keySig = this.xmlToKeySignature(mxKey);
@@ -13407,7 +13379,7 @@ class MeasureParser {
     this.insertIntoMeasureOrVoice(mxKey, keySig);
   }
   xmlToKeySignature(mxKey) {
-    const ks = new _key__WEBPACK_IMPORTED_MODULE_5__.KeySignature();
+    const ks = new _key__WEBPACK_IMPORTED_MODULE_4__.KeySignature();
     seta(ks, mxKey, 'fifths', 'sharps', parseInt);
     // mode!
     // non-standard and key-octaves
@@ -13442,19 +13414,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   noteheadTypeNames: () => (/* binding */ noteheadTypeNames),
 /* harmony export */   stemDirectionNames: () => (/* binding */ stemDirectionNames)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
-/* harmony import */ var _vfShims__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./vfShims */ "./src/vfShims.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./beam */ "./src/beam.ts");
+/* harmony import */ var _vfShims__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./vfShims */ "./src/vfShims.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -13476,7 +13445,7 @@ function _extends() { _extends = Object.assign ? Object.assign.bind() : function
 
 
 
-class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_9__.Music21Exception {}
+class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__.Music21Exception {}
 // noinspection JSUnusedGlobalSymbols
 const noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 const stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
@@ -13504,7 +13473,7 @@ const default_vf_lyric_style = {
  * @property {number} number - see above
  * @property {string} rawText - text + any connectors
  */
-class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
+class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
   static get className() {
     return 'music21.note.Lyric';
   }
@@ -13617,12 +13586,12 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
     if (['middle', 'begin'].includes(this.syllabic)) {
       text += ' ' + this.lyricConnector;
     }
-    const annotation = new _vfShims__WEBPACK_IMPORTED_MODULE_7__.VFLyricAnnotation(text);
+    const annotation = new _vfShims__WEBPACK_IMPORTED_MODULE_6__.VFLyricAnnotation(text);
     annotation.setFont(font);
     if (style.align === 'left') {
-      annotation.setJustification(vexflow__WEBPACK_IMPORTED_MODULE_1__.AnnotationHorizontalJustify.LEFT);
+      annotation.setJustification(vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.LEFT);
     } else if (style.align === 'right') {
-      annotation.setJustification(vexflow__WEBPACK_IMPORTED_MODULE_1__.AnnotationHorizontalJustify.RIGHT);
+      annotation.setJustification(vexflow__WEBPACK_IMPORTED_MODULE_0__.AnnotationHorizontalJustify.RIGHT);
     }
     if (style.color) {
       annotation.setFill(style.color);
@@ -13650,7 +13619,7 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
  * @property {number} midiVolume - how loud is this note, taking into
  *     account articulations
  */
-class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
+class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   static get className() {
     return 'music21.note.GeneralNote';
   }
@@ -13743,7 +13712,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
    */
   vexflowNote() {
     let _options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveNote({
+    const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveNote({
       keys: [],
       duration: this.duration.vexflowDuration + 'r'
     });
@@ -13787,7 +13756,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     let _options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     if (this.duration.dots > 0) {
       for (let i = 0; i < this.duration.dots; i++) {
-        vexflow__WEBPACK_IMPORTED_MODULE_1__.Dot.buildAndAttach([vfn], {
+        vexflow__WEBPACK_IMPORTED_MODULE_0__.Dot.buildAndAttach([vfn], {
           all: true
         });
       }
@@ -13847,7 +13816,7 @@ class NotRest extends GeneralNote {
     // ['up','down','noStem', 'unspecified']
     // double not supported.
     this._stemDirection = 'unspecified';
-    this.beams = new _beam__WEBPACK_IMPORTED_MODULE_6__.Beams();
+    this.beams = new _beam__WEBPACK_IMPORTED_MODULE_5__.Beams();
     /* TODO: this.duration.linkage -- need durationUnits */
     /* TODO: check notehead, noteheadFill, noteheadParentheses */
   }
@@ -13888,8 +13857,8 @@ class NotRest extends GeneralNote {
       vexflowPitchKeys.push(p.vexflowName(clef));
     }
     // Not supported: Double;  None is done elsewhere?
-    const vfnStemDirection = useStemDirection === 'down' ? vexflow__WEBPACK_IMPORTED_MODULE_1__.Stem.DOWN : vexflow__WEBPACK_IMPORTED_MODULE_1__.Stem.UP;
-    const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveNote({
+    const vfnStemDirection = useStemDirection === 'down' ? vexflow__WEBPACK_IMPORTED_MODULE_0__.Stem.DOWN : vexflow__WEBPACK_IMPORTED_MODULE_0__.Stem.UP;
+    const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveNote({
       keys: vexflowPitchKeys,
       duration: vfd,
       stem_direction: vfnStemDirection
@@ -13900,7 +13869,7 @@ class NotRest extends GeneralNote {
     for (const [i, p] of this.pitches.entries()) {
       if (p.accidental !== undefined) {
         const acc = p.accidental;
-        const vf_accidental = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Accidental(acc.vexflowModifier);
+        const vf_accidental = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Accidental(acc.vexflowModifier);
         if (acc.vexflowModifier !== 'n' && acc.displayStatus !== false) {
           vfn.addModifier(vf_accidental, i);
         } else if (acc.displayType === 'always' || acc.displayStatus === true) {
@@ -13980,10 +13949,10 @@ class Note extends NotRest {
     // noinspection JSUnusedGlobalSymbols
     this.isNote = true;
     this.isRest = false;
-    if (nn instanceof _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch) {
+    if (nn instanceof _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch) {
       this.pitch = nn;
     } else {
-      this.pitch = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(nn);
+      this.pitch = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch(nn);
     }
   }
   stringInfo() {
@@ -14057,7 +14026,7 @@ class Note extends NotRest {
       stave,
       clef
     });
-    if (_debug__WEBPACK_IMPORTED_MODULE_8__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_7__.debug) {
       console.log(this.stemDirection);
     }
     if (this.stemDirection !== 'noStem') {
@@ -14119,8 +14088,8 @@ class Note extends NotRest {
     if (this.tie === undefined || this.tie.type === 'start') {
       // console.log(volume);
       try {
-        midicube__WEBPACK_IMPORTED_MODULE_2__.noteOn(channel, midNum, volume, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_2__.noteOff(channel, midNum, stopTime);
+        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOn(channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOff(channel, midNum, stopTime);
       } catch (e) {
         // do nothing -- might not have an output channel because of audio not connected
       }
@@ -14174,7 +14143,7 @@ class Rest extends GeneralNote {
       keyLine = 'd/5';
     }
     if (this.stepShift !== 0) {
-      const p = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch('B4');
+      const p = new _pitch__WEBPACK_IMPORTED_MODULE_4__.Pitch('B4');
       let ls = this.stepShift;
       if (this.duration.type === 'whole' && !activeSiteSingleLine) {
         ls += 2;
@@ -14182,13 +14151,13 @@ class Rest extends GeneralNote {
       p.diatonicNoteNum += ls;
       keyLine = p.vexflowName(undefined);
     }
-    const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveNote({
+    const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveNote({
       keys: [keyLine],
       duration: this.duration.vexflowDuration + 'r'
     });
     if (this.duration.dots > 0) {
       for (let i = 0; i < this.duration.dots; i++) {
-        vexflow__WEBPACK_IMPORTED_MODULE_1__.Dot.buildAndAttach([vfn], {
+        vexflow__WEBPACK_IMPORTED_MODULE_0__.Dot.buildAndAttach([vfn], {
           all: true
         });
       }
@@ -14229,13 +14198,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderHTML: () => (/* binding */ renderHTML),
 /* harmony export */   runConfiguration: () => (/* binding */ runConfiguration)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
-/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
-
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
 /**
  * Parses loading options -- called by music21_modules.js
  *
@@ -14268,8 +14234,8 @@ function getBasePath() {
   if (!m21jsPath) {
     m21jsPath = getM21attribute('src');
   }
-  const m21basePath = _common__WEBPACK_IMPORTED_MODULE_2__.pathSimplify(m21jsPath + '/../..');
-  if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
+  const m21basePath = _common__WEBPACK_IMPORTED_MODULE_1__.pathSimplify(m21jsPath + '/../..');
+  if (_debug__WEBPACK_IMPORTED_MODULE_0__.debug) {
     console.log('Music21 paths: base: ', m21basePath, '; js: ', m21jsPath);
   }
   return m21basePath;
@@ -14278,8 +14244,8 @@ function fixUrls(conf) {
   if (!conf.m21basePath) {
     return;
   }
-  for (const u of Object.keys(_common__WEBPACK_IMPORTED_MODULE_2__.urls)) {
-    _common__WEBPACK_IMPORTED_MODULE_2__.urls[u] = _common__WEBPACK_IMPORTED_MODULE_2__.pathSimplify(conf.m21basePath + _common__WEBPACK_IMPORTED_MODULE_2__.urls[u]);
+  for (const u of Object.keys(_common__WEBPACK_IMPORTED_MODULE_1__.urls)) {
+    _common__WEBPACK_IMPORTED_MODULE_1__.urls[u] = _common__WEBPACK_IMPORTED_MODULE_1__.pathSimplify(conf.m21basePath + _common__WEBPACK_IMPORTED_MODULE_1__.urls[u]);
   }
 }
 /**
@@ -14290,10 +14256,10 @@ function renderHTML() {
     return;
   }
   if (document.readyState === 'complete') {
-    _tinyNotation__WEBPACK_IMPORTED_MODULE_4__.renderNotationDivs();
+    _tinyNotation__WEBPACK_IMPORTED_MODULE_3__.renderNotationDivs();
   } else {
     window.addEventListener('load', () => {
-      _tinyNotation__WEBPACK_IMPORTED_MODULE_4__.renderNotationDivs();
+      _tinyNotation__WEBPACK_IMPORTED_MODULE_3__.renderNotationDivs();
     });
   }
 }
@@ -14307,7 +14273,7 @@ function loadDefaultSoundfont(conf) {
   } else {
     instrument = conf.loadSoundfont;
   }
-  return _miditools__WEBPACK_IMPORTED_MODULE_3__.loadSoundfont(instrument);
+  return _miditools__WEBPACK_IMPORTED_MODULE_2__.loadSoundfont(instrument);
 }
 /**
  * Find the configuration as a JSON-encoded m21conf attribute on the script tag.
@@ -14365,12 +14331,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   nameToSteps: () => (/* binding */ nameToSteps),
 /* harmony export */   stepsToName: () => (/* binding */ stepsToName)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/pitch -- pitch routines
@@ -14389,7 +14352,7 @@ __webpack_require__.r(__webpack_exports__);
  * @property {string} displayType
  * @property {boolean|undefined} displayStatus
  */
-class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
+class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   static get className() {
     return 'music21.pitch.Accidental';
   }
@@ -14470,7 +14433,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
       this._modifier = '####';
       this._unicodeModifier = '&#x1d12a;';
     } else {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('Accidental is not supported: ' + accName);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('Accidental is not supported: ' + accName);
     }
   }
   /**
@@ -14536,7 +14499,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     } else if (m === '---') {
       return 'bbb';
     } else {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('Vexflow does not support: ' + m);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('Vexflow does not support: ' + m);
     }
   }
   /**
@@ -14619,7 +14582,7 @@ const midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 
  * @property {string} step - letter name for the pitch (C-G, A, B),
  *     without accidental; default 'C'
  */
-class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
+class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   static get className() {
     return 'music21.pitch.Pitch';
   }
@@ -14736,7 +14699,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
    * @readonly
    */
   get pitchClass() {
-    return _common__WEBPACK_IMPORTED_MODULE_3__.posMod(Math.round(this.ps), 12);
+    return _common__WEBPACK_IMPORTED_MODULE_2__.posMod(Math.round(this.ps), 12);
   }
   /**
    *
@@ -14748,7 +14711,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
   set diatonicNoteNum(newDNN) {
     newDNN -= 1; // makes math easier
     this.octave = Math.floor(newDNN / 7);
-    const mod7DNN = _common__WEBPACK_IMPORTED_MODULE_3__.posMod(Math.round(newDNN), 7);
+    const mod7DNN = _common__WEBPACK_IMPORTED_MODULE_2__.posMod(Math.round(newDNN), 7);
     this.step = stepsToName[mod7DNN];
   }
   /**
@@ -14779,7 +14742,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     return (this.octave + 1) * 12 + nameToMidi[this.step] + accidentalAlter;
   }
   set ps(ps) {
-    this.name = midiToName[_common__WEBPACK_IMPORTED_MODULE_3__.posMod(ps, 12)];
+    this.name = midiToName[_common__WEBPACK_IMPORTED_MODULE_2__.posMod(ps, 12)];
     this.octave = Math.floor(ps / 12) - 1;
     this.spellingIsInferred = true;
   }
@@ -15496,11 +15459,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   RenderOptions: () => (/* binding */ RenderOptions)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./types */ "./src/types.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./types */ "./src/types.ts");
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/renderOptions -- an object that defines the render options for a Stream
@@ -15551,7 +15511,7 @@ class RenderOptions {
     this.leftBarline = undefined; // render() sets to 'none' for system beginnings
     this.rightBarline = undefined;
     this.staffLines = 5;
-    this.staffConnectors = [_types__WEBPACK_IMPORTED_MODULE_1__.StaveConnector.SINGLE, _types__WEBPACK_IMPORTED_MODULE_1__.StaveConnector.BRACE];
+    this.staffConnectors = [_types__WEBPACK_IMPORTED_MODULE_0__.StaveConnector.SINGLE, _types__WEBPACK_IMPORTED_MODULE_0__.StaveConnector.BRACE];
     this.staffPadding = 60; // width...
     this.events = {
       click: 'play',
@@ -15607,17 +15567,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   functionalityScores: () => (/* binding */ functionalityScores),
 /* harmony export */   romanToNumber: () => (/* binding */ romanToNumber)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./figuredBass */ "./src/figuredBass.ts");
-/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./harmony */ "./src/harmony.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./key */ "./src/key.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./figuredBass */ "./src/figuredBass.ts");
+/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./harmony */ "./src/harmony.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./key */ "./src/key.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/roman -- roman.RomanNumeral -- Chord subclass
@@ -15800,7 +15757,7 @@ const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * @property {string|undefined} frontAlterationString
  * @property {string|undefined} romanNumeralAlone
  */
-class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
+class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_4__.Harmony {
   static get className() {
     return 'music21.roman.RomanNumeral';
   }
@@ -15849,7 +15806,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
     this._scale = undefined; // the Key
     this.figure = figure;
     if (typeof keyStr === 'string') {
-      this.key = new _key__WEBPACK_IMPORTED_MODULE_7__.Key(keyStr);
+      this.key = new _key__WEBPACK_IMPORTED_MODULE_6__.Key(keyStr);
     } else {
       this.key = keyStr;
     }
@@ -15890,7 +15847,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
     this._tempRoot = useScale.pitchFromDegree(this.scaleDegree);
     this._fixMinorVIandVII(useScale);
     const expandedFigure = expandShortHand(workingFigure);
-    this.figuresNotationObj = new _figuredBass__WEBPACK_IMPORTED_MODULE_4__.Notation(expandedFigure.toString());
+    this.figuresNotationObj = new _figuredBass__WEBPACK_IMPORTED_MODULE_3__.Notation(expandedFigure.toString());
     const numbersArr = workingFigure.match(/\d+/);
     if (numbersArr != null) {
       // noinspection JSUnusedAssignment
@@ -15910,8 +15867,8 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
       if (group[0] === 'b' || group[0] === '-') {
         alteration *= -1;
       }
-      frontAlterationTransposeInterval = _interval__WEBPACK_IMPORTED_MODULE_6__.intervalFromGenericAndChromatic(1, alteration);
-      frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(alteration);
+      frontAlterationTransposeInterval = _interval__WEBPACK_IMPORTED_MODULE_5__.intervalFromGenericAndChromatic(1, alteration);
+      frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(alteration);
       frontAlterationString = group;
       workingFigure = workingFigure.replace(_alterationRegex, '');
     }
@@ -15927,7 +15884,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
       if (alterPitch === undefined) {
         continue;
       }
-      const newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(alterNotation);
+      const newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(alterNotation);
       if (alterPitch.accidental === undefined) {
         alterPitch.accidental = newAccidental;
       } else {
@@ -15975,12 +15932,12 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
     }
     const fati = this.frontAlterationTransposeInterval;
     if (fati !== undefined) {
-      const newFati = _interval__WEBPACK_IMPORTED_MODULE_6__.add([fati, new _interval__WEBPACK_IMPORTED_MODULE_6__.Interval('A1')]);
+      const newFati = _interval__WEBPACK_IMPORTED_MODULE_5__.add([fati, new _interval__WEBPACK_IMPORTED_MODULE_5__.Interval('A1')]);
       this.frontAlterationTransposeInterval = newFati;
       this.frontAlterationAccidental.alter += 1;
     } else {
-      this.frontAlterationTransposeInterval = new _interval__WEBPACK_IMPORTED_MODULE_6__.Interval('A1');
-      this.frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(1);
+      this.frontAlterationTransposeInterval = new _interval__WEBPACK_IMPORTED_MODULE_5__.Interval('A1');
+      this.frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(1);
     }
     this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(this._tempRoot);
   }
@@ -15991,11 +15948,11 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
     const rm = _romanNumeralAloneRegex.exec(workingFigure);
     const a6match = _augmentedSixthRegex.exec(workingFigure);
     if (rm === null && a6match === null) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception(`No roman numeral found in ${workingFigure}.`);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception(`No roman numeral found in ${workingFigure}.`);
     }
     if (a6match !== null) {
       if (useScale.mode === 'major') {
-        useScale = new _key__WEBPACK_IMPORTED_MODULE_7__.Key(useScale.tonic.name, 'minor');
+        useScale = new _key__WEBPACK_IMPORTED_MODULE_6__.Key(useScale.tonic.name, 'minor');
         this.impliedScale = useScale;
         this.useImpliedScale = true;
       }
@@ -16015,7 +15972,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
       }
     } else {
       romanNumeralAlone = rm[1];
-      this.scaleDegree = _common__WEBPACK_IMPORTED_MODULE_3__.fromRoman(romanNumeralAlone);
+      this.scaleDegree = _common__WEBPACK_IMPORTED_MODULE_2__.fromRoman(romanNumeralAlone);
       workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
       this.romanNumeralAlone = romanNumeralAlone;
     }
@@ -16044,15 +16001,15 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
   }
   set key(keyOrScale) {
     if (typeof keyOrScale === 'string') {
-      this._key = new _key__WEBPACK_IMPORTED_MODULE_7__.Key(keyOrScale);
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_6__.Key(keyOrScale);
     } else if (typeof keyOrScale === 'undefined') {
-      this._key = new _key__WEBPACK_IMPORTED_MODULE_7__.Key('C');
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_6__.Key('C');
     } else {
       this._key = keyOrScale;
     }
     if (keyOrScale === undefined) {
       this.useImpliedScale = true;
-      this.impliedScale = new _key__WEBPACK_IMPORTED_MODULE_7__.Key('C');
+      this.impliedScale = new _key__WEBPACK_IMPORTED_MODULE_6__.Key('C');
     } else {
       this.useImpliedScale = false;
       this.impliedScale = undefined;
@@ -16124,7 +16081,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
       const thisScaleDegree = bassScaleDegree + this.figuresNotationObj.numbers[i] - 1;
       const newPitch = useScale.pitchFromDegree(thisScaleDegree, 'ascending');
       const pitchName = this.figuresNotationObj.modifiers[i].modifyPitchName(newPitch.name);
-      const newNewPitch = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch(pitchName);
+      const newNewPitch = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch(pitchName);
       newNewPitch.octave = newPitch.octave;
       if (newNewPitch.ps < lastPitch.ps) {
         newNewPitch.octave += 1;
@@ -16165,22 +16122,22 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
     this._correctBracketedPitches();
   }
   bassScaleDegreeFromNotation(notationObject) {
-    const c = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch('C3');
+    const c = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch('C3');
     const cDNN = c.diatonicNoteNum; // always 22
     const pitches = [c];
     for (const i of notationObject.numbers) {
       const distanceToMove = i - 1;
       const newDiatonicNumber = cDNN + distanceToMove;
-      const [newStep, newOctave] = _interval__WEBPACK_IMPORTED_MODULE_6__.convertDiatonicNumberToStep(newDiatonicNumber);
-      const newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Pitch('C3');
+      const [newStep, newOctave] = _interval__WEBPACK_IMPORTED_MODULE_5__.convertDiatonicNumberToStep(newDiatonicNumber);
+      const newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Pitch('C3');
       newPitch.step = newStep;
       newPitch.octave = newOctave;
       pitches.push(newPitch);
     }
-    const tempChord = new _chord__WEBPACK_IMPORTED_MODULE_2__.Chord(pitches);
+    const tempChord = new _chord__WEBPACK_IMPORTED_MODULE_1__.Chord(pitches);
     const rootDNN = tempChord.root().diatonicNoteNum;
     const staffDistanceFromBassToRoot = rootDNN - cDNN;
-    let bassSD = _common__WEBPACK_IMPORTED_MODULE_3__.posMod(this.scaleDegree - staffDistanceFromBassToRoot, 7);
+    let bassSD = _common__WEBPACK_IMPORTED_MODULE_2__.posMod(this.scaleDegree - staffDistanceFromBassToRoot, 7);
     if (bassSD === 0) {
       bassSD = 7;
     }
@@ -16211,7 +16168,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
       const faultyPitch = this.getChordStep(thisChordStep);
       // TODO: check for faultyPitch is undefined
       if (faultyPitch.accidental === undefined) {
-        faultyPitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_8__.Accidental(correctedSemis);
+        faultyPitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_7__.Accidental(correctedSemis);
       } else {
         const acc = faultyPitch.accidental;
         correctedSemis += acc.alter;
@@ -16247,7 +16204,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_5__.Harmony {
       } else {
         secondaryMode = 'major';
       }
-      this.secondaryRomanNumeralKey = new _key__WEBPACK_IMPORTED_MODULE_7__.Key(secondaryRomanNumeral.root().name, secondaryMode);
+      this.secondaryRomanNumeralKey = new _key__WEBPACK_IMPORTED_MODULE_6__.Key(secondaryRomanNumeral.root().name, secondaryMode);
       useScale = this.secondaryRomanNumeralKey;
       workingFigure = primaryFigure;
     }
@@ -16388,15 +16345,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ScaleSimpleMinor: () => (/* binding */ ScaleSimpleMinor),
 /* harmony export */   SimpleDiatonicScale: () => (/* binding */ SimpleDiatonicScale)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./interval */ "./src/interval.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/scale -- Scales
@@ -16418,7 +16372,7 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * A generalized Scale object.
  */
-class Scale extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
+class Scale extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
   static get className() {
     return 'music21.scale.Scale';
   }
@@ -16474,7 +16428,7 @@ class AbstractScale extends Scale {
    * @returns {boolean}
    */
   equals(other) {
-    if (_common__WEBPACK_IMPORTED_MODULE_4__.arrayEquals(this.classes, other.classes) && this.tonicDegree === other.tonicDegree && _common__WEBPACK_IMPORTED_MODULE_4__.arrayEquals(this._net, other._net)) {
+    if (_common__WEBPACK_IMPORTED_MODULE_3__.arrayEquals(this.classes, other.classes) && this.tonicDegree === other.tonicDegree && _common__WEBPACK_IMPORTED_MODULE_3__.arrayEquals(this._net, other._net)) {
       return true;
     } else {
       return false;
@@ -16484,7 +16438,7 @@ class AbstractScale extends Scale {
     const pitchListReal = [];
     for (const p of pitchList) {
       if (typeof p === 'string') {
-        pitchListReal.push(new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch(p));
+        pitchListReal.push(new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(p));
       } else if (p.classes.includes('Note')) {
         pitchListReal.push(p.pitch);
       } else {
@@ -16508,7 +16462,7 @@ class AbstractScale extends Scale {
     }
     const intervalList = [];
     for (let i = 0; i < pitchListReal.length - 1; i++) {
-      const thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_5__.Interval(pitchListReal[i], pitchListReal[i + 1]);
+      const thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval(pitchListReal[i], pitchListReal[i + 1]);
       intervalList.push(thisInterval);
     }
     this._net = intervalList;
@@ -16530,7 +16484,7 @@ class AbstractScale extends Scale {
     //     stepOfPitch = 1;
     // }
     if (typeof pitchObj === 'string') {
-      pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch(pitchObj);
+      pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(pitchObj);
     } else {
       pitchObj = pitchObj.clone();
     }
@@ -16554,7 +16508,7 @@ class AbstractScale extends Scale {
     let unused_comparisonAttribute = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
     let unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
     if (typeof pitchTarget === 'string') {
-      pitchTarget = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch(pitchTarget);
+      pitchTarget = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(pitchTarget);
     }
     let realizedPitches;
     if (this._oneOctaveRealizationCache !== undefined) {
@@ -16612,7 +16566,7 @@ class AbstractDiatonicScale extends AbstractScale {
     }
     this._net = [];
     for (const intVStr of intervalList) {
-      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_5__.Interval(intVStr));
+      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval(intVStr));
     }
   }
 }
@@ -16630,7 +16584,7 @@ class AbstractHarmonicMinorScale extends AbstractScale {
     const intervalList = ['M2', 'm2', 'M2', 'M2', 'm2', 'A2', 'm2'];
     this._net = [];
     for (const intVStr of intervalList) {
-      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_5__.Interval(intVStr));
+      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval(intVStr));
     }
   }
 }
@@ -16650,7 +16604,7 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
     const intervalList = ['M2', 'm2', 'M2', 'M2', 'M2', 'M2', 'm2'];
     this._net = [];
     for (const intVStr of intervalList) {
-      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_5__.Interval(intVStr));
+      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval(intVStr));
     }
   }
 }
@@ -16661,7 +16615,7 @@ class ConcreteScale extends Scale {
   constructor(tonic) {
     super();
     if (typeof tonic === 'string') {
-      tonic = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch(tonic);
+      tonic = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(tonic);
     }
     this.tonic = tonic;
     this.abstract = undefined;
@@ -16690,7 +16644,7 @@ class ConcreteScale extends Scale {
     let unused_direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     let pitchObj;
     if (this.tonic === undefined) {
-      pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch('C4');
+      pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch('C4');
     } else {
       pitchObj = this.tonic;
     }
@@ -16766,21 +16720,21 @@ class AscendingMelodicMinorScale extends ConcreteScale {
  */
 function SimpleDiatonicScale(tonic, scaleSteps) {
   if (tonic === undefined) {
-    tonic = new _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch('C4');
-  } else if (!(tonic instanceof _pitch__WEBPACK_IMPORTED_MODULE_6__.Pitch)) {
-    throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('Cannot make a scale not from ' + 'a music21.pitch.Pitch object: ' + tonic);
+    tonic = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch('C4');
+  } else if (!(tonic instanceof _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch)) {
+    throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('Cannot make a scale not from ' + 'a music21.pitch.Pitch object: ' + tonic);
   }
   if (scaleSteps === undefined) {
     scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
   }
-  const gi = new _interval__WEBPACK_IMPORTED_MODULE_5__.GenericInterval(2);
+  const gi = new _interval__WEBPACK_IMPORTED_MODULE_4__.GenericInterval(2);
   const pitches = [tonic];
   let lastPitch = tonic;
   for (let i = 0; i < scaleSteps.length; i++) {
-    const di = new _interval__WEBPACK_IMPORTED_MODULE_5__.DiatonicInterval(scaleSteps[i], gi);
-    const ii = new _interval__WEBPACK_IMPORTED_MODULE_5__.Interval(di);
+    const di = new _interval__WEBPACK_IMPORTED_MODULE_4__.DiatonicInterval(scaleSteps[i], gi);
+    const ii = new _interval__WEBPACK_IMPORTED_MODULE_4__.Interval(di);
     const newPitch = ii.transposePitch(lastPitch);
-    if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
       console.log('ScaleSimpleMajor -- adding pitch: ' + newPitch.name);
     }
     pitches.push(newPitch);
@@ -16835,11 +16789,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SitesException: () => (/* binding */ SitesException),
 /* harmony export */   getId: () => (/* binding */ getId)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 /**
  * Objects for keeping track of relationships among Music21Objects.
  *
@@ -16850,7 +16801,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  */
-class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception {}
+class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception {}
 /**
  * SiteRef.site is held strongly in Javascript.  This is
  * actually NOT a problem because of the difference between
@@ -16872,7 +16823,7 @@ class SiteRef {
 const _NoneSiteRef = new SiteRef();
 _NoneSiteRef.globalSiteIndex = -2;
 _NoneSiteRef.siteIndex = -2;
-const _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_1__.SingletonCounter();
+const _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_0__.SingletonCounter();
 const GLOBAL_SITE_STATE_DICT = new WeakMap();
 function getId(obj) {
   if (!GLOBAL_SITE_STATE_DICT.has(obj)) {
@@ -17034,7 +16985,7 @@ class Sites {
       getElementMethod: 'getElementAtOrBefore',
       memo: {}
     };
-    _common__WEBPACK_IMPORTED_MODULE_1__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_0__.merge(params, options);
     const memo = params.memo;
     let post;
     const objs = Array.from(this.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
@@ -17083,36 +17034,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Stream: () => (/* binding */ Stream),
 /* harmony export */   StreamException: () => (/* binding */ StreamException),
 /* harmony export */   Voice: () => (/* binding */ Voice),
-/* harmony export */   filters: () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_19__),
-/* harmony export */   iterator: () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_20__),
-/* harmony export */   makeNotation: () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__)
+/* harmony export */   filters: () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_18__),
+/* harmony export */   iterator: () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_19__),
+/* harmony export */   makeNotation: () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
-/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
-/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
-
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
+/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
+/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/stream -- Streams -- objects that hold other Music21Objects
@@ -17159,9 +17107,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception {}
+class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception {}
 function _exportMusicXMLAsText(s) {
-  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_18__.GeneralObjectExporter(s);
+  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_17__.GeneralObjectExporter(s);
   return gox.parse();
 }
 /**
@@ -17194,7 +17142,7 @@ function _exportMusicXMLAsText(s) {
  *     call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
-class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
+class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   static get className() {
     return 'music21.stream.Stream';
   }
@@ -17242,7 +17190,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     this._timeSignature = undefined; // a music21.meter.TimeSignature object
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_14__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_13__.RenderOptions();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
@@ -17284,7 +17232,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       }
       const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(canvasOrSVGElement, e);
       if (foundNote === undefined) {
-        if (_debug__WEBPACK_IMPORTED_MODULE_3__.debug) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
           console.log('No note found');
         }
         return undefined;
@@ -17341,11 +17289,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     }
   }
   get duration() {
-    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_9__.Duration) {
+    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_8__.Duration) {
       // return new duration.Duration(32.0);
       return this._overriddenDuration;
     }
-    return new _duration__WEBPACK_IMPORTED_MODULE_9__.Duration(this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_8__.Duration(this.highestTime);
   }
   set duration(newDuration) {
     this._overriddenDuration = newDuration;
@@ -17384,7 +17332,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       // namely, do not set inner streams activeSites to be
       // in things that they won't have later.
       newSt.clear();
-      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_20__.RecursiveIterator(this, {
+      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_19__.RecursiveIterator(this, {
         restoreActiveSites: false,
         includeSelf: false,
         ignoreSorting: true
@@ -17410,10 +17358,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     return newSt;
   }
   get notes() {
-    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_12__.NotRest);
+    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_11__.NotRest);
   }
   get notesAndRests() {
-    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_12__.GeneralNote);
+    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_11__.GeneralNote);
   }
   get tempo() {
     if (this._tempo === undefined && this.activeSite !== undefined) {
@@ -17437,7 +17385,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
     const highestTime = thisFlat.highestTime;
     const lowestOffset = 0;
-    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_16__.MetronomeMark({
+    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_15__.MetronomeMark({
       number: 120
     });
     if (!metronomeMarks.length) {
@@ -17505,7 +17453,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
   }
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_10__.Instrument(newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_9__.Instrument(newInstrument);
     }
     this._instrument = newInstrument;
   }
@@ -17585,7 +17533,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
   }
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_11__.TimeSignature(newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_10__.TimeSignature(newTimeSignature);
     }
     const oldTS = this._firstElementContext('timeSignature');
     if (oldTS !== undefined) {
@@ -17757,7 +17705,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       skipSelf = true
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     const includeSelf = !skipSelf;
-    let ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_20__.RecursiveIterator(this, {
+    let ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_19__.RecursiveIterator(this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
@@ -17779,8 +17727,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       return this;
     }
     const el = elOrElList;
-    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object)) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception('Can only append a music21 object.');
+    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object)) {
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('Can only append a music21 object.');
     }
     if (this._elements.includes(el)) {
       throw new StreamException(`Cannot append (${el}): already found in Stream`);
@@ -17862,7 +17810,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
   a.repeatAppend(n, 10)
   */
   repeatAppend(item, numberOfTimes) {
-    if (!(item instanceof _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object)) {
+    if (!(item instanceof _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object)) {
       throw new StreamException('to put a non Music21Object in a stream, ' + 'create a music21.ElementWrapper for the item');
     }
     for (let i = 0; i < numberOfTimes; i++) {
@@ -18186,7 +18134,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       bestClef: false,
       inPlace: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_7__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_6__.merge(params, options);
     let voiceCount;
     if (this.hasVoices()) {
       voiceCount = this.getElementsByClass('Voice').length;
@@ -18358,7 +18306,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
         return;
       }
       const restQL = restInfo.endTime - restInfo.offset;
-      const restObj = new _note__WEBPACK_IMPORTED_MODULE_12__.Rest();
+      const restObj = new _note__WEBPACK_IMPORTED_MODULE_11__.Rest();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
@@ -18376,7 +18324,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       } else if (removeClasses === true || removeClasses.some(removeClass => el.classSet.has(removeClass)) || !retainVoices && el.classSet.has('Voice')) {
         // remove this element
         if (fillWithRests && el.quarterLength) {
-          const endTime = _common__WEBPACK_IMPORTED_MODULE_7__.opFrac(el.offset + el.quarterLength);
+          const endTime = _common__WEBPACK_IMPORTED_MODULE_6__.opFrac(el.offset + el.quarterLength);
           if (restInfo.offset === undefined) {
             restInfo.offset = el.offset;
             restInfo.endTime = endTime;
@@ -18395,7 +18343,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
   cloneEmpty(derivationMethod) {
     // noinspection JSPotentiallyInvalidConstructorUsage
     const returnObj = new this.constructor();
-    const new_derivation = new _derivation__WEBPACK_IMPORTED_MODULE_8__.Derivation(returnObj);
+    const new_derivation = new _derivation__WEBPACK_IMPORTED_MODULE_7__.Derivation(returnObj);
     new_derivation.origin = this;
     new_derivation.method = derivationMethod || 'cloneEmpty';
     returnObj.derivation = new_derivation;
@@ -18436,7 +18384,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       out = this.clone(true);
     }
     // already made a copy
-    _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__.setStemDirectionForUnspecified(out);
+    _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__.setStemDirectionForUnspecified(out);
     out.makeAccidentals({
       inPlace: true,
       overrideStatus
@@ -18455,7 +18403,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       setStemDirections = true,
       failOnNoTimeSignature = false
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__.makeBeams(this, {
+    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__.makeBeams(this, {
       inPlace,
       setStemDirections,
       failOnNoTimeSignature
@@ -18520,7 +18468,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     return offsetMap;
   }
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_20__.StreamIterator(this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_19__.StreamIterator(this);
   }
   getElementsByClass(classList) {
     return this.iter.getElementsByClass(classList);
@@ -18726,7 +18674,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
         if (tie !== undefined && tie.type !== 'stop') {
           tiePitchSet.add(p.nameWithOctave);
         }
-      } else if (e instanceof _chord__WEBPACK_IMPORTED_MODULE_5__.Chord) {
+      } else if (e instanceof _chord__WEBPACK_IMPORTED_MODULE_4__.Chord) {
         const chordNotes = e.notes;
         const seenPitchNames = new Set();
         for (const n of chordNotes) {
@@ -18782,7 +18730,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     let recursive = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     let preserveEvents = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     const oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_14__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_13__.RenderOptions();
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
     }
@@ -18811,11 +18759,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
    * Takes in the div surrounding an SVG object (or a canvas)
    */
   renderVexflow(where) {
-    const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement(where);
-    const DOMContains = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation).contains(canvasOrSVG);
+    const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement(where);
+    const DOMContains = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation).contains(canvasOrSVG);
     if (!DOMContains) {
       // temporarily add to DOM so Firefox can measure it...
-      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation).appendChild(canvasOrSVG);
+      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation).appendChild(canvasOrSVG);
     }
     const tagName = canvasOrSVG.tagName.toLowerCase();
     if (this.autoBeam === true) {
@@ -18829,7 +18777,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
         }
       }
     }
-    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_17__.Renderer(this, canvasOrSVG);
+    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_16__.Renderer(this, canvasOrSVG);
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
     } else if (tagName === 'svg') {
@@ -18844,7 +18792,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       // bug in gruntTests -- not sure the other one.  Spent another 90 minutes
       // diagnosing.  Need to stop for now.
       // remove the adding to DOM so that Firefox could measure it...
-      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation).removeChild(canvasOrSVG);
+      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation).removeChild(canvasOrSVG);
     }
     return vfr;
   }
@@ -18886,7 +18834,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       if (!ignoreSystems) {
         numSystems = this.numSystems();
       }
-      if (_debug__WEBPACK_IMPORTED_MODULE_3__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
       let partHeight = numSystems * staffHeight + (numSystems - 1) * systemPadding;
@@ -19137,7 +19085,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     for (const element of sortedElements) {
       if (element) {
         if (element.offset > highestCurrentEndTime) {
-          const gapElement = new _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object();
+          const gapElement = new _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object();
           const gapQuarterLength = element.offset - highestCurrentEndTime;
           gapElement.duration = this.duration;
           gapElement.duration.quarterLength = gapQuarterLength;
@@ -19180,7 +19128,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       done: undefined,
       startNote: undefined
     };
-    _common__WEBPACK_IMPORTED_MODULE_7__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_6__.merge(params, options);
     const startNoteIndex = params.startNote;
     let currentNoteIndex = 0;
     if (startNoteIndex !== undefined) {
@@ -19209,7 +19157,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
         // const nextOffset = nextNote ? nextNote.offset : el.offset + el.duration.quarterLength;
         // const tempo = thisStream._averageTempo(el.offset, nextOffset);
         // const milliseconds = playDuration * 1000 * 60 / tempo;
-        if (_debug__WEBPACK_IMPORTED_MODULE_3__.debug) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
           console.log(`playing: ${el} ${playDuration} ${milliseconds} ${params.tempo}`);
         }
         if (el.playMidi !== undefined) {
@@ -19235,7 +19183,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     // turns off all currently playing MIDI notes (on any stream) and stops playback.
     this._stopPlaying = true;
     for (let i = 0; i < 127; i++) {
-      midicube__WEBPACK_IMPORTED_MODULE_1__.noteOff(0, i, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_0__.noteOff(0, i, 0);
     }
     return this;
   }
@@ -19270,14 +19218,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     let newCanvasOrDIV;
     if (elementType === 'svg') {
       // we render SVG on a Div for Vexflow
-      newCanvasOrDIV = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<div></div>');
+      newCanvasOrDIV = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<div></div>');
     } else if (elementType === 'canvas') {
-      newCanvasOrDIV = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<canvas></canvas>');
+      newCanvasOrDIV = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<canvas></canvas>');
     }
     newCanvasOrDIV.classList.add('streamHolding'); // .css('border', '1px red solid');
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common__WEBPACK_IMPORTED_MODULE_7__.stripPx(width);
+        width = _common__WEBPACK_IMPORTED_MODULE_6__.stripPx(width);
       }
       newCanvasOrDIV.setAttribute('width', width.toString());
     } else {
@@ -19347,12 +19295,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     let height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     let elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
     if (!where) {
-      where = _defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation;
+      where = _defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation;
     }
     if (typeof where === 'string') {
       where = document.querySelector(where);
     }
-    const appendElement = _common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement(where);
+    const appendElement = _common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement(where);
     const svgOrCanvasBlock = this.createDOM(width, height, elementType);
     appendElement.appendChild(svgOrCanvasBlock);
     return svgOrCanvasBlock;
@@ -19372,13 +19320,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     let preserveSvgSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     let elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
     let oldSVGOrCanvas;
-    where = _common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement(where);
+    where = _common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement(where);
     if (where.classList.contains('streamHolding')) {
       oldSVGOrCanvas = where;
     } else {
       const allStreamHolding = where.querySelectorAll('.streamHolding');
       if (allStreamHolding.length === 0) {
-        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception('No svg defined for replaceDOM!');
+        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception('No svg defined for replaceDOM!');
       }
       oldSVGOrCanvas = allStreamHolding[allStreamHolding.length - 1];
     }
@@ -19406,7 +19354,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
    *                    find the original stream; var s = this; var f = function () { s...}
    */
   setRenderInteraction(where) {
-    const svg = _common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement(where);
+    const svg = _common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement(where);
     const playFunc = () => {
       this.playStream();
     };
@@ -19558,7 +19506,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common__WEBPACK_IMPORTED_MODULE_7__.merge(params, options);
+    _common__WEBPACK_IMPORTED_MODULE_6__.merge(params, options);
     let foundNote;
     const subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
     if (subStream === undefined) {
@@ -19625,7 +19573,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
    */
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     const n = foundNote;
-    const p = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Pitch('C');
+    const p = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Pitch('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -19668,7 +19616,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     /*
      * Create an editable svg with an accidental selection bar.
      */
-    const d = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<div style="text-align: left; position: relative"></div>');
+    const d = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<div style="text-align: left; position: relative"></div>');
     this.renderOptions.events.click = this.DOMChangerFunction;
     if (this.changedCallbackFunction === undefined) {
       this.changedCallbackFunction = this.DOMChangerFunction;
@@ -19676,7 +19624,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
     const svgDiv = this.createDOM(width, height);
     const buttonDiv = this.getAccidentalToolbar(minAccidental, maxAccidental, svgDiv);
     d.appendChild(buttonDiv);
-    d.appendChild((0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)("<br style='clear: both;'>"));
+    d.appendChild((0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)("<br style='clear: both;'>"));
     d.appendChild(svgDiv);
     return d;
   }
@@ -19713,9 +19661,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
           return;
         }
       }
-      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_12__.Note) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_11__.Note) {
         const n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Accidental(newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Accidental(newAlter);
         /* console.log(n.pitch.name); */
         const newSvg = this.redrawDOM(useSvg);
         if (this.changedCallbackFunction !== undefined) {
@@ -19726,10 +19674,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
         }
       }
     };
-    const buttonDiv = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<div class="accidentalToolbar scoreToolbar">');
+    const buttonDiv = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<div class="accidentalToolbar scoreToolbar">');
     for (let i = minAccidental; i <= maxAccidental; i++) {
-      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_15__.svg_accidentals.get(i).cloneNode(true);
-      const button = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<button style="width: 40px; height: 40px;"></button>');
+      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_14__.svg_accidentals.get(i).cloneNode(true);
+      const button = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button style="width: 40px; height: 40px;"></button>');
       button.addEventListener('click', e => addAccidental(i, e));
       button.appendChild(svg_acc);
       buttonDiv.appendChild(button);
@@ -19740,13 +19688,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_4__.Music21Object {
    * get a Div element containing two buttons -- play and stop
    */
   getPlayToolbar() {
-    const buttonDiv = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<div class="playToolbar scoreToolbar">');
-    const bPlay = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<button>&#9658</button>');
+    const buttonDiv = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<div class="playToolbar scoreToolbar">');
+    const bPlay = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button>&#9658</button>');
     bPlay.addEventListener('click', () => {
       this.playStream();
     });
     buttonDiv.appendChild(bPlay);
-    const bStop = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<button>&#9724</button>');
+    const bStop = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button>&#9724</button>');
     bStop.addEventListener('click', () => {
       this.stopPlayStream();
     });
@@ -19853,7 +19801,7 @@ class Part extends Stream {
     if (this._partName !== undefined) {
       return this._partName;
     }
-    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_10__.Instrument) {
+    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_9__.Instrument) {
       return this.instrument.partName;
     }
     return undefined;
@@ -19868,7 +19816,7 @@ class Part extends Stream {
     if (this._partAbbreviation !== undefined) {
       return this._partAbbreviation;
     }
-    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_10__.Instrument) {
+    if (this.instrument instanceof _instrument__WEBPACK_IMPORTED_MODULE_9__.Instrument) {
       return this.instrument.partAbbreviation;
     }
     return undefined;
@@ -20009,7 +19957,7 @@ class Part extends Stream {
     if (systemHeight === undefined) {
       /* part.show() called... */
       systemHeight = this.renderOptions.staffAreaHeight;
-    } else if (_debug__WEBPACK_IMPORTED_MODULE_3__.debug) {
+    } else if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
       console.log('overridden systemHeight: ' + systemHeight);
     }
     const systemCurrentWidths = [];
@@ -20141,7 +20089,7 @@ class Part extends Stream {
       [x, y] = this.getScaledXYforDOM(svg, e);
     }
     // debug = true;
-    if (_debug__WEBPACK_IMPORTED_MODULE_3__.debug && svg !== undefined) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug && svg !== undefined) {
       console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / svg.getBoundingClientRect().height: ' + svg.getBoundingClientRect().height);
     }
     // TODO(msc) -- systemPadding was never used -- should it be?
@@ -20163,7 +20111,7 @@ class Part extends Stream {
       const right = left + rendOp.width;
       const top = rendOp.top;
       const bottom = top + rendOp.height;
-      if (_debug__WEBPACK_IMPORTED_MODULE_3__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
         console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
       }
       if (xPxScaled >= left && xPxScaled <= right) {
@@ -20195,7 +20143,7 @@ class Score extends Stream {
   get clef() {
     const c = super.clef;
     if (c === undefined) {
-      return new _clef__WEBPACK_IMPORTED_MODULE_6__.TrebleClef();
+      return new _clef__WEBPACK_IMPORTED_MODULE_5__.TrebleClef();
     } else {
       return c;
     }
@@ -20518,12 +20466,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   StopIterationSingleton: () => (/* binding */ StopIterationSingleton),
 /* harmony export */   StreamFilter: () => (/* binding */ StreamFilter)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../exceptions21 */ "./src/exceptions21.ts");
 
-
-class FilterException extends _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception {}
+class FilterException extends _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception {}
 class _StopIteration {}
 const StopIterationSingleton = new _StopIteration();
 class StreamFilter {
@@ -21177,14 +21122,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setStemDirectionForUnspecified: () => (/* binding */ setStemDirectionForUnspecified),
 /* harmony export */   setStemDirectionOneGroup: () => (/* binding */ setStemDirectionOneGroup)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../beam */ "./src/beam.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../note */ "./src/note.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common */ "./src/common.ts");
-
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../beam */ "./src/beam.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../clef */ "./src/clef.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../note */ "./src/note.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../stream */ "./src/stream.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common */ "./src/common.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/stream/makeNotation -- notation making functions
@@ -21218,7 +21160,7 @@ function makeBeams(s) {
     lastTimeSignature = m.timeSignature || m.getContextByClass('TimeSignature');
     if (lastTimeSignature === undefined) {
       if (failOnNoTimeSignature) {
-        throw new _stream__WEBPACK_IMPORTED_MODULE_4__.StreamException('Need a Time Signature to process beams');
+        throw new _stream__WEBPACK_IMPORTED_MODULE_3__.StreamException('Need a Time Signature to process beams');
       }
       continue;
     }
@@ -21242,7 +21184,7 @@ function makeBeams(s) {
       }
       const noteStream = noteStreamIterator.stream();
       const durSumErr = durList.map(a => a.quarterLength).reduce((total, val) => total + val, 0);
-      const durSum = (0,_common__WEBPACK_IMPORTED_MODULE_5__.opFrac)(durSumErr); // remove fraction errors
+      const durSum = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(durSumErr); // remove fraction errors
       const barQL = lastTimeSignature.barDuration.quarterLength;
       if (durSum > barQL) {
         continue;
@@ -21251,7 +21193,7 @@ function makeBeams(s) {
       if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
         offset = m.paddingLeft;
       } else if (m.paddingRight === 0.0 && noteStream.highestTime < barQL) {
-        offset = (0,_common__WEBPACK_IMPORTED_MODULE_5__.opFrac)(barQL - noteStream.highestTime);
+        offset = (0,_common__WEBPACK_IMPORTED_MODULE_4__.opFrac)(barQL - noteStream.highestTime);
       }
       const beamsList = lastTimeSignature.getBeams(noteStream, {
         measureStartOffset: offset
@@ -21262,7 +21204,7 @@ function makeBeams(s) {
         if (thisBeams !== undefined) {
           n.beams = thisBeams;
         } else {
-          n.beams = new _beam__WEBPACK_IMPORTED_MODULE_1__.Beams();
+          n.beams = new _beam__WEBPACK_IMPORTED_MODULE_0__.Beams();
         }
       }
     }
@@ -21333,15 +21275,15 @@ function setStemDirectionForBeamGroups(s) {
  */
 function setStemDirectionForUnspecified(s) {
   let single_clef_context;
-  const all_clefs = s.rc(_clef__WEBPACK_IMPORTED_MODULE_2__.Clef);
+  const all_clefs = s.rc(_clef__WEBPACK_IMPORTED_MODULE_1__.Clef);
   if (all_clefs.length === 1) {
     // most common. do one search;
     single_clef_context = all_clefs.first();
   } else if (all_clefs.length === 0) {
     // no clef here. in outer part;
-    single_clef_context = s.getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_2__.Clef);
+    single_clef_context = s.getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_1__.Clef);
   }
-  for (const n of s.rc(_note__WEBPACK_IMPORTED_MODULE_3__.NotRest)) {
+  for (const n of s.rc(_note__WEBPACK_IMPORTED_MODULE_2__.NotRest)) {
     if (n.pitches.length > 1) {
       const pitchSet = new Set(n.pitches.map(p => p.diatonicNoteNum));
       if (pitchSet.size < n.pitches.length) {
@@ -21359,7 +21301,7 @@ function setStemDirectionForUnspecified(s) {
     let clef_context;
     if (!single_clef_context) {
       // slower...
-      clef_context = n.getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_2__.Clef);
+      clef_context = n.getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_1__.Clef);
     } else {
       clef_context = single_clef_context;
     }
@@ -21394,7 +21336,7 @@ function setStemDirectionOneGroup(group) {
   } else if (stem_directions_found.size < 2) {
     has_consistent_stem_directions = true;
   }
-  const clef_context = group[0].getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_2__.Clef);
+  const clef_context = group[0].getContextByClass(_clef__WEBPACK_IMPORTED_MODULE_1__.Clef);
   if (clef_context === undefined) {
     return;
   }
@@ -21524,17 +21466,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   baseTempo: () => (/* binding */ baseTempo),
 /* harmony export */   defaultTempoValues: () => (/* binding */ defaultTempoValues)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/base.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./main */ "./src/main.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/common.ts");
-
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
+/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./main */ "./src/main.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/tempo -- tempo and (not in music21p) metronome objects
@@ -21552,7 +21491,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_5__.Music21Exception {}
+class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_4__.Music21Exception {}
 // noinspection JSNonASCIINames,NonAsciiCharacters
 /**
  * Object mapping names to tempo values
@@ -21596,7 +21535,7 @@ const baseTempo = 60;
 /**
  * Metronome object
  */
-class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
+class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   static get className() {
     return 'music21.tempo.Metronome';
   }
@@ -21638,7 +21577,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     const fm = this.metronomeDiv.querySelector('.metroFlash');
     fm.style.transition = 'background-color ' + (this.beatLength / 4).toString() + 's ease-in-out';
     fm.style.backgroundColor = flashColor;
-    (0,_common__WEBPACK_IMPORTED_MODULE_7__.sleep)(this.beatLength * 1000 / 4).then(() => {
+    (0,_common__WEBPACK_IMPORTED_MODULE_6__.sleep)(this.beatLength * 1000 / 4).then(() => {
       fm.style.backgroundColor = '#ffffff';
     });
   }
@@ -21650,16 +21589,16 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     if (this.beat > this.numBeatsPerMeasure) {
       this.beat = 1;
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOn(0, 96, 100, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOff(0, 96, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_0__.noteOn(0, 96, 100, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_0__.noteOff(0, 96, 0.1);
       }
       if (this.flash === true) {
         this._silentFlash('#0000f0');
       }
     } else {
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOn(0, 84, 70, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_1__.noteOff(0, 84, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_0__.noteOn(0, 84, 70, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_0__.noteOff(0, 84, 0.1);
       }
       if (this.flash === true) {
         this._silentFlash('#ff0000');
@@ -21742,36 +21681,36 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
    * returns a JQuery div holding the metronome.
    */
   addDiv(where) {
-    where = _main__WEBPACK_IMPORTED_MODULE_6__.common.coerceHTMLElement(where);
-    const tempoHolder = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+    where = _main__WEBPACK_IMPORTED_MODULE_5__.common.coerceHTMLElement(where);
+    const tempoHolder = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
     tempoHolder.style.fontSize = '24px';
     tempoHolder.style.paddingLeft = '10px';
     tempoHolder.style.paddingRight = '10px';
-    const newDiv = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<div class="metronomeRendered"></div>');
-    const b1 = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<button>start</button>');
+    const newDiv = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<div class="metronomeRendered"></div>');
+    const b1 = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button>start</button>');
     b1.addEventListener('click', () => {
       this.chirp();
     });
-    const b2 = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<button>stop</button>');
+    const b2 = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button>stop</button>');
     b2.addEventListener('click', () => {
       this.stopChirp();
     });
     newDiv.appendChild(b1);
     newDiv.appendChild(b2);
     newDiv.appendChild(tempoHolder);
-    const b3 = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<button>up</button>');
+    const b3 = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button>up</button>');
     b3.addEventListener('click', () => {
       this.increaseSpeed();
       b3.parentElement.querySelector('.tempoHolder').innerHTML = this.tempo.toString();
     });
-    const b4 = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<button>down</button>');
+    const b4 = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button>down</button>');
     b4.addEventListener('click', () => {
       this.decreaseSpeed();
       b4.parentElement.querySelector('.tempoHolder').innerHTML = this.tempo.toString();
     });
     newDiv.appendChild(b3);
     newDiv.appendChild(b4);
-    const flash = (0,_common__WEBPACK_IMPORTED_MODULE_7__.to_el)('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+    const flash = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     flash.style.marginLeft = '40px';
     flash.style.height = '40px';
     newDiv.appendChild(flash);
@@ -21786,7 +21725,7 @@ class TempoText {
     this.text = text;
   }
 }
-class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
+class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
   static get className() {
     return 'music21.tempo.MetronomeMark';
   }
@@ -21868,14 +21807,14 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   }
   set referent(value) {
     if (value === undefined) {
-      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_4__.Duration(1);
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_3__.Duration(1);
     } else if (typeof value === 'number') {
-      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_4__.Duration(value);
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_3__.Duration(value);
     } else if (typeof value === 'string') {
-      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_4__.Duration(value);
-    } else if (value instanceof _duration__WEBPACK_IMPORTED_MODULE_4__.Duration) {
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_3__.Duration(value);
+    } else if (value instanceof _duration__WEBPACK_IMPORTED_MODULE_3__.Duration) {
       this._referent = value;
-    } else if (value instanceof _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object) {
+    } else if (value instanceof _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object) {
       this._referent = value.duration;
     } else {
       throw new TempoException(`Cannot get a Duration from the supplied object: ${value}`);
@@ -21921,11 +21860,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Tie: () => (/* binding */ Tie)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
-
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./prebase */ "./src/prebase.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./exceptions21 */ "./src/exceptions21.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tie -- ties!
@@ -21948,7 +21884,7 @@ const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-
  * @property {string|undefined} placement - undefined = unknown or above/below.
  * (NB currently does nothing)
  */
-class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
+class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_0__.ProtoM21Object {
   static get className() {
     return 'music21.tie.Tie';
   }
@@ -21966,7 +21902,7 @@ class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   }
   set type(newType) {
     if (!VALID_TIE_TYPES.includes(newType)) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__.Music21Exception(`Type must be one of ${VALID_TIE_TYPES}, not ${newType}`);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception(`Type must be one of ${VALID_TIE_TYPES}, not ${newType}`);
     }
     this._type = newType;
   }
@@ -21984,6 +21920,7 @@ class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TinyNotation: () => (/* binding */ TinyNotation),
+/* harmony export */   regularExpressions: () => (/* binding */ regularExpressions),
 /* harmony export */   renderNotationDivs: () => (/* binding */ renderNotationDivs)
 /* harmony export */ });
 /* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chord */ "./src/chord.ts");
@@ -22063,7 +22000,7 @@ function TinyNotation(textIn) {
   if (textIn.slice(0, 14).toLowerCase() === 'tinynotation: ') {
     textIn = textIn.slice(14);
   }
-  const tokens = textIn.split(' ');
+  const tokens = textIn.split(/\s+/);
   let optionalScore;
   let p = new _stream__WEBPACK_IMPORTED_MODULE_6__.Part();
   let m = new _stream__WEBPACK_IMPORTED_MODULE_6__.Measure();
@@ -22097,7 +22034,7 @@ function TinyNotation(textIn) {
         p.append(m);
         m = new _stream__WEBPACK_IMPORTED_MODULE_6__.Measure();
       }
-      if (optionalScore === undefined) {
+      if (!optionalScore) {
         optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_6__.Score();
       }
       optionalScore.insert(0, p);
@@ -22517,17 +22454,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getTextNote: () => (/* binding */ getTextNote),
 /* harmony export */   vexflowDefaults: () => (/* binding */ vexflowDefaults)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes.js */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/common.ts");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/build/esm/entry/vexflow.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./clef */ "./src/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./common */ "./src/common.ts");
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
@@ -22555,7 +22489,7 @@ const barlineMap = {
 const vexflowDefaults = {
   softmaxFactor: 10
 };
-const _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_3__.TrebleClef();
+const _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_2__.TrebleClef();
 /**
  * Represents a stack of objects that need to be rendered together.
  *
@@ -22631,20 +22565,20 @@ class Renderer {
     this.systemBreakOffsets = []; // where to break the systems
     this.vfTuplets = [];
     this.stream = s;
-    this.div = (0,_common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement)(div);
-    this.where = (0,_common__WEBPACK_IMPORTED_MODULE_7__.coerceHTMLElement)(where);
+    this.div = (0,_common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement)(div);
+    this.where = (0,_common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement)(where);
   }
   get vfRenderer() {
     let backend;
     if (this.rendererType === 'canvas') {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_1__.Renderer.Backends.CANVAS;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_0__.Renderer.Backends.CANVAS;
     } else {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_1__.Renderer.Backends.SVG;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_0__.Renderer.Backends.SVG;
     }
     if (this._vfRenderer !== undefined) {
       return this._vfRenderer;
     } else {
-      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Renderer(this.div, backend);
+      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Renderer(this.div, backend);
       if (this.rendererType === 'svg') {
         // this is NOT NOT NOT a JQuery object.
         // noinspection JSDeprecatedSymbols
@@ -22944,7 +22878,7 @@ class Renderer {
         }
       }
       if (onSameSystem) {
-        const vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveTie({
+        const vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveTie({
           first_note: thisNote.activeVexflowNote,
           last_note: nextNote.activeVexflowNote,
           first_indices: [0],
@@ -22953,12 +22887,12 @@ class Renderer {
         this.vfTies.push(vfTie);
       } else {
         // console.log('got me a tie across systemBreaks!');
-        const vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveTie({
+        const vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveTie({
           first_note: thisNote.activeVexflowNote,
           first_indices: [0]
         });
         this.vfTies.push(vfTie1);
-        const vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveTie({
+        const vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveTie({
           last_note: nextNote.activeVexflowNote,
           first_indices: [0]
         });
@@ -22984,7 +22918,7 @@ class Renderer {
     const totalLength = s.duration.quarterLength;
     if (totalLength === 0) {
       // Return an empty voice, since the stream is empty.
-      const emptyVoice = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_1__.Voice.Mode.SOFT);
+      const emptyVoice = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_0__.Voice.Mode.SOFT);
       emptyVoice.setStave(stave);
       return emptyVoice;
     }
@@ -23045,7 +22979,7 @@ class Renderer {
     if (autoBeam === undefined) {
       autoBeam = measuresOrVoices[0].autoBeam;
     }
-    const formatter = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Formatter({
+    const formatter = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Formatter({
       softmaxFactor: vexflowDefaults.softmaxFactor
     });
     // var minLength = formatter.preCalculateMinTotalWidth([voices]);
@@ -23088,10 +23022,10 @@ class Renderer {
           // TODO: getContextByClass...
           // console.log(beatGroups);
         } else {
-          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_1__.Fraction(2, 8)]; // default beam groups
+          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_0__.Fraction(2, 8)]; // default beam groups
         }
 
-        const beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_1__.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
+        const beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_0__.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
         this.beamGroups.push(...beamGroups);
       }
     } else {
@@ -23110,7 +23044,7 @@ class Renderer {
           }
           if (eighthNoteBeam.type === 'stop') {
             if (activeBeamGroupNotes.length > 1) {
-              const vfBeam = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Beam(activeBeamGroupNotes, false);
+              const vfBeam = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Beam(activeBeamGroupNotes, false);
               this.beamGroups.push(vfBeam);
             }
             activeBeamGroupNotes = [];
@@ -23155,10 +23089,10 @@ class Renderer {
       left = 10;
     }
     // console.log('streamLength: ' + streamLength);
-    if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
       console.log(`creating new stave: left: ${left}, top: ${top}, width: ${width}`);
     }
-    const stave = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Stave(left, top, width);
+    const stave = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Stave(left, top, width);
     return stave;
   }
   /**
@@ -23184,7 +23118,7 @@ class Renderer {
     sClef = sClef || _clefSingleton;
     this.setStafflines(s, stave);
     if (rendOp.showMeasureNumber) {
-      if (s instanceof _stream__WEBPACK_IMPORTED_MODULE_6__.Measure && s.number !== undefined) {
+      if (s instanceof _stream__WEBPACK_IMPORTED_MODULE_5__.Measure && s.number !== undefined) {
         stave.setMeasure(s.number);
       } else {
         stave.setMeasure(rendOp.measureIndex + 1);
@@ -23231,14 +23165,14 @@ class Renderer {
       const bl = rendOp.leftBarline;
       const vxBL = barlineMap[bl];
       if (vxBL !== undefined) {
-        stave.setBegBarType(vexflow__WEBPACK_IMPORTED_MODULE_1__.BarlineType[vxBL]);
+        stave.setBegBarType(vexflow__WEBPACK_IMPORTED_MODULE_0__.BarlineType[vxBL]);
       }
     }
     if (rendOp.rightBarline !== undefined) {
       const bl = rendOp.rightBarline;
       const vxBL = barlineMap[bl];
       if (vxBL !== undefined) {
-        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_1__.BarlineType[vxBL]);
+        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_0__.BarlineType[vxBL]);
       }
     }
   }
@@ -23333,7 +23267,7 @@ class Renderer {
         notes_occupied: activeTuplet.numberNotesNormal
       };
       // console.log('tupletOptions', tupletOptions);
-      const vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Tuplet(activeTupletVexflowNotes, tupletOptions);
+      const vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Tuplet(activeTupletVexflowNotes, tupletOptions);
       if (activeTuplet.tupletNormalShow === 'ratio') {
         vfTuplet.setRatioed(true);
       }
@@ -23405,14 +23339,14 @@ class Renderer {
       let d = el.duration;
       // connectors deal with hyphens.
       let addConnector = false;
-      const font = _extends({}, _note__WEBPACK_IMPORTED_MODULE_5__.default_vf_lyric_style);
+      const font = _extends({}, _note__WEBPACK_IMPORTED_MODULE_4__.default_vf_lyric_style);
       const lyricAtDepth = lyricsArray[depth]; // rename lyricAtDepth
       if (lyricAtDepth) {
         text = (_a = lyricAtDepth.text) !== null && _a !== void 0 ? _a : '';
         if (['middle', 'begin'].includes(lyricAtDepth.syllabic)) {
           addConnector = ' ' + lyricAtDepth.lyricConnector;
           const tempQl = el.duration.quarterLength / 2.0;
-          d = new _duration__WEBPACK_IMPORTED_MODULE_4__.Duration(tempQl);
+          d = new _duration__WEBPACK_IMPORTED_MODULE_3__.Duration(tempQl);
         }
         if (lyricAtDepth.style.fontFamily) {
           font.family = lyricAtDepth.style.fontFamily;
@@ -23440,7 +23374,7 @@ class Renderer {
   vexflowVoice(s) {
     const totalLength = s.duration.quarterLength;
     if (totalLength === 0) {
-      return new vexflow__WEBPACK_IMPORTED_MODULE_1__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_1__.Voice.Mode.SOFT);
+      return new vexflow__WEBPACK_IMPORTED_MODULE_0__.Voice().setMode(vexflow__WEBPACK_IMPORTED_MODULE_0__.Voice.Mode.SOFT);
     }
     let num1024 = Math.round(totalLength / (1 / 256));
     let beatValue = 1024;
@@ -23473,10 +23407,10 @@ class Renderer {
       num1024 /= 2;
     }
     // console.log('creating voice');
-    if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
       console.log(`New voice, num_beats: ${num1024} beat_value: ${beatValue}`);
     }
-    const vfv = new vexflow__WEBPACK_IMPORTED_MODULE_1__.Voice({
+    const vfv = new vexflow__WEBPACK_IMPORTED_MODULE_0__.Voice({
       num_beats: num1024,
       beat_value: beatValue
       // this is the default
@@ -23491,16 +23425,16 @@ class Renderer {
     // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
     //         tick length.
     // noinspection TypeScriptValidateJSTypes
-    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_1__.Voice.Mode.SOFT);
+    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_0__.Voice.Mode.SOFT);
     vfv.setSoftmaxFactor(vexflowDefaults.softmaxFactor); // will be wiped out later...
     return vfv;
   }
   staffConnectorsMap(connectorType) {
     const connectorMap = {
-      brace: vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveConnector.type.BRACE,
-      single: vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveConnector.type.SINGLE,
-      double: vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveConnector.type.DOUBLE,
-      bracket: vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveConnector.type.BRACKET
+      brace: vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveConnector.type.BRACE,
+      single: vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveConnector.type.SINGLE,
+      double: vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveConnector.type.DOUBLE,
+      bracket: vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveConnector.type.BRACKET
     };
     return connectorMap[connectorType];
   }
@@ -23550,7 +23484,7 @@ class Renderer {
           }
         }
         for (const scTypeM21 of s.renderOptions.staffConnectors) {
-          const sc = new vexflow__WEBPACK_IMPORTED_MODULE_1__.StaveConnector(topVFStaff, bottomVFStaff);
+          const sc = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveConnector(topVFStaff, bottomVFStaff);
           const scTypeVF = this.staffConnectorsMap(scTypeM21);
           // noinspection TypeScriptValidateJSTypes
           sc.setType(scTypeVF);
@@ -23604,7 +23538,7 @@ class Renderer {
     if (stave !== undefined) {
       const noteStartX = stave.getNoteStartX();
       noteOffsetLeft = noteStartX;
-      if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
         console.log(`noteOffsetLeft: ${noteOffsetLeft}; stave.getNoteStartX(): ${noteStartX}`);
         console.log('Bottom y: ' + stave.getBottomY());
       }
@@ -23640,7 +23574,7 @@ class Renderer {
       }
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_2__.debug) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
       for (const n of s) {
         if (n.pitch !== undefined) {
           const nn = n;
@@ -23656,11 +23590,11 @@ function getTextNote(text, font, d, stave) {
   let line = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 11;
   // console.log(text, font, d);
   // noinspection TypeScriptValidateJSTypes
-  const t1 = new vexflow__WEBPACK_IMPORTED_MODULE_1__.TextNote({
+  const t1 = new vexflow__WEBPACK_IMPORTED_MODULE_0__.TextNote({
     text,
     font,
     duration: d.vexflowDuration
-  }).setLine(line).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_1__.TextNote.Justification.LEFT);
+  }).setLine(line).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_0__.TextNote.Justification.LEFT);
   if (lyricObj) {
     t1.setStyle({
       fillStyle: lyricObj.style.color
@@ -24383,1954 +24317,6 @@ function populateSelect() {
   });
   webmidi.select.dispatchEvent(changeEvent);
 }
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/a-callable.js":
-/*!******************************************************!*\
-  !*** ./node_modules/core-js/internals/a-callable.js ***!
-  \******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-var tryToString = __webpack_require__(/*! ../internals/try-to-string */ "./node_modules/core-js/internals/try-to-string.js");
-
-var $TypeError = TypeError;
-
-// `Assert: IsCallable(argument) is true`
-module.exports = function (argument) {
-  if (isCallable(argument)) return argument;
-  throw $TypeError(tryToString(argument) + ' is not a function');
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/add-to-unscopables.js":
-/*!**************************************************************!*\
-  !*** ./node_modules/core-js/internals/add-to-unscopables.js ***!
-  \**************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
-var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js/internals/object-create.js");
-var defineProperty = (__webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js").f);
-
-var UNSCOPABLES = wellKnownSymbol('unscopables');
-var ArrayPrototype = Array.prototype;
-
-// Array.prototype[@@unscopables]
-// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
-if (ArrayPrototype[UNSCOPABLES] === undefined) {
-  defineProperty(ArrayPrototype, UNSCOPABLES, {
-    configurable: true,
-    value: create(null)
-  });
-}
-
-// add a key to Array.prototype[@@unscopables]
-module.exports = function (key) {
-  ArrayPrototype[UNSCOPABLES][key] = true;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/an-object.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/core-js/internals/an-object.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-
-var $String = String;
-var $TypeError = TypeError;
-
-// `Assert: Type(argument) is Object`
-module.exports = function (argument) {
-  if (isObject(argument)) return argument;
-  throw $TypeError($String(argument) + ' is not an object');
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/array-includes.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/core-js/internals/array-includes.js ***!
-  \**********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js/internals/to-indexed-object.js");
-var toAbsoluteIndex = __webpack_require__(/*! ../internals/to-absolute-index */ "./node_modules/core-js/internals/to-absolute-index.js");
-var lengthOfArrayLike = __webpack_require__(/*! ../internals/length-of-array-like */ "./node_modules/core-js/internals/length-of-array-like.js");
-
-// `Array.prototype.{ indexOf, includes }` methods implementation
-var createMethod = function (IS_INCLUDES) {
-  return function ($this, el, fromIndex) {
-    var O = toIndexedObject($this);
-    var length = lengthOfArrayLike(O);
-    var index = toAbsoluteIndex(fromIndex, length);
-    var value;
-    // Array#includes uses SameValueZero equality algorithm
-    // eslint-disable-next-line no-self-compare -- NaN check
-    if (IS_INCLUDES && el !== el) while (length > index) {
-      value = O[index++];
-      // eslint-disable-next-line no-self-compare -- NaN check
-      if (value !== value) return true;
-    // Array#indexOf ignores holes, Array#includes - not
-    } else for (;length > index; index++) {
-      if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0;
-    } return !IS_INCLUDES && -1;
-  };
-};
-
-module.exports = {
-  // `Array.prototype.includes` method
-  // https://tc39.es/ecma262/#sec-array.prototype.includes
-  includes: createMethod(true),
-  // `Array.prototype.indexOf` method
-  // https://tc39.es/ecma262/#sec-array.prototype.indexof
-  indexOf: createMethod(false)
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/classof-raw.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/core-js/internals/classof-raw.js ***!
-  \*******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-
-var toString = uncurryThis({}.toString);
-var stringSlice = uncurryThis(''.slice);
-
-module.exports = function (it) {
-  return stringSlice(toString(it), 8, -1);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/copy-constructor-properties.js":
-/*!***********************************************************************!*\
-  !*** ./node_modules/core-js/internals/copy-constructor-properties.js ***!
-  \***********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js/internals/has-own-property.js");
-var ownKeys = __webpack_require__(/*! ../internals/own-keys */ "./node_modules/core-js/internals/own-keys.js");
-var getOwnPropertyDescriptorModule = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js/internals/object-get-own-property-descriptor.js");
-var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
-
-module.exports = function (target, source, exceptions) {
-  var keys = ownKeys(source);
-  var defineProperty = definePropertyModule.f;
-  var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
-  for (var i = 0; i < keys.length; i++) {
-    var key = keys[i];
-    if (!hasOwn(target, key) && !(exceptions && hasOwn(exceptions, key))) {
-      defineProperty(target, key, getOwnPropertyDescriptor(source, key));
-    }
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/create-non-enumerable-property.js":
-/*!**************************************************************************!*\
-  !*** ./node_modules/core-js/internals/create-non-enumerable-property.js ***!
-  \**************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
-var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
-
-module.exports = DESCRIPTORS ? function (object, key, value) {
-  return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/create-property-descriptor.js":
-/*!**********************************************************************!*\
-  !*** ./node_modules/core-js/internals/create-property-descriptor.js ***!
-  \**********************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-module.exports = function (bitmap, value) {
-  return {
-    enumerable: !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
-  };
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/define-built-in.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/core-js/internals/define-built-in.js ***!
-  \***********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
-var makeBuiltIn = __webpack_require__(/*! ../internals/make-built-in */ "./node_modules/core-js/internals/make-built-in.js");
-var defineGlobalProperty = __webpack_require__(/*! ../internals/define-global-property */ "./node_modules/core-js/internals/define-global-property.js");
-
-module.exports = function (O, key, value, options) {
-  if (!options) options = {};
-  var simple = options.enumerable;
-  var name = options.name !== undefined ? options.name : key;
-  if (isCallable(value)) makeBuiltIn(value, name, options);
-  if (options.global) {
-    if (simple) O[key] = value;
-    else defineGlobalProperty(key, value);
-  } else {
-    try {
-      if (!options.unsafe) delete O[key];
-      else if (O[key]) simple = true;
-    } catch (error) { /* empty */ }
-    if (simple) O[key] = value;
-    else definePropertyModule.f(O, key, {
-      value: value,
-      enumerable: false,
-      configurable: !options.nonConfigurable,
-      writable: !options.nonWritable
-    });
-  } return O;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/define-global-property.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/core-js/internals/define-global-property.js ***!
-  \******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-
-// eslint-disable-next-line es/no-object-defineproperty -- safe
-var defineProperty = Object.defineProperty;
-
-module.exports = function (key, value) {
-  try {
-    defineProperty(global, key, { value: value, configurable: true, writable: true });
-  } catch (error) {
-    global[key] = value;
-  } return value;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/descriptors.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/core-js/internals/descriptors.js ***!
-  \*******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-
-// Detect IE8's incomplete defineProperty implementation
-module.exports = !fails(function () {
-  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
-  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] !== 7;
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/document-all.js":
-/*!********************************************************!*\
-  !*** ./node_modules/core-js/internals/document-all.js ***!
-  \********************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-var documentAll = typeof document == 'object' && document.all;
-
-// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
-// eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
-var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
-
-module.exports = {
-  all: documentAll,
-  IS_HTMLDDA: IS_HTMLDDA
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/document-create-element.js":
-/*!*******************************************************************!*\
-  !*** ./node_modules/core-js/internals/document-create-element.js ***!
-  \*******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-
-var document = global.document;
-// typeof document.createElement is 'object' in old IE
-var EXISTS = isObject(document) && isObject(document.createElement);
-
-module.exports = function (it) {
-  return EXISTS ? document.createElement(it) : {};
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/engine-user-agent.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/engine-user-agent.js ***!
-  \*************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/engine-v8-version.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/engine-v8-version.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var userAgent = __webpack_require__(/*! ../internals/engine-user-agent */ "./node_modules/core-js/internals/engine-user-agent.js");
-
-var process = global.process;
-var Deno = global.Deno;
-var versions = process && process.versions || Deno && Deno.version;
-var v8 = versions && versions.v8;
-var match, version;
-
-if (v8) {
-  match = v8.split('.');
-  // in old Chrome, versions of V8 isn't V8 = Chrome / 10
-  // but their correct versions are not interesting for us
-  version = match[0] > 0 && match[0] < 4 ? 1 : +(match[0] + match[1]);
-}
-
-// BrowserFS NodeJS `process` polyfill incorrectly set `.v8` to `0.0`
-// so check `userAgent` even if `.v8` exists, but 0
-if (!version && userAgent) {
-  match = userAgent.match(/Edge\/(\d+)/);
-  if (!match || match[1] >= 74) {
-    match = userAgent.match(/Chrome\/(\d+)/);
-    if (match) version = +match[1];
-  }
-}
-
-module.exports = version;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/enum-bug-keys.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/internals/enum-bug-keys.js ***!
-  \*********************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-// IE8- don't enum bug keys
-module.exports = [
-  'constructor',
-  'hasOwnProperty',
-  'isPrototypeOf',
-  'propertyIsEnumerable',
-  'toLocaleString',
-  'toString',
-  'valueOf'
-];
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/export.js":
-/*!**************************************************!*\
-  !*** ./node_modules/core-js/internals/export.js ***!
-  \**************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var getOwnPropertyDescriptor = (__webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js/internals/object-get-own-property-descriptor.js").f);
-var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
-var defineBuiltIn = __webpack_require__(/*! ../internals/define-built-in */ "./node_modules/core-js/internals/define-built-in.js");
-var defineGlobalProperty = __webpack_require__(/*! ../internals/define-global-property */ "./node_modules/core-js/internals/define-global-property.js");
-var copyConstructorProperties = __webpack_require__(/*! ../internals/copy-constructor-properties */ "./node_modules/core-js/internals/copy-constructor-properties.js");
-var isForced = __webpack_require__(/*! ../internals/is-forced */ "./node_modules/core-js/internals/is-forced.js");
-
-/*
-  options.target         - name of the target object
-  options.global         - target is the global object
-  options.stat           - export as static methods of target
-  options.proto          - export as prototype methods of target
-  options.real           - real prototype method for the `pure` version
-  options.forced         - export even if the native feature is available
-  options.bind           - bind methods to the target, required for the `pure` version
-  options.wrap           - wrap constructors to preventing global pollution, required for the `pure` version
-  options.unsafe         - use the simple assignment of property instead of delete + defineProperty
-  options.sham           - add a flag to not completely full polyfills
-  options.enumerable     - export as enumerable property
-  options.dontCallGetSet - prevent calling a getter on target
-  options.name           - the .name of the function if it does not match the key
-*/
-module.exports = function (options, source) {
-  var TARGET = options.target;
-  var GLOBAL = options.global;
-  var STATIC = options.stat;
-  var FORCED, target, key, targetProperty, sourceProperty, descriptor;
-  if (GLOBAL) {
-    target = global;
-  } else if (STATIC) {
-    target = global[TARGET] || defineGlobalProperty(TARGET, {});
-  } else {
-    target = (global[TARGET] || {}).prototype;
-  }
-  if (target) for (key in source) {
-    sourceProperty = source[key];
-    if (options.dontCallGetSet) {
-      descriptor = getOwnPropertyDescriptor(target, key);
-      targetProperty = descriptor && descriptor.value;
-    } else targetProperty = target[key];
-    FORCED = isForced(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced);
-    // contained in target
-    if (!FORCED && targetProperty !== undefined) {
-      if (typeof sourceProperty == typeof targetProperty) continue;
-      copyConstructorProperties(sourceProperty, targetProperty);
-    }
-    // add a flag to not completely full polyfills
-    if (options.sham || (targetProperty && targetProperty.sham)) {
-      createNonEnumerableProperty(sourceProperty, 'sham', true);
-    }
-    defineBuiltIn(target, key, sourceProperty, options);
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/fails.js":
-/*!*************************************************!*\
-  !*** ./node_modules/core-js/internals/fails.js ***!
-  \*************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-module.exports = function (exec) {
-  try {
-    return !!exec();
-  } catch (error) {
-    return true;
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/function-bind-native.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/core-js/internals/function-bind-native.js ***!
-  \****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-
-module.exports = !fails(function () {
-  // eslint-disable-next-line es/no-function-prototype-bind -- safe
-  var test = (function () { /* empty */ }).bind();
-  // eslint-disable-next-line no-prototype-builtins -- safe
-  return typeof test != 'function' || test.hasOwnProperty('prototype');
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/function-call.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/internals/function-call.js ***!
-  \*********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "./node_modules/core-js/internals/function-bind-native.js");
-
-var call = Function.prototype.call;
-
-module.exports = NATIVE_BIND ? call.bind(call) : function () {
-  return call.apply(call, arguments);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/function-name.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/internals/function-name.js ***!
-  \*********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js/internals/has-own-property.js");
-
-var FunctionPrototype = Function.prototype;
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
-
-var EXISTS = hasOwn(FunctionPrototype, 'name');
-// additional protection from minified / mangled / dropped function names
-var PROPER = EXISTS && (function something() { /* empty */ }).name === 'something';
-var CONFIGURABLE = EXISTS && (!DESCRIPTORS || (DESCRIPTORS && getDescriptor(FunctionPrototype, 'name').configurable));
-
-module.exports = {
-  EXISTS: EXISTS,
-  PROPER: PROPER,
-  CONFIGURABLE: CONFIGURABLE
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/function-uncurry-this.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/core-js/internals/function-uncurry-this.js ***!
-  \*****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var NATIVE_BIND = __webpack_require__(/*! ../internals/function-bind-native */ "./node_modules/core-js/internals/function-bind-native.js");
-
-var FunctionPrototype = Function.prototype;
-var call = FunctionPrototype.call;
-var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
-
-module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
-  return function () {
-    return call.apply(fn, arguments);
-  };
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/get-built-in.js":
-/*!********************************************************!*\
-  !*** ./node_modules/core-js/internals/get-built-in.js ***!
-  \********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-
-var aFunction = function (argument) {
-  return isCallable(argument) ? argument : undefined;
-};
-
-module.exports = function (namespace, method) {
-  return arguments.length < 2 ? aFunction(global[namespace]) : global[namespace] && global[namespace][method];
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/get-method.js":
-/*!******************************************************!*\
-  !*** ./node_modules/core-js/internals/get-method.js ***!
-  \******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var aCallable = __webpack_require__(/*! ../internals/a-callable */ "./node_modules/core-js/internals/a-callable.js");
-var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "./node_modules/core-js/internals/is-null-or-undefined.js");
-
-// `GetMethod` abstract operation
-// https://tc39.es/ecma262/#sec-getmethod
-module.exports = function (V, P) {
-  var func = V[P];
-  return isNullOrUndefined(func) ? undefined : aCallable(func);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/global.js":
-/*!**************************************************!*\
-  !*** ./node_modules/core-js/internals/global.js ***!
-  \**************************************************/
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-"use strict";
-
-var check = function (it) {
-  return it && it.Math === Math && it;
-};
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-module.exports =
-  // eslint-disable-next-line es/no-global-this -- safe
-  check(typeof globalThis == 'object' && globalThis) ||
-  check(typeof window == 'object' && window) ||
-  // eslint-disable-next-line no-restricted-globals -- safe
-  check(typeof self == 'object' && self) ||
-  check(typeof __webpack_require__.g == 'object' && __webpack_require__.g) ||
-  // eslint-disable-next-line no-new-func -- fallback
-  (function () { return this; })() || this || Function('return this')();
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/has-own-property.js":
-/*!************************************************************!*\
-  !*** ./node_modules/core-js/internals/has-own-property.js ***!
-  \************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-var toObject = __webpack_require__(/*! ../internals/to-object */ "./node_modules/core-js/internals/to-object.js");
-
-var hasOwnProperty = uncurryThis({}.hasOwnProperty);
-
-// `HasOwnProperty` abstract operation
-// https://tc39.es/ecma262/#sec-hasownproperty
-// eslint-disable-next-line es/no-object-hasown -- safe
-module.exports = Object.hasOwn || function hasOwn(it, key) {
-  return hasOwnProperty(toObject(it), key);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/hidden-keys.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/core-js/internals/hidden-keys.js ***!
-  \*******************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-module.exports = {};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/html.js":
-/*!************************************************!*\
-  !*** ./node_modules/core-js/internals/html.js ***!
-  \************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js/internals/get-built-in.js");
-
-module.exports = getBuiltIn('document', 'documentElement');
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/ie8-dom-define.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/core-js/internals/ie8-dom-define.js ***!
-  \**********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-var createElement = __webpack_require__(/*! ../internals/document-create-element */ "./node_modules/core-js/internals/document-create-element.js");
-
-// Thanks to IE8 for its funny defineProperty
-module.exports = !DESCRIPTORS && !fails(function () {
-  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
-  return Object.defineProperty(createElement('div'), 'a', {
-    get: function () { return 7; }
-  }).a !== 7;
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/indexed-object.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/core-js/internals/indexed-object.js ***!
-  \**********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-var classof = __webpack_require__(/*! ../internals/classof-raw */ "./node_modules/core-js/internals/classof-raw.js");
-
-var $Object = Object;
-var split = uncurryThis(''.split);
-
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
-module.exports = fails(function () {
-  // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
-  // eslint-disable-next-line no-prototype-builtins -- safe
-  return !$Object('z').propertyIsEnumerable(0);
-}) ? function (it) {
-  return classof(it) === 'String' ? split(it, '') : $Object(it);
-} : $Object;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/inspect-source.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/core-js/internals/inspect-source.js ***!
-  \**********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-var store = __webpack_require__(/*! ../internals/shared-store */ "./node_modules/core-js/internals/shared-store.js");
-
-var functionToString = uncurryThis(Function.toString);
-
-// this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
-if (!isCallable(store.inspectSource)) {
-  store.inspectSource = function (it) {
-    return functionToString(it);
-  };
-}
-
-module.exports = store.inspectSource;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/internal-state.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/core-js/internals/internal-state.js ***!
-  \**********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var NATIVE_WEAK_MAP = __webpack_require__(/*! ../internals/weak-map-basic-detection */ "./node_modules/core-js/internals/weak-map-basic-detection.js");
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js/internals/has-own-property.js");
-var shared = __webpack_require__(/*! ../internals/shared-store */ "./node_modules/core-js/internals/shared-store.js");
-var sharedKey = __webpack_require__(/*! ../internals/shared-key */ "./node_modules/core-js/internals/shared-key.js");
-var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js/internals/hidden-keys.js");
-
-var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
-var TypeError = global.TypeError;
-var WeakMap = global.WeakMap;
-var set, get, has;
-
-var enforce = function (it) {
-  return has(it) ? get(it) : set(it, {});
-};
-
-var getterFor = function (TYPE) {
-  return function (it) {
-    var state;
-    if (!isObject(it) || (state = get(it)).type !== TYPE) {
-      throw TypeError('Incompatible receiver, ' + TYPE + ' required');
-    } return state;
-  };
-};
-
-if (NATIVE_WEAK_MAP || shared.state) {
-  var store = shared.state || (shared.state = new WeakMap());
-  /* eslint-disable no-self-assign -- prototype methods protection */
-  store.get = store.get;
-  store.has = store.has;
-  store.set = store.set;
-  /* eslint-enable no-self-assign -- prototype methods protection */
-  set = function (it, metadata) {
-    if (store.has(it)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
-    metadata.facade = it;
-    store.set(it, metadata);
-    return metadata;
-  };
-  get = function (it) {
-    return store.get(it) || {};
-  };
-  has = function (it) {
-    return store.has(it);
-  };
-} else {
-  var STATE = sharedKey('state');
-  hiddenKeys[STATE] = true;
-  set = function (it, metadata) {
-    if (hasOwn(it, STATE)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
-    metadata.facade = it;
-    createNonEnumerableProperty(it, STATE, metadata);
-    return metadata;
-  };
-  get = function (it) {
-    return hasOwn(it, STATE) ? it[STATE] : {};
-  };
-  has = function (it) {
-    return hasOwn(it, STATE);
-  };
-}
-
-module.exports = {
-  set: set,
-  get: get,
-  has: has,
-  enforce: enforce,
-  getterFor: getterFor
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/is-callable.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/core-js/internals/is-callable.js ***!
-  \*******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var $documentAll = __webpack_require__(/*! ../internals/document-all */ "./node_modules/core-js/internals/document-all.js");
-
-var documentAll = $documentAll.all;
-
-// `IsCallable` abstract operation
-// https://tc39.es/ecma262/#sec-iscallable
-module.exports = $documentAll.IS_HTMLDDA ? function (argument) {
-  return typeof argument == 'function' || argument === documentAll;
-} : function (argument) {
-  return typeof argument == 'function';
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/is-forced.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/core-js/internals/is-forced.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-
-var replacement = /#|\.prototype\./;
-
-var isForced = function (feature, detection) {
-  var value = data[normalize(feature)];
-  return value === POLYFILL ? true
-    : value === NATIVE ? false
-    : isCallable(detection) ? fails(detection)
-    : !!detection;
-};
-
-var normalize = isForced.normalize = function (string) {
-  return String(string).replace(replacement, '.').toLowerCase();
-};
-
-var data = isForced.data = {};
-var NATIVE = isForced.NATIVE = 'N';
-var POLYFILL = isForced.POLYFILL = 'P';
-
-module.exports = isForced;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/is-null-or-undefined.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/core-js/internals/is-null-or-undefined.js ***!
-  \****************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-// we can't use just `it == null` since of `document.all` special case
-// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
-module.exports = function (it) {
-  return it === null || it === undefined;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/is-object.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/core-js/internals/is-object.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-var $documentAll = __webpack_require__(/*! ../internals/document-all */ "./node_modules/core-js/internals/document-all.js");
-
-var documentAll = $documentAll.all;
-
-module.exports = $documentAll.IS_HTMLDDA ? function (it) {
-  return typeof it == 'object' ? it !== null : isCallable(it) || it === documentAll;
-} : function (it) {
-  return typeof it == 'object' ? it !== null : isCallable(it);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/is-pure.js":
-/*!***************************************************!*\
-  !*** ./node_modules/core-js/internals/is-pure.js ***!
-  \***************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-module.exports = false;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/is-symbol.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/core-js/internals/is-symbol.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js/internals/get-built-in.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-var isPrototypeOf = __webpack_require__(/*! ../internals/object-is-prototype-of */ "./node_modules/core-js/internals/object-is-prototype-of.js");
-var USE_SYMBOL_AS_UID = __webpack_require__(/*! ../internals/use-symbol-as-uid */ "./node_modules/core-js/internals/use-symbol-as-uid.js");
-
-var $Object = Object;
-
-module.exports = USE_SYMBOL_AS_UID ? function (it) {
-  return typeof it == 'symbol';
-} : function (it) {
-  var $Symbol = getBuiltIn('Symbol');
-  return isCallable($Symbol) && isPrototypeOf($Symbol.prototype, $Object(it));
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/length-of-array-like.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/core-js/internals/length-of-array-like.js ***!
-  \****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var toLength = __webpack_require__(/*! ../internals/to-length */ "./node_modules/core-js/internals/to-length.js");
-
-// `LengthOfArrayLike` abstract operation
-// https://tc39.es/ecma262/#sec-lengthofarraylike
-module.exports = function (obj) {
-  return toLength(obj.length);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/make-built-in.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/internals/make-built-in.js ***!
-  \*********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js/internals/has-own-property.js");
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var CONFIGURABLE_FUNCTION_NAME = (__webpack_require__(/*! ../internals/function-name */ "./node_modules/core-js/internals/function-name.js").CONFIGURABLE);
-var inspectSource = __webpack_require__(/*! ../internals/inspect-source */ "./node_modules/core-js/internals/inspect-source.js");
-var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js/internals/internal-state.js");
-
-var enforceInternalState = InternalStateModule.enforce;
-var getInternalState = InternalStateModule.get;
-var $String = String;
-// eslint-disable-next-line es/no-object-defineproperty -- safe
-var defineProperty = Object.defineProperty;
-var stringSlice = uncurryThis(''.slice);
-var replace = uncurryThis(''.replace);
-var join = uncurryThis([].join);
-
-var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
-  return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
-});
-
-var TEMPLATE = String(String).split('String');
-
-var makeBuiltIn = module.exports = function (value, name, options) {
-  if (stringSlice($String(name), 0, 7) === 'Symbol(') {
-    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
-  }
-  if (options && options.getter) name = 'get ' + name;
-  if (options && options.setter) name = 'set ' + name;
-  if (!hasOwn(value, 'name') || (CONFIGURABLE_FUNCTION_NAME && value.name !== name)) {
-    if (DESCRIPTORS) defineProperty(value, 'name', { value: name, configurable: true });
-    else value.name = name;
-  }
-  if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
-    defineProperty(value, 'length', { value: options.arity });
-  }
-  try {
-    if (options && hasOwn(options, 'constructor') && options.constructor) {
-      if (DESCRIPTORS) defineProperty(value, 'prototype', { writable: false });
-    // in V8 ~ Chrome 53, prototypes of some methods, like `Array.prototype.values`, are non-writable
-    } else if (value.prototype) value.prototype = undefined;
-  } catch (error) { /* empty */ }
-  var state = enforceInternalState(value);
-  if (!hasOwn(state, 'source')) {
-    state.source = join(TEMPLATE, typeof name == 'string' ? name : '');
-  } return value;
-};
-
-// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-// eslint-disable-next-line no-extend-native -- required
-Function.prototype.toString = makeBuiltIn(function toString() {
-  return isCallable(this) && getInternalState(this).source || inspectSource(this);
-}, 'toString');
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/math-trunc.js":
-/*!******************************************************!*\
-  !*** ./node_modules/core-js/internals/math-trunc.js ***!
-  \******************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-var ceil = Math.ceil;
-var floor = Math.floor;
-
-// `Math.trunc` method
-// https://tc39.es/ecma262/#sec-math.trunc
-// eslint-disable-next-line es/no-math-trunc -- safe
-module.exports = Math.trunc || function trunc(x) {
-  var n = +x;
-  return (n > 0 ? floor : ceil)(n);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-create.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/internals/object-create.js ***!
-  \*********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-/* global ActiveXObject -- old IE, WSH */
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
-var definePropertiesModule = __webpack_require__(/*! ../internals/object-define-properties */ "./node_modules/core-js/internals/object-define-properties.js");
-var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "./node_modules/core-js/internals/enum-bug-keys.js");
-var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js/internals/hidden-keys.js");
-var html = __webpack_require__(/*! ../internals/html */ "./node_modules/core-js/internals/html.js");
-var documentCreateElement = __webpack_require__(/*! ../internals/document-create-element */ "./node_modules/core-js/internals/document-create-element.js");
-var sharedKey = __webpack_require__(/*! ../internals/shared-key */ "./node_modules/core-js/internals/shared-key.js");
-
-var GT = '>';
-var LT = '<';
-var PROTOTYPE = 'prototype';
-var SCRIPT = 'script';
-var IE_PROTO = sharedKey('IE_PROTO');
-
-var EmptyConstructor = function () { /* empty */ };
-
-var scriptTag = function (content) {
-  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
-};
-
-// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
-var NullProtoObjectViaActiveX = function (activeXDocument) {
-  activeXDocument.write(scriptTag(''));
-  activeXDocument.close();
-  var temp = activeXDocument.parentWindow.Object;
-  activeXDocument = null; // avoid memory leak
-  return temp;
-};
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var NullProtoObjectViaIFrame = function () {
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = documentCreateElement('iframe');
-  var JS = 'java' + SCRIPT + ':';
-  var iframeDocument;
-  iframe.style.display = 'none';
-  html.appendChild(iframe);
-  // https://github.com/zloirock/core-js/issues/475
-  iframe.src = String(JS);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(scriptTag('document.F=Object'));
-  iframeDocument.close();
-  return iframeDocument.F;
-};
-
-// Check for document.domain and active x support
-// No need to use active x approach when document.domain is not set
-// see https://github.com/es-shims/es5-shim/issues/150
-// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
-// avoid IE GC bug
-var activeXDocument;
-var NullProtoObject = function () {
-  try {
-    activeXDocument = new ActiveXObject('htmlfile');
-  } catch (error) { /* ignore */ }
-  NullProtoObject = typeof document != 'undefined'
-    ? document.domain && activeXDocument
-      ? NullProtoObjectViaActiveX(activeXDocument) // old IE
-      : NullProtoObjectViaIFrame()
-    : NullProtoObjectViaActiveX(activeXDocument); // WSH
-  var length = enumBugKeys.length;
-  while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
-  return NullProtoObject();
-};
-
-hiddenKeys[IE_PROTO] = true;
-
-// `Object.create` method
-// https://tc39.es/ecma262/#sec-object.create
-// eslint-disable-next-line es/no-object-create -- safe
-module.exports = Object.create || function create(O, Properties) {
-  var result;
-  if (O !== null) {
-    EmptyConstructor[PROTOTYPE] = anObject(O);
-    result = new EmptyConstructor();
-    EmptyConstructor[PROTOTYPE] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO] = O;
-  } else result = NullProtoObject();
-  return Properties === undefined ? result : definePropertiesModule.f(result, Properties);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-define-properties.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-define-properties.js ***!
-  \********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(/*! ../internals/v8-prototype-define-bug */ "./node_modules/core-js/internals/v8-prototype-define-bug.js");
-var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
-var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js/internals/to-indexed-object.js");
-var objectKeys = __webpack_require__(/*! ../internals/object-keys */ "./node_modules/core-js/internals/object-keys.js");
-
-// `Object.defineProperties` method
-// https://tc39.es/ecma262/#sec-object.defineproperties
-// eslint-disable-next-line es/no-object-defineproperties -- safe
-exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : function defineProperties(O, Properties) {
-  anObject(O);
-  var props = toIndexedObject(Properties);
-  var keys = objectKeys(Properties);
-  var length = keys.length;
-  var index = 0;
-  var key;
-  while (length > index) definePropertyModule.f(O, key = keys[index++], props[key]);
-  return O;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-define-property.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-define-property.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var IE8_DOM_DEFINE = __webpack_require__(/*! ../internals/ie8-dom-define */ "./node_modules/core-js/internals/ie8-dom-define.js");
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(/*! ../internals/v8-prototype-define-bug */ "./node_modules/core-js/internals/v8-prototype-define-bug.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
-var toPropertyKey = __webpack_require__(/*! ../internals/to-property-key */ "./node_modules/core-js/internals/to-property-key.js");
-
-var $TypeError = TypeError;
-// eslint-disable-next-line es/no-object-defineproperty -- safe
-var $defineProperty = Object.defineProperty;
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-var ENUMERABLE = 'enumerable';
-var CONFIGURABLE = 'configurable';
-var WRITABLE = 'writable';
-
-// `Object.defineProperty` method
-// https://tc39.es/ecma262/#sec-object.defineproperty
-exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P, Attributes) {
-  anObject(O);
-  P = toPropertyKey(P);
-  anObject(Attributes);
-  if (typeof O === 'function' && P === 'prototype' && 'value' in Attributes && WRITABLE in Attributes && !Attributes[WRITABLE]) {
-    var current = $getOwnPropertyDescriptor(O, P);
-    if (current && current[WRITABLE]) {
-      O[P] = Attributes.value;
-      Attributes = {
-        configurable: CONFIGURABLE in Attributes ? Attributes[CONFIGURABLE] : current[CONFIGURABLE],
-        enumerable: ENUMERABLE in Attributes ? Attributes[ENUMERABLE] : current[ENUMERABLE],
-        writable: false
-      };
-    }
-  } return $defineProperty(O, P, Attributes);
-} : $defineProperty : function defineProperty(O, P, Attributes) {
-  anObject(O);
-  P = toPropertyKey(P);
-  anObject(Attributes);
-  if (IE8_DOM_DEFINE) try {
-    return $defineProperty(O, P, Attributes);
-  } catch (error) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw $TypeError('Accessors not supported');
-  if ('value' in Attributes) O[P] = Attributes.value;
-  return O;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-get-own-property-descriptor.js":
-/*!******************************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-get-own-property-descriptor.js ***!
-  \******************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var call = __webpack_require__(/*! ../internals/function-call */ "./node_modules/core-js/internals/function-call.js");
-var propertyIsEnumerableModule = __webpack_require__(/*! ../internals/object-property-is-enumerable */ "./node_modules/core-js/internals/object-property-is-enumerable.js");
-var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
-var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js/internals/to-indexed-object.js");
-var toPropertyKey = __webpack_require__(/*! ../internals/to-property-key */ "./node_modules/core-js/internals/to-property-key.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js/internals/has-own-property.js");
-var IE8_DOM_DEFINE = __webpack_require__(/*! ../internals/ie8-dom-define */ "./node_modules/core-js/internals/ie8-dom-define.js");
-
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-
-// `Object.getOwnPropertyDescriptor` method
-// https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
-exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
-  O = toIndexedObject(O);
-  P = toPropertyKey(P);
-  if (IE8_DOM_DEFINE) try {
-    return $getOwnPropertyDescriptor(O, P);
-  } catch (error) { /* empty */ }
-  if (hasOwn(O, P)) return createPropertyDescriptor(!call(propertyIsEnumerableModule.f, O, P), O[P]);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-get-own-property-names.js":
-/*!*************************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-get-own-property-names.js ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-var internalObjectKeys = __webpack_require__(/*! ../internals/object-keys-internal */ "./node_modules/core-js/internals/object-keys-internal.js");
-var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "./node_modules/core-js/internals/enum-bug-keys.js");
-
-var hiddenKeys = enumBugKeys.concat('length', 'prototype');
-
-// `Object.getOwnPropertyNames` method
-// https://tc39.es/ecma262/#sec-object.getownpropertynames
-// eslint-disable-next-line es/no-object-getownpropertynames -- safe
-exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-  return internalObjectKeys(O, hiddenKeys);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-get-own-property-symbols.js":
-/*!***************************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-get-own-property-symbols.js ***!
-  \***************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-// eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
-exports.f = Object.getOwnPropertySymbols;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-is-prototype-of.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-is-prototype-of.js ***!
-  \******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-
-module.exports = uncurryThis({}.isPrototypeOf);
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-keys-internal.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-keys-internal.js ***!
-  \****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js/internals/has-own-property.js");
-var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js/internals/to-indexed-object.js");
-var indexOf = (__webpack_require__(/*! ../internals/array-includes */ "./node_modules/core-js/internals/array-includes.js").indexOf);
-var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js/internals/hidden-keys.js");
-
-var push = uncurryThis([].push);
-
-module.exports = function (object, names) {
-  var O = toIndexedObject(object);
-  var i = 0;
-  var result = [];
-  var key;
-  for (key in O) !hasOwn(hiddenKeys, key) && hasOwn(O, key) && push(result, key);
-  // Don't enum bug & hidden keys
-  while (names.length > i) if (hasOwn(O, key = names[i++])) {
-    ~indexOf(result, key) || push(result, key);
-  }
-  return result;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-keys.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/core-js/internals/object-keys.js ***!
-  \*******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var internalObjectKeys = __webpack_require__(/*! ../internals/object-keys-internal */ "./node_modules/core-js/internals/object-keys-internal.js");
-var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "./node_modules/core-js/internals/enum-bug-keys.js");
-
-// `Object.keys` method
-// https://tc39.es/ecma262/#sec-object.keys
-// eslint-disable-next-line es/no-object-keys -- safe
-module.exports = Object.keys || function keys(O) {
-  return internalObjectKeys(O, enumBugKeys);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/object-property-is-enumerable.js":
-/*!*************************************************************************!*\
-  !*** ./node_modules/core-js/internals/object-property-is-enumerable.js ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-var $propertyIsEnumerable = {}.propertyIsEnumerable;
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-
-// Nashorn ~ JDK8 bug
-var NASHORN_BUG = getOwnPropertyDescriptor && !$propertyIsEnumerable.call({ 1: 2 }, 1);
-
-// `Object.prototype.propertyIsEnumerable` method implementation
-// https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
-exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
-  var descriptor = getOwnPropertyDescriptor(this, V);
-  return !!descriptor && descriptor.enumerable;
-} : $propertyIsEnumerable;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/ordinary-to-primitive.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/core-js/internals/ordinary-to-primitive.js ***!
-  \*****************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var call = __webpack_require__(/*! ../internals/function-call */ "./node_modules/core-js/internals/function-call.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-
-var $TypeError = TypeError;
-
-// `OrdinaryToPrimitive` abstract operation
-// https://tc39.es/ecma262/#sec-ordinarytoprimitive
-module.exports = function (input, pref) {
-  var fn, val;
-  if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
-  if (isCallable(fn = input.valueOf) && !isObject(val = call(fn, input))) return val;
-  if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
-  throw $TypeError("Can't convert object to primitive value");
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/own-keys.js":
-/*!****************************************************!*\
-  !*** ./node_modules/core-js/internals/own-keys.js ***!
-  \****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js/internals/get-built-in.js");
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-var getOwnPropertyNamesModule = __webpack_require__(/*! ../internals/object-get-own-property-names */ "./node_modules/core-js/internals/object-get-own-property-names.js");
-var getOwnPropertySymbolsModule = __webpack_require__(/*! ../internals/object-get-own-property-symbols */ "./node_modules/core-js/internals/object-get-own-property-symbols.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js/internals/an-object.js");
-
-var concat = uncurryThis([].concat);
-
-// all object keys, includes non-enumerable and symbols
-module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
-  var keys = getOwnPropertyNamesModule.f(anObject(it));
-  var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
-  return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/require-object-coercible.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/core-js/internals/require-object-coercible.js ***!
-  \********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var isNullOrUndefined = __webpack_require__(/*! ../internals/is-null-or-undefined */ "./node_modules/core-js/internals/is-null-or-undefined.js");
-
-var $TypeError = TypeError;
-
-// `RequireObjectCoercible` abstract operation
-// https://tc39.es/ecma262/#sec-requireobjectcoercible
-module.exports = function (it) {
-  if (isNullOrUndefined(it)) throw $TypeError("Can't call method on " + it);
-  return it;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/shared-key.js":
-/*!******************************************************!*\
-  !*** ./node_modules/core-js/internals/shared-key.js ***!
-  \******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var shared = __webpack_require__(/*! ../internals/shared */ "./node_modules/core-js/internals/shared.js");
-var uid = __webpack_require__(/*! ../internals/uid */ "./node_modules/core-js/internals/uid.js");
-
-var keys = shared('keys');
-
-module.exports = function (key) {
-  return keys[key] || (keys[key] = uid(key));
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/shared-store.js":
-/*!********************************************************!*\
-  !*** ./node_modules/core-js/internals/shared-store.js ***!
-  \********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var defineGlobalProperty = __webpack_require__(/*! ../internals/define-global-property */ "./node_modules/core-js/internals/define-global-property.js");
-
-var SHARED = '__core-js_shared__';
-var store = global[SHARED] || defineGlobalProperty(SHARED, {});
-
-module.exports = store;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/shared.js":
-/*!**************************************************!*\
-  !*** ./node_modules/core-js/internals/shared.js ***!
-  \**************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "./node_modules/core-js/internals/is-pure.js");
-var store = __webpack_require__(/*! ../internals/shared-store */ "./node_modules/core-js/internals/shared-store.js");
-
-(module.exports = function (key, value) {
-  return store[key] || (store[key] = value !== undefined ? value : {});
-})('versions', []).push({
-  version: '3.32.2',
-  mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.32.2/LICENSE',
-  source: 'https://github.com/zloirock/core-js'
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/symbol-constructor-detection.js":
-/*!************************************************************************!*\
-  !*** ./node_modules/core-js/internals/symbol-constructor-detection.js ***!
-  \************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-/* eslint-disable es/no-symbol -- required for testing */
-var V8_VERSION = __webpack_require__(/*! ../internals/engine-v8-version */ "./node_modules/core-js/internals/engine-v8-version.js");
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-
-var $String = global.String;
-
-// eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
-module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
-  var symbol = Symbol('symbol detection');
-  // Chrome 38 Symbol has incorrect toString conversion
-  // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-  // nb: Do not call `String` directly to avoid this being optimized out to `symbol+''` which will,
-  // of course, fail.
-  return !$String(symbol) || !(Object(symbol) instanceof Symbol) ||
-    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
-    !Symbol.sham && V8_VERSION && V8_VERSION < 41;
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/to-absolute-index.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/to-absolute-index.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var toIntegerOrInfinity = __webpack_require__(/*! ../internals/to-integer-or-infinity */ "./node_modules/core-js/internals/to-integer-or-infinity.js");
-
-var max = Math.max;
-var min = Math.min;
-
-// Helper for a popular repeating case of the spec:
-// Let integer be ? ToInteger(index).
-// If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
-module.exports = function (index, length) {
-  var integer = toIntegerOrInfinity(index);
-  return integer < 0 ? max(integer + length, 0) : min(integer, length);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/to-indexed-object.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/to-indexed-object.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-// toObject with fallback for non-array-like ES3 strings
-var IndexedObject = __webpack_require__(/*! ../internals/indexed-object */ "./node_modules/core-js/internals/indexed-object.js");
-var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "./node_modules/core-js/internals/require-object-coercible.js");
-
-module.exports = function (it) {
-  return IndexedObject(requireObjectCoercible(it));
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/to-integer-or-infinity.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/core-js/internals/to-integer-or-infinity.js ***!
-  \******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var trunc = __webpack_require__(/*! ../internals/math-trunc */ "./node_modules/core-js/internals/math-trunc.js");
-
-// `ToIntegerOrInfinity` abstract operation
-// https://tc39.es/ecma262/#sec-tointegerorinfinity
-module.exports = function (argument) {
-  var number = +argument;
-  // eslint-disable-next-line no-self-compare -- NaN check
-  return number !== number || number === 0 ? 0 : trunc(number);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/to-length.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/core-js/internals/to-length.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var toIntegerOrInfinity = __webpack_require__(/*! ../internals/to-integer-or-infinity */ "./node_modules/core-js/internals/to-integer-or-infinity.js");
-
-var min = Math.min;
-
-// `ToLength` abstract operation
-// https://tc39.es/ecma262/#sec-tolength
-module.exports = function (argument) {
-  return argument > 0 ? min(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/to-object.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/core-js/internals/to-object.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "./node_modules/core-js/internals/require-object-coercible.js");
-
-var $Object = Object;
-
-// `ToObject` abstract operation
-// https://tc39.es/ecma262/#sec-toobject
-module.exports = function (argument) {
-  return $Object(requireObjectCoercible(argument));
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/to-primitive.js":
-/*!********************************************************!*\
-  !*** ./node_modules/core-js/internals/to-primitive.js ***!
-  \********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var call = __webpack_require__(/*! ../internals/function-call */ "./node_modules/core-js/internals/function-call.js");
-var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var isSymbol = __webpack_require__(/*! ../internals/is-symbol */ "./node_modules/core-js/internals/is-symbol.js");
-var getMethod = __webpack_require__(/*! ../internals/get-method */ "./node_modules/core-js/internals/get-method.js");
-var ordinaryToPrimitive = __webpack_require__(/*! ../internals/ordinary-to-primitive */ "./node_modules/core-js/internals/ordinary-to-primitive.js");
-var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
-
-var $TypeError = TypeError;
-var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
-
-// `ToPrimitive` abstract operation
-// https://tc39.es/ecma262/#sec-toprimitive
-module.exports = function (input, pref) {
-  if (!isObject(input) || isSymbol(input)) return input;
-  var exoticToPrim = getMethod(input, TO_PRIMITIVE);
-  var result;
-  if (exoticToPrim) {
-    if (pref === undefined) pref = 'default';
-    result = call(exoticToPrim, input, pref);
-    if (!isObject(result) || isSymbol(result)) return result;
-    throw $TypeError("Can't convert object to primitive value");
-  }
-  if (pref === undefined) pref = 'number';
-  return ordinaryToPrimitive(input, pref);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/to-property-key.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/core-js/internals/to-property-key.js ***!
-  \***********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var toPrimitive = __webpack_require__(/*! ../internals/to-primitive */ "./node_modules/core-js/internals/to-primitive.js");
-var isSymbol = __webpack_require__(/*! ../internals/is-symbol */ "./node_modules/core-js/internals/is-symbol.js");
-
-// `ToPropertyKey` abstract operation
-// https://tc39.es/ecma262/#sec-topropertykey
-module.exports = function (argument) {
-  var key = toPrimitive(argument, 'string');
-  return isSymbol(key) ? key : key + '';
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/try-to-string.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/internals/try-to-string.js ***!
-  \*********************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-var $String = String;
-
-module.exports = function (argument) {
-  try {
-    return $String(argument);
-  } catch (error) {
-    return 'Object';
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/uid.js":
-/*!***********************************************!*\
-  !*** ./node_modules/core-js/internals/uid.js ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(/*! ../internals/function-uncurry-this */ "./node_modules/core-js/internals/function-uncurry-this.js");
-
-var id = 0;
-var postfix = Math.random();
-var toString = uncurryThis(1.0.toString);
-
-module.exports = function (key) {
-  return 'Symbol(' + (key === undefined ? '' : key) + ')_' + toString(++id + postfix, 36);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/use-symbol-as-uid.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/use-symbol-as-uid.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-/* eslint-disable es/no-symbol -- required for testing */
-var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/symbol-constructor-detection */ "./node_modules/core-js/internals/symbol-constructor-detection.js");
-
-module.exports = NATIVE_SYMBOL
-  && !Symbol.sham
-  && typeof Symbol.iterator == 'symbol';
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/v8-prototype-define-bug.js":
-/*!*******************************************************************!*\
-  !*** ./node_modules/core-js/internals/v8-prototype-define-bug.js ***!
-  \*******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-
-// V8 ~ Chrome 36-
-// https://bugs.chromium.org/p/v8/issues/detail?id=3334
-module.exports = DESCRIPTORS && fails(function () {
-  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
-  return Object.defineProperty(function () { /* empty */ }, 'prototype', {
-    value: 42,
-    writable: false
-  }).prototype !== 42;
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/weak-map-basic-detection.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/core-js/internals/weak-map-basic-detection.js ***!
-  \********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var isCallable = __webpack_require__(/*! ../internals/is-callable */ "./node_modules/core-js/internals/is-callable.js");
-
-var WeakMap = global.WeakMap;
-
-module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/well-known-symbol.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/core-js/internals/well-known-symbol.js ***!
-  \*************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var shared = __webpack_require__(/*! ../internals/shared */ "./node_modules/core-js/internals/shared.js");
-var hasOwn = __webpack_require__(/*! ../internals/has-own-property */ "./node_modules/core-js/internals/has-own-property.js");
-var uid = __webpack_require__(/*! ../internals/uid */ "./node_modules/core-js/internals/uid.js");
-var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/symbol-constructor-detection */ "./node_modules/core-js/internals/symbol-constructor-detection.js");
-var USE_SYMBOL_AS_UID = __webpack_require__(/*! ../internals/use-symbol-as-uid */ "./node_modules/core-js/internals/use-symbol-as-uid.js");
-
-var Symbol = global.Symbol;
-var WellKnownSymbolsStore = shared('wks');
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
-
-module.exports = function (name) {
-  if (!hasOwn(WellKnownSymbolsStore, name)) {
-    WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol, name)
-      ? Symbol[name]
-      : createWellKnownSymbol('Symbol.' + name);
-  } return WellKnownSymbolsStore[name];
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/modules/es.array.includes.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/core-js/modules/es.array.includes.js ***!
-  \***********************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
-var $includes = (__webpack_require__(/*! ../internals/array-includes */ "./node_modules/core-js/internals/array-includes.js").includes);
-var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
-var addToUnscopables = __webpack_require__(/*! ../internals/add-to-unscopables */ "./node_modules/core-js/internals/add-to-unscopables.js");
-
-// FF99+ bug
-var BROKEN_ON_SPARSE = fails(function () {
-  // eslint-disable-next-line es/no-array-prototype-includes -- detection
-  return !Array(1).includes();
-});
-
-// `Array.prototype.includes` method
-// https://tc39.es/ecma262/#sec-array.prototype.includes
-$({ target: 'Array', proto: true, forced: BROKEN_ON_SPARSE }, {
-  includes: function includes(el /* , fromIndex = 0 */) {
-    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
-  }
-});
-
-// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
-addToUnscopables('includes');
-
 
 /***/ }),
 
@@ -60117,7 +58103,7 @@ function isHTMLDiv(element) {
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -60146,18 +58132,6 @@ function isHTMLDiv(element) {
 /******/ 				}
 /******/ 			}
 /******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
