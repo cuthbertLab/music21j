@@ -1,5 +1,5 @@
 /**
- * music21j version 0.16.6 built on 2025-02-06.
+ * music21j version 0.16.7 built on 2025-02-24.
  * Copyright (c) 2013-2025 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -22000,7 +22000,8 @@ function TinyNotation(textIn) {
   if (textIn.slice(0, 14).toLowerCase() === 'tinynotation: ') {
     textIn = textIn.slice(14);
   }
-  const tokens = textIn.split(/\s+/);
+  // whitespace that is not non-breaking space.
+  const tokens = textIn.split(/[ \t\r\n]+/);
   let optionalScore;
   let p = new _stream__WEBPACK_IMPORTED_MODULE_6__.Part();
   let m = new _stream__WEBPACK_IMPORTED_MODULE_6__.Measure();
