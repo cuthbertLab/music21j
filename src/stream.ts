@@ -2474,6 +2474,8 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      * if height is undefined  will use
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
+     *
+     * Estimated widths and heights are multiplied by this.renderOptions.scaleFactor.
      */
     createNewDOM(
         width?: number|string,
@@ -2504,7 +2506,10 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             const computedWidth
                 = this.estimateStaffLength()
                 + this.renderOptions.staffPadding;
-            newCanvasOrDIV.setAttribute('width', computedWidth.toString());
+            newCanvasOrDIV.setAttribute(
+                'width',
+                (computedWidth * this.renderOptions.scaleFactor.x).toString()
+            );
         }
         if (height !== undefined) {
             newCanvasOrDIV.setAttribute('height', height.toString());
