@@ -24,6 +24,9 @@ jobs:
     - name: Install deps
       run: npm ci
 
+    - name: Prepare Google Sandbox
+      run: sudo chown root /opt/google/chrome/chrome-sandbox && sudo chmod 4755 /opt/google/chrome/chrome-sandbox
+
     - name: Run frontend tests (and Disable AppArmor for Chrome)
       run: env CHROME_DEVEL_SANDBOX=/opt/google/chrome/chrome-sandbox grunt test_no_watch
 
