@@ -24,11 +24,8 @@ jobs:
     - name: Install deps
       run: npm ci
 
-    - name: Disable AppArmor for Chrome
-      run: export CHROME_DEVEL_SANDBOX=/opt/google/chrome/chrome-sandbox
-
-    - name: Run frontend tests
-      run: grunt test_no_watch
+    - name: Run frontend tests (and Disable AppArmor for Chrome)
+      run: env CHROME_DEVEL_SANDBOX=/opt/google/chrome/chrome-sandbox grunt test_no_watch
 
   eslint:
     runs-on: ubuntu-latest
