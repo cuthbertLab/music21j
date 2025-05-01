@@ -613,6 +613,8 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * if height is undefined  will use
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
+     *
+     * Estimated widths and heights are multiplied by this.renderOptions.scaleFactor.
      */
     createNewDOM(width?: number | string, height?: number | string, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**

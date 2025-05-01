@@ -1,5 +1,5 @@
 /**
- * music21j version 0.17.0 built on 2025-05-01.
+ * music21j version 0.17.3 built on 2025-05-01.
  * Copyright (c) 2013-2025 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -34740,7 +34740,6 @@ function autoCorrelate(buf, sampleRate) {
   return -1;
   //  var best_frequency = sampleRate/best_offset;
 }
-
 function midiNumDiffFromFrequency(frequency) {
   const midiNumFloat = 12 * Math.log2(frequency / 440) + 69;
   const midiNum = Math.round(midiNumFloat);
@@ -34814,7 +34813,6 @@ class Barline extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
     this.type = type;
     this.location = location; // left, right, middle, None
   }
-
   get type() {
     return this._type;
   }
@@ -35736,7 +35734,6 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
       type = splitIt[0];
       direction = splitIt[1]; // not unpacking because. can be undefined...
     }
-
     if (validBeamTypes[type] === undefined) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('invalid beam type: ' + type);
     }
@@ -35934,7 +35931,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_3__.NotRest {
       return undefined; // TODO(msc): add other get methods.
     }
   }
-
   *[Symbol.iterator]() {
     for (let i = 0; i < this.length; i++) {
       yield this.get(i);
@@ -36126,7 +36122,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_3__.NotRest {
         // should test rootedness function, etc. 13ths. etc.
       }
     }
-
     const newRoot = closedChord.pitches[0]; // fallback, just return the bass...
     this._cache.root = newRoot;
     return newRoot;
@@ -36270,7 +36265,6 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_3__.NotRest {
       //      return false;
       // }
     }
-
     return true;
   }
   /**
@@ -36711,19 +36705,14 @@ const card_1 = {
 const card_2 = {
   '1,0': [FORTE[2][1][0], FORTE[2][1][2], FORTE[2][1][1] //icv
   ],
-
   '2,0': [FORTE[2][2][0], FORTE[2][2][2], FORTE[2][2][1] //icv
   ],
-
   '3,0': [FORTE[2][3][0], FORTE[2][3][2], FORTE[2][3][1] //icv
   ],
-
   '4,0': [FORTE[2][4][0], FORTE[2][4][2], FORTE[2][4][1] //icv
   ],
-
   '5,0': [FORTE[2][5][0], FORTE[2][5][2], FORTE[2][5][1] //icv
   ],
-
   '6,0': [FORTE[2][6][0], FORTE[2][6][2], FORTE[2][6][1] //icv
   ]
 };
@@ -36731,58 +36720,40 @@ const card_2 = {
 const card_3 = {
   '1,0': [FORTE[3][1][0], FORTE[3][1][2], FORTE[3][1][1] //icv
   ],
-
   '2,1': [FORTE[3][2][0], FORTE[3][2][2], FORTE[3][2][1] //icv
   ],
-
   '2,-1': [[0, 2, 3], FORTE[3][2][2], FORTE[3][2][1] //icv
   ],
-
   '3,1': [FORTE[3][3][0], FORTE[3][3][2], FORTE[3][3][1] //icv
   ],
-
   '3,-1': [[0, 3, 4], FORTE[3][3][2], FORTE[3][3][1] //icv
   ],
-
   '4,1': [FORTE[3][4][0], FORTE[3][4][2], FORTE[3][4][1] //icv
   ],
-
   '4,-1': [[0, 4, 5], FORTE[3][4][2], FORTE[3][4][1] //icv
   ],
-
   '5,1': [FORTE[3][5][0], FORTE[3][5][2], FORTE[3][5][1] //icv
   ],
-
   '5,-1': [[0, 5, 6], FORTE[3][5][2], FORTE[3][5][1] //icv
   ],
-
   '6,0': [FORTE[3][6][0], FORTE[3][6][2], FORTE[3][6][1] //icv
   ],
-
   '7,1': [FORTE[3][7][0], FORTE[3][7][2], FORTE[3][7][1] //icv
   ],
-
   '7,-1': [[0, 3, 5], FORTE[3][7][2], FORTE[3][7][1] //icv
   ],
-
   '8,1': [FORTE[3][8][0], FORTE[3][8][2], FORTE[3][8][1] //icv
   ],
-
   '8,-1': [[0, 4, 6], FORTE[3][8][2], FORTE[3][8][1] //icv
   ],
-
   '9,0': [FORTE[3][9][0], FORTE[3][9][2], FORTE[3][9][1] //icv
   ],
-
   '10,0': [FORTE[3][10][0], FORTE[3][10][2], FORTE[3][10][1] //icv
   ],
-
   '11,1': [FORTE[3][11][0], FORTE[3][11][2], FORTE[3][11][1] //icv
   ],
-
   '11,-1': [[0, 4, 7], FORTE[3][11][2], FORTE[3][11][1] //icv
   ],
-
   '12,0': [FORTE[3][12][0], FORTE[3][12][2], FORTE[3][12][1] //icv
   ]
 };
@@ -36790,130 +36761,88 @@ const card_3 = {
 const card_4 = {
   '1,0': [FORTE[4][1][0], FORTE[4][1][2], FORTE[4][1][1] //icv
   ],
-
   '2,1': [FORTE[4][2][0], FORTE[4][2][2], FORTE[4][2][1] //icv
   ],
-
   '2,-1': [[0, 2, 3, 4], FORTE[4][2][2], FORTE[4][2][1] //icv
   ],
-
   '3,0': [FORTE[4][3][0], FORTE[4][3][2], FORTE[4][3][1] //icv
   ],
-
   '4,1': [FORTE[4][4][0], FORTE[4][4][2], FORTE[4][4][1] //icv
   ],
-
   '4,-1': [[0, 3, 4, 5], FORTE[4][4][2], FORTE[4][4][1] //icv
   ],
-
   '5,1': [FORTE[4][5][0], FORTE[4][5][2], FORTE[4][5][1] //icv
   ],
-
   '5,-1': [[0, 4, 5, 6], FORTE[4][5][2], FORTE[4][5][1] //icv
   ],
-
   '6,0': [FORTE[4][6][0], FORTE[4][6][2], FORTE[4][6][1] //icv
   ],
-
   '7,0': [FORTE[4][7][0], FORTE[4][7][2], FORTE[4][7][1] //icv
   ],
-
   '8,0': [FORTE[4][8][0], FORTE[4][8][2], FORTE[4][8][1] //icv
   ],
-
   '9,0': [FORTE[4][9][0], FORTE[4][9][2], FORTE[4][9][1] //icv
   ],
-
   '10,0': [FORTE[4][10][0], FORTE[4][10][2], FORTE[4][10][1] //icv
   ],
-
   '11,1': [FORTE[4][11][0], FORTE[4][11][2], FORTE[4][11][1] //icv
   ],
-
   '11,-1': [[0, 2, 4, 5], FORTE[4][11][2], FORTE[4][11][1] //icv
   ],
-
   '12,1': [FORTE[4][12][0], FORTE[4][12][2], FORTE[4][12][1] //icv
   ],
-
   '12,-1': [[0, 3, 4, 6], FORTE[4][12][2], FORTE[4][12][1] //icv
   ],
-
   '13,1': [FORTE[4][13][0], FORTE[4][13][2], FORTE[4][13][1] //icv
   ],
-
   '13,-1': [[0, 3, 5, 6], FORTE[4][13][2], FORTE[4][13][1] //icv
   ],
-
   '14,1': [FORTE[4][14][0], FORTE[4][14][2], FORTE[4][14][1] //icv
   ],
-
   '14,-1': [[0, 4, 5, 7], FORTE[4][14][2], FORTE[4][14][1] //icv
   ],
-
   '15,1': [FORTE[4][15][0], FORTE[4][15][2], FORTE[4][15][1] //icv
   ],
-
   '15,-1': [[0, 2, 5, 6], FORTE[4][15][2], FORTE[4][15][1] //icv
   ],
-
   '16,1': [FORTE[4][16][0], FORTE[4][16][2], FORTE[4][16][1] //icv
   ],
-
   '16,-1': [[0, 2, 6, 7], FORTE[4][16][2], FORTE[4][16][1] //icv
   ],
-
   '17,0': [FORTE[4][17][0], FORTE[4][17][2], FORTE[4][17][1] //icv
   ],
-
   '18,1': [FORTE[4][18][0], FORTE[4][18][2], FORTE[4][18][1] //icv
   ],
-
   '18,-1': [[0, 3, 6, 7], FORTE[4][18][2], FORTE[4][18][1] //icv
   ],
-
   '19,1': [FORTE[4][19][0], FORTE[4][19][2], FORTE[4][19][1] //icv
   ],
-
   '19,-1': [[0, 4, 7, 8], FORTE[4][19][2], FORTE[4][19][1] //icv
   ],
-
   '20,0': [FORTE[4][20][0], FORTE[4][20][2], FORTE[4][20][1] //icv
   ],
-
   '21,0': [FORTE[4][21][0], FORTE[4][21][2], FORTE[4][21][1] //icv
   ],
-
   '22,1': [FORTE[4][22][0], FORTE[4][22][2], FORTE[4][22][1] //icv
   ],
-
   '22,-1': [[0, 3, 5, 7], FORTE[4][22][2], FORTE[4][22][1] //icv
   ],
-
   '23,0': [FORTE[4][23][0], FORTE[4][23][2], FORTE[4][23][1] //icv
   ],
-
   '24,0': [FORTE[4][24][0], FORTE[4][24][2], FORTE[4][24][1] //icv
   ],
-
   '25,0': [FORTE[4][25][0], FORTE[4][25][2], FORTE[4][25][1] //icv
   ],
-
   '26,0': [FORTE[4][26][0], FORTE[4][26][2], FORTE[4][26][1] //icv
   ],
-
   '27,1': [FORTE[4][27][0], FORTE[4][27][2], FORTE[4][27][1] //icv
   ],
-
   '27,-1': [[0, 3, 6, 8], FORTE[4][27][2], FORTE[4][27][1] //icv
   ],
-
   '28,0': [FORTE[4][28][0], FORTE[4][28][2], FORTE[4][28][1] //icv
   ],
-
   '29,1': [FORTE[4][29][0], FORTE[4][29][2], FORTE[4][29][1] //icv
   ],
-
   '29,-1': [[0, 4, 6, 7], FORTE[4][29][2], FORTE[4][29][1] //icv
   ]
 };
@@ -36921,199 +36850,134 @@ const card_4 = {
 const card_5 = {
   '1,0': [FORTE[5][1][0], FORTE[5][1][2], FORTE[5][1][1] //icv
   ],
-
   '2,1': [FORTE[5][2][0], FORTE[5][2][2], FORTE[5][2][1] //icv
   ],
-
   '2,-1': [[0, 2, 3, 4, 5], FORTE[5][2][2], FORTE[5][2][1] //icv
   ],
-
   '3,1': [FORTE[5][3][0], FORTE[5][3][2], FORTE[5][3][1] //icv
   ],
-
   '3,-1': [[0, 1, 3, 4, 5], FORTE[5][3][2], FORTE[5][3][1] //icv
   ],
-
   '4,1': [FORTE[5][4][0], FORTE[5][4][2], FORTE[5][4][1] //icv
   ],
-
   '4,-1': [[0, 3, 4, 5, 6], FORTE[5][4][2], FORTE[5][4][1] //icv
   ],
-
   '5,1': [FORTE[5][5][0], FORTE[5][5][2], FORTE[5][5][1] //icv
   ],
-
   '5,-1': [[0, 4, 5, 6, 7], FORTE[5][5][2], FORTE[5][5][1] //icv
   ],
-
   '6,1': [FORTE[5][6][0], FORTE[5][6][2], FORTE[5][6][1] //icv
   ],
-
   '6,-1': [[0, 1, 4, 5, 6], FORTE[5][6][2], FORTE[5][6][1] //icv
   ],
-
   '7,1': [FORTE[5][7][0], FORTE[5][7][2], FORTE[5][7][1] //icv
   ],
-
   '7,-1': [[0, 1, 5, 6, 7], FORTE[5][7][2], FORTE[5][7][1] //icv
   ],
-
   '8,0': [FORTE[5][8][0], FORTE[5][8][2], FORTE[5][8][1] //icv
   ],
-
   '9,1': [FORTE[5][9][0], FORTE[5][9][2], FORTE[5][9][1] //icv
   ],
-
   '9,-1': [[0, 2, 4, 5, 6], FORTE[5][9][2], FORTE[5][9][1] //icv
   ],
-
   '10,1': [FORTE[5][10][0], FORTE[5][10][2], FORTE[5][10][1] //icv
   ],
-
   '10,-1': [[0, 2, 3, 5, 6], FORTE[5][10][2], FORTE[5][10][1] //icv
   ],
-
   '11,1': [FORTE[5][11][0], FORTE[5][11][2], FORTE[5][11][1] //icv
   ],
-
   '11,-1': [[0, 3, 4, 5, 7], FORTE[5][11][2], FORTE[5][11][1] //icv
   ],
-
   '12,0': [FORTE[5][12][0], FORTE[5][12][2], FORTE[5][12][1] //icv
   ],
-
   '13,1': [FORTE[5][13][0], FORTE[5][13][2], FORTE[5][13][1] //icv
   ],
-
   '13,-1': [[0, 4, 6, 7, 8], FORTE[5][13][2], FORTE[5][13][1] //icv
   ],
-
   '14,1': [FORTE[5][14][0], FORTE[5][14][2], FORTE[5][14][1] //icv
   ],
-
   '14,-1': [[0, 2, 5, 6, 7], FORTE[5][14][2], FORTE[5][14][1] //icv
   ],
-
   '15,0': [FORTE[5][15][0], FORTE[5][15][2], FORTE[5][15][1] //icv
   ],
-
   '16,1': [FORTE[5][16][0], FORTE[5][16][2], FORTE[5][16][1] //icv
   ],
-
   '16,-1': [[0, 3, 4, 6, 7], FORTE[5][16][2], FORTE[5][16][1] //icv
   ],
-
   '17,0': [FORTE[5][17][0], FORTE[5][17][2], FORTE[5][17][1] //icv
   ],
-
   '18,1': [FORTE[5][18][0], FORTE[5][18][2], FORTE[5][18][1] //icv
   ],
-
   '18,-1': [[0, 2, 3, 6, 7], FORTE[5][18][2], FORTE[5][18][1] //icv
   ],
-
   '19,1': [FORTE[5][19][0], FORTE[5][19][2], FORTE[5][19][1] //icv
   ],
-
   '19,-1': [[0, 1, 4, 6, 7], FORTE[5][19][2], FORTE[5][19][1] //icv
   ],
-
   '20,1': [FORTE[5][20][0], FORTE[5][20][2], FORTE[5][20][1] //icv
   ],
-
   '20,-1': [[0, 1, 5, 7, 8], FORTE[5][20][2], FORTE[5][20][1] //icv
   ],
-
   '21,1': [FORTE[5][21][0], FORTE[5][21][2], FORTE[5][21][1] //icv
   ],
-
   '21,-1': [[0, 3, 4, 7, 8], FORTE[5][21][2], FORTE[5][21][1] //icv
   ],
-
   '22,0': [FORTE[5][22][0], FORTE[5][22][2], FORTE[5][22][1] //icv
   ],
-
   '23,1': [FORTE[5][23][0], FORTE[5][23][2], FORTE[5][23][1] //icv
   ],
-
   '23,-1': [[0, 2, 4, 5, 7], FORTE[5][23][2], FORTE[5][23][1] //icv
   ],
-
   '24,1': [FORTE[5][24][0], FORTE[5][24][2], FORTE[5][24][1] //icv
   ],
-
   '24,-1': [[0, 2, 4, 6, 7], FORTE[5][24][2], FORTE[5][24][1] //icv
   ],
-
   '25,1': [FORTE[5][25][0], FORTE[5][25][2], FORTE[5][25][1] //icv
   ],
-
   '25,-1': [[0, 3, 5, 6, 8], FORTE[5][25][2], FORTE[5][25][1] //icv
   ],
-
   '26,1': [FORTE[5][26][0], FORTE[5][26][2], FORTE[5][26][1] //icv
   ],
-
   '26,-1': [[0, 3, 4, 6, 8], FORTE[5][26][2], FORTE[5][26][1] //icv
   ],
-
   '27,1': [FORTE[5][27][0], FORTE[5][27][2], FORTE[5][27][1] //icv
   ],
-
   '27,-1': [[0, 3, 5, 7, 8], FORTE[5][27][2], FORTE[5][27][1] //icv
   ],
-
   '28,1': [FORTE[5][28][0], FORTE[5][28][2], FORTE[5][28][1] //icv
   ],
-
   '28,-1': [[0, 2, 5, 6, 8], FORTE[5][28][2], FORTE[5][28][1] //icv
   ],
-
   '29,1': [FORTE[5][29][0], FORTE[5][29][2], FORTE[5][29][1] //icv
   ],
-
   '29,-1': [[0, 2, 5, 7, 8], FORTE[5][29][2], FORTE[5][29][1] //icv
   ],
-
   '30,1': [FORTE[5][30][0], FORTE[5][30][2], FORTE[5][30][1] //icv
   ],
-
   '30,-1': [[0, 2, 4, 7, 8], FORTE[5][30][2], FORTE[5][30][1] //icv
   ],
-
   '31,1': [FORTE[5][31][0], FORTE[5][31][2], FORTE[5][31][1] //icv
   ],
-
   '31,-1': [[0, 3, 6, 8, 9], FORTE[5][31][2], FORTE[5][31][1] //icv
   ],
-
   '32,1': [FORTE[5][32][0], FORTE[5][32][2], FORTE[5][32][1] //icv
   ],
-
   '32,-1': [[0, 3, 5, 8, 9], FORTE[5][32][2], FORTE[5][32][1] //icv
   ],
-
   '33,0': [FORTE[5][33][0], FORTE[5][33][2], FORTE[5][33][1] //icv
   ],
-
   '34,0': [FORTE[5][34][0], FORTE[5][34][2], FORTE[5][34][1] //icv
   ],
-
   '35,0': [FORTE[5][35][0], FORTE[5][35][2], FORTE[5][35][1] //icv
   ],
-
   '36,1': [FORTE[5][36][0], FORTE[5][36][2], FORTE[5][36][1] //icv
   ],
-
   '36,-1': [[0, 3, 5, 6, 7], FORTE[5][36][2], FORTE[5][36][1] //icv
   ],
-
   '37,0': [FORTE[5][37][0], FORTE[5][37][2], FORTE[5][37][1] //icv
   ],
-
   '38,1': [FORTE[5][38][0], FORTE[5][38][2], FORTE[5][38][1] //icv
   ],
-
   '38,-1': [[0, 3, 6, 7, 8], FORTE[5][38][2], FORTE[5][38][1] //icv
   ]
 };
@@ -37121,241 +36985,162 @@ const card_5 = {
 const card_6 = {
   '1,0': [FORTE[6][1][0], FORTE[6][1][2], FORTE[6][1][1] //icv
   ],
-
   '2,1': [FORTE[6][2][0], FORTE[6][2][2], FORTE[6][2][1] //icv
   ],
-
   '2,-1': [[0, 2, 3, 4, 5, 6], FORTE[6][2][2], FORTE[6][2][1] //icv
   ],
-
   '3,1': [FORTE[6][3][0], FORTE[6][3][2], FORTE[6][3][1] //icv
   ],
-
   '3,-1': [[0, 1, 3, 4, 5, 6], FORTE[6][3][2], FORTE[6][3][1] //icv
   ],
-
   '4,0': [FORTE[6][4][0], FORTE[6][4][2], FORTE[6][4][1] //icv
   ],
-
   '5,1': [FORTE[6][5][0], FORTE[6][5][2], FORTE[6][5][1] //icv
   ],
-
   '5,-1': [[0, 1, 4, 5, 6, 7], FORTE[6][5][2], FORTE[6][5][1] //icv
   ],
-
   '6,0': [FORTE[6][6][0], FORTE[6][6][2], FORTE[6][6][1] //icv
   ],
-
   '7,0': [FORTE[6][7][0], FORTE[6][7][2], FORTE[6][7][1] //icv
   ],
-
   '8,0': [FORTE[6][8][0], FORTE[6][8][2], FORTE[6][8][1] //icv
   ],
-
   '9,1': [FORTE[6][9][0], FORTE[6][9][2], FORTE[6][9][1] //icv
   ],
-
   '9,-1': [[0, 2, 4, 5, 6, 7], FORTE[6][9][2], FORTE[6][9][1] //icv
   ],
-
   '10,1': [FORTE[6][10][0], FORTE[6][10][2], FORTE[6][10][1] //icv
   ],
-
   '10,-1': [[0, 2, 3, 4, 6, 7], FORTE[6][10][2], FORTE[6][10][1] //icv
   ],
-
   '11,1': [FORTE[6][11][0], FORTE[6][11][2], FORTE[6][11][1] //icv
   ],
-
   '11,-1': [[0, 2, 3, 5, 6, 7], FORTE[6][11][2], FORTE[6][11][1] //icv
   ],
-
   '12,1': [FORTE[6][12][0], FORTE[6][12][2], FORTE[6][12][1] //icv
   ],
-
   '12,-1': [[0, 1, 3, 5, 6, 7], FORTE[6][12][2], FORTE[6][12][1] //icv
   ],
-
   '13,0': [FORTE[6][13][0], FORTE[6][13][2], FORTE[6][13][1] //icv
   ],
-
   '14,1': [FORTE[6][14][0], FORTE[6][14][2], FORTE[6][14][1] //icv
   ],
-
   '14,-1': [[0, 3, 4, 5, 7, 8], FORTE[6][14][2], FORTE[6][14][1] //icv
   ],
-
   '15,1': [FORTE[6][15][0], FORTE[6][15][2], FORTE[6][15][1] //icv
   ],
-
   '15,-1': [[0, 3, 4, 6, 7, 8], FORTE[6][15][2], FORTE[6][15][1] //icv
   ],
-
   '16,1': [FORTE[6][16][0], FORTE[6][16][2], FORTE[6][16][1] //icv
   ],
-
   '16,-1': [[0, 2, 3, 4, 7, 8], FORTE[6][16][2], FORTE[6][16][1] //icv
   ],
-
   '17,1': [FORTE[6][17][0], FORTE[6][17][2], FORTE[6][17][1] //icv
   ],
-
   '17,-1': [[0, 1, 4, 6, 7, 8], FORTE[6][17][2], FORTE[6][17][1] //icv
   ],
-
   '18,1': [FORTE[6][18][0], FORTE[6][18][2], FORTE[6][18][1] //icv
   ],
-
   '18,-1': [[0, 1, 3, 6, 7, 8], FORTE[6][18][2], FORTE[6][18][1] //icv
   ],
-
   '19,1': [FORTE[6][19][0], FORTE[6][19][2], FORTE[6][19][1] //icv
   ],
-
   '19,-1': [[0, 1, 4, 5, 7, 8], FORTE[6][19][2], FORTE[6][19][1] //icv
   ],
-
   '20,0': [FORTE[6][20][0], FORTE[6][20][2], FORTE[6][20][1] //icv
   ],
-
   '21,1': [FORTE[6][21][0], FORTE[6][21][2], FORTE[6][21][1] //icv
   ],
-
   '21,-1': [[0, 2, 4, 5, 6, 8], FORTE[6][21][2], FORTE[6][21][1] //icv
   ],
-
   '22,1': [FORTE[6][22][0], FORTE[6][22][2], FORTE[6][22][1] //icv
   ],
-
   '22,-1': [[0, 2, 4, 6, 7, 8], FORTE[6][22][2], FORTE[6][22][1] //icv
   ],
-
   '23,0': [FORTE[6][23][0], FORTE[6][23][2], FORTE[6][23][1] //icv
   ],
-
   '24,1': [FORTE[6][24][0], FORTE[6][24][2], FORTE[6][24][1] //icv
   ],
-
   '24,-1': [[0, 2, 4, 5, 7, 8], FORTE[6][24][2], FORTE[6][24][1] //icv
   ],
-
   '25,1': [FORTE[6][25][0], FORTE[6][25][2], FORTE[6][25][1] //icv
   ],
-
   '25,-1': [[0, 2, 3, 5, 7, 8], FORTE[6][25][2], FORTE[6][25][1] //icv
   ],
-
   '26,0': [FORTE[6][26][0], FORTE[6][26][2], FORTE[6][26][1] //icv
   ],
-
   '27,1': [FORTE[6][27][0], FORTE[6][27][2], FORTE[6][27][1] //icv
   ],
-
   '27,-1': [[0, 3, 5, 6, 8, 9], FORTE[6][27][2], FORTE[6][27][1] //icv
   ],
-
   '28,0': [FORTE[6][28][0], FORTE[6][28][2], FORTE[6][28][1] //icv
   ],
-
   '29,0': [FORTE[6][29][0], FORTE[6][29][2], FORTE[6][29][1] //icv
   ],
-
   '30,1': [FORTE[6][30][0], FORTE[6][30][2], FORTE[6][30][1] //icv
   ],
-
   '30,-1': [[0, 2, 3, 6, 8, 9], FORTE[6][30][2], FORTE[6][30][1] //icv
   ],
-
   '31,1': [FORTE[6][31][0], FORTE[6][31][2], FORTE[6][31][1] //icv
   ],
-
   '31,-1': [[0, 1, 4, 6, 8, 9], FORTE[6][31][2], FORTE[6][31][1] //icv
   ],
-
   '32,0': [FORTE[6][32][0], FORTE[6][32][2], FORTE[6][32][1] //icv
   ],
-
   '33,1': [FORTE[6][33][0], FORTE[6][33][2], FORTE[6][33][1] //icv
   ],
-
   '33,-1': [[0, 2, 4, 6, 7, 9], FORTE[6][33][2], FORTE[6][33][1] //icv
   ],
-
   '34,1': [FORTE[6][34][0], FORTE[6][34][2], FORTE[6][34][1] //icv
   ],
-
   '34,-1': [[0, 2, 4, 6, 8, 9], FORTE[6][34][2], FORTE[6][34][1] //icv
   ],
-
   '35,0': [FORTE[6][35][0], FORTE[6][35][2], FORTE[6][35][1] //icv
   ],
-
   '36,1': [FORTE[6][36][0], FORTE[6][36][2], FORTE[6][36][1] //icv
   ],
-
   '36,-1': [[0, 3, 4, 5, 6, 7], FORTE[6][36][2], FORTE[6][36][1] //icv
   ],
-
   '37,0': [FORTE[6][37][0], FORTE[6][37][2], FORTE[6][37][1] //icv
   ],
-
   '38,0': [FORTE[6][38][0], FORTE[6][38][2], FORTE[6][38][1] //icv
   ],
-
   '39,1': [FORTE[6][39][0], FORTE[6][39][2], FORTE[6][39][1] //icv
   ],
-
   '39,-1': [[0, 3, 4, 5, 6, 8], FORTE[6][39][2], FORTE[6][39][1] //icv
   ],
-
   '40,1': [FORTE[6][40][0], FORTE[6][40][2], FORTE[6][40][1] //icv
   ],
-
   '40,-1': [[0, 3, 5, 6, 7, 8], FORTE[6][40][2], FORTE[6][40][1] //icv
   ],
-
   '41,1': [FORTE[6][41][0], FORTE[6][41][2], FORTE[6][41][1] //icv
   ],
-
   '41,-1': [[0, 2, 5, 6, 7, 8], FORTE[6][41][2], FORTE[6][41][1] //icv
   ],
-
   '42,0': [FORTE[6][42][0], FORTE[6][42][2], FORTE[6][42][1] //icv
   ],
-
   '43,1': [FORTE[6][43][0], FORTE[6][43][2], FORTE[6][43][1] //icv
   ],
-
   '43,-1': [[0, 2, 3, 6, 7, 8], FORTE[6][43][2], FORTE[6][43][1] //icv
   ],
-
   '44,1': [FORTE[6][44][0], FORTE[6][44][2], FORTE[6][44][1] //icv
   ],
-
   '44,-1': [[0, 3, 4, 7, 8, 9], FORTE[6][44][2], FORTE[6][44][1] //icv
   ],
-
   '45,0': [FORTE[6][45][0], FORTE[6][45][2], FORTE[6][45][1] //icv
   ],
-
   '46,1': [FORTE[6][46][0], FORTE[6][46][2], FORTE[6][46][1] //icv
   ],
-
   '46,-1': [[0, 3, 5, 7, 8, 9], FORTE[6][46][2], FORTE[6][46][1] //icv
   ],
-
   '47,1': [FORTE[6][47][0], FORTE[6][47][2], FORTE[6][47][1] //icv
   ],
-
   '47,-1': [[0, 2, 5, 7, 8, 9], FORTE[6][47][2], FORTE[6][47][1] //icv
   ],
-
   '48,0': [FORTE[6][48][0], FORTE[6][48][2], FORTE[6][48][1] //icv
   ],
-
   '49,0': [FORTE[6][49][0], FORTE[6][49][2], FORTE[6][49][1] //icv
   ],
-
   '50,0': [FORTE[6][50][0], FORTE[6][50][2], FORTE[6][50][1] //icv
   ]
 };
@@ -37363,199 +37148,134 @@ const card_6 = {
 const card_7 = {
   '1,0': [FORTE[7][1][0], FORTE[7][1][2], FORTE[7][1][1] //icv
   ],
-
   '2,1': [FORTE[7][2][0], FORTE[7][2][2], FORTE[7][2][1] //icv
   ],
-
   '2,-1': [[0, 2, 3, 4, 5, 6, 7], FORTE[7][2][2], FORTE[7][2][1] //icv
   ],
-
   '3,1': [FORTE[7][3][0], FORTE[7][3][2], FORTE[7][3][1] //icv
   ],
-
   '3,-1': [[0, 3, 4, 5, 6, 7, 8], FORTE[7][3][2], FORTE[7][3][1] //icv
   ],
-
   '4,1': [FORTE[7][4][0], FORTE[7][4][2], FORTE[7][4][1] //icv
   ],
-
   '4,-1': [[0, 1, 3, 4, 5, 6, 7], FORTE[7][4][2], FORTE[7][4][1] //icv
   ],
-
   '5,1': [FORTE[7][5][0], FORTE[7][5][2], FORTE[7][5][1] //icv
   ],
-
   '5,-1': [[0, 1, 2, 4, 5, 6, 7], FORTE[7][5][2], FORTE[7][5][1] //icv
   ],
-
   '6,1': [FORTE[7][6][0], FORTE[7][6][2], FORTE[7][6][1] //icv
   ],
-
   '6,-1': [[0, 1, 4, 5, 6, 7, 8], FORTE[7][6][2], FORTE[7][6][1] //icv
   ],
-
   '7,1': [FORTE[7][7][0], FORTE[7][7][2], FORTE[7][7][1] //icv
   ],
-
   '7,-1': [[0, 1, 2, 5, 6, 7, 8], FORTE[7][7][2], FORTE[7][7][1] //icv
   ],
-
   '8,0': [FORTE[7][8][0], FORTE[7][8][2], FORTE[7][8][1] //icv
   ],
-
   '9,1': [FORTE[7][9][0], FORTE[7][9][2], FORTE[7][9][1] //icv
   ],
-
   '9,-1': [[0, 2, 4, 5, 6, 7, 8], FORTE[7][9][2], FORTE[7][9][1] //icv
   ],
-
   '10,1': [FORTE[7][10][0], FORTE[7][10][2], FORTE[7][10][1] //icv
   ],
-
   '10,-1': [[0, 3, 5, 6, 7, 8, 9], FORTE[7][10][2], FORTE[7][10][1] //icv
   ],
-
   '11,1': [FORTE[7][11][0], FORTE[7][11][2], FORTE[7][11][1] //icv
   ],
-
   '11,-1': [[0, 2, 3, 4, 5, 7, 8], FORTE[7][11][2], FORTE[7][11][1] //icv
   ],
-
   '12,0': [FORTE[7][12][0], FORTE[7][12][2], FORTE[7][12][1] //icv
   ],
-
   '13,1': [FORTE[7][13][0], FORTE[7][13][2], FORTE[7][13][1] //icv
   ],
-
   '13,-1': [[0, 2, 3, 4, 6, 7, 8], FORTE[7][13][2], FORTE[7][13][1] //icv
   ],
-
   '14,1': [FORTE[7][14][0], FORTE[7][14][2], FORTE[7][14][1] //icv
   ],
-
   '14,-1': [[0, 1, 3, 5, 6, 7, 8], FORTE[7][14][2], FORTE[7][14][1] //icv
   ],
-
   '15,0': [FORTE[7][15][0], FORTE[7][15][2], FORTE[7][15][1] //icv
   ],
-
   '16,1': [FORTE[7][16][0], FORTE[7][16][2], FORTE[7][16][1] //icv
   ],
-
   '16,-1': [[0, 3, 4, 6, 7, 8, 9], FORTE[7][16][2], FORTE[7][16][1] //icv
   ],
-
   '17,0': [FORTE[7][17][0], FORTE[7][17][2], FORTE[7][17][1] //icv
   ],
-
   '18,1': [FORTE[7][18][0], FORTE[7][18][2], FORTE[7][18][1] //icv
   ],
-
   '18,-1': [[0, 1, 4, 6, 7, 8, 9], FORTE[7][18][2], FORTE[7][18][1] //icv
   ],
-
   '19,1': [FORTE[7][19][0], FORTE[7][19][2], FORTE[7][19][1] //icv
   ],
-
   '19,-1': [[0, 2, 3, 6, 7, 8, 9], FORTE[7][19][2], FORTE[7][19][1] //icv
   ],
-
   '20,1': [FORTE[7][20][0], FORTE[7][20][2], FORTE[7][20][1] //icv
   ],
-
   '20,-1': [[0, 1, 2, 5, 7, 8, 9], FORTE[7][20][2], FORTE[7][20][1] //icv
   ],
-
   '21,1': [FORTE[7][21][0], FORTE[7][21][2], FORTE[7][21][1] //icv
   ],
-
   '21,-1': [[0, 1, 4, 5, 7, 8, 9], FORTE[7][21][2], FORTE[7][21][1] //icv
   ],
-
   '22,0': [FORTE[7][22][0], FORTE[7][22][2], FORTE[7][22][1] //icv
   ],
-
   '23,1': [FORTE[7][23][0], FORTE[7][23][2], FORTE[7][23][1] //icv
   ],
-
   '23,-1': [[0, 2, 4, 5, 6, 7, 9], FORTE[7][23][2], FORTE[7][23][1] //icv
   ],
-
   '24,1': [FORTE[7][24][0], FORTE[7][24][2], FORTE[7][24][1] //icv
   ],
-
   '24,-1': [[0, 2, 4, 6, 7, 8, 9], FORTE[7][24][2], FORTE[7][24][1] //icv
   ],
-
   '25,1': [FORTE[7][25][0], FORTE[7][25][2], FORTE[7][25][1] //icv
   ],
-
   '25,-1': [[0, 2, 3, 5, 6, 7, 9], FORTE[7][25][2], FORTE[7][25][1] //icv
   ],
-
   '26,1': [FORTE[7][26][0], FORTE[7][26][2], FORTE[7][26][1] //icv
   ],
-
   '26,-1': [[0, 2, 4, 5, 6, 8, 9], FORTE[7][26][2], FORTE[7][26][1] //icv
   ],
-
   '27,1': [FORTE[7][27][0], FORTE[7][27][2], FORTE[7][27][1] //icv
   ],
-
   '27,-1': [[0, 2, 4, 5, 7, 8, 9], FORTE[7][27][2], FORTE[7][27][1] //icv
   ],
-
   '28,1': [FORTE[7][28][0], FORTE[7][28][2], FORTE[7][28][1] //icv
   ],
-
   '28,-1': [[0, 2, 3, 4, 6, 8, 9], FORTE[7][28][2], FORTE[7][28][1] //icv
   ],
-
   '29,1': [FORTE[7][29][0], FORTE[7][29][2], FORTE[7][29][1] //icv
   ],
-
   '29,-1': [[0, 2, 3, 5, 7, 8, 9], FORTE[7][29][2], FORTE[7][29][1] //icv
   ],
-
   '30,1': [FORTE[7][30][0], FORTE[7][30][2], FORTE[7][30][1] //icv
   ],
-
   '30,-1': [[0, 1, 3, 5, 7, 8, 9], FORTE[7][30][2], FORTE[7][30][1] //icv
   ],
-
   '31,1': [FORTE[7][31][0], FORTE[7][31][2], FORTE[7][31][1] //icv
   ],
-
   '31,-1': [[0, 2, 3, 5, 6, 8, 9], FORTE[7][31][2], FORTE[7][31][1] //icv
   ],
-
   '32,1': [FORTE[7][32][0], FORTE[7][32][2], FORTE[7][32][1] //icv
   ],
-
   '32,-1': [[0, 1, 3, 5, 6, 8, 9], FORTE[7][32][2], FORTE[7][32][1] //icv
   ],
-
   '33,0': [FORTE[7][33][0], FORTE[7][33][2], FORTE[7][33][1] //icv
   ],
-
   '34,0': [FORTE[7][34][0], FORTE[7][34][2], FORTE[7][34][1] //icv
   ],
-
   '35,0': [FORTE[7][35][0], FORTE[7][35][2], FORTE[7][35][1] //icv
   ],
-
   '36,1': [FORTE[7][36][0], FORTE[7][36][2], FORTE[7][36][1] //icv
   ],
-
   '36,-1': [[0, 2, 3, 5, 6, 7, 8], FORTE[7][36][2], FORTE[7][36][1] //icv
   ],
-
   '37,0': [FORTE[7][37][0], FORTE[7][37][2], FORTE[7][37][1] //icv
   ],
-
   '38,1': [FORTE[7][38][0], FORTE[7][38][2], FORTE[7][38][1] //icv
   ],
-
   '38,-1': [[0, 1, 3, 4, 6, 7, 8], FORTE[7][38][2], FORTE[7][38][1] //icv
   ]
 };
@@ -37563,130 +37283,88 @@ const card_7 = {
 const card_8 = {
   '1,0': [FORTE[8][1][0], FORTE[8][1][2], FORTE[8][1][1] //icv
   ],
-
   '2,1': [FORTE[8][2][0], FORTE[8][2][2], FORTE[8][2][1] //icv
   ],
-
   '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8], FORTE[8][2][2], FORTE[8][2][1] //icv
   ],
-
   '3,0': [FORTE[8][3][0], FORTE[8][3][2], FORTE[8][3][1] //icv
   ],
-
   '4,1': [FORTE[8][4][0], FORTE[8][4][2], FORTE[8][4][1] //icv
   ],
-
   '4,-1': [[0, 1, 3, 4, 5, 6, 7, 8], FORTE[8][4][2], FORTE[8][4][1] //icv
   ],
-
   '5,1': [FORTE[8][5][0], FORTE[8][5][2], FORTE[8][5][1] //icv
   ],
-
   '5,-1': [[0, 1, 2, 4, 5, 6, 7, 8], FORTE[8][5][2], FORTE[8][5][1] //icv
   ],
-
   '6,0': [FORTE[8][6][0], FORTE[8][6][2], FORTE[8][6][1] //icv
   ],
-
   '7,0': [FORTE[8][7][0], FORTE[8][7][2], FORTE[8][7][1] //icv
   ],
-
   '8,0': [FORTE[8][8][0], FORTE[8][8][2], FORTE[8][8][1] //icv
   ],
-
   '9,0': [FORTE[8][9][0], FORTE[8][9][2], FORTE[8][9][1] //icv
   ],
-
   '10,0': [FORTE[8][10][0], FORTE[8][10][2], FORTE[8][10][1] //icv
   ],
-
   '11,1': [FORTE[8][11][0], FORTE[8][11][2], FORTE[8][11][1] //icv
   ],
-
   '11,-1': [[0, 2, 4, 5, 6, 7, 8, 9], FORTE[8][11][2], FORTE[8][11][1] //icv
   ],
-
   '12,1': [FORTE[8][12][0], FORTE[8][12][2], FORTE[8][12][1] //icv
   ],
-
   '12,-1': [[0, 2, 3, 4, 5, 6, 8, 9], FORTE[8][12][2], FORTE[8][12][1] //icv
   ],
-
   '13,1': [FORTE[8][13][0], FORTE[8][13][2], FORTE[8][13][1] //icv
   ],
-
   '13,-1': [[0, 2, 3, 5, 6, 7, 8, 9], FORTE[8][13][2], FORTE[8][13][1] //icv
   ],
-
   '14,1': [FORTE[8][14][0], FORTE[8][14][2], FORTE[8][14][1] //icv
   ],
-
   '14,-1': [[0, 2, 3, 4, 5, 7, 8, 9], FORTE[8][14][2], FORTE[8][14][1] //icv
   ],
-
   '15,1': [FORTE[8][15][0], FORTE[8][15][2], FORTE[8][15][1] //icv
   ],
-
   '15,-1': [[0, 1, 3, 5, 6, 7, 8, 9], FORTE[8][15][2], FORTE[8][15][1] //icv
   ],
-
   '16,1': [FORTE[8][16][0], FORTE[8][16][2], FORTE[8][16][1] //icv
   ],
-
   '16,-1': [[0, 1, 2, 4, 6, 7, 8, 9], FORTE[8][16][2], FORTE[8][16][1] //icv
   ],
-
   '17,0': [FORTE[8][17][0], FORTE[8][17][2], FORTE[8][17][1] //icv
   ],
-
   '18,1': [FORTE[8][18][0], FORTE[8][18][2], FORTE[8][18][1] //icv
   ],
-
   '18,-1': [[0, 1, 3, 4, 6, 7, 8, 9], FORTE[8][18][2], FORTE[8][18][1] //icv
   ],
-
   '19,1': [FORTE[8][19][0], FORTE[8][19][2], FORTE[8][19][1] //icv
   ],
-
   '19,-1': [[0, 1, 3, 4, 5, 7, 8, 9], FORTE[8][19][2], FORTE[8][19][1] //icv
   ],
-
   '20,0': [FORTE[8][20][0], FORTE[8][20][2], FORTE[8][20][1] //icv
   ],
-
   '21,0': [FORTE[8][21][0], FORTE[8][21][2], FORTE[8][21][1] //icv
   ],
-
   '22,1': [FORTE[8][22][0], FORTE[8][22][2], FORTE[8][22][1] //icv
   ],
-
   '22,-1': [[0, 2, 4, 5, 7, 8, 9, 10], FORTE[8][22][2], FORTE[8][22][1] //icv
   ],
-
   '23,0': [FORTE[8][23][0], FORTE[8][23][2], FORTE[8][23][1] //icv
   ],
-
   '24,0': [FORTE[8][24][0], FORTE[8][24][2], FORTE[8][24][1] //icv
   ],
-
   '25,0': [FORTE[8][25][0], FORTE[8][25][2], FORTE[8][25][1] //icv
   ],
-
   '26,0': [FORTE[8][26][0], FORTE[8][26][2], FORTE[8][26][1] //icv
   ],
-
   '27,1': [FORTE[8][27][0], FORTE[8][27][2], FORTE[8][27][1] //icv
   ],
-
   '27,-1': [[0, 2, 3, 5, 6, 8, 9, 10], FORTE[8][27][2], FORTE[8][27][1] //icv
   ],
-
   '28,0': [FORTE[8][28][0], FORTE[8][28][2], FORTE[8][28][1] //icv
   ],
-
   '29,1': [FORTE[8][29][0], FORTE[8][29][2], FORTE[8][29][1] //icv
   ],
-
   '29,-1': [[0, 2, 3, 4, 6, 7, 8, 9], FORTE[8][29][2], FORTE[8][29][1] //icv
   ]
 };
@@ -37694,58 +37372,40 @@ const card_8 = {
 const card_9 = {
   '1,0': [FORTE[9][1][0], FORTE[9][1][2], FORTE[9][1][1] //icv
   ],
-
   '2,1': [FORTE[9][2][0], FORTE[9][2][2], FORTE[9][2][1] //icv
   ],
-
   '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8, 9], FORTE[9][2][2], FORTE[9][2][1] //icv
   ],
-
   '3,1': [FORTE[9][3][0], FORTE[9][3][2], FORTE[9][3][1] //icv
   ],
-
   '3,-1': [[0, 1, 3, 4, 5, 6, 7, 8, 9], FORTE[9][3][2], FORTE[9][3][1] //icv
   ],
-
   '4,1': [FORTE[9][4][0], FORTE[9][4][2], FORTE[9][4][1] //icv
   ],
-
   '4,-1': [[0, 1, 2, 4, 5, 6, 7, 8, 9], FORTE[9][4][2], FORTE[9][4][1] //icv
   ],
-
   '5,1': [FORTE[9][5][0], FORTE[9][5][2], FORTE[9][5][1] //icv
   ],
-
   '5,-1': [[0, 1, 2, 3, 5, 6, 7, 8, 9], FORTE[9][5][2], FORTE[9][5][1] //icv
   ],
-
   '6,0': [FORTE[9][6][0], FORTE[9][6][2], FORTE[9][6][1] //icv
   ],
-
   '7,1': [FORTE[9][7][0], FORTE[9][7][2], FORTE[9][7][1] //icv
   ],
-
   '7,-1': [[0, 2, 3, 5, 6, 7, 8, 9, 10], FORTE[9][7][2], FORTE[9][7][1] //icv
   ],
-
   '8,1': [FORTE[9][8][0], FORTE[9][8][2], FORTE[9][8][1] //icv
   ],
-
   '8,-1': [[0, 2, 3, 4, 6, 7, 8, 9, 10], FORTE[9][8][2], FORTE[9][8][1] //icv
   ],
-
   '9,0': [FORTE[9][9][0], FORTE[9][9][2], FORTE[9][9][1] //icv
   ],
-
   '10,0': [FORTE[9][10][0], FORTE[9][10][2], FORTE[9][10][1] //icv
   ],
-
   '11,1': [FORTE[9][11][0], FORTE[9][11][2], FORTE[9][11][1] //icv
   ],
-
   '11,-1': [[0, 1, 3, 4, 5, 7, 8, 9, 10], FORTE[9][11][2], FORTE[9][11][1] //icv
   ],
-
   '12,0': [FORTE[9][12][0], FORTE[9][12][2], FORTE[9][12][1] //icv
   ]
 };
@@ -37753,19 +37413,14 @@ const card_9 = {
 const card_10 = {
   '1,0': [FORTE[10][1][0], FORTE[10][1][2], FORTE[10][1][1] //icv
   ],
-
   '2,0': [FORTE[10][2][0], FORTE[10][2][2], FORTE[10][2][1] //icv
   ],
-
   '3,0': [FORTE[10][3][0], FORTE[10][3][2], FORTE[10][3][1] //icv
   ],
-
   '4,0': [FORTE[10][4][0], FORTE[10][4][2], FORTE[10][4][1] //icv
   ],
-
   '5,0': [FORTE[10][5][0], FORTE[10][5][2], FORTE[10][5][1] //icv
   ],
-
   '6,0': [FORTE[10][6][0], FORTE[10][6][2], FORTE[10][6][1] //icv
   ]
 };
@@ -39183,7 +38838,6 @@ function seekChordTablesAddress(c) {
     if (dataLine === undefined) {
       continue; // spacer lines
     }
-
     const dataLinePcs = dataLine[0];
     const inversionsAvailable = forteIndexToInversionsAvailable(card, indexCandidate);
     for (const [candidate, candidateInversion, candidateOriginalPC] of candidates) {
@@ -39336,7 +38990,6 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
       console.log('no first line defined for clef', this.name, this);
       return p; // error
     }
-
     const lowestLineDifference = this.lowestLineTrebleOffset;
     const tempPitch = new _pitch__WEBPACK_IMPORTED_MODULE_1__.Pitch(p.step);
     tempPitch.octave = p.octave;
@@ -39889,7 +39542,6 @@ function makeSVGright() {
     }
     el.setAttribute(k, `${attrs[k]}`); // convert to string.
   }
-
   return el;
 }
 /**
@@ -40029,7 +39681,6 @@ const pathSimplify = path => {
     path = path.slice(protoSpace + 3);
     // console.log('cross-site split', pPrefix, path);
   }
-
   const ps = path.split('/');
   const addSlash = path.slice(path.length - 1, path.length) === '/';
   const pout = [];
@@ -40070,7 +39721,6 @@ function byte_2_relevant_bits(num) {
     // noinspection JSBitwiseOperatorUsage
     out += num & 1 << i ? '1' : '0'; // eslint-disable-line no-bitwise
   }
-
   return out;
 }
 function is_power_of_2_denominator(num) {
@@ -40433,7 +40083,6 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
         vd += 'd'; // vexflow does not handle double dots .. or does it???
       }
     }
-
     return vd;
   }
   _findDots(ql) {
@@ -40461,7 +40110,6 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
     if (typeNumber === -1) {
       return; // e.g. "zero" type
     }
-
     const undottedQuarterLength = Math.pow(2, quarterTypeIndex - typeNumber);
     const dottedMultiplier = 1 + (Math.pow(2, this._dots) - 1.0) / Math.pow(2, this._dots);
     const unTupletedQl = undottedQuarterLength * dottedMultiplier;
@@ -40861,7 +40509,6 @@ class ExtendableError extends Error {
     // }
   }
 }
-
 class Music21Exception extends ExtendableError {}
 class StreamException extends Music21Exception {}
 
@@ -41297,7 +40944,6 @@ class Converter {
     this.debug = true;
     this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', 'music21.tempo.MetronomeMark', 'music21.metadata.Metadata' // Soon...
     ];
-
     this.currentPart = undefined;
     this.lastClef = undefined;
     this.lastKeySignature = undefined;
@@ -41364,7 +41010,6 @@ class Converter {
       if (streamPart === undefined) {
         streamPart = s; // possibly a Stream constructed from .measures()
       }
-
       let appendEl = true;
       let insertAtStart = false;
       for (let j = 0; j < classList.length; j++) {
@@ -41408,7 +41053,6 @@ class Converter {
         s.insert(0, el); // Part
       }
     }
-
     return s;
   }
   /**
@@ -42091,7 +41735,6 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
       if (ch % 16 === 10 && this.inGMPercMap !== true) {
         continue; // skip 10 / percussion.
       }
-
       if (usedChannels[ch] === undefined || usedChannels[ch] === this.midiProgram) {
         usedChannels[ch] = this.midiProgram;
         this.midiChannel = ch;
@@ -42344,7 +41987,6 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Obje
       } else {
         this.simpleDirected = 1; // no descending unisons...
       }
-
       this.semiSimpleDirected = -1 * this.semiSimpleUndirected;
     } else {
       this.octaves = tempOctaves;
@@ -42519,7 +42161,6 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Obj
       this.specifier = IntervalPrefixSpecs.indexOf(specifier);
       // TODO: convertSpecifier();
     }
-
     this.generic = generic;
     if (generic.undirected !== 1 || specifier === IntervalSpecifiersEnum.PERFECT) {
       this.direction = generic.direction;
@@ -43593,7 +43234,6 @@ class Keyboard {
     } else {
       svg_holder.appendChild(svgDOM); // svg must use appendChild, not append.
     }
-
     return this;
   }
   /**
@@ -43610,7 +43250,6 @@ class Keyboard {
     if (thisKeyObject === undefined) {
       return; // not on keyboard;
     }
-
     const storedStyle = thisKeyObject.keyStyle;
     let fillColor = '#c0c000';
     if (thisKeyObject.keyClass === 'whitekey') {
@@ -43868,7 +43507,6 @@ function jazzHighlight(e) {
         intensityRGB = 'rgb(' + intensity + ',' + intensity + ',0)';
         // console.log(intensityRGB);
       }
-
       svgObj.setAttribute('style', 'fill:' + intensityRGB + ';stroke:black');
     }
   } else if (e.noteOff) {
@@ -44944,7 +44582,6 @@ function makeChords(jEvent) {
           return; // no duplicates
         }
       }
-
       config.heldChordNotes.push(m21n);
     }
   }
@@ -45515,7 +45152,6 @@ function normalizeColor(color) {
 const _classMapping = ['Score', 'Part', 'Measure', 'Voice', 'GeneralNote' // 'Pitch', 'Duration', 'Dynamic', 'DiatonicScale', 'Scale',
 // 'Music21Object',
 ];
-
 class GeneralObjectExporter {
   constructor(obj) {
     this.generalObj = obj;
@@ -45720,7 +45356,6 @@ class XMLExporterBase {
       mxName = a.name;
       // check other accidentals here.
     }
-
     const mxAccidental = this.doc.createElement('accidental');
     mxAccidental.innerHTML = mxName;
     // TODO(msc): parentheses, bracket, setPrintStyle
@@ -45783,7 +45418,6 @@ class ScoreExporter extends XMLExporterBase {
     this.highestTime = 0.0;
     // spannerBundle
   }
-
   setPartsAndRefStream() {
     const s = this.stream;
     const streamOfStreams = s.getElementsByClass('Stream');
@@ -45868,7 +45502,6 @@ class PartExporter extends XMLExporterBase {
     this.spannerBundle = partObj.spannerBundle;
     this.xmlPartId = this.getRandomId(); // hacky
   }
-
   parse() {
     // this.instrumentSetup();
     this.xmlRoot.setAttribute('id', this.xmlPartId);
@@ -45907,7 +45540,6 @@ const _classesToMeasureMethods = [['Note', 'noteToXml'],
 // Dynamic, Segno, Coda, MetronomeMark, MetricModulation,
 // TextExpression, RepeatExpression, RehearsalMark
 ];
-
 const _wrapAttributeMethodClasses = [['Clef', 'clefToXml'], ['KeySignature', 'keySignatureToXml'], ['TimeSignature', 'timeSignatureToXml']];
 const _ignoreOnParseClasses = ['LayoutBase', 'Barline'];
 const divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
@@ -46138,7 +45770,6 @@ class MeasureExporter extends XMLExporterBase {
     // full measure
     // display-step, display-octave, etc.
   }
-
   chordToXml(c) {
     const mxNoteList = [];
     for (const [i, n] of Array.from(c).entries()) {
@@ -46515,7 +46146,6 @@ class ScoreParser {
     // deal with part-groups
   }
 }
-
 class PartParser {
   constructor(mxPart, mxScorePart) {
     let parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
@@ -46565,7 +46195,6 @@ class PartParser {
     // remainder of part names
     // instruments
   }
-
   parseMeasures() {
     for (const mxMeasure of Array.from(this.mxPart.getElementsByTagName('measure'))) {
       this.xmlMeasureToMeasure(mxMeasure);
@@ -46574,14 +46203,12 @@ class PartParser {
       this.lastMeasureParser.parent = undefined; // gc.
     }
   }
-
   xmlMeasureToMeasure(mxMeasure) {
     const measureParser = new MeasureParser(mxMeasure, this);
     measureParser.parse();
     if (this.lastMeasureParser !== undefined) {
       this.lastMeasureParser.parent = undefined; // gc.
     }
-
     this.lastMeasureParser = measureParser;
     if (measureParser.staves > this.maxStaves) {
       this.maxStaves = measureParser.staves;
@@ -46661,7 +46288,6 @@ class PartParser {
         // copyMeasure.flattenUnnecessaryVoices({inPlace: true});
       }
     }
-
     for (const partStaff of partStaffs) {
       this.parent.stream.insert(0, partStaff);
     }
@@ -46669,7 +46295,6 @@ class PartParser {
     // TODO: new StaffGroup
   }
 }
-
 class MeasureParser {
   constructor(mxMeasure) {
     let parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
@@ -46708,7 +46333,6 @@ class MeasureParser {
       // 'staff-details': 'handleStaffDetails',
       // 'measure-style': 'handleMeasureStyle',
     };
-
     this.musicDataMethods = {
       note: 'xmlToNote',
       backup: 'xmlBackup',
@@ -46724,7 +46348,6 @@ class MeasureParser {
       // 'bookmark': undefined,
       // Note: <print> is handled separately...
     };
-
     this.mxMeasure = mxMeasure;
     this.parent = parent;
     this.stream = new _stream__WEBPACK_IMPORTED_MODULE_8__.Measure();
@@ -46755,7 +46378,6 @@ class MeasureParser {
     // useVoices
     // fullMeasureRest
   }
-
   getStaffNumber(mxObj) {
     if (['harmony', 'forward', 'note', 'direction'].includes(mxObj.tagName)) {
       const mxStaffs = mxObj.getElementsByTagName('staff');
@@ -47033,7 +46655,6 @@ class MeasureParser {
     } catch (exc) {
       return undefined; // sometimes there are empty lyrics.
     }
-
     const number = mxLyric.getAttribute('number');
     try {
       const num = parseInt(number);
@@ -47067,7 +46688,6 @@ class MeasureParser {
     this.parseMeasureNumbers();
     // width;
   }
-
   parseMeasureNumbers() {
     const mNumRaw = this.mxMeasure.getAttribute('number');
     const mNum = parseInt(mNumRaw); // no suffixes...
@@ -47092,7 +46712,6 @@ class MeasureParser {
       }
       // transpose;
     }
-
     if (this.parent !== undefined) {
       this.parent.lastDivisions = this.divisions;
       this.parent.activeAttributes = this.activeAttributes;
@@ -47112,7 +46731,6 @@ class MeasureParser {
     return new _meter__WEBPACK_IMPORTED_MODULE_5__.TimeSignature(numerator + '/' + denominator);
     // symbol
   }
-
   handleClef(mxClef) {
     const clefObj = this.xmlToClef(mxClef);
     this.addToStaffReference(mxClef, clefObj);
@@ -47122,7 +46740,6 @@ class MeasureParser {
     //     this.parent.lastClefs[0] = clefObj.clone(true);
     // }
   }
-
   xmlToClef(mxClef) {
     const sign = mxClef.querySelector('sign').textContent.trim();
     if (sign === 'percussion') {
@@ -47256,7 +46873,6 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
       relativeX: 0,
       relativeY: 0 // does nothing right now.
     };
-
     this.text = text;
     this._number = number;
     this.syllabic = syllabic;
@@ -47362,7 +46978,6 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     if (style.relativeX) {
       annotation.setXShift(-1 * style.relativeX); // VF measures backwards
     }
-
     annotation.setTextLine(5 - lyric_line + (((_b = this.number) !== null && _b !== void 0 ? _b : 1) - 1) * 2);
     return annotation;
   }
@@ -47400,7 +47015,6 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     /* TODO: editorial objects, style(color), addLyric, insertLyric, hasLyrics */
     /* Later: augmentOrDiminish, getGrace, */
   }
-
   get pitches() {
     return [];
   }
@@ -47583,7 +47197,6 @@ class NotRest extends GeneralNote {
     /* TODO: this.duration.linkage -- need durationUnits */
     /* TODO: check notehead, noteheadFill, noteheadParentheses */
   }
-
   get stemDirection() {
     return this._stemDirection;
   }
@@ -48361,7 +47974,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
       if (pn < 12) {
         pn += 60; // pitchClass
       }
-
       this.ps = pn;
     } else if (pn.match(/\d+/)) {
       this.nameWithOctave = pn;
@@ -48644,7 +48256,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
         return; // exit: already set, do not override
       }
     }
-
     if (acc_orig && acc_orig.displayType === 'never') {
       this.accidental.displayStatus = false;
       return;
@@ -48661,7 +48272,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
         return; // exit: nothing more to do
       }
     }
-
     function same_step_different_pitch(p) {
       if (p.step !== this.step) {
         return false;
@@ -49281,7 +48891,6 @@ class RenderOptions {
       dblclick: undefined
       // resize
     };
-
     this.useVexflowAutobeam = false;
     this.startNewSystem = false;
     // noinspection JSUnusedGlobalSymbols
@@ -49881,7 +49490,6 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_4__.Harmony {
       this.pitches = newPitches;
       // do something...
     }
-
     this._correctBracketedPitches();
   }
   bassScaleDegreeFromNotation(notationObject) {
@@ -50753,7 +50361,6 @@ class Sites {
     let post;
     const objs = Array.from(this.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
     ));
-
     for (const obj of objs) {
       if (obj.isClassOrSubclass(className)) {
         post = obj;
@@ -50987,7 +50594,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       }
       // isSorted will be cloned elsewhere.
     };
-
     this.DOMChangerFunction = e => {
       const canvasOrSVGElement = e.currentTarget;
       if (!(canvasOrSVGElement instanceof HTMLElement) && !(canvasOrSVGElement instanceof HTMLCanvasElement)) {
@@ -51743,7 +51349,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       //                }
       //            }
     }
-
     this.coreElementsChanged({
       clearIsSorted: false
     });
@@ -52006,7 +51611,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       return this; // javascript style;
     }
   }
-
   containerInHierarchy(el) {
     let {
       setActiveSite = true
@@ -52405,7 +52009,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     function different_pitch(other) {
       return other.nameWithOctave !== this.nameWithOctave; // this is `p`
     }
-
     const noteIterator = returnObj.recurse().notesAndRests;
     let last_measure;
     for (const e of noteIterator) {
@@ -52972,6 +52575,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * if height is undefined  will use
    *     `this.renderOptions.height`. If still undefined, will use
    *     `this.estimateStreamHeight()`
+   *
+   * Estimated widths and heights are multiplied by this.renderOptions.scaleFactor.
    */
   createNewDOM(width, height) {
     let elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
@@ -52993,7 +52598,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       newCanvasOrDIV.setAttribute('width', width.toString());
     } else {
       const computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding;
-      newCanvasOrDIV.setAttribute('width', computedWidth.toString());
+      newCanvasOrDIV.setAttribute('width', (computedWidth * this.renderOptions.scaleFactor.x).toString());
     }
     if (height !== undefined) {
       newCanvasOrDIV.setAttribute('height', height.toString());
@@ -53006,7 +52611,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
         computedHeight = this.renderOptions.height;
         // console.log('computed Height: ' + computedHeight);
       }
-
       newCanvasOrDIV.setAttribute('height', (computedHeight * this.renderOptions.scaleFactor.y).toString());
     }
     return newCanvasOrDIV;
@@ -54554,7 +54158,6 @@ class StreamIteratorBase {
       if (ret === false) {
         return false; // must === false;
       }
-
       if (ret === StopIterationSingleton) {
         return ret;
       }
@@ -54593,7 +54196,6 @@ class StreamIteratorBase {
         return this.clone(); // will not work... because == overrides.
       }
     }
-
     const clone = this.clone();
     clone.filters = [...clone.filters, newFilter];
     return clone;
@@ -54789,7 +54391,6 @@ class RecursiveIterator extends StreamIteratorBase {
           // parentIterator: this,
           //
         });
-
         const newStartOffset = this.iteratorStartOffsetInHierarchy + this.srcStream.elementOffset(e);
         this.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
         for (const e of this.childRecursiveIterator) {
@@ -54930,7 +54531,6 @@ function makeBeams(s) {
     if (m.recurse().notesAndRests.length <= 1) {
       continue; // nothing to beam.
     }
-
     const noteGroups = [];
     if (m.hasVoices()) {
       for (const v of m.voices) {
@@ -55086,7 +54686,6 @@ function setStemDirectionOneGroup(group) {
   if (!group.length) {
     return; // should not happen
   }
-
   const stem_directions_found = new Set();
   for (const n of group) {
     if (_up_down_unspecified.includes(n.stemDirection)) {
@@ -55988,11 +55587,9 @@ function renderNotationDivs() {
       thisTNContents = thisTN.textContent;
       thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
     }
-
     if (thisTNContents) {
       thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
     }
-
     if (thisTNContents) {
       const st = TinyNotation(thisTNContents);
       if (thisTN.classList.contains('noPlayback')) {
@@ -56249,7 +55846,6 @@ const barlineMap = {
   none: 'NONE'
   // TODO: Repeats
 };
-
 const vexflowDefaults = {
   softmaxFactor: 10
 };
@@ -56788,7 +56384,6 @@ class Renderer {
         } else {
           beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_0__.Fraction(2, 8)]; // default beam groups
         }
-
         const beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_0__.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
         this.beamGroups.push(...beamGroups);
       }
@@ -57308,7 +56903,6 @@ class Renderer {
       }
       // staveHeight = stave.height;
     }
-
     let nextTicks = 0;
     for (const ee of s) {
       const el = ee; // TODO: get rid of the hacky el.x, el.systemIndex, el.width.
@@ -57337,7 +56931,6 @@ class Renderer {
         }
       }
     }
-
     if (_debug__WEBPACK_IMPORTED_MODULE_1__.debug) {
       for (const n of s) {
         if (n.pitch !== undefined) {
