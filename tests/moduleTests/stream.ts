@@ -442,6 +442,26 @@ export default function tests() {
         assert.ok(true);
     });
 
+    test('music21.stream.Stream.createNewDOM', assert => {
+        const s = music21.tinyNotation.TinyNotation('4/4 c2 c2 c2 c2');
+        s.renderOptions.scaleFactor = {x: 1.0, y: 1.0};
+
+        const where1 = s.createNewDOM();
+        const full_height = parseInt(where1.getAttribute('height'));
+        const full_width = parseInt(where1.getAttribute('width'));
+
+        // sanity check
+        assert.ok(full_height > 0);
+        assert.ok(full_width > 0);
+
+        s.renderOptions.scaleFactor = {x: 0.5, y: 0.5};
+        const where2 = s.createNewDOM();
+        const half_height = parseInt(where2.getAttribute('height'));
+        const half_width = parseInt(where2.getAttribute('width'));
+        assert.equal(full_height / 2, half_height);
+        assert.equal(full_width / 2, half_width);
+    });
+
     test('music21.stream.Stream.getElementsByClass', assert => {
         const s = new music21.stream.Stream();
         const n1 = new music21.note.Note('C#5');
