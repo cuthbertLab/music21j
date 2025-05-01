@@ -75,6 +75,7 @@
             "error",
             {
                 "args": "none",
+                "caughtErrors": "none",
                 "varsIgnorePattern": "^_.*|^i$|^j$|^unused|^junk|^counter"
             }
         ],
@@ -82,6 +83,7 @@
             "error",
             {
                 "args": "none",
+                "caughtErrors": "none",
                 "varsIgnorePattern": "^_.*|^i$|^j$|^unused|^junk|^counter"
             }
         ],
