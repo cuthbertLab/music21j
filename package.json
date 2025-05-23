@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.16.7",
+  "version": "0.16.8",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "releases/music21.debug.js",
   "typings": "releases/src/main.d.ts",
@@ -12,7 +12,7 @@
   ],
   "dependencies": {
     "jsonpickle": "^1.1.2",
-    "midicube": "^0.6.1",
+    "midicube": "^0.9.0",
     "vexflow": "^4.2.3"
   },
   "devDependencies": {
@@ -57,7 +57,7 @@
     "test": "tests"
   },
   "scripts": {
-    "prepublishOnly": "rm -rf releases; cp -rp build/ releases/; rm -rf releases/tests",
+    "prepublishOnly": "rm -rf releases; cp -rp build/ releases/; rm -rf releases/tests; rm releases/README.md",
     "postinstall": "sh scripts/postinstall.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
