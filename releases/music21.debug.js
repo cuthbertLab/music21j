@@ -1,5 +1,5 @@
 /**
- * music21j version 0.17.9 built on 2025-05-27.
+ * music21j version 0.17.12 built on 2025-08-07.
  * Copyright (c) 2013-2025 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -338,11 +338,11 @@ module.exports = function (item) {
 /***/ ((module) => {
 
 /*!
- * midicube 0.9.1 built on 2025-05-23.
+ * midicube 0.9.2 built on 2025-08-07.
  *
  * ----------------------------------------------------------
  *   midicube
- *   2025-05-23 - version 0.9
+ *   2025-05-23 - version 0.9.1
  *
  *   based on MIDI.js. v. 0.3.4 : 2015-03-26
  *
@@ -352,20 +352,7 @@ module.exports = function (item) {
  *   Technologies: Web MIDI API, Web Audio API, HTML5 Audio Tag
  *   ----------------------------------------------------------
  */
-!function(t,e){ true?module.exports=e():0}(self,(()=>(()=>{var t={4601:(t,e,r)=>{var n=r(8420),o=r(3838),i=TypeError;t.exports=function(t){if(n(t))return t;throw i(o(t)+" is not a function")}},7849:(t,e,r)=>{var n=r(1466),o=r(3838),i=TypeError;t.exports=function(t){if(n(t))return t;throw i(o(t)+" is not a constructor")}},7473:(t,e,r)=>{var n=r(8420),o=String,i=TypeError;t.exports=function(t){if("object"==typeof t||n(t))return t;throw i("Can't set "+o(t)+" as a prototype")}},298:(t,e,r)=>{var n=r(1602),o=r(3105),i=r(3610).f,a=n("unscopables"),u=Array.prototype;null==u[a]&&i(u,a,{configurable:!0,value:o(null)}),t.exports=function(t){u[a][t]=!0}},7234:(t,e,r)=>{"use strict";var n=r(7804).charAt;t.exports=function(t,e,r){return e+(r?n(t,e).length:1)}},5190:(t,e,r)=>{var n=r(7658),o=TypeError;t.exports=function(t,e){if(n(e,t))return t;throw o("Incorrect invocation")}},3938:(t,e,r)=>{var n=r(5335),o=String,i=TypeError;t.exports=function(t){if(n(t))return t;throw i(o(t)+" is not an object")}},6004:t=>{t.exports="undefined"!=typeof ArrayBuffer&&"undefined"!=typeof DataView},5343:(t,e,r)=>{"use strict";var n,o,i,a=r(6004),u=r(5077),c=r(200),s=r(8420),f=r(5335),l=r(6490),p=r(3062),h=r(3838),v=r(7712),d=r(7485),y=r(3610).f,g=r(7658),m=r(7970),b=r(9686),A=r(1602),w=r(665),x=r(9206),S=x.enforce,E=x.get,T=c.Int8Array,O=T&&T.prototype,I=c.Uint8ClampedArray,F=I&&I.prototype,C=T&&m(T),k=O&&m(O),q=Object.prototype,M=c.TypeError,B=A("toStringTag"),R=w("TYPED_ARRAY_TAG"),j="TypedArrayConstructor",_=a&&!!b&&"Opera"!==p(c.opera),L=!1,P={Int8Array:1,Uint8Array:1,Uint8ClampedArray:1,Int16Array:2,Uint16Array:2,Int32Array:4,Uint32Array:4,Float32Array:4,Float64Array:8},D={BigInt64Array:8,BigUint64Array:8},N=function(t){var e=m(t);if(f(e)){var r=E(e);return r&&l(r,j)?r[j]:N(e)}},G=function(t){if(!f(t))return!1;var e=p(t);return l(P,e)||l(D,e)};for(n in P)(i=(o=c[n])&&o.prototype)?S(i)[j]=o:_=!1;for(n in D)(i=(o=c[n])&&o.prototype)&&(S(i)[j]=o);if((!_||!s(C)||C===Function.prototype)&&(C=function(){throw M("Incorrect invocation")},_))for(n in P)c[n]&&b(c[n],C);if((!_||!k||k===q)&&(k=C.prototype,_))for(n in P)c[n]&&b(c[n].prototype,k);if(_&&m(F)!==k&&b(F,k),u&&!l(k,B))for(n in L=!0,y(k,B,{get:function(){return f(this)?this[R]:void 0}}),P)c[n]&&v(c[n],R,n);t.exports={NATIVE_ARRAY_BUFFER_VIEWS:_,TYPED_ARRAY_TAG:L&&R,aTypedArray:function(t){if(G(t))return t;throw M("Target is not a typed array")},aTypedArrayConstructor:function(t){if(s(t)&&(!b||g(C,t)))return t;throw M(h(t)+" is not a typed array constructor")},exportTypedArrayMethod:function(t,e,r,n){if(u){if(r)for(var o in P){var i=c[o];if(i&&l(i.prototype,t))try{delete i.prototype[t]}catch(r){try{i.prototype[t]=e}catch(t){}}}k[t]&&!r||d(k,t,r?e:_&&O[t]||e,n)}},exportTypedArrayStaticMethod:function(t,e,r){var n,o;if(u){if(b){if(r)for(n in P)if((o=c[n])&&l(o,t))try{delete o[t]}catch(t){}if(C[t]&&!r)return;try{return d(C,t,r?e:_&&C[t]||e)}catch(t){}}for(n in P)!(o=c[n])||o[t]&&!r||d(o,t,e)}},getTypedArrayConstructor:N,isView:function(t){if(!f(t))return!1;var e=p(t);return"DataView"===e||l(P,e)||l(D,e)},isTypedArray:G,TypedArray:C,TypedArrayPrototype:k}},4497:(t,e,r)=>{"use strict";var n=r(200),o=r(281),i=r(5077),a=r(6004),u=r(2071),c=r(7712),s=r(2760),f=r(2074),l=r(5190),p=r(9328),h=r(3747),v=r(6283),d=r(6431),y=r(7970),g=r(9686),m=r(4789).f,b=r(3610).f,A=r(7806),w=r(6056),x=r(5282),S=r(9206),E=u.PROPER,T=u.CONFIGURABLE,O=S.get,I=S.set,F="ArrayBuffer",C="DataView",k="prototype",q="Wrong index",M=n[F],B=M,R=B&&B[k],j=n[C],_=j&&j[k],L=Object.prototype,P=n.Array,D=n.RangeError,N=o(A),G=o([].reverse),U=d.pack,W=d.unpack,K=function(t){return[255&t]},H=function(t){return[255&t,t>>8&255]},V=function(t){return[255&t,t>>8&255,t>>16&255,t>>24&255]},Y=function(t){return t[3]<<24|t[2]<<16|t[1]<<8|t[0]},J=function(t){return U(t,23,4)},Z=function(t){return U(t,52,8)},X=function(t,e){b(t[k],e,{get:function(){return O(this)[e]}})},Q=function(t,e,r,n){var o=v(r),i=O(t);if(o+e>i.byteLength)throw D(q);var a=O(i.buffer).bytes,u=o+i.byteOffset,c=w(a,u,u+e);return n?c:G(c)},z=function(t,e,r,n,o,i){var a=v(r),u=O(t);if(a+e>u.byteLength)throw D(q);for(var c=O(u.buffer).bytes,s=a+u.byteOffset,f=n(+o),l=0;l<e;l++)c[s+l]=f[i?l:e-l-1]};if(a){var $=E&&M.name!==F;if(f((function(){M(1)}))&&f((function(){new M(-1)}))&&!f((function(){return new M,new M(1.5),new M(NaN),1!=M.length||$&&!T})))$&&T&&c(M,"name",F);else{(B=function(t){return l(this,R),new M(v(t))})[k]=R;for(var tt,et=m(M),rt=0;et.length>rt;)(tt=et[rt++])in B||c(B,tt,M[tt]);R.constructor=B}g&&y(_)!==L&&g(_,L);var nt=new j(new B(2)),ot=o(_.setInt8);nt.setInt8(0,2147483648),nt.setInt8(1,2147483649),!nt.getInt8(0)&&nt.getInt8(1)||s(_,{setInt8:function(t,e){ot(this,t,e<<24>>24)},setUint8:function(t,e){ot(this,t,e<<24>>24)}},{unsafe:!0})}else R=(B=function(t){l(this,R);var e=v(t);I(this,{bytes:N(P(e),0),byteLength:e}),i||(this.byteLength=e)})[k],_=(j=function(t,e,r){l(this,_),l(t,R);var n=O(t).byteLength,o=p(e);if(o<0||o>n)throw D("Wrong offset");if(o+(r=void 0===r?n-o:h(r))>n)throw D("Wrong length");I(this,{buffer:t,byteLength:r,byteOffset:o}),i||(this.buffer=t,this.byteLength=r,this.byteOffset=o)})[k],i&&(X(B,"byteLength"),X(j,"buffer"),X(j,"byteLength"),X(j,"byteOffset")),s(_,{getInt8:function(t){return Q(this,1,t)[0]<<24>>24},getUint8:function(t){return Q(this,1,t)[0]},getInt16:function(t){var e=Q(this,2,t,arguments.length>1?arguments[1]:void 0);return(e[1]<<8|e[0])<<16>>16},getUint16:function(t){var e=Q(this,2,t,arguments.length>1?arguments[1]:void 0);return e[1]<<8|e[0]},getInt32:function(t){return Y(Q(this,4,t,arguments.length>1?arguments[1]:void 0))},getUint32:function(t){return Y(Q(this,4,t,arguments.length>1?arguments[1]:void 0))>>>0},getFloat32:function(t){return W(Q(this,4,t,arguments.length>1?arguments[1]:void 0),23)},getFloat64:function(t){return W(Q(this,8,t,arguments.length>1?arguments[1]:void 0),52)},setInt8:function(t,e){z(this,1,t,K,e)},setUint8:function(t,e){z(this,1,t,K,e)},setInt16:function(t,e){z(this,2,t,H,e,arguments.length>2?arguments[2]:void 0)},setUint16:function(t,e){z(this,2,t,H,e,arguments.length>2?arguments[2]:void 0)},setInt32:function(t,e){z(this,4,t,V,e,arguments.length>2?arguments[2]:void 0)},setUint32:function(t,e){z(this,4,t,V,e,arguments.length>2?arguments[2]:void 0)},setFloat32:function(t,e){z(this,4,t,J,e,arguments.length>2?arguments[2]:void 0)},setFloat64:function(t,e){z(this,8,t,Z,e,arguments.length>2?arguments[2]:void 0)}});x(B,F),x(j,C),t.exports={ArrayBuffer:B,DataView:j}},9688:(t,e,r)=>{"use strict";var n=r(2612),o=r(6539),i=r(3493),a=r(4881),u=Math.min;t.exports=[].copyWithin||function(t,e){var r=n(this),c=i(r),s=o(t,c),f=o(e,c),l=arguments.length>2?arguments[2]:void 0,p=u((void 0===l?c:o(l,c))-f,c-s),h=1;for(f<s&&s<f+p&&(h=-1,f+=p-1,s+=p-1);p-- >0;)f in r?r[s]=r[f]:a(r,s),s+=h,f+=h;return r}},7806:(t,e,r)=>{"use strict";var n=r(2612),o=r(6539),i=r(3493);t.exports=function(t){for(var e=n(this),r=i(e),a=arguments.length,u=o(a>1?arguments[1]:void 0,r),c=a>2?arguments[2]:void 0,s=void 0===c?r:o(c,r);s>u;)e[u++]=t;return e}},447:(t,e,r)=>{var n=r(3493);t.exports=function(t,e){for(var r=0,o=n(e),i=new t(o);o>r;)i[r]=e[r++];return i}},1027:(t,e,r)=>{"use strict";var n=r(6885),o=r(2368),i=r(2612),a=r(1332),u=r(9034),c=r(1466),s=r(3493),f=r(2057),l=r(9526),p=r(1898),h=Array;t.exports=function(t){var e=i(t),r=c(this),v=arguments.length,d=v>1?arguments[1]:void 0,y=void 0!==d;y&&(d=n(d,v>2?arguments[2]:void 0));var g,m,b,A,w,x,S=p(e),E=0;if(!S||this===h&&u(S))for(g=s(e),m=r?new this(g):h(g);g>E;E++)x=y?d(e[E],E):e[E],f(m,E,x);else for(w=(A=l(e,S)).next,m=r?new this:[];!(b=o(w,A)).done;E++)x=y?a(A,d,[b.value,E],!0):b.value,f(m,E,x);return m.length=E,m}},8186:(t,e,r)=>{var n=r(5476),o=r(6539),i=r(3493),a=function(t){return function(e,r,a){var u,c=n(e),s=i(c),f=o(a,s);if(t&&r!=r){for(;s>f;)if((u=c[f++])!=u)return!0}else for(;s>f;f++)if((t||f in c)&&c[f]===r)return t||f||0;return!t&&-1}};t.exports={includes:a(!0),indexOf:a(!1)}},1344:(t,e,r)=>{var n=r(6885),o=r(281),i=r(8664),a=r(2612),u=r(3493),c=r(2998),s=o([].push),f=function(t){var e=1==t,r=2==t,o=3==t,f=4==t,l=6==t,p=7==t,h=5==t||l;return function(v,d,y,g){for(var m,b,A=a(v),w=i(A),x=n(d,y),S=u(w),E=0,T=g||c,O=e?T(v,S):r||p?T(v,0):void 0;S>E;E++)if((h||E in w)&&(b=x(m=w[E],E,A),t))if(e)O[E]=b;else if(b)switch(t){case 3:return!0;case 5:return m;case 6:return E;case 2:s(O,m)}else switch(t){case 4:return!1;case 7:s(O,m)}return l?-1:o||f?f:O}};t.exports={forEach:f(0),map:f(1),filter:f(2),some:f(3),every:f(4),find:f(5),findIndex:f(6),filterReject:f(7)}},3470:(t,e,r)=>{"use strict";var n=r(9070),o=r(5476),i=r(9328),a=r(3493),u=r(2349),c=Math.min,s=[].lastIndexOf,f=!!s&&1/[1].lastIndexOf(1,-0)<0,l=u("lastIndexOf"),p=f||!l;t.exports=p?function(t){if(f)return n(s,this,arguments)||0;var e=o(this),r=a(e),u=r-1;for(arguments.length>1&&(u=c(u,i(arguments[1]))),u<0&&(u=r+u);u>=0;u--)if(u in e&&e[u]===t)return u||0;return-1}:s},5634:(t,e,r)=>{var n=r(2074),o=r(1602),i=r(6845),a=o("species");t.exports=function(t){return i>=51||!n((function(){var e=[];return(e.constructor={})[a]=function(){return{foo:1}},1!==e[t](Boolean).foo}))}},2349:(t,e,r)=>{"use strict";var n=r(2074);t.exports=function(t,e){var r=[][t];return!!r&&n((function(){r.call(null,e||function(){return 1},1)}))}},2237:(t,e,r)=>{var n=r(4601),o=r(2612),i=r(8664),a=r(3493),u=TypeError,c=function(t){return function(e,r,c,s){n(r);var f=o(e),l=i(f),p=a(f),h=t?p-1:0,v=t?-1:1;if(c<2)for(;;){if(h in l){s=l[h],h+=v;break}if(h+=v,t?h<0:p<=h)throw u("Reduce of empty array with no initial value")}for(;t?h>=0:p>h;h+=v)h in l&&(s=r(s,l[h],h,f));return s}};t.exports={left:c(!1),right:c(!0)}},6056:(t,e,r)=>{var n=r(6539),o=r(3493),i=r(2057),a=Array,u=Math.max;t.exports=function(t,e,r){for(var c=o(t),s=n(e,c),f=n(void 0===r?c:r,c),l=a(u(f-s,0)),p=0;s<f;s++,p++)i(l,p,t[s]);return l.length=p,l}},9609:(t,e,r)=>{var n=r(281);t.exports=n([].slice)},8039:(t,e,r)=>{var n=r(6056),o=Math.floor,i=function(t,e){var r=t.length,c=o(r/2);return r<8?a(t,e):u(t,i(n(t,0,c),e),i(n(t,c),e),e)},a=function(t,e){for(var r,n,o=t.length,i=1;i<o;){for(n=i,r=t[i];n&&e(t[n-1],r)>0;)t[n]=t[--n];n!==i++&&(t[n]=r)}return t},u=function(t,e,r,n){for(var o=e.length,i=r.length,a=0,u=0;a<o||u<i;)t[a+u]=a<o&&u<i?n(e[a],r[u])<=0?e[a++]:r[u++]:a<o?e[a++]:r[u++];return t};t.exports=i},3892:(t,e,r)=>{var n=r(8679),o=r(1466),i=r(5335),a=r(1602)("species"),u=Array;t.exports=function(t){var e;return n(t)&&(e=t.constructor,(o(e)&&(e===u||n(e.prototype))||i(e)&&null===(e=e[a]))&&(e=void 0)),void 0===e?u:e}},2998:(t,e,r)=>{var n=r(3892);t.exports=function(t,e){return new(n(t))(0===e?0:e)}},1332:(t,e,r)=>{var n=r(3938),o=r(9868);t.exports=function(t,e,r,i){try{return i?e(n(r)[0],r[1]):e(r)}catch(e){o(t,"throw",e)}}},7499:(t,e,r)=>{var n=r(1602)("iterator"),o=!1;try{var i=0,a={next:function(){return{done:!!i++}},return:function(){o=!0}};a[n]=function(){return this},Array.from(a,(function(){throw 2}))}catch(t){}t.exports=function(t,e){if(!e&&!o)return!1;var r=!1;try{var i={};i[n]=function(){return{next:function(){return{done:r=!0}}}},t(i)}catch(t){}return r}},8569:(t,e,r)=>{var n=r(281),o=n({}.toString),i=n("".slice);t.exports=function(t){return i(o(t),8,-1)}},3062:(t,e,r)=>{var n=r(3129),o=r(8420),i=r(8569),a=r(1602)("toStringTag"),u=Object,c="Arguments"==i(function(){return arguments}());t.exports=n?i:function(t){var e,r,n;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(r=function(t,e){try{return t[e]}catch(t){}}(e=u(t),a))?r:c?i(e):"Object"==(n=i(e))&&o(e.callee)?"Arguments":n}},4361:(t,e,r)=>{var n=r(6490),o=r(5816),i=r(7632),a=r(3610);t.exports=function(t,e,r){for(var u=o(e),c=a.f,s=i.f,f=0;f<u.length;f++){var l=u[f];n(t,l)||r&&n(r,l)||c(t,l,s(e,l))}}},4177:(t,e,r)=>{var n=r(1602)("match");t.exports=function(t){var e=/./;try{"/./"[t](e)}catch(r){try{return e[n]=!1,"/./"[t](e)}catch(t){}}return!1}},7168:(t,e,r)=>{var n=r(2074);t.exports=!n((function(){function t(){}return t.prototype.constructor=null,Object.getPrototypeOf(new t)!==t.prototype}))},8296:t=>{t.exports=function(t,e){return{value:t,done:e}}},7712:(t,e,r)=>{var n=r(5077),o=r(3610),i=r(6843);t.exports=n?function(t,e,r){return o.f(t,e,i(1,r))}:function(t,e,r){return t[e]=r,t}},6843:t=>{t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},2057:(t,e,r)=>{"use strict";var n=r(6032),o=r(3610),i=r(6843);t.exports=function(t,e,r){var a=n(e);a in t?o.f(t,a,i(0,r)):t[a]=r}},1137:(t,e,r)=>{"use strict";var n=r(3938),o=r(9751),i=TypeError;t.exports=function(t){if(n(this),"string"===t||"default"===t)t="string";else if("number"!==t)throw i("Incorrect hint");return o(this,t)}},7485:(t,e,r)=>{var n=r(8420),o=r(3610),i=r(8218),a=r(9430);t.exports=function(t,e,r,u){u||(u={});var c=u.enumerable,s=void 0!==u.name?u.name:e;if(n(r)&&i(r,s,u),u.global)c?t[e]=r:a(e,r);else{try{u.unsafe?t[e]&&(c=!0):delete t[e]}catch(t){}c?t[e]=r:o.f(t,e,{value:r,enumerable:!1,configurable:!u.nonConfigurable,writable:!u.nonWritable})}return t}},2760:(t,e,r)=>{var n=r(7485);t.exports=function(t,e,r){for(var o in e)n(t,o,e[o],r);return t}},9430:(t,e,r)=>{var n=r(200),o=Object.defineProperty;t.exports=function(t,e){try{o(n,t,{value:e,configurable:!0,writable:!0})}catch(r){n[t]=e}return e}},4881:(t,e,r)=>{"use strict";var n=r(3838),o=TypeError;t.exports=function(t,e){if(!delete t[e])throw o("Cannot delete property "+n(e)+" of "+n(t))}},5077:(t,e,r)=>{var n=r(2074);t.exports=!n((function(){return 7!=Object.defineProperty({},1,{get:function(){return 7}})[1]}))},6568:t=>{var e="object"==typeof document&&document.all,r=void 0===e&&void 0!==e;t.exports={all:e,IS_HTMLDDA:r}},3262:(t,e,r)=>{var n=r(200),o=r(5335),i=n.document,a=o(i)&&o(i.createElement);t.exports=function(t){return a?i.createElement(t):{}}},5549:t=>{t.exports={CSSRuleList:0,CSSStyleDeclaration:0,CSSValueList:0,ClientRectList:0,DOMRectList:0,DOMStringList:0,DOMTokenList:1,DataTransferItemList:0,FileList:0,HTMLAllCollection:0,HTMLCollection:0,HTMLFormElement:0,HTMLSelectElement:0,MediaList:0,MimeTypeArray:0,NamedNodeMap:0,NodeList:1,PaintRequestList:0,Plugin:0,PluginArray:0,SVGLengthList:0,SVGNumberList:0,SVGPathSegList:0,SVGPointList:0,SVGStringList:0,SVGTransformList:0,SourceBufferList:0,StyleSheetList:0,TextTrackCueList:0,TextTrackList:0,TouchList:0}},2975:(t,e,r)=>{var n=r(3262)("span").classList,o=n&&n.constructor&&n.constructor.prototype;t.exports=o===Object.prototype?void 0:o},3727:(t,e,r)=>{var n=r(7061).match(/firefox\/(\d+)/i);t.exports=!!n&&+n[1]},6874:t=>{t.exports="function"==typeof Bun&&Bun&&"string"==typeof Bun.version},7413:(t,e,r)=>{var n=r(7061);t.exports=/MSIE|Trident/.test(n)},7061:(t,e,r)=>{var n=r(6492);t.exports=n("navigator","userAgent")||""},6845:(t,e,r)=>{var n,o,i=r(200),a=r(7061),u=i.process,c=i.Deno,s=u&&u.versions||c&&c.version,f=s&&s.v8;f&&(o=(n=f.split("."))[0]>0&&n[0]<4?1:+(n[0]+n[1])),!o&&a&&(!(n=a.match(/Edge\/(\d+)/))||n[1]>=74)&&(n=a.match(/Chrome\/(\d+)/))&&(o=+n[1]),t.exports=o},2346:(t,e,r)=>{var n=r(7061).match(/AppleWebKit\/(\d+)\./);t.exports=!!n&&+n[1]},290:t=>{t.exports=["constructor","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","valueOf"]},1605:(t,e,r)=>{var n=r(200),o=r(7632).f,i=r(7712),a=r(7485),u=r(9430),c=r(4361),s=r(4977);t.exports=function(t,e){var r,f,l,p,h,v=t.target,d=t.global,y=t.stat;if(r=d?n:y?n[v]||u(v,{}):(n[v]||{}).prototype)for(f in e){if(p=e[f],l=t.dontCallGetSet?(h=o(r,f))&&h.value:r[f],!s(d?f:v+(y?".":"#")+f,t.forced)&&void 0!==l){if(typeof p==typeof l)continue;c(p,l)}(t.sham||l&&l.sham)&&i(p,"sham",!0),a(r,f,p,t)}}},2074:t=>{t.exports=function(t){try{return!!t()}catch(t){return!0}}},779:(t,e,r)=>{"use strict";r(7136);var n=r(3091),o=r(7485),i=r(54),a=r(2074),u=r(1602),c=r(7712),s=u("species"),f=RegExp.prototype;t.exports=function(t,e,r,l){var p=u(t),h=!a((function(){var e={};return e[p]=function(){return 7},7!=""[t](e)})),v=h&&!a((function(){var e=!1,r=/a/;return"split"===t&&((r={}).constructor={},r.constructor[s]=function(){return r},r.flags="",r[p]=/./[p]),r.exec=function(){return e=!0,null},r[p](""),!e}));if(!h||!v||r){var d=n(/./[p]),y=e(p,""[t],(function(t,e,r,o,a){var u=n(t),c=e.exec;return c===i||c===f.exec?h&&!a?{done:!0,value:d(e,r,o)}:{done:!0,value:u(r,e,o)}:{done:!1}}));o(String.prototype,t,y[0]),o(f,p,y[1])}l&&c(f[p],"sham",!0)}},9070:(t,e,r)=>{var n=r(8823),o=Function.prototype,i=o.apply,a=o.call;t.exports="object"==typeof Reflect&&Reflect.apply||(n?a.bind(i):function(){return a.apply(i,arguments)})},6885:(t,e,r)=>{var n=r(3091),o=r(4601),i=r(8823),a=n(n.bind);t.exports=function(t,e){return o(t),void 0===e?t:i?a(t,e):function(){return t.apply(e,arguments)}}},8823:(t,e,r)=>{var n=r(2074);t.exports=!n((function(){var t=function(){}.bind();return"function"!=typeof t||t.hasOwnProperty("prototype")}))},8891:(t,e,r)=>{"use strict";var n=r(281),o=r(4601),i=r(5335),a=r(6490),u=r(9609),c=r(8823),s=Function,f=n([].concat),l=n([].join),p={};t.exports=c?s.bind:function(t){var e=o(this),r=e.prototype,n=u(arguments,1),c=function(){var r=f(n,u(arguments));return this instanceof c?function(t,e,r){if(!a(p,e)){for(var n=[],o=0;o<e;o++)n[o]="a["+o+"]";p[e]=s("C,a","return new C("+l(n,",")+")")}return p[e](t,r)}(e,r.length,r):e.apply(t,r)};return i(r)&&(c.prototype=r),c}},2368:(t,e,r)=>{var n=r(8823),o=Function.prototype.call;t.exports=n?o.bind(o):function(){return o.apply(o,arguments)}},2071:(t,e,r)=>{var n=r(5077),o=r(6490),i=Function.prototype,a=n&&Object.getOwnPropertyDescriptor,u=o(i,"name"),c=u&&"something"===function(){}.name,s=u&&(!n||n&&a(i,"name").configurable);t.exports={EXISTS:u,PROPER:c,CONFIGURABLE:s}},3091:(t,e,r)=>{var n=r(8569),o=r(281);t.exports=function(t){if("Function"===n(t))return o(t)}},281:(t,e,r)=>{var n=r(8823),o=Function.prototype,i=o.call,a=n&&o.bind.bind(i,i);t.exports=n?a:function(t){return function(){return i.apply(t,arguments)}}},6492:(t,e,r)=>{var n=r(200),o=r(8420);t.exports=function(t,e){return arguments.length<2?(r=n[t],o(r)?r:void 0):n[t]&&n[t][e];var r}},1898:(t,e,r)=>{var n=r(3062),o=r(6457),i=r(8406),a=r(2228),u=r(1602)("iterator");t.exports=function(t){if(!i(t))return o(t,u)||o(t,"@@iterator")||a[n(t)]}},9526:(t,e,r)=>{var n=r(2368),o=r(4601),i=r(3938),a=r(3838),u=r(1898),c=TypeError;t.exports=function(t,e){var r=arguments.length<2?u(t):e;if(o(r))return i(n(r,t));throw c(a(t)+" is not iterable")}},6457:(t,e,r)=>{var n=r(4601),o=r(8406);t.exports=function(t,e){var r=t[e];return o(r)?void 0:n(r)}},4433:(t,e,r)=>{var n=r(281),o=r(2612),i=Math.floor,a=n("".charAt),u=n("".replace),c=n("".slice),s=/\$([$&'`]|\d{1,2}|<[^>]*>)/g,f=/\$([$&'`]|\d{1,2})/g;t.exports=function(t,e,r,n,l,p){var h=r+t.length,v=n.length,d=f;return void 0!==l&&(l=o(l),d=s),u(p,d,(function(o,u){var s;switch(a(u,0)){case"$":return"$";case"&":return t;case"`":return c(e,0,r);case"'":return c(e,h);case"<":s=l[c(u,1,-1)];break;default:var f=+u;if(0===f)return o;if(f>v){var p=i(f/10);return 0===p?o:p<=v?void 0===n[p-1]?a(u,1):n[p-1]+a(u,1):o}s=n[f-1]}return void 0===s?"":s}))}},200:(t,e,r)=>{var n=function(t){return t&&t.Math==Math&&t};t.exports=n("object"==typeof globalThis&&globalThis)||n("object"==typeof window&&window)||n("object"==typeof self&&self)||n("object"==typeof r.g&&r.g)||function(){return this}()||Function("return this")()},6490:(t,e,r)=>{var n=r(281),o=r(2612),i=n({}.hasOwnProperty);t.exports=Object.hasOwn||function(t,e){return i(o(t),e)}},7708:t=>{t.exports={}},8890:(t,e,r)=>{var n=r(6492);t.exports=n("document","documentElement")},7694:(t,e,r)=>{var n=r(5077),o=r(2074),i=r(3262);t.exports=!n&&!o((function(){return 7!=Object.defineProperty(i("div"),"a",{get:function(){return 7}}).a}))},6431:t=>{var e=Array,r=Math.abs,n=Math.pow,o=Math.floor,i=Math.log,a=Math.LN2;t.exports={pack:function(t,u,c){var s,f,l,p=e(c),h=8*c-u-1,v=(1<<h)-1,d=v>>1,y=23===u?n(2,-24)-n(2,-77):0,g=t<0||0===t&&1/t<0?1:0,m=0;for((t=r(t))!=t||t===1/0?(f=t!=t?1:0,s=v):(s=o(i(t)/a),t*(l=n(2,-s))<1&&(s--,l*=2),(t+=s+d>=1?y/l:y*n(2,1-d))*l>=2&&(s++,l/=2),s+d>=v?(f=0,s=v):s+d>=1?(f=(t*l-1)*n(2,u),s+=d):(f=t*n(2,d-1)*n(2,u),s=0));u>=8;)p[m++]=255&f,f/=256,u-=8;for(s=s<<u|f,h+=u;h>0;)p[m++]=255&s,s/=256,h-=8;return p[--m]|=128*g,p},unpack:function(t,e){var r,o=t.length,i=8*o-e-1,a=(1<<i)-1,u=a>>1,c=i-7,s=o-1,f=t[s--],l=127&f;for(f>>=7;c>0;)l=256*l+t[s--],c-=8;for(r=l&(1<<-c)-1,l>>=-c,c+=e;c>0;)r=256*r+t[s--],c-=8;if(0===l)l=1-u;else{if(l===a)return r?NaN:f?-1/0:1/0;r+=n(2,e),l-=u}return(f?-1:1)*r*n(2,l-e)}}},8664:(t,e,r)=>{var n=r(281),o=r(2074),i=r(8569),a=Object,u=n("".split);t.exports=o((function(){return!a("z").propertyIsEnumerable(0)}))?function(t){return"String"==i(t)?u(t,""):a(t)}:a},3054:(t,e,r)=>{var n=r(8420),o=r(5335),i=r(9686);t.exports=function(t,e,r){var a,u;return i&&n(a=e.constructor)&&a!==r&&o(u=a.prototype)&&u!==r.prototype&&i(t,u),t}},9965:(t,e,r)=>{var n=r(281),o=r(8420),i=r(9310),a=n(Function.toString);o(i.inspectSource)||(i.inspectSource=function(t){return a(t)}),t.exports=i.inspectSource},9206:(t,e,r)=>{var n,o,i,a=r(8369),u=r(200),c=r(5335),s=r(7712),f=r(6490),l=r(9310),p=r(5904),h=r(7708),v="Object already initialized",d=u.TypeError,y=u.WeakMap;if(a||l.state){var g=l.state||(l.state=new y);g.get=g.get,g.has=g.has,g.set=g.set,n=function(t,e){if(g.has(t))throw d(v);return e.facade=t,g.set(t,e),e},o=function(t){return g.get(t)||{}},i=function(t){return g.has(t)}}else{var m=p("state");h[m]=!0,n=function(t,e){if(f(t,m))throw d(v);return e.facade=t,s(t,m,e),e},o=function(t){return f(t,m)?t[m]:{}},i=function(t){return f(t,m)}}t.exports={set:n,get:o,has:i,enforce:function(t){return i(t)?o(t):n(t,{})},getterFor:function(t){return function(e){var r;if(!c(e)||(r=o(e)).type!==t)throw d("Incompatible receiver, "+t+" required");return r}}}},9034:(t,e,r)=>{var n=r(1602),o=r(2228),i=n("iterator"),a=Array.prototype;t.exports=function(t){return void 0!==t&&(o.Array===t||a[i]===t)}},8679:(t,e,r)=>{var n=r(8569);t.exports=Array.isArray||function(t){return"Array"==n(t)}},7472:(t,e,r)=>{var n=r(3062),o=r(281)("".slice);t.exports=function(t){return"Big"===o(n(t),0,3)}},8420:(t,e,r)=>{var n=r(6568),o=n.all;t.exports=n.IS_HTMLDDA?function(t){return"function"==typeof t||t===o}:function(t){return"function"==typeof t}},1466:(t,e,r)=>{var n=r(281),o=r(2074),i=r(8420),a=r(3062),u=r(6492),c=r(9965),s=function(){},f=[],l=u("Reflect","construct"),p=/^\s*(?:class|function)\b/,h=n(p.exec),v=!p.exec(s),d=function(t){if(!i(t))return!1;try{return l(s,f,t),!0}catch(t){return!1}},y=function(t){if(!i(t))return!1;switch(a(t)){case"AsyncFunction":case"GeneratorFunction":case"AsyncGeneratorFunction":return!1}try{return v||!!h(p,c(t))}catch(t){return!0}};y.sham=!0,t.exports=!l||o((function(){var t;return d(d.call)||!d(Object)||!d((function(){t=!0}))||t}))?y:d},4977:(t,e,r)=>{var n=r(2074),o=r(8420),i=/#|\.prototype\./,a=function(t,e){var r=c[u(t)];return r==f||r!=s&&(o(e)?n(e):!!e)},u=a.normalize=function(t){return String(t).replace(i,".").toLowerCase()},c=a.data={},s=a.NATIVE="N",f=a.POLYFILL="P";t.exports=a},3496:(t,e,r)=>{var n=r(5335),o=Math.floor;t.exports=Number.isInteger||function(t){return!n(t)&&isFinite(t)&&o(t)===t}},8406:t=>{t.exports=function(t){return null==t}},5335:(t,e,r)=>{var n=r(8420),o=r(6568),i=o.all;t.exports=o.IS_HTMLDDA?function(t){return"object"==typeof t?null!==t:n(t)||t===i}:function(t){return"object"==typeof t?null!==t:n(t)}},6926:t=>{t.exports=!1},2449:(t,e,r)=>{var n=r(5335),o=r(8569),i=r(1602)("match");t.exports=function(t){var e;return n(t)&&(void 0!==(e=t[i])?!!e:"RegExp"==o(t))}},2328:(t,e,r)=>{var n=r(6492),o=r(8420),i=r(7658),a=r(5225),u=Object;t.exports=a?function(t){return"symbol"==typeof t}:function(t){var e=n("Symbol");return o(e)&&i(e.prototype,u(t))}},9868:(t,e,r)=>{var n=r(2368),o=r(3938),i=r(6457);t.exports=function(t,e,r){var a,u;o(t);try{if(!(a=i(t,"return"))){if("throw"===e)throw r;return r}a=n(a,t)}catch(t){u=!0,a=t}if("throw"===e)throw r;if(u)throw a;return o(a),r}},8287:(t,e,r)=>{"use strict";var n=r(9306).IteratorPrototype,o=r(3105),i=r(6843),a=r(5282),u=r(2228),c=function(){return this};t.exports=function(t,e,r,s){var f=e+" Iterator";return t.prototype=o(n,{next:i(+!s,r)}),a(t,f,!1,!0),u[f]=c,t}},6409:(t,e,r)=>{"use strict";var n=r(1605),o=r(2368),i=r(6926),a=r(2071),u=r(8420),c=r(8287),s=r(7970),f=r(9686),l=r(5282),p=r(7712),h=r(7485),v=r(1602),d=r(2228),y=r(9306),g=a.PROPER,m=a.CONFIGURABLE,b=y.IteratorPrototype,A=y.BUGGY_SAFARI_ITERATORS,w=v("iterator"),x="keys",S="values",E="entries",T=function(){return this};t.exports=function(t,e,r,a,v,y,O){c(r,e,a);var I,F,C,k=function(t){if(t===v&&j)return j;if(!A&&t in B)return B[t];switch(t){case x:case S:case E:return function(){return new r(this,t)}}return function(){return new r(this)}},q=e+" Iterator",M=!1,B=t.prototype,R=B[w]||B["@@iterator"]||v&&B[v],j=!A&&R||k(v),_="Array"==e&&B.entries||R;if(_&&(I=s(_.call(new t)))!==Object.prototype&&I.next&&(i||s(I)===b||(f?f(I,b):u(I[w])||h(I,w,T)),l(I,q,!0,!0),i&&(d[q]=T)),g&&v==S&&R&&R.name!==S&&(!i&&m?p(B,"name",S):(M=!0,j=function(){return o(R,this)})),v)if(F={values:k(S),keys:y?j:k(x),entries:k(E)},O)for(C in F)(A||M||!(C in B))&&h(B,C,F[C]);else n({target:e,proto:!0,forced:A||M},F);return i&&!O||B[w]===j||h(B,w,j,{name:v}),d[e]=j,F}},9306:(t,e,r)=>{"use strict";var n,o,i,a=r(2074),u=r(8420),c=r(5335),s=r(3105),f=r(7970),l=r(7485),p=r(1602),h=r(6926),v=p("iterator"),d=!1;[].keys&&("next"in(i=[].keys())?(o=f(f(i)))!==Object.prototype&&(n=o):d=!0),!c(n)||a((function(){var t={};return n[v].call(t)!==t}))?n={}:h&&(n=s(n)),u(n[v])||l(n,v,(function(){return this})),t.exports={IteratorPrototype:n,BUGGY_SAFARI_ITERATORS:d}},2228:t=>{t.exports={}},3493:(t,e,r)=>{var n=r(3747);t.exports=function(t){return n(t.length)}},8218:(t,e,r)=>{var n=r(2074),o=r(8420),i=r(6490),a=r(5077),u=r(2071).CONFIGURABLE,c=r(9965),s=r(9206),f=s.enforce,l=s.get,p=Object.defineProperty,h=a&&!n((function(){return 8!==p((function(){}),"length",{value:8}).length})),v=String(String).split("String"),d=t.exports=function(t,e,r){"Symbol("===String(e).slice(0,7)&&(e="["+String(e).replace(/^Symbol\(([^)]*)\)/,"$1")+"]"),r&&r.getter&&(e="get "+e),r&&r.setter&&(e="set "+e),(!i(t,"name")||u&&t.name!==e)&&(a?p(t,"name",{value:e,configurable:!0}):t.name=e),h&&r&&i(r,"arity")&&t.length!==r.arity&&p(t,"length",{value:r.arity});try{r&&i(r,"constructor")&&r.constructor?a&&p(t,"prototype",{writable:!1}):t.prototype&&(t.prototype=void 0)}catch(t){}var n=f(t);return i(n,"source")||(n.source=v.join("string"==typeof e?e:"")),t};Function.prototype.toString=d((function(){return o(this)&&l(this).source||c(this)}),"toString")},9830:t=>{var e=Math.ceil,r=Math.floor;t.exports=Math.trunc||function(t){var n=+t;return(n>0?r:e)(n)}},2588:(t,e,r)=>{var n=r(2449),o=TypeError;t.exports=function(t){if(n(t))throw o("The method doesn't accept regular expressions");return t}},5963:(t,e,r)=>{var n=r(200),o=r(2074),i=r(281),a=r(5362),u=r(9163).trim,c=r(5073),s=i("".charAt),f=n.parseFloat,l=n.Symbol,p=l&&l.iterator,h=1/f(c+"-0")!=-1/0||p&&!o((function(){f(Object(p))}));t.exports=h?function(t){var e=u(a(t)),r=f(e);return 0===r&&"-"==s(e,0)?-0:r}:f},7292:(t,e,r)=>{var n=r(200),o=r(2074),i=r(281),a=r(5362),u=r(9163).trim,c=r(5073),s=n.parseInt,f=n.Symbol,l=f&&f.iterator,p=/^[+-]?0x/i,h=i(p.exec),v=8!==s(c+"08")||22!==s(c+"0x16")||l&&!o((function(){s(Object(l))}));t.exports=v?function(t,e){var r=u(a(t));return s(r,e>>>0||(h(p,r)?16:10))}:s},3105:(t,e,r)=>{var n,o=r(3938),i=r(5318),a=r(290),u=r(7708),c=r(8890),s=r(3262),f=r(5904),l="prototype",p="script",h=f("IE_PROTO"),v=function(){},d=function(t){return"<"+p+">"+t+"</"+p+">"},y=function(t){t.write(d("")),t.close();var e=t.parentWindow.Object;return t=null,e},g=function(){try{n=new ActiveXObject("htmlfile")}catch(t){}var t,e,r;g="undefined"!=typeof document?document.domain&&n?y(n):(e=s("iframe"),r="java"+p+":",e.style.display="none",c.appendChild(e),e.src=String(r),(t=e.contentWindow.document).open(),t.write(d("document.F=Object")),t.close(),t.F):y(n);for(var o=a.length;o--;)delete g[l][a[o]];return g()};u[h]=!0,t.exports=Object.create||function(t,e){var r;return null!==t?(v[l]=o(t),r=new v,v[l]=null,r[h]=t):r=g(),void 0===e?r:i.f(r,e)}},5318:(t,e,r)=>{var n=r(5077),o=r(4491),i=r(3610),a=r(3938),u=r(5476),c=r(1641);e.f=n&&!o?Object.defineProperties:function(t,e){a(t);for(var r,n=u(e),o=c(e),s=o.length,f=0;s>f;)i.f(t,r=o[f++],n[r]);return t}},3610:(t,e,r)=>{var n=r(5077),o=r(7694),i=r(4491),a=r(3938),u=r(6032),c=TypeError,s=Object.defineProperty,f=Object.getOwnPropertyDescriptor,l="enumerable",p="configurable",h="writable";e.f=n?i?function(t,e,r){if(a(t),e=u(e),a(r),"function"==typeof t&&"prototype"===e&&"value"in r&&h in r&&!r[h]){var n=f(t,e);n&&n[h]&&(t[e]=r.value,r={configurable:p in r?r[p]:n[p],enumerable:l in r?r[l]:n[l],writable:!1})}return s(t,e,r)}:s:function(t,e,r){if(a(t),e=u(e),a(r),o)try{return s(t,e,r)}catch(t){}if("get"in r||"set"in r)throw c("Accessors not supported");return"value"in r&&(t[e]=r.value),t}},7632:(t,e,r)=>{var n=r(5077),o=r(2368),i=r(9304),a=r(6843),u=r(5476),c=r(6032),s=r(6490),f=r(7694),l=Object.getOwnPropertyDescriptor;e.f=n?l:function(t,e){if(t=u(t),e=c(e),f)try{return l(t,e)}catch(t){}if(s(t,e))return a(!o(i.f,t,e),t[e])}},6509:(t,e,r)=>{var n=r(8569),o=r(5476),i=r(4789).f,a=r(6056),u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[];t.exports.f=function(t){return u&&"Window"==n(t)?function(t){try{return i(t)}catch(t){return a(u)}}(t):i(o(t))}},4789:(t,e,r)=>{var n=r(6347),o=r(290).concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return n(t,o)}},8916:(t,e)=>{e.f=Object.getOwnPropertySymbols},7970:(t,e,r)=>{var n=r(6490),o=r(8420),i=r(2612),a=r(5904),u=r(7168),c=a("IE_PROTO"),s=Object,f=s.prototype;t.exports=u?s.getPrototypeOf:function(t){var e=i(t);if(n(e,c))return e[c];var r=e.constructor;return o(r)&&e instanceof r?r.prototype:e instanceof s?f:null}},7658:(t,e,r)=>{var n=r(281);t.exports=n({}.isPrototypeOf)},6347:(t,e,r)=>{var n=r(281),o=r(6490),i=r(5476),a=r(8186).indexOf,u=r(7708),c=n([].push);t.exports=function(t,e){var r,n=i(t),s=0,f=[];for(r in n)!o(u,r)&&o(n,r)&&c(f,r);for(;e.length>s;)o(n,r=e[s++])&&(~a(f,r)||c(f,r));return f}},1641:(t,e,r)=>{var n=r(6347),o=r(290);t.exports=Object.keys||function(t){return n(t,o)}},9304:(t,e)=>{"use strict";var r={}.propertyIsEnumerable,n=Object.getOwnPropertyDescriptor,o=n&&!r.call({1:2},1);e.f=o?function(t){var e=n(this,t);return!!e&&e.enumerable}:r},9686:(t,e,r)=>{var n=r(281),o=r(3938),i=r(7473);t.exports=Object.setPrototypeOf||("__proto__"in{}?function(){var t,e=!1,r={};try{(t=n(Object.getOwnPropertyDescriptor(Object.prototype,"__proto__").set))(r,[]),e=r instanceof Array}catch(t){}return function(r,n){return o(r),i(n),e?t(r,n):r.__proto__=n,r}}():void 0)},3172:(t,e,r)=>{var n=r(5077),o=r(281),i=r(1641),a=r(5476),u=o(r(9304).f),c=o([].push),s=function(t){return function(e){for(var r,o=a(e),s=i(o),f=s.length,l=0,p=[];f>l;)r=s[l++],n&&!u(o,r)||c(p,t?[r,o[r]]:o[r]);return p}};t.exports={entries:s(!0),values:s(!1)}},4972:(t,e,r)=>{"use strict";var n=r(3129),o=r(3062);t.exports=n?{}.toString:function(){return"[object "+o(this)+"]"}},9751:(t,e,r)=>{var n=r(2368),o=r(8420),i=r(5335),a=TypeError;t.exports=function(t,e){var r,u;if("string"===e&&o(r=t.toString)&&!i(u=n(r,t)))return u;if(o(r=t.valueOf)&&!i(u=n(r,t)))return u;if("string"!==e&&o(r=t.toString)&&!i(u=n(r,t)))return u;throw a("Can't convert object to primitive value")}},5816:(t,e,r)=>{var n=r(6492),o=r(281),i=r(4789),a=r(8916),u=r(3938),c=o([].concat);t.exports=n("Reflect","ownKeys")||function(t){var e=i.f(u(t)),r=a.f;return r?c(e,r(t)):e}},9720:(t,e,r)=>{var n=r(200);t.exports=n},6793:(t,e,r)=>{var n=r(2368),o=r(3938),i=r(8420),a=r(8569),u=r(54),c=TypeError;t.exports=function(t,e){var r=t.exec;if(i(r)){var s=n(r,t,e);return null!==s&&o(s),s}if("RegExp"===a(t))return n(u,t,e);throw c("RegExp#exec called on incompatible receiver")}},54:(t,e,r)=>{"use strict";var n,o,i=r(2368),a=r(281),u=r(5362),c=r(6844),s=r(2192),f=r(2),l=r(3105),p=r(9206).get,h=r(1036),v=r(8121),d=f("native-string-replace",String.prototype.replace),y=RegExp.prototype.exec,g=y,m=a("".charAt),b=a("".indexOf),A=a("".replace),w=a("".slice),x=(o=/b*/g,i(y,n=/a/,"a"),i(y,o,"a"),0!==n.lastIndex||0!==o.lastIndex),S=s.BROKEN_CARET,E=void 0!==/()??/.exec("")[1];(x||E||S||h||v)&&(g=function(t){var e,r,n,o,a,s,f,h=this,v=p(h),T=u(t),O=v.raw;if(O)return O.lastIndex=h.lastIndex,e=i(g,O,T),h.lastIndex=O.lastIndex,e;var I=v.groups,F=S&&h.sticky,C=i(c,h),k=h.source,q=0,M=T;if(F&&(C=A(C,"y",""),-1===b(C,"g")&&(C+="g"),M=w(T,h.lastIndex),h.lastIndex>0&&(!h.multiline||h.multiline&&"\n"!==m(T,h.lastIndex-1))&&(k="(?: "+k+")",M=" "+M,q++),r=new RegExp("^(?:"+k+")",C)),E&&(r=new RegExp("^"+k+"$(?!\\s)",C)),x&&(n=h.lastIndex),o=i(y,F?r:h,M),F?o?(o.input=w(o.input,q),o[0]=w(o[0],q),o.index=h.lastIndex,h.lastIndex+=o[0].length):h.lastIndex=0:x&&o&&(h.lastIndex=h.global?o.index+o[0].length:n),E&&o&&o.length>1&&i(d,o[0],r,(function(){for(a=1;a<arguments.length-2;a++)void 0===arguments[a]&&(o[a]=void 0)})),o&&I)for(o.groups=s=l(null),a=0;a<I.length;a++)s[(f=I[a])[0]]=o[f[1]];return o}),t.exports=g},6844:(t,e,r)=>{"use strict";var n=r(3938);t.exports=function(){var t=n(this),e="";return t.hasIndices&&(e+="d"),t.global&&(e+="g"),t.ignoreCase&&(e+="i"),t.multiline&&(e+="m"),t.dotAll&&(e+="s"),t.unicode&&(e+="u"),t.unicodeSets&&(e+="v"),t.sticky&&(e+="y"),e}},353:(t,e,r)=>{var n=r(2368),o=r(6490),i=r(7658),a=r(6844),u=RegExp.prototype;t.exports=function(t){var e=t.flags;return void 0!==e||"flags"in u||o(t,"flags")||!i(u,t)?e:n(a,t)}},2192:(t,e,r)=>{var n=r(2074),o=r(200).RegExp,i=n((function(){var t=o("a","y");return t.lastIndex=2,null!=t.exec("abcd")})),a=i||n((function(){return!o("a","y").sticky})),u=i||n((function(){var t=o("^r","gy");return t.lastIndex=2,null!=t.exec("str")}));t.exports={BROKEN_CARET:u,MISSED_STICKY:a,UNSUPPORTED_Y:i}},1036:(t,e,r)=>{var n=r(2074),o=r(200).RegExp;t.exports=n((function(){var t=o(".","s");return!(t.dotAll&&t.exec("\n")&&"s"===t.flags)}))},8121:(t,e,r)=>{var n=r(2074),o=r(200).RegExp;t.exports=n((function(){var t=o("(?<a>b)","g");return"b"!==t.exec("b").groups.a||"bc"!=="b".replace(t,"$<a>c")}))},1229:(t,e,r)=>{var n=r(8406),o=TypeError;t.exports=function(t){if(n(t))throw o("Can't call method on "+t);return t}},8827:(t,e,r)=>{"use strict";var n,o=r(200),i=r(9070),a=r(8420),u=r(6874),c=r(7061),s=r(9609),f=r(6589),l=o.Function,p=/MSIE .\./.test(c)||u&&((n=o.Bun.version.split(".")).length<3||0==n[0]&&(n[1]<3||3==n[1]&&0==n[2]));t.exports=function(t,e){var r=e?2:1;return p?function(n,o){var u=f(arguments.length,1)>r,c=a(n)?n:l(n),p=u?s(arguments,r):[],h=u?function(){i(c,this,p)}:c;return e?t(h,o):t(h)}:t}},3524:(t,e,r)=>{"use strict";var n=r(6492),o=r(3610),i=r(1602),a=r(5077),u=i("species");t.exports=function(t){var e=n(t),r=o.f;a&&e&&!e[u]&&r(e,u,{configurable:!0,get:function(){return this}})}},5282:(t,e,r)=>{var n=r(3610).f,o=r(6490),i=r(1602)("toStringTag");t.exports=function(t,e,r){t&&!r&&(t=t.prototype),t&&!o(t,i)&&n(t,i,{configurable:!0,value:e})}},5904:(t,e,r)=>{var n=r(2),o=r(665),i=n("keys");t.exports=function(t){return i[t]||(i[t]=o(t))}},9310:(t,e,r)=>{var n=r(200),o=r(9430),i="__core-js_shared__",a=n[i]||o(i,{});t.exports=a},2:(t,e,r)=>{var n=r(6926),o=r(9310);(t.exports=function(t,e){return o[t]||(o[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.27.1",mode:n?"pure":"global",copyright:"© 2014-2022 Denis Pushkarev (zloirock.ru)",license:"https://github.com/zloirock/core-js/blob/v3.27.1/LICENSE",source:"https://github.com/zloirock/core-js"})},3444:(t,e,r)=>{var n=r(3938),o=r(7849),i=r(8406),a=r(1602)("species");t.exports=function(t,e){var r,u=n(t).constructor;return void 0===u||i(r=n(u)[a])?e:o(r)}},7804:(t,e,r)=>{var n=r(281),o=r(9328),i=r(5362),a=r(1229),u=n("".charAt),c=n("".charCodeAt),s=n("".slice),f=function(t){return function(e,r){var n,f,l=i(a(e)),p=o(r),h=l.length;return p<0||p>=h?t?"":void 0:(n=c(l,p))<55296||n>56319||p+1===h||(f=c(l,p+1))<56320||f>57343?t?u(l,p):n:t?s(l,p,p+2):f-56320+(n-55296<<10)+65536}};t.exports={codeAt:f(!1),charAt:f(!0)}},9163:(t,e,r)=>{var n=r(281),o=r(1229),i=r(5362),a=r(5073),u=n("".replace),c="["+a+"]",s=RegExp("^"+c+c+"*"),f=RegExp(c+c+"*$"),l=function(t){return function(e){var r=i(o(e));return 1&t&&(r=u(r,s,"")),2&t&&(r=u(r,f,"")),r}};t.exports={start:l(1),end:l(2),trim:l(3)}},2072:(t,e,r)=>{var n=r(6845),o=r(2074);t.exports=!!Object.getOwnPropertySymbols&&!o((function(){var t=Symbol();return!String(t)||!(Object(t)instanceof Symbol)||!Symbol.sham&&n&&n<41}))},8237:(t,e,r)=>{var n=r(2368),o=r(6492),i=r(1602),a=r(7485);t.exports=function(){var t=o("Symbol"),e=t&&t.prototype,r=e&&e.valueOf,u=i("toPrimitive");e&&!e[u]&&a(e,u,(function(t){return n(r,this)}),{arity:1})}},4569:(t,e,r)=>{var n=r(2072);t.exports=n&&!!Symbol.for&&!!Symbol.keyFor},7809:(t,e,r)=>{var n=r(281);t.exports=n(1..valueOf)},6539:(t,e,r)=>{var n=r(9328),o=Math.max,i=Math.min;t.exports=function(t,e){var r=n(t);return r<0?o(r+e,0):i(r,e)}},3005:(t,e,r)=>{var n=r(874),o=TypeError;t.exports=function(t){var e=n(t,"number");if("number"==typeof e)throw o("Can't convert number to bigint");return BigInt(e)}},6283:(t,e,r)=>{var n=r(9328),o=r(3747),i=RangeError;t.exports=function(t){if(void 0===t)return 0;var e=n(t),r=o(e);if(e!==r)throw i("Wrong length or index");return r}},5476:(t,e,r)=>{var n=r(8664),o=r(1229);t.exports=function(t){return n(o(t))}},9328:(t,e,r)=>{var n=r(9830);t.exports=function(t){var e=+t;return e!=e||0===e?0:n(e)}},3747:(t,e,r)=>{var n=r(9328),o=Math.min;t.exports=function(t){return t>0?o(n(t),9007199254740991):0}},2612:(t,e,r)=>{var n=r(1229),o=Object;t.exports=function(t){return o(n(t))}},3720:(t,e,r)=>{var n=r(5955),o=RangeError;t.exports=function(t,e){var r=n(t);if(r%e)throw o("Wrong offset");return r}},5955:(t,e,r)=>{var n=r(9328),o=RangeError;t.exports=function(t){var e=n(t);if(e<0)throw o("The argument can't be less than 0");return e}},874:(t,e,r)=>{var n=r(2368),o=r(5335),i=r(2328),a=r(6457),u=r(9751),c=r(1602),s=TypeError,f=c("toPrimitive");t.exports=function(t,e){if(!o(t)||i(t))return t;var r,c=a(t,f);if(c){if(void 0===e&&(e="default"),r=n(c,t,e),!o(r)||i(r))return r;throw s("Can't convert object to primitive value")}return void 0===e&&(e="number"),u(t,e)}},6032:(t,e,r)=>{var n=r(874),o=r(2328);t.exports=function(t){var e=n(t,"string");return o(e)?e:e+""}},3129:(t,e,r)=>{var n={};n[r(1602)("toStringTag")]="z",t.exports="[object z]"===String(n)},5362:(t,e,r)=>{var n=r(3062),o=String;t.exports=function(t){if("Symbol"===n(t))throw TypeError("Cannot convert a Symbol value to a string");return o(t)}},3838:t=>{var e=String;t.exports=function(t){try{return e(t)}catch(t){return"Object"}}},3106:(t,e,r)=>{"use strict";var n=r(1605),o=r(200),i=r(2368),a=r(5077),u=r(3668),c=r(5343),s=r(4497),f=r(5190),l=r(6843),p=r(7712),h=r(3496),v=r(3747),d=r(6283),y=r(3720),g=r(6032),m=r(6490),b=r(3062),A=r(5335),w=r(2328),x=r(3105),S=r(7658),E=r(9686),T=r(4789).f,O=r(2180),I=r(1344).forEach,F=r(3524),C=r(3610),k=r(7632),q=r(9206),M=r(3054),B=q.get,R=q.set,j=q.enforce,_=C.f,L=k.f,P=Math.round,D=o.RangeError,N=s.ArrayBuffer,G=N.prototype,U=s.DataView,W=c.NATIVE_ARRAY_BUFFER_VIEWS,K=c.TYPED_ARRAY_TAG,H=c.TypedArray,V=c.TypedArrayPrototype,Y=c.aTypedArrayConstructor,J=c.isTypedArray,Z="BYTES_PER_ELEMENT",X="Wrong length",Q=function(t,e){Y(t);for(var r=0,n=e.length,o=new t(n);n>r;)o[r]=e[r++];return o},z=function(t,e){_(t,e,{get:function(){return B(this)[e]}})},$=function(t){var e;return S(G,t)||"ArrayBuffer"==(e=b(t))||"SharedArrayBuffer"==e},tt=function(t,e){return J(t)&&!w(e)&&e in t&&h(+e)&&e>=0},et=function(t,e){return e=g(e),tt(t,e)?l(2,t[e]):L(t,e)},rt=function(t,e,r){return e=g(e),!(tt(t,e)&&A(r)&&m(r,"value"))||m(r,"get")||m(r,"set")||r.configurable||m(r,"writable")&&!r.writable||m(r,"enumerable")&&!r.enumerable?_(t,e,r):(t[e]=r.value,t)};a?(W||(k.f=et,C.f=rt,z(V,"buffer"),z(V,"byteOffset"),z(V,"byteLength"),z(V,"length")),n({target:"Object",stat:!0,forced:!W},{getOwnPropertyDescriptor:et,defineProperty:rt}),t.exports=function(t,e,r){var a=t.match(/\d+$/)[0]/8,c=t+(r?"Clamped":"")+"Array",s="get"+t,l="set"+t,h=o[c],g=h,m=g&&g.prototype,b={},w=function(t,e){_(t,e,{get:function(){return function(t,e){var r=B(t);return r.view[s](e*a+r.byteOffset,!0)}(this,e)},set:function(t){return function(t,e,n){var o=B(t);r&&(n=(n=P(n))<0?0:n>255?255:255&n),o.view[l](e*a+o.byteOffset,n,!0)}(this,e,t)},enumerable:!0})};W?u&&(g=e((function(t,e,r,n){return f(t,m),M(A(e)?$(e)?void 0!==n?new h(e,y(r,a),n):void 0!==r?new h(e,y(r,a)):new h(e):J(e)?Q(g,e):i(O,g,e):new h(d(e)),t,g)})),E&&E(g,H),I(T(h),(function(t){t in g||p(g,t,h[t])})),g.prototype=m):(g=e((function(t,e,r,n){f(t,m);var o,u,c,s=0,l=0;if(A(e)){if(!$(e))return J(e)?Q(g,e):i(O,g,e);o=e,l=y(r,a);var p=e.byteLength;if(void 0===n){if(p%a)throw D(X);if((u=p-l)<0)throw D(X)}else if((u=v(n)*a)+l>p)throw D(X);c=u/a}else c=d(e),o=new N(u=c*a);for(R(t,{buffer:o,byteOffset:l,byteLength:u,length:c,view:new U(o)});s<c;)w(t,s++)})),E&&E(g,H),m=g.prototype=x(V)),m.constructor!==g&&p(m,"constructor",g),j(m).TypedArrayConstructor=g,K&&p(m,K,c);var S=g!=h;b[c]=g,n({global:!0,constructor:!0,forced:S,sham:!W},b),Z in g||p(g,Z,a),Z in m||p(m,Z,a),F(c)}):t.exports=function(){}},3668:(t,e,r)=>{var n=r(200),o=r(2074),i=r(7499),a=r(5343).NATIVE_ARRAY_BUFFER_VIEWS,u=n.ArrayBuffer,c=n.Int8Array;t.exports=!a||!o((function(){c(1)}))||!o((function(){new c(-1)}))||!i((function(t){new c,new c(null),new c(1.5),new c(t)}),!0)||o((function(){return 1!==new c(new u(2),1,void 0).length}))},800:(t,e,r)=>{var n=r(447),o=r(9601);t.exports=function(t,e){return n(o(t),e)}},2180:(t,e,r)=>{var n=r(6885),o=r(2368),i=r(7849),a=r(2612),u=r(3493),c=r(9526),s=r(1898),f=r(9034),l=r(7472),p=r(5343).aTypedArrayConstructor,h=r(3005);t.exports=function(t){var e,r,v,d,y,g,m,b,A=i(this),w=a(t),x=arguments.length,S=x>1?arguments[1]:void 0,E=void 0!==S,T=s(w);if(T&&!f(T))for(b=(m=c(w,T)).next,w=[];!(g=o(b,m)).done;)w.push(g.value);for(E&&x>2&&(S=n(S,arguments[2])),r=u(w),v=new(p(A))(r),d=l(v),e=0;r>e;e++)y=E?S(w[e],e):w[e],v[e]=d?h(y):+y;return v}},9601:(t,e,r)=>{var n=r(5343),o=r(3444),i=n.aTypedArrayConstructor,a=n.getTypedArrayConstructor;t.exports=function(t){return i(o(t,a(t)))}},665:(t,e,r)=>{var n=r(281),o=0,i=Math.random(),a=n(1..toString);t.exports=function(t){return"Symbol("+(void 0===t?"":t)+")_"+a(++o+i,36)}},5225:(t,e,r)=>{var n=r(2072);t.exports=n&&!Symbol.sham&&"symbol"==typeof Symbol.iterator},4491:(t,e,r)=>{var n=r(5077),o=r(2074);t.exports=n&&o((function(){return 42!=Object.defineProperty((function(){}),"prototype",{value:42,writable:!1}).prototype}))},6589:t=>{var e=TypeError;t.exports=function(t,r){if(t<r)throw e("Not enough arguments");return t}},8369:(t,e,r)=>{var n=r(200),o=r(8420),i=n.WeakMap;t.exports=o(i)&&/native code/.test(String(i))},6100:(t,e,r)=>{var n=r(9720),o=r(6490),i=r(802),a=r(3610).f;t.exports=function(t){var e=n.Symbol||(n.Symbol={});o(e,t)||a(e,t,{value:i.f(t)})}},802:(t,e,r)=>{var n=r(1602);e.f=n},1602:(t,e,r)=>{var n=r(200),o=r(2),i=r(6490),a=r(665),u=r(2072),c=r(5225),s=o("wks"),f=n.Symbol,l=f&&f.for,p=c?f:f&&f.withoutSetter||a;t.exports=function(t){if(!i(s,t)||!u&&"string"!=typeof s[t]){var e="Symbol."+t;u&&i(f,t)?s[t]=f[t]:s[t]=c&&l?l(e):p(e)}return s[t]}},5073:t=>{t.exports="\t\n\v\f\r                　\u2028\u2029\ufeff"},3446:(t,e,r)=>{"use strict";var n=r(1605),o=r(200),i=r(4497),a=r(3524),u="ArrayBuffer",c=i[u];n({global:!0,constructor:!0,forced:o[u]!==c},{ArrayBuffer:c}),a(u)},1772:(t,e,r)=>{"use strict";var n=r(1605),o=r(3091),i=r(2074),a=r(4497),u=r(3938),c=r(6539),s=r(3747),f=r(3444),l=a.ArrayBuffer,p=a.DataView,h=p.prototype,v=o(l.prototype.slice),d=o(h.getUint8),y=o(h.setUint8);n({target:"ArrayBuffer",proto:!0,unsafe:!0,forced:i((function(){return!new l(2).slice(1,void 0).byteLength}))},{slice:function(t,e){if(v&&void 0===e)return v(u(this),t);for(var r=u(this).byteLength,n=c(t,r),o=c(void 0===e?r:e,r),i=new(f(this,l))(s(o-n)),a=new p(this),h=new p(i),g=0;n<o;)y(h,g++,d(a,n++));return i}})},5195:(t,e,r)=>{var n=r(1605),o=r(1027);n({target:"Array",stat:!0,forced:!r(7499)((function(t){Array.from(t)}))},{from:o})},7746:(t,e,r)=>{"use strict";var n=r(1605),o=r(8186).includes,i=r(2074),a=r(298);n({target:"Array",proto:!0,forced:i((function(){return!Array(1).includes()}))},{includes:function(t){return o(this,t,arguments.length>1?arguments[1]:void 0)}}),a("includes")},9693:(t,e,r)=>{"use strict";var n=r(1605),o=r(3091),i=r(8186).indexOf,a=r(2349),u=o([].indexOf),c=!!u&&1/u([1],1,-0)<0,s=a("indexOf");n({target:"Array",proto:!0,forced:c||!s},{indexOf:function(t){var e=arguments.length>1?arguments[1]:void 0;return c?u(this,t,e)||0:i(this,t,e)}})},4895:(t,e,r)=>{r(1605)({target:"Array",stat:!0},{isArray:r(8679)})},8665:(t,e,r)=>{"use strict";var n=r(5476),o=r(298),i=r(2228),a=r(9206),u=r(3610).f,c=r(6409),s=r(8296),f=r(6926),l=r(5077),p="Array Iterator",h=a.set,v=a.getterFor(p);t.exports=c(Array,"Array",(function(t,e){h(this,{type:p,target:n(t),index:0,kind:e})}),(function(){var t=v(this),e=t.target,r=t.kind,n=t.index++;return!e||n>=e.length?(t.target=void 0,s(void 0,!0)):s("keys"==r?n:"values"==r?e[n]:[n,e[n]],!1)}),"values");var d=i.Arguments=i.Array;if(o("keys"),o("values"),o("entries"),!f&&l&&"values"!==d.name)try{u(d,"name",{value:"values"})}catch(t){}},475:(t,e,r)=>{"use strict";var n=r(1605),o=r(281),i=r(8664),a=r(5476),u=r(2349),c=o([].join),s=i!=Object,f=u("join",",");n({target:"Array",proto:!0,forced:s||!f},{join:function(t){return c(a(this),void 0===t?",":t)}})},4913:(t,e,r)=>{"use strict";var n=r(1605),o=r(8679),i=r(1466),a=r(5335),u=r(6539),c=r(3493),s=r(5476),f=r(2057),l=r(1602),p=r(5634),h=r(9609),v=p("slice"),d=l("species"),y=Array,g=Math.max;n({target:"Array",proto:!0,forced:!v},{slice:function(t,e){var r,n,l,p=s(this),v=c(p),m=u(t,v),b=u(void 0===e?v:e,v);if(o(p)&&(r=p.constructor,(i(r)&&(r===y||o(r.prototype))||a(r)&&null===(r=r[d]))&&(r=void 0),r===y||void 0===r))return h(p,m,b);for(n=new(void 0===r?y:r)(g(b-m,0)),l=0;m<b;m++,l++)m in p&&f(n,l,p[m]);return n.length=l,n}})},9560:(t,e,r)=>{var n=r(1605),o=r(281),i=Date,a=o(i.prototype.getTime);n({target:"Date",stat:!0},{now:function(){return a(new i)}})},7787:(t,e,r)=>{var n=r(6490),o=r(7485),i=r(1137),a=r(1602)("toPrimitive"),u=Date.prototype;n(u,a)||o(u,a,i)},9389:(t,e,r)=>{var n=r(281),o=r(7485),i=Date.prototype,a="Invalid Date",u="toString",c=n(i[u]),s=n(i.getTime);String(new Date(NaN))!=a&&o(i,u,(function(){var t=s(this);return t==t?c(this):a}))},4189:(t,e,r)=>{var n=r(1605),o=r(8891);n({target:"Function",proto:!0,forced:Function.bind!==o},{bind:o})},8741:(t,e,r)=>{var n=r(5077),o=r(2071).EXISTS,i=r(281),a=r(3610).f,u=Function.prototype,c=i(u.toString),s=/function\b(?:\s|\/\*[\S\s]*?\*\/|\/\/[^\n\r]*[\n\r]+)*([^\s(/]*)/,f=i(s.exec);n&&!o&&a(u,"name",{configurable:!0,get:function(){try{return f(s,c(this))[1]}catch(t){return""}}})},959:(t,e,r)=>{var n=r(1605),o=r(6492),i=r(9070),a=r(2368),u=r(281),c=r(2074),s=r(8679),f=r(8420),l=r(5335),p=r(2328),h=r(9609),v=r(2072),d=o("JSON","stringify"),y=u(/./.exec),g=u("".charAt),m=u("".charCodeAt),b=u("".replace),A=u(1..toString),w=/[\uD800-\uDFFF]/g,x=/^[\uD800-\uDBFF]$/,S=/^[\uDC00-\uDFFF]$/,E=!v||c((function(){var t=o("Symbol")();return"[null]"!=d([t])||"{}"!=d({a:t})||"{}"!=d(Object(t))})),T=c((function(){return'"\\udf06\\ud834"'!==d("\udf06\ud834")||'"\\udead"'!==d("\udead")})),O=function(t,e){var r=h(arguments),n=e;if((l(e)||void 0!==t)&&!p(t))return s(e)||(e=function(t,e){if(f(n)&&(e=a(n,this,t,e)),!p(e))return e}),r[1]=e,i(d,null,r)},I=function(t,e,r){var n=g(r,e-1),o=g(r,e+1);return y(x,t)&&!y(S,o)||y(S,t)&&!y(x,n)?"\\u"+A(m(t,0),16):t};d&&n({target:"JSON",stat:!0,arity:3,forced:E||T},{stringify:function(t,e,r){var n=h(arguments),o=i(E?O:d,null,n);return T&&"string"==typeof o?b(o,w,I):o}})},4009:(t,e,r)=>{"use strict";var n=r(1605),o=r(6926),i=r(5077),a=r(200),u=r(9720),c=r(281),s=r(4977),f=r(6490),l=r(3054),p=r(7658),h=r(2328),v=r(874),d=r(2074),y=r(4789).f,g=r(7632).f,m=r(3610).f,b=r(7809),A=r(9163).trim,w="Number",x=a[w],S=u[w],E=x.prototype,T=a.TypeError,O=c("".slice),I=c("".charCodeAt),F=function(t){var e,r,n,o,i,a,u,c,s=v(t,"number");if(h(s))throw T("Cannot convert a Symbol value to a number");if("string"==typeof s&&s.length>2)if(s=A(s),43===(e=I(s,0))||45===e){if(88===(r=I(s,2))||120===r)return NaN}else if(48===e){switch(I(s,1)){case 66:case 98:n=2,o=49;break;case 79:case 111:n=8,o=55;break;default:return+s}for(a=(i=O(s,2)).length,u=0;u<a;u++)if((c=I(i,u))<48||c>o)return NaN;return parseInt(i,n)}return+s},C=s(w,!x(" 0o1")||!x("0b1")||x("+0x1")),k=function(t){var e,r=arguments.length<1?0:x(function(t){var e=v(t,"number");return"bigint"==typeof e?e:F(e)}(t));return p(E,e=this)&&d((function(){b(e)}))?l(Object(r),this,k):r};k.prototype=E,C&&!o&&(E.constructor=k),n({global:!0,constructor:!0,wrap:!0,forced:C},{Number:k});var q=function(t,e){for(var r,n=i?y(e):"MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,isFinite,isInteger,isNaN,isSafeInteger,parseFloat,parseInt,fromString,range".split(","),o=0;n.length>o;o++)f(e,r=n[o])&&!f(t,r)&&m(t,r,g(e,r))};o&&S&&q(u[w],S),(C||o)&&q(u[w],x)},5365:(t,e,r)=>{r(1605)({target:"Number",stat:!0},{isNaN:function(t){return t!=t}})},7755:(t,e,r)=>{r(1605)({target:"Object",stat:!0,sham:!r(5077)},{create:r(3105)})},5852:(t,e,r)=>{var n=r(1605),o=r(5077),i=r(3610).f;n({target:"Object",stat:!0,forced:Object.defineProperty!==i,sham:!o},{defineProperty:i})},4095:(t,e,r)=>{var n=r(1605),o=r(3172).entries;n({target:"Object",stat:!0},{entries:function(t){return o(t)}})},1074:(t,e,r)=>{var n=r(1605),o=r(2072),i=r(2074),a=r(8916),u=r(2612);n({target:"Object",stat:!0,forced:!o||i((function(){a.f(1)}))},{getOwnPropertySymbols:function(t){var e=a.f;return e?e(u(t)):[]}})},1412:(t,e,r)=>{var n=r(1605),o=r(2074),i=r(2612),a=r(7970),u=r(7168);n({target:"Object",stat:!0,forced:o((function(){a(1)})),sham:!u},{getPrototypeOf:function(t){return a(i(t))}})},7899:(t,e,r)=>{var n=r(1605),o=r(2612),i=r(1641);n({target:"Object",stat:!0,forced:r(2074)((function(){i(1)}))},{keys:function(t){return i(o(t))}})},4632:(t,e,r)=>{r(1605)({target:"Object",stat:!0},{setPrototypeOf:r(9686)})},5086:(t,e,r)=>{var n=r(3129),o=r(7485),i=r(4972);n||o(Object.prototype,"toString",i,{unsafe:!0})},6088:(t,e,r)=>{var n=r(1605),o=r(5963);n({global:!0,forced:parseFloat!=o},{parseFloat:o})},2231:(t,e,r)=>{var n=r(1605),o=r(7292);n({global:!0,forced:parseInt!=o},{parseInt:o})},4606:(t,e,r)=>{var n=r(1605),o=r(6492),i=r(9070),a=r(8891),u=r(7849),c=r(3938),s=r(5335),f=r(3105),l=r(2074),p=o("Reflect","construct"),h=Object.prototype,v=[].push,d=l((function(){function t(){}return!(p((function(){}),[],t)instanceof t)})),y=!l((function(){p((function(){}))})),g=d||y;n({target:"Reflect",stat:!0,forced:g,sham:g},{construct:function(t,e){u(t),c(e);var r=arguments.length<3?t:u(arguments[2]);if(y&&!d)return p(t,e,r);if(t==r){switch(e.length){case 0:return new t;case 1:return new t(e[0]);case 2:return new t(e[0],e[1]);case 3:return new t(e[0],e[1],e[2]);case 4:return new t(e[0],e[1],e[2],e[3])}var n=[null];return i(v,n,e),new(i(a,t,n))}var o=r.prototype,l=f(s(o)?o:h),g=i(t,l,e);return s(g)?g:l}})},7136:(t,e,r)=>{"use strict";var n=r(1605),o=r(54);n({target:"RegExp",proto:!0,forced:/./.exec!==o},{exec:o})},6048:(t,e,r)=>{"use strict";var n=r(2071).PROPER,o=r(7485),i=r(3938),a=r(5362),u=r(2074),c=r(353),s="toString",f=RegExp.prototype[s],l=u((function(){return"/a/b"!=f.call({source:"a",flags:"b"})})),p=n&&f.name!=s;(l||p)&&o(RegExp.prototype,s,(function(){var t=i(this);return"/"+a(t.source)+"/"+a(c(t))}),{unsafe:!0})},3148:(t,e,r)=>{"use strict";var n=r(1605),o=r(281),i=r(2588),a=r(1229),u=r(5362),c=r(4177),s=o("".indexOf);n({target:"String",proto:!0,forced:!c("includes")},{includes:function(t){return!!~s(u(a(this)),u(i(t)),arguments.length>1?arguments[1]:void 0)}})},9979:(t,e,r)=>{"use strict";var n=r(7804).charAt,o=r(5362),i=r(9206),a=r(6409),u=r(8296),c="String Iterator",s=i.set,f=i.getterFor(c);a(String,"String",(function(t){s(this,{type:c,string:o(t),index:0})}),(function(){var t,e=f(this),r=e.string,o=e.index;return o>=r.length?u(void 0,!0):(t=n(r,o),e.index+=t.length,u(t,!1))}))},173:(t,e,r)=>{"use strict";var n=r(9070),o=r(2368),i=r(281),a=r(779),u=r(2074),c=r(3938),s=r(8420),f=r(8406),l=r(9328),p=r(3747),h=r(5362),v=r(1229),d=r(7234),y=r(6457),g=r(4433),m=r(6793),b=r(1602)("replace"),A=Math.max,w=Math.min,x=i([].concat),S=i([].push),E=i("".indexOf),T=i("".slice),O="$0"==="a".replace(/./,"$0"),I=!!/./[b]&&""===/./[b]("a","$0");a("replace",(function(t,e,r){var i=I?"$":"$0";return[function(t,r){var n=v(this),i=f(t)?void 0:y(t,b);return i?o(i,t,n,r):o(e,h(n),t,r)},function(t,o){var a=c(this),u=h(t);if("string"==typeof o&&-1===E(o,i)&&-1===E(o,"$<")){var f=r(e,a,u,o);if(f.done)return f.value}var v=s(o);v||(o=h(o));var y=a.global;if(y){var b=a.unicode;a.lastIndex=0}for(var O=[];;){var I=m(a,u);if(null===I)break;if(S(O,I),!y)break;""===h(I[0])&&(a.lastIndex=d(u,p(a.lastIndex),b))}for(var F,C="",k=0,q=0;q<O.length;q++){for(var M=h((I=O[q])[0]),B=A(w(l(I.index),u.length),0),R=[],j=1;j<I.length;j++)S(R,void 0===(F=I[j])?F:String(F));var _=I.groups;if(v){var L=x([M],R,B,u);void 0!==_&&S(L,_);var P=h(n(o,void 0,L))}else P=g(M,u,B,R,_,o);B>=k&&(C+=T(u,k,B)+P,k=B+M.length)}return C+T(u,k)}]}),!!u((function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")}))||!O||I)},7896:(t,e,r)=>{"use strict";var n=r(1605),o=r(200),i=r(2368),a=r(281),u=r(6926),c=r(5077),s=r(2072),f=r(2074),l=r(6490),p=r(7658),h=r(3938),v=r(5476),d=r(6032),y=r(5362),g=r(6843),m=r(3105),b=r(1641),A=r(4789),w=r(6509),x=r(8916),S=r(7632),E=r(3610),T=r(5318),O=r(9304),I=r(7485),F=r(2),C=r(5904),k=r(7708),q=r(665),M=r(1602),B=r(802),R=r(6100),j=r(8237),_=r(5282),L=r(9206),P=r(1344).forEach,D=C("hidden"),N="Symbol",G="prototype",U=L.set,W=L.getterFor(N),K=Object[G],H=o.Symbol,V=H&&H[G],Y=o.TypeError,J=o.QObject,Z=S.f,X=E.f,Q=w.f,z=O.f,$=a([].push),tt=F("symbols"),et=F("op-symbols"),rt=F("wks"),nt=!J||!J[G]||!J[G].findChild,ot=c&&f((function(){return 7!=m(X({},"a",{get:function(){return X(this,"a",{value:7}).a}})).a}))?function(t,e,r){var n=Z(K,e);n&&delete K[e],X(t,e,r),n&&t!==K&&X(K,e,n)}:X,it=function(t,e){var r=tt[t]=m(V);return U(r,{type:N,tag:t,description:e}),c||(r.description=e),r},at=function(t,e,r){t===K&&at(et,e,r),h(t);var n=d(e);return h(r),l(tt,n)?(r.enumerable?(l(t,D)&&t[D][n]&&(t[D][n]=!1),r=m(r,{enumerable:g(0,!1)})):(l(t,D)||X(t,D,g(1,{})),t[D][n]=!0),ot(t,n,r)):X(t,n,r)},ut=function(t,e){h(t);var r=v(e),n=b(r).concat(lt(r));return P(n,(function(e){c&&!i(ct,r,e)||at(t,e,r[e])})),t},ct=function(t){var e=d(t),r=i(z,this,e);return!(this===K&&l(tt,e)&&!l(et,e))&&(!(r||!l(this,e)||!l(tt,e)||l(this,D)&&this[D][e])||r)},st=function(t,e){var r=v(t),n=d(e);if(r!==K||!l(tt,n)||l(et,n)){var o=Z(r,n);return!o||!l(tt,n)||l(r,D)&&r[D][n]||(o.enumerable=!0),o}},ft=function(t){var e=Q(v(t)),r=[];return P(e,(function(t){l(tt,t)||l(k,t)||$(r,t)})),r},lt=function(t){var e=t===K,r=Q(e?et:v(t)),n=[];return P(r,(function(t){!l(tt,t)||e&&!l(K,t)||$(n,tt[t])})),n};s||(I(V=(H=function(){if(p(V,this))throw Y("Symbol is not a constructor");var t=arguments.length&&void 0!==arguments[0]?y(arguments[0]):void 0,e=q(t),r=function(t){this===K&&i(r,et,t),l(this,D)&&l(this[D],e)&&(this[D][e]=!1),ot(this,e,g(1,t))};return c&&nt&&ot(K,e,{configurable:!0,set:r}),it(e,t)})[G],"toString",(function(){return W(this).tag})),I(H,"withoutSetter",(function(t){return it(q(t),t)})),O.f=ct,E.f=at,T.f=ut,S.f=st,A.f=w.f=ft,x.f=lt,B.f=function(t){return it(M(t),t)},c&&(X(V,"description",{configurable:!0,get:function(){return W(this).description}}),u||I(K,"propertyIsEnumerable",ct,{unsafe:!0}))),n({global:!0,constructor:!0,wrap:!0,forced:!s,sham:!s},{Symbol:H}),P(b(rt),(function(t){R(t)})),n({target:N,stat:!0,forced:!s},{useSetter:function(){nt=!0},useSimple:function(){nt=!1}}),n({target:"Object",stat:!0,forced:!s,sham:!c},{create:function(t,e){return void 0===e?m(t):ut(m(t),e)},defineProperty:at,defineProperties:ut,getOwnPropertyDescriptor:st}),n({target:"Object",stat:!0,forced:!s},{getOwnPropertyNames:ft}),j(),_(H,N),k[D]=!0},590:(t,e,r)=>{"use strict";var n=r(1605),o=r(5077),i=r(200),a=r(281),u=r(6490),c=r(8420),s=r(7658),f=r(5362),l=r(3610).f,p=r(4361),h=i.Symbol,v=h&&h.prototype;if(o&&c(h)&&(!("description"in v)||void 0!==h().description)){var d={},y=function(){var t=arguments.length<1||void 0===arguments[0]?void 0:f(arguments[0]),e=s(v,this)?new h(t):void 0===t?h():h(t);return""===t&&(d[e]=!0),e};p(y,h),y.prototype=v,v.constructor=y;var g="Symbol(test)"==String(h("test")),m=a(v.valueOf),b=a(v.toString),A=/^Symbol\((.*)\)[^)]+$/,w=a("".replace),x=a("".slice);l(v,"description",{configurable:!0,get:function(){var t=m(this);if(u(d,t))return"";var e=b(t),r=g?x(e,7,-1):w(e,A,"$1");return""===r?void 0:r}}),n({global:!0,constructor:!0,forced:!0},{Symbol:y})}},3883:(t,e,r)=>{var n=r(1605),o=r(6492),i=r(6490),a=r(5362),u=r(2),c=r(4569),s=u("string-to-symbol-registry"),f=u("symbol-to-string-registry");n({target:"Symbol",stat:!0,forced:!c},{for:function(t){var e=a(t);if(i(s,e))return s[e];var r=o("Symbol")(e);return s[e]=r,f[r]=e,r}})},4216:(t,e,r)=>{r(6100)("iterator")},3534:(t,e,r)=>{r(7896),r(3883),r(5245),r(959),r(1074)},5245:(t,e,r)=>{var n=r(1605),o=r(6490),i=r(2328),a=r(3838),u=r(2),c=r(4569),s=u("symbol-to-string-registry");n({target:"Symbol",stat:!0,forced:!c},{keyFor:function(t){if(!i(t))throw TypeError(a(t)+" is not a symbol");if(o(s,t))return s[t]}})},6611:(t,e,r)=>{var n=r(6100),o=r(8237);n("toPrimitive"),o()},861:(t,e,r)=>{"use strict";var n=r(281),o=r(5343),i=n(r(9688)),a=o.aTypedArray;(0,o.exportTypedArrayMethod)("copyWithin",(function(t,e){return i(a(this),t,e,arguments.length>2?arguments[2]:void 0)}))},1905:(t,e,r)=>{"use strict";var n=r(5343),o=r(1344).every,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("every",(function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)}))},5213:(t,e,r)=>{"use strict";var n=r(5343),o=r(7806),i=r(3005),a=r(3062),u=r(2368),c=r(281),s=r(2074),f=n.aTypedArray,l=n.exportTypedArrayMethod,p=c("".slice);l("fill",(function(t){var e=arguments.length;f(this);var r="Big"===p(a(this),0,3)?i(t):+t;return u(o,this,r,e>1?arguments[1]:void 0,e>2?arguments[2]:void 0)}),s((function(){var t=0;return new Int8Array(2).fill({valueOf:function(){return t++}}),1!==t})))},7182:(t,e,r)=>{"use strict";var n=r(5343),o=r(1344).filter,i=r(800),a=n.aTypedArray;(0,n.exportTypedArrayMethod)("filter",(function(t){var e=o(a(this),t,arguments.length>1?arguments[1]:void 0);return i(this,e)}))},9302:(t,e,r)=>{"use strict";var n=r(5343),o=r(1344).findIndex,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("findIndex",(function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)}))},2279:(t,e,r)=>{"use strict";var n=r(5343),o=r(1344).find,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("find",(function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)}))},147:(t,e,r)=>{"use strict";var n=r(5343),o=r(1344).forEach,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("forEach",(function(t){o(i(this),t,arguments.length>1?arguments[1]:void 0)}))},6217:(t,e,r)=>{"use strict";var n=r(5343),o=r(8186).includes,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("includes",(function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)}))},7966:(t,e,r)=>{"use strict";var n=r(5343),o=r(8186).indexOf,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("indexOf",(function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)}))},5186:(t,e,r)=>{"use strict";var n=r(200),o=r(2074),i=r(281),a=r(5343),u=r(8665),c=r(1602)("iterator"),s=n.Uint8Array,f=i(u.values),l=i(u.keys),p=i(u.entries),h=a.aTypedArray,v=a.exportTypedArrayMethod,d=s&&s.prototype,y=!o((function(){d[c].call([1])})),g=!!d&&d.values&&d[c]===d.values&&"values"===d.values.name,m=function(){return f(h(this))};v("entries",(function(){return p(h(this))}),y),v("keys",(function(){return l(h(this))}),y),v("values",m,y||!g,{name:"values"}),v(c,m,y||!g,{name:"values"})},5944:(t,e,r)=>{"use strict";var n=r(5343),o=r(281),i=n.aTypedArray,a=n.exportTypedArrayMethod,u=o([].join);a("join",(function(t){return u(i(this),t)}))},4787:(t,e,r)=>{"use strict";var n=r(5343),o=r(9070),i=r(3470),a=n.aTypedArray;(0,n.exportTypedArrayMethod)("lastIndexOf",(function(t){var e=arguments.length;return o(i,a(this),e>1?[t,arguments[1]]:[t])}))},632:(t,e,r)=>{"use strict";var n=r(5343),o=r(1344).map,i=r(9601),a=n.aTypedArray;(0,n.exportTypedArrayMethod)("map",(function(t){return o(a(this),t,arguments.length>1?arguments[1]:void 0,(function(t,e){return new(i(t))(e)}))}))},4245:(t,e,r)=>{"use strict";var n=r(5343),o=r(2237).right,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("reduceRight",(function(t){var e=arguments.length;return o(i(this),t,e,e>1?arguments[1]:void 0)}))},2278:(t,e,r)=>{"use strict";var n=r(5343),o=r(2237).left,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("reduce",(function(t){var e=arguments.length;return o(i(this),t,e,e>1?arguments[1]:void 0)}))},2492:(t,e,r)=>{"use strict";var n=r(5343),o=n.aTypedArray,i=n.exportTypedArrayMethod,a=Math.floor;i("reverse",(function(){for(var t,e=this,r=o(e).length,n=a(r/2),i=0;i<n;)t=e[i],e[i++]=e[--r],e[r]=t;return e}))},3266:(t,e,r)=>{"use strict";var n=r(200),o=r(2368),i=r(5343),a=r(3493),u=r(3720),c=r(2612),s=r(2074),f=n.RangeError,l=n.Int8Array,p=l&&l.prototype,h=p&&p.set,v=i.aTypedArray,d=i.exportTypedArrayMethod,y=!s((function(){var t=new Uint8ClampedArray(2);return o(h,t,{length:1,0:3},1),3!==t[1]})),g=y&&i.NATIVE_ARRAY_BUFFER_VIEWS&&s((function(){var t=new l(2);return t.set(1),t.set("2",1),0!==t[0]||2!==t[1]}));d("set",(function(t){v(this);var e=u(arguments.length>1?arguments[1]:void 0,1),r=c(t);if(y)return o(h,this,r,e);var n=this.length,i=a(r),s=0;if(i+e>n)throw f("Wrong length");for(;s<i;)this[e+s]=r[s++]}),!y||g)},7192:(t,e,r)=>{"use strict";var n=r(5343),o=r(9601),i=r(2074),a=r(9609),u=n.aTypedArray;(0,n.exportTypedArrayMethod)("slice",(function(t,e){for(var r=a(u(this),t,e),n=o(this),i=0,c=r.length,s=new n(c);c>i;)s[i]=r[i++];return s}),i((function(){new Int8Array(1).slice()})))},7220:(t,e,r)=>{"use strict";var n=r(5343),o=r(1344).some,i=n.aTypedArray;(0,n.exportTypedArrayMethod)("some",(function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)}))},2432:(t,e,r)=>{"use strict";var n=r(200),o=r(3091),i=r(2074),a=r(4601),u=r(8039),c=r(5343),s=r(3727),f=r(7413),l=r(6845),p=r(2346),h=c.aTypedArray,v=c.exportTypedArrayMethod,d=n.Uint16Array,y=d&&o(d.prototype.sort),g=!(!y||i((function(){y(new d(2),null)}))&&i((function(){y(new d(2),{})}))),m=!!y&&!i((function(){if(l)return l<74;if(s)return s<67;if(f)return!0;if(p)return p<602;var t,e,r=new d(516),n=Array(516);for(t=0;t<516;t++)e=t%4,r[t]=515-t,n[t]=t-2*e+3;for(y(r,(function(t,e){return(t/4|0)-(e/4|0)})),t=0;t<516;t++)if(r[t]!==n[t])return!0}));v("sort",(function(t){return void 0!==t&&a(t),m?y(this,t):u(h(this),function(t){return function(e,r){return void 0!==t?+t(e,r)||0:r!=r?-1:e!=e?1:0===e&&0===r?1/e>0&&1/r<0?1:-1:e>r}}(t))}),!m||g)},2483:(t,e,r)=>{"use strict";var n=r(5343),o=r(3747),i=r(6539),a=r(9601),u=n.aTypedArray;(0,n.exportTypedArrayMethod)("subarray",(function(t,e){var r=u(this),n=r.length,c=i(t,n);return new(a(r))(r.buffer,r.byteOffset+c*r.BYTES_PER_ELEMENT,o((void 0===e?n:i(e,n))-c))}))},6696:(t,e,r)=>{"use strict";var n=r(200),o=r(9070),i=r(5343),a=r(2074),u=r(9609),c=n.Int8Array,s=i.aTypedArray,f=i.exportTypedArrayMethod,l=[].toLocaleString,p=!!c&&a((function(){l.call(new c(1))}));f("toLocaleString",(function(){return o(l,p?u(s(this)):s(this),u(arguments))}),a((function(){return[1,2].toLocaleString()!=new c([1,2]).toLocaleString()}))||!a((function(){c.prototype.toLocaleString.call([1,2])})))},8083:(t,e,r)=>{"use strict";var n=r(5343).exportTypedArrayMethod,o=r(2074),i=r(200),a=r(281),u=i.Uint8Array,c=u&&u.prototype||{},s=[].toString,f=a([].join);o((function(){s.call({})}))&&(s=function(){return f(this)});var l=c.toString!=s;n("toString",s,l)},3746:(t,e,r)=>{r(3106)("Uint8",(function(t){return function(e,r,n){return t(this,e,r,n)}}))},4602:(t,e,r)=>{var n=r(200),o=r(5549),i=r(2975),a=r(8665),u=r(7712),c=r(1602),s=c("iterator"),f=c("toStringTag"),l=a.values,p=function(t,e){if(t){if(t[s]!==l)try{u(t,s,l)}catch(e){t[s]=l}if(t[f]||u(t,f,e),o[e])for(var r in a)if(t[r]!==a[r])try{u(t,r,a[r])}catch(e){t[r]=a[r]}}};for(var h in o)p(n[h]&&n[h].prototype,h);p(i,"DOMTokenList")},2776:(t,e,r)=>{var n=r(1605),o=r(200),i=r(8827)(o.setInterval,!0);n({global:!0,bind:!0,forced:o.setInterval!==i},{setInterval:i})},538:(t,e,r)=>{var n=r(1605),o=r(200),i=r(8827)(o.setTimeout,!0);n({global:!0,bind:!0,forced:o.setTimeout!==i},{setTimeout:i})},8772:(t,e,r)=>{r(2776),r(538)},7452:t=>{var e=function(t){"use strict";var e,r=Object.prototype,n=r.hasOwnProperty,o=Object.defineProperty||function(t,e,r){t[e]=r.value},i="function"==typeof Symbol?Symbol:{},a=i.iterator||"@@iterator",u=i.asyncIterator||"@@asyncIterator",c=i.toStringTag||"@@toStringTag";function s(t,e,r){return Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}),t[e]}try{s({},"")}catch(t){s=function(t,e,r){return t[e]=r}}function f(t,e,r,n){var i=e&&e.prototype instanceof g?e:g,a=Object.create(i.prototype),u=new k(n||[]);return o(a,"_invoke",{value:O(t,r,u)}),a}function l(t,e,r){try{return{type:"normal",arg:t.call(e,r)}}catch(t){return{type:"throw",arg:t}}}t.wrap=f;var p="suspendedStart",h="suspendedYield",v="executing",d="completed",y={};function g(){}function m(){}function b(){}var A={};s(A,a,(function(){return this}));var w=Object.getPrototypeOf,x=w&&w(w(q([])));x&&x!==r&&n.call(x,a)&&(A=x);var S=b.prototype=g.prototype=Object.create(A);function E(t){["next","throw","return"].forEach((function(e){s(t,e,(function(t){return this._invoke(e,t)}))}))}function T(t,e){function r(o,i,a,u){var c=l(t[o],t,i);if("throw"!==c.type){var s=c.arg,f=s.value;return f&&"object"==typeof f&&n.call(f,"__await")?e.resolve(f.__await).then((function(t){r("next",t,a,u)}),(function(t){r("throw",t,a,u)})):e.resolve(f).then((function(t){s.value=t,a(s)}),(function(t){return r("throw",t,a,u)}))}u(c.arg)}var i;o(this,"_invoke",{value:function(t,n){function o(){return new e((function(e,o){r(t,n,e,o)}))}return i=i?i.then(o,o):o()}})}function O(t,e,r){var n=p;return function(o,i){if(n===v)throw new Error("Generator is already running");if(n===d){if("throw"===o)throw i;return M()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var u=I(a,r);if(u){if(u===y)continue;return u}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if(n===p)throw n=d,r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n=v;var c=l(t,e,r);if("normal"===c.type){if(n=r.done?d:h,c.arg===y)continue;return{value:c.arg,done:r.done}}"throw"===c.type&&(n=d,r.method="throw",r.arg=c.arg)}}}function I(t,r){var n=r.method,o=t.iterator[n];if(o===e)return r.delegate=null,"throw"===n&&t.iterator.return&&(r.method="return",r.arg=e,I(t,r),"throw"===r.method)||"return"!==n&&(r.method="throw",r.arg=new TypeError("The iterator does not provide a '"+n+"' method")),y;var i=l(o,t.iterator,r.arg);if("throw"===i.type)return r.method="throw",r.arg=i.arg,r.delegate=null,y;var a=i.arg;return a?a.done?(r[t.resultName]=a.value,r.next=t.nextLoc,"return"!==r.method&&(r.method="next",r.arg=e),r.delegate=null,y):a:(r.method="throw",r.arg=new TypeError("iterator result is not an object"),r.delegate=null,y)}function F(t){var e={tryLoc:t[0]};1 in t&&(e.catchLoc=t[1]),2 in t&&(e.finallyLoc=t[2],e.afterLoc=t[3]),this.tryEntries.push(e)}function C(t){var e=t.completion||{};e.type="normal",delete e.arg,t.completion=e}function k(t){this.tryEntries=[{tryLoc:"root"}],t.forEach(F,this),this.reset(!0)}function q(t){if(t){var r=t[a];if(r)return r.call(t);if("function"==typeof t.next)return t;if(!isNaN(t.length)){var o=-1,i=function r(){for(;++o<t.length;)if(n.call(t,o))return r.value=t[o],r.done=!1,r;return r.value=e,r.done=!0,r};return i.next=i}}return{next:M}}function M(){return{value:e,done:!0}}return m.prototype=b,o(S,"constructor",{value:b,configurable:!0}),o(b,"constructor",{value:m,configurable:!0}),m.displayName=s(b,c,"GeneratorFunction"),t.isGeneratorFunction=function(t){var e="function"==typeof t&&t.constructor;return!!e&&(e===m||"GeneratorFunction"===(e.displayName||e.name))},t.mark=function(t){return Object.setPrototypeOf?Object.setPrototypeOf(t,b):(t.__proto__=b,s(t,c,"GeneratorFunction")),t.prototype=Object.create(S),t},t.awrap=function(t){return{__await:t}},E(T.prototype),s(T.prototype,u,(function(){return this})),t.AsyncIterator=T,t.async=function(e,r,n,o,i){void 0===i&&(i=Promise);var a=new T(f(e,r,n,o),i);return t.isGeneratorFunction(r)?a:a.next().then((function(t){return t.done?t.value:a.next()}))},E(S),s(S,c,"Generator"),s(S,a,(function(){return this})),s(S,"toString",(function(){return"[object Generator]"})),t.keys=function(t){var e=Object(t),r=[];for(var n in e)r.push(n);return r.reverse(),function t(){for(;r.length;){var n=r.pop();if(n in e)return t.value=n,t.done=!1,t}return t.done=!0,t}},t.values=q,k.prototype={constructor:k,reset:function(t){if(this.prev=0,this.next=0,this.sent=this._sent=e,this.done=!1,this.delegate=null,this.method="next",this.arg=e,this.tryEntries.forEach(C),!t)for(var r in this)"t"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=e)},stop:function(){this.done=!0;var t=this.tryEntries[0].completion;if("throw"===t.type)throw t.arg;return this.rval},dispatchException:function(t){if(this.done)throw t;var r=this;function o(n,o){return u.type="throw",u.arg=t,r.next=n,o&&(r.method="next",r.arg=e),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var a=this.tryEntries[i],u=a.completion;if("root"===a.tryLoc)return o("end");if(a.tryLoc<=this.prev){var c=n.call(a,"catchLoc"),s=n.call(a,"finallyLoc");if(c&&s){if(this.prev<a.catchLoc)return o(a.catchLoc,!0);if(this.prev<a.finallyLoc)return o(a.finallyLoc)}else if(c){if(this.prev<a.catchLoc)return o(a.catchLoc,!0)}else{if(!s)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return o(a.finallyLoc)}}}},abrupt:function(t,e){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===t||"continue"===t)&&i.tryLoc<=e&&e<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=t,a.arg=e,i?(this.method="next",this.next=i.finallyLoc,y):this.complete(a)},complete:function(t,e){if("throw"===t.type)throw t.arg;return"break"===t.type||"continue"===t.type?this.next=t.arg:"return"===t.type?(this.rval=this.arg=t.arg,this.method="return",this.next="end"):"normal"===t.type&&e&&(this.next=e),y},finish:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.finallyLoc===t)return this.complete(r.completion,r.afterLoc),C(r),y}},catch:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.tryLoc===t){var n=r.completion;if("throw"===n.type){var o=n.arg;C(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(t,r,n){return this.delegate={iterator:q(t),resultName:r,nextLoc:n},"next"===this.method&&(this.arg=e),y}},t}(t.exports);try{regeneratorRuntime=e}catch(t){"object"==typeof globalThis?globalThis.regeneratorRuntime=e:Function("r","regeneratorRuntime = r")(e)}}},e={};function r(n){var o=e[n];if(void 0!==o)return o.exports;var i=e[n]={exports:{}};return t[n](i,i.exports,r),i.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.g=function(){if("object"==typeof globalThis)return globalThis;try{return this||new Function("return this")()}catch(t){if("object"==typeof window)return window}}(),r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};return(()=>{"use strict";r.r(n),r.d(n,{AudioTag:()=>t,GM:()=>b,Player:()=>Ke,Soundfont:()=>Ae,Synesthesia:()=>i,WebAudio:()=>e,WebMIDI:()=>o,audioDetect_supports:()=>be,audio_contexts:()=>we,channels:()=>A,chordOff:()=>De,chordOn:()=>Pe,config:()=>xe,getContext:()=>Ue,keyToNote:()=>w,loadPlugin:()=>Se,loadProgram:()=>Ee,noteOff:()=>Le,noteOn:()=>_e,noteToKey:()=>x,pitchBend:()=>je,playChannel:()=>Ce,programChange:()=>Re,requestQueue:()=>Ie,send:()=>qe,sendRequest:()=>Fe,setContext:()=>We,setController:()=>Me,setEffects:()=>Ge,setVolume:()=>Be,stopAllNotes:()=>Ne,stopChannel:()=>ke});var t={};r.r(t),r.d(t,{api:()=>S,chordOff:()=>V,chordOn:()=>H,connect:()=>M,getContext:()=>L,noteOff:()=>K,noteOn:()=>W,pitchBend:()=>j,playChannel:()=>D,programChange:()=>U,send:()=>B,setContext:()=>P,setController:()=>R,setEffects:()=>_,setVolume:()=>G,shared_root_info:()=>E,stopAllNotes:()=>Y,stopChannel:()=>N});var e={};r.r(e),r.d(e,{api:()=>et,chordOff:()=>mt,chordOn:()=>gt,connect:()=>ut,createAudioContext:()=>Et,getContext:()=>wt,loadAudio:()=>St,noteOff:()=>yt,noteOn:()=>dt,pitchBend:()=>vt,playChannel:()=>ct,programChange:()=>ht,send:()=>ft,setContext:()=>xt,setController:()=>lt,setEffects:()=>At,setVolume:()=>pt,shared_root_info:()=>rt,stopAllNotes:()=>bt,stopChannel:()=>st});var o={};r.r(o),r.d(o,{api:()=>It,chordOff:()=>Kt,chordOn:()=>Wt,connect:()=>kt,getContext:()=>Rt,noteOff:()=>Ut,noteOn:()=>Gt,pitchBend:()=>Nt,playChannel:()=>qt,programChange:()=>Dt,send:()=>_t,setContext:()=>jt,setController:()=>Lt,setEffects:()=>Bt,setVolume:()=>Pt,shared_root_info:()=>Ft,stopAllNotes:()=>Ht,stopChannel:()=>Mt});var i={};r.r(i),r.d(i,{data:()=>fe,map:()=>le});r(4913),r(5086),r(8741),r(5195),r(9979),r(7136),r(3534),r(590),r(4216),r(8665),r(4602),r(4895),r(4632),r(4189),r(1412),r(4606),r(7755),r(5852),r(6611),r(7787),r(4009),r(7452),r(9693),r(9389),r(8772),r(7746),r(3148);var a=void 0!==window.safari,u=window.navigator.userAgent.toLowerCase().includes("firefox"),c="function"==typeof window.ShadowRoot.prototype.getSelection,s="function"==typeof window.InputEvent.prototype.getTargetRanges,f=!c&&s&&!u||a,l={},p=0,h=function(t){p+=1;var e=document.body,r=new Audio,n=t.split(";")[0];r.id="audio",r.setAttribute("preload","auto"),r.setAttribute("audiobuffer","true"),r.addEventListener("error",(function(){e.removeChild(r),l[n]=!1,p-=1}),!1),r.addEventListener("canplaythrough",(function(){e.removeChild(r),l[n]=!0,p-=1}),!1),r.src="data:"+t,e.appendChild(r)};r(7899);var v=!1;r(173),r(4095),r(2231);function d(t,e){var r="undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(!r){if(Array.isArray(t)||(r=g(t))||e&&t&&"number"==typeof t.length){r&&(t=r);var n=0,o=function(){};return{s:o,n:function(){return n>=t.length?{done:!0}:{done:!1,value:t[n++]}},e:function(t){throw t},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var i,a=!0,u=!1;return{s:function(){r=r.call(t)},n:function(){var t=r.next();return a=t.done,t},e:function(t){u=!0,i=t},f:function(){try{a||null==r.return||r.return()}finally{if(u)throw i}}}}function y(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=null==t?null:"undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(null!=r){var n,o,i,a,u=[],c=!0,s=!1;try{if(i=(r=r.call(t)).next,0===e){if(Object(r)!==r)return;c=!1}else for(;!(c=(n=i.call(r)).done)&&(u.push(n.value),u.length!==e);c=!0);}catch(t){s=!0,o=t}finally{try{if(!c&&null!=r.return&&(a=r.return(),Object(a)!==a))return}finally{if(s)throw o}}return u}}(t,e)||g(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function g(t,e){if(t){if("string"==typeof t)return m(t,e);var r=Object.prototype.toString.call(t).slice(8,-1);return"Object"===r&&t.constructor&&(r=t.constructor.name),"Map"===r||"Set"===r?Array.from(t):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?m(t,e):void 0}}function m(t,e){(null==e||e>t.length)&&(e=t.length);for(var r=0,n=new Array(e);r<e;r++)n[r]=t[r];return n}var b=function(t){for(var e=function(t){return t.replace(/[^a-z0-9 ]/gi,"").replace(/ /g,"_").toLowerCase()},r={byName:{},byId:{},byCategory:{}},n=0,o=Object.entries(t);n<o.length;n++){var i,a=y(o[n],2),u=a[0],c=d(a[1]);try{for(c.s();!(i=c.n()).done;){var s=i.value;if(s){var f=parseInt(s.substr(0,s.indexOf(" ")),10),l=f-1,p=s.replace(f+" ",""),h=e(p),v=e(u),g={id:h,name:p,program:l,category:u};r.byId[l]=g,r.byName[h]=g,r.byCategory[v]=r.byCategory[v]||[],r.byCategory[v].push(g)}}}catch(t){c.e(t)}finally{c.f()}}return r}({Piano:["1 Acoustic Grand Piano","2 Bright Acoustic Piano","3 Electric Grand Piano","4 Honky-tonk Piano","5 Electric Piano 1","6 Electric Piano 2","7 Harpsichord","8 Clavinet"],"Chromatic Percussion":["9 Celesta","10 Glockenspiel","11 Music Box","12 Vibraphone","13 Marimba","14 Xylophone","15 Tubular Bells","16 Dulcimer"],Organ:["17 Drawbar Organ","18 Percussive Organ","19 Rock Organ","20 Church Organ","21 Reed Organ","22 Accordion","23 Harmonica","24 Tango Accordion"],Guitar:["25 Acoustic Guitar (nylon)","26 Acoustic Guitar (steel)","27 Electric Guitar (jazz)","28 Electric Guitar (clean)","29 Electric Guitar (muted)","30 Overdriven Guitar","31 Distortion Guitar","32 Guitar Harmonics"],Bass:["33 Acoustic Bass","34 Electric Bass (finger)","35 Electric Bass (pick)","36 Fretless Bass","37 Slap Bass 1","38 Slap Bass 2","39 Synth Bass 1","40 Synth Bass 2"],Strings:["41 Violin","42 Viola","43 Cello","44 Contrabass","45 Tremolo Strings","46 Pizzicato Strings","47 Orchestral Harp","48 Timpani"],Ensemble:["49 String Ensemble 1","50 String Ensemble 2","51 Synth Strings 1","52 Synth Strings 2","53 Choir Aahs","54 Voice Oohs","55 Synth Choir","56 Orchestra Hit"],Brass:["57 Trumpet","58 Trombone","59 Tuba","60 Muted Trumpet","61 French Horn","62 Brass Section","63 Synth Brass 1","64 Synth Brass 2"],Reed:["65 Soprano Sax","66 Alto Sax","67 Tenor Sax","68 Baritone Sax","69 Oboe","70 English Horn","71 Bassoon","72 Clarinet"],Pipe:["73 Piccolo","74 Flute","75 Recorder","76 Pan Flute","77 Blown Bottle","78 Shakuhachi","79 Whistle","80 Ocarina"],"Synth Lead":["81 Lead 1 (square)","82 Lead 2 (sawtooth)","83 Lead 3 (calliope)","84 Lead 4 (chiff)","85 Lead 5 (charang)","86 Lead 6 (voice)","87 Lead 7 (fifths)","88 Lead 8 (bass + lead)"],"Synth Pad":["89 Pad 1 (new age)","90 Pad 2 (warm)","91 Pad 3 (polysynth)","92 Pad 4 (choir)","93 Pad 5 (bowed)","94 Pad 6 (metallic)","95 Pad 7 (halo)","96 Pad 8 (sweep)"],"Synth Effects":["97 FX 1 (rain)","98 FX 2 (soundtrack)","99 FX 3 (crystal)","100 FX 4 (atmosphere)","101 FX 5 (brightness)","102 FX 6 (goblins)","103 FX 7 (echoes)","104 FX 8 (sci-fi)"],Ethnic:["105 Sitar","106 Banjo","107 Shamisen","108 Koto","109 Kalimba","110 Bagpipe","111 Fiddle","112 Shanai"],Percussive:["113 Tinkle Bell","114 Agogo","115 Steel Drums","116 Woodblock","117 Taiko Drum","118 Melodic Tom","119 Synth Drum"],"Sound effects":["120 Reverse Cymbal","121 Guitar Fret Noise","122 Breath Noise","123 Seashore","124 Bird Tweet","125 Telephone Ring","126 Helicopter","127 Applause","128 Gunshot"]}),A=function(){for(var t={},e=0;e<16;e++)t[e]={program:e,pitchBend:0,mute:!1,mono:!1,omni:!1,solo:!1};return t}(),w={},x={};!function(){for(var t=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],e=21;e<=108;e++){var r=Math.floor((e-12)/12),n=t[e%12]+r;w[n]=e,x[e]=n}}();for(var S="audiotag",E={},T=[],O=0;O<16;O++)T[O]=127;for(var I=-1,F=[],C={},k=[],q=0;q<12;q++)k[q]=new Audio;var M=function(t){for(var e=0,r=Object.keys(w);e<r.length;e++){var n=r[e];C[n]={id:n}}t.onsuccess&&t.onsuccess()},B=function(t,e){},R=function(t,e,r,n){},j=function(t,e,r){},_=function(){},L=function(){},P=function(){},D=function(t,e){if(A[t]){var r=A[t].program,n=b.byId[r].id,o=C[e];if(o){var i=n+""+o.id,a=(I+1)%k.length,u=k[a];if(F[a]=i,!E.Soundfont[n])return void 0;u.src=E.Soundfont[n][o.id],u.volume=T[t]/127,u.play(),I=a}}},N=function(t,e){if(A[t]){var r=A[t].program,n=b.byId[r].id,o=C[e];if(o)for(var i=n+""+o.id,a=0,u=k.length;a<u;a++){var c=(a+I+1)%u,s=F[c];if(s&&s===i)return k[c].pause(),void(F[c]=null)}}},G=function(t,e){T[t]=e},U=function(t,e){A[t].instrument=e},W=function(t,e,r,n){var o=x[e];return!!C[o]&&(n?setTimeout((function(){T[t]=r,D(t,o)}),1e3*n):(T[t]=r,D(t,o),!0))},K=function(t,e,r){},H=function(t,e,r,n){for(var o=function(){var r=e[i],o=x[r];if(!C[o])return"continue";n?setTimeout((function(){D(t,o)}),1e3*n):D(t,o)},i=0;i<e.length;i++)o()},V=function(t,e,r){for(var n=function(){var n=e[o],i=x[n];if(!C[i])return"continue";r?setTimeout((function(){N(t,i)}),1e3*r):N(t,i)},o=0;o<e.length;o++)n()},Y=function(){for(var t=0,e=k.length;t<e;t++)k[t].pause()},J=(r(3446),r(1772),r(3746),r(861),r(1905),r(5213),r(7182),r(2279),r(9302),r(147),r(6217),r(7966),r(5186),r(5944),r(4787),r(632),r(2278),r(4245),r(2492),r(3266),r(7192),r(7220),r(2432),r(2483),r(6696),r(8083),"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=");function Z(t){var e=Math.ceil(3*t.length/4),r=new ArrayBuffer(e);return function(t,e){var r,n,o,i,a,u,c,s=J.indexOf(t.charAt(t.length-1)),f=J.indexOf(t.charAt(t.length-1)),l=Math.ceil(3*t.length/4);64===s&&(l-=1);64===f&&(l-=1);var p=0;r=e?new Uint8Array(e):new Uint8Array(l);t=t.replace(/[^A-Za-z0-9+/=]/g,"");for(var h=0;h<l;h+=3)n=J.indexOf(t.charAt(p++))<<2|(a=J.indexOf(t.charAt(p++)))>>4,o=(15&a)<<4|(u=J.indexOf(t.charAt(p++)))>>2,i=(3&u)<<6|(c=J.indexOf(t.charAt(p++))),r[h]=n,64!==u&&(r[h+1]=o),64!==c&&(r[h+2]=i)}(t,r),r}function X(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=null==t?null:"undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(null!=r){var n,o,i,a,u=[],c=!0,s=!1;try{if(i=(r=r.call(t)).next,0===e){if(Object(r)!==r)return;c=!1}else for(;!(c=(n=i.call(r)).done)&&(u.push(n.value),u.length!==e);c=!0);}catch(t){s=!0,o=t}finally{try{if(!c&&null!=r.return&&(a=r.return(),Object(a)!==a))return}finally{if(s)throw o}}return u}}(t,e)||z(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function Q(t,e){var r="undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(!r){if(Array.isArray(t)||(r=z(t))||e&&t&&"number"==typeof t.length){r&&(t=r);var n=0,o=function(){};return{s:o,n:function(){return n>=t.length?{done:!0}:{done:!1,value:t[n++]}},e:function(t){throw t},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var i,a=!0,u=!1;return{s:function(){r=r.call(t)},n:function(){var t=r.next();return a=t.done,t},e:function(t){u=!0,i=t},f:function(){try{a||null==r.return||r.return()}finally{if(u)throw i}}}}function z(t,e){if(t){if("string"==typeof t)return $(t,e);var r=Object.prototype.toString.call(t).slice(8,-1);return"Object"===r&&t.constructor&&(r=t.constructor.name),"Map"===r||"Set"===r?Array.from(t):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?$(t,e):void 0}}function $(t,e){(null==e||e>t.length)&&(e=t.length);for(var r=0,n=new Array(e);r<e;r++)n[r]=t[r];return n}var tt,et="webaudio",rt={},nt={},ot={},it=127,at={},ut=function(t){xt(tt||Et(),t.onsuccess)},ct=function(){},st=function(){},ft=function(t,e){},lt=function(t,e,r,n){},pt=function(t,e,r){r?setTimeout((function(){it=e}),1e3*r):it=e},ht=function(t,e,r){var n=A[t];n&&(n.program=e)},vt=function(t,e,r){var n=A[t];n&&(r?setTimeout((function(){n.pitchBend=e}),r):n.pitchBend=e)},dt=function(t,e,r){var n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:0,o=A[t].program,i=at[o+"x"+e];if(i&&tt){var a;if(n<tt.currentTime&&(n+=tt.currentTime),(a=tt.createBufferSource()).buffer=i,ot)for(var u=a,c=0,s=Object.keys(ot);c<s.length;c++){var f=s[c];u.connect(ot[f].input),u=ot[f]}var l=r/127*(it/127)*2-1;return a.connect(tt.destination),a.playbackRate.value=1,a.gainNode=tt.createGain(),a.gainNode.connect(tt.destination),a.gainNode.gain.value=Math.min(1,Math.max(-1,l)),a.connect(a.gainNode),a.start(n||0),nt[t+"x"+e]=a,a}},yt=function(t,e){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,n=A[t].program,o=at[n+"x"+e];if(tt&&o){r<tt.currentTime&&(r+=tt.currentTime);var i=nt[t+"x"+e];if(i){if(i.gainNode){var a=i.gainNode.gain;a.linearRampToValueAtTime(a.value,r),a.linearRampToValueAtTime(-1,r+.3)}return i.noteOff?i.noteOff(r+.5):i.stop(r+.5),delete nt[t+"x"+e],i}}},gt=function(t,e,r,n){var o,i={},a=Q(e);try{for(a.s();!(o=a.n()).done;){var u=o.value;i[u]=dt(t,u,r,n)}}catch(t){a.e(t)}finally{a.f()}return i},mt=function(t,e,r){var n,o={},i=Q(e);try{for(i.s();!(n=i.n()).done;){var a=n.value;o[a]=yt(t,a,r)}}catch(t){i.e(t)}finally{i.f()}return o},bt=function(){if(tt)for(var t=0,e=Object.keys(nt);t<e.length;t++){var r=e[t],n=0;n<tt.currentTime&&(n+=tt.currentTime);var o=nt[r];o.gain.linearRampToValueAtTime(1,n),o.gain.linearRampToValueAtTime(0,n+.3),o.noteOff?o.noteOff(n+.3):o.stop(n+.3),delete nt[r]}},At=function(t){if(tt&&tt.tunajs){var e,r=Q(t);try{for(r.s();!(e=r.n()).done;){var n=e.value,o=new tt.tunajs[n.type](n);o.connect(tt.destination),ot[n.type]=o}}catch(t){r.e(t)}finally{r.f()}}else console.log("Effects module not installed.")},wt=function(){return tt},xt=function(t,e,r,n){tt=t,"undefined"==typeof Tuna||tt.tunajs instanceof Tuna||(tt.tunajs=new Tuna(tt));for(var o=[],i=0,a=Object.keys(w);i<a.length;i++){var u=a[i];o.push(u)}for(var c=function(t){for(var r=0,n=Object.keys(f);r<n.length;r++){var o=n[r];if(f[o])return}e&&(e(),e=null)},s=function(t,e,r,n){var o=t[n];o&&(f[e]+=1,St(o,(function(r){r.id=n;var o=w[n];if(at[e+"x"+o]=r,f[e]-=1,0===f[e]){v,t.isLoaded=!0,c()}}),(function(t){console.log(t)})))},f={},l=0,p=Object.entries(rt.Soundfont);l<p.length;l++){var h=X(p[l],2),d=h[0],y=h[1];if(!y.isLoaded){var g=b.byName[d];if(g){var m=g.program;f[m]=0;for(var A=0;A<o.length;A++){s(y,m,0,o[A])}}}}setTimeout(c,1)},St=function(t,e,r){if(0===t.indexOf("data:audio")){var n=Z(t.split(",")[1]);return tt.decodeAudioData(n,e,r)}var o=new XMLHttpRequest;return o.open("GET",t,!0),o.responseType="arraybuffer",o.onsuccess=function(){return tt.decodeAudioData(o.response,e,r)},void o.send()},Et=function(){return new(window.AudioContext||window.webkitAudioContext)};function Tt(t,e){var r="undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(!r){if(Array.isArray(t)||(r=function(t,e){if(!t)return;if("string"==typeof t)return Ot(t,e);var r=Object.prototype.toString.call(t).slice(8,-1);"Object"===r&&t.constructor&&(r=t.constructor.name);if("Map"===r||"Set"===r)return Array.from(t);if("Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r))return Ot(t,e)}(t))||e&&t&&"number"==typeof t.length){r&&(t=r);var n=0,o=function(){};return{s:o,n:function(){return n>=t.length?{done:!0}:{done:!1,value:t[n++]}},e:function(t){throw t},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var i,a=!0,u=!1;return{s:function(){r=r.call(t)},n:function(){var t=r.next();return a=t.done,t},e:function(t){u=!0,i=t},f:function(){try{a||null==r.return||r.return()}finally{if(u)throw i}}}}function Ot(t,e){(null==e||e>t.length)&&(e=t.length);for(var r=0,n=new Array(e);r<e;r++)n[r]=t[r];return n}var It="webmidi",Ft={},Ct=null,kt=function(t){var e=function(e){console.error("Could not connect to web midi! Falling back to WebAudio:",e),Ft.webaudio_backup_connect&&(Ft.config.api="webaudio",Ft.webaudio_backup_connect(t))};navigator.requestMIDIAccess().then((function(r){var n=r.outputs;return void 0===(Ct="function"==typeof n?n()[0]:n[0])?e("No outputs defined"):t.onsuccess&&t.onsuccess()}),e)},qt=function(){},Mt=function(){},Bt=function(){},Rt=function(){},jt=function(){},_t=function(t,e){Ct.send(t,1e3*e)},Lt=function(t,e,r,n){Ct.send([t,e,r],1e3*n)},Pt=function(t,e,r){Ct.send([176+t,7,e],1e3*r)},Dt=function(t,e,r){Ct.send([192+t,e],1e3*r)},Nt=function(t,e,r){Ct.send([224+t,e],1e3*r)},Gt=function(t,e,r,n){Ct.send([144+t,e,r],1e3*n)},Ut=function(t,e,r){Ct.send([128+t,e,0],1e3*r)},Wt=function(t,e,r,n){var o,i=Tt(e);try{for(i.s();!(o=i.n()).done;){var a=o.value;Ct.send([144+t,a,r],1e3*n)}}catch(t){i.e(t)}finally{i.f()}},Kt=function(t,e,r){var n,o=Tt(e);try{for(o.s();!(n=o.n()).done;){var i=n.value;Ct.send([128+t,i,0],1e3*r)}}catch(t){o.e(t)}finally{o.f()}},Ht=function(){Ct.cancel();for(var t=0;t<16;t++)Ct.send([176+t,123,0])};r(9560),r(475),r(5365);function Vt(t){return Vt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},Vt(t)}function Yt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,(o=n.key,i=void 0,i=function(t,e){if("object"!==Vt(t)||null===t)return t;var r=t[Symbol.toPrimitive];if(void 0!==r){var n=r.call(t,e||"default");if("object"!==Vt(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===e?String:Number)(t)}(o,"string"),"symbol"===Vt(i)?i:String(i)),n)}var o,i}var Jt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.str=e,this.position=0}var e,r,n;return e=t,(r=[{key:"read",value:function(t){var e=this.str.substr(this.position,t);return this.position+=t,e}},{key:"readInt32",value:function(){var t=(this.str.charCodeAt(this.position)<<24)+(this.str.charCodeAt(this.position+1)<<16)+(this.str.charCodeAt(this.position+2)<<8)+this.str.charCodeAt(this.position+3);return this.position+=4,t}},{key:"readInt16",value:function(){var t=(this.str.charCodeAt(this.position)<<8)+this.str.charCodeAt(this.position+1);return this.position+=2,t}},{key:"readInt8",value:function(t){var e=this.str.charCodeAt(this.position);return t&&e>127&&(e-=256),this.position+=1,e}},{key:"eof",value:function(){return this.position>=this.str.length}},{key:"readVarInt",value:function(){for(var t=0;;){var e=this.readInt8();if(!(128&e))return t+e;t+=127&e,t<<=7}}}])&&Yt(e.prototype,r),n&&Yt(e,n),Object.defineProperty(e,"prototype",{writable:!1}),t}();function Zt(t){return Zt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},Zt(t)}function Xt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,(o=n.key,i=void 0,i=function(t,e){if("object"!==Zt(t)||null===t)return t;var r=t[Symbol.toPrimitive];if(void 0!==r){var n=r.call(t,e||"default");if("object"!==Zt(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===e?String:Number)(t)}(o,"string"),"symbol"===Zt(i)?i:String(i)),n)}var o,i}var Qt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.data=e,this.stream=new Jt(e),this.lastEventTypeByte=void 0}var e,r,n;return e=t,(r=[{key:"readChunk",value:function(t){var e=t.read(4),r=t.readInt32();return{id:e,length:r,data:t.read(r)}}},{key:"readEvent",value:function(t){var e={};e.deltaTime=t.readVarInt();var r=t.readInt8();if(240&~r){var n;128&r?(n=t.readInt8(),this.lastEventTypeByte=r):(n=r,r=this.lastEventTypeByte);var o=r>>4;switch(e.channel=15&r,e.type="channel",o){case 8:return e.subtype="noteOff",e.noteNumber=n,e.velocity=t.readInt8(),e;case 9:return e.noteNumber=n,e.velocity=t.readInt8(),0===e.velocity?e.subtype="noteOff":e.subtype="noteOn",e;case 10:return e.subtype="noteAftertouch",e.noteNumber=n,e.amount=t.readInt8(),e;case 11:return e.subtype="controller",e.controllerType=n,e.value=t.readInt8(),e;case 12:return e.subtype="programChange",e.programNumber=n,e;case 13:return e.subtype="channelAftertouch",e.amount=n,e;case 14:return e.subtype="pitchBend",e.value=n+(t.readInt8()<<7),e;default:throw new Error("Unrecognised MIDI event type: "+o)}}else{if(255!==r){if(240===r){e.type="sysEx";var i=t.readVarInt();return e.data=t.read(i),e}if(247===r){e.type="dividedSysEx";var a=t.readVarInt();return e.data=t.read(a),e}throw new Error("Unrecognised MIDI event type byte: "+r)}e.type="meta";var u=t.readInt8(),c=t.readVarInt();switch(u){case 0:if(e.subtype="sequenceNumber",2!==c)throw new Error("Expected length for sequenceNumber event is 2, got "+c);return e.number=t.readInt16(),e;case 1:return e.subtype="text",e.text=t.read(c),e;case 2:return e.subtype="copyrightNotice",e.text=t.read(c),e;case 3:return e.subtype="trackName",e.text=t.read(c),e;case 4:return e.subtype="instrumentName",e.text=t.read(c),e;case 5:return e.subtype="lyrics",e.text=t.read(c),e;case 6:return e.subtype="marker",e.text=t.read(c),e;case 7:return e.subtype="cuePoint",e.text=t.read(c),e;case 32:if(e.subtype="midiChannelPrefix",1!==c)throw new Error("Expected length for midiChannelPrefix event is 1, got "+c);return e.channel=t.readInt8(),e;case 47:if(e.subtype="endOfTrack",0!==c)throw new Error("Expected length for endOfTrack event is 0, got "+c);return e;case 81:if(e.subtype="setTempo",3!==c)throw new Error("Expected length for setTempo event is 3, got "+c);return e.microsecondsPerBeat=(t.readInt8()<<16)+(t.readInt8()<<8)+t.readInt8(),e;case 84:if(e.subtype="smpteOffset",5!==c)throw new Error("Expected length for smpteOffset event is 5, got "+c);var s=t.readInt8();return e.frameRate={0:24,32:25,64:29,96:30}[96&s],e.hour=31&s,e.min=t.readInt8(),e.sec=t.readInt8(),e.frame=t.readInt8(),e.subframe=t.readInt8(),e;case 88:if(e.subtype="timeSignature",4!==c)throw new Error("Expected length for timeSignature event is 4, got "+c);return e.numerator=t.readInt8(),e.denominator=Math.pow(2,t.readInt8()),e.metronome=t.readInt8(),e.thirtyseconds=t.readInt8(),e;case 89:if(e.subtype="keySignature",2!==c)throw new Error("Expected length for keySignature event is 2, got "+c);return e.key=t.readInt8(!0),e.scale=t.readInt8(),e;case 127:return e.subtype="sequencerSpecific",e.data=t.read(c),e;default:return e.subtype="unknown",e.data=t.read(c),e}}}},{key:"parseAndReturn",value:function(){var t=this.stream,e=this.readChunk(t);if("MThd"!==e.id||6!==e.length)throw new Error("Bad .mid file - header not found");var r=new Jt(e.data),n=r.readInt16(),o=r.readInt16(),i=r.readInt16();if(32768&i)throw new Error("Expressing time division in SMTPE frames is not supported yet");for(var a={formatType:n,trackCount:o,ticksPerBeat:i},u=[],c=0;c<a.trackCount;c++){u[c]=[];var s=this.readChunk(t);if("MTrk"!==s.id)throw new Error("Unexpected chunk - expected MTrk, got "+s.id);for(var f=new Jt(s.data);!f.eof();){var l=this.readEvent(f);u[c].push(l)}}return{header:a,tracks:u}}}])&&Xt(e.prototype,r),n&&Xt(e,n),Object.defineProperty(e,"prototype",{writable:!1}),t}();function zt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,(o=n.key,i=void 0,i=function(t,e){if("object"!==$t(t)||null===t)return t;var r=t[Symbol.toPrimitive];if(void 0!==r){var n=r.call(t,e||"default");if("object"!==$t(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===e?String:Number)(t)}(o,"string"),"symbol"===$t(i)?i:String(i)),n)}var o,i}function $t(t){return $t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},$t(t)}var te=function t(e){if("object"!==$t(e))return e;if(null==e)return e;var r="number"==typeof e.length?[]:{};for(var n in e)r[n]=t(e[n]);return r},ee=function(){function t(e,r,n,o){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.midiFile=e,this.timeWarp=r,this.eventProcessor=n,this.trackStates=[],this.beatsPerMinute=o||120,this.bpmOverride=!!o,this.ticksPerBeat=e.header.ticksPerBeat;for(var i=0;i<e.tracks.length;i++)this.trackStates[i]={nextEventIndex:0,ticksToNextEvent:e.tracks[i].length?e.tracks[i][0].deltaTime:null};this.temporal=[],this.processEvents()}var e,r,n;return e=t,(r=[{key:"getNextEvent",value:function(){for(var t=null,e=null,r=null,n=0;n<this.trackStates.length;n++)null!=this.trackStates[n].ticksToNextEvent&&(null==t||this.trackStates[n].ticksToNextEvent<t)&&(t=this.trackStates[n].ticksToNextEvent,e=n,r=this.trackStates[n].nextEventIndex);if(null!=e){var o=this.midiFile.tracks[e][r];this.midiFile.tracks[e][r+1]?this.trackStates[e].ticksToNextEvent+=this.midiFile.tracks[e][r+1].deltaTime:this.trackStates[e].ticksToNextEvent=null,this.trackStates[e].nextEventIndex+=1;for(var i=0;i<this.trackStates.length;i++)null!=this.trackStates[i].ticksToNextEvent&&(this.trackStates[i].ticksToNextEvent-=t);return{ticksToEvent:t,event:o,track:e}}return null}},{key:"processEvents",value:function(){for(var t=this.getNextEvent();t;){this.bpmOverride||"meta"!==t.event.type||"setTempo"!==t.event.subtype||(this.beatsPerMinute=6e7/t.event.microsecondsPerBeat);var e=0;t.ticksToEvent>0&&(e=t.ticksToEvent/this.ticksPerBeat/(this.beatsPerMinute/60));var r=1e3*e*this.timeWarp||0;this.temporal.push([t,r]),t=this.getNextEvent()}}},{key:"getData",value:function(){return te(this.temporal)}}])&&zt(e.prototype,r),n&&zt(e,n),Object.defineProperty(e,"prototype",{writable:!1}),t}();function re(t){return re="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},re(t)}function ne(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,(o=n.key,i=void 0,i=function(t,e){if("object"!==re(t)||null===t)return t;var r=t[Symbol.toPrimitive];if(void 0!==r){var n=r.call(t,e||"default");if("object"!==re(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===e?String:Number)(t)}(o,"string"),"symbol"===re(i)?i:String(i)),n)}var o,i}var oe=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.plugin=e,this.currentTime=0,this.endTime=0,this.restart=0,this.playing=!1,this.timeWarp=1,this.startDelay=0,this.BPM=void 0,this.data=[],this.eventQueue=[],this.queuedTime=0,this.startTime=0,this.noteRegistrar={},this.onMidiEvent=void 0,this.MIDIOffset=0,this.frame=void 0,this.__now=void 0}var e,r,n;return e=t,r=[{key:"start",value:function(t){this.currentTime<-1&&(this.currentTime=-1),this.startAudio(this.currentTime,null,t)}},{key:"resume",value:function(t){this.start(t)}},{key:"pause",value:function(){var t=this.restart;this.stopAudio(),this.restart=t}},{key:"stop",value:function(){this.stopAudio(),this.restart=0,this.currentTime=0}},{key:"addListener",value:function(t){this.onMidiEvent=t}},{key:"removeListener",value:function(){this.onMidiEvent=void 0}},{key:"clearAnimation",value:function(){this.animationFrameId&&cancelAnimationFrame(this.animationFrameId)}},{key:"setAnimation",value:function(t){var e=this,r=0,n=0,o=0;this.clearAnimation(),this.frame=function(){if(e.animationFrameId=requestAnimationFrame(e.frame),0!==e.endTime){e.playing?(r=o===e.currentTime?n-Date.now():0,r=0===e.currentTime?0:e.currentTime-r,o!==e.currentTime&&(n=Date.now(),o=e.currentTime)):r=e.currentTime;var i=e.endTime,a=r/1e3,u=a/60,c=60*u+(a-60*u),s=i/1e3;s-c<-1||t({now:c,end:s,events:e.noteRegistrar})}},requestAnimationFrame(this.frame)}},{key:"loadMidiFile",value:function(t,e,r){try{this.replayer=new ee(function(t){return new Qt(t).parseAndReturn()}(this.currentData),this.timeWarp,null,this.BPM),this.data=this.replayer.getData(),this.endTime=this.getLength(),this.loadPlugin({onsuccess:t,onprogress:e,onerror:r})}catch(t){r&&r(t)}}},{key:"loadPlugin",value:function(){}},{key:"loadFile",value:function(t,e,r,n){var o=this;if(this.stop(),-1!==t.indexOf("base64,"))this.currentData=atob(t.split(",")[1]),this.loadMidiFile(e,r,n);else{var i=new XMLHttpRequest;i.open("GET",t),i.overrideMimeType("text/plain; charset=x-user-defined"),i.onreadystatechange=function(){if(4===i.readyState)if(200===i.status){for(var t=i.responseText||"",a=[],u=t.length,c=String.fromCharCode,s=0;s<u;s++)a[s]=c(255&t.charCodeAt(s));o.currentData=a.join(""),o.loadMidiFile(e,r,n)}else n&&n("Unable to load MIDI file")},i.send()}}},{key:"getFileInstruments",value:function(){for(var t={},e={},r=0;r<this.data.length;r++){var n=this.data[r][0].event;if("channel"===n.type){var o=n.channel;switch(n.subtype){case"controller":default:break;case"programChange":e[o]=n.programNumber;break;case"noteOn":var i=e[o],a=Number.isNaN(parseInt(i))?o:i;t[b.byId[a].id]=!0}}}for(var u=[],c=0,s=Object.keys(t);c<s.length;c++){var f=s[c];u.push(f)}return u}},{key:"scheduleTracking",value:function(t,e,r,n,o,i,a){var u=this;return setTimeout((function(){var n={channel:t,note:e,now:r,end:u.endTime,message:o,velocity:i};128===o?delete u.noteRegistrar[e]:u.noteRegistrar[e]=n,u.onMidiEvent&&u.onMidiEvent(n),u.currentTime=r,u.eventQueue.shift(),(u.eventQueue.length<1e3||u.currentTime===u.queuedTime&&u.queuedTime<u.endTime)&&u.startAudio(u.queuedTime,!0)}),r-n)}},{key:"getContext",value:function(){return"webaudio"===this.plugin.api?this.plugin.getContext():(this.ctx={currentTime:0},this.ctx)}},{key:"getLength",value:function(){for(var t=this.data,e=t.length,r=.5,n=0;n<e;n++)r+=t[n][1];return r}},{key:"getNow",value:function(){return window.performance&&window.performance.now?window.performance.now():Date.now()}},{key:"startAudio",value:function(t,e,r){if(this.replayer){var n;e||(void 0===t&&(t=this.restart),this.playing&&this.stopAudio(),this.playing=!0,this.data=this.replayer.getData(),this.endTime=this.getLength());var o=0,i=0,a=this.data,u=this.getContext(),c=a.length;this.queuedTime=.5;var s=t-this.currentTime;if("webaudio"!==this.plugin.api){var f=this.getNow();this.__now=this.__now||f,u.currentTime=(f-this.__now)/1e3}this.startTime=u.currentTime;for(var l=0;l<c&&i<100;l++){var p=a[l];if(this.queuedTime+=p[1],this.queuedTime<=t)o=this.queuedTime;else{t=this.queuedTime-o;var h=p[0].event;if("channel"===h.type){var v=h.channel,d=A[v],y=u.currentTime+(t+s+this.startDelay)/1e3,g=this.queuedTime-o+this.startDelay;switch(h.subtype){case"controller":this.plugin.setController(v,h.controllerType,h.value,y);break;case"programChange":this.plugin.programChange(v,h.programNumber,y);break;case"pitchBend":this.plugin.pitchBend(v,h.value,y);break;case"noteOn":if(d.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:g,source:this.plugin.noteOn(v,h.noteNumber,h.velocity,y),interval:this.scheduleTracking(v,n,this.queuedTime+this.startDelay,o-s,144,h.velocity)}),i+=1;break;case"noteOff":if(d.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:g,source:this.plugin.noteOff(v,h.noteNumber,y),interval:this.scheduleTracking(v,n,this.queuedTime,o-s,128,0)})}}}}r&&r(this.eventQueue)}}},{key:"stopAudio",value:function(){var t=this.getContext();for(this.playing=!1,this.restart+=1e3*(t.currentTime-this.startTime);this.eventQueue.length;){var e=this.eventQueue.pop();window.clearInterval(e.interval),e.source&&("number"==typeof e.source?window.clearTimeout(e.source):e.source.disconnect(0))}for(var r=0,n=Object.keys(this.noteRegistrar);r<n.length;r++){var o=n[r],i=this.noteRegistrar[o];144===this.noteRegistrar[o].message&&this.onMidiEvent&&this.onMidiEvent({channel:i.channel,note:i.note,now:i.now,end:i.end,message:128,velocity:i.velocity})}this.noteRegistrar={}}}],r&&ne(e.prototype,r),n&&ne(e,n),Object.defineProperty(e,"prototype",{writable:!1}),t}();r(6088),r(6048);function ie(t){return ie="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},ie(t)}var ae,ue,ce,se={};se.Space={},ae={},ue={"HEX24>HSL":"HEX24>RGB>HSL","HEX32>HSLA":"HEX32>RGBA>HSLA","HEX24>CMYK":"HEX24>RGB>CMY>CMYK","RGB>CMYK":"RGB>CMY>CMYK"},(ce=se.Space=function(t,e){ue[e]&&(e=ue[e]);var r=e.split(">");if("object"===ie(t)&&t[0]>=0){for(var n=r[0],o={},i=0;i<n.length;i++)o[n.substr(i,1)]=t[i];t=o}if(ae[e])return ae[e](t);for(var a=1,u=r[0];a<r.length;a++)a>1&&(u=u.substr(u.indexOf("_")+1)),u+=(0===a?"":"_")+r[a],t=ce[u](t);return t}).RGB_W3=function(t){return"rgb("+(0|t.R)+","+(0|t.G)+","+(0|t.B)+")"},ce.RGBA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"rgba("+(0|t.R)+","+(0|t.G)+","+(0|t.B)+","+e+")"},ce.W3_RGB=function(t){var e=t.substr(4,t.length-5).split(",");return{R:parseInt(e[0]),G:parseInt(e[1]),B:parseInt(e[2])}},ce.W3_RGBA=function(t){var e=t.substr(5,t.length-6).split(",");return{R:parseInt(e[0]),G:parseInt(e[1]),B:parseInt(e[2]),A:255*parseFloat(e[3])}},ce.HSL_W3=function(t){return"hsl("+(t.H+.5|0)+","+(t.S+.5|0)+"%,"+(t.L+.5|0)+"%)"},ce.HSLA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"hsla("+(t.H+.5|0)+","+(t.S+.5|0)+"%,"+(t.L+.5|0)+"%,"+e+")"},ce.W3_HSL=function(t){var e=t.substr(4,t.length-5).split(",");return{H:parseInt(e[0]),S:parseInt(e[1]),L:parseInt(e[2])}},ce.W3_HSLA=function(t){var e=t.substr(5,t.length-6).split(",");return{H:parseInt(e[0]),S:parseInt(e[1]),L:parseInt(e[2]),A:255*parseFloat(e[3])}},ce.W3_HEX=ce.W3_HEX24=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),3===t.length&&(t=t[0]+t[0]+t[1]+t[1]+t[2]+t[2]),parseInt("0x"+t)},ce.W3_HEX32=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),6===t.length?parseInt("0xFF"+t):parseInt("0x"+t)},ce.HEX_W3=ce.HEX24_W3=function(t,e){e||(e=6),t||(t=0);for(var r=t.toString(16),n=r.length;n<e;)r="0"+r,n+=1;for(n=r.length;n>e;)r=r.substring(1),n-=1;return"#"+r},ce.HEX32_W3=function(t){return ce.HEX_W3(t,8)},ce.HEX_RGB=ce.HEX24_RGB=function(t){return{R:t>>16,G:t>>8&255,B:255&t}},ce.HEX32_RGBA=function(t){return{R:t>>>16&255,G:t>>>8&255,B:255&t,A:t>>>24}},ce.RGBA_HEX32=function(t){return(t.A<<24|t.R<<16|t.G<<8|t.B)>>>0},ce.RGB_HEX24=ce.RGB_HEX=function(t){return t.R<0&&(t.R=0),t.G<0&&(t.G=0),t.B<0&&(t.B=0),t.R>255&&(t.R=255),t.G>255&&(t.G=255),t.B>255&&(t.B=255),t.R<<16|t.G<<8|t.B},ce.RGB_CMY=function(t){return{C:1-t.R/255,M:1-t.G/255,Y:1-t.B/255}},ce.RGBA_HSLA=ce.RGB_HSL=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a,s=(u+a)/2;if(0===c)e=0,r=0;else{r=s<.5?c/(u+a):c/(2-u-a);var f=((u-n)/6+c/2)/c,l=((u-o)/6+c/2)/c,p=((u-i)/6+c/2)/c;n===u?e=p-l:o===u?e=1/3+f-p:i===u&&(e=2/3+l-f),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,L:100*s,A:t.A}},ce.RGBA_HSVA=ce.RGB_HSV=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a;if(0===c)e=0,r=0;else{r=c/u;var s=((u-n)/6+c/2)/c,f=((u-o)/6+c/2)/c,l=((u-i)/6+c/2)/c;n===u?e=l-f:o===u?e=1/3+s-l:i===u&&(e=2/3+f-s),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,V:100*u,A:t.A}},ce.CMY_RGB=function(t){return{R:Math.max(0,255*(1-t.C)),G:Math.max(0,255*(1-t.M)),B:Math.max(0,255*(1-t.Y))}},ce.CMY_CMYK=function(t){var e=t.C,r=t.M,n=t.Y,o=Math.min(n,Math.min(r,Math.min(e,1)));return{C:e=Math.round((e-o)/(1-o)*100),M:r=Math.round((r-o)/(1-o)*100),Y:n=Math.round((n-o)/(1-o)*100),K:o=Math.round(100*o)}},ce.CMYK_CMY=function(t){return{C:t.C*(1-t.K)+t.K,M:t.M*(1-t.K)+t.K,Y:t.Y*(1-t.K)+t.K}},ce.HSLA_RGBA=ce.HSL_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.L/100;return 0===c?e=r=n=s:(o=2*s-(i=s<.5?s*(1+c):s+c-c*s),(a=u+1/3)<0&&(a+=1),a>1&&(a-=1),e=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u)<0&&(a+=1),a>1&&(a-=1),r=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u-1/3)<0&&(a+=1),a>1&&(a-=1),n=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o),{R:255*e,G:255*r,B:255*n,A:t.A}},ce.HSVA_RGBA=ce.HSV_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.V/100;if(0===c)e=r=n=Math.round(255*s);else switch(u>=1&&(u=0),o=(u*=6)-Math.floor(u),i=Math.round(255*s*(1-c)),n=Math.round(255*s*(1-c*o)),a=Math.round(255*s*(1-c*(1-o))),s=Math.round(255*s),Math.floor(u)){case 0:e=s,r=a,n=i;break;case 1:e=n,r=s,n=i;break;case 2:e=i,r=s,n=a;break;case 3:e=i,r=n,n=s;break;case 4:e=a,r=i,n=s;break;case 5:e=s,r=i}return{R:e,G:r,B:n,A:t.A}};var fe={"Isaac Newton (1704)":{format:"HSL",ref:"Gerstner, p.167",english:["red",null,"orange",null,"yellow","green",null,"blue",null,"indigo",null,"violet"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[135,76,32],6:[0,0,0],7:[248,82,28],8:[0,0,0],9:[302,88,26],10:[0,0,0],11:[325,84,46]},"Louis Bertrand Castel (1734)":{format:"HSL",ref:"Peacock, p.400",english:["blue","blue-green","green","olive green","yellow","yellow-orange","orange","red","crimson","violet","agate","indigo"],0:[248,82,28],1:[172,68,34],2:[135,76,32],3:[79,59,36],4:[60,90,60],5:[49,90,60],6:[29,94,52],7:[360,96,51],8:[1,89,33],9:[325,84,46],10:[273,80,27],11:[302,88,26]},"George Field (1816)":{format:"HSL",ref:"Klein, p.69",english:["blue",null,"purple",null,"red","orange",null,"yellow",null,"yellow green",null,"green"],0:[248,82,28],1:[0,0,0],2:[302,88,26],3:[0,0,0],4:[360,96,51],5:[29,94,52],6:[0,0,0],7:[60,90,60],8:[0,0,0],9:[79,59,36],10:[0,0,0],11:[135,76,32]},"D. D. Jameson (1844)":{format:"HSL",ref:"Jameson, p.12",english:["red","red-orange","orange","orange-yellow","yellow","green","green-blue","blue","blue-purple","purple","purple-violet","violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[273,80,27],9:[302,88,26],10:[313,78,37],11:[325,84,46]},"Theodor Seemann (1881)":{format:"HSL",ref:"Klein, p.86",english:["carmine","scarlet","orange","yellow-orange","yellow","green","green blue","blue","indigo","violet","brown","black"],0:[0,58,26],1:[360,96,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[302,88,26],9:[325,84,46],10:[0,58,26],11:[0,0,3]},"A. Wallace Rimington (1893)":{format:"HSL",ref:"Peacock, p.402",english:["deep red","crimson","orange-crimson","orange","yellow","yellow-green","green","blueish green","blue-green","indigo","deep blue","violet"],0:[360,96,51],1:[1,89,33],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[79,59,36],6:[135,76,32],7:[163,62,40],8:[172,68,34],9:[302,88,26],10:[248,82,28],11:[325,84,46]},"Bainbridge Bishop (1893)":{format:"HSL",ref:"Bishop, p.11",english:["red","orange-red or scarlet","orange","gold or yellow-orange","yellow or green-gold","yellow-green","green","greenish-blue or aquamarine","blue","indigo or violet-blue","violet","violet-red","red"],0:[360,96,51],1:[1,89,33],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[163,62,40],8:[302,88,26],9:[325,84,46],10:[343,79,47],11:[360,96,51]},"H. von Helmholtz (1910)":{format:"HSL",ref:"Helmholtz, p.22",english:["yellow","green","greenish blue","cyan-blue","indigo blue","violet","end of red","red","red","red","red orange","orange"],0:[60,90,60],1:[135,76,32],2:[172,68,34],3:[211,70,37],4:[302,88,26],5:[325,84,46],6:[330,84,34],7:[360,96,51],8:[10,91,43],9:[10,91,43],10:[8,93,51],11:[28,89,50]},"Alexander Scriabin (1911)":{format:"HSL",ref:"Jones, p.104",english:["red","violet","yellow","steely with the glint of metal","pearly blue the shimmer of moonshine","dark red","bright blue","rosy orange","purple","green","steely with a glint of metal","pearly blue the shimmer of moonshine"],0:[360,96,51],1:[325,84,46],2:[60,90,60],3:[245,21,43],4:[211,70,37],5:[1,89,33],6:[248,82,28],7:[29,94,52],8:[302,88,26],9:[135,76,32],10:[245,21,43],11:[211,70,37]},"Adrian Bernard Klein (1930)":{format:"HSL",ref:"Klein, p.209",english:["dark red","red","red orange","orange","yellow","yellow green","green","blue-green","blue","blue violet","violet","dark violet"],0:[0,91,40],1:[360,96,51],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[292,70,31],10:[325,84,46],11:[330,84,34]},"August Aeppli (1940)":{format:"HSL",ref:"Gerstner, p.169",english:["red",null,"orange",null,"yellow",null,"green","blue-green",null,"ultramarine blue","violet","purple"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[0,0,0],6:[135,76,32],7:[172,68,34],8:[0,0,0],9:[211,70,37],10:[273,80,27],11:[302,88,26]},"I. J. Belmont (1944)":{ref:"Belmont, p.226",english:["red","red-orange","orange","yellow-orange","yellow","yellow-green","green","blue-green","blue","blue-violet","violet","red-violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[313,78,37],10:[325,84,46],11:[338,85,37]},"Steve Zieverink (2004)":{format:"HSL",ref:"Cincinnati Contemporary Art Center",english:["yellow-green","green","blue-green","blue","indigo","violet","ultra violet","infra red","red","orange","yellow-white","yellow"],0:[73,73,55],1:[135,76,32],2:[172,68,34],3:[248,82,28],4:[302,88,26],5:[325,84,46],6:[326,79,24],7:[1,89,33],8:[360,96,51],9:[29,94,52],10:[62,78,74],11:[60,90,60]},"Circle of Fifths (Johnston 2003)":{format:"RGB",ref:"Joseph Johnston",english:["yellow","blue","orange","teal","red","green","purple","light orange","light blue","dark orange","dark green","violet"],0:[255,255,0],1:[50,0,255],2:[255,150,0],3:[0,210,180],4:[255,0,0],5:[130,255,0],6:[150,0,200],7:[255,195,0],8:[30,130,255],9:[255,100,0],10:[0,200,0],11:[225,0,225]},"Circle of Fifths (Wheatman 2002)":{format:"HEX",ref:"Stuart Wheatman",english:[],data:["#122400","#2E002E","#002914","#470000","#002142","#2E2E00","#290052","#003D00","#520029","#003D3D","#522900","#000080","#244700","#570057","#004D26","#7A0000","#003B75","#4C4D00","#47008F","#006100","#850042","#005C5C","#804000","#0000C7","#366B00","#80007F","#00753B","#B80000","#0057AD","#6B6B00","#6600CC","#008A00","#B8005C","#007F80","#B35900","#2424FF","#478F00","#AD00AD","#00994D","#F00000","#0073E6","#8F8F00","#8A14FF","#00AD00","#EB0075","#00A3A3","#E07000","#6B6BFF","#5CB800","#DB00DB","#00C261","#FF5757","#3399FF","#ADAD00","#B56BFF","#00D600","#FF57AB","#00C7C7","#FF9124","#9999FF","#6EDB00","#FF29FF","#00E070","#FF9999","#7ABDFF","#D1D100","#D1A3FF","#00FA00","#FFA3D1","#00E5E6","#FFC285","#C2C2FF","#80FF00","#FFA8FF","#00E070","#FFCCCC","#C2E0FF","#F0F000","#EBD6FF","#ADFFAD","#FFD6EB","#8AFFFF","#FFEBD6","#EBEBFF","#E0FFC2","#FFEBFF","#E5FFF2","#FFF5F5"]}},le=function(t){for(var e,r,n,o,i,a={},u=fe,c=u[t]||u["D. D. Jameson (1844)"],s=c[3],f=0;f<=88;f++)if(c.data)a[f]={hsl:c.data[f],hex:c.data[f]};else{var l=c[(f+9)%12];"RGB"===c.format?(l=se.Space(l,"RGB>HSL"),e=Math.floor(l.H),r=Math.floor(l.S),n=Math.floor(l.L)):(e=l[0],r=l[1],n=l[2]),e===r&&r===n&&(o=s,i=c[(f+10)%12],l=[Math.floor(.5*o[0]+.5*i[0]+.5),Math.floor(.5*o[1]+.5*i[1]+.5),Math.floor(.5*o[2]+.5*i[2]+.5)]),a[f]={hsl:"hsla("+e+","+r+"%,"+n+"%, 1)",hex:se.Space({H:e,S:r,L:n},"HSL>RGB>HEX>W3")},s=l}return a};function pe(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,(o=n.key,i=void 0,i=function(t,e){if("object"!==ye(t)||null===t)return t;var r=t[Symbol.toPrimitive];if(void 0!==r){var n=r.call(t,e||"default");if("object"!==ye(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===e?String:Number)(t)}(o,"string"),"symbol"===ye(i)?i:String(i)),n)}var o,i}function he(t,e){return he=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(t,e){return t.__proto__=e,t},he(t,e)}function ve(t){var e=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],(function(){}))),!0}catch(t){return!1}}();return function(){var r,n=de(t);if(e){var o=de(this).constructor;r=Reflect.construct(n,arguments,o)}else r=n.apply(this,arguments);return function(t,e){if(e&&("object"===ye(e)||"function"==typeof e))return e;if(void 0!==e)throw new TypeError("Derived constructors may only return object or undefined");return function(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}(t)}(this,r)}}function de(t){return de=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(t){return t.__proto__||Object.getPrototypeOf(t)},de(t)}function ye(t){return ye="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},ye(t)}function ge(t,e){var r="undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(!r){if(Array.isArray(t)||(r=function(t,e){if(!t)return;if("string"==typeof t)return me(t,e);var r=Object.prototype.toString.call(t).slice(8,-1);"Object"===r&&t.constructor&&(r=t.constructor.name);if("Map"===r||"Set"===r)return Array.from(t);if("Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r))return me(t,e)}(t))||e&&t&&"number"==typeof t.length){r&&(t=r);var n=0,o=function(){};return{s:o,n:function(){return n>=t.length?{done:!0}:{done:!1,value:t[n++]}},e:function(t){throw t},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var i,a=!0,u=!1;return{s:function(){r=r.call(t)},n:function(){var t=r.next();return a=t.done,t},e:function(t){u=!0,i=t},f:function(){try{a||null==r.return||r.return()}finally{if(u)throw i}}}}function me(t,e){(null==e||e>t.length)&&(e=t.length);for(var r=0,n=new Array(e);r<e;r++)n[r]=t[r];return n}
-/*!
-  ----------------------------------------------------------
-  midicube
-  2025-05-23 - version 0.9
-
-  based on MIDI.js. v. 0.3.4 : 2015-03-26
-
-  MIT License
-  https://github.com/mscuthbert/midicube/
-
-  Technologies: Web MIDI API, Web Audio API, HTML5 Audio Tag
-  ----------------------------------------------------------
-*/var be=l,Ae={},we={AudioTag:t,WebAudio:e,WebMIDI:o},xe={soundfontUrl:"./soundfont/",api:"",audioFormat:"",supports:{},connected_plugin:e,is_connected:!1},Se=function(t){"function"==typeof t&&(t={onsuccess:t}),t.onprogress=t.onprogress||void 0,t.api=t.api||"",t.targetFormat=t.targetFormat||"",t.instrument=t.instrument||"acoustic_grand_piano",t.instruments=t.instruments||void 0,t.apiPrecedence=t.apiPrecedence||["webaudio","webmidi","audiotag"],xe.soundfontUrl=t.soundfontUrl||xe.soundfontUrl,function(t){if("undefined"!=typeof navigator&&navigator.requestMIDIAccess)if(Function.prototype.toString.call(navigator.requestMIDIAccess).indexOf("[native code]"))l.webmidi=!0;else if("undefined"!=typeof navigator&&void 0!==navigator.plugins)for(var e=0,r=Array.from(navigator.plugins);e<r.length;e++)r[e].name.indexOf("Jazz-Plugin")>=0&&(l.webmidi=!0);if("undefined"==typeof Audio)return t({});l.audiotag=!0;var n=window.AudioContext||window.webkitAudioContext;n&&n.prototype.createGain&&(l.webaudio=!0);var o=new Audio;if(void 0===o.canPlayType)return t(l);var i=o.canPlayType('audio/ogg; codecs="vorbis"'),a="probably"===i||"maybe"===i,u=o.canPlayType("audio/mpeg"),c="probably"===u||"maybe"===u;if(l.ogg_mp3_precedence="probably"===i?"ogg":"probably"===u?"mp3":"ogg",f&&(l.ogg_mp3_precedence="mp3"),!a&&!c)return t(l);a&&h("audio/ogg;base64,T2dnUwACAAAAAAAAAADqnjMlAAAAAOyyzPIBHgF2b3JiaXMAAAAAAUAfAABAHwAAQB8AAEAfAACZAU9nZ1MAAAAAAAAAAAAA6p4zJQEAAAANJGeqCj3//////////5ADdm9yYmlzLQAAAFhpcGguT3JnIGxpYlZvcmJpcyBJIDIwMTAxMTAxIChTY2hhdWZlbnVnZ2V0KQAAAAABBXZvcmJpcw9CQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBACAAAAYRqF1TCqDEEPKQ4QUY9AzoxBDDEzGHGNONKQMMogzxZAyiFssLqgQBKEhKwKAKAAAwBjEGGIMOeekZFIi55iUTkoDnaPUUcoolRRLjBmlEluJMYLOUeooZZRCjKXFjFKJscRUAABAgAMAQICFUGjIigAgCgCAMAYphZRCjCnmFHOIMeUcgwwxxiBkzinoGJNOSuWck85JiRhjzjEHlXNOSuekctBJyaQTAAAQ4AAAEGAhFBqyIgCIEwAwSJKmWZomipamiaJniqrqiaKqWp5nmp5pqqpnmqpqqqrrmqrqypbnmaZnmqrqmaaqiqbquqaquq6nqrZsuqoum65q267s+rZru77uqapsm6or66bqyrrqyrbuurbtS56nqqKquq5nqq6ruq5uq65r25pqyq6purJtuq4tu7Js664s67pmqq5suqotm64s667s2rYqy7ovuq5uq7Ks+6os+75s67ru2rrwi65r66os674qy74x27bwy7ouHJMnqqqnqq7rmarrqq5r26rr2rqmmq5suq4tm6or26os67Yry7aumaosm64r26bryrIqy77vyrJui67r66Ys67oqy8Lu6roxzLat+6Lr6roqy7qvyrKuu7ru+7JuC7umqrpuyrKvm7Ks+7auC8us27oxuq7vq7It/KosC7+u+8Iy6z5jdF1fV21ZGFbZ9n3d95Vj1nVhWW1b+V1bZ7y+bgy7bvzKrQvLstq2scy6rSyvrxvDLux8W/iVmqratum6um7Ksq/Lui60dd1XRtf1fdW2fV+VZd+3hV9pG8OwjK6r+6os68Jry8ov67qw7MIvLKttK7+r68ow27qw3L6wLL/uC8uq277v6rrStXVluX2fsSu38QsAABhwAAAIMKEMFBqyIgCIEwBAEHIOKQahYgpCCKGkEEIqFWNSMuakZM5JKaWUFEpJrWJMSuaclMwxKaGUlkopqYRSWiqlxBRKaS2l1mJKqcVQSmulpNZKSa2llGJMrcUYMSYlc05K5pyUklJrJZXWMucoZQ5K6iCklEoqraTUYuacpA46Kx2E1EoqMZWUYgupxFZKaq2kFGMrMdXUWo4hpRhLSrGVlFptMdXWWqs1YkxK5pyUzDkqJaXWSiqtZc5J6iC01DkoqaTUYiopxco5SR2ElDLIqJSUWiupxBJSia20FGMpqcXUYq4pxRZDSS2WlFosqcTWYoy1tVRTJ6XFklKMJZUYW6y5ttZqDKXEVkqLsaSUW2sx1xZjjqGkFksrsZWUWmy15dhayzW1VGNKrdYWY40x5ZRrrT2n1mJNMdXaWqy51ZZbzLXnTkprpZQWS0oxttZijTHmHEppraQUWykpxtZara3FXEMpsZXSWiypxNhirLXFVmNqrcYWW62ltVprrb3GVlsurdXcYqw9tZRrrLXmWFNtBQAADDgAAASYUAYKDVkJAEQBAADGMMYYhEYpx5yT0ijlnHNSKucghJBS5hyEEFLKnINQSkuZcxBKSSmUklJqrYVSUmqttQIAAAocAAACbNCUWByg0JCVAEAqAIDBcTRNFFXVdX1fsSxRVFXXlW3jVyxNFFVVdm1b+DVRVFXXtW3bFn5NFFVVdmXZtoWiqrqybduybgvDqKqua9uybeuorqvbuq3bui9UXVmWbVu3dR3XtnXd9nVd+Bmzbeu2buu+8CMMR9/4IeTj+3RCCAAAT3AAACqwYXWEk6KxwEJDVgIAGQAAgDFKGYUYM0gxphhjTDHGmAAAgAEHAIAAE8pAoSErAoAoAADAOeecc84555xzzjnnnHPOOeecc44xxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY0wAwE6EA8BOhIVQaMhKACAcAABACCEpKaWUUkoRU85BSSmllFKqFIOMSkoppZRSpBR1lFJKKaWUIqWgpJJSSimllElJKaWUUkoppYw6SimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaVUSimllFJKKaWUUkoppRQAYPLgAACVYOMMK0lnhaPBhYasBAByAwAAhRiDEEJpraRUUkolVc5BKCWUlEpKKZWUUqqYgxBKKqmlklJKKbXSQSihlFBKKSWUUkooJYQQSgmhlFRCK6mEUkoHoYQSQimhhFRKKSWUzkEoIYUOQkmllNRCSB10VFIpIZVSSiklpZQ6CKGUklJLLZVSWkqpdBJSKamV1FJqqbWSUgmhpFZKSSWl0lpJJbUSSkklpZRSSymFVFJJJYSSUioltZZaSqm11lJIqZWUUkqppdRSSiWlkEpKqZSSUmollZRSaiGVlEpJKaTUSimlpFRCSamlUlpKLbWUSkmptFRSSaWUlEpJKaVSSksppRJKSqmllFpJKYWSUkoplZJSSyW1VEoKJaWUUkmptJRSSymVklIBAEAHDgAAAUZUWoidZlx5BI4oZJiAAgAAQABAgAkgMEBQMApBgDACAQAAAADAAAAfAABHARAR0ZzBAUKCwgJDg8MDAAAAAAAAAAAAAACAT2dnUwAEAAAAAAAAAADqnjMlAgAAADzQPmcBAQA="),c&&h("audio/mpeg;base64,/+MYxAAAAANIAUAAAASEEB/jwOFM/0MM/90b/+RhST//w4NFwOjf///PZu////9lns5GFDv//l9GlUIEEIAAAgIg8Ir/JGq3/+MYxDsLIj5QMYcoAP0dv9HIjUcH//yYSg+CIbkGP//8w0bLVjUP///3Z0x5QCAv/yLjwtGKTEFNRTMuOTeqqqqqqqqqqqqq/+MYxEkNmdJkUYc4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");var s=(new Date).getTime(),v=window.setInterval((function(){var e=(new Date).getTime();p&&!(e-s>5e3)||(window.clearInterval(v),t(l))}),1)}((function(e){var r=window.location.hash,n="";if(e[t.api])n=t.api;else if(e[r.substring(1)])n=r.substring(1);else{var o,i=ge(t.apiPrecedence);try{for(i.s();!(o=i.n()).done;){var a=o.value;if(e[a]){n=a;break}}}catch(t){i.e(t)}finally{i.f()}}if(Te[n]){var u="",c=e["audio/ogg"],s=e["audio/mpeg"],f=e.ogg_mp3_precedence;t.targetFormat?u=t.targetFormat:c&&"ogg"===f?u="ogg":s&&"mp3"===f?u="mp3":c?u="ogg":s?u="mp3":"webmidi"!==n&&(console.warn("no supporting playback formats...will try mp3 but unlikely"),u="mp3"),xe.api=n,xe.audioFormat=u,xe.supports=e,Ee(t)}}))},Ee=function(t){var e=t.instruments||t.instrument||"acoustic_grand_piano";"object"!==ye(e)&&(e=e||0===e?[e]:[]);for(var r=0;r<e.length;r++){var n=e[r];n===n+0&&b.byId[n]&&(e[r]=b.byId[n].id)}t.format=xe.audioFormat,t.instruments=e,Te[xe.api](t)},Te={webmidi:function(t){Oe(o,t),kt(t),xe.is_connected=!0},audiotag:function(e){Oe(t,e),Ie(e,"AudioTag")},webaudio:function(t){Oe(e,t),Ie(t,"WebAudio")}},Oe=function(t,e){xe.connected_plugin=t,t.shared_root_info.Soundfont=Ae,t.shared_root_info.config=xe,t.shared_root_info.webaudio_backup_connect=function(t){return Te.webaudio(t)}},Ie=function(t,e){var r,n=t.format,o=t.instruments,i=t.onprogress,a=t.onerror,u=we[e]||e.WebAudio,c=o.length,s=c,f=function(){(s-=1)||(u.connect(t),xe.is_connected=!0,i&&i("load",1))},l=ge(o);try{var p=function(){var t=r.value;if(Ae[t])f();else{Fe(t,n,(function(e,r){return function(t,e,r){i&&i("load",e/c+(c-s)/c,r)}(0,r,t)}),(function(){return f()}),a)}};for(l.s();!(r=l.n()).done;)p()}catch(t){l.e(t)}finally{l.f()}},Fe=function(t,e,r,n,o){var i=xe.soundfontUrl+t+"-"+e+".js",a=new XMLHttpRequest;a.open("GET",i),a.setRequestHeader("Content-Type","text/plain"),a.onload=function(){if(200===a.status){var t=document.createElement("script");t.language="javascript",t.type="text/javascript",t.text=a.responseText,document.body.appendChild(t),n()}else o?o():console.error("Could not load soundfont; path was ".concat(i))},a.send()},Ce=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).playChannel.apply(t,arguments);console.error("Connect before calling")},ke=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).stopChannel.apply(t,arguments);console.error("Connect before calling")},qe=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).send.apply(t,arguments);console.error("Connect before calling")},Me=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).setController.apply(t,arguments);console.error("Connect before calling")},Be=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).setVolume.apply(t,arguments);console.error("Connect before calling")},Re=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).programChange.apply(t,arguments);console.error("Connect before calling")},je=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).pitchBend.apply(t,arguments);console.error("Connect before calling")},_e=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).noteOn.apply(t,arguments);console.error("Connect before calling")},Le=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).noteOff.apply(t,arguments);console.error("Connect before calling")},Pe=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).chordOn.apply(t,arguments);console.error("Connect before calling")},De=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).chordOff.apply(t,arguments);console.error("Connect before calling")},Ne=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).stopAllNotes.apply(t,arguments);console.error("Connect before calling")},Ge=function(){if(xe.is_connected)return xe.connected_plugin.setEffects();console.error("Connect before calling")},Ue=function(){if(xe.is_connected)return xe.connected_plugin.getContext();console.error("Connect before calling")},We=function(){var t;if(xe.is_connected)return(t=xe.connected_plugin).setContext.apply(t,arguments);console.error("Connect before calling")},Ke=function(t){!function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function");t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,writable:!0,configurable:!0}}),Object.defineProperty(t,"prototype",{writable:!1}),e&&he(t,e)}(i,t);var e,r,n,o=ve(i);function i(){return function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,i),o.call(this,xe.connected_plugin)}return e=i,r=[{key:"loadPlugin",value:function(){return Se.apply(void 0,arguments)}}],r&&pe(e.prototype,r),n&&pe(e,n),Object.defineProperty(e,"prototype",{writable:!1}),i}(oe)})(),n})()));
+!function(e,t){ true?module.exports=t():0}(self,(()=>(()=>{var e={452:e=>{var t=function(e){"use strict";var t,n=Object.prototype,r=n.hasOwnProperty,o=Object.defineProperty||function(e,t,n){e[t]=n.value},i="function"==typeof Symbol?Symbol:{},a=i.iterator||"@@iterator",s=i.asyncIterator||"@@asyncIterator",c=i.toStringTag||"@@toStringTag";function l(e,t,n){return Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{l({},"")}catch(e){l=function(e,t,n){return e[t]=n}}function u(e,t,n,r){var i=t&&t.prototype instanceof A?t:A,a=Object.create(i.prototype),s=new k(r||[]);return o(a,"_invoke",{value:C(e,n,s)}),a}function d(e,t,n){try{return{type:"normal",arg:e.call(t,n)}}catch(e){return{type:"throw",arg:e}}}e.wrap=u;var h="suspendedStart",p="suspendedYield",f="executing",g="completed",m={};function A(){}function y(){}function b(){}var v={};l(v,a,(function(){return this}));var w=Object.getPrototypeOf,q=w&&w(w(I([])));q&&q!==n&&r.call(q,a)&&(v=q);var S=b.prototype=A.prototype=Object.create(v);function E(e){["next","throw","return"].forEach((function(t){l(e,t,(function(e){return this._invoke(t,e)}))}))}function F(e,t){function n(o,i,a,s){var c=d(e[o],e,i);if("throw"!==c.type){var l=c.arg,u=l.value;return u&&"object"==typeof u&&r.call(u,"__await")?t.resolve(u.__await).then((function(e){n("next",e,a,s)}),(function(e){n("throw",e,a,s)})):t.resolve(u).then((function(e){l.value=e,a(l)}),(function(e){return n("throw",e,a,s)}))}s(c.arg)}var i;o(this,"_invoke",{value:function(e,r){function o(){return new t((function(t,o){n(e,r,t,o)}))}return i=i?i.then(o,o):o()}})}function C(e,t,n){var r=h;return function(o,i){if(r===f)throw new Error("Generator is already running");if(r===g){if("throw"===o)throw i;return M()}for(n.method=o,n.arg=i;;){var a=n.delegate;if(a){var s=B(a,n);if(s){if(s===m)continue;return s}}if("next"===n.method)n.sent=n._sent=n.arg;else if("throw"===n.method){if(r===h)throw r=g,n.arg;n.dispatchException(n.arg)}else"return"===n.method&&n.abrupt("return",n.arg);r=f;var c=d(e,t,n);if("normal"===c.type){if(r=n.done?g:p,c.arg===m)continue;return{value:c.arg,done:n.done}}"throw"===c.type&&(r=g,n.method="throw",n.arg=c.arg)}}}function B(e,n){var r=n.method,o=e.iterator[r];if(o===t)return n.delegate=null,"throw"===r&&e.iterator.return&&(n.method="return",n.arg=t,B(e,n),"throw"===n.method)||"return"!==r&&(n.method="throw",n.arg=new TypeError("The iterator does not provide a '"+r+"' method")),m;var i=d(o,e.iterator,n.arg);if("throw"===i.type)return n.method="throw",n.arg=i.arg,n.delegate=null,m;var a=i.arg;return a?a.done?(n[e.resultName]=a.value,n.next=e.nextLoc,"return"!==n.method&&(n.method="next",n.arg=t),n.delegate=null,m):a:(n.method="throw",n.arg=new TypeError("iterator result is not an object"),n.delegate=null,m)}function x(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function T(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function k(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(x,this),this.reset(!0)}function I(e){if(e){var n=e[a];if(n)return n.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var o=-1,i=function n(){for(;++o<e.length;)if(r.call(e,o))return n.value=e[o],n.done=!1,n;return n.value=t,n.done=!0,n};return i.next=i}}return{next:M}}function M(){return{value:t,done:!0}}return y.prototype=b,o(S,"constructor",{value:b,configurable:!0}),o(b,"constructor",{value:y,configurable:!0}),y.displayName=l(b,c,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===y||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,b):(e.__proto__=b,l(e,c,"GeneratorFunction")),e.prototype=Object.create(S),e},e.awrap=function(e){return{__await:e}},E(F.prototype),l(F.prototype,s,(function(){return this})),e.AsyncIterator=F,e.async=function(t,n,r,o,i){void 0===i&&(i=Promise);var a=new F(u(t,n,r,o),i);return e.isGeneratorFunction(n)?a:a.next().then((function(e){return e.done?e.value:a.next()}))},E(S),l(S,c,"Generator"),l(S,a,(function(){return this})),l(S,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=Object(e),n=[];for(var r in t)n.push(r);return n.reverse(),function e(){for(;n.length;){var r=n.pop();if(r in t)return e.value=r,e.done=!1,e}return e.done=!0,e}},e.values=I,k.prototype={constructor:k,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=t,this.done=!1,this.delegate=null,this.method="next",this.arg=t,this.tryEntries.forEach(T),!e)for(var n in this)"t"===n.charAt(0)&&r.call(this,n)&&!isNaN(+n.slice(1))&&(this[n]=t)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var n=this;function o(r,o){return s.type="throw",s.arg=e,n.next=r,o&&(n.method="next",n.arg=t),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var a=this.tryEntries[i],s=a.completion;if("root"===a.tryLoc)return o("end");if(a.tryLoc<=this.prev){var c=r.call(a,"catchLoc"),l=r.call(a,"finallyLoc");if(c&&l){if(this.prev<a.catchLoc)return o(a.catchLoc,!0);if(this.prev<a.finallyLoc)return o(a.finallyLoc)}else if(c){if(this.prev<a.catchLoc)return o(a.catchLoc,!0)}else{if(!l)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return o(a.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var o=this.tryEntries[n];if(o.tryLoc<=this.prev&&r.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===e||"continue"===e)&&i.tryLoc<=t&&t<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=e,a.arg=t,i?(this.method="next",this.next=i.finallyLoc,m):this.complete(a)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),m},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var n=this.tryEntries[t];if(n.finallyLoc===e)return this.complete(n.completion,n.afterLoc),T(n),m}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var n=this.tryEntries[t];if(n.tryLoc===e){var r=n.completion;if("throw"===r.type){var o=r.arg;T(n)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(e,n,r){return this.delegate={iterator:I(e),resultName:n,nextLoc:r},"next"===this.method&&(this.arg=t),m}},e}(e.exports);try{regeneratorRuntime=t}catch(e){"object"==typeof globalThis?globalThis.regeneratorRuntime=t:Function("r","regeneratorRuntime = r")(t)}}},t={};function n(r){var o=t[r];if(void 0!==o)return o.exports;var i=t[r]={exports:{}};return e[r](i,i.exports,n),i.exports}n.d=(e,t)=>{for(var r in t)n.o(t,r)&&!n.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},n.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),n.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})};var r={};return(()=>{"use strict";n.r(r),n.d(r,{AudioTag:()=>e,GM:()=>g,Player:()=>pt,Soundfont:()=>Je,Synesthesia:()=>i,WebAudio:()=>t,WebMIDI:()=>o,audioDetect_supports:()=>He,audio_contexts:()=>Ye,channels:()=>m,chordOff:()=>ct,chordOn:()=>st,config:()=>Ne,getContext:()=>dt,keyToNote:()=>A,loadPlugin:()=>Ve,loadProgram:()=>je,noteOff:()=>at,noteOn:()=>it,noteToKey:()=>y,pitchBend:()=>ot,playChannel:()=>ze,programChange:()=>rt,requestQueue:()=>Xe,send:()=>et,sendRequest:()=>Qe,setContext:()=>ht,setController:()=>tt,setEffects:()=>ut,setVolume:()=>nt,stopAllNotes:()=>lt,stopChannel:()=>$e});var e={};n.r(e),n.d(e,{api:()=>b,chordOff:()=>U,chordOn:()=>D,connect:()=>C,getContext:()=>I,noteOff:()=>O,noteOn:()=>L,pitchBend:()=>T,playChannel:()=>R,programChange:()=>K,send:()=>B,setContext:()=>M,setController:()=>x,setEffects:()=>k,setVolume:()=>G,shared_root_info:()=>v,stopAllNotes:()=>W,stopChannel:()=>_});var t={};n.r(t),n.d(t,{api:()=>Y,chordOff:()=>ce,chordOn:()=>se,connect:()=>Q,createAudioContext:()=>fe,getContext:()=>de,loadAudio:()=>pe,noteOff:()=>ae,noteOn:()=>ie,pitchBend:()=>oe,playChannel:()=>z,programChange:()=>re,send:()=>ee,setContext:()=>he,setController:()=>te,setEffects:()=>ue,setVolume:()=>ne,shared_root_info:()=>N,stopAllNotes:()=>le,stopChannel:()=>$});var o={};n.r(o),n.d(o,{api:()=>ge,chordOff:()=>Me,chordOn:()=>Ie,connect:()=>ye,getContext:()=>qe,noteOff:()=>ke,noteOn:()=>Te,pitchBend:()=>xe,playChannel:()=>be,programChange:()=>Be,send:()=>Ee,setContext:()=>Se,setController:()=>Fe,setEffects:()=>we,setVolume:()=>Ce,shared_root_info:()=>me,stopAllNotes:()=>Re,stopChannel:()=>ve});var i={};n.r(i),n.d(i,{data:()=>Ue,map:()=>We});n(452);const a=void 0!==window.safari,s=window.navigator.userAgent.toLowerCase().includes("firefox"),c="function"==typeof window.ShadowRoot.prototype.getSelection,l="function"==typeof window.InputEvent.prototype.getTargetRanges,u=!c&&l&&!s||a,d={};let h=0;const p=e=>{h+=1;const t=document.body,n=new Audio,r=e.split(";")[0];n.id="audio",n.setAttribute("preload","auto"),n.setAttribute("audiobuffer","true"),n.addEventListener("error",(()=>{t.removeChild(n),d[r]=!1,h-=1}),!1),n.addEventListener("canplaythrough",(()=>{t.removeChild(n),d[r]=!0,h-=1}),!1),n.src="data:"+e,t.appendChild(n)};const f=!1,g=(e=>{const t=e=>e.replace(/[^a-z0-9 ]/gi,"").replace(/ /g,"_").toLowerCase(),n={byName:{},byId:{},byCategory:{}};for(const[r,o]of Object.entries(e))for(const e of o){if(!e)continue;const o=parseInt(e.substr(0,e.indexOf(" ")),10),i=o-1,a=e.replace(o+" ",""),s=t(a),c=t(r),l={id:s,name:a,program:i,category:r};n.byId[i]=l,n.byName[s]=l,n.byCategory[c]=n.byCategory[c]||[],n.byCategory[c].push(l)}return n})({Piano:["1 Acoustic Grand Piano","2 Bright Acoustic Piano","3 Electric Grand Piano","4 Honky-tonk Piano","5 Electric Piano 1","6 Electric Piano 2","7 Harpsichord","8 Clavinet"],"Chromatic Percussion":["9 Celesta","10 Glockenspiel","11 Music Box","12 Vibraphone","13 Marimba","14 Xylophone","15 Tubular Bells","16 Dulcimer"],Organ:["17 Drawbar Organ","18 Percussive Organ","19 Rock Organ","20 Church Organ","21 Reed Organ","22 Accordion","23 Harmonica","24 Tango Accordion"],Guitar:["25 Acoustic Guitar (nylon)","26 Acoustic Guitar (steel)","27 Electric Guitar (jazz)","28 Electric Guitar (clean)","29 Electric Guitar (muted)","30 Overdriven Guitar","31 Distortion Guitar","32 Guitar Harmonics"],Bass:["33 Acoustic Bass","34 Electric Bass (finger)","35 Electric Bass (pick)","36 Fretless Bass","37 Slap Bass 1","38 Slap Bass 2","39 Synth Bass 1","40 Synth Bass 2"],Strings:["41 Violin","42 Viola","43 Cello","44 Contrabass","45 Tremolo Strings","46 Pizzicato Strings","47 Orchestral Harp","48 Timpani"],Ensemble:["49 String Ensemble 1","50 String Ensemble 2","51 Synth Strings 1","52 Synth Strings 2","53 Choir Aahs","54 Voice Oohs","55 Synth Choir","56 Orchestra Hit"],Brass:["57 Trumpet","58 Trombone","59 Tuba","60 Muted Trumpet","61 French Horn","62 Brass Section","63 Synth Brass 1","64 Synth Brass 2"],Reed:["65 Soprano Sax","66 Alto Sax","67 Tenor Sax","68 Baritone Sax","69 Oboe","70 English Horn","71 Bassoon","72 Clarinet"],Pipe:["73 Piccolo","74 Flute","75 Recorder","76 Pan Flute","77 Blown Bottle","78 Shakuhachi","79 Whistle","80 Ocarina"],"Synth Lead":["81 Lead 1 (square)","82 Lead 2 (sawtooth)","83 Lead 3 (calliope)","84 Lead 4 (chiff)","85 Lead 5 (charang)","86 Lead 6 (voice)","87 Lead 7 (fifths)","88 Lead 8 (bass + lead)"],"Synth Pad":["89 Pad 1 (new age)","90 Pad 2 (warm)","91 Pad 3 (polysynth)","92 Pad 4 (choir)","93 Pad 5 (bowed)","94 Pad 6 (metallic)","95 Pad 7 (halo)","96 Pad 8 (sweep)"],"Synth Effects":["97 FX 1 (rain)","98 FX 2 (soundtrack)","99 FX 3 (crystal)","100 FX 4 (atmosphere)","101 FX 5 (brightness)","102 FX 6 (goblins)","103 FX 7 (echoes)","104 FX 8 (sci-fi)"],Ethnic:["105 Sitar","106 Banjo","107 Shamisen","108 Koto","109 Kalimba","110 Bagpipe","111 Fiddle","112 Shanai"],Percussive:["113 Tinkle Bell","114 Agogo","115 Steel Drums","116 Woodblock","117 Taiko Drum","118 Melodic Tom","119 Synth Drum"],"Sound effects":["120 Reverse Cymbal","121 Guitar Fret Noise","122 Breath Noise","123 Seashore","124 Bird Tweet","125 Telephone Ring","126 Helicopter","127 Applause","128 Gunshot"]}),m=(()=>{const e={};for(let t=0;t<16;t++)e[t]={program:t,pitchBend:0,mute:!1,mono:!1,omni:!1,solo:!1};return e})(),A={},y={};!function(){const e=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];for(let t=21;t<=108;t++){const n=Math.floor((t-12)/12),r=e[t%12]+n;A[r]=t,y[t]=r}}();const b="audiotag",v={},w=[];for(let e=0;e<16;e++)w[e]=127;let q=-1;const S=[],E={},F=[];for(let e=0;e<12;e++)F[e]=new Audio;const C=e=>{for(const e of Object.keys(A))E[e]={id:e};e.onsuccess&&e.onsuccess()},B=(e,t)=>{},x=(e,t,n,r)=>{},T=(e,t,n)=>{},k=()=>{},I=()=>{},M=()=>{},R=(e,t)=>{if(!m[e])return;const n=m[e].program,r=g.byId[n].id,o=E[t];if(o){const t=r+""+o.id,n=(q+1)%F.length,i=F[n];if(S[n]=t,!v.Soundfont[r])return void 0;i.src=v.Soundfont[r][o.id],i.volume=w[e]/127,i.play(),q=n}},_=(e,t)=>{if(!m[e])return;const n=m[e].program,r=g.byId[n].id,o=E[t];if(o){const e=r+""+o.id;for(let t=0,n=F.length;t<n;t++){const r=(t+q+1)%n,o=S[r];if(o&&o===e)return F[r].pause(),void(S[r]=null)}}},G=(e,t)=>{w[e]=t},K=(e,t)=>{m[e].instrument=t},L=(e,t,n,r)=>{const o=y[t];return!!E[o]&&(r?setTimeout((()=>{w[e]=n,R(e,o)}),1e3*r):(w[e]=n,R(e,o),!0))},O=(e,t,n)=>{},D=(e,t,n,r)=>{for(let n=0;n<t.length;n++){const o=t[n],i=y[o];E[i]&&(r?setTimeout((()=>{R(e,i)}),1e3*r):R(e,i))}},U=(e,t,n)=>{for(let r=0;r<t.length;r++){const o=t[r],i=y[o];E[i]&&(n?setTimeout((()=>{_(e,i)}),1e3*n):_(e,i))}},W=()=>{for(let e=0,{length:t}=F;e<t;e++)F[e].pause()},H="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";function J(e){const t=Math.ceil(3*e.length/4),n=new ArrayBuffer(t);return function(e,t){const n=H.indexOf(e.charAt(e.length-1)),r=H.indexOf(e.charAt(e.length-1));let o,i,a,s,c,l,u,d,h=Math.ceil(3*e.length/4);64===n&&(h-=1);64===r&&(h-=1);let p=0;o=t?new Uint8Array(t):new Uint8Array(h);e=e.replace(/[^A-Za-z0-9+/=]/g,"");for(let t=0;t<h;t+=3)c=H.indexOf(e.charAt(p++)),l=H.indexOf(e.charAt(p++)),u=H.indexOf(e.charAt(p++)),d=H.indexOf(e.charAt(p++)),i=c<<2|l>>4,a=(15&l)<<4|u>>2,s=(3&u)<<6|d,o[t]=i,64!==u&&(o[t+1]=a),64!==d&&(o[t+2]=s)}(e,n),n}const Y="webaudio",N={};let V;const j={},P={};let Z=127;const X={},Q=e=>{he(V||fe(),e.onsuccess)},z=()=>{},$=()=>{},ee=(e,t)=>{},te=(e,t,n,r)=>{},ne=(e,t,n)=>{n?setTimeout((()=>{Z=t}),1e3*n):Z=t},re=(e,t,n)=>{const r=m[e];r&&(r.program=t)},oe=(e,t,n)=>{const r=m[e];r&&(n?setTimeout((()=>{r.pitchBend=t}),n):r.pitchBend=t)},ie=function(e,t,n){let r=arguments.length>3&&void 0!==arguments[3]?arguments[3]:0;const o=m[e].program,i=X[o+"x"+t];if(!i)return void 0;if(!V)return void 0;let a;if(r<V.currentTime&&(r+=V.currentTime),a=V.createBufferSource(),a.buffer=i,P){let e=a;for(const t of Object.keys(P))e.connect(P[t].input),e=P[t]}const s=n/127*(Z/127)*2-1;return a.connect(V.destination),a.playbackRate.value=1,a.gainNode=V.createGain(),a.gainNode.connect(V.destination),a.gainNode.gain.value=Math.min(1,Math.max(-1,s)),a.connect(a.gainNode),a.start(r||0),j[e+"x"+t]=a,a},ae=function(e,t){let n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0;const r=m[e].program,o=X[r+"x"+t];if(V&&o){n<V.currentTime&&(n+=V.currentTime);const r=j[e+"x"+t];if(r){if(r.gainNode){const e=r.gainNode.gain;e.linearRampToValueAtTime(e.value,n),e.linearRampToValueAtTime(-1,n+.3)}return r.noteOff?r.noteOff(n+.5):r.stop(n+.5),delete j[e+"x"+t],r}}},se=(e,t,n,r)=>{const o={};for(const i of t)o[i]=ie(e,i,n,r);return o},ce=(e,t,n)=>{const r={};for(const o of t)r[o]=ae(e,o,n);return r},le=()=>{if(V)for(const e of Object.keys(j)){let t=0;t<V.currentTime&&(t+=V.currentTime);const n=j[e];n.gain.linearRampToValueAtTime(1,t),n.gain.linearRampToValueAtTime(0,t+.3),n.noteOff?n.noteOff(t+.3):n.stop(t+.3),delete j[e]}},ue=e=>{if(V&&V.tunajs)for(const t of e){const e=new V.tunajs[t.type](t);e.connect(V.destination),P[t.type]=e}else console.log("Effects module not installed.")},de=()=>V,he=(e,t,n,r)=>{V=e,"undefined"==typeof Tuna||V.tunajs instanceof Tuna||(V.tunajs=new Tuna(V));const o=[];for(const e of Object.keys(A))o.push(e);const i=e=>{for(const e of Object.keys(s))if(s[e])return;t&&(t(),t=null)},a=(e,t,n,r)=>{const o=e[r];o&&(s[t]+=1,pe(o,(n=>{n.id=r;const o=A[r];if(X[t+"x"+o]=n,s[t]-=1,0===s[t]){f,e.isLoaded=!0,i()}}),(e=>{console.log(e)})))},s={};for(const[e,t]of Object.entries(N.Soundfont)){if(t.isLoaded)continue;const n=g.byName[e];if(n){const e=n.program;s[e]=0;for(let n=0;n<o.length;n++){a(t,e,0,o[n])}}}setTimeout(i,1)},pe=(e,t,n)=>{if(0===e.indexOf("data:audio")){const r=J(e.split(",")[1]);return V.decodeAudioData(r,t,n)}{const r=new XMLHttpRequest;return r.open("GET",e,!0),r.responseType="arraybuffer",r.onsuccess=()=>V.decodeAudioData(r.response,t,n),void r.send()}},fe=()=>new(window.AudioContext||window.webkitAudioContext),ge="webmidi",me={};let Ae=null;const ye=e=>{const t=t=>{console.error("Could not connect to web midi! Falling back to WebAudio:",t),me.webaudio_backup_connect&&(me.config.api="webaudio",me.webaudio_backup_connect(e))};navigator.requestMIDIAccess().then((n=>{const r=n.outputs;return Ae="function"==typeof r?r()[0]:r[0],void 0===Ae?t("No outputs defined"):e.onsuccess&&e.onsuccess()}),t)},be=()=>{},ve=()=>{},we=()=>{},qe=()=>{},Se=()=>{},Ee=(e,t)=>{Ae.send(e,1e3*t)},Fe=(e,t,n,r)=>{Ae.send([e,t,n],1e3*r)},Ce=(e,t,n)=>{Ae.send([176+e,7,t],1e3*n)},Be=(e,t,n)=>{Ae.send([192+e,t],1e3*n)},xe=(e,t,n)=>{Ae.send([224+e,t],1e3*n)},Te=(e,t,n,r)=>{Ae.send([144+e,t,n],1e3*r)},ke=(e,t,n)=>{Ae.send([128+e,t,0],1e3*n)},Ie=(e,t,n,r)=>{for(const o of t)Ae.send([144+e,o,n],1e3*r)},Me=(e,t,n)=>{for(const r of t)Ae.send([128+e,r,0],1e3*n)},Re=()=>{Ae.cancel();for(let e=0;e<16;e++)Ae.send([176+e,123,0])};class _e{constructor(e){this.str=e,this.position=0}read(e){const t=this.str.substr(this.position,e);return this.position+=e,t}readInt32(){const e=(this.str.charCodeAt(this.position)<<24)+(this.str.charCodeAt(this.position+1)<<16)+(this.str.charCodeAt(this.position+2)<<8)+this.str.charCodeAt(this.position+3);return this.position+=4,e}readInt16(){const e=(this.str.charCodeAt(this.position)<<8)+this.str.charCodeAt(this.position+1);return this.position+=2,e}readInt8(e){let t=this.str.charCodeAt(this.position);return e&&t>127&&(t-=256),this.position+=1,t}eof(){return this.position>=this.str.length}readVarInt(){let e=0;for(;;){const t=this.readInt8();if(!(128&t))return e+t;e+=127&t,e<<=7}}}class Ge{constructor(e){this.data=e,this.stream=new _e(e),this.lastEventTypeByte=void 0}readChunk(e){const t=e.read(4),n=e.readInt32();return{id:t,length:n,data:e.read(n)}}readEvent(e){const t={};t.deltaTime=e.readVarInt();let n=e.readInt8();if(240&~n){let r;128&n?(r=e.readInt8(),this.lastEventTypeByte=n):(r=n,n=this.lastEventTypeByte);const o=n>>4;switch(t.channel=15&n,t.type="channel",o){case 8:return t.subtype="noteOff",t.noteNumber=r,t.velocity=e.readInt8(),t;case 9:return t.noteNumber=r,t.velocity=e.readInt8(),0===t.velocity?t.subtype="noteOff":t.subtype="noteOn",t;case 10:return t.subtype="noteAftertouch",t.noteNumber=r,t.amount=e.readInt8(),t;case 11:return t.subtype="controller",t.controllerType=r,t.value=e.readInt8(),t;case 12:return t.subtype="programChange",t.programNumber=r,t;case 13:return t.subtype="channelAftertouch",t.amount=r,t;case 14:return t.subtype="pitchBend",t.value=r+(e.readInt8()<<7),t;default:throw new Error("Unrecognised MIDI event type: "+o)}}else{if(255!==n){if(240===n){t.type="sysEx";const n=e.readVarInt();return t.data=e.read(n),t}if(247===n){t.type="dividedSysEx";const n=e.readVarInt();return t.data=e.read(n),t}throw new Error("Unrecognised MIDI event type byte: "+n)}{t.type="meta";const n=e.readInt8(),r=e.readVarInt();switch(n){case 0:if(t.subtype="sequenceNumber",2!==r)throw new Error("Expected length for sequenceNumber event is 2, got "+r);return t.number=e.readInt16(),t;case 1:return t.subtype="text",t.text=e.read(r),t;case 2:return t.subtype="copyrightNotice",t.text=e.read(r),t;case 3:return t.subtype="trackName",t.text=e.read(r),t;case 4:return t.subtype="instrumentName",t.text=e.read(r),t;case 5:return t.subtype="lyrics",t.text=e.read(r),t;case 6:return t.subtype="marker",t.text=e.read(r),t;case 7:return t.subtype="cuePoint",t.text=e.read(r),t;case 32:if(t.subtype="midiChannelPrefix",1!==r)throw new Error("Expected length for midiChannelPrefix event is 1, got "+r);return t.channel=e.readInt8(),t;case 47:if(t.subtype="endOfTrack",0!==r)throw new Error("Expected length for endOfTrack event is 0, got "+r);return t;case 81:if(t.subtype="setTempo",3!==r)throw new Error("Expected length for setTempo event is 3, got "+r);return t.microsecondsPerBeat=(e.readInt8()<<16)+(e.readInt8()<<8)+e.readInt8(),t;case 84:if(t.subtype="smpteOffset",5!==r)throw new Error("Expected length for smpteOffset event is 5, got "+r);const n=e.readInt8();return t.frameRate={0:24,32:25,64:29,96:30}[96&n],t.hour=31&n,t.min=e.readInt8(),t.sec=e.readInt8(),t.frame=e.readInt8(),t.subframe=e.readInt8(),t;case 88:if(t.subtype="timeSignature",4!==r)throw new Error("Expected length for timeSignature event is 4, got "+r);return t.numerator=e.readInt8(),t.denominator=2**e.readInt8(),t.metronome=e.readInt8(),t.thirtyseconds=e.readInt8(),t;case 89:if(t.subtype="keySignature",2!==r)throw new Error("Expected length for keySignature event is 2, got "+r);return t.key=e.readInt8(!0),t.scale=e.readInt8(),t;case 127:return t.subtype="sequencerSpecific",t.data=e.read(r),t;default:return t.subtype="unknown",t.data=e.read(r),t}}}}parseAndReturn(){const e=this.stream,t=this.readChunk(e);if("MThd"!==t.id||6!==t.length)throw new Error("Bad .mid file - header not found");const n=new _e(t.data),r=n.readInt16(),o=n.readInt16(),i=n.readInt16();let a;if(32768&i)throw new Error("Expressing time division in SMTPE frames is not supported yet");a=i;const s={formatType:r,trackCount:o,ticksPerBeat:a},c=[];for(let t=0;t<s.trackCount;t++){c[t]=[];const n=this.readChunk(e);if("MTrk"!==n.id)throw new Error("Unexpected chunk - expected MTrk, got "+n.id);const r=new _e(n.data);for(;!r.eof();){const e=this.readEvent(r);c[t].push(e)}}return{header:s,tracks:c}}}const Ke=e=>{if("object"!=typeof e)return e;if(null==e)return e;const t="number"==typeof e.length?[]:{};for(const n in e)t[n]=Ke(e[n]);return t};class Le{constructor(e,t,n,r){this.midiFile=e,this.timeWarp=t,this.eventProcessor=n,this.trackStates=[],this.beatsPerMinute=r||120,this.bpmOverride=!!r,this.ticksPerBeat=e.header.ticksPerBeat;for(let t=0;t<e.tracks.length;t++)this.trackStates[t]={nextEventIndex:0,ticksToNextEvent:e.tracks[t].length?e.tracks[t][0].deltaTime:null};this.temporal=[],this.processEvents()}getNextEvent(){let e=null,t=null,n=null;for(let r=0;r<this.trackStates.length;r++)null!=this.trackStates[r].ticksToNextEvent&&(null==e||this.trackStates[r].ticksToNextEvent<e)&&(e=this.trackStates[r].ticksToNextEvent,t=r,n=this.trackStates[r].nextEventIndex);if(null!=t){const r=this.midiFile.tracks[t][n];this.midiFile.tracks[t][n+1]?this.trackStates[t].ticksToNextEvent+=this.midiFile.tracks[t][n+1].deltaTime:this.trackStates[t].ticksToNextEvent=null,this.trackStates[t].nextEventIndex+=1;for(let t=0;t<this.trackStates.length;t++)null!=this.trackStates[t].ticksToNextEvent&&(this.trackStates[t].ticksToNextEvent-=e);return{ticksToEvent:e,event:r,track:t}}return null}processEvents(){let e=this.getNextEvent();for(;e;){this.bpmOverride||"meta"!==e.event.type||"setTempo"!==e.event.subtype||(this.beatsPerMinute=6e7/e.event.microsecondsPerBeat);let t=0,n=0;e.ticksToEvent>0&&(t=e.ticksToEvent/this.ticksPerBeat,n=t/(this.beatsPerMinute/60));const r=1e3*n*this.timeWarp||0;this.temporal.push([e,r]),e=this.getNextEvent()}}getData(){return Ke(this.temporal)}}class Oe{constructor(e){this.plugin=e,this.currentTime=0,this.endTime=0,this.restart=0,this.playing=!1,this.timeWarp=1,this.startDelay=0,this.BPM=void 0,this.data=[],this.eventQueue=[],this.queuedTime=0,this.startTime=0,this.noteRegistrar={},this.onMidiEvent=void 0,this.MIDIOffset=0,this.frame=void 0,this.__now=void 0}start(e){this.currentTime<-1&&(this.currentTime=-1),this.startAudio(this.currentTime,null,e)}resume(e){this.start(e)}pause(){const e=this.restart;this.stopAudio(),this.restart=e}stop(){this.stopAudio(),this.restart=0,this.currentTime=0}addListener(e){this.onMidiEvent=e}removeListener(){this.onMidiEvent=void 0}clearAnimation(){this.animationFrameId&&cancelAnimationFrame(this.animationFrameId)}setAnimation(e){let t=0,n=0,r=0;this.clearAnimation(),this.frame=()=>{if(this.animationFrameId=requestAnimationFrame(this.frame),0===this.endTime)return;this.playing?(t=r===this.currentTime?n-Date.now():0,t=0===this.currentTime?0:this.currentTime-t,r!==this.currentTime&&(n=Date.now(),r=this.currentTime)):t=this.currentTime;const o=this.endTime,i=t/1e3,a=i/60,s=60*a+(i-60*a),c=o/1e3;c-s<-1||e({now:s,end:c,events:this.noteRegistrar})},requestAnimationFrame(this.frame)}loadMidiFile(e,t,n){try{this.replayer=new Le(function(e){return new Ge(e).parseAndReturn()}(this.currentData),this.timeWarp,null,this.BPM),this.data=this.replayer.getData(),this.endTime=this.getLength(),this.loadPlugin({onsuccess:e,onprogress:t,onerror:n})}catch(e){n&&n(e)}}loadPlugin(){}loadFile(e,t,n,r){if(this.stop(),-1!==e.indexOf("base64,"))this.currentData=atob(e.split(",")[1]),this.loadMidiFile(t,n,r);else{const o=new XMLHttpRequest;o.open("GET",e),o.overrideMimeType("text/plain; charset=x-user-defined"),o.onreadystatechange=()=>{if(4===o.readyState)if(200===o.status){const e=o.responseText||"",i=[],a=e.length,s=String.fromCharCode;for(let t=0;t<a;t++)i[t]=s(255&e.charCodeAt(t));this.currentData=i.join(""),this.loadMidiFile(t,n,r)}else r&&r("Unable to load MIDI file")},o.send()}}getFileInstruments(){const e={},t={};for(let n=0;n<this.data.length;n++){const r=this.data[n][0].event;if("channel"!==r.type)continue;const o=r.channel;switch(r.subtype){case"controller":default:break;case"programChange":t[o]=r.programNumber;break;case"noteOn":{const n=t[o],r=Number.isNaN(parseInt(n))?o:n;e[g.byId[r].id]=!0;break}}}const n=[];for(const t of Object.keys(e))n.push(t);return n}scheduleTracking(e,t,n,r,o,i,a){return setTimeout((()=>{const r={channel:e,note:t,now:n,end:this.endTime,message:o,velocity:i};128===o?delete this.noteRegistrar[t]:this.noteRegistrar[t]=r,this.onMidiEvent&&this.onMidiEvent(r),this.currentTime=n,this.eventQueue.shift(),(this.eventQueue.length<1e3||this.currentTime===this.queuedTime&&this.queuedTime<this.endTime)&&this.startAudio(this.queuedTime,!0)}),n-r)}getContext(){return"webaudio"===this.plugin.api?this.plugin.getContext():(this.ctx={currentTime:0},this.ctx)}getLength(){const e=this.data,t=e.length;let n=.5;for(let r=0;r<t;r++)n+=e[r][1];return n}getNow(){return window.performance&&window.performance.now?window.performance.now():Date.now()}startAudio(e,t,n){if(!this.replayer)return;let r;t||(void 0===e&&(e=this.restart),this.playing&&this.stopAudio(),this.playing=!0,this.data=this.replayer.getData(),this.endTime=this.getLength());let o=0,i=0;const a=this.data,s=this.getContext(),c=a.length;this.queuedTime=.5;const l=e-this.currentTime;if("webaudio"!==this.plugin.api){const e=this.getNow();this.__now=this.__now||e,s.currentTime=(e-this.__now)/1e3}this.startTime=s.currentTime;for(let t=0;t<c&&i<100;t++){const n=a[t];if(this.queuedTime+=n[1],this.queuedTime<=e){o=this.queuedTime;continue}e=this.queuedTime-o;const c=n[0].event;if("channel"!==c.type)continue;const u=c.channel,d=m[u],h=s.currentTime+(e+l+this.startDelay)/1e3,p=this.queuedTime-o+this.startDelay;switch(c.subtype){case"controller":this.plugin.setController(u,c.controllerType,c.value,h);break;case"programChange":this.plugin.programChange(u,c.programNumber,h);break;case"pitchBend":this.plugin.pitchBend(u,c.value,h);break;case"noteOn":if(d.mute)break;r=c.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:c,time:p,source:this.plugin.noteOn(u,c.noteNumber,c.velocity,h),interval:this.scheduleTracking(u,r,this.queuedTime+this.startDelay,o-l,144,c.velocity)}),i+=1;break;case"noteOff":if(d.mute)break;r=c.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:c,time:p,source:this.plugin.noteOff(u,c.noteNumber,h),interval:this.scheduleTracking(u,r,this.queuedTime,o-l,128,0)})}}n&&n(this.eventQueue)}stopAudio(){const e=this.getContext();for(this.playing=!1,this.restart+=1e3*(e.currentTime-this.startTime);this.eventQueue.length;){const e=this.eventQueue.pop();window.clearInterval(e.interval),e.source&&("number"==typeof e.source?window.clearTimeout(e.source):e.source.disconnect(0))}for(const e of Object.keys(this.noteRegistrar)){const t=this.noteRegistrar[e];144===this.noteRegistrar[e].message&&this.onMidiEvent&&this.onMidiEvent({channel:t.channel,note:t.note,now:t.now,end:t.end,message:128,velocity:t.velocity})}this.noteRegistrar={}}}const De={Space:{}};!function(){const e={},t={"HEX24>HSL":"HEX24>RGB>HSL","HEX32>HSLA":"HEX32>RGBA>HSLA","HEX24>CMYK":"HEX24>RGB>CMY>CMYK","RGB>CMYK":"RGB>CMY>CMYK"},n=De.Space=function(r,o){t[o]&&(o=t[o]);const i=o.split(">");if("object"==typeof r&&r[0]>=0){const e=i[0],t={};for(let n=0;n<e.length;n++){t[e.substr(n,1)]=r[n]}r=t}if(e[o])return e[o](r);for(let e=1,t=i[0];e<i.length;e++)e>1&&(t=t.substr(t.indexOf("_")+1)),t+=(0===e?"":"_")+i[e],r=n[t](r);return r};n.RGB_W3=function(e){return"rgb("+(e.R|0)+","+(e.G|0)+","+(e.B|0)+")"},n.RGBA_W3=function(e){const t="number"==typeof e.A?e.A/255:1;return"rgba("+(e.R|0)+","+(e.G|0)+","+(e.B|0)+","+t+")"},n.W3_RGB=function(e){const t=e.substr(4,e.length-5).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2])}},n.W3_RGBA=function(e){const t=e.substr(5,e.length-6).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2]),A:255*parseFloat(t[3])}},n.HSL_W3=function(e){return"hsl("+(e.H+.5|0)+","+(e.S+.5|0)+"%,"+(e.L+.5|0)+"%)"},n.HSLA_W3=function(e){const t="number"==typeof e.A?e.A/255:1;return"hsla("+(e.H+.5|0)+","+(e.S+.5|0)+"%,"+(e.L+.5|0)+"%,"+t+")"},n.W3_HSL=function(e){const t=e.substr(4,e.length-5).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2])}},n.W3_HSLA=function(e){const t=e.substr(5,e.length-6).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2]),A:255*parseFloat(t[3])}},n.W3_HEX=n.W3_HEX24=function(e){return"#"===e.substr(0,1)&&(e=e.substr(1)),3===e.length&&(e=e[0]+e[0]+e[1]+e[1]+e[2]+e[2]),parseInt("0x"+e)},n.W3_HEX32=function(e){return"#"===e.substr(0,1)&&(e=e.substr(1)),6===e.length?parseInt("0xFF"+e):parseInt("0x"+e)},n.HEX_W3=n.HEX24_W3=function(e,t){t||(t=6),e||(e=0);let n=e.toString(16),r=n.length;for(;r<t;)n="0"+n,r+=1;for(r=n.length;r>t;)n=n.substring(1),r-=1;return"#"+n},n.HEX32_W3=function(e){return n.HEX_W3(e,8)},n.HEX_RGB=n.HEX24_RGB=function(e){return{R:e>>16,G:e>>8&255,B:255&e}},n.HEX32_RGBA=function(e){return{R:e>>>16&255,G:e>>>8&255,B:255&e,A:e>>>24}},n.RGBA_HEX32=function(e){return(e.A<<24|e.R<<16|e.G<<8|e.B)>>>0},n.RGB_HEX24=n.RGB_HEX=function(e){return e.R<0&&(e.R=0),e.G<0&&(e.G=0),e.B<0&&(e.B=0),e.R>255&&(e.R=255),e.G>255&&(e.G=255),e.B>255&&(e.B=255),e.R<<16|e.G<<8|e.B},n.RGB_CMY=function(e){return{C:1-e.R/255,M:1-e.G/255,Y:1-e.B/255}},n.RGBA_HSLA=n.RGB_HSL=function(e){const t=e.R/255,n=e.G/255,r=e.B/255,o=Math.min(t,n,r),i=Math.max(t,n,r),a=i-o;let s,c;const l=(i+o)/2;if(0===a)s=0,c=0;else{c=l<.5?a/(i+o):a/(2-i-o);const e=((i-t)/6+a/2)/a,u=((i-n)/6+a/2)/a,d=((i-r)/6+a/2)/a;t===i?s=d-u:n===i?s=1/3+e-d:r===i&&(s=2/3+u-e),s<0&&(s+=1),s>1&&(s-=1)}return{H:360*s,S:100*c,L:100*l,A:e.A}},n.RGBA_HSVA=n.RGB_HSV=function(e){const t=e.R/255,n=e.G/255,r=e.B/255,o=Math.min(t,n,r),i=Math.max(t,n,r),a=i-o;let s,c;if(0===a)s=0,c=0;else{c=a/i;const e=((i-t)/6+a/2)/a,o=((i-n)/6+a/2)/a,l=((i-r)/6+a/2)/a;t===i?s=l-o:n===i?s=1/3+e-l:r===i&&(s=2/3+o-e),s<0&&(s+=1),s>1&&(s-=1)}return{H:360*s,S:100*c,V:100*i,A:e.A}},n.CMY_RGB=function(e){return{R:Math.max(0,255*(1-e.C)),G:Math.max(0,255*(1-e.M)),B:Math.max(0,255*(1-e.Y))}},n.CMY_CMYK=function(e){let t=e.C,n=e.M,r=e.Y,o=Math.min(r,Math.min(n,Math.min(t,1)));return t=Math.round((t-o)/(1-o)*100),n=Math.round((n-o)/(1-o)*100),r=Math.round((r-o)/(1-o)*100),o=Math.round(100*o),{C:t,M:n,Y:r,K:o}},n.CMYK_CMY=function(e){return{C:e.C*(1-e.K)+e.K,M:e.M*(1-e.K)+e.K,Y:e.Y*(1-e.K)+e.K}},n.HSLA_RGBA=n.HSL_RGB=function(e){const t=e.H/360,n=e.S/100,r=e.L/100;let o,i,a,s,c,l;return 0===n?o=i=a=r:(c=r<.5?r*(1+n):r+n-n*r,s=2*r-c,l=t+1/3,l<0&&(l+=1),l>1&&(l-=1),o=6*l<1?s+6*(c-s)*l:2*l<1?c:3*l<2?s+(c-s)*(2/3-l)*6:s,l=t,l<0&&(l+=1),l>1&&(l-=1),i=6*l<1?s+6*(c-s)*l:2*l<1?c:3*l<2?s+(c-s)*(2/3-l)*6:s,l=t-1/3,l<0&&(l+=1),l>1&&(l-=1),a=6*l<1?s+6*(c-s)*l:2*l<1?c:3*l<2?s+(c-s)*(2/3-l)*6:s),{R:255*o,G:255*i,B:255*a,A:e.A}},n.HSVA_RGBA=n.HSV_RGB=function(e){let t=e.H/360;const n=e.S/100;let r,o,i,a,s,c,l=e.V/100;if(0===n)r=o=i=Math.round(255*l);else switch(t>=1&&(t=0),t*=6,a=t-Math.floor(t),s=Math.round(255*l*(1-n)),i=Math.round(255*l*(1-n*a)),c=Math.round(255*l*(1-n*(1-a))),l=Math.round(255*l),Math.floor(t)){case 0:r=l,o=c,i=s;break;case 1:r=i,o=l,i=s;break;case 2:r=s,o=l,i=c;break;case 3:r=s,o=i,i=l;break;case 4:r=c,o=s,i=l;break;case 5:r=l,o=s}return{R:r,G:o,B:i,A:e.A}}}();const Ue={"Isaac Newton (1704)":{format:"HSL",ref:"Gerstner, p.167",english:["red",null,"orange",null,"yellow","green",null,"blue",null,"indigo",null,"violet"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[135,76,32],6:[0,0,0],7:[248,82,28],8:[0,0,0],9:[302,88,26],10:[0,0,0],11:[325,84,46]},"Louis Bertrand Castel (1734)":{format:"HSL",ref:"Peacock, p.400",english:["blue","blue-green","green","olive green","yellow","yellow-orange","orange","red","crimson","violet","agate","indigo"],0:[248,82,28],1:[172,68,34],2:[135,76,32],3:[79,59,36],4:[60,90,60],5:[49,90,60],6:[29,94,52],7:[360,96,51],8:[1,89,33],9:[325,84,46],10:[273,80,27],11:[302,88,26]},"George Field (1816)":{format:"HSL",ref:"Klein, p.69",english:["blue",null,"purple",null,"red","orange",null,"yellow",null,"yellow green",null,"green"],0:[248,82,28],1:[0,0,0],2:[302,88,26],3:[0,0,0],4:[360,96,51],5:[29,94,52],6:[0,0,0],7:[60,90,60],8:[0,0,0],9:[79,59,36],10:[0,0,0],11:[135,76,32]},"D. D. Jameson (1844)":{format:"HSL",ref:"Jameson, p.12",english:["red","red-orange","orange","orange-yellow","yellow","green","green-blue","blue","blue-purple","purple","purple-violet","violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[273,80,27],9:[302,88,26],10:[313,78,37],11:[325,84,46]},"Theodor Seemann (1881)":{format:"HSL",ref:"Klein, p.86",english:["carmine","scarlet","orange","yellow-orange","yellow","green","green blue","blue","indigo","violet","brown","black"],0:[0,58,26],1:[360,96,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[302,88,26],9:[325,84,46],10:[0,58,26],11:[0,0,3]},"A. Wallace Rimington (1893)":{format:"HSL",ref:"Peacock, p.402",english:["deep red","crimson","orange-crimson","orange","yellow","yellow-green","green","blueish green","blue-green","indigo","deep blue","violet"],0:[360,96,51],1:[1,89,33],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[79,59,36],6:[135,76,32],7:[163,62,40],8:[172,68,34],9:[302,88,26],10:[248,82,28],11:[325,84,46]},"Bainbridge Bishop (1893)":{format:"HSL",ref:"Bishop, p.11",english:["red","orange-red or scarlet","orange","gold or yellow-orange","yellow or green-gold","yellow-green","green","greenish-blue or aquamarine","blue","indigo or violet-blue","violet","violet-red","red"],0:[360,96,51],1:[1,89,33],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[163,62,40],8:[302,88,26],9:[325,84,46],10:[343,79,47],11:[360,96,51]},"H. von Helmholtz (1910)":{format:"HSL",ref:"Helmholtz, p.22",english:["yellow","green","greenish blue","cyan-blue","indigo blue","violet","end of red","red","red","red","red orange","orange"],0:[60,90,60],1:[135,76,32],2:[172,68,34],3:[211,70,37],4:[302,88,26],5:[325,84,46],6:[330,84,34],7:[360,96,51],8:[10,91,43],9:[10,91,43],10:[8,93,51],11:[28,89,50]},"Alexander Scriabin (1911)":{format:"HSL",ref:"Jones, p.104",english:["red","violet","yellow","steely with the glint of metal","pearly blue the shimmer of moonshine","dark red","bright blue","rosy orange","purple","green","steely with a glint of metal","pearly blue the shimmer of moonshine"],0:[360,96,51],1:[325,84,46],2:[60,90,60],3:[245,21,43],4:[211,70,37],5:[1,89,33],6:[248,82,28],7:[29,94,52],8:[302,88,26],9:[135,76,32],10:[245,21,43],11:[211,70,37]},"Adrian Bernard Klein (1930)":{format:"HSL",ref:"Klein, p.209",english:["dark red","red","red orange","orange","yellow","yellow green","green","blue-green","blue","blue violet","violet","dark violet"],0:[0,91,40],1:[360,96,51],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[292,70,31],10:[325,84,46],11:[330,84,34]},"August Aeppli (1940)":{format:"HSL",ref:"Gerstner, p.169",english:["red",null,"orange",null,"yellow",null,"green","blue-green",null,"ultramarine blue","violet","purple"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[0,0,0],6:[135,76,32],7:[172,68,34],8:[0,0,0],9:[211,70,37],10:[273,80,27],11:[302,88,26]},"I. J. Belmont (1944)":{ref:"Belmont, p.226",english:["red","red-orange","orange","yellow-orange","yellow","yellow-green","green","blue-green","blue","blue-violet","violet","red-violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[313,78,37],10:[325,84,46],11:[338,85,37]},"Steve Zieverink (2004)":{format:"HSL",ref:"Cincinnati Contemporary Art Center",english:["yellow-green","green","blue-green","blue","indigo","violet","ultra violet","infra red","red","orange","yellow-white","yellow"],0:[73,73,55],1:[135,76,32],2:[172,68,34],3:[248,82,28],4:[302,88,26],5:[325,84,46],6:[326,79,24],7:[1,89,33],8:[360,96,51],9:[29,94,52],10:[62,78,74],11:[60,90,60]},"Circle of Fifths (Johnston 2003)":{format:"RGB",ref:"Joseph Johnston",english:["yellow","blue","orange","teal","red","green","purple","light orange","light blue","dark orange","dark green","violet"],0:[255,255,0],1:[50,0,255],2:[255,150,0],3:[0,210,180],4:[255,0,0],5:[130,255,0],6:[150,0,200],7:[255,195,0],8:[30,130,255],9:[255,100,0],10:[0,200,0],11:[225,0,225]},"Circle of Fifths (Wheatman 2002)":{format:"HEX",ref:"Stuart Wheatman",english:[],data:["#122400","#2E002E","#002914","#470000","#002142","#2E2E00","#290052","#003D00","#520029","#003D3D","#522900","#000080","#244700","#570057","#004D26","#7A0000","#003B75","#4C4D00","#47008F","#006100","#850042","#005C5C","#804000","#0000C7","#366B00","#80007F","#00753B","#B80000","#0057AD","#6B6B00","#6600CC","#008A00","#B8005C","#007F80","#B35900","#2424FF","#478F00","#AD00AD","#00994D","#F00000","#0073E6","#8F8F00","#8A14FF","#00AD00","#EB0075","#00A3A3","#E07000","#6B6BFF","#5CB800","#DB00DB","#00C261","#FF5757","#3399FF","#ADAD00","#B56BFF","#00D600","#FF57AB","#00C7C7","#FF9124","#9999FF","#6EDB00","#FF29FF","#00E070","#FF9999","#7ABDFF","#D1D100","#D1A3FF","#00FA00","#FFA3D1","#00E5E6","#FFC285","#C2C2FF","#80FF00","#FFA8FF","#00E070","#FFCCCC","#C2E0FF","#F0F000","#EBD6FF","#ADFFAD","#FFD6EB","#8AFFFF","#FFEBD6","#EBEBFF","#E0FFC2","#FFEBFF","#E5FFF2","#FFF5F5"]}},We=e=>{const t={},n=Ue,r=n[e]||n["D. D. Jameson (1844)"];let o,i,a,s=r[3];for(let e=0;e<=88;e++)if(r.data)t[e]={hsl:r.data[e],hex:r.data[e]};else{let n=r[(e+9)%12];"RGB"===r.format?(n=De.Space(n,"RGB>HSL"),o=Math.floor(n.H),i=Math.floor(n.S),a=Math.floor(n.L)):(o=n[0],i=n[1],a=n[2]),o===i&&i===a&&(c=s,l=r[(e+10)%12],n=[Math.floor(.5*c[0]+.5*l[0]+.5),Math.floor(.5*c[1]+.5*l[1]+.5),Math.floor(.5*c[2]+.5*l[2]+.5)]),t[e]={hsl:"hsla("+o+","+i+"%,"+a+"%, 1)",hex:De.Space({H:o,S:i,L:a},"HSL>RGB>HEX>W3")},s=n}var c,l;return t},He=d,Je={},Ye={AudioTag:e,WebAudio:t,WebMIDI:o},Ne={soundfontUrl:"./soundfont/",api:"",audioFormat:"",supports:{},connected_plugin:t,is_connected:!1},Ve=e=>{"function"==typeof e&&(e={onsuccess:e}),e.onprogress=e.onprogress||void 0,e.api=e.api||"",e.targetFormat=e.targetFormat||"",e.instrument=e.instrument||"acoustic_grand_piano",e.instruments=e.instruments||void 0,e.apiPrecedence=e.apiPrecedence||["webaudio","webmidi","audiotag"],Ne.soundfontUrl=e.soundfontUrl||Ne.soundfontUrl,function(e){if("undefined"!=typeof navigator&&navigator.requestMIDIAccess)if(Function.prototype.toString.call(navigator.requestMIDIAccess).indexOf("[native code]"))d.webmidi=!0;else if("undefined"!=typeof navigator&&void 0!==navigator.plugins)for(const e of Array.from(navigator.plugins))e.name.indexOf("Jazz-Plugin")>=0&&(d.webmidi=!0);if("undefined"==typeof Audio)return e({});d.audiotag=!0;const t=window.AudioContext||window.webkitAudioContext;t&&t.prototype.createGain&&(d.webaudio=!0);const n=new Audio;if(void 0===n.canPlayType)return e(d);const r=n.canPlayType('audio/ogg; codecs="vorbis"'),o="probably"===r||"maybe"===r,i=n.canPlayType("audio/mpeg"),a="probably"===i||"maybe"===i;if(d.ogg_mp3_precedence="probably"===r?"ogg":"probably"===i?"mp3":"ogg",u&&(d.ogg_mp3_precedence="mp3"),!o&&!a)return e(d);o&&p("audio/ogg;base64,T2dnUwACAAAAAAAAAADqnjMlAAAAAOyyzPIBHgF2b3JiaXMAAAAAAUAfAABAHwAAQB8AAEAfAACZAU9nZ1MAAAAAAAAAAAAA6p4zJQEAAAANJGeqCj3//////////5ADdm9yYmlzLQAAAFhpcGguT3JnIGxpYlZvcmJpcyBJIDIwMTAxMTAxIChTY2hhdWZlbnVnZ2V0KQAAAAABBXZvcmJpcw9CQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBACAAAAYRqF1TCqDEEPKQ4QUY9AzoxBDDEzGHGNONKQMMogzxZAyiFssLqgQBKEhKwKAKAAAwBjEGGIMOeekZFIi55iUTkoDnaPUUcoolRRLjBmlEluJMYLOUeooZZRCjKXFjFKJscRUAABAgAMAQICFUGjIigAgCgCAMAYphZRCjCnmFHOIMeUcgwwxxiBkzinoGJNOSuWck85JiRhjzjEHlXNOSuekctBJyaQTAAAQ4AAAEGAhFBqyIgCIEwAwSJKmWZomipamiaJniqrqiaKqWp5nmp5pqqpnmqpqqqrrmqrqypbnmaZnmqrqmaaqiqbquqaquq6nqrZsuqoum65q267s+rZru77uqapsm6or66bqyrrqyrbuurbtS56nqqKquq5nqq6ruq5uq65r25pqyq6purJtuq4tu7Js664s67pmqq5suqotm64s667s2rYqy7ovuq5uq7Ks+6os+75s67ru2rrwi65r66os674qy74x27bwy7ouHJMnqqqnqq7rmarrqq5r26rr2rqmmq5suq4tm6or26os67Yry7aumaosm64r26bryrIqy77vyrJui67r66Ys67oqy8Lu6roxzLat+6Lr6roqy7qvyrKuu7ru+7JuC7umqrpuyrKvm7Ks+7auC8us27oxuq7vq7It/KosC7+u+8Iy6z5jdF1fV21ZGFbZ9n3d95Vj1nVhWW1b+V1bZ7y+bgy7bvzKrQvLstq2scy6rSyvrxvDLux8W/iVmqratum6um7Ksq/Lui60dd1XRtf1fdW2fV+VZd+3hV9pG8OwjK6r+6os68Jry8ov67qw7MIvLKttK7+r68ow27qw3L6wLL/uC8uq277v6rrStXVluX2fsSu38QsAABhwAAAIMKEMFBqyIgCIEwBAEHIOKQahYgpCCKGkEEIqFWNSMuakZM5JKaWUFEpJrWJMSuaclMwxKaGUlkopqYRSWiqlxBRKaS2l1mJKqcVQSmulpNZKSa2llGJMrcUYMSYlc05K5pyUklJrJZXWMucoZQ5K6iCklEoqraTUYuacpA46Kx2E1EoqMZWUYgupxFZKaq2kFGMrMdXUWo4hpRhLSrGVlFptMdXWWqs1YkxK5pyUzDkqJaXWSiqtZc5J6iC01DkoqaTUYiopxco5SR2ElDLIqJSUWiupxBJSia20FGMpqcXUYq4pxRZDSS2WlFosqcTWYoy1tVRTJ6XFklKMJZUYW6y5ttZqDKXEVkqLsaSUW2sx1xZjjqGkFksrsZWUWmy15dhayzW1VGNKrdYWY40x5ZRrrT2n1mJNMdXaWqy51ZZbzLXnTkprpZQWS0oxttZijTHmHEppraQUWykpxtZara3FXEMpsZXSWiypxNhirLXFVmNqrcYWW62ltVprrb3GVlsurdXcYqw9tZRrrLXmWFNtBQAADDgAAASYUAYKDVkJAEQBAADGMMYYhEYpx5yT0ijlnHNSKucghJBS5hyEEFLKnINQSkuZcxBKSSmUklJqrYVSUmqttQIAAAocAAACbNCUWByg0JCVAEAqAIDBcTRNFFXVdX1fsSxRVFXXlW3jVyxNFFVVdm1b+DVRVFXXtW3bFn5NFFVVdmXZtoWiqrqybduybgvDqKqua9uybeuorqvbuq3bui9UXVmWbVu3dR3XtnXd9nVd+Bmzbeu2buu+8CMMR9/4IeTj+3RCCAAAT3AAACqwYXWEk6KxwEJDVgIAGQAAgDFKGYUYM0gxphhjTDHGmAAAgAEHAIAAE8pAoSErAoAoAADAOeecc84555xzzjnnnHPOOeecc44xxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY0wAwE6EA8BOhIVQaMhKACAcAABACCEpKaWUUkoRU85BSSmllFKqFIOMSkoppZRSpBR1lFJKKaWUIqWgpJJSSimllElJKaWUUkoppYw6SimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaVUSimllFJKKaWUUkoppRQAYPLgAACVYOMMK0lnhaPBhYasBAByAwAAhRiDEEJpraRUUkolVc5BKCWUlEpKKZWUUqqYgxBKKqmlklJKKbXSQSihlFBKKSWUUkooJYQQSgmhlFRCK6mEUkoHoYQSQimhhFRKKSWUzkEoIYUOQkmllNRCSB10VFIpIZVSSiklpZQ6CKGUklJLLZVSWkqpdBJSKamV1FJqqbWSUgmhpFZKSSWl0lpJJbUSSkklpZRSSymFVFJJJYSSUioltZZaSqm11lJIqZWUUkqppdRSSiWlkEpKqZSSUmollZRSaiGVlEpJKaTUSimlpFRCSamlUlpKLbWUSkmptFRSSaWUlEpJKaVSSksppRJKSqmllFpJKYWSUkoplZJSSyW1VEoKJaWUUkmptJRSSymVklIBAEAHDgAAAUZUWoidZlx5BI4oZJiAAgAAQABAgAkgMEBQMApBgDACAQAAAADAAAAfAABHARAR0ZzBAUKCwgJDg8MDAAAAAAAAAAAAAACAT2dnUwAEAAAAAAAAAADqnjMlAgAAADzQPmcBAQA="),a&&p("audio/mpeg;base64,/+MYxAAAAANIAUAAAASEEB/jwOFM/0MM/90b/+RhST//w4NFwOjf///PZu////9lns5GFDv//l9GlUIEEIAAAgIg8Ir/JGq3/+MYxDsLIj5QMYcoAP0dv9HIjUcH//yYSg+CIbkGP//8w0bLVjUP///3Z0x5QCAv/yLjwtGKTEFNRTMuOTeqqqqqqqqqqqqq/+MYxEkNmdJkUYc4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");const s=(new Date).getTime(),c=window.setInterval((()=>{const t=(new Date).getTime();h&&!(t-s>5e3)||(window.clearInterval(c),e(d))}),1)}((t=>{const n=window.location.hash;let r="";if(t[e.api])r=e.api;else if(t[n.substring(1)])r=n.substring(1);else for(const n of e.apiPrecedence)if(t[n]){r=n;break}if(Pe[r]){let n="";const o=t["audio/ogg"],i=t["audio/mpeg"],a=t.ogg_mp3_precedence;e.targetFormat?n=e.targetFormat:o&&"ogg"===a?n="ogg":i&&"mp3"===a?n="mp3":o?n="ogg":i?n="mp3":"webmidi"!==r&&(console.warn("no supporting playback formats...will try mp3 but unlikely"),n="mp3"),Ne.api=r,Ne.audioFormat=n,Ne.supports=t,je(e)}}))},je=e=>{let t=e.instruments||e.instrument||"acoustic_grand_piano";"object"!=typeof t&&(t=t||0===t?[t]:[]);for(let e=0;e<t.length;e++){const n=t[e];n===n+0&&g.byId[n]&&(t[e]=g.byId[n].id)}e.format=Ne.audioFormat,e.instruments=t,Pe[Ne.api](e)},Pe={webmidi:e=>{Ze(o,e),ye(e),Ne.is_connected=!0},audiotag:t=>{Ze(e,t),Xe(t,"AudioTag")},webaudio:e=>{Ze(t,e),Xe(e,"WebAudio")}},Ze=(e,t)=>{Ne.connected_plugin=e,e.shared_root_info.Soundfont=Je,e.shared_root_info.config=Ne,e.shared_root_info.webaudio_backup_connect=e=>Pe.webaudio(e)},Xe=(e,t)=>{const n=e.format,{instruments:r,onprogress:o,onerror:i}=e,a=Ye[t]||t.WebAudio,s=r.length;let c=s;const l=()=>{c-=1,c||(a.connect(e),Ne.is_connected=!0,o&&o("load",1))},u=(e,t,n)=>{o&&o("load",t/s+(s-c)/s,n)};for(const e of r)if(Je[e])l();else{Qe(e,n,((t,n)=>u(0,n,e)),(()=>l()),i)}},Qe=(e,t,n,r,o)=>{const i=Ne.soundfontUrl+e+"-"+t+".js",a=new XMLHttpRequest;a.open("GET",i),a.setRequestHeader("Content-Type","text/plain"),a.onload=()=>{if(200===a.status){const e=document.createElement("script");e.language="javascript",e.type="text/javascript",e.text=a.responseText,document.body.appendChild(e),r()}else o?o():console.error(`Could not load soundfont; path was ${i}`)},a.send()},ze=function(){if(Ne.is_connected)return Ne.connected_plugin.playChannel(...arguments);console.error("Connect before calling")},$e=function(){if(Ne.is_connected)return Ne.connected_plugin.stopChannel(...arguments);console.error("Connect before calling")},et=function(){if(Ne.is_connected)return Ne.connected_plugin.send(...arguments);console.error("Connect before calling")},tt=function(){if(Ne.is_connected)return Ne.connected_plugin.setController(...arguments);console.error("Connect before calling")},nt=function(){if(Ne.is_connected)return Ne.connected_plugin.setVolume(...arguments);console.error("Connect before calling")},rt=function(){if(Ne.is_connected)return Ne.connected_plugin.programChange(...arguments);console.error("Connect before calling")},ot=function(){if(Ne.is_connected)return Ne.connected_plugin.pitchBend(...arguments);console.error("Connect before calling")},it=function(){if(Ne.is_connected)return Ne.connected_plugin.noteOn(...arguments);console.error("Connect before calling")},at=function(){if(Ne.is_connected)return Ne.connected_plugin.noteOff(...arguments);console.error("Connect before calling")},st=function(){if(Ne.is_connected)return Ne.connected_plugin.chordOn(...arguments);console.error("Connect before calling")},ct=function(){if(Ne.is_connected)return Ne.connected_plugin.chordOff(...arguments);console.error("Connect before calling")},lt=function(){if(Ne.is_connected)return Ne.connected_plugin.stopAllNotes(...arguments);console.error("Connect before calling")},ut=function(){if(Ne.is_connected)return Ne.connected_plugin.setEffects();console.error("Connect before calling")},dt=()=>{if(Ne.is_connected)return Ne.connected_plugin.getContext();console.error("Connect before calling")},ht=function(){if(Ne.is_connected)return Ne.connected_plugin.setContext(...arguments);console.error("Connect before calling")};class pt extends Oe{constructor(){super(Ne.connected_plugin)}loadPlugin(){return Ve(...arguments)}}})(),r})()));
 //# sourceMappingURL=midicube.js.map
 
 /***/ }),
@@ -33905,10 +33892,9 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object 
    * Generates a Vex.Flow.Articulation for this articulation if it is something
    * vexflow can display.
    */
-  vexflow() {
-    let {
-      stemDirection
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflow({
+    stemDirection
+  } = {}) {
     if (!this.vexflowModifier) {
       return null;
     }
@@ -34074,8 +34060,7 @@ __webpack_require__.r(__webpack_exports__);
  * Adopted from Matt Diamond's recorder.js code MIT License
  */
 class Recorder {
-  constructor() {
-    let cfg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor(cfg = {}) {
     this.recording = false;
     const config = cfg || {};
     this.bufferLen = config.bufferLen || 4096;
@@ -34265,9 +34250,7 @@ class Recorder {
   exportMonoWAV(cb, type) {
     this.exportWAV(cb, type, true);
   }
-  setupDownload(blob) {
-    let filename = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'output.wav';
-    let elementId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'save';
+  setupDownload(blob, filename = 'output.wav', elementId = 'save') {
     const url = (window.URL || window.webkitURL).createObjectURL(blob);
     const link = document.getElementById(elementId);
     link.href = url;
@@ -34704,9 +34687,7 @@ function sampleCallback(frequency) {
   return 0;
 }
 // from Chris Wilson. Replace with Jordi's
-function autoCorrelate(buf, sampleRate) {
-  let minFrequency = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-  let maxFrequency = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+function autoCorrelate(buf, sampleRate, minFrequency = 0, maxFrequency = undefined) {
   const SIZE = buf.length;
   const MAX_SAMPLES = Math.floor(SIZE / 2);
   if (maxFrequency === undefined) {
@@ -34818,8 +34799,7 @@ function typeToMusicXMLBarStyle(value) {
     return value;
   }
 }
-function standardizeBarType() {
-  let value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'regular';
+function standardizeBarType(value = 'regular') {
   value = value.toLowerCase();
   if (barTypeList.includes(value)) {
     return value;
@@ -34833,9 +34813,7 @@ class Barline extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
   static get className() {
     return 'music21.bar.Barline';
   }
-  constructor() {
-    let type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'regular';
-    let location = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'right';
+  constructor(type = 'regular', location = 'right') {
     super();
     this.type = type;
     this.location = location; // left, right, middle, None
@@ -34912,8 +34890,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object
   static get className() {
     return 'music21.base.Music21Object';
   }
-  constructor() {
-    let _keywords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor(_keywords = {}) {
     super();
     this.classSortOrder = 20; // default;
     this._activeSiteStoredOffset = 0;
@@ -34942,9 +34919,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object
   /**
    * Override clone on prebase to add a derivation.
    */
-  clone() {
-    let deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    let memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  clone(deep = true, memo = undefined) {
     const ret = super.clone(deep, memo);
     const newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_1__.Derivation(ret);
     newDerivation.origin = this;
@@ -35059,10 +35034,9 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object
       defined as `paddingLeft` (for pickup measures, etc.), padding will be added to the
       native offset gathered from the object.
     */
-  _getMeasureOffset() {
-    let {
-      includeMeasurePadding = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  _getMeasureOffset({
+    includeMeasurePadding = true
+  } = {}) {
     const activeS = this.activeSite;
     let offsetLocal;
     if (activeS !== undefined && activeS.isMeasure) {
@@ -35146,9 +35120,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object
    * @param {boolean} [stringReturns=false] -- allow strings to be returned
    * @returns {number|string|undefined}
    */
-  getOffsetBySite() {
-    let site = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    let stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  getOffsetBySite(site = undefined, stringReturns = false) {
     if (site === undefined) {
       return this._naiveOffset;
     }
@@ -35191,8 +35163,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object
     throw new Error(`Element ${this} is not in hierarchy of ${site}`);
   }
   // ---------- Contexts -------------
-  getContextByClass(className) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  getContextByClass(className, options = {}) {
     const params = {
       getElementMethod: 'getElementAtOrBefore',
       sortByCreationTime: false
@@ -35237,90 +35208,88 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_4__.ProtoM21Object
     }
     return undefined;
   }
-  contextSites() {
-    var _this = this;
-    let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    return function* () {
-      const params = {
-        callerFirst: undefined,
-        memo: new Map(),
-        offsetAppend: 0.0,
-        sortByCreationTime: false,
-        priorityTarget: undefined,
-        returnSortTuples: false,
-        followDerivation: true
+  *contextSites(options = {}) {
+    const params = {
+      callerFirst: undefined,
+      memo: new Map(),
+      offsetAppend: 0.0,
+      sortByCreationTime: false,
+      priorityTarget: undefined,
+      returnSortTuples: false,
+      followDerivation: true
+    };
+    _common__WEBPACK_IMPORTED_MODULE_0__.merge(params, options);
+    const memo = params.memo;
+    if (params.callerFirst === undefined) {
+      params.callerFirst = this;
+      if (this.isStream && !memo.has(this)) {
+        const streamThis = this;
+        const recursionType = streamThis.recursionType;
+        yield [this, 0.0, recursionType];
+      }
+      memo.set(this, true);
+    }
+    if (params.priorityTarget === undefined && !params.sortByCreationTime) {
+      params.priorityTarget = this.activeSite;
+    }
+    const topLevel = this;
+    for (const siteObj of this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
+    )) {
+      if (memo.has(siteObj)) {
+        continue;
+      }
+      if (siteObj.classes.includes('SpannerStorage')) {
+        continue;
+      }
+      // let offset = this.getOffsetBySite(siteObj);
+      // followDerivation;
+      let offsetInStream;
+      try {
+        offsetInStream = siteObj.elementOffset(this);
+      } catch (e) {
+        console.error(`${this + ''} is not in ${siteObj + ''}`);
+        continue;
+      }
+      const newOffset = offsetInStream + params.offsetAppend;
+      const positionInStream = newOffset;
+      const recursionType = siteObj.recursionType;
+      yield [siteObj, positionInStream, recursionType];
+      memo.set(siteObj, true);
+      const newParams = {
+        callerFirst: params.callerFirst,
+        memo,
+        offsetAppend: positionInStream,
+        // .offset
+        returnSortTuples: true,
+        // always!
+        sortByCreationTime: params.sortByCreationTime
       };
-      _common__WEBPACK_IMPORTED_MODULE_0__.merge(params, options);
-      const memo = params.memo;
-      if (params.callerFirst === undefined) {
-        params.callerFirst = _this;
-        if (_this.isStream && !memo.has(_this)) {
-          const streamThis = _this;
-          const recursionType = streamThis.recursionType;
-          yield [_this, 0.0, recursionType];
+      for (const [topLevelInner, inStreamPos, recurType] of siteObj.contextSites(newParams)) {
+        const inStreamOffset = inStreamPos; // .offset;
+        // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
+        if (!memo.has(topLevelInner)) {
+          // if returnSortTuples...
+          // else
+          yield [topLevelInner, inStreamOffset, recurType];
+          memo.set(topLevelInner, true);
         }
-        memo.set(_this, true);
       }
-      if (params.priorityTarget === undefined && !params.sortByCreationTime) {
-        params.priorityTarget = _this.activeSite;
-      }
-      const topLevel = _this;
-      for (const siteObj of _this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
-      )) {
-        if (memo.has(siteObj)) {
-          continue;
-        }
-        if (siteObj.classes.includes('SpannerStorage')) {
-          continue;
-        }
-        // let offset = this.getOffsetBySite(siteObj);
-        // followDerivation;
-        let offsetInStream;
-        try {
-          offsetInStream = siteObj.elementOffset(_this);
-        } catch (e) {
-          console.error(`${_this + ''} is not in ${siteObj + ''}`);
-          continue;
-        }
-        const newOffset = offsetInStream + params.offsetAppend;
-        const positionInStream = newOffset;
-        const recursionType = siteObj.recursionType;
-        yield [siteObj, positionInStream, recursionType];
-        memo.set(siteObj, true);
-        const newParams = {
-          callerFirst: params.callerFirst,
+    }
+    // if followDerivation...
+    if (params.followDerivation) {
+      for (const derivedObject of topLevel.derivation.chain()) {
+        for (const [derivedSite, derivedOffset, derivedRecurseType] of derivedObject.contextSites({
+          callerFirst: undefined,
           memo,
-          offsetAppend: positionInStream,
+          offsetAppend: 0.0,
           returnSortTuples: true,
           sortByCreationTime: params.sortByCreationTime
-        };
-        for (const [topLevelInner, inStreamPos, recurType] of siteObj.contextSites(newParams)) {
-          const inStreamOffset = inStreamPos; // .offset;
-          // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
-          if (!memo.has(topLevelInner)) {
-            // if returnSortTuples...
-            // else
-            yield [topLevelInner, inStreamOffset, recurType];
-            memo.set(topLevelInner, true);
-          }
+        })) {
+          const offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
+          yield offsetAdjustedCsTuple;
         }
       }
-      // if followDerivation...
-      if (params.followDerivation) {
-        for (const derivedObject of topLevel.derivation.chain()) {
-          for (const [derivedSite, derivedOffset, derivedRecurseType] of derivedObject.contextSites({
-            callerFirst: undefined,
-            memo,
-            offsetAppend: 0.0,
-            returnSortTuples: true,
-            sortByCreationTime: params.sortByCreationTime
-          })) {
-            const offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
-            yield offsetAdjustedCsTuple;
-          }
-        }
-      }
-    }();
+    }
   }
   _getTimeSignatureForBeat() {
     // note: getContextByClass does not full support BeforeOffset yet.
@@ -35451,8 +35420,7 @@ class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   static get className() {
     return 'music21.beam.Beam';
   }
-  constructor(type) {
-    let direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  constructor(type, direction = undefined) {
     super();
     this.type = type;
     this.direction = direction;
@@ -35614,8 +35582,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    * @param {string} [direction=undefined] - the direction if type is "partial"
    * @returns {Beam} newly appended object
    */
-  append(type) {
-    let direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  append(type, direction = undefined) {
     const obj = new Beam(type, direction);
     obj.number = this.beamsList.length + 1;
     this.beamsList.push(obj);
@@ -35635,8 +35602,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    * @param {string} [type] - type to fill all beams to.
    * @returns {this}
    */
-  fill(level) {
-    let type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  fill(level, type = undefined) {
     this.beamsList = [];
     let count = 1;
     if (level === 1 || level === '8th' || level === _duration__WEBPACK_IMPORTED_MODULE_2__.typeFromNumDict[8]) {
@@ -35734,8 +35700,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    * @param {string} [direction] - beam direction
    * @returns {this}
    */
-  setAll(type) {
-    let direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  setAll(type, direction = undefined) {
     if (validBeamTypes[type] === undefined) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_0__.Music21Exception('invalid beam type: ' + type);
     }
@@ -35754,8 +35719,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    * @param {string} [direction]
    * @returns {this}
    */
-  setByNumber(number, type) {
-    let direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  setByNumber(number, type, direction = undefined) {
     if (direction === undefined) {
       const splitIt = type.split('-');
       type = splitIt[0];
@@ -35894,8 +35858,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_3__.NotRest {
     this._cache = {};
     this._overrides = {};
   }
-  vexflowNote() {
-    let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflowNote(options = {}) {
     this.sortPitches();
     return super.vexflowNote(options);
   }
@@ -36039,8 +36002,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_3__.NotRest {
    *
    * runSort - Sort after running (default true)
    */
-  add(n) {
-    let runSort = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  add(n, runSort = true) {
     let notes;
     if (!(n instanceof Array)) {
       notes = [n];
@@ -36333,14 +36295,11 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_3__.NotRest {
     }
     return undefined;
   }
-  playMidi() {
-    let tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
-    let nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let {
-      instrument = undefined,
-      channel = undefined,
-      playLegato = false
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  playMidi(tempo = 120, nextElement = undefined, {
+    instrument = undefined,
+    channel = undefined,
+    playLegato = false
+  } = {}) {
     const milliseconds = super.playMidi(tempo, nextElement, {
       instrument,
       channel,
@@ -36725,740 +36684,2144 @@ const FORTE = [undefined, monad, diad, trichord, tetrachord, pentachord, hexacho
 //-------------------------------------------------------------------------------
 // cardinality 1
 const card_1 = {
-  '1,0': [FORTE[1][1][0], FORTE[1][1][2], FORTE[1][1][1] //icv
+  '1,0': [FORTE[1][1][0],
+  // 1
+  FORTE[1][1][2],
+  // var
+  FORTE[1][1][1] //icv
   ]
 };
 // cardinality 2
 const card_2 = {
-  '1,0': [FORTE[2][1][0], FORTE[2][1][2], FORTE[2][1][1] //icv
+  '1,0': [FORTE[2][1][0],
+  // 2
+  FORTE[2][1][2],
+  // var
+  FORTE[2][1][1] //icv
   ],
-  '2,0': [FORTE[2][2][0], FORTE[2][2][2], FORTE[2][2][1] //icv
+  '2,0': [FORTE[2][2][0],
+  // 3
+  FORTE[2][2][2],
+  // var
+  FORTE[2][2][1] //icv
   ],
-  '3,0': [FORTE[2][3][0], FORTE[2][3][2], FORTE[2][3][1] //icv
+  '3,0': [FORTE[2][3][0],
+  // 4
+  FORTE[2][3][2],
+  // var
+  FORTE[2][3][1] //icv
   ],
-  '4,0': [FORTE[2][4][0], FORTE[2][4][2], FORTE[2][4][1] //icv
+  '4,0': [FORTE[2][4][0],
+  // 5
+  FORTE[2][4][2],
+  // var
+  FORTE[2][4][1] //icv
   ],
-  '5,0': [FORTE[2][5][0], FORTE[2][5][2], FORTE[2][5][1] //icv
+  '5,0': [FORTE[2][5][0],
+  // 6
+  FORTE[2][5][2],
+  // var
+  FORTE[2][5][1] //icv
   ],
-  '6,0': [FORTE[2][6][0], FORTE[2][6][2], FORTE[2][6][1] //icv
+  '6,0': [FORTE[2][6][0],
+  // 7
+  FORTE[2][6][2],
+  // var
+  FORTE[2][6][1] //icv
   ]
 };
 // cardinality 3
 const card_3 = {
-  '1,0': [FORTE[3][1][0], FORTE[3][1][2], FORTE[3][1][1] //icv
+  '1,0': [FORTE[3][1][0],
+  // 8
+  FORTE[3][1][2],
+  // var
+  FORTE[3][1][1] //icv
   ],
-  '2,1': [FORTE[3][2][0], FORTE[3][2][2], FORTE[3][2][1] //icv
+  '2,1': [FORTE[3][2][0],
+  // 9
+  FORTE[3][2][2],
+  // var
+  FORTE[3][2][1] //icv
   ],
-  '2,-1': [[0, 2, 3], FORTE[3][2][2], FORTE[3][2][1] //icv
+  '2,-1': [[0, 2, 3],
+  // 10
+  FORTE[3][2][2],
+  // var
+  FORTE[3][2][1] //icv
   ],
-  '3,1': [FORTE[3][3][0], FORTE[3][3][2], FORTE[3][3][1] //icv
+  '3,1': [FORTE[3][3][0],
+  // 11
+  FORTE[3][3][2],
+  // var
+  FORTE[3][3][1] //icv
   ],
-  '3,-1': [[0, 3, 4], FORTE[3][3][2], FORTE[3][3][1] //icv
+  '3,-1': [[0, 3, 4],
+  // 12
+  FORTE[3][3][2],
+  // var
+  FORTE[3][3][1] //icv
   ],
-  '4,1': [FORTE[3][4][0], FORTE[3][4][2], FORTE[3][4][1] //icv
+  '4,1': [FORTE[3][4][0],
+  // 13
+  FORTE[3][4][2],
+  // var
+  FORTE[3][4][1] //icv
   ],
-  '4,-1': [[0, 4, 5], FORTE[3][4][2], FORTE[3][4][1] //icv
+  '4,-1': [[0, 4, 5],
+  // 14
+  FORTE[3][4][2],
+  // var
+  FORTE[3][4][1] //icv
   ],
-  '5,1': [FORTE[3][5][0], FORTE[3][5][2], FORTE[3][5][1] //icv
+  '5,1': [FORTE[3][5][0],
+  // 15
+  FORTE[3][5][2],
+  // var
+  FORTE[3][5][1] //icv
   ],
-  '5,-1': [[0, 5, 6], FORTE[3][5][2], FORTE[3][5][1] //icv
+  '5,-1': [[0, 5, 6],
+  // 16
+  FORTE[3][5][2],
+  // var
+  FORTE[3][5][1] //icv
   ],
-  '6,0': [FORTE[3][6][0], FORTE[3][6][2], FORTE[3][6][1] //icv
+  '6,0': [FORTE[3][6][0],
+  // 17
+  FORTE[3][6][2],
+  // var
+  FORTE[3][6][1] //icv
   ],
-  '7,1': [FORTE[3][7][0], FORTE[3][7][2], FORTE[3][7][1] //icv
+  '7,1': [FORTE[3][7][0],
+  // 18
+  FORTE[3][7][2],
+  // var
+  FORTE[3][7][1] //icv
   ],
-  '7,-1': [[0, 3, 5], FORTE[3][7][2], FORTE[3][7][1] //icv
+  '7,-1': [[0, 3, 5],
+  // 19
+  FORTE[3][7][2],
+  // var
+  FORTE[3][7][1] //icv
   ],
-  '8,1': [FORTE[3][8][0], FORTE[3][8][2], FORTE[3][8][1] //icv
+  '8,1': [FORTE[3][8][0],
+  // 20
+  FORTE[3][8][2],
+  // var
+  FORTE[3][8][1] //icv
   ],
-  '8,-1': [[0, 4, 6], FORTE[3][8][2], FORTE[3][8][1] //icv
+  '8,-1': [[0, 4, 6],
+  // 21
+  FORTE[3][8][2],
+  // var
+  FORTE[3][8][1] //icv
   ],
-  '9,0': [FORTE[3][9][0], FORTE[3][9][2], FORTE[3][9][1] //icv
+  '9,0': [FORTE[3][9][0],
+  // 22
+  FORTE[3][9][2],
+  // var
+  FORTE[3][9][1] //icv
   ],
-  '10,0': [FORTE[3][10][0], FORTE[3][10][2], FORTE[3][10][1] //icv
+  '10,0': [FORTE[3][10][0],
+  // 23
+  FORTE[3][10][2],
+  // var
+  FORTE[3][10][1] //icv
   ],
-  '11,1': [FORTE[3][11][0], FORTE[3][11][2], FORTE[3][11][1] //icv
+  '11,1': [FORTE[3][11][0],
+  // 24
+  FORTE[3][11][2],
+  // var
+  FORTE[3][11][1] //icv
   ],
-  '11,-1': [[0, 4, 7], FORTE[3][11][2], FORTE[3][11][1] //icv
+  '11,-1': [[0, 4, 7],
+  // 25
+  FORTE[3][11][2],
+  // var
+  FORTE[3][11][1] //icv
   ],
-  '12,0': [FORTE[3][12][0], FORTE[3][12][2], FORTE[3][12][1] //icv
+  '12,0': [FORTE[3][12][0],
+  // 26
+  FORTE[3][12][2],
+  // var
+  FORTE[3][12][1] //icv
   ]
 };
 // cardinality 4
 const card_4 = {
-  '1,0': [FORTE[4][1][0], FORTE[4][1][2], FORTE[4][1][1] //icv
+  '1,0': [FORTE[4][1][0],
+  // 27
+  FORTE[4][1][2],
+  // var
+  FORTE[4][1][1] //icv
   ],
-  '2,1': [FORTE[4][2][0], FORTE[4][2][2], FORTE[4][2][1] //icv
+  '2,1': [FORTE[4][2][0],
+  // 28
+  FORTE[4][2][2],
+  // var
+  FORTE[4][2][1] //icv
   ],
-  '2,-1': [[0, 2, 3, 4], FORTE[4][2][2], FORTE[4][2][1] //icv
+  '2,-1': [[0, 2, 3, 4],
+  // 29
+  FORTE[4][2][2],
+  // var
+  FORTE[4][2][1] //icv
   ],
-  '3,0': [FORTE[4][3][0], FORTE[4][3][2], FORTE[4][3][1] //icv
+  '3,0': [FORTE[4][3][0],
+  // 30
+  FORTE[4][3][2],
+  // var
+  FORTE[4][3][1] //icv
   ],
-  '4,1': [FORTE[4][4][0], FORTE[4][4][2], FORTE[4][4][1] //icv
+  '4,1': [FORTE[4][4][0],
+  // 31
+  FORTE[4][4][2],
+  // var
+  FORTE[4][4][1] //icv
   ],
-  '4,-1': [[0, 3, 4, 5], FORTE[4][4][2], FORTE[4][4][1] //icv
+  '4,-1': [[0, 3, 4, 5],
+  // 32
+  FORTE[4][4][2],
+  // var
+  FORTE[4][4][1] //icv
   ],
-  '5,1': [FORTE[4][5][0], FORTE[4][5][2], FORTE[4][5][1] //icv
+  '5,1': [FORTE[4][5][0],
+  // 33
+  FORTE[4][5][2],
+  // var
+  FORTE[4][5][1] //icv
   ],
-  '5,-1': [[0, 4, 5, 6], FORTE[4][5][2], FORTE[4][5][1] //icv
+  '5,-1': [[0, 4, 5, 6],
+  // 34
+  FORTE[4][5][2],
+  // var
+  FORTE[4][5][1] //icv
   ],
-  '6,0': [FORTE[4][6][0], FORTE[4][6][2], FORTE[4][6][1] //icv
+  '6,0': [FORTE[4][6][0],
+  // 35
+  FORTE[4][6][2],
+  // var
+  FORTE[4][6][1] //icv
   ],
-  '7,0': [FORTE[4][7][0], FORTE[4][7][2], FORTE[4][7][1] //icv
+  '7,0': [FORTE[4][7][0],
+  // 36
+  FORTE[4][7][2],
+  // var
+  FORTE[4][7][1] //icv
   ],
-  '8,0': [FORTE[4][8][0], FORTE[4][8][2], FORTE[4][8][1] //icv
+  '8,0': [FORTE[4][8][0],
+  // 37
+  FORTE[4][8][2],
+  // var
+  FORTE[4][8][1] //icv
   ],
-  '9,0': [FORTE[4][9][0], FORTE[4][9][2], FORTE[4][9][1] //icv
+  '9,0': [FORTE[4][9][0],
+  // 38
+  FORTE[4][9][2],
+  // var
+  FORTE[4][9][1] //icv
   ],
-  '10,0': [FORTE[4][10][0], FORTE[4][10][2], FORTE[4][10][1] //icv
+  '10,0': [FORTE[4][10][0],
+  // 39
+  FORTE[4][10][2],
+  // var
+  FORTE[4][10][1] //icv
   ],
-  '11,1': [FORTE[4][11][0], FORTE[4][11][2], FORTE[4][11][1] //icv
+  '11,1': [FORTE[4][11][0],
+  // 40
+  FORTE[4][11][2],
+  // var
+  FORTE[4][11][1] //icv
   ],
-  '11,-1': [[0, 2, 4, 5], FORTE[4][11][2], FORTE[4][11][1] //icv
+  '11,-1': [[0, 2, 4, 5],
+  // 41
+  FORTE[4][11][2],
+  // var
+  FORTE[4][11][1] //icv
   ],
-  '12,1': [FORTE[4][12][0], FORTE[4][12][2], FORTE[4][12][1] //icv
+  '12,1': [FORTE[4][12][0],
+  // 42
+  FORTE[4][12][2],
+  // var
+  FORTE[4][12][1] //icv
   ],
-  '12,-1': [[0, 3, 4, 6], FORTE[4][12][2], FORTE[4][12][1] //icv
+  '12,-1': [[0, 3, 4, 6],
+  // 43
+  FORTE[4][12][2],
+  // var
+  FORTE[4][12][1] //icv
   ],
-  '13,1': [FORTE[4][13][0], FORTE[4][13][2], FORTE[4][13][1] //icv
+  '13,1': [FORTE[4][13][0],
+  // 44
+  FORTE[4][13][2],
+  // var
+  FORTE[4][13][1] //icv
   ],
-  '13,-1': [[0, 3, 5, 6], FORTE[4][13][2], FORTE[4][13][1] //icv
+  '13,-1': [[0, 3, 5, 6],
+  // 45
+  FORTE[4][13][2],
+  // var
+  FORTE[4][13][1] //icv
   ],
-  '14,1': [FORTE[4][14][0], FORTE[4][14][2], FORTE[4][14][1] //icv
+  '14,1': [FORTE[4][14][0],
+  // 46
+  FORTE[4][14][2],
+  // var
+  FORTE[4][14][1] //icv
   ],
-  '14,-1': [[0, 4, 5, 7], FORTE[4][14][2], FORTE[4][14][1] //icv
+  '14,-1': [[0, 4, 5, 7],
+  // 47
+  FORTE[4][14][2],
+  // var
+  FORTE[4][14][1] //icv
   ],
-  '15,1': [FORTE[4][15][0], FORTE[4][15][2], FORTE[4][15][1] //icv
+  '15,1': [FORTE[4][15][0],
+  // 48
+  FORTE[4][15][2],
+  // var
+  FORTE[4][15][1] //icv
   ],
-  '15,-1': [[0, 2, 5, 6], FORTE[4][15][2], FORTE[4][15][1] //icv
+  '15,-1': [[0, 2, 5, 6],
+  // 49
+  FORTE[4][15][2],
+  // var
+  FORTE[4][15][1] //icv
   ],
-  '16,1': [FORTE[4][16][0], FORTE[4][16][2], FORTE[4][16][1] //icv
+  '16,1': [FORTE[4][16][0],
+  // 50
+  FORTE[4][16][2],
+  // var
+  FORTE[4][16][1] //icv
   ],
-  '16,-1': [[0, 2, 6, 7], FORTE[4][16][2], FORTE[4][16][1] //icv
+  '16,-1': [[0, 2, 6, 7],
+  // 51
+  FORTE[4][16][2],
+  // var
+  FORTE[4][16][1] //icv
   ],
-  '17,0': [FORTE[4][17][0], FORTE[4][17][2], FORTE[4][17][1] //icv
+  '17,0': [FORTE[4][17][0],
+  // 52
+  FORTE[4][17][2],
+  // var
+  FORTE[4][17][1] //icv
   ],
-  '18,1': [FORTE[4][18][0], FORTE[4][18][2], FORTE[4][18][1] //icv
+  '18,1': [FORTE[4][18][0],
+  // 53
+  FORTE[4][18][2],
+  // var
+  FORTE[4][18][1] //icv
   ],
-  '18,-1': [[0, 3, 6, 7], FORTE[4][18][2], FORTE[4][18][1] //icv
+  '18,-1': [[0, 3, 6, 7],
+  // 54
+  FORTE[4][18][2],
+  // var
+  FORTE[4][18][1] //icv
   ],
-  '19,1': [FORTE[4][19][0], FORTE[4][19][2], FORTE[4][19][1] //icv
+  '19,1': [FORTE[4][19][0],
+  // 55
+  FORTE[4][19][2],
+  // var
+  FORTE[4][19][1] //icv
   ],
-  '19,-1': [[0, 4, 7, 8], FORTE[4][19][2], FORTE[4][19][1] //icv
+  '19,-1': [[0, 4, 7, 8],
+  // 56
+  FORTE[4][19][2],
+  // var
+  FORTE[4][19][1] //icv
   ],
-  '20,0': [FORTE[4][20][0], FORTE[4][20][2], FORTE[4][20][1] //icv
+  '20,0': [FORTE[4][20][0],
+  // 57
+  FORTE[4][20][2],
+  // var
+  FORTE[4][20][1] //icv
   ],
-  '21,0': [FORTE[4][21][0], FORTE[4][21][2], FORTE[4][21][1] //icv
+  '21,0': [FORTE[4][21][0],
+  // 58
+  FORTE[4][21][2],
+  // var
+  FORTE[4][21][1] //icv
   ],
-  '22,1': [FORTE[4][22][0], FORTE[4][22][2], FORTE[4][22][1] //icv
+  '22,1': [FORTE[4][22][0],
+  // 59
+  FORTE[4][22][2],
+  // var
+  FORTE[4][22][1] //icv
   ],
-  '22,-1': [[0, 3, 5, 7], FORTE[4][22][2], FORTE[4][22][1] //icv
+  '22,-1': [[0, 3, 5, 7],
+  // 60
+  FORTE[4][22][2],
+  // var
+  FORTE[4][22][1] //icv
   ],
-  '23,0': [FORTE[4][23][0], FORTE[4][23][2], FORTE[4][23][1] //icv
+  '23,0': [FORTE[4][23][0],
+  // 61
+  FORTE[4][23][2],
+  // var
+  FORTE[4][23][1] //icv
   ],
-  '24,0': [FORTE[4][24][0], FORTE[4][24][2], FORTE[4][24][1] //icv
+  '24,0': [FORTE[4][24][0],
+  // 62
+  FORTE[4][24][2],
+  // var
+  FORTE[4][24][1] //icv
   ],
-  '25,0': [FORTE[4][25][0], FORTE[4][25][2], FORTE[4][25][1] //icv
+  '25,0': [FORTE[4][25][0],
+  // 63
+  FORTE[4][25][2],
+  // var
+  FORTE[4][25][1] //icv
   ],
-  '26,0': [FORTE[4][26][0], FORTE[4][26][2], FORTE[4][26][1] //icv
+  '26,0': [FORTE[4][26][0],
+  // 64
+  FORTE[4][26][2],
+  // var
+  FORTE[4][26][1] //icv
   ],
-  '27,1': [FORTE[4][27][0], FORTE[4][27][2], FORTE[4][27][1] //icv
+  '27,1': [FORTE[4][27][0],
+  // 65
+  FORTE[4][27][2],
+  // var
+  FORTE[4][27][1] //icv
   ],
-  '27,-1': [[0, 3, 6, 8], FORTE[4][27][2], FORTE[4][27][1] //icv
+  '27,-1': [[0, 3, 6, 8],
+  // 66
+  FORTE[4][27][2],
+  // var
+  FORTE[4][27][1] //icv
   ],
-  '28,0': [FORTE[4][28][0], FORTE[4][28][2], FORTE[4][28][1] //icv
+  '28,0': [FORTE[4][28][0],
+  // 67
+  FORTE[4][28][2],
+  // var
+  FORTE[4][28][1] //icv
   ],
-  '29,1': [FORTE[4][29][0], FORTE[4][29][2], FORTE[4][29][1] //icv
+  '29,1': [FORTE[4][29][0],
+  // 68
+  FORTE[4][29][2],
+  // var
+  FORTE[4][29][1] //icv
   ],
-  '29,-1': [[0, 4, 6, 7], FORTE[4][29][2], FORTE[4][29][1] //icv
+  '29,-1': [[0, 4, 6, 7],
+  // 69
+  FORTE[4][29][2],
+  // var
+  FORTE[4][29][1] //icv
   ]
 };
 // cardinality 5
 const card_5 = {
-  '1,0': [FORTE[5][1][0], FORTE[5][1][2], FORTE[5][1][1] //icv
-  ],
-  '2,1': [FORTE[5][2][0], FORTE[5][2][2], FORTE[5][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5], FORTE[5][2][2], FORTE[5][2][1] //icv
-  ],
-  '3,1': [FORTE[5][3][0], FORTE[5][3][2], FORTE[5][3][1] //icv
-  ],
-  '3,-1': [[0, 1, 3, 4, 5], FORTE[5][3][2], FORTE[5][3][1] //icv
-  ],
-  '4,1': [FORTE[5][4][0], FORTE[5][4][2], FORTE[5][4][1] //icv
-  ],
-  '4,-1': [[0, 3, 4, 5, 6], FORTE[5][4][2], FORTE[5][4][1] //icv
-  ],
-  '5,1': [FORTE[5][5][0], FORTE[5][5][2], FORTE[5][5][1] //icv
-  ],
-  '5,-1': [[0, 4, 5, 6, 7], FORTE[5][5][2], FORTE[5][5][1] //icv
-  ],
-  '6,1': [FORTE[5][6][0], FORTE[5][6][2], FORTE[5][6][1] //icv
-  ],
-  '6,-1': [[0, 1, 4, 5, 6], FORTE[5][6][2], FORTE[5][6][1] //icv
-  ],
-  '7,1': [FORTE[5][7][0], FORTE[5][7][2], FORTE[5][7][1] //icv
-  ],
-  '7,-1': [[0, 1, 5, 6, 7], FORTE[5][7][2], FORTE[5][7][1] //icv
-  ],
-  '8,0': [FORTE[5][8][0], FORTE[5][8][2], FORTE[5][8][1] //icv
-  ],
-  '9,1': [FORTE[5][9][0], FORTE[5][9][2], FORTE[5][9][1] //icv
-  ],
-  '9,-1': [[0, 2, 4, 5, 6], FORTE[5][9][2], FORTE[5][9][1] //icv
-  ],
-  '10,1': [FORTE[5][10][0], FORTE[5][10][2], FORTE[5][10][1] //icv
-  ],
-  '10,-1': [[0, 2, 3, 5, 6], FORTE[5][10][2], FORTE[5][10][1] //icv
-  ],
-  '11,1': [FORTE[5][11][0], FORTE[5][11][2], FORTE[5][11][1] //icv
-  ],
-  '11,-1': [[0, 3, 4, 5, 7], FORTE[5][11][2], FORTE[5][11][1] //icv
-  ],
-  '12,0': [FORTE[5][12][0], FORTE[5][12][2], FORTE[5][12][1] //icv
-  ],
-  '13,1': [FORTE[5][13][0], FORTE[5][13][2], FORTE[5][13][1] //icv
-  ],
-  '13,-1': [[0, 4, 6, 7, 8], FORTE[5][13][2], FORTE[5][13][1] //icv
-  ],
-  '14,1': [FORTE[5][14][0], FORTE[5][14][2], FORTE[5][14][1] //icv
-  ],
-  '14,-1': [[0, 2, 5, 6, 7], FORTE[5][14][2], FORTE[5][14][1] //icv
-  ],
-  '15,0': [FORTE[5][15][0], FORTE[5][15][2], FORTE[5][15][1] //icv
-  ],
-  '16,1': [FORTE[5][16][0], FORTE[5][16][2], FORTE[5][16][1] //icv
-  ],
-  '16,-1': [[0, 3, 4, 6, 7], FORTE[5][16][2], FORTE[5][16][1] //icv
-  ],
-  '17,0': [FORTE[5][17][0], FORTE[5][17][2], FORTE[5][17][1] //icv
-  ],
-  '18,1': [FORTE[5][18][0], FORTE[5][18][2], FORTE[5][18][1] //icv
-  ],
-  '18,-1': [[0, 2, 3, 6, 7], FORTE[5][18][2], FORTE[5][18][1] //icv
-  ],
-  '19,1': [FORTE[5][19][0], FORTE[5][19][2], FORTE[5][19][1] //icv
-  ],
-  '19,-1': [[0, 1, 4, 6, 7], FORTE[5][19][2], FORTE[5][19][1] //icv
-  ],
-  '20,1': [FORTE[5][20][0], FORTE[5][20][2], FORTE[5][20][1] //icv
-  ],
-  '20,-1': [[0, 1, 5, 7, 8], FORTE[5][20][2], FORTE[5][20][1] //icv
-  ],
-  '21,1': [FORTE[5][21][0], FORTE[5][21][2], FORTE[5][21][1] //icv
-  ],
-  '21,-1': [[0, 3, 4, 7, 8], FORTE[5][21][2], FORTE[5][21][1] //icv
-  ],
-  '22,0': [FORTE[5][22][0], FORTE[5][22][2], FORTE[5][22][1] //icv
-  ],
-  '23,1': [FORTE[5][23][0], FORTE[5][23][2], FORTE[5][23][1] //icv
-  ],
-  '23,-1': [[0, 2, 4, 5, 7], FORTE[5][23][2], FORTE[5][23][1] //icv
-  ],
-  '24,1': [FORTE[5][24][0], FORTE[5][24][2], FORTE[5][24][1] //icv
-  ],
-  '24,-1': [[0, 2, 4, 6, 7], FORTE[5][24][2], FORTE[5][24][1] //icv
-  ],
-  '25,1': [FORTE[5][25][0], FORTE[5][25][2], FORTE[5][25][1] //icv
-  ],
-  '25,-1': [[0, 3, 5, 6, 8], FORTE[5][25][2], FORTE[5][25][1] //icv
-  ],
-  '26,1': [FORTE[5][26][0], FORTE[5][26][2], FORTE[5][26][1] //icv
-  ],
-  '26,-1': [[0, 3, 4, 6, 8], FORTE[5][26][2], FORTE[5][26][1] //icv
-  ],
-  '27,1': [FORTE[5][27][0], FORTE[5][27][2], FORTE[5][27][1] //icv
-  ],
-  '27,-1': [[0, 3, 5, 7, 8], FORTE[5][27][2], FORTE[5][27][1] //icv
-  ],
-  '28,1': [FORTE[5][28][0], FORTE[5][28][2], FORTE[5][28][1] //icv
-  ],
-  '28,-1': [[0, 2, 5, 6, 8], FORTE[5][28][2], FORTE[5][28][1] //icv
-  ],
-  '29,1': [FORTE[5][29][0], FORTE[5][29][2], FORTE[5][29][1] //icv
-  ],
-  '29,-1': [[0, 2, 5, 7, 8], FORTE[5][29][2], FORTE[5][29][1] //icv
-  ],
-  '30,1': [FORTE[5][30][0], FORTE[5][30][2], FORTE[5][30][1] //icv
-  ],
-  '30,-1': [[0, 2, 4, 7, 8], FORTE[5][30][2], FORTE[5][30][1] //icv
-  ],
-  '31,1': [FORTE[5][31][0], FORTE[5][31][2], FORTE[5][31][1] //icv
-  ],
-  '31,-1': [[0, 3, 6, 8, 9], FORTE[5][31][2], FORTE[5][31][1] //icv
-  ],
-  '32,1': [FORTE[5][32][0], FORTE[5][32][2], FORTE[5][32][1] //icv
-  ],
-  '32,-1': [[0, 3, 5, 8, 9], FORTE[5][32][2], FORTE[5][32][1] //icv
-  ],
-  '33,0': [FORTE[5][33][0], FORTE[5][33][2], FORTE[5][33][1] //icv
-  ],
-  '34,0': [FORTE[5][34][0], FORTE[5][34][2], FORTE[5][34][1] //icv
-  ],
-  '35,0': [FORTE[5][35][0], FORTE[5][35][2], FORTE[5][35][1] //icv
-  ],
-  '36,1': [FORTE[5][36][0], FORTE[5][36][2], FORTE[5][36][1] //icv
-  ],
-  '36,-1': [[0, 3, 5, 6, 7], FORTE[5][36][2], FORTE[5][36][1] //icv
-  ],
-  '37,0': [FORTE[5][37][0], FORTE[5][37][2], FORTE[5][37][1] //icv
-  ],
-  '38,1': [FORTE[5][38][0], FORTE[5][38][2], FORTE[5][38][1] //icv
-  ],
-  '38,-1': [[0, 3, 6, 7, 8], FORTE[5][38][2], FORTE[5][38][1] //icv
+  '1,0': [FORTE[5][1][0],
+  // 70
+  FORTE[5][1][2],
+  // var
+  FORTE[5][1][1] //icv
+  ],
+  '2,1': [FORTE[5][2][0],
+  // 71
+  FORTE[5][2][2],
+  // var
+  FORTE[5][2][1] //icv
+  ],
+  '2,-1': [[0, 2, 3, 4, 5],
+  // 72
+  FORTE[5][2][2],
+  // var
+  FORTE[5][2][1] //icv
+  ],
+  '3,1': [FORTE[5][3][0],
+  // 73
+  FORTE[5][3][2],
+  // var
+  FORTE[5][3][1] //icv
+  ],
+  '3,-1': [[0, 1, 3, 4, 5],
+  // 74
+  FORTE[5][3][2],
+  // var
+  FORTE[5][3][1] //icv
+  ],
+  '4,1': [FORTE[5][4][0],
+  // 75
+  FORTE[5][4][2],
+  // var
+  FORTE[5][4][1] //icv
+  ],
+  '4,-1': [[0, 3, 4, 5, 6],
+  // 76
+  FORTE[5][4][2],
+  // var
+  FORTE[5][4][1] //icv
+  ],
+  '5,1': [FORTE[5][5][0],
+  // 77
+  FORTE[5][5][2],
+  // var
+  FORTE[5][5][1] //icv
+  ],
+  '5,-1': [[0, 4, 5, 6, 7],
+  // 78
+  FORTE[5][5][2],
+  // var
+  FORTE[5][5][1] //icv
+  ],
+  '6,1': [FORTE[5][6][0],
+  // 79
+  FORTE[5][6][2],
+  // var
+  FORTE[5][6][1] //icv
+  ],
+  '6,-1': [[0, 1, 4, 5, 6],
+  // 80
+  FORTE[5][6][2],
+  // var
+  FORTE[5][6][1] //icv
+  ],
+  '7,1': [FORTE[5][7][0],
+  // 81
+  FORTE[5][7][2],
+  // var
+  FORTE[5][7][1] //icv
+  ],
+  '7,-1': [[0, 1, 5, 6, 7],
+  // 82
+  FORTE[5][7][2],
+  // var
+  FORTE[5][7][1] //icv
+  ],
+  '8,0': [FORTE[5][8][0],
+  // 83
+  FORTE[5][8][2],
+  // var
+  FORTE[5][8][1] //icv
+  ],
+  '9,1': [FORTE[5][9][0],
+  // 84
+  FORTE[5][9][2],
+  // var
+  FORTE[5][9][1] //icv
+  ],
+  '9,-1': [[0, 2, 4, 5, 6],
+  // 85
+  FORTE[5][9][2],
+  // var
+  FORTE[5][9][1] //icv
+  ],
+  '10,1': [FORTE[5][10][0],
+  // 86
+  FORTE[5][10][2],
+  // var
+  FORTE[5][10][1] //icv
+  ],
+  '10,-1': [[0, 2, 3, 5, 6],
+  // 87
+  FORTE[5][10][2],
+  // var
+  FORTE[5][10][1] //icv
+  ],
+  '11,1': [FORTE[5][11][0],
+  // 88
+  FORTE[5][11][2],
+  // var
+  FORTE[5][11][1] //icv
+  ],
+  '11,-1': [[0, 3, 4, 5, 7],
+  // 89
+  FORTE[5][11][2],
+  // var
+  FORTE[5][11][1] //icv
+  ],
+  '12,0': [FORTE[5][12][0],
+  // 90
+  FORTE[5][12][2],
+  // var
+  FORTE[5][12][1] //icv
+  ],
+  '13,1': [FORTE[5][13][0],
+  // 91
+  FORTE[5][13][2],
+  // var
+  FORTE[5][13][1] //icv
+  ],
+  '13,-1': [[0, 4, 6, 7, 8],
+  // 92
+  FORTE[5][13][2],
+  // var
+  FORTE[5][13][1] //icv
+  ],
+  '14,1': [FORTE[5][14][0],
+  // 93
+  FORTE[5][14][2],
+  // var
+  FORTE[5][14][1] //icv
+  ],
+  '14,-1': [[0, 2, 5, 6, 7],
+  // 94
+  FORTE[5][14][2],
+  // var
+  FORTE[5][14][1] //icv
+  ],
+  '15,0': [FORTE[5][15][0],
+  // 95
+  FORTE[5][15][2],
+  // var
+  FORTE[5][15][1] //icv
+  ],
+  '16,1': [FORTE[5][16][0],
+  // 96
+  FORTE[5][16][2],
+  // var
+  FORTE[5][16][1] //icv
+  ],
+  '16,-1': [[0, 3, 4, 6, 7],
+  // 97
+  FORTE[5][16][2],
+  // var
+  FORTE[5][16][1] //icv
+  ],
+  '17,0': [FORTE[5][17][0],
+  // 98
+  FORTE[5][17][2],
+  // var
+  FORTE[5][17][1] //icv
+  ],
+  '18,1': [FORTE[5][18][0],
+  // 99
+  FORTE[5][18][2],
+  // var
+  FORTE[5][18][1] //icv
+  ],
+  '18,-1': [[0, 2, 3, 6, 7],
+  // 100
+  FORTE[5][18][2],
+  // var
+  FORTE[5][18][1] //icv
+  ],
+  '19,1': [FORTE[5][19][0],
+  // 101
+  FORTE[5][19][2],
+  // var
+  FORTE[5][19][1] //icv
+  ],
+  '19,-1': [[0, 1, 4, 6, 7],
+  // 102
+  FORTE[5][19][2],
+  // var
+  FORTE[5][19][1] //icv
+  ],
+  '20,1': [FORTE[5][20][0],
+  // 103
+  FORTE[5][20][2],
+  // var
+  FORTE[5][20][1] //icv
+  ],
+  '20,-1': [[0, 1, 5, 7, 8],
+  // 104
+  FORTE[5][20][2],
+  // var
+  FORTE[5][20][1] //icv
+  ],
+  '21,1': [FORTE[5][21][0],
+  // 105
+  FORTE[5][21][2],
+  // var
+  FORTE[5][21][1] //icv
+  ],
+  '21,-1': [[0, 3, 4, 7, 8],
+  // 106
+  FORTE[5][21][2],
+  // var
+  FORTE[5][21][1] //icv
+  ],
+  '22,0': [FORTE[5][22][0],
+  // 107
+  FORTE[5][22][2],
+  // var
+  FORTE[5][22][1] //icv
+  ],
+  '23,1': [FORTE[5][23][0],
+  // 108
+  FORTE[5][23][2],
+  // var
+  FORTE[5][23][1] //icv
+  ],
+  '23,-1': [[0, 2, 4, 5, 7],
+  // 109
+  FORTE[5][23][2],
+  // var
+  FORTE[5][23][1] //icv
+  ],
+  '24,1': [FORTE[5][24][0],
+  // 110
+  FORTE[5][24][2],
+  // var
+  FORTE[5][24][1] //icv
+  ],
+  '24,-1': [[0, 2, 4, 6, 7],
+  // 111
+  FORTE[5][24][2],
+  // var
+  FORTE[5][24][1] //icv
+  ],
+  '25,1': [FORTE[5][25][0],
+  // 112
+  FORTE[5][25][2],
+  // var
+  FORTE[5][25][1] //icv
+  ],
+  '25,-1': [[0, 3, 5, 6, 8],
+  // 113
+  FORTE[5][25][2],
+  // var
+  FORTE[5][25][1] //icv
+  ],
+  '26,1': [FORTE[5][26][0],
+  // 114
+  FORTE[5][26][2],
+  // var
+  FORTE[5][26][1] //icv
+  ],
+  '26,-1': [[0, 3, 4, 6, 8],
+  // 115
+  FORTE[5][26][2],
+  // var
+  FORTE[5][26][1] //icv
+  ],
+  '27,1': [FORTE[5][27][0],
+  // 116
+  FORTE[5][27][2],
+  // var
+  FORTE[5][27][1] //icv
+  ],
+  '27,-1': [[0, 3, 5, 7, 8],
+  // 117
+  FORTE[5][27][2],
+  // var
+  FORTE[5][27][1] //icv
+  ],
+  '28,1': [FORTE[5][28][0],
+  // 118
+  FORTE[5][28][2],
+  // var
+  FORTE[5][28][1] //icv
+  ],
+  '28,-1': [[0, 2, 5, 6, 8],
+  // 119
+  FORTE[5][28][2],
+  // var
+  FORTE[5][28][1] //icv
+  ],
+  '29,1': [FORTE[5][29][0],
+  // 120
+  FORTE[5][29][2],
+  // var
+  FORTE[5][29][1] //icv
+  ],
+  '29,-1': [[0, 2, 5, 7, 8],
+  // 121
+  FORTE[5][29][2],
+  // var
+  FORTE[5][29][1] //icv
+  ],
+  '30,1': [FORTE[5][30][0],
+  // 122
+  FORTE[5][30][2],
+  // var
+  FORTE[5][30][1] //icv
+  ],
+  '30,-1': [[0, 2, 4, 7, 8],
+  // 123
+  FORTE[5][30][2],
+  // var
+  FORTE[5][30][1] //icv
+  ],
+  '31,1': [FORTE[5][31][0],
+  // 124
+  FORTE[5][31][2],
+  // var
+  FORTE[5][31][1] //icv
+  ],
+  '31,-1': [[0, 3, 6, 8, 9],
+  // 125
+  FORTE[5][31][2],
+  // var
+  FORTE[5][31][1] //icv
+  ],
+  '32,1': [FORTE[5][32][0],
+  // 126
+  FORTE[5][32][2],
+  // var
+  FORTE[5][32][1] //icv
+  ],
+  '32,-1': [[0, 3, 5, 8, 9],
+  // 127
+  FORTE[5][32][2],
+  // var
+  FORTE[5][32][1] //icv
+  ],
+  '33,0': [FORTE[5][33][0],
+  // 128
+  FORTE[5][33][2],
+  // var
+  FORTE[5][33][1] //icv
+  ],
+  '34,0': [FORTE[5][34][0],
+  // 129
+  FORTE[5][34][2],
+  // var
+  FORTE[5][34][1] //icv
+  ],
+  '35,0': [FORTE[5][35][0],
+  // 130
+  FORTE[5][35][2],
+  // var
+  FORTE[5][35][1] //icv
+  ],
+  '36,1': [FORTE[5][36][0],
+  // 131
+  FORTE[5][36][2],
+  // var
+  FORTE[5][36][1] //icv
+  ],
+  '36,-1': [[0, 3, 5, 6, 7],
+  // 132
+  FORTE[5][36][2],
+  // var
+  FORTE[5][36][1] //icv
+  ],
+  '37,0': [FORTE[5][37][0],
+  // 133
+  FORTE[5][37][2],
+  // var
+  FORTE[5][37][1] //icv
+  ],
+  '38,1': [FORTE[5][38][0],
+  // 134
+  FORTE[5][38][2],
+  // var
+  FORTE[5][38][1] //icv
+  ],
+  '38,-1': [[0, 3, 6, 7, 8],
+  // 135
+  FORTE[5][38][2],
+  // var
+  FORTE[5][38][1] //icv
   ]
 };
 // cardinality 6
 const card_6 = {
-  '1,0': [FORTE[6][1][0], FORTE[6][1][2], FORTE[6][1][1] //icv
-  ],
-  '2,1': [FORTE[6][2][0], FORTE[6][2][2], FORTE[6][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5, 6], FORTE[6][2][2], FORTE[6][2][1] //icv
-  ],
-  '3,1': [FORTE[6][3][0], FORTE[6][3][2], FORTE[6][3][1] //icv
-  ],
-  '3,-1': [[0, 1, 3, 4, 5, 6], FORTE[6][3][2], FORTE[6][3][1] //icv
-  ],
-  '4,0': [FORTE[6][4][0], FORTE[6][4][2], FORTE[6][4][1] //icv
-  ],
-  '5,1': [FORTE[6][5][0], FORTE[6][5][2], FORTE[6][5][1] //icv
-  ],
-  '5,-1': [[0, 1, 4, 5, 6, 7], FORTE[6][5][2], FORTE[6][5][1] //icv
-  ],
-  '6,0': [FORTE[6][6][0], FORTE[6][6][2], FORTE[6][6][1] //icv
-  ],
-  '7,0': [FORTE[6][7][0], FORTE[6][7][2], FORTE[6][7][1] //icv
-  ],
-  '8,0': [FORTE[6][8][0], FORTE[6][8][2], FORTE[6][8][1] //icv
-  ],
-  '9,1': [FORTE[6][9][0], FORTE[6][9][2], FORTE[6][9][1] //icv
-  ],
-  '9,-1': [[0, 2, 4, 5, 6, 7], FORTE[6][9][2], FORTE[6][9][1] //icv
-  ],
-  '10,1': [FORTE[6][10][0], FORTE[6][10][2], FORTE[6][10][1] //icv
-  ],
-  '10,-1': [[0, 2, 3, 4, 6, 7], FORTE[6][10][2], FORTE[6][10][1] //icv
-  ],
-  '11,1': [FORTE[6][11][0], FORTE[6][11][2], FORTE[6][11][1] //icv
-  ],
-  '11,-1': [[0, 2, 3, 5, 6, 7], FORTE[6][11][2], FORTE[6][11][1] //icv
-  ],
-  '12,1': [FORTE[6][12][0], FORTE[6][12][2], FORTE[6][12][1] //icv
-  ],
-  '12,-1': [[0, 1, 3, 5, 6, 7], FORTE[6][12][2], FORTE[6][12][1] //icv
-  ],
-  '13,0': [FORTE[6][13][0], FORTE[6][13][2], FORTE[6][13][1] //icv
-  ],
-  '14,1': [FORTE[6][14][0], FORTE[6][14][2], FORTE[6][14][1] //icv
-  ],
-  '14,-1': [[0, 3, 4, 5, 7, 8], FORTE[6][14][2], FORTE[6][14][1] //icv
-  ],
-  '15,1': [FORTE[6][15][0], FORTE[6][15][2], FORTE[6][15][1] //icv
-  ],
-  '15,-1': [[0, 3, 4, 6, 7, 8], FORTE[6][15][2], FORTE[6][15][1] //icv
-  ],
-  '16,1': [FORTE[6][16][0], FORTE[6][16][2], FORTE[6][16][1] //icv
-  ],
-  '16,-1': [[0, 2, 3, 4, 7, 8], FORTE[6][16][2], FORTE[6][16][1] //icv
-  ],
-  '17,1': [FORTE[6][17][0], FORTE[6][17][2], FORTE[6][17][1] //icv
-  ],
-  '17,-1': [[0, 1, 4, 6, 7, 8], FORTE[6][17][2], FORTE[6][17][1] //icv
-  ],
-  '18,1': [FORTE[6][18][0], FORTE[6][18][2], FORTE[6][18][1] //icv
-  ],
-  '18,-1': [[0, 1, 3, 6, 7, 8], FORTE[6][18][2], FORTE[6][18][1] //icv
-  ],
-  '19,1': [FORTE[6][19][0], FORTE[6][19][2], FORTE[6][19][1] //icv
-  ],
-  '19,-1': [[0, 1, 4, 5, 7, 8], FORTE[6][19][2], FORTE[6][19][1] //icv
-  ],
-  '20,0': [FORTE[6][20][0], FORTE[6][20][2], FORTE[6][20][1] //icv
-  ],
-  '21,1': [FORTE[6][21][0], FORTE[6][21][2], FORTE[6][21][1] //icv
-  ],
-  '21,-1': [[0, 2, 4, 5, 6, 8], FORTE[6][21][2], FORTE[6][21][1] //icv
-  ],
-  '22,1': [FORTE[6][22][0], FORTE[6][22][2], FORTE[6][22][1] //icv
-  ],
-  '22,-1': [[0, 2, 4, 6, 7, 8], FORTE[6][22][2], FORTE[6][22][1] //icv
-  ],
-  '23,0': [FORTE[6][23][0], FORTE[6][23][2], FORTE[6][23][1] //icv
-  ],
-  '24,1': [FORTE[6][24][0], FORTE[6][24][2], FORTE[6][24][1] //icv
-  ],
-  '24,-1': [[0, 2, 4, 5, 7, 8], FORTE[6][24][2], FORTE[6][24][1] //icv
-  ],
-  '25,1': [FORTE[6][25][0], FORTE[6][25][2], FORTE[6][25][1] //icv
-  ],
-  '25,-1': [[0, 2, 3, 5, 7, 8], FORTE[6][25][2], FORTE[6][25][1] //icv
-  ],
-  '26,0': [FORTE[6][26][0], FORTE[6][26][2], FORTE[6][26][1] //icv
-  ],
-  '27,1': [FORTE[6][27][0], FORTE[6][27][2], FORTE[6][27][1] //icv
-  ],
-  '27,-1': [[0, 3, 5, 6, 8, 9], FORTE[6][27][2], FORTE[6][27][1] //icv
-  ],
-  '28,0': [FORTE[6][28][0], FORTE[6][28][2], FORTE[6][28][1] //icv
-  ],
-  '29,0': [FORTE[6][29][0], FORTE[6][29][2], FORTE[6][29][1] //icv
-  ],
-  '30,1': [FORTE[6][30][0], FORTE[6][30][2], FORTE[6][30][1] //icv
-  ],
-  '30,-1': [[0, 2, 3, 6, 8, 9], FORTE[6][30][2], FORTE[6][30][1] //icv
-  ],
-  '31,1': [FORTE[6][31][0], FORTE[6][31][2], FORTE[6][31][1] //icv
-  ],
-  '31,-1': [[0, 1, 4, 6, 8, 9], FORTE[6][31][2], FORTE[6][31][1] //icv
-  ],
-  '32,0': [FORTE[6][32][0], FORTE[6][32][2], FORTE[6][32][1] //icv
-  ],
-  '33,1': [FORTE[6][33][0], FORTE[6][33][2], FORTE[6][33][1] //icv
-  ],
-  '33,-1': [[0, 2, 4, 6, 7, 9], FORTE[6][33][2], FORTE[6][33][1] //icv
-  ],
-  '34,1': [FORTE[6][34][0], FORTE[6][34][2], FORTE[6][34][1] //icv
-  ],
-  '34,-1': [[0, 2, 4, 6, 8, 9], FORTE[6][34][2], FORTE[6][34][1] //icv
-  ],
-  '35,0': [FORTE[6][35][0], FORTE[6][35][2], FORTE[6][35][1] //icv
-  ],
-  '36,1': [FORTE[6][36][0], FORTE[6][36][2], FORTE[6][36][1] //icv
-  ],
-  '36,-1': [[0, 3, 4, 5, 6, 7], FORTE[6][36][2], FORTE[6][36][1] //icv
-  ],
-  '37,0': [FORTE[6][37][0], FORTE[6][37][2], FORTE[6][37][1] //icv
-  ],
-  '38,0': [FORTE[6][38][0], FORTE[6][38][2], FORTE[6][38][1] //icv
-  ],
-  '39,1': [FORTE[6][39][0], FORTE[6][39][2], FORTE[6][39][1] //icv
-  ],
-  '39,-1': [[0, 3, 4, 5, 6, 8], FORTE[6][39][2], FORTE[6][39][1] //icv
-  ],
-  '40,1': [FORTE[6][40][0], FORTE[6][40][2], FORTE[6][40][1] //icv
-  ],
-  '40,-1': [[0, 3, 5, 6, 7, 8], FORTE[6][40][2], FORTE[6][40][1] //icv
-  ],
-  '41,1': [FORTE[6][41][0], FORTE[6][41][2], FORTE[6][41][1] //icv
-  ],
-  '41,-1': [[0, 2, 5, 6, 7, 8], FORTE[6][41][2], FORTE[6][41][1] //icv
-  ],
-  '42,0': [FORTE[6][42][0], FORTE[6][42][2], FORTE[6][42][1] //icv
-  ],
-  '43,1': [FORTE[6][43][0], FORTE[6][43][2], FORTE[6][43][1] //icv
-  ],
-  '43,-1': [[0, 2, 3, 6, 7, 8], FORTE[6][43][2], FORTE[6][43][1] //icv
-  ],
-  '44,1': [FORTE[6][44][0], FORTE[6][44][2], FORTE[6][44][1] //icv
-  ],
-  '44,-1': [[0, 3, 4, 7, 8, 9], FORTE[6][44][2], FORTE[6][44][1] //icv
-  ],
-  '45,0': [FORTE[6][45][0], FORTE[6][45][2], FORTE[6][45][1] //icv
-  ],
-  '46,1': [FORTE[6][46][0], FORTE[6][46][2], FORTE[6][46][1] //icv
-  ],
-  '46,-1': [[0, 3, 5, 7, 8, 9], FORTE[6][46][2], FORTE[6][46][1] //icv
-  ],
-  '47,1': [FORTE[6][47][0], FORTE[6][47][2], FORTE[6][47][1] //icv
-  ],
-  '47,-1': [[0, 2, 5, 7, 8, 9], FORTE[6][47][2], FORTE[6][47][1] //icv
-  ],
-  '48,0': [FORTE[6][48][0], FORTE[6][48][2], FORTE[6][48][1] //icv
-  ],
-  '49,0': [FORTE[6][49][0], FORTE[6][49][2], FORTE[6][49][1] //icv
-  ],
-  '50,0': [FORTE[6][50][0], FORTE[6][50][2], FORTE[6][50][1] //icv
+  '1,0': [FORTE[6][1][0],
+  // 136
+  FORTE[6][1][2],
+  // var
+  FORTE[6][1][1] //icv
+  ],
+  '2,1': [FORTE[6][2][0],
+  // 137
+  FORTE[6][2][2],
+  // var
+  FORTE[6][2][1] //icv
+  ],
+  '2,-1': [[0, 2, 3, 4, 5, 6],
+  // 138
+  FORTE[6][2][2],
+  // var
+  FORTE[6][2][1] //icv
+  ],
+  '3,1': [FORTE[6][3][0],
+  // 139
+  FORTE[6][3][2],
+  // var
+  FORTE[6][3][1] //icv
+  ],
+  '3,-1': [[0, 1, 3, 4, 5, 6],
+  // 140
+  FORTE[6][3][2],
+  // var
+  FORTE[6][3][1] //icv
+  ],
+  '4,0': [FORTE[6][4][0],
+  // 141
+  FORTE[6][4][2],
+  // var
+  FORTE[6][4][1] //icv
+  ],
+  '5,1': [FORTE[6][5][0],
+  // 142
+  FORTE[6][5][2],
+  // var
+  FORTE[6][5][1] //icv
+  ],
+  '5,-1': [[0, 1, 4, 5, 6, 7],
+  // 143
+  FORTE[6][5][2],
+  // var
+  FORTE[6][5][1] //icv
+  ],
+  '6,0': [FORTE[6][6][0],
+  // 144
+  FORTE[6][6][2],
+  // var
+  FORTE[6][6][1] //icv
+  ],
+  '7,0': [FORTE[6][7][0],
+  // 145
+  FORTE[6][7][2],
+  // var
+  FORTE[6][7][1] //icv
+  ],
+  '8,0': [FORTE[6][8][0],
+  // 146
+  FORTE[6][8][2],
+  // var
+  FORTE[6][8][1] //icv
+  ],
+  '9,1': [FORTE[6][9][0],
+  // 147
+  FORTE[6][9][2],
+  // var
+  FORTE[6][9][1] //icv
+  ],
+  '9,-1': [[0, 2, 4, 5, 6, 7],
+  // 148
+  FORTE[6][9][2],
+  // var
+  FORTE[6][9][1] //icv
+  ],
+  '10,1': [FORTE[6][10][0],
+  // 149
+  FORTE[6][10][2],
+  // var
+  FORTE[6][10][1] //icv
+  ],
+  '10,-1': [[0, 2, 3, 4, 6, 7],
+  // 150
+  FORTE[6][10][2],
+  // var
+  FORTE[6][10][1] //icv
+  ],
+  '11,1': [FORTE[6][11][0],
+  // 151
+  FORTE[6][11][2],
+  // var
+  FORTE[6][11][1] //icv
+  ],
+  '11,-1': [[0, 2, 3, 5, 6, 7],
+  // 152
+  FORTE[6][11][2],
+  // var
+  FORTE[6][11][1] //icv
+  ],
+  '12,1': [FORTE[6][12][0],
+  // 153
+  FORTE[6][12][2],
+  // var
+  FORTE[6][12][1] //icv
+  ],
+  '12,-1': [[0, 1, 3, 5, 6, 7],
+  // 154
+  FORTE[6][12][2],
+  // var
+  FORTE[6][12][1] //icv
+  ],
+  '13,0': [FORTE[6][13][0],
+  // 155
+  FORTE[6][13][2],
+  // var
+  FORTE[6][13][1] //icv
+  ],
+  '14,1': [FORTE[6][14][0],
+  // 156
+  FORTE[6][14][2],
+  // var
+  FORTE[6][14][1] //icv
+  ],
+  '14,-1': [[0, 3, 4, 5, 7, 8],
+  // 157
+  FORTE[6][14][2],
+  // var
+  FORTE[6][14][1] //icv
+  ],
+  '15,1': [FORTE[6][15][0],
+  // 158
+  FORTE[6][15][2],
+  // var
+  FORTE[6][15][1] //icv
+  ],
+  '15,-1': [[0, 3, 4, 6, 7, 8],
+  // 159
+  FORTE[6][15][2],
+  // var
+  FORTE[6][15][1] //icv
+  ],
+  '16,1': [FORTE[6][16][0],
+  // 160
+  FORTE[6][16][2],
+  // var
+  FORTE[6][16][1] //icv
+  ],
+  '16,-1': [[0, 2, 3, 4, 7, 8],
+  // 161
+  FORTE[6][16][2],
+  // var
+  FORTE[6][16][1] //icv
+  ],
+  '17,1': [FORTE[6][17][0],
+  // 162
+  FORTE[6][17][2],
+  // var
+  FORTE[6][17][1] //icv
+  ],
+  '17,-1': [[0, 1, 4, 6, 7, 8],
+  // 163
+  FORTE[6][17][2],
+  // var
+  FORTE[6][17][1] //icv
+  ],
+  '18,1': [FORTE[6][18][0],
+  // 164
+  FORTE[6][18][2],
+  // var
+  FORTE[6][18][1] //icv
+  ],
+  '18,-1': [[0, 1, 3, 6, 7, 8],
+  // 165
+  FORTE[6][18][2],
+  // var
+  FORTE[6][18][1] //icv
+  ],
+  '19,1': [FORTE[6][19][0],
+  // 166
+  FORTE[6][19][2],
+  // var
+  FORTE[6][19][1] //icv
+  ],
+  '19,-1': [[0, 1, 4, 5, 7, 8],
+  // 167
+  FORTE[6][19][2],
+  // var
+  FORTE[6][19][1] //icv
+  ],
+  '20,0': [FORTE[6][20][0],
+  // 168
+  FORTE[6][20][2],
+  // var
+  FORTE[6][20][1] //icv
+  ],
+  '21,1': [FORTE[6][21][0],
+  // 169
+  FORTE[6][21][2],
+  // var
+  FORTE[6][21][1] //icv
+  ],
+  '21,-1': [[0, 2, 4, 5, 6, 8],
+  // 170
+  FORTE[6][21][2],
+  // var
+  FORTE[6][21][1] //icv
+  ],
+  '22,1': [FORTE[6][22][0],
+  // 171
+  FORTE[6][22][2],
+  // var
+  FORTE[6][22][1] //icv
+  ],
+  '22,-1': [[0, 2, 4, 6, 7, 8],
+  // 172
+  FORTE[6][22][2],
+  // var
+  FORTE[6][22][1] //icv
+  ],
+  '23,0': [FORTE[6][23][0],
+  // 173
+  FORTE[6][23][2],
+  // var
+  FORTE[6][23][1] //icv
+  ],
+  '24,1': [FORTE[6][24][0],
+  // 174
+  FORTE[6][24][2],
+  // var
+  FORTE[6][24][1] //icv
+  ],
+  '24,-1': [[0, 2, 4, 5, 7, 8],
+  // 175
+  FORTE[6][24][2],
+  // var
+  FORTE[6][24][1] //icv
+  ],
+  '25,1': [FORTE[6][25][0],
+  // 176
+  FORTE[6][25][2],
+  // var
+  FORTE[6][25][1] //icv
+  ],
+  '25,-1': [[0, 2, 3, 5, 7, 8],
+  // 177
+  FORTE[6][25][2],
+  // var
+  FORTE[6][25][1] //icv
+  ],
+  '26,0': [FORTE[6][26][0],
+  // 178
+  FORTE[6][26][2],
+  // var
+  FORTE[6][26][1] //icv
+  ],
+  '27,1': [FORTE[6][27][0],
+  // 179
+  FORTE[6][27][2],
+  // var
+  FORTE[6][27][1] //icv
+  ],
+  '27,-1': [[0, 3, 5, 6, 8, 9],
+  // 180
+  FORTE[6][27][2],
+  // var
+  FORTE[6][27][1] //icv
+  ],
+  '28,0': [FORTE[6][28][0],
+  // 181
+  FORTE[6][28][2],
+  // var
+  FORTE[6][28][1] //icv
+  ],
+  '29,0': [FORTE[6][29][0],
+  // 182
+  FORTE[6][29][2],
+  // var
+  FORTE[6][29][1] //icv
+  ],
+  '30,1': [FORTE[6][30][0],
+  // 183
+  FORTE[6][30][2],
+  // var
+  FORTE[6][30][1] //icv
+  ],
+  '30,-1': [[0, 2, 3, 6, 8, 9],
+  // 184
+  FORTE[6][30][2],
+  // var
+  FORTE[6][30][1] //icv
+  ],
+  '31,1': [FORTE[6][31][0],
+  // 185
+  FORTE[6][31][2],
+  // var
+  FORTE[6][31][1] //icv
+  ],
+  '31,-1': [[0, 1, 4, 6, 8, 9],
+  // 186
+  FORTE[6][31][2],
+  // var
+  FORTE[6][31][1] //icv
+  ],
+  '32,0': [FORTE[6][32][0],
+  // 187
+  FORTE[6][32][2],
+  // var
+  FORTE[6][32][1] //icv
+  ],
+  '33,1': [FORTE[6][33][0],
+  // 188
+  FORTE[6][33][2],
+  // var
+  FORTE[6][33][1] //icv
+  ],
+  '33,-1': [[0, 2, 4, 6, 7, 9],
+  // 189
+  FORTE[6][33][2],
+  // var
+  FORTE[6][33][1] //icv
+  ],
+  '34,1': [FORTE[6][34][0],
+  // 190
+  FORTE[6][34][2],
+  // var
+  FORTE[6][34][1] //icv
+  ],
+  '34,-1': [[0, 2, 4, 6, 8, 9],
+  // 191
+  FORTE[6][34][2],
+  // var
+  FORTE[6][34][1] //icv
+  ],
+  '35,0': [FORTE[6][35][0],
+  // 192
+  FORTE[6][35][2],
+  // var
+  FORTE[6][35][1] //icv
+  ],
+  '36,1': [FORTE[6][36][0],
+  // 193
+  FORTE[6][36][2],
+  // var
+  FORTE[6][36][1] //icv
+  ],
+  '36,-1': [[0, 3, 4, 5, 6, 7],
+  // 194
+  FORTE[6][36][2],
+  // var
+  FORTE[6][36][1] //icv
+  ],
+  '37,0': [FORTE[6][37][0],
+  // 195
+  FORTE[6][37][2],
+  // var
+  FORTE[6][37][1] //icv
+  ],
+  '38,0': [FORTE[6][38][0],
+  // 196
+  FORTE[6][38][2],
+  // var
+  FORTE[6][38][1] //icv
+  ],
+  '39,1': [FORTE[6][39][0],
+  // 197
+  FORTE[6][39][2],
+  // var
+  FORTE[6][39][1] //icv
+  ],
+  '39,-1': [[0, 3, 4, 5, 6, 8],
+  // 198
+  FORTE[6][39][2],
+  // var
+  FORTE[6][39][1] //icv
+  ],
+  '40,1': [FORTE[6][40][0],
+  // 199
+  FORTE[6][40][2],
+  // var
+  FORTE[6][40][1] //icv
+  ],
+  '40,-1': [[0, 3, 5, 6, 7, 8],
+  // 200
+  FORTE[6][40][2],
+  // var
+  FORTE[6][40][1] //icv
+  ],
+  '41,1': [FORTE[6][41][0],
+  // 201
+  FORTE[6][41][2],
+  // var
+  FORTE[6][41][1] //icv
+  ],
+  '41,-1': [[0, 2, 5, 6, 7, 8],
+  // 202
+  FORTE[6][41][2],
+  // var
+  FORTE[6][41][1] //icv
+  ],
+  '42,0': [FORTE[6][42][0],
+  // 203
+  FORTE[6][42][2],
+  // var
+  FORTE[6][42][1] //icv
+  ],
+  '43,1': [FORTE[6][43][0],
+  // 204
+  FORTE[6][43][2],
+  // var
+  FORTE[6][43][1] //icv
+  ],
+  '43,-1': [[0, 2, 3, 6, 7, 8],
+  // 205
+  FORTE[6][43][2],
+  // var
+  FORTE[6][43][1] //icv
+  ],
+  '44,1': [FORTE[6][44][0],
+  // 206
+  FORTE[6][44][2],
+  // var
+  FORTE[6][44][1] //icv
+  ],
+  '44,-1': [[0, 3, 4, 7, 8, 9],
+  // 207
+  FORTE[6][44][2],
+  // var
+  FORTE[6][44][1] //icv
+  ],
+  '45,0': [FORTE[6][45][0],
+  // 208
+  FORTE[6][45][2],
+  // var
+  FORTE[6][45][1] //icv
+  ],
+  '46,1': [FORTE[6][46][0],
+  // 209
+  FORTE[6][46][2],
+  // var
+  FORTE[6][46][1] //icv
+  ],
+  '46,-1': [[0, 3, 5, 7, 8, 9],
+  // 210
+  FORTE[6][46][2],
+  // var
+  FORTE[6][46][1] //icv
+  ],
+  '47,1': [FORTE[6][47][0],
+  // 211
+  FORTE[6][47][2],
+  // var
+  FORTE[6][47][1] //icv
+  ],
+  '47,-1': [[0, 2, 5, 7, 8, 9],
+  // 212
+  FORTE[6][47][2],
+  // var
+  FORTE[6][47][1] //icv
+  ],
+  '48,0': [FORTE[6][48][0],
+  // 213
+  FORTE[6][48][2],
+  // var
+  FORTE[6][48][1] //icv
+  ],
+  '49,0': [FORTE[6][49][0],
+  // 214
+  FORTE[6][49][2],
+  // var
+  FORTE[6][49][1] //icv
+  ],
+  '50,0': [FORTE[6][50][0],
+  // 215
+  FORTE[6][50][2],
+  // var
+  FORTE[6][50][1] //icv
   ]
 };
 // cardinality 7
 const card_7 = {
-  '1,0': [FORTE[7][1][0], FORTE[7][1][2], FORTE[7][1][1] //icv
-  ],
-  '2,1': [FORTE[7][2][0], FORTE[7][2][2], FORTE[7][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7], FORTE[7][2][2], FORTE[7][2][1] //icv
-  ],
-  '3,1': [FORTE[7][3][0], FORTE[7][3][2], FORTE[7][3][1] //icv
-  ],
-  '3,-1': [[0, 3, 4, 5, 6, 7, 8], FORTE[7][3][2], FORTE[7][3][1] //icv
-  ],
-  '4,1': [FORTE[7][4][0], FORTE[7][4][2], FORTE[7][4][1] //icv
-  ],
-  '4,-1': [[0, 1, 3, 4, 5, 6, 7], FORTE[7][4][2], FORTE[7][4][1] //icv
-  ],
-  '5,1': [FORTE[7][5][0], FORTE[7][5][2], FORTE[7][5][1] //icv
-  ],
-  '5,-1': [[0, 1, 2, 4, 5, 6, 7], FORTE[7][5][2], FORTE[7][5][1] //icv
-  ],
-  '6,1': [FORTE[7][6][0], FORTE[7][6][2], FORTE[7][6][1] //icv
-  ],
-  '6,-1': [[0, 1, 4, 5, 6, 7, 8], FORTE[7][6][2], FORTE[7][6][1] //icv
-  ],
-  '7,1': [FORTE[7][7][0], FORTE[7][7][2], FORTE[7][7][1] //icv
-  ],
-  '7,-1': [[0, 1, 2, 5, 6, 7, 8], FORTE[7][7][2], FORTE[7][7][1] //icv
-  ],
-  '8,0': [FORTE[7][8][0], FORTE[7][8][2], FORTE[7][8][1] //icv
-  ],
-  '9,1': [FORTE[7][9][0], FORTE[7][9][2], FORTE[7][9][1] //icv
-  ],
-  '9,-1': [[0, 2, 4, 5, 6, 7, 8], FORTE[7][9][2], FORTE[7][9][1] //icv
-  ],
-  '10,1': [FORTE[7][10][0], FORTE[7][10][2], FORTE[7][10][1] //icv
-  ],
-  '10,-1': [[0, 3, 5, 6, 7, 8, 9], FORTE[7][10][2], FORTE[7][10][1] //icv
-  ],
-  '11,1': [FORTE[7][11][0], FORTE[7][11][2], FORTE[7][11][1] //icv
-  ],
-  '11,-1': [[0, 2, 3, 4, 5, 7, 8], FORTE[7][11][2], FORTE[7][11][1] //icv
-  ],
-  '12,0': [FORTE[7][12][0], FORTE[7][12][2], FORTE[7][12][1] //icv
-  ],
-  '13,1': [FORTE[7][13][0], FORTE[7][13][2], FORTE[7][13][1] //icv
-  ],
-  '13,-1': [[0, 2, 3, 4, 6, 7, 8], FORTE[7][13][2], FORTE[7][13][1] //icv
-  ],
-  '14,1': [FORTE[7][14][0], FORTE[7][14][2], FORTE[7][14][1] //icv
-  ],
-  '14,-1': [[0, 1, 3, 5, 6, 7, 8], FORTE[7][14][2], FORTE[7][14][1] //icv
-  ],
-  '15,0': [FORTE[7][15][0], FORTE[7][15][2], FORTE[7][15][1] //icv
-  ],
-  '16,1': [FORTE[7][16][0], FORTE[7][16][2], FORTE[7][16][1] //icv
-  ],
-  '16,-1': [[0, 3, 4, 6, 7, 8, 9], FORTE[7][16][2], FORTE[7][16][1] //icv
-  ],
-  '17,0': [FORTE[7][17][0], FORTE[7][17][2], FORTE[7][17][1] //icv
-  ],
-  '18,1': [FORTE[7][18][0], FORTE[7][18][2], FORTE[7][18][1] //icv
-  ],
-  '18,-1': [[0, 1, 4, 6, 7, 8, 9], FORTE[7][18][2], FORTE[7][18][1] //icv
-  ],
-  '19,1': [FORTE[7][19][0], FORTE[7][19][2], FORTE[7][19][1] //icv
-  ],
-  '19,-1': [[0, 2, 3, 6, 7, 8, 9], FORTE[7][19][2], FORTE[7][19][1] //icv
-  ],
-  '20,1': [FORTE[7][20][0], FORTE[7][20][2], FORTE[7][20][1] //icv
-  ],
-  '20,-1': [[0, 1, 2, 5, 7, 8, 9], FORTE[7][20][2], FORTE[7][20][1] //icv
-  ],
-  '21,1': [FORTE[7][21][0], FORTE[7][21][2], FORTE[7][21][1] //icv
-  ],
-  '21,-1': [[0, 1, 4, 5, 7, 8, 9], FORTE[7][21][2], FORTE[7][21][1] //icv
-  ],
-  '22,0': [FORTE[7][22][0], FORTE[7][22][2], FORTE[7][22][1] //icv
-  ],
-  '23,1': [FORTE[7][23][0], FORTE[7][23][2], FORTE[7][23][1] //icv
-  ],
-  '23,-1': [[0, 2, 4, 5, 6, 7, 9], FORTE[7][23][2], FORTE[7][23][1] //icv
-  ],
-  '24,1': [FORTE[7][24][0], FORTE[7][24][2], FORTE[7][24][1] //icv
-  ],
-  '24,-1': [[0, 2, 4, 6, 7, 8, 9], FORTE[7][24][2], FORTE[7][24][1] //icv
-  ],
-  '25,1': [FORTE[7][25][0], FORTE[7][25][2], FORTE[7][25][1] //icv
-  ],
-  '25,-1': [[0, 2, 3, 5, 6, 7, 9], FORTE[7][25][2], FORTE[7][25][1] //icv
-  ],
-  '26,1': [FORTE[7][26][0], FORTE[7][26][2], FORTE[7][26][1] //icv
-  ],
-  '26,-1': [[0, 2, 4, 5, 6, 8, 9], FORTE[7][26][2], FORTE[7][26][1] //icv
-  ],
-  '27,1': [FORTE[7][27][0], FORTE[7][27][2], FORTE[7][27][1] //icv
-  ],
-  '27,-1': [[0, 2, 4, 5, 7, 8, 9], FORTE[7][27][2], FORTE[7][27][1] //icv
-  ],
-  '28,1': [FORTE[7][28][0], FORTE[7][28][2], FORTE[7][28][1] //icv
-  ],
-  '28,-1': [[0, 2, 3, 4, 6, 8, 9], FORTE[7][28][2], FORTE[7][28][1] //icv
-  ],
-  '29,1': [FORTE[7][29][0], FORTE[7][29][2], FORTE[7][29][1] //icv
-  ],
-  '29,-1': [[0, 2, 3, 5, 7, 8, 9], FORTE[7][29][2], FORTE[7][29][1] //icv
-  ],
-  '30,1': [FORTE[7][30][0], FORTE[7][30][2], FORTE[7][30][1] //icv
-  ],
-  '30,-1': [[0, 1, 3, 5, 7, 8, 9], FORTE[7][30][2], FORTE[7][30][1] //icv
-  ],
-  '31,1': [FORTE[7][31][0], FORTE[7][31][2], FORTE[7][31][1] //icv
-  ],
-  '31,-1': [[0, 2, 3, 5, 6, 8, 9], FORTE[7][31][2], FORTE[7][31][1] //icv
-  ],
-  '32,1': [FORTE[7][32][0], FORTE[7][32][2], FORTE[7][32][1] //icv
-  ],
-  '32,-1': [[0, 1, 3, 5, 6, 8, 9], FORTE[7][32][2], FORTE[7][32][1] //icv
-  ],
-  '33,0': [FORTE[7][33][0], FORTE[7][33][2], FORTE[7][33][1] //icv
-  ],
-  '34,0': [FORTE[7][34][0], FORTE[7][34][2], FORTE[7][34][1] //icv
-  ],
-  '35,0': [FORTE[7][35][0], FORTE[7][35][2], FORTE[7][35][1] //icv
-  ],
-  '36,1': [FORTE[7][36][0], FORTE[7][36][2], FORTE[7][36][1] //icv
-  ],
-  '36,-1': [[0, 2, 3, 5, 6, 7, 8], FORTE[7][36][2], FORTE[7][36][1] //icv
-  ],
-  '37,0': [FORTE[7][37][0], FORTE[7][37][2], FORTE[7][37][1] //icv
-  ],
-  '38,1': [FORTE[7][38][0], FORTE[7][38][2], FORTE[7][38][1] //icv
-  ],
-  '38,-1': [[0, 1, 3, 4, 6, 7, 8], FORTE[7][38][2], FORTE[7][38][1] //icv
+  '1,0': [FORTE[7][1][0],
+  // 216
+  FORTE[7][1][2],
+  // var
+  FORTE[7][1][1] //icv
+  ],
+  '2,1': [FORTE[7][2][0],
+  // 217
+  FORTE[7][2][2],
+  // var
+  FORTE[7][2][1] //icv
+  ],
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7],
+  // 218
+  FORTE[7][2][2],
+  // var
+  FORTE[7][2][1] //icv
+  ],
+  '3,1': [FORTE[7][3][0],
+  // 219
+  FORTE[7][3][2],
+  // var
+  FORTE[7][3][1] //icv
+  ],
+  '3,-1': [[0, 3, 4, 5, 6, 7, 8],
+  // 220
+  FORTE[7][3][2],
+  // var
+  FORTE[7][3][1] //icv
+  ],
+  '4,1': [FORTE[7][4][0],
+  // 221
+  FORTE[7][4][2],
+  // var
+  FORTE[7][4][1] //icv
+  ],
+  '4,-1': [[0, 1, 3, 4, 5, 6, 7],
+  // 222
+  FORTE[7][4][2],
+  // var
+  FORTE[7][4][1] //icv
+  ],
+  '5,1': [FORTE[7][5][0],
+  // 223
+  FORTE[7][5][2],
+  // var
+  FORTE[7][5][1] //icv
+  ],
+  '5,-1': [[0, 1, 2, 4, 5, 6, 7],
+  // 224
+  FORTE[7][5][2],
+  // var
+  FORTE[7][5][1] //icv
+  ],
+  '6,1': [FORTE[7][6][0],
+  // 225
+  FORTE[7][6][2],
+  // var
+  FORTE[7][6][1] //icv
+  ],
+  '6,-1': [[0, 1, 4, 5, 6, 7, 8],
+  // 226
+  FORTE[7][6][2],
+  // var
+  FORTE[7][6][1] //icv
+  ],
+  '7,1': [FORTE[7][7][0],
+  // 227
+  FORTE[7][7][2],
+  // var
+  FORTE[7][7][1] //icv
+  ],
+  '7,-1': [[0, 1, 2, 5, 6, 7, 8],
+  // 228
+  FORTE[7][7][2],
+  // var
+  FORTE[7][7][1] //icv
+  ],
+  '8,0': [FORTE[7][8][0],
+  // 229
+  FORTE[7][8][2],
+  // var
+  FORTE[7][8][1] //icv
+  ],
+  '9,1': [FORTE[7][9][0],
+  // 230
+  FORTE[7][9][2],
+  // var
+  FORTE[7][9][1] //icv
+  ],
+  '9,-1': [[0, 2, 4, 5, 6, 7, 8],
+  // 231
+  FORTE[7][9][2],
+  // var
+  FORTE[7][9][1] //icv
+  ],
+  '10,1': [FORTE[7][10][0],
+  // 232
+  FORTE[7][10][2],
+  // var
+  FORTE[7][10][1] //icv
+  ],
+  '10,-1': [[0, 3, 5, 6, 7, 8, 9],
+  // 233
+  FORTE[7][10][2],
+  // var
+  FORTE[7][10][1] //icv
+  ],
+  '11,1': [FORTE[7][11][0],
+  // 234
+  FORTE[7][11][2],
+  // var
+  FORTE[7][11][1] //icv
+  ],
+  '11,-1': [[0, 2, 3, 4, 5, 7, 8],
+  // 235
+  FORTE[7][11][2],
+  // var
+  FORTE[7][11][1] //icv
+  ],
+  '12,0': [FORTE[7][12][0],
+  // 236
+  FORTE[7][12][2],
+  // var
+  FORTE[7][12][1] //icv
+  ],
+  '13,1': [FORTE[7][13][0],
+  // 237
+  FORTE[7][13][2],
+  // var
+  FORTE[7][13][1] //icv
+  ],
+  '13,-1': [[0, 2, 3, 4, 6, 7, 8],
+  // 238
+  FORTE[7][13][2],
+  // var
+  FORTE[7][13][1] //icv
+  ],
+  '14,1': [FORTE[7][14][0],
+  // 239
+  FORTE[7][14][2],
+  // var
+  FORTE[7][14][1] //icv
+  ],
+  '14,-1': [[0, 1, 3, 5, 6, 7, 8],
+  // 240
+  FORTE[7][14][2],
+  // var
+  FORTE[7][14][1] //icv
+  ],
+  '15,0': [FORTE[7][15][0],
+  // 241
+  FORTE[7][15][2],
+  // var
+  FORTE[7][15][1] //icv
+  ],
+  '16,1': [FORTE[7][16][0],
+  // 242
+  FORTE[7][16][2],
+  // var
+  FORTE[7][16][1] //icv
+  ],
+  '16,-1': [[0, 3, 4, 6, 7, 8, 9],
+  // 243
+  FORTE[7][16][2],
+  // var
+  FORTE[7][16][1] //icv
+  ],
+  '17,0': [FORTE[7][17][0],
+  // 244
+  FORTE[7][17][2],
+  // var
+  FORTE[7][17][1] //icv
+  ],
+  '18,1': [FORTE[7][18][0],
+  // 245
+  FORTE[7][18][2],
+  // var
+  FORTE[7][18][1] //icv
+  ],
+  '18,-1': [[0, 1, 4, 6, 7, 8, 9],
+  // 246
+  FORTE[7][18][2],
+  // var
+  FORTE[7][18][1] //icv
+  ],
+  '19,1': [FORTE[7][19][0],
+  // 247
+  FORTE[7][19][2],
+  // var
+  FORTE[7][19][1] //icv
+  ],
+  '19,-1': [[0, 2, 3, 6, 7, 8, 9],
+  // 248
+  FORTE[7][19][2],
+  // var
+  FORTE[7][19][1] //icv
+  ],
+  '20,1': [FORTE[7][20][0],
+  // 249
+  FORTE[7][20][2],
+  // var
+  FORTE[7][20][1] //icv
+  ],
+  '20,-1': [[0, 1, 2, 5, 7, 8, 9],
+  // 250
+  FORTE[7][20][2],
+  // var
+  FORTE[7][20][1] //icv
+  ],
+  '21,1': [FORTE[7][21][0],
+  // 251
+  FORTE[7][21][2],
+  // var
+  FORTE[7][21][1] //icv
+  ],
+  '21,-1': [[0, 1, 4, 5, 7, 8, 9],
+  // 252
+  FORTE[7][21][2],
+  // var
+  FORTE[7][21][1] //icv
+  ],
+  '22,0': [FORTE[7][22][0],
+  // 253
+  FORTE[7][22][2],
+  // var
+  FORTE[7][22][1] //icv
+  ],
+  '23,1': [FORTE[7][23][0],
+  // 254
+  FORTE[7][23][2],
+  // var
+  FORTE[7][23][1] //icv
+  ],
+  '23,-1': [[0, 2, 4, 5, 6, 7, 9],
+  // 255
+  FORTE[7][23][2],
+  // var
+  FORTE[7][23][1] //icv
+  ],
+  '24,1': [FORTE[7][24][0],
+  // 256
+  FORTE[7][24][2],
+  // var
+  FORTE[7][24][1] //icv
+  ],
+  '24,-1': [[0, 2, 4, 6, 7, 8, 9],
+  // 257
+  FORTE[7][24][2],
+  // var
+  FORTE[7][24][1] //icv
+  ],
+  '25,1': [FORTE[7][25][0],
+  // 258
+  FORTE[7][25][2],
+  // var
+  FORTE[7][25][1] //icv
+  ],
+  '25,-1': [[0, 2, 3, 5, 6, 7, 9],
+  // 259
+  FORTE[7][25][2],
+  // var
+  FORTE[7][25][1] //icv
+  ],
+  '26,1': [FORTE[7][26][0],
+  // 260
+  FORTE[7][26][2],
+  // var
+  FORTE[7][26][1] //icv
+  ],
+  '26,-1': [[0, 2, 4, 5, 6, 8, 9],
+  // 261
+  FORTE[7][26][2],
+  // var
+  FORTE[7][26][1] //icv
+  ],
+  '27,1': [FORTE[7][27][0],
+  // 262
+  FORTE[7][27][2],
+  // var
+  FORTE[7][27][1] //icv
+  ],
+  '27,-1': [[0, 2, 4, 5, 7, 8, 9],
+  // 263
+  FORTE[7][27][2],
+  // var
+  FORTE[7][27][1] //icv
+  ],
+  '28,1': [FORTE[7][28][0],
+  // 264
+  FORTE[7][28][2],
+  // var
+  FORTE[7][28][1] //icv
+  ],
+  '28,-1': [[0, 2, 3, 4, 6, 8, 9],
+  // 265
+  FORTE[7][28][2],
+  // var
+  FORTE[7][28][1] //icv
+  ],
+  '29,1': [FORTE[7][29][0],
+  // 266
+  FORTE[7][29][2],
+  // var
+  FORTE[7][29][1] //icv
+  ],
+  '29,-1': [[0, 2, 3, 5, 7, 8, 9],
+  // 267
+  FORTE[7][29][2],
+  // var
+  FORTE[7][29][1] //icv
+  ],
+  '30,1': [FORTE[7][30][0],
+  // 268
+  FORTE[7][30][2],
+  // var
+  FORTE[7][30][1] //icv
+  ],
+  '30,-1': [[0, 1, 3, 5, 7, 8, 9],
+  // 269
+  FORTE[7][30][2],
+  // var
+  FORTE[7][30][1] //icv
+  ],
+  '31,1': [FORTE[7][31][0],
+  // 270
+  FORTE[7][31][2],
+  // var
+  FORTE[7][31][1] //icv
+  ],
+  '31,-1': [[0, 2, 3, 5, 6, 8, 9],
+  // 271
+  FORTE[7][31][2],
+  // var
+  FORTE[7][31][1] //icv
+  ],
+  '32,1': [FORTE[7][32][0],
+  // 272
+  FORTE[7][32][2],
+  // var
+  FORTE[7][32][1] //icv
+  ],
+  '32,-1': [[0, 1, 3, 5, 6, 8, 9],
+  // 273
+  FORTE[7][32][2],
+  // var
+  FORTE[7][32][1] //icv
+  ],
+  '33,0': [FORTE[7][33][0],
+  // 274
+  FORTE[7][33][2],
+  // var
+  FORTE[7][33][1] //icv
+  ],
+  '34,0': [FORTE[7][34][0],
+  // 275
+  FORTE[7][34][2],
+  // var
+  FORTE[7][34][1] //icv
+  ],
+  '35,0': [FORTE[7][35][0],
+  // 276
+  FORTE[7][35][2],
+  // var
+  FORTE[7][35][1] //icv
+  ],
+  '36,1': [FORTE[7][36][0],
+  // 277
+  FORTE[7][36][2],
+  // var
+  FORTE[7][36][1] //icv
+  ],
+  '36,-1': [[0, 2, 3, 5, 6, 7, 8],
+  // 278
+  FORTE[7][36][2],
+  // var
+  FORTE[7][36][1] //icv
+  ],
+  '37,0': [FORTE[7][37][0],
+  // 279
+  FORTE[7][37][2],
+  // var
+  FORTE[7][37][1] //icv
+  ],
+  '38,1': [FORTE[7][38][0],
+  // 280
+  FORTE[7][38][2],
+  // var
+  FORTE[7][38][1] //icv
+  ],
+  '38,-1': [[0, 1, 3, 4, 6, 7, 8],
+  // 281
+  FORTE[7][38][2],
+  // var
+  FORTE[7][38][1] //icv
   ]
 };
 // cardinality 8
 const card_8 = {
-  '1,0': [FORTE[8][1][0], FORTE[8][1][2], FORTE[8][1][1] //icv
+  '1,0': [FORTE[8][1][0],
+  // 282
+  FORTE[8][1][2],
+  // var
+  FORTE[8][1][1] //icv
   ],
-  '2,1': [FORTE[8][2][0], FORTE[8][2][2], FORTE[8][2][1] //icv
+  '2,1': [FORTE[8][2][0],
+  // 283
+  FORTE[8][2][2],
+  // var
+  FORTE[8][2][1] //icv
   ],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8], FORTE[8][2][2], FORTE[8][2][1] //icv
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8],
+  // 284
+  FORTE[8][2][2],
+  // var
+  FORTE[8][2][1] //icv
   ],
-  '3,0': [FORTE[8][3][0], FORTE[8][3][2], FORTE[8][3][1] //icv
+  '3,0': [FORTE[8][3][0],
+  // 285
+  FORTE[8][3][2],
+  // var
+  FORTE[8][3][1] //icv
   ],
-  '4,1': [FORTE[8][4][0], FORTE[8][4][2], FORTE[8][4][1] //icv
+  '4,1': [FORTE[8][4][0],
+  // 286
+  FORTE[8][4][2],
+  // var
+  FORTE[8][4][1] //icv
   ],
-  '4,-1': [[0, 1, 3, 4, 5, 6, 7, 8], FORTE[8][4][2], FORTE[8][4][1] //icv
+  '4,-1': [[0, 1, 3, 4, 5, 6, 7, 8],
+  // 287
+  FORTE[8][4][2],
+  // var
+  FORTE[8][4][1] //icv
   ],
-  '5,1': [FORTE[8][5][0], FORTE[8][5][2], FORTE[8][5][1] //icv
+  '5,1': [FORTE[8][5][0],
+  // 288
+  FORTE[8][5][2],
+  // var
+  FORTE[8][5][1] //icv
   ],
-  '5,-1': [[0, 1, 2, 4, 5, 6, 7, 8], FORTE[8][5][2], FORTE[8][5][1] //icv
+  '5,-1': [[0, 1, 2, 4, 5, 6, 7, 8],
+  // 289
+  FORTE[8][5][2],
+  // var
+  FORTE[8][5][1] //icv
   ],
-  '6,0': [FORTE[8][6][0], FORTE[8][6][2], FORTE[8][6][1] //icv
+  '6,0': [FORTE[8][6][0],
+  // 290
+  FORTE[8][6][2],
+  // var
+  FORTE[8][6][1] //icv
   ],
-  '7,0': [FORTE[8][7][0], FORTE[8][7][2], FORTE[8][7][1] //icv
+  '7,0': [FORTE[8][7][0],
+  // 291
+  FORTE[8][7][2],
+  // var
+  FORTE[8][7][1] //icv
   ],
-  '8,0': [FORTE[8][8][0], FORTE[8][8][2], FORTE[8][8][1] //icv
+  '8,0': [FORTE[8][8][0],
+  // 292
+  FORTE[8][8][2],
+  // var
+  FORTE[8][8][1] //icv
   ],
-  '9,0': [FORTE[8][9][0], FORTE[8][9][2], FORTE[8][9][1] //icv
+  '9,0': [FORTE[8][9][0],
+  // 293
+  FORTE[8][9][2],
+  // var
+  FORTE[8][9][1] //icv
   ],
-  '10,0': [FORTE[8][10][0], FORTE[8][10][2], FORTE[8][10][1] //icv
+  '10,0': [FORTE[8][10][0],
+  // 294
+  FORTE[8][10][2],
+  // var
+  FORTE[8][10][1] //icv
   ],
-  '11,1': [FORTE[8][11][0], FORTE[8][11][2], FORTE[8][11][1] //icv
+  '11,1': [FORTE[8][11][0],
+  // 295
+  FORTE[8][11][2],
+  // var
+  FORTE[8][11][1] //icv
   ],
-  '11,-1': [[0, 2, 4, 5, 6, 7, 8, 9], FORTE[8][11][2], FORTE[8][11][1] //icv
+  '11,-1': [[0, 2, 4, 5, 6, 7, 8, 9],
+  // 296
+  FORTE[8][11][2],
+  // var
+  FORTE[8][11][1] //icv
   ],
-  '12,1': [FORTE[8][12][0], FORTE[8][12][2], FORTE[8][12][1] //icv
+  '12,1': [FORTE[8][12][0],
+  // 297
+  FORTE[8][12][2],
+  // var
+  FORTE[8][12][1] //icv
   ],
-  '12,-1': [[0, 2, 3, 4, 5, 6, 8, 9], FORTE[8][12][2], FORTE[8][12][1] //icv
+  '12,-1': [[0, 2, 3, 4, 5, 6, 8, 9],
+  // 298
+  FORTE[8][12][2],
+  // var
+  FORTE[8][12][1] //icv
   ],
-  '13,1': [FORTE[8][13][0], FORTE[8][13][2], FORTE[8][13][1] //icv
+  '13,1': [FORTE[8][13][0],
+  // 299
+  FORTE[8][13][2],
+  // var
+  FORTE[8][13][1] //icv
   ],
-  '13,-1': [[0, 2, 3, 5, 6, 7, 8, 9], FORTE[8][13][2], FORTE[8][13][1] //icv
+  '13,-1': [[0, 2, 3, 5, 6, 7, 8, 9],
+  // 300
+  FORTE[8][13][2],
+  // var
+  FORTE[8][13][1] //icv
   ],
-  '14,1': [FORTE[8][14][0], FORTE[8][14][2], FORTE[8][14][1] //icv
+  '14,1': [FORTE[8][14][0],
+  // 301
+  FORTE[8][14][2],
+  // var
+  FORTE[8][14][1] //icv
   ],
-  '14,-1': [[0, 2, 3, 4, 5, 7, 8, 9], FORTE[8][14][2], FORTE[8][14][1] //icv
+  '14,-1': [[0, 2, 3, 4, 5, 7, 8, 9],
+  // 302
+  FORTE[8][14][2],
+  // var
+  FORTE[8][14][1] //icv
   ],
-  '15,1': [FORTE[8][15][0], FORTE[8][15][2], FORTE[8][15][1] //icv
+  '15,1': [FORTE[8][15][0],
+  // 303
+  FORTE[8][15][2],
+  // var
+  FORTE[8][15][1] //icv
   ],
-  '15,-1': [[0, 1, 3, 5, 6, 7, 8, 9], FORTE[8][15][2], FORTE[8][15][1] //icv
+  '15,-1': [[0, 1, 3, 5, 6, 7, 8, 9],
+  // 304
+  FORTE[8][15][2],
+  // var
+  FORTE[8][15][1] //icv
   ],
-  '16,1': [FORTE[8][16][0], FORTE[8][16][2], FORTE[8][16][1] //icv
+  '16,1': [FORTE[8][16][0],
+  // 305
+  FORTE[8][16][2],
+  // var
+  FORTE[8][16][1] //icv
   ],
-  '16,-1': [[0, 1, 2, 4, 6, 7, 8, 9], FORTE[8][16][2], FORTE[8][16][1] //icv
+  '16,-1': [[0, 1, 2, 4, 6, 7, 8, 9],
+  // 306
+  FORTE[8][16][2],
+  // var
+  FORTE[8][16][1] //icv
   ],
-  '17,0': [FORTE[8][17][0], FORTE[8][17][2], FORTE[8][17][1] //icv
+  '17,0': [FORTE[8][17][0],
+  // 307
+  FORTE[8][17][2],
+  // var
+  FORTE[8][17][1] //icv
   ],
-  '18,1': [FORTE[8][18][0], FORTE[8][18][2], FORTE[8][18][1] //icv
+  '18,1': [FORTE[8][18][0],
+  // 308
+  FORTE[8][18][2],
+  // var
+  FORTE[8][18][1] //icv
   ],
-  '18,-1': [[0, 1, 3, 4, 6, 7, 8, 9], FORTE[8][18][2], FORTE[8][18][1] //icv
+  '18,-1': [[0, 1, 3, 4, 6, 7, 8, 9],
+  // 309
+  FORTE[8][18][2],
+  // var
+  FORTE[8][18][1] //icv
   ],
-  '19,1': [FORTE[8][19][0], FORTE[8][19][2], FORTE[8][19][1] //icv
+  '19,1': [FORTE[8][19][0],
+  // 310
+  FORTE[8][19][2],
+  // var
+  FORTE[8][19][1] //icv
   ],
-  '19,-1': [[0, 1, 3, 4, 5, 7, 8, 9], FORTE[8][19][2], FORTE[8][19][1] //icv
+  '19,-1': [[0, 1, 3, 4, 5, 7, 8, 9],
+  // 311
+  FORTE[8][19][2],
+  // var
+  FORTE[8][19][1] //icv
   ],
-  '20,0': [FORTE[8][20][0], FORTE[8][20][2], FORTE[8][20][1] //icv
+  '20,0': [FORTE[8][20][0],
+  // 312
+  FORTE[8][20][2],
+  // var
+  FORTE[8][20][1] //icv
   ],
-  '21,0': [FORTE[8][21][0], FORTE[8][21][2], FORTE[8][21][1] //icv
+  '21,0': [FORTE[8][21][0],
+  // 313
+  FORTE[8][21][2],
+  // var
+  FORTE[8][21][1] //icv
   ],
-  '22,1': [FORTE[8][22][0], FORTE[8][22][2], FORTE[8][22][1] //icv
+  '22,1': [FORTE[8][22][0],
+  // 314
+  FORTE[8][22][2],
+  // var
+  FORTE[8][22][1] //icv
   ],
-  '22,-1': [[0, 2, 4, 5, 7, 8, 9, 10], FORTE[8][22][2], FORTE[8][22][1] //icv
+  '22,-1': [[0, 2, 4, 5, 7, 8, 9, 10],
+  // 315
+  FORTE[8][22][2],
+  // var
+  FORTE[8][22][1] //icv
   ],
-  '23,0': [FORTE[8][23][0], FORTE[8][23][2], FORTE[8][23][1] //icv
+  '23,0': [FORTE[8][23][0],
+  // 316
+  FORTE[8][23][2],
+  // var
+  FORTE[8][23][1] //icv
   ],
-  '24,0': [FORTE[8][24][0], FORTE[8][24][2], FORTE[8][24][1] //icv
+  '24,0': [FORTE[8][24][0],
+  // 317
+  FORTE[8][24][2],
+  // var
+  FORTE[8][24][1] //icv
   ],
-  '25,0': [FORTE[8][25][0], FORTE[8][25][2], FORTE[8][25][1] //icv
+  '25,0': [FORTE[8][25][0],
+  // 318
+  FORTE[8][25][2],
+  // var
+  FORTE[8][25][1] //icv
   ],
-  '26,0': [FORTE[8][26][0], FORTE[8][26][2], FORTE[8][26][1] //icv
+  '26,0': [FORTE[8][26][0],
+  // 319
+  FORTE[8][26][2],
+  // var
+  FORTE[8][26][1] //icv
   ],
-  '27,1': [FORTE[8][27][0], FORTE[8][27][2], FORTE[8][27][1] //icv
+  '27,1': [FORTE[8][27][0],
+  // 320
+  FORTE[8][27][2],
+  // var
+  FORTE[8][27][1] //icv
   ],
-  '27,-1': [[0, 2, 3, 5, 6, 8, 9, 10], FORTE[8][27][2], FORTE[8][27][1] //icv
+  '27,-1': [[0, 2, 3, 5, 6, 8, 9, 10],
+  // 321
+  FORTE[8][27][2],
+  // var
+  FORTE[8][27][1] //icv
   ],
-  '28,0': [FORTE[8][28][0], FORTE[8][28][2], FORTE[8][28][1] //icv
+  '28,0': [FORTE[8][28][0],
+  // 322
+  FORTE[8][28][2],
+  // var
+  FORTE[8][28][1] //icv
   ],
-  '29,1': [FORTE[8][29][0], FORTE[8][29][2], FORTE[8][29][1] //icv
+  '29,1': [FORTE[8][29][0],
+  // 323
+  FORTE[8][29][2],
+  // var
+  FORTE[8][29][1] //icv
   ],
-  '29,-1': [[0, 2, 3, 4, 6, 7, 8, 9], FORTE[8][29][2], FORTE[8][29][1] //icv
+  '29,-1': [[0, 2, 3, 4, 6, 7, 8, 9],
+  // 324
+  FORTE[8][29][2],
+  // var
+  FORTE[8][29][1] //icv
   ]
 };
 // cardinality 9
 const card_9 = {
-  '1,0': [FORTE[9][1][0], FORTE[9][1][2], FORTE[9][1][1] //icv
+  '1,0': [FORTE[9][1][0],
+  // 325
+  FORTE[9][1][2],
+  // var
+  FORTE[9][1][1] //icv
   ],
-  '2,1': [FORTE[9][2][0], FORTE[9][2][2], FORTE[9][2][1] //icv
+  '2,1': [FORTE[9][2][0],
+  // 326
+  FORTE[9][2][2],
+  // var
+  FORTE[9][2][1] //icv
   ],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8, 9], FORTE[9][2][2], FORTE[9][2][1] //icv
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8, 9],
+  // 327
+  FORTE[9][2][2],
+  // var
+  FORTE[9][2][1] //icv
   ],
-  '3,1': [FORTE[9][3][0], FORTE[9][3][2], FORTE[9][3][1] //icv
+  '3,1': [FORTE[9][3][0],
+  // 328
+  FORTE[9][3][2],
+  // var
+  FORTE[9][3][1] //icv
   ],
-  '3,-1': [[0, 1, 3, 4, 5, 6, 7, 8, 9], FORTE[9][3][2], FORTE[9][3][1] //icv
+  '3,-1': [[0, 1, 3, 4, 5, 6, 7, 8, 9],
+  // 329
+  FORTE[9][3][2],
+  // var
+  FORTE[9][3][1] //icv
   ],
-  '4,1': [FORTE[9][4][0], FORTE[9][4][2], FORTE[9][4][1] //icv
+  '4,1': [FORTE[9][4][0],
+  // 330
+  FORTE[9][4][2],
+  // var
+  FORTE[9][4][1] //icv
   ],
-  '4,-1': [[0, 1, 2, 4, 5, 6, 7, 8, 9], FORTE[9][4][2], FORTE[9][4][1] //icv
+  '4,-1': [[0, 1, 2, 4, 5, 6, 7, 8, 9],
+  // 331
+  FORTE[9][4][2],
+  // var
+  FORTE[9][4][1] //icv
   ],
-  '5,1': [FORTE[9][5][0], FORTE[9][5][2], FORTE[9][5][1] //icv
+  '5,1': [FORTE[9][5][0],
+  // 332
+  FORTE[9][5][2],
+  // var
+  FORTE[9][5][1] //icv
   ],
-  '5,-1': [[0, 1, 2, 3, 5, 6, 7, 8, 9], FORTE[9][5][2], FORTE[9][5][1] //icv
+  '5,-1': [[0, 1, 2, 3, 5, 6, 7, 8, 9],
+  // 333
+  FORTE[9][5][2],
+  // var
+  FORTE[9][5][1] //icv
   ],
-  '6,0': [FORTE[9][6][0], FORTE[9][6][2], FORTE[9][6][1] //icv
+  '6,0': [FORTE[9][6][0],
+  // 334
+  FORTE[9][6][2],
+  // var
+  FORTE[9][6][1] //icv
   ],
-  '7,1': [FORTE[9][7][0], FORTE[9][7][2], FORTE[9][7][1] //icv
+  '7,1': [FORTE[9][7][0],
+  // 335
+  FORTE[9][7][2],
+  // var
+  FORTE[9][7][1] //icv
   ],
-  '7,-1': [[0, 2, 3, 5, 6, 7, 8, 9, 10], FORTE[9][7][2], FORTE[9][7][1] //icv
+  '7,-1': [[0, 2, 3, 5, 6, 7, 8, 9, 10],
+  // 336
+  FORTE[9][7][2],
+  // var
+  FORTE[9][7][1] //icv
   ],
-  '8,1': [FORTE[9][8][0], FORTE[9][8][2], FORTE[9][8][1] //icv
+  '8,1': [FORTE[9][8][0],
+  // 337
+  FORTE[9][8][2],
+  // var
+  FORTE[9][8][1] //icv
   ],
-  '8,-1': [[0, 2, 3, 4, 6, 7, 8, 9, 10], FORTE[9][8][2], FORTE[9][8][1] //icv
+  '8,-1': [[0, 2, 3, 4, 6, 7, 8, 9, 10],
+  // 338
+  FORTE[9][8][2],
+  // var
+  FORTE[9][8][1] //icv
   ],
-  '9,0': [FORTE[9][9][0], FORTE[9][9][2], FORTE[9][9][1] //icv
+  '9,0': [FORTE[9][9][0],
+  // 339
+  FORTE[9][9][2],
+  // var
+  FORTE[9][9][1] //icv
   ],
-  '10,0': [FORTE[9][10][0], FORTE[9][10][2], FORTE[9][10][1] //icv
+  '10,0': [FORTE[9][10][0],
+  // 340
+  FORTE[9][10][2],
+  // var
+  FORTE[9][10][1] //icv
   ],
-  '11,1': [FORTE[9][11][0], FORTE[9][11][2], FORTE[9][11][1] //icv
+  '11,1': [FORTE[9][11][0],
+  // 341
+  FORTE[9][11][2],
+  // var
+  FORTE[9][11][1] //icv
   ],
-  '11,-1': [[0, 1, 3, 4, 5, 7, 8, 9, 10], FORTE[9][11][2], FORTE[9][11][1] //icv
+  '11,-1': [[0, 1, 3, 4, 5, 7, 8, 9, 10],
+  // 342
+  FORTE[9][11][2],
+  // var
+  FORTE[9][11][1] //icv
   ],
-  '12,0': [FORTE[9][12][0], FORTE[9][12][2], FORTE[9][12][1] //icv
+  '12,0': [FORTE[9][12][0],
+  // 343
+  FORTE[9][12][2],
+  // var
+  FORTE[9][12][1] //icv
   ]
 };
 // cardinality 10
 const card_10 = {
-  '1,0': [FORTE[10][1][0], FORTE[10][1][2], FORTE[10][1][1] //icv
+  '1,0': [FORTE[10][1][0],
+  // 344
+  FORTE[10][1][2],
+  // var
+  FORTE[10][1][1] //icv
   ],
-  '2,0': [FORTE[10][2][0], FORTE[10][2][2], FORTE[10][2][1] //icv
+  '2,0': [FORTE[10][2][0],
+  // 345
+  FORTE[10][2][2],
+  // var
+  FORTE[10][2][1] //icv
   ],
-  '3,0': [FORTE[10][3][0], FORTE[10][3][2], FORTE[10][3][1] //icv
+  '3,0': [FORTE[10][3][0],
+  // 346
+  FORTE[10][3][2],
+  // var
+  FORTE[10][3][1] //icv
   ],
-  '4,0': [FORTE[10][4][0], FORTE[10][4][2], FORTE[10][4][1] //icv
+  '4,0': [FORTE[10][4][0],
+  // 347
+  FORTE[10][4][2],
+  // var
+  FORTE[10][4][1] //icv
   ],
-  '5,0': [FORTE[10][5][0], FORTE[10][5][2], FORTE[10][5][1] //icv
+  '5,0': [FORTE[10][5][0],
+  // 348
+  FORTE[10][5][2],
+  // var
+  FORTE[10][5][1] //icv
   ],
-  '6,0': [FORTE[10][6][0], FORTE[10][6][2], FORTE[10][6][1] //icv
+  '6,0': [FORTE[10][6][0],
+  // 349
+  FORTE[10][6][2],
+  // var
+  FORTE[10][6][1] //icv
   ]
 };
 // cardinality 11
 const card_11 = {
-  '1,0': [FORTE[11][1][0], FORTE[11][1][2], FORTE[11][1][1] //icv
+  '1,0': [FORTE[11][1][0],
+  // 350
+  FORTE[11][1][2],
+  // var
+  FORTE[11][1][1] //icv
   ]
 };
 // cardinality 12
 const card_12 = {
-  '1,0': [FORTE[12][1][0], FORTE[12][1][2], FORTE[12][1][1] //icv
+  '1,0': [FORTE[12][1][0],
+  // 351
+  FORTE[12][1][2],
+  // var
+  FORTE[12][1][1] //icv
   ]
 };
 //-------------------------------------------------------------------------------
@@ -38699,9 +40062,7 @@ function forteIndexToInversionsAvailable(card, index) {
     return [-1, 1];
   }
 }
-function _chordTableAddress(cardinality, forteClass) {
-  let inversion = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-  let pcOriginal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+function _chordTableAddress(cardinality, forteClass, inversion = undefined, pcOriginal = undefined) {
   return {
     cardinality,
     forteClass,
@@ -38796,8 +40157,7 @@ function addressToCommonNames(address) {
   const refDict = SCREF[String(addressNew)];
   return refDict.name;
 }
-function addressToForteName(address) {
-  let classification = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'tn';
+function addressToForteName(address, classification = 'tn') {
   const [card, index, inversion] = _validateAddress(address);
   let iStr;
   if (classification.toLowerCase() === 'tn') {
@@ -38981,8 +40341,7 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
   static get className() {
     return 'music21.clef.Clef';
   }
-  constructor(name) {
-    let octaveChange = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  constructor(name, octaveChange = 0) {
     super();
     this.name = undefined;
     this.sign = undefined;
@@ -39024,11 +40383,10 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
     tempPitch.accidental = p.accidental;
     return tempPitch;
   }
-  getStemDirectionForPitches(pitchList) {
-    let {
-      firstLastOnly = true,
-      extremePitchOnly = true
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  getStemDirectionForPitches(pitchList, {
+    firstLastOnly = true,
+    extremePitchOnly = true
+  } = {}) {
     let pitchRealList;
     if (!(pitchList instanceof Array)) {
       pitchRealList = [pitchList];
@@ -39208,10 +40566,9 @@ const all_clefs = {
  * of Treble and Bass
  *
  */
-function bestClef(st) {
-  let {
-    recurse = true
-  } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function bestClef(st, {
+  recurse = true
+} = {}) {
   // console.log('calling flatten on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
   let stFlat;
   if (recurse) {
@@ -39243,8 +40600,7 @@ function bestClef(st) {
 }
 /**
  */
-function clefFromString(clefString) {
-  let octaveShift = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+function clefFromString(clefString, octaveShift = 0) {
   const xnStr = clefString.trim();
   let thisType;
   let lineNum;
@@ -39557,9 +40913,7 @@ function toRoman(num) {
  * tag defaults to svg, but can be 'rect', 'circle', 'text', etc.
  * Attributes is an object to pass to the tag.
  */
-function makeSVGright() {
-  let tag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'svg';
-  let attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function makeSVGright(tag = 'svg', attrs = {}) {
   // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
   // normal JQuery does not work.
   const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -39577,8 +40931,7 @@ function makeSVGright() {
  *
  * [plural=false] - make plural (note that "21st" plural is "21st")
  */
-function ordinalAbbreviation(value) {
-  let plural = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+function ordinalAbbreviation(value, plural = false) {
   let post;
   const valueHundredths = value % 100;
   if (valueHundredths === 11 || valueHundredths === 12 || valueHundredths === 13) {
@@ -39609,9 +40962,7 @@ function ordinalAbbreviation(value) {
  * * epsilon=0.001 - how close to get
  * * maxDenominator=50 - maximum denominator
  */
-function rationalize(ql) {
-  let epsilon = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.001;
-  let maxDenominator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 50;
+function rationalize(ql, epsilon = 0.001, maxDenominator = 50) {
   for (let i = 2; i < maxDenominator; i++) {
     if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
       const numerator = Math.round(ql * i);
@@ -39956,6 +41307,7 @@ const typeFromNumDict = {
   512: '512th',
   1024: '1024th',
   2048: '2048th',
+  // if extended, update beam.beamableDurationTypes
   0: 'zero',
   '0.5': 'breve',
   '0.25': 'longa',
@@ -39973,8 +41325,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   static get className() {
     return 'music21.duration.Duration';
   }
-  constructor() {
-    let ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0.0;
+  constructor(ql = 0.0) {
     super();
     this.isGrace = false;
     this.linked = true;
@@ -40183,8 +41534,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
    * newTuplet - tuplet to add to `.tuplets`
    * [skipUpdateQl=false] - update the quarterLength afterward?
    */
-  appendTuplet(newTuplet) {
-    let skipUpdateQl = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  appendTuplet(newTuplet, skipUpdateQl = false) {
     newTuplet.frozen = true;
     this._tuplets.push(newTuplet);
     if (skipUpdateQl !== true && this.linked) {
@@ -40207,11 +41557,7 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   static get className() {
     return 'music21.duration.Tuplet';
   }
-  constructor() {
-    let numberNotesActual = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3;
-    let numberNotesNormal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-    let durationActual = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    let durationNormal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  constructor(numberNotesActual = 3, numberNotesNormal = 2, durationActual = undefined, durationNormal = undefined) {
     super();
     this.frozen = false;
     this.bracket = true;
@@ -40371,6 +41717,7 @@ const englishNames = {
 };
 const dynamicStrToScalar = {
   None: [0.5],
+  // default value
   n: [0.0],
   pppp: [0.1],
   ppp: [0.15],
@@ -40592,10 +41939,9 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
    *
    * (this is not right for all cases)
    */
-  vexflow() {
-    let {
-      stemDirection
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflow({
+    stemDirection
+  } = {}) {
     if (!this.vexflowModifier) {
       return null;
     }
@@ -40626,10 +41972,9 @@ class Ornament extends Expression {
   static get className() {
     return 'music21.expressions.Ornament';
   }
-  vexflow() {
-    let {
-      stemDirection
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflow({
+    stemDirection
+  } = {}) {
     if (!this.vexflowModifier) {
       return null;
     }
@@ -40742,8 +42087,7 @@ class Notation {
    * @property {Modifier[]} modifiers
    * @property {Figure[]} figures
    */
-  constructor() {
-    let notationColumn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  constructor(notationColumn = '') {
     this.figureStrings = undefined;
     this.origNumbers = undefined;
     this.origModStrings = undefined;
@@ -40969,7 +42313,11 @@ const unpickler = jp.unpickler;
 class Converter {
   constructor() {
     this.debug = true;
-    this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', 'music21.tempo.MetronomeMark', 'music21.metadata.Metadata' // Soon...
+    this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline',
+    // Soon...
+    'music21.tempo.MetronomeMark',
+    // should be possible
+    'music21.metadata.Metadata' // Soon...
     ];
     this.currentPart = undefined;
     this.lastClef = undefined;
@@ -41112,11 +42460,10 @@ class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_0__.Chord {
   static get className() {
     return 'music21.harmony.Harmony';
   }
-  constructor(figure) {
-    let {
-      parseFigure = true,
-      updatePitches = false
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  constructor(figure, {
+    parseFigure = true,
+    updatePitches = false
+  } = {}) {
     super();
     this._writeAsChord = false;
     this.chordStepModifications = [];
@@ -41721,8 +43068,7 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
   static get className() {
     return 'music21.instrument.Instrument';
   }
-  constructor() {
-    let instrumentName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  constructor(instrumentName = '') {
     super();
     this.partId = undefined;
     this.partName = undefined;
@@ -41749,8 +43095,7 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
    * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
    * Skips 10 unless this.inGMPercMap is true
    */
-  autoAssignMidiChannel() {
-    let usedChannels = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  autoAssignMidiChannel(usedChannels = undefined) {
     if (usedChannels === undefined) {
       usedChannels = global_usedChannels;
     }
@@ -42276,8 +43621,7 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Ob
   static get className() {
     return 'music21.interval.ChromaticInterval';
   }
-  constructor() {
-    let value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  constructor(value = 0) {
     super();
     this.semitones = value;
     this.cents = Math.round(value * 100.0);
@@ -42372,14 +43716,11 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
   static get className() {
     return 'music21.interval.Interval';
   }
-  constructor() {
+  constructor(...restArgs) {
     super();
     // todo: allow full range of ways of specifying as in m21p
     let noteStart;
     let noteEnd;
-    for (var _len = arguments.length, restArgs = new Array(_len), _key = 0; _key < _len; _key++) {
-      restArgs[_key] = arguments[_key];
-    }
     if (restArgs.length === 1) {
       const arg0 = restArgs[0];
       if (typeof arg0 === 'string') {
@@ -42494,11 +43835,10 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_3__.ProtoM21Object {
    * [config.reverse=false] -- reverse direction
    * [config.maxAccidental=4] -- maximum accidentals to retain (unused/ TODO)
    */
-  transposePitch(p) {
-    let {
-      reverse = false,
-      maxAccidental = 4
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  transposePitch(p, {
+    reverse = false,
+    maxAccidental = 4
+  } = {}) {
     /*
     var useImplicitOctave = false;
     if (p.octave === undefined) {
@@ -42682,8 +44022,7 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
   static get className() {
     return 'music21.key.KeySignature';
   }
-  constructor() {
-    let sharps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  constructor(sharps = 0) {
     super();
     this._sharps = 0;
     // 12 flats/sharps enough for now...
@@ -42869,9 +44208,7 @@ class Key extends KeySignature {
   static get className() {
     return 'music21.key.Key';
   }
-  constructor() {
-    let keyName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
-    let mode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  constructor(keyName = 'C', mode = undefined) {
     if (keyName === undefined) {
       keyName = 'C';
     }
@@ -42939,19 +44276,13 @@ class Key extends KeySignature {
   get isConcrete() {
     return this._scale.isConcrete;
   }
-  getPitches() {
-    return this._scale.getPitches(...arguments);
+  getPitches(...args) {
+    return this._scale.getPitches(...args);
   }
-  pitchFromDegree(degree) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
+  pitchFromDegree(degree, ...args) {
     return this._scale.pitchFromDegree(degree, ...args);
   }
-  getScaleDegreeFromPitch(pitchTarget) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
+  getScaleDegreeFromPitch(pitchTarget, ...args) {
     return this._scale.getScaleDegreeFromPitch(pitchTarget, ...args);
   }
 }
@@ -43067,8 +44398,7 @@ class Key {
   /**
    * Adds a circle (red) on the key (to mark middle C etc.)
    */
-  addCircle() {
-    let strokeColor = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'red';
+  addCircle(strokeColor = 'red') {
     if (this.svgObj === undefined || this.parent === undefined || this.parent.svgObj === undefined) {
       return undefined;
     }
@@ -43094,8 +44424,7 @@ class Key {
    *
    * if labelOctaves then octave numbers will also appear
    */
-  addNoteName() {
-    let labelOctaves = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  addNoteName(labelOctaves = false) {
     if (this.svgObj === undefined || this.parent === undefined || this.parent.svgObj === undefined) {
       return this;
     }
@@ -43376,8 +44705,7 @@ class Keyboard {
   /**
    * Puts a circle on middle c.
    */
-  markMiddleC() {
-    let strokeColor = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'red';
+  markMiddleC(strokeColor = 'red') {
     const midC = this.keyObjects.get(60);
     if (midC !== undefined) {
       midC.addCircle(strokeColor);
@@ -43386,8 +44714,7 @@ class Keyboard {
   /**
    * Puts note names on every white key.
    */
-  markNoteNames() {
-    let labelOctaves = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  markNoteNames(labelOctaves = false) {
     this.removeNoteNames(); // in case...
     for (const keyObj of this.keyObjects.values()) {
       keyObj.addNoteName(labelOctaves);
@@ -43969,7 +45296,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.16.0';
+const VERSION = '0.17.12';
 _parseLoader__WEBPACK_IMPORTED_MODULE_34__.runConfiguration();
 
 /***/ }),
@@ -44022,9 +45349,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
   static get className() {
     return 'music21.meter.TimeSignature';
   }
-  constructor() {
-    let value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
-    let divisions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  constructor(value = '4/4', divisions = undefined) {
     super();
     this._numerator = 4;
     this._denominator = 4;
@@ -44038,9 +45363,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
   stringInfo() {
     return this.ratioString;
   }
-  resetValues() {
-    let value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
-    let divisions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  resetValues(value = '4/4', divisions = undefined) {
     this.symbol = '';
     this.symbolizeDenominator = false;
     this._overwrittenBarDuration = undefined;
@@ -44209,10 +45532,9 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
     }
     return post;
   }
-  offsetToIndex(qLenPos) {
-    let {
-      includeCoincidentBoundaries = false
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  offsetToIndex(qLenPos, {
+    includeCoincidentBoundaries = false
+  } = {}) {
     // This should be a method on a MeterSequence.
     if (qLenPos >= this.barDuration.quarterLength || qLenPos < 0) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__.Music21Exception(`cannot access from qLenPos ${qLenPos} ` + `where total duration is ${this.barDuration.quarterLength}`);
@@ -44249,8 +45571,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_1__.Music21Object {
    * srcStream - a stream of elements.
    * options - an object with measureStartOffset
    */
-  getBeams(srcStream) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  getBeams(srcStream, options = {}) {
     const params = {
       measureStartOffset: 0.0
     };
@@ -44843,8 +46164,7 @@ class MidiPlayer {
   stopPng() {
     return _common__WEBPACK_IMPORTED_MODULE_4__.urls.midiPlayer + '/stop.png';
   }
-  pausePlayStop() {
-    let stop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'no';
+  pausePlayStop(stop = 'no') {
     let d;
     if (!this.playDiv) {
       d = {
@@ -45176,15 +46496,16 @@ function normalizeColor(color) {
     return color.toUpperCase();
   }
 }
-const _classMapping = ['Score', 'Part', 'Measure', 'Voice', 'GeneralNote' // 'Pitch', 'Duration', 'Dynamic', 'DiatonicScale', 'Scale',
+const _classMapping = ['Score', 'Part', 'Measure', 'Voice',
+// 'Stream',
+'GeneralNote' // 'Pitch', 'Duration', 'Dynamic', 'DiatonicScale', 'Scale',
 // 'Music21Object',
 ];
 class GeneralObjectExporter {
   constructor(obj) {
     this.generalObj = obj;
   }
-  parse() {
-    let obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  parse(obj = undefined) {
     if (obj === undefined) {
       obj = this.generalObj;
     }
@@ -45265,10 +46586,9 @@ class XMLExporterBase {
     this.doc = document.implementation.createDocument('', '', null);
     this.xmlRoot = undefined;
   }
-  asBytes() {
-    let {
-      noCopy = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  asBytes({
+    noCopy = true
+  } = {}) {
     let out = this.xmlHeader();
     const oSerializer = new XMLSerializer();
     out += oSerializer.serializeToString(this.xmlRoot);
@@ -45283,12 +46603,10 @@ class XMLExporterBase {
   /**
    * Note: this is not a method in music21p, but it needs access to this.doc in music21j
    */
-  _setTagTextFromAttribute(m21El, xmlEl, tag) {
-    let attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    let {
-      transform = undefined,
-      forceEmpty = false
-    } = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+  _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName = undefined, {
+    transform = undefined,
+    forceEmpty = false
+  } = {}) {
     if (attributeName === undefined) {
       attributeName = _common__WEBPACK_IMPORTED_MODULE_1__.hyphenToCamelCase(tag);
     }
@@ -45305,15 +46623,13 @@ class XMLExporterBase {
     }
     return subElement;
   }
-  seta(m21El, xmlEl, tag) {
-    let options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  seta(m21El, xmlEl, tag, options = {}) {
     return this._setTagTextFromAttribute(m21El, xmlEl, tag, undefined, options);
   }
-  _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName) {
-    let {
-      attributeName = undefined,
-      transform = undefined
-    } = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, {
+    attributeName = undefined,
+    transform = undefined
+  } = {}) {
     if (attributeName === undefined) {
       attributeName = _common__WEBPACK_IMPORTED_MODULE_1__.hyphenToCamelCase(xmlAttributeName);
     }
@@ -45326,14 +46642,12 @@ class XMLExporterBase {
     }
     xmlEl.setAttribute(xmlAttributeName, value.toString());
   }
-  setb(m21El, xmlEl, xmlAttributeName) {
-    let options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  setb(m21El, xmlEl, xmlAttributeName, options = {}) {
     return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
   }
   // TODO(msc): _synchronizeIds;
   _synchronizeIds(element, m21Object) {}
-  addDividerComment() {
-    let comment = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  addDividerComment(comment = '') {
     let commentLength = comment.length;
     if (commentLength > 60) {
       commentLength = 60;
@@ -45506,10 +46820,9 @@ class ScoreExporter extends XMLExporterBase {
   }
 }
 class PartExporter extends XMLExporterBase {
-  constructor(partObj) {
-    let {
-      parent = undefined
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  constructor(partObj, {
+    parent = undefined
+  } = {}) {
     super();
     this.stream = partObj;
     this.parent = parent;
@@ -45571,10 +46884,9 @@ const _wrapAttributeMethodClasses = [['Clef', 'clefToXml'], ['KeySignature', 'ke
 const _ignoreOnParseClasses = ['LayoutBase', 'Barline'];
 const divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
 class MeasureExporter extends XMLExporterBase {
-  constructor(measureObj) {
-    let {
-      parent = undefined
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  constructor(measureObj, {
+    parent = undefined
+  } = {}) {
     super();
     this.currentDivisions = divisionsPerQuarter;
     this.transpositionInterval = undefined;
@@ -45621,10 +46933,9 @@ class MeasureExporter extends XMLExporterBase {
       });
     }
   }
-  parseFlatElements(m) {
-    let {
-      backupAfterwards = false
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  parseFlatElements(m, {
+    backupAfterwards = false
+  } = {}) {
     const root = this.xmlRoot;
     const divisions = this.currentDivisions;
     this.offsetInMeasure = 0.0;
@@ -45687,11 +46998,10 @@ class MeasureExporter extends XMLExporterBase {
   /**
    *
    */
-  noteToXml(n) {
-    let {
-      noteIndexInChord = 0,
-      chordParent = undefined
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  noteToXml(n, {
+    noteIndexInChord = 0,
+    chordParent = undefined
+  } = {}) {
     const addChordTag = noteIndexInChord !== 0;
     let chordOrN;
     if (chordParent === undefined) {
@@ -46074,9 +47384,7 @@ const STAFF_SPECIFIC_CLASSES = ['Clef', 'Dynamic', 'Expression', 'GeneralNote',
 /**
  * Set an attribute of a Music21 Object via
  */
-function seta(m21El, xmlEl, tag) {
-  let attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-  let transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+function seta(m21El, xmlEl, tag, attributeName = undefined, transform = undefined) {
   var _a, _b;
   const matchEl = xmlEl.getElementsByTagName(tag);
   if (!matchEl.length) {
@@ -46174,8 +47482,7 @@ class ScoreParser {
   }
 }
 class PartParser {
-  constructor(mxPart, mxScorePart) {
-    let parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  constructor(mxPart, mxScorePart, parent = undefined) {
     this.atSoundingPitch = true;
     this.staffReferenceList = [];
     this.lastMeasureWasShort = false;
@@ -46323,8 +47630,7 @@ class PartParser {
   }
 }
 class MeasureParser {
-  constructor(mxMeasure) {
-    let parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  constructor(mxMeasure, parent = undefined) {
     this.mxMeasureElements = [];
     this.divisions = undefined;
     this.transposition = undefined;
@@ -46497,8 +47803,7 @@ class MeasureParser {
     // move spanners;
     return c;
   }
-  xmlToSimpleNote(mxNote) {
-    let freeSpanners = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  xmlToSimpleNote(mxNote, freeSpanners = true) {
     const n = new _note__WEBPACK_IMPORTED_MODULE_6__.Note();
     this.xmlToPitch(mxNote, n.pitch);
     // beams;
@@ -46566,8 +47871,7 @@ class MeasureParser {
     return this.xmlNoteToGeneralNoteHelper(r, mxRest);
   }
   // noinspection JSUnusedLocalSymbols
-  xmlNoteToGeneralNoteHelper(n, mxNote) {
-    let freeSpanners = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  xmlNoteToGeneralNoteHelper(n, mxNote, freeSpanners = true) {
     // spanners
     // setPrintStyle
     // print-object
@@ -46884,11 +48188,7 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
   static get className() {
     return 'music21.note.Lyric';
   }
-  constructor(text) {
-    let number = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-    let syllabic = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    let applyRaw = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    let identifier = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  constructor(text, number = 1, syllabic = undefined, applyRaw = undefined, identifier = undefined) {
     super();
     this.lyricConnector = '-'; // override to place something else between two notes...
     this.style = {
@@ -46944,8 +48244,7 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
    *
    * set applyRaw = false if hyphens should not be applied
    */
-  setTextAndSyllabic(rawText) {
-    let applyRaw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  setTextAndSyllabic(rawText, applyRaw = false) {
     if (rawText === undefined) {
       this.text = undefined;
       return this;
@@ -46967,10 +48266,9 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_2__.ProtoM21Object {
     }
     return this;
   }
-  vexflowLyric() {
-    let {
-      lyric_line = -3
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflowLyric({
+    lyric_line = -3
+  } = {}) {
     var _a, _b;
     // This was used in music21 0.15 and will be again in the future once
     // VexFlow no longer spills into next measure.  For now, it is UNUSED.
@@ -47028,8 +48326,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   static get className() {
     return 'music21.note.GeneralNote';
   }
-  constructor() {
-    let ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+  constructor(ql = 1.0) {
     super();
     this.isNote = false;
     this.isRest = false;
@@ -47088,9 +48385,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * [applyRaw=false] - if `true`, do not parse the text for clues about syllable placement.
    * [lyricIdentifier] - an optional identifier
    */
-  addLyric(text, lyricNumber) {
-    let applyRaw = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    let lyricIdentifier = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  addLyric(text, lyricNumber, applyRaw = false, lyricIdentifier = undefined) {
     if (lyricNumber === undefined) {
       const maxLyrics = this.lyrics.length + 1;
       const newLyric = new Lyric(text, maxLyrics, undefined, applyRaw, lyricIdentifier);
@@ -47114,8 +48409,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   /**
    * For subclassing.  Do not use this...
    */
-  vexflowNote() {
-    let _options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflowNote(_options = {}) {
     const vfn = new vexflow__WEBPACK_IMPORTED_MODULE_0__.StaveNote({
       keys: [],
       duration: this.duration.vexflowDuration + 'r'
@@ -47156,8 +48450,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * options -- a set of VexFlow options
    */
-  vexflowAccidentalsAndDisplay(vfn) {
-    let _options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  vexflowAccidentalsAndDisplay(vfn, _options = {}) {
     if (this.duration.dots > 0) {
       for (let i = 0; i < this.duration.dots; i++) {
         vexflow__WEBPACK_IMPORTED_MODULE_0__.Dot.buildAndAttach([vfn], {
@@ -47189,10 +48482,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *     the length to play in case of tied notes, etc.
    * returns delay time in milliseconds until the next element (may be ignored)
    */
-  playMidi() {
-    let tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
-    let _nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let _unused_options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  playMidi(tempo = 120, _nextElement = undefined, _unused_options = {}) {
     // returns the number of milliseconds to the next element in
     // case that can't be determined otherwise.
     const ql = this.duration.quarterLength;
@@ -47207,8 +48497,7 @@ class NotRest extends GeneralNote {
   static get className() {
     return 'music21.note.NotRest';
   }
-  constructor() {
-    let ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+  constructor(ql = 1.0) {
     super(ql);
     // noinspection JSUnusedGlobalSymbols
     this.notehead = 'normal';
@@ -47242,10 +48531,9 @@ class NotRest extends GeneralNote {
    *
    * clef to set the stem direction of.
    */
-  vexflowNote() {
-    let {
-      clef = undefined
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflowNote({
+    clef = undefined
+  } = {}) {
     let useStemDirection = this.stemDirection;
     // fixup stem direction -- must happen before Vex.Flow.Note is created...
     if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
@@ -47311,8 +48599,7 @@ class NotRest extends GeneralNote {
     this.activeVexflowNote = vfn;
     return vfn;
   }
-  vexflowAccidentalsAndDisplay(vfn) {
-    let _options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  vexflowAccidentalsAndDisplay(vfn, _options = {}) {
     super.vexflowAccidentalsAndDisplay(vfn, _options);
     if (this.stemDirection === 'noStem') {
       vfn.glyphProps.stem = false;
@@ -47345,9 +48632,7 @@ class Note extends NotRest {
    *
    * nn -- pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
    */
-  constructor() {
-    let nn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C4';
-    let ql = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
+  constructor(nn = 'C4', ql = 1.0) {
     super(ql);
     // noinspection JSUnusedGlobalSymbols
     this.isNote = true;
@@ -47420,11 +48705,10 @@ class Note extends NotRest {
       return 'up';
     }
   }
-  vexflowAccidentalsAndDisplay(vfn) {
-    let {
-      stave = undefined,
-      clef = undefined
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  vexflowAccidentalsAndDisplay(vfn, {
+    stave = undefined,
+    clef = undefined
+  } = {}) {
     super.vexflowAccidentalsAndDisplay(vfn, {
       stave,
       clef
@@ -47451,14 +48735,11 @@ class Note extends NotRest {
       }
     }
   }
-  playMidi() {
-    let tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
-    let nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let {
-      instrument = undefined,
-      channel = undefined,
-      playLegato = false
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  playMidi(tempo = 120, nextElement = undefined, {
+    instrument = undefined,
+    channel = undefined,
+    playLegato = false
+  } = {}) {
     const milliseconds = super.playMidi(tempo, nextElement, {
       instrument,
       channel,
@@ -47518,8 +48799,7 @@ class Rest extends GeneralNote {
   }
   // this dummy constructor is here for JetBrains typescript linter
   // which otherwise complains that Rests have no durations, etc.
-  constructor() {
-    let ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+  constructor(ql = 1.0) {
     super(ql);
     // noinspection JSUnusedGlobalSymbols
     this.isNote = false;
@@ -47538,8 +48818,7 @@ class Rest extends GeneralNote {
    * Corrects for bug in VexFlow that renders a whole rest too low.
    *
    */
-  vexflowNote() {
-    let _options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  vexflowNote(_options = {}) {
     let keyLine = 'b/4';
     const activeSiteSingleLine = this.activeSite !== undefined && this.activeSite.renderOptions.staffLines === 1;
     if (this.duration.type === 'whole' && !activeSiteSingleLine) {
@@ -47700,8 +48979,7 @@ function loadConfiguration() {
  * @param {string} [attribute=m21conf]
  * @returns {undefined|*|string}
  */
-function getM21attribute() {
-  let attribute = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'm21conf';
+function getM21attribute(attribute = 'm21conf') {
   // this is case insensitive.
   const scripts = document.getElementsByTagName('script');
   for (const s of Array.from(scripts)) {
@@ -47989,8 +49267,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   static get className() {
     return 'music21.pitch.Pitch';
   }
-  constructor() {
-    let pn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
+  constructor(pn = 'C') {
     super();
     this._step = 'C';
     this._octave = 4;
@@ -48175,9 +49452,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    * @param {int} directionInt -- -1 = down, 1 = up
    * @returns {Pitch}
    */
-  _getEnharmonicHelper() {
-    let inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    let directionInt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  _getEnharmonicHelper(inPlace = false, directionInt = 0) {
     // differs from Python version because
     // cannot import interval here.
     let octaveStored = true;
@@ -48215,8 +49490,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    * @param {boolean} [inPlace=false]
    * @returns {Pitch}
    */
-  getHigherEnharmonic() {
-    let inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  getHigherEnharmonic(inPlace = false) {
     return this._getEnharmonicHelper(inPlace, 1);
   }
   /**
@@ -48224,8 +49498,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    * @param {boolean} [inPlace=false]
    * @returns {Pitch}
    */
-  getLowerEnharmonic() {
-    let inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  getLowerEnharmonic(inPlace = false) {
     return this._getEnharmonicHelper(inPlace, -1);
   }
   /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
@@ -48252,18 +49525,17 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
     return false;
   }
   // noinspection PointlessBooleanExpressionJS
-  updateAccidentalDisplay() {
-    let {
-      pitchPast = [],
-      pitchPastMeasure = [],
-      otherSimultaneousPitches = [],
-      alteredPitches = [],
-      cautionaryPitchClass = true,
-      cautionaryAll = false,
-      overrideStatus = false,
-      cautionaryNotImmediateRepeat = true,
-      lastNoteWasTied = false
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  updateAccidentalDisplay({
+    pitchPast = [],
+    pitchPastMeasure = [],
+    otherSimultaneousPitches = [],
+    alteredPitches = [],
+    cautionaryPitchClass = true,
+    cautionaryAll = false,
+    overrideStatus = false,
+    cautionaryNotImmediateRepeat = true,
+    lastNoteWasTied = false
+  } = {}) {
     var _a;
     // should we display accidental if no previous accidentals have been displayed
     // i.e. if it's the first instance of an accidental after a tie
@@ -48747,9 +50019,7 @@ class ProtoM21Object {
    * n2.duration.quarterLength == 4; // true
    * n2 === n1; // false
    */
-  clone() {
-    let deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    let memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  clone(deep = true, memo = undefined) {
     // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
     const classConstructor = this.constructor;
     const ret = new classConstructor();
@@ -48998,13 +50268,20 @@ const figureShorthands = {
   '63': '6',
   '753': '7',
   '75': '7',
+  // controversial perhaps
   '73': '7',
+  // controversial perhaps
   '9753': '9',
   '975': '9',
+  // controversial perhaps
   '953': '9',
+  // controversial perhaps
   '97': '9',
+  // controversial perhaps
   '95': '9',
+  // controversial perhaps
   '93': '9',
+  // controversial perhaps
   '653': '65',
   '6b53': '6b5',
   '643': '43',
@@ -49045,8 +50322,10 @@ const functionalityScores = {
   viio: 39,
   '#viio': 39,
   iio: 37,
+  // common in Minor
   iio42: 36,
   bII6: 35,
+  // Neapolitan
   iio43: 32,
   iio65: 31,
   '#vio': 28,
@@ -49160,13 +50439,10 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_4__.Harmony {
   static get className() {
     return 'music21.roman.RomanNumeral';
   }
-  constructor() {
-    let figure = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    let keyStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let {
-      parseFigure = false,
-      updatePitches = false
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  constructor(figure = '', keyStr = undefined, {
+    parseFigure = false,
+    updatePitches = false
+  } = {}) {
     super(figure, {
       updatePitches,
       parseFigure
@@ -49579,8 +50855,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_4__.Harmony {
       }
     }
   }
-  _correctForSecondaryRomanNumeral(useScale) {
-    let figure = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  _correctForSecondaryRomanNumeral(useScale, figure = undefined) {
     if (figure === undefined) {
       figure = this._figure;
     }
@@ -49665,8 +50940,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_4__.Harmony {
    * @param {number} [inversion=0]
    * @returns {string}
    */
-  asString(displayType) {
-    let inversion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  asString(displayType, inversion = 0) {
     const keyObj = this.key;
     const tonicName = keyObj.tonic.name;
     const mode = keyObj.mode;
@@ -49815,8 +51089,7 @@ class AbstractScale extends Scale {
   /**
    * To be subclassed
    */
-  buildNetwork() {
-    let mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  buildNetwork(mode = undefined) {
     this._net = [];
   }
   /**
@@ -49869,12 +51142,7 @@ class AbstractScale extends Scale {
     return this._net.length;
   }
   // noinspection JSUnusedLocalSymbols
-  getRealization(pitchObj) {
-    let unused_stepOfPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let unused_minPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    let unused_maxPitch = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    let unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
-    let unused_reverse = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : undefined;
+  getRealization(pitchObj, unused_stepOfPitch = undefined, unused_minPitch = undefined, unused_maxPitch = undefined, unused_direction = undefined, unused_reverse = undefined) {
     // if (direction === undefined) {
     //     direction = DIRECTION_ASCENDING;
     // }
@@ -49902,9 +51170,7 @@ class AbstractScale extends Scale {
     return pitchReference;
   }
   // noinspection JSUnusedLocalSymbols
-  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget) {
-    let unused_comparisonAttribute = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    let unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget, unused_comparisonAttribute = undefined, unused_direction = undefined) {
     if (typeof pitchTarget === 'string') {
       pitchTarget = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch(pitchTarget);
     }
@@ -49938,8 +51204,7 @@ class AbstractDiatonicScale extends AbstractScale {
    * @property {number|undefined} dominantDegree
    * @property {boolean} octaveDuplicating
    */
-  constructor() {
-    let mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'major';
+  constructor(mode = 'major') {
     super();
     this.type = 'Abstract diatonic';
     this.tonicDegree = undefined;
@@ -50036,10 +51301,7 @@ class ConcreteScale extends Scale {
   //     return new roman.RomanNumeral(degree, this);
   // }
   // noinspection JSUnusedLocalSymbols
-  getPitches() {
-    let unused_minPitch = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    let unused_maxPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let unused_direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  getPitches(unused_minPitch = undefined, unused_maxPitch = undefined, unused_direction = undefined) {
     let pitchObj;
     if (this.tonic === undefined) {
       pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_5__.Pitch('C4');
@@ -50049,17 +51311,11 @@ class ConcreteScale extends Scale {
     return this.abstract.getRealization(pitchObj);
   }
   // noinspection JSUnusedLocalSymbols
-  pitchFromDegree(degree) {
-    let unused_minPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let unused_maxPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    let unused_direction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-    let unused_equateTermini = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  pitchFromDegree(degree, unused_minPitch = undefined, unused_maxPitch = undefined, unused_direction = undefined, unused_equateTermini = undefined) {
     return this.abstract.getPitchFromNodeDegree(this.tonic, this.abstract.tonicDegree, degree);
   }
   // noinspection JSUnusedLocalSymbols
-  getScaleDegreeFromPitch(pitchTarget) {
-    let unused_direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let unused_comparisonAttribute = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  getScaleDegreeFromPitch(pitchTarget, unused_direction = undefined, unused_comparisonAttribute = undefined) {
     return this.abstract.getRelativeNodeDegree(this.tonic, this.abstract.tonicDegree, pitchTarget);
   }
 }
@@ -50249,8 +51505,7 @@ class Sites {
     }
     return false;
   }
-  _keysByTime() {
-    let newFirst = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+  _keysByTime(newFirst = true) {
     const post = [];
     for (const [key, siteRef] of this.siteDict) {
       const keyVal = [siteRef.siteIndex, key];
@@ -50262,9 +51517,7 @@ class Sites {
     }
     return post.map(innerList => innerList[1]);
   }
-  add(obj) {
-    let idKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let classString = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  add(obj, idKey = undefined, classString = undefined) {
     if (idKey === undefined && obj !== undefined) {
       idKey = getId(obj);
     }
@@ -50308,49 +51561,40 @@ class Sites {
   }
   /**
    */
-  yieldSites() {
-    var _this = this;
-    let sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    let priorityTarget = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    return function* () {
-      let keyRepository;
-      if (sortByCreationTime === true) {
-        keyRepository = _this._keysByTime(false);
-      } else if (sortByCreationTime === 'reverse') {
-        keyRepository = _this._keysByTime(true);
+  *yieldSites(sortByCreationTime = false, priorityTarget = undefined, excludeNone = false) {
+    let keyRepository;
+    if (sortByCreationTime === true) {
+      keyRepository = this._keysByTime(false);
+    } else if (sortByCreationTime === 'reverse') {
+      keyRepository = this._keysByTime(true);
+    } else {
+      keyRepository = Array.from(this.siteDict.keys());
+    }
+    if (priorityTarget !== undefined) {
+      const priorityId = getId(priorityTarget);
+      if (keyRepository.includes(priorityId)) {
+        const priorityIndex = keyRepository.indexOf(priorityId);
+        keyRepository.splice(priorityIndex, 1);
+        keyRepository.unshift(priorityId);
+      }
+    }
+    for (const key of keyRepository) {
+      const siteRef = this.siteDict.get(key);
+      if (siteRef === _NoneSiteRef) {
+        if (!excludeNone) {
+          yield siteRef.site;
+        }
       } else {
-        keyRepository = Array.from(_this.siteDict.keys());
-      }
-      if (priorityTarget !== undefined) {
-        const priorityId = getId(priorityTarget);
-        if (keyRepository.includes(priorityId)) {
-          const priorityIndex = keyRepository.indexOf(priorityId);
-          keyRepository.splice(priorityIndex, 1);
-          keyRepository.unshift(priorityId);
-        }
-      }
-      for (const key of keyRepository) {
-        const siteRef = _this.siteDict.get(key);
-        if (siteRef === _NoneSiteRef) {
-          if (!excludeNone) {
-            yield siteRef.site;
-          }
+        const obj = siteRef.site;
+        if (obj === undefined) {
+          siteRef.isDead = true;
         } else {
-          const obj = siteRef.site;
-          if (obj === undefined) {
-            siteRef.isDead = true;
-          } else {
-            yield obj;
-          }
+          yield obj;
         }
       }
-    }();
+    }
   }
-  get() {
-    let sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    let priorityTarget = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  get(sortByCreationTime = false, priorityTarget = undefined, excludeNone = false) {
     const post = Array.from(this.yieldSites(sortByCreationTime, priorityTarget, excludeNone));
     // we do this resorting again, because the priority target might not match id and we
     // want to be extra safe.  If you want fast, use .yieldSites
@@ -50374,8 +51618,7 @@ class Sites {
     }
     return undefined;
   }
-  getObjByClass(className) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  getObjByClass(className, options = {}) {
     const params = {
       callerFirst: this,
       sortByCreationTime: false,
@@ -50494,7 +51737,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// eslint-disable-next-line import/no-cycle
 
 
 
@@ -50719,8 +51961,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * @param retainContainers - if true, retain the containers (e.g., Measure, Part, etc.)
    */
-  flatten() {
-    let retainContainers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  flatten(retainContainers = false) {
     const newSt = this.clone(false);
     // console.log('done cloning...');
     if (!this.isFlat) {
@@ -51037,8 +52278,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * May be removed.
    */
-  getSpecialContext(context) {
-    let warnOnCall = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  getSpecialContext(context, warnOnCall = false) {
     const first_el = this._firstElementContext(context);
     if (first_el !== undefined) {
       return first_el;
@@ -51073,13 +52313,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     this.isFlat = true;
     this.isSorted = true;
   }
-  coreElementsChanged() {
-    let {
-      updateIsFlat = true,
-      clearIsSorted = true
-      // memo=undefined, // unused
-      // keepIndex=false, // unused
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  coreElementsChanged({
+    updateIsFlat = true,
+    clearIsSorted = true
+    // memo=undefined, // unused
+    // keepIndex=false, // unused
+  } = {}) {
     if (clearIsSorted) {
       this.isSorted = false;
     }
@@ -51093,13 +52332,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       }
     }
   }
-  recurse() {
-    let {
-      streamsOnly = false,
-      restoreActiveSites = true,
-      classFilter = undefined,
-      skipSelf = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  recurse({
+    streamsOnly = false,
+    restoreActiveSites = true,
+    classFilter = undefined,
+    skipSelf = true
+  } = {}) {
     const includeSelf = !skipSelf;
     let ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_19__.RecursiveIterator(this, {
       streamsOnly,
@@ -51165,11 +52403,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * @param {boolean} [config.setActiveSite=true] -- set the active site for the inserted element.
    * @returns {this}
    */
-  insert(offset, el) {
-    let {
-      ignoreSort = false,
-      setActiveSite = true
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  insert(offset, el, {
+    ignoreSort = false,
+    setActiveSite = true
+  } = {}) {
     if (el === undefined) {
       throw new StreamException('Cannot insert without an element.');
     }
@@ -51290,11 +52527,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   /**
    * Remove an object from this Stream.  shiftOffsets and recurse do nothing.
    */
-  remove(targetOrList) {
-    let {
-      shiftOffsets = false,
-      recurse = false
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  remove(targetOrList, {
+    shiftOffsets = false,
+    recurse = false
+  } = {}) {
     if (shiftOffsets && recurse) {
       throw new StreamException('Cannot do both shiftOffsets and recurse search at the same time...yet');
     }
@@ -51388,11 +52624,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    *  Does nothing if target cannot be found.
    */
-  replace(target, replacement) {
-    let {
-      recurse = false,
-      allDerived = true
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  replace(target, replacement, {
+    recurse = false,
+    allDerived = true
+  } = {}) {
     try {
       this.index(target);
     } catch (err) {
@@ -51487,8 +52722,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     this.replace(replaceEl, newEl);
     return this;
   }
-  setElementOffset(el, value) {
-    let addElement = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  setElementOffset(el, value, addElement = false) {
     if (!this._elements.includes(el)) {
       if (addElement) {
         this.insert(value, el);
@@ -51500,8 +52734,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     this._offsetDict.set(el, value);
     el.activeSite = this;
   }
-  elementOffset(element) {
-    let _stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  elementOffset(element, _stringReturns = false) {
     if (!this._offsetDict.has(element)) {
       throw new StreamException('An entry for this object ' + element.toString() + ' is not stored in this Stream.');
     } else {
@@ -51638,10 +52871,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       return this; // javascript style;
     }
   }
-  containerInHierarchy(el) {
-    let {
-      setActiveSite = true
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  containerInHierarchy(el, {
+    setActiveSite = true
+  } = {}) {
     const elSites = el.sites;
     for (const s of this.recurse({
       skipSelf: false,
@@ -51660,13 +52892,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   /**
    * chordify does not yet work...
    */
-  chordify() {
-    let {
-      addTies = true,
-      addPartIdAsGroup = true,
-      removeRedundantPitches = true,
-      toSoundingPitch = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  chordify({
+    addTies = true,
+    addPartIdAsGroup = true,
+    removeRedundantPitches = true,
+    toSoundingPitch = true
+  } = {}) {
     const workObj = this;
     let templateStream;
     if (this.hasPartLikeStreams()) {
@@ -51681,12 +52912,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     });
     return template;
   }
-  template() {
-    let {
-      fillWithRests = true,
-      removeClasses = [],
-      retainVoices = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  template({
+    fillWithRests = true,
+    removeClasses = [],
+    retainVoices = true
+  } = {}) {
     const out = this.cloneEmpty('template');
     const restInfo = {
       offset: undefined,
@@ -51766,11 +52996,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * TODO: move call to makeBeams from renderVexflow to here once
    *     it works on recursive streams.
    */
-  makeNotation() {
-    let {
-      inPlace = false,
-      overrideStatus = false
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  makeNotation({
+    inPlace = false,
+    overrideStatus = false
+  } = {}) {
     let out;
     if (inPlace) {
       out = this;
@@ -51791,12 +53020,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * Called from renderVexflow()
    */
-  makeBeams() {
-    let {
-      inPlace = false,
-      setStemDirections = true,
-      failOnNoTimeSignature = false
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  makeBeams({
+    inPlace = false,
+    setStemDirections = true,
+    failOnNoTimeSignature = false
+  } = {}) {
     return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__.makeBeams(this, {
       inPlace,
       setStemDirections,
@@ -51900,15 +53128,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * See music21p documentation for the effect of various parameters.
    */
-  getElementsByOffset(offsetStart) {
-    let offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let {
-      includeEndBoundary = true,
-      mustFinishInSpan = false,
-      mustBeginInSpan = true,
-      includeElementsThatEndAtStart = true,
-      classList = undefined
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  getElementsByOffset(offsetStart, offsetEnd = undefined, {
+    includeEndBoundary = true,
+    mustFinishInSpan = false,
+    mustBeginInSpan = true,
+    includeElementsThatEndAtStart = true,
+    classList = undefined
+  } = {}) {
     let si;
     if (classList !== undefined) {
       si = this.iter.getElementsByClass(classList);
@@ -52002,20 +53228,19 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       this returns a modified deep copy.
        Called automatically before appendDOM routines are called.
    */
-  makeAccidentals() {
-    let {
-      pitchPast = [],
-      pitchPastMeasure = [],
-      useKeySignature = true,
-      alteredPitches = [],
-      // searchKeySignatureByContext=false,
-      cautionaryPitchClass = true,
-      cautionaryAll = false,
-      inPlace = false,
-      overrideStatus = false,
-      cautionaryNotImmediateRepeat = true,
-      tiePitchSet = new Set()
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  makeAccidentals({
+    pitchPast = [],
+    pitchPastMeasure = [],
+    useKeySignature = true,
+    alteredPitches = [],
+    // searchKeySignatureByContext=false,
+    cautionaryPitchClass = true,
+    cautionaryAll = false,
+    inPlace = false,
+    overrideStatus = false,
+    cautionaryNotImmediateRepeat = true,
+    tiePitchSet = new Set()
+  } = {}) {
     var _a;
     let returnObj;
     if (inPlace) {
@@ -52119,9 +53344,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * @param {boolean} [preserveEvents=false]
    * @returns {this}
    */
-  resetRenderOptions() {
-    let recursive = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    let preserveEvents = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  resetRenderOptions(recursive = false, preserveEvents = false) {
     const oldEvents = this.renderOptions.events;
     this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_13__.RenderOptions();
     if (preserveEvents) {
@@ -52137,8 +53360,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     return this;
   }
   //  * *********  VexFlow functionality
-  write() {
-    let _format = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'musicxml';
+  write(_format = 'musicxml') {
     return _exportMusicXMLAsText(this);
   }
   /**
@@ -52196,11 +53418,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * @returns {number} height in pixels
    */
-  estimateStreamHeight() {
-    let {
-      ignoreSystems = false,
-      ignoreMarginBottom = false
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  estimateStreamHeight({
+    ignoreSystems = false,
+    ignoreMarginBottom = false
+  } = {}) {
     const staffHeight = this.renderOptions.staffAreaHeight;
     const marginBottom = this.renderOptions.marginBottom; // extra at end.
     const systemPadding = this.renderOptions.systemPadding;
@@ -52309,11 +53530,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     // totalLength += rendOp.staffPadding;
     return totalLength;
   }
-  stripTies() {
-    let {
-      inPlace = false,
-      matchByPitch = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  stripTies({
+    inPlace = false,
+    matchByPitch = true
+  } = {}) {
     var _a, _b, _c, _d;
     let returnObj;
     if (inPlace) {
@@ -52513,8 +53733,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
    * - tempo: number (default, `this.tempo`)
    */
-  playStream() {
-    let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  playStream(options = {}) {
     const params = {
       instrument: this.instrument,
       tempo: this.tempo,
@@ -52605,8 +53824,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * Estimated widths and heights are multiplied by this.renderOptions.scaleFactor.
    */
-  createNewDOM(width, height) {
-    let elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+  createNewDOM(width, height, elementType = 'svg') {
     if (!this.isFlat) {
       this.setSubstreamRenderOptions();
     }
@@ -52648,10 +53866,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * Called from appendNewDOM() etc.
    *
    */
-  createPlayableDOM() {
-    let width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    let height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+  createPlayableDOM(width = undefined, height = undefined, elementType = 'svg') {
     this.renderOptions.events.click = 'play';
     return this.createDOM(width, height, elementType);
   }
@@ -52663,10 +53878,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * @param {string} elementType - what type of element svg or canvas, default = svg
    * @returns {HTMLDivElement|HTMLCanvasElement} Div containing SVG or the Canvas element
    */
-  createDOM() {
-    let width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-    let height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+  createDOM(width = undefined, height = undefined, elementType = 'svg') {
     const newSvg = this.createNewDOM(width, height, elementType);
     // temporarily append the SVG to the document to fix a Firefox bug
     // where nothing can be measured unless is it in the document.
@@ -52683,11 +53895,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * @returns {HTMLDivElement|HTMLCanvasElement} svg or canvas
    *
    */
-  appendNewDOM() {
-    let where = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    let width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-    let elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
+  appendNewDOM(where = '', width = undefined, height = undefined, elementType = 'svg') {
     if (!where) {
       where = _defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation;
     }
@@ -52710,9 +53918,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * @param {string} elementType - what type of element, default = svg
    * @returns {HTMLDivElement} the svg
    */
-  replaceDOM(where) {
-    let preserveSvgSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    let elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+  replaceDOM(where, preserveSvgSize = false, elementType = 'svg') {
     let oldSVGOrCanvas;
     where = _common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement(where);
     if (where.classList.contains('streamHolding')) {
@@ -52876,8 +54082,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * Override in subclasses, always returns this; here.
    */
-  getStreamFromScaledXandSystemIndex(_xPxScaled) {
-    let _systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  getStreamFromScaledXandSystemIndex(_xPxScaled, _systemIndex = 0) {
     return this;
   }
   /**
@@ -52892,10 +54097,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * and 'backupMaximum' which specifies a maximum distance even for backup
    * (default: 70);
    */
-  noteElementFromScaledX(xPxScaled) {
-    let allowablePixels = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
-    let systemIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    let options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  noteElementFromScaledX(xPxScaled, allowablePixels = 10, systemIndex = 0, options = {}) {
     const params = {
       allowBackup: true,
       backupMaximum: 70
@@ -53002,11 +54204,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * Renders a stream on svg with the ability to edit it and
    * a toolbar that allows the accidentals to be edited.
    */
-  editableAccidentalDOM(width, height) {
-    let {
-      minAccidental = -1,
-      maxAccidental = 1
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  editableAccidentalDOM(width, height, {
+    minAccidental = -1,
+    maxAccidental = 1
+  } = {}) {
     /*
      * Create an editable svg with an accidental selection bar.
      */
@@ -53031,10 +54232,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    * If siblingSvg is defined then this toolbar alters the notes in that
    * toolbar.
    */
-  getAccidentalToolbar() {
-    let minAccidental = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
-    let maxAccidental = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-    let siblingSvg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  getAccidentalToolbar(minAccidental = -1, maxAccidental = 1, siblingSvg = undefined) {
     minAccidental = Math.round(minAccidental);
     maxAccidental = Math.round(maxAccidental);
     const addAccidental = (newAlter, clickEvent) => {
@@ -53278,10 +54476,9 @@ class Part extends Stream {
    * Calculate system breaks and update measure widths as necessary on
    * account of the reiteration of clefs and key signatures on subsequent systems.
    */
-  systemWidthsAndBreaks() {
-    let {
-      setMeasureWidths = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  systemWidthsAndBreaks({
+    setMeasureWidths = true
+  } = {}) {
     const maxSystemWidth = this.maxSystemWidth;
     const systemCurrentWidths = [];
     const systemBreakIndexes = [];
@@ -53342,11 +54539,10 @@ class Part extends Stream {
    * returns an array of all the widths of complete systems
    * (last partial system omitted)
    */
-  fixSystemInformation() {
-    let {
-      systemHeight = undefined,
-      systemPadding = undefined
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  fixSystemInformation({
+    systemHeight = undefined,
+    systemPadding = undefined
+  } = {}) {
     // this is a method on Part!
     if (systemHeight === undefined) {
       /* part.show() called... */
@@ -53548,11 +54744,10 @@ class Score extends Stream {
   /**
    * Override main stream makeBeams to call on each part.
    */
-  makeBeams() {
-    let {
-      inPlace = false,
-      setStemDirections = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  makeBeams({
+    inPlace = false,
+    setStemDirections = true
+  } = {}) {
     let returnObj = this;
     if (!inPlace) {
       returnObj = this.clone(true);
@@ -53576,8 +54771,7 @@ class Score extends Stream {
    * @returns {Stream} usually a Measure
    *
    */
-  getStreamFromScaledXandSystemIndex(xPxScaled) {
-    let systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex = undefined) {
     const parts = this.parts;
     return parts.get(0).getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
   }
@@ -53665,8 +54859,7 @@ class Score extends Stream {
    *
    * @param {Object} params -- passed to each part
    */
-  playStream() {
-    let params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  playStream(params = {}) {
     // play multiple parts in parallel...
     for (const el of this) {
       if (el.isClassOrSubclass('Part')) {
@@ -53791,10 +54984,9 @@ class Score extends Stream {
    *
    * This does not even out systems.
    */
-  evenPartMeasureSpacing() {
-    let {
-      setLeft = true
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  evenPartMeasureSpacing({
+    setLeft = true
+  } = {}) {
     const measureStacks = [];
     let currentPartNumber = 0;
     const maxMeasureWidth = []; // the maximum measure width among all parts
@@ -53878,8 +55070,7 @@ class IsFilter extends StreamFilter {
   static get derivationStr() {
     return 'is';
   }
-  constructor() {
-    let target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  constructor(target = []) {
     super();
     if (!Array.isArray(target)) {
       target = [target];
@@ -53906,8 +55097,7 @@ class IsNotFilter extends IsFilter {
   static get derivationStr() {
     return 'IsNot';
   }
-  constructor() {
-    let target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  constructor(target = []) {
     super(target);
     this.numToFind = Number.MAX_SAFE_INTEGER;
   }
@@ -53926,8 +55116,7 @@ class ClassFilter extends StreamFilter {
   static get derivationStr() {
     return 'getElementsByClass';
   }
-  constructor() {
-    let classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  constructor(classList = []) {
     super();
     let classListArray;
     if (!Array.isArray(classList)) {
@@ -53954,14 +55143,12 @@ class OffsetFilter extends StreamFilter {
   static get derivationStr() {
     return 'getElementsByOffset';
   }
-  constructor(offsetStart) {
-    let offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-    let {
-      includeEndBoundary = true,
-      mustFinishInSpan = false,
-      mustBeginInSpan = true,
-      includeElementsThatEndAtStart = true
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  constructor(offsetStart, offsetEnd = undefined, {
+    includeEndBoundary = true,
+    mustFinishInSpan = false,
+    mustBeginInSpan = true,
+    includeElementsThatEndAtStart = true
+  } = {}) {
     super();
     this.zeroLengthSearch = false;
     this.offsetStart = offsetStart;
@@ -54056,13 +55243,12 @@ const StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_1__.StopIterati
 // noinspection JSUnusedGlobalSymbols
 class StreamIteratorException extends _exceptions21__WEBPACK_IMPORTED_MODULE_0__.StreamException {}
 class StreamIteratorBase {
-  constructor(srcStream) {
-    let {
-      filterList = [],
-      restoreActiveSites = true,
-      activeInformation = undefined,
-      ignoreSorting = false
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  constructor(srcStream, {
+    filterList = [],
+    restoreActiveSites = true,
+    activeInformation = undefined,
+    ignoreSorting = false
+  } = {}) {
     this.index = 0;
     this.iterSection = '_elements';
     this.cleanupOnStop = false;
@@ -54351,15 +55537,14 @@ class OffsetIterator extends StreamIteratorBase {
   }
 }
 class RecursiveIterator extends StreamIteratorBase {
-  constructor(srcStream) {
-    let {
-      filterList = [],
-      restoreActiveSites = true,
-      activeInformation = undefined,
-      streamsOnly = false,
-      includeSelf = false,
-      ignoreSorting = false
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  constructor(srcStream, {
+    filterList = [],
+    restoreActiveSites = true,
+    activeInformation = undefined,
+    streamsOnly = false,
+    includeSelf = false,
+    ignoreSorting = false
+  } = {}) {
     super(srcStream, {
       filterList,
       restoreActiveSites,
@@ -54412,7 +55597,9 @@ class RecursiveIterator extends StreamIteratorBase {
         this.childRecursiveIterator = new RecursiveIterator(e, {
           restoreActiveSites: this.restoreActiveSites,
           filterList: this.filters,
+          // shared list
           activeInformation: this.activeInformation,
+          // shared
           includeSelf: false,
           ignoreSorting: this.ignoreSorting
           // parentIterator: this,
@@ -54527,12 +55714,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function makeBeams(s) {
-  let {
-    inPlace = false,
-    setStemDirections = true,
-    failOnNoTimeSignature = false
-  } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function makeBeams(s, {
+  inPlace = false,
+  setStemDirections = true,
+  failOnNoTimeSignature = false
+} = {}) {
   let returnObj = s;
   if (!inPlace) {
     returnObj = s.clone(true);
@@ -54605,50 +55791,46 @@ function makeBeams(s) {
   // returnObj.streamStatus.beams = true;
   return returnObj;
 }
-function iterateBeamGroups(s) {
-  let {
-    skipNoBeams = true,
-    recurse = true
-  } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  return function* () {
-    let iterator;
-    if (recurse) {
-      iterator = s.recurse();
-    } else {
-      iterator = s.iter;
+function* iterateBeamGroups(s, {
+  skipNoBeams = true,
+  recurse = true
+} = {}) {
+  let iterator;
+  if (recurse) {
+    iterator = s.recurse();
+  } else {
+    iterator = s.iter;
+  }
+  let current_beam_group = [];
+  let in_beam_group = false;
+  for (const untyped_el of iterator.getElementsByClass('NotRest')) {
+    const el = untyped_el;
+    let first_el_type;
+    if (el.beams !== undefined && el.beams.getNumbers().includes(1)) {
+      first_el_type = el.beams.getTypeByNumber(1);
     }
-    let current_beam_group = [];
-    let in_beam_group = false;
-    for (const untyped_el of iterator.getElementsByClass('NotRest')) {
-      const el = untyped_el;
-      let first_el_type;
-      if (el.beams !== undefined && el.beams.getNumbers().includes(1)) {
-        first_el_type = el.beams.getTypeByNumber(1);
-      }
-      if (first_el_type === 'start') {
-        in_beam_group = true;
-      }
-      if (in_beam_group) {
-        current_beam_group.push(el);
-      }
-      if (first_el_type === 'stop') {
-        yield current_beam_group;
-        current_beam_group = [];
-        in_beam_group = false;
-      } else if (!skipNoBeams && !in_beam_group) {
-        yield [el];
-      }
+    if (first_el_type === 'start') {
+      in_beam_group = true;
     }
-    if (current_beam_group.length) {
+    if (in_beam_group) {
+      current_beam_group.push(el);
+    }
+    if (first_el_type === 'stop') {
       yield current_beam_group;
+      current_beam_group = [];
+      in_beam_group = false;
+    } else if (!skipNoBeams && !in_beam_group) {
+      yield [el];
     }
-  }();
+  }
+  if (current_beam_group.length) {
+    yield current_beam_group;
+  }
 }
-function setStemDirectionForBeamGroups(s) {
-  let {
-    setNewStems = true,
-    overrideConsistentStemDirections = false
-  } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function setStemDirectionForBeamGroups(s, {
+  setNewStems = true,
+  overrideConsistentStemDirections = false
+} = {}) {
   for (const beamGroup of iterateBeamGroups(s, {
     skipNoBeams: true,
     recurse: true
@@ -54705,11 +55887,10 @@ const _up_down_unspecified = ['up', 'down', 'unspecified'];
 /**
  *  Set stem directions for all notes in a beam group.
  */
-function setStemDirectionOneGroup(group) {
-  let {
-    setNewStems = true,
-    overrideConsistentStemDirections = false
-  } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function setStemDirectionOneGroup(group, {
+  setNewStems = true,
+  overrideConsistentStemDirections = false
+} = {}) {
   if (!group.length) {
     return; // should not happen
   }
@@ -54928,8 +56109,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   static get className() {
     return 'music21.tempo.Metronome';
   }
-  constructor() {
-    let tempoInt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : baseTempo;
+  constructor(tempoInt = baseTempo) {
     super();
     this._tempo = baseTempo;
     this.numBeatsPerMeasure = 4;
@@ -55018,8 +56198,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    *
    * returns new tempo
    */
-  increaseSpeed() {
-    let n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+  increaseSpeed(n = 1) {
     // increase by one metronome 'click' for every n
     for (let i = 0; i < n; i++) {
       let t = this.tempo;
@@ -55046,8 +56225,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
    *
    * returns new tempo
    */
-  decreaseSpeed() {
-    let n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+  decreaseSpeed(n = 1) {
     for (let i = 0; i < n; i++) {
       let t = this.tempo;
       const trL = this.tempoRanges.length;
@@ -55109,8 +56287,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_1__.ProtoM21Object {
   }
 }
 class TempoText {
-  constructor() {
-    let text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  constructor(text = '') {
     this.text = text;
   }
 }
@@ -55118,13 +56295,12 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
   static get className() {
     return 'music21.tempo.MetronomeMark';
   }
-  constructor() {
-    let {
-      text = undefined,
-      number = undefined,
-      referent = undefined,
-      parentheses = false
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor({
+    text = undefined,
+    number = undefined,
+    referent = undefined,
+    parentheses = false
+  } = {}) {
     super();
     this.parentheses = false;
     this._number = number;
@@ -55226,8 +56402,7 @@ class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
     }
     return post;
   }
-  _getDefaultText(n) {
-    let spread = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  _getDefaultText(n, spread = 2) {
     const tempoNumber = typeof n === 'number' ? n : parseFloat(n);
     return Object.keys(defaultTempoValues).find(tempoName => {
       const tempoValue = defaultTempoValues[tempoName];
@@ -55277,8 +56452,7 @@ class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_0__.ProtoM21Object {
   static get className() {
     return 'music21.tie.Tie';
   }
-  constructor() {
-    let type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'start';
+  constructor(type = 'start') {
     super();
     this.style = 'normal';
     this.type = type;
@@ -55350,16 +56524,22 @@ const regularExpressions = {
   EDFLAT: /\((-+)\)/,
   EDNAT: /\(n\)/,
   SHARP: /^[A-Ga-g]+'*(#+)/,
+  // simple notation finds
   FLAT: /^[A-Ga-g]+'*(-+)/,
+  //   double accidentals too
   NAT: /^[A-Ga-g]+'*n/,
+  // explicit naturals
   TYPE: /(\d+)/,
   TIE: /.~/,
+  // not preceding ties
   PRECTIE: /~/,
+  // front ties   // TODO: remove these...
   ID_EL: /=([A-Za-z0-9]*)/,
   LYRIC: /_(.*)/,
   DOT: /\.+/,
   TIMESIG: /(\d+)\/(\d+)/,
   PARTBREAK: /partBreak/,
+  // nonstandard...fix later...
   CHORD: /chord{/,
   TRIP: /trip{/,
   QUAD: /quad{/,
@@ -55594,9 +56774,7 @@ function TinyNotation(textIn) {
  * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {HTMLElement|jQuery} [selector]
  */
-function renderNotationDivs() {
-  let classTypes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '.music21.tinyNotation';
-  let selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+function renderNotationDivs(classTypes = '.music21.tinyNotation', selector = undefined) {
   let allRender;
   if (selector === undefined) {
     allRender = document.querySelectorAll(classTypes);
@@ -55678,12 +56856,8 @@ __webpack_require__.r(__webpack_exports__);
  * the new lyrics in Vexflow would cause staves to overflow.
  */
 
-// eslint-disable-next-line
-function L() {
+function L(...args) {
   if (VFLyricAnnotation.DEBUG) {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
     (0,vexflow__WEBPACK_IMPORTED_MODULE_0__.log)('Vex.Flow.Annotation', args);
   }
 }
@@ -56053,10 +57227,9 @@ class Renderer {
    * or substreams that should be considered like Measures)
    * for rendering.
    */
-  preparePartlike(p) {
-    let {
-      multipart = false
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  preparePartlike(p, {
+    multipart = false
+  } = {}) {
     // console.log('preparePartlike called');
     this.systemBreakOffsets = [];
     const measureList = p.measures;
@@ -56588,7 +57761,9 @@ class Renderer {
           visible: false
         }, {
           visible: true
-        }, {
+        },
+        // show middle
+        {
           visible: false
         }, {
           visible: false
@@ -56600,7 +57775,9 @@ class Renderer {
           visible: false
         }, {
           visible: true
-        }, {
+        },
+        // show middle
+        {
           visible: true
         }, {
           visible: false
@@ -56612,7 +57789,9 @@ class Renderer {
           visible: true
         }, {
           visible: true
-        }, {
+        },
+        // show middle
+        {
           visible: true
         }, {
           visible: false
@@ -56711,8 +57890,7 @@ class Renderer {
   /**
    * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
    */
-  vexflowLyrics(s, stave) {
-    let depth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+  vexflowLyrics(s, stave, depth = 0) {
     var _a;
     // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
     const lyricTextNotes = [];
@@ -56887,8 +58065,7 @@ class Renderer {
    *
    * You might want to remove this information; this routine does that.
    */
-  removeFormatterInformation(s) {
-    let recursive = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  removeFormatterInformation(s, recursive = false) {
     s.storedVexflowStave = undefined;
     for (const el of s) {
       el.x = undefined;
@@ -56969,9 +58146,7 @@ class Renderer {
     s.storedVexflowStave = stave;
   }
 }
-function getTextNote(text, font, d, stave) {
-  let lyricObj = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
-  let line = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 11;
+function getTextNote(text, font, d, stave, lyricObj = undefined, line = 11) {
   // console.log(text, font, d);
   // noinspection TypeScriptValidateJSTypes
   const t1 = new vexflow__WEBPACK_IMPORTED_MODULE_0__.TextNote({
@@ -57156,8 +58331,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Obje
       return false;
     }
   }
-  parallelMotion() {
-    let requiredInterval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  parallelMotion(requiredInterval = undefined) {
     if (!this.similarMotion()) {
       return false;
     }
@@ -57195,8 +58369,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Obje
   inwardContraryMotion() {
     return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_0__.Direction.DESCENDING;
   }
-  antiParallelMotion() {
-    let simpleName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  antiParallelMotion(simpleName = undefined) {
     if (!this.contraryMotion()) {
       return false;
     }
@@ -57500,9 +58673,7 @@ function midiInArrived(midiMessageEvent) {
  *     successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
-function createPlugin() {
-  let appendElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-  let override = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+function createPlugin(appendElement = undefined, override = false) {
   if (webmidi.storedPlugin && !override) {
     return webmidi.storedPlugin;
   }
@@ -57535,8 +58706,7 @@ function createPlugin() {
  * @param {Object} [options] - see createSelector for details
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-function createJazzSelector(newSelect) {
-  let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function createJazzSelector(newSelect, options = {}) {
   const params = {
     onsuccess: undefined,
     oninputsuccess: undefined,
@@ -57623,8 +58793,7 @@ function selectionChanged(e) {
  *
  * Returns an HTMLSelectElement or undefined if Jazz cannot be loaded.
  */
-function createSelector(where) {
-  let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function createSelector(where, options = {}) {
   let existingMidiSelect = false;
   const params = {
     autoUpdate: true,

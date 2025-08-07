@@ -1,5 +1,4 @@
-import { // eslint-disable-line import/no-cycle
-Stream, Measure, Part, Score } from '../stream';
+import { Stream, Measure, Part, Score } from '../stream';
 import { Music21Object } from '../base';
 import { GeneralNote } from '../note';
 export declare class GeneralObjectExporter {

@@ -159,7 +159,7 @@ the Seaver Institute and the National Endowment for the Humanities.  Earlier ver
 [jsdoc]:http://usejsdoc.org
 
 
-## Dev Notes
+# Dev Notes
 Build and watch with
 
 ```sh
@@ -189,32 +189,28 @@ for running tests one time without watch, you can use:
 $ grunt test_no_watch
 ```
 
-### Publishing a new version
+## Publishing a new version
 You'll need to be part of the npm dev team.
 
 Two steps 
 
-1: Build the latest version by running:
+1. Update the version number in package.json, manually in main.ts, 
+and (if bigger than patch), here.  Then do all the steps again from the start.  :-)
+
+
+2. Run this which will update the version number in package-lock.json -- important!
+
+```sh
+$ npm install
+````
+
+3. Build the latest version by running:
 
 ```sh
 $ grunt
 ```
 
-Then update the version number and commit with:
-
-```sh
-$ grunt publish
-```
-
-(It also tries to build the
-docs via `grunt jsdoc` (currently failing).
-The template is specified in jsdoc-template/jsdoc.conf.json)
-
-For a non-backwards compatible release, edit the minor 
-version number manually in this README.md, in main.ts, and in
-package.json.  Then do all the steps again from the start.  :-)
-
-Then run the copy script with:
+4. Then run the copy script with:
 
 ```sh
 $ npm publish
@@ -223,11 +219,15 @@ $ npm publish
 which will copy the current contents of `build` in `releases`
 and publish on npm.
 
-Before publishing, every once in a while run (in the music21j directory)
+## Updating Dependencies
+
+Every once in a while run (in the music21j directory)
 
 ```sh
 $ node_modules/.bin/npm-check-updates
 ```
+
+(You may have it installed as "ncu")
 
 and if it looks like something to update, run
 

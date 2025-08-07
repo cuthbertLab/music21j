@@ -1,5 +1,3 @@
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 export declare function coerceHTMLElement(el?: JQuery | HTMLElement): HTMLElement;
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;

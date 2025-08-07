@@ -9,8 +9,7 @@
  *
  * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
  */
-import { StaveNote as VFStaveNote } from 'vexflow';
-import type { FontInfo as VFFontInfo } from 'vexflow/src/font';
+import { StaveNote as VFStaveNote, type FontInfo as VFFontInfo } from 'vexflow';
 import * as prebase from './prebase';
 import * as base from './base';
 import * as pitch from './pitch';

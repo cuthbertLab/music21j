@@ -1,5 +1,3 @@
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 import * as miditools from './miditools';
 import * as pitch from './pitch';
 /**
