@@ -38,7 +38,6 @@ import { svg_accidentals } from './svgs';
 import * as tempo from './tempo';
 import * as vfShow from './vfShow';
 
-// eslint-disable-next-line import/no-cycle
 import { GeneralObjectExporter } from './musicxml/m21ToXml';
 
 import * as filters from './stream/filters';

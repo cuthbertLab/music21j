@@ -7,9 +7,9 @@ mkdir -p soundfonts
 curl https://codeload.github.com/cuthbertLab/midi-js-soundfonts/zip/master > soundfonts/soundfonts.zip
 (cd "${BASEDIR}"/soundfonts || exit 1; unzip -o -q soundfonts.zip && rm soundfonts.zip)
 
-# do not use the double-bracket form -- Ubuntu 16 cannot handle it and is still supported.
-# if [ ! -f "${BASEDIR}/src/music21.js" ]; then
-#     echo 'Symlinking music21.js for use with require'
-
-#     (cd "${BASEDIR}"/src || exit 1; ln -s ../releases/music21.debug.js music21.js)
-# fi
+## Uncomment these lines if Vexflow gives problems again in eslint/Typescript.
+#echo "Cleaning up vexflow: keeping only 'build/'"
+#rm -rf "${BASEDIR}/node_modules/vexflow/entry"
+#rm -rf "${BASEDIR}/node_modules/vexflow/releases"
+#rm -rf "${BASEDIR}/node_modules/vexflow/src"
+#rm -rf "${BASEDIR}/node_modules/vexflow/tests"

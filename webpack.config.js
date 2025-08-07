@@ -2,6 +2,9 @@
 // Copyright (c) 2025 Michael Scott Asato Cuthbert
 // (michael.asato.cuthbert@gmail.com),
 // BSD License
+
+// this WILL Become the main build system during 2025, but it is NOT yet.  Still use grunt.
+
 const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -17,7 +20,7 @@ const babel_loader = babel_presets => ({
         presets: babel_presets,
         plugins: [
             '@babel/plugin-transform-object-assign',
-            '@babel/plugin-proposal-export-namespace-from',
+            '@babel/plugin-transform-export-namespace-from',
             '@babel/plugin-proposal-class-properties',
         ],
     },

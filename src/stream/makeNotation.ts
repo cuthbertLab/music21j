@@ -107,7 +107,7 @@ export function makeBeams(s: stream.Stream, {
     return returnObj;
 }
 
-export function * iterateBeamGroups(
+export function* iterateBeamGroups(
     s: stream.Stream,
     {
         skipNoBeams=true,
