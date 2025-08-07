@@ -1,6 +1,6 @@
 import * as clef from '../clef';
 import * as common from '../common';
-import {  // eslint-disable-line import/no-cycle
+import {
     Stream, Measure, Part, Score,
 } from '../stream';
 

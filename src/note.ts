@@ -15,8 +15,8 @@ import {
     Dot as VFDot,
     StaveNote as VFStaveNote,
     Stem as VFStem,
+    type FontInfo as VFFontInfo,
 } from 'vexflow';
-import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';

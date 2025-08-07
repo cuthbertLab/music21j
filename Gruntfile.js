@@ -1,5 +1,8 @@
 // Gruntfile for music21j
 // Copyright Michael Scott Asato Cuthbert (michael.asato.cuthbert@gmail.com), BSD License
+
+// this system is in the process of being phased out in 2025 but is not there yet.
+
 const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -66,7 +69,7 @@ module.exports = grunt => {
                 presets: babel_presets,
                 plugins: [
                     '@babel/plugin-transform-object-assign',
-                    '@babel/plugin-proposal-export-namespace-from',
+                    '@babel/plugin-transform-export-namespace-from',
                     '@babel/plugin-proposal-class-properties',
                 ],
             },
@@ -201,9 +204,6 @@ module.exports = grunt => {
         },
         eslint: {
             target: SOURCES.concat(TEST_SOURCES),
-            options: {
-                overrideConfigFile: '.eslintrc.json',
-            },
         },
         qunit: {
             files: ['tests/gruntTest.html'],
