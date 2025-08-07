@@ -26,7 +26,7 @@ module.exports = [
                 ...globals.browser,
                 ...globals.jquery,
                 ...globals.es2026,  // this should be the latest in globals, not what we transpile to.
-            }
+            },
         },
         rules: {
             'array-bracket-spacing': ['off'],
@@ -36,12 +36,12 @@ module.exports = [
             'camelcase': ['off'],
             'class-methods-use-this': ['off'],
             'comma-dangle': ['warn', {
-               arrays: 'only-multiline',
-               objects: 'always-multiline',
-               imports: 'always-multiline',
-               exports: 'always-multiline',
-               functions: 'ignore',
-               }],
+                arrays: 'only-multiline',
+                objects: 'always-multiline',
+                imports: 'always-multiline',
+                exports: 'always-multiline',
+                functions: 'ignore',
+            }],
             'curly': ['warn', 'all'],
             'dot-location': ['warn', 'property'],
             'dot-notation': ['error'],
@@ -109,7 +109,7 @@ module.exports = [
             'prefer-const': [
                 'warn',
                 {
-                     'destructuring': 'all'
+                    'destructuring': 'all',
                 }
             ],
             'prefer-destructuring': ['off'],
@@ -139,6 +139,6 @@ module.exports = [
             '@typescript-eslint/no-unused-vars': no_unused_vars_config,
             'no-undef': 'off',
             'no-unused-vars': 'off',
-        }
+        },
     },
 ];

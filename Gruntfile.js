@@ -204,9 +204,6 @@ module.exports = grunt => {
         },
         eslint: {
             target: SOURCES.concat(TEST_SOURCES),
-            options: {
-                overrideConfigFile: '.eslintrc.json',
-            },
         },
         qunit: {
             files: ['tests/gruntTest.html'],

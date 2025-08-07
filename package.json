@@ -12,7 +12,7 @@
   ],
   "dependencies": {
     "jsonpickle": "^1.1.2",
-    "midicube": "^0.9.1",
+    "midicube": "^0.9.2",
     "vexflow": "^4.2.3"
   },
   "devDependencies": {
