@@ -54,6 +54,8 @@ export declare function toRoman(num: number): string;
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
  * tag defaults to svg, but can be 'rect', 'circle', 'text', etc.
  * Attributes is an object to pass to the tag.
+ *
+ * If tag is not specified creates <svg> (SVGSVGElement)
  */
 export declare function makeSVGright(tag?: string, attrs?: Record<string, any>): SVGElement;
 /**
@@ -110,7 +112,7 @@ export declare function isFloat(num: number): boolean;
  * Returns either the original number (never a fraction, since js does not have them)
  * or the slightly rounded, correct representation.
  *
- * Uses a shared memory buffer to give the conversion.
+ * Uses a shared memory buffer to give the conversion (in is_power_of_2_denominator)
  */
 export declare function opFrac(num: number): number;
 /**
@@ -127,7 +129,7 @@ export declare function opFrac(num: number): number;
  * Recommended in:
  * https://stackoverflow.com/questions/494143/
  */
-export declare function to_el(input_string: string): HTMLElement;
+export declare function to_el<T extends Element = HTMLElement>(input_string: string): T;
 /**
  * Sleep for some time in milliseconds.
  */

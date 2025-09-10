@@ -1,5 +1,5 @@
 /**
- * music21j version 0.17.12 built on 2025-08-07.
+ * music21j version 0.17.13 built on 2025-09-10.
  * Copyright (c) 2013-2025 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -40912,6 +40912,8 @@ function toRoman(num) {
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
  * tag defaults to svg, but can be 'rect', 'circle', 'text', etc.
  * Attributes is an object to pass to the tag.
+ *
+ * If tag is not specified creates <svg> (SVGSVGElement)
  */
 function makeSVGright(tag = 'svg', attrs = {}) {
   // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
@@ -41114,7 +41116,7 @@ function is_power_of_2_denominator(num) {
  * Returns either the original number (never a fraction, since js does not have them)
  * or the slightly rounded, correct representation.
  *
- * Uses a shared memory buffer to give the conversion.
+ * Uses a shared memory buffer to give the conversion (in is_power_of_2_denominator)
  */
 function opFrac(num) {
   if (num === Math.floor(num)) {
@@ -44514,6 +44516,9 @@ class BlackKey extends Key {
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
  * @property {Boolean} showOctaves - default false
+ * @property {string} instrumentName - default "acoustic_grand_piano"
+ * @property {string} highlightedBlackKeyColor - what color does a black key turn when clicked
+ * @property {string} highlightedWhiteKeyColor - what color does a white key turn when clicked.
  * @property {string|number} startPitch - default "C3" (a pitch string or midi number)
  * @property {string|number} endPitch - default "C5" (a pitch string or midi number)
  * @property {Boolean} hideable - default false -- add a way to hide and show keyboard
@@ -44522,14 +44527,18 @@ class BlackKey extends Key {
 class Keyboard {
   constructor() {
     this.whiteKeyWidth = 23;
+    // these are used to understand how much we have scaled
     this._defaultWhiteKeyWidth = 23;
     this._defaultBlackKeyWidth = 13;
-    this.scaleFactor = 1;
+    this.scaleFactor = 1.0;
     this.height = 120; // does nothing right now...
     this.keyObjects = new Map();
     this.markC = true;
     this.showNames = false;
     this.showOctaves = false;
+    this.instrumentName = 'acoustic_grand_piano';
+    this.highlightedBlackKeyColor = '#c0c000';
+    this.highlightedWhiteKeyColor = 'yellow';
     this.startPitch = 'C3';
     this.endPitch = 'C5';
     this._startDNN = 22;
@@ -44597,7 +44606,7 @@ class Keyboard {
    *
    * TODO(msc) - 2019-Dec -- separate into two calls, one for highlighting and one for playing.
    *
-   * @param {SVGElement} keyRect - the dom object with the keyboard.
+   * the dom object with the keyboard.
    */
   clickHandler(keyRect) {
     // to-do : integrate with jazzHighlight...
@@ -44607,12 +44616,12 @@ class Keyboard {
       return; // not on keyboard;
     }
     const storedStyle = thisKeyObject.keyStyle;
-    let fillColor = '#c0c000';
+    let fillColor = this.highlightedBlackKeyColor;
     if (thisKeyObject.keyClass === 'whitekey') {
-      fillColor = 'yellow';
+      fillColor = this.highlightedWhiteKeyColor;
     }
     keyRect.setAttribute('style', 'fill:' + fillColor + ';stroke:black');
-    _miditools__WEBPACK_IMPORTED_MODULE_2__.loadSoundfont('acoustic_grand_piano', i => {
+    _miditools__WEBPACK_IMPORTED_MODULE_2__.loadSoundfont(this.instrumentName, i => {
       midicube__WEBPACK_IMPORTED_MODULE_0__.noteOn(i.midiChannel, id, 100, 0);
       midicube__WEBPACK_IMPORTED_MODULE_0__.noteOff(i.midiChannel, id, 500);
     });
@@ -44670,7 +44679,8 @@ class Keyboard {
       };
       const wkSVG = wk.makeKey(this.whiteKeyWidth * this.scaleFactor * wki);
       svgDOM.appendChild(wkSVG);
-      if ((currentIndex === 0 || currentIndex === 1 || currentIndex === 3 || currentIndex === 4 || currentIndex === 5) && wki !== keyboardDiatonicLength - 1) {
+      if ((currentIndex === 0 || currentIndex === 1 // not 2
+      || currentIndex === 3 || currentIndex === 4 || currentIndex === 5) && wki !== keyboardDiatonicLength - 1) {
         // create but do not append BlackKey to the right of WhiteKey
         const bk = new BlackKey();
         bk.id = movingPitch.midi + 1;
@@ -44774,18 +44784,18 @@ class Keyboard {
     var _a;
     const container = (0,_common__WEBPACK_IMPORTED_MODULE_1__.to_el)('<div class="keyboardHideableContainer"></div>');
     const bInside = (0,_common__WEBPACK_IMPORTED_MODULE_1__.to_el)(`
-            <div class='keyboardToggleInside'
+            <div class="keyboardToggleInside"
                  style="display: inline-block; padding-top: 40px; font-size: 40px;"
             >↥</div>`);
     const b = (0,_common__WEBPACK_IMPORTED_MODULE_1__.to_el)(`
-            <div class='keyboardToggleOutside'
+            <div class="keyboardToggleOutside"
                  style="display: inline-block; vertical-align: top; background: white"
             ></div>`);
     b.append(bInside);
     b.setAttribute('data-defaultDisplay', (_a = container.querySelector('.keyboardSVG')) === null || _a === void 0 ? void 0 : _a.style.display);
     b.setAttribute('data-state', 'down');
     b.addEventListener('click', e => triggerToggleShow(e));
-    const explain = (0,_common__WEBPACK_IMPORTED_MODULE_1__.to_el)(`<div class='keyboardExplain'
+    const explain = (0,_common__WEBPACK_IMPORTED_MODULE_1__.to_el)(`<div class="keyboardExplain"
                   style="display: none; background-color: white; padding: 10px 10px 10px 10px; font-size: 12pt;"
              >Show keyboard</div>`);
     b.append(explain);
@@ -44798,20 +44808,27 @@ class Keyboard {
 // noinspection JSUnusedLocalSymbols
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.
- *
- * @param {Event} [e]
  */
 const triggerToggleShow = e => {
   const t = e.currentTarget;
   const state = t.getAttribute('data-state');
   const parent = t.parentElement;
+  if (!parent) {
+    throw new Error('Clicked toggle has no parent (ShadowDOM?)');
+  }
   let k = parent.querySelector('.keyboardScrollableWrapper');
   if (!k) {
     // not scrollable
     k = parent.querySelector('.keyboardSVG');
+    if (!k) {
+      throw new Error('Cannot find parent element to put hide/show controls');
+    }
   }
   const bInside = t.querySelector('.keyboardToggleInside');
   const explain = parent.querySelector('.keyboardExplain');
+  if (!bInside || !explain) {
+    throw new Error('Cannot find toggle button or explanation');
+  }
   if (state === 'up') {
     bInside.innerText = '↥';
     bInside.style.paddingTop = '40px';
@@ -51772,8 +51789,9 @@ function _exportMusicXMLAsText(s) {
  *     to just get the parts (NON-recursive)
  * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more
- *     sophisticated later, but for now the whole stream has one tempo
+ * @property {number} tempo - tempo in QuarterLengths per minute -- this is a legacy behavior
+ *     and eventually only MetronomeMarks measured in Beats per minute should be used.
+ *     This property will always remain in QL per minute for backwards compatibility.
  * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
  * @property {int} [staffLines=5] - number of staff lines
@@ -53731,7 +53749,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    *
    * `options` can be an object containing:
    * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
-   * - tempo: number (default, `this.tempo`)
+   * - tempo: number (default, `this.tempo`) -- should be in BPM but apparently in QL per minute!
    */
   playStream(options = {}) {
     const params = {
@@ -53757,7 +53775,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       if (currentNoteIndex <= lastNoteIndex && !this._stopPlaying) {
         const el = elements[currentNoteIndex];
         let nextNote;
-        let playDuration;
+        let playDuration; // this is in QLs not BPM
         if (currentNoteIndex < lastNoteIndex) {
           nextNote = elements[currentNoteIndex + 1];
           playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el);
@@ -54070,9 +54088,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     const thisClef = this.clef || this.getContextByClass('Clef');
     // TODO: on music21p percussion clef defines no lowest line, but does in music21j...
     const lowestLine = thisClef !== undefined ? thisClef.lowestLine : 31;
+    // TODO: in Vexflow 5 (also fix numLines below)
+    // const lineSpacing: number = storedVexflowStave.options.spacingBetweenLinesPx;
+    // const linesAboveStaff: number = storedVexflowStave.options.spaceAboveStaffLn;
     const lineSpacing = storedVexflowStave.options.spacing_between_lines_px;
     const linesAboveStaff = storedVexflowStave.options.space_above_staff_ln;
     const notesFromTop = yPxScaled * 2 / lineSpacing;
+    // TODO: in VexFlow 5...it's .options.numLines
     const notesAboveLowestLine = (storedVexflowStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
     const clickedDiatonicNoteNum = lowestLine + Math.round(notesAboveLowestLine);
     return clickedDiatonicNoteNum;
@@ -56291,6 +56313,14 @@ class TempoText {
     this.text = text;
   }
 }
+/**
+ * Note -- currently just the simple `Stream.tempo` is used for all playbacks
+ * within music21.  Some other systems use wrapers around it.
+ *
+ * @example:
+ *
+ *     mm = new music21.tempo.MetronomeMark({text: 'Allegro', number: 132, referent: 'half'})
+ */
 class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_2__.Music21Object {
   static get className() {
     return 'music21.tempo.MetronomeMark';
