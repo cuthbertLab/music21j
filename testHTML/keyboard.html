@@ -1,26 +1,24 @@
-<html>
-    <head>
-        <title>Piano Keyboard!</title>
-        <!-- for MSIE 10 on Windows 8 -->
-        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-        <script src="../build/music21.debug.js"></script>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Piano Keyboard!</title>
+    <link rel="stylesheet" href="../css/m21.css">
+    <script src="../build/music21.debug.js"></script>
+</head>
+<body>
     <h1>A keyboard that can be clicked on.</h1>
     <div id="keyboardDiv"></div>
     <script>
-    var k = ""; // will become keyboard.Keyboard object
+        const kd = document.getElementById('keyboardDiv');
 
-    k = new music21.keyboard.Keyboard();
-    var kd = document.getElementById('keyboardDiv');
-    k.startPitch = 18;
-    k.endPitch = 39;
-    k.markC = true;
+        const k = new music21.keyboard.Keyboard();
+        k.startPitch = 18;
+        k.endPitch = 39;
+        k.markC = true;
 
-    k.appendKeyboard(kd); // 37key keyboard
-    //k.markNoteNames(true);
+        k.appendKeyboard(kd); // 37-key keyboard
+        // k.markNoteNames(true);
     </script>
 </body>
 </html>
