@@ -109,8 +109,9 @@ interface MakeAccidentalsParams {
  *     to just get the parts (NON-recursive)
  * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more
- *     sophisticated later, but for now the whole stream has one tempo
+ * @property {number} tempo - tempo in QuarterLengths per minute -- this is a legacy behavior
+ *     and eventually only MetronomeMarks measured in Beats per minute should be used.
+ *     This property will always remain in QL per minute for backwards compatibility.
  * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
  * @property {int} [staffLines=5] - number of staff lines
@@ -2377,7 +2378,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      *
      * `options` can be an object containing:
      * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
-     * - tempo: number (default, `this.tempo`)
+     * - tempo: number (default, `this.tempo`) -- should be in BPM but apparently in QL per minute!
      */
     playStream(options: PlayStreamParams = {}): this {
         const params: PlayStreamParams = {
@@ -2404,7 +2405,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             if (currentNoteIndex <= lastNoteIndex && !this._stopPlaying) {
                 const el = elements[currentNoteIndex];
                 let nextNote: ElementType;
-                let playDuration: number;
+                let playDuration: number;  // this is in QLs not BPM
                 if (currentNoteIndex < lastNoteIndex) {
                     nextNote = elements[currentNoteIndex + 1];
                     playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el);
@@ -2784,10 +2785,15 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         // TODO: on music21p percussion clef defines no lowest line, but does in music21j...
         const lowestLine: number = (thisClef !== undefined) ? thisClef.lowestLine : 31;
 
+        // TODO: in Vexflow 5 (also fix numLines below)
+        // const lineSpacing: number = storedVexflowStave.options.spacingBetweenLinesPx;
+        // const linesAboveStaff: number = storedVexflowStave.options.spaceAboveStaffLn;
         const lineSpacing: number = storedVexflowStave.options.spacing_between_lines_px;
         const linesAboveStaff: number = storedVexflowStave.options.space_above_staff_ln;
-
+        
         const notesFromTop = yPxScaled * 2 / lineSpacing;
+
+        // TODO: in VexFlow 5...it's .options.numLines
         const notesAboveLowestLine
             = (storedVexflowStave.options.num_lines - 1 + linesAboveStaff) * 2
             - notesFromTop;
