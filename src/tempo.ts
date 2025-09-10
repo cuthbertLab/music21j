@@ -286,6 +286,15 @@ interface MetronomeMarkOptions {
     parentheses?: boolean;
 }
 
+
+/**
+ * Note -- currently just the simple `Stream.tempo` is used for all playbacks
+ * within music21.  Some other systems use wrapers around it.
+ *
+ * @example:
+ *
+ *     mm = new music21.tempo.MetronomeMark({text: 'Allegro', number: 132, referent: 'half'})
+ */
 export class MetronomeMark extends base.Music21Object {
     static get className() { return 'music21.tempo.MetronomeMark'; }
 
