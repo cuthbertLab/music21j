@@ -250,16 +250,20 @@ export class BlackKey extends Key {
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
  * @property {Boolean} showOctaves - default false
+ * @property {string} instrumentName - default "acoustic_grand_piano"
+ * @property {string} highlightedBlackKeyColor - what color does a black key turn when clicked
+ * @property {string} highlightedWhiteKeyColor - what color does a white key turn when clicked.
  * @property {string|number} startPitch - default "C3" (a pitch string or midi number)
  * @property {string|number} endPitch - default "C5" (a pitch string or midi number)
  * @property {Boolean} hideable - default false -- add a way to hide and show keyboard
  * @property {Boolean} scrollable - default false -- add scroll bars to change octave
  */
 export class Keyboard {
-    whiteKeyWidth = 23;
-    _defaultWhiteKeyWidth = 23;
-    _defaultBlackKeyWidth = 13;
-    scaleFactor = 1;
+    whiteKeyWidth: number = 23;
+    // these are used to understand how much we have scaled
+    protected _defaultWhiteKeyWidth: number = 23;
+    protected _defaultBlackKeyWidth: number = 13;
+    scaleFactor: number = 1.0;
     height = 120; // does nothing right now...
     keyObjects = new Map();
     svgObj: SVGElement;
@@ -267,6 +271,10 @@ export class Keyboard {
     markC = true;
     showNames = false;
     showOctaves = false;
+
+    instrumentName: string = 'acoustic_grand_piano';
+    highlightedBlackKeyColor: string = '#c0c000';
+    highlightedWhiteKeyColor: string = 'yellow';
 
     startPitch: string|number|pitch.Pitch = 'C3';
     endPitch: string|number|pitch.Pitch = 'C5';
@@ -300,7 +308,7 @@ export class Keyboard {
          * @type {Object}
          */
         this.callbacks = {
-            click: (keyClicked) => this.clickHandler(keyClicked),
+            click: (keyClicked: SVGRectElement) => this.clickHandler(keyClicked),
         };
     }
 
@@ -345,9 +353,9 @@ export class Keyboard {
      *
      * TODO(msc) - 2019-Dec -- separate into two calls, one for highlighting and one for playing.
      *
-     * @param {SVGElement} keyRect - the dom object with the keyboard.
+     * the dom object with the keyboard.
      */
-    clickHandler(keyRect): void {
+    clickHandler(keyRect: SVGRectElement): void {
         // to-do : integrate with jazzHighlight...
         const id = parseInt(keyRect.getAttribute('id'));
         const thisKeyObject = this.keyObjects.get(id);
@@ -355,12 +363,12 @@ export class Keyboard {
             return; // not on keyboard;
         }
         const storedStyle = thisKeyObject.keyStyle;
-        let fillColor = '#c0c000';
+        let fillColor = this.highlightedBlackKeyColor;
         if (thisKeyObject.keyClass === 'whitekey') {
-            fillColor = 'yellow';
+            fillColor = this.highlightedWhiteKeyColor;
         }
         keyRect.setAttribute('style', 'fill:' + fillColor + ';stroke:black');
-        miditools.loadSoundfont('acoustic_grand_piano', i => {
+        miditools.loadSoundfont(this.instrumentName, i => {
             MIDI.noteOn(i.midiChannel, id, 100, 0);
             MIDI.noteOff(i.midiChannel, id, 500);
         });
@@ -430,7 +438,7 @@ export class Keyboard {
 
             if (
                 (currentIndex === 0
-                    || currentIndex === 1
+                    || currentIndex === 1  // not 2
                     || currentIndex === 3
                     || currentIndex === 4
                     || currentIndex === 5)
@@ -443,8 +451,7 @@ export class Keyboard {
                 bk.parent = this;
 
                 bk.scaleFactor = this.scaleFactor;
-                bk.width
-                    = this._defaultBlackKeyWidth
+                bk.width = this._defaultBlackKeyWidth
                     * this.whiteKeyWidth
                     / this._defaultWhiteKeyWidth;
                 bk.callbacks.click = function blackKeyClicksCallback() {
@@ -560,11 +567,11 @@ export class Keyboard {
     appendHideableKeyboard(where: HTMLElement, keyboardSVG: SVGSVGElement|HTMLElement): HTMLElement {
         const container = to_el('<div class="keyboardHideableContainer"></div>');
         const bInside = to_el(`
-            <div class='keyboardToggleInside'
+            <div class="keyboardToggleInside"
                  style="display: inline-block; padding-top: 40px; font-size: 40px;"
             >↥</div>`);
         const b = to_el(`
-            <div class='keyboardToggleOutside'
+            <div class="keyboardToggleOutside"
                  style="display: inline-block; vertical-align: top; background: white"
             ></div>`);
         b.append(bInside);
@@ -575,7 +582,7 @@ export class Keyboard {
         b.setAttribute('data-state', 'down');
         b.addEventListener('click', e => triggerToggleShow(e));
         const explain = to_el(
-            `<div class='keyboardExplain'
+            `<div class="keyboardExplain"
                   style="display: none; background-color: white; padding: 10px 10px 10px 10px; font-size: 12pt;"
              >Show keyboard</div>`
         );
@@ -590,20 +597,30 @@ export class Keyboard {
 // noinspection JSUnusedLocalSymbols
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.
- *
- * @param {Event} [e]
  */
-export const triggerToggleShow = e => {
-    const t = e.currentTarget;
+export const triggerToggleShow = (e: Event): void => {
+    const t = e.currentTarget as HTMLElement;
     const state = t.getAttribute('data-state');
     const parent = t.parentElement;
-    let k = parent.querySelector('.keyboardScrollableWrapper');
+    if (!parent) {
+        throw new Error('Clicked toggle has no parent (ShadowDOM?)');
+    }
+
+    let k = parent.querySelector<HTMLElement>('.keyboardScrollableWrapper');
     if (!k) {
         // not scrollable
-        k = parent.querySelector('.keyboardSVG');
+        k = parent.querySelector<HTMLElement>('.keyboardSVG');
+        if (!k) {
+            throw new Error('Cannot find parent element to put hide/show controls');
+        }
     }
-    const bInside = t.querySelector('.keyboardToggleInside');
-    const explain = parent.querySelector('.keyboardExplain');
+    const bInside = t.querySelector<HTMLElement>('.keyboardToggleInside');
+    const explain = parent.querySelector<HTMLElement>('.keyboardExplain');
+
+    if (!bInside || !explain) {
+        throw new Error('Cannot find toggle button or explanation');
+    }
+
     if (state === 'up') {
         bInside.innerText = '↥';
         bInside.style.paddingTop = '40px';

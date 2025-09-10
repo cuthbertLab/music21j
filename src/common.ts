@@ -248,6 +248,8 @@ export function toRoman(num: number): string {
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
  * tag defaults to svg, but can be 'rect', 'circle', 'text', etc.
  * Attributes is an object to pass to the tag.
+ *
+ * If tag is not specified creates <svg> (SVGSVGElement)
  */
 export function makeSVGright(tag: string = 'svg', attrs: Record<string, any> = {}): SVGElement {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
@@ -470,7 +472,7 @@ function is_power_of_2_denominator(num: number): boolean {
  * Returns either the original number (never a fraction, since js does not have them)
  * or the slightly rounded, correct representation.
  *
- * Uses a shared memory buffer to give the conversion.
+ * Uses a shared memory buffer to give the conversion (in is_power_of_2_denominator)
  */
 export function opFrac(num: number): number {
     if (num === Math.floor(num)) {
@@ -503,11 +505,11 @@ export function opFrac(num: number): number {
  * Recommended in:
  * https://stackoverflow.com/questions/494143/
  */
-export function to_el(input_string: string): HTMLElement {
+export function to_el<T extends Element=HTMLElement>(input_string: string): T {
     const template = document.createElement('template');
     input_string = input_string.trim(); // Never return a text node of whitespace as the result
     template.innerHTML = input_string;
-    return template.content.firstElementChild as HTMLElement;
+    return template.content.firstElementChild as T;
 }
 
 /**
