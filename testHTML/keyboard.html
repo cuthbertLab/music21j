@@ -9,6 +9,21 @@
 <body>
     <h1>A keyboard that can be clicked on.</h1>
     <div id="keyboardDiv"></div>
+    <div id="instrumentControls">
+        <label>
+            <input type="radio" name="instrument" value="acoustic_grand_piano" checked>
+            Piano
+        </label>
+        <label>
+            <input type="radio" name="instrument" value="harpsichord">
+            Harpsichord
+        </label>
+        <label>
+            <input type="radio" name="instrument" value="acoustic_guitar_nylon">
+            Guitar (Nylon)
+        </label>
+    </div>
+
     <script>
         const kd = document.getElementById('keyboardDiv');
 
@@ -19,6 +34,20 @@
 
         k.appendKeyboard(kd); // 37-key keyboard
         // k.markNoteNames(true);
+
+        // store globally for easy access
+        window.k = k;
+
+        // instrument switching
+        const radios = document.querySelectorAll('input[name="instrument"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.checked) {
+                    k.instrumentName = radio.value;
+                }
+            });
+        });
+
     </script>
 </body>
 </html>

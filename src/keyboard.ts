@@ -260,8 +260,9 @@ export class BlackKey extends Key {
  */
 export class Keyboard {
     whiteKeyWidth: number = 23;
-    _defaultWhiteKeyWidth: number = 23;
-    _defaultBlackKeyWidth: number = 13;
+    // these are used to understand how much we have scaled
+    protected _defaultWhiteKeyWidth: number = 23;
+    protected _defaultBlackKeyWidth: number = 13;
     scaleFactor: number = 1.0;
     height = 120; // does nothing right now...
     keyObjects = new Map();
@@ -450,8 +451,7 @@ export class Keyboard {
                 bk.parent = this;
 
                 bk.scaleFactor = this.scaleFactor;
-                bk.width
-                    = this._defaultBlackKeyWidth
+                bk.width = this._defaultBlackKeyWidth
                     * this.whiteKeyWidth
                     / this._defaultWhiteKeyWidth;
                 bk.callbacks.click = function blackKeyClicksCallback() {
