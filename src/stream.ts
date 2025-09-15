@@ -30,6 +30,7 @@ import * as common from './common';
 import * as derivation from './derivation';
 import { Duration } from './duration';
 import * as instrument from './instrument';
+import * as metadata from './metadata';
 import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
@@ -554,6 +555,24 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             return firstElements.get(0);
         } else {
             return undefined;
+        }
+    }
+
+    get metadata(): metadata.Metadata {
+        let out_metadata = this._firstElementContext('metadata') as metadata.Metadata;
+        if (out_metadata === undefined) {
+            out_metadata = new metadata.Metadata();
+            this.insert(0.0, out_metadata);
+        }
+        return out_metadata;
+    }
+
+    set metadata(newMetadata: metadata.Metadata) {
+        const oldMetadata = this._firstElementContext('metadata') as metadata.Metadata;
+        if (oldMetadata !== undefined) {
+            this.replace(oldMetadata, newMetadata);
+        } else {
+            this.insert(0.0, newMetadata);
         }
     }
 

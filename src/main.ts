@@ -62,6 +62,7 @@ import * as interval from './interval';
 import * as key from './key';
 import * as keyboard from './keyboard';
 import * as layout from './layout';
+import * as metadata from './metadata';
 import * as meter from './meter';
 import * as miditools from './miditools';
 import * as musicxml from './musicxml';
@@ -85,6 +86,7 @@ import * as webmidi from './webmidi';
 
 import { debug } from './debug';
 
+export const VERSION = '0.17.14';
 
 export {
     MIDI,
@@ -120,6 +122,7 @@ export {
     key,
     keyboard,
     layout,
+    metadata,
     meter,
     miditools,
     musicxml,
@@ -141,7 +144,5 @@ export {
     voiceLeading,
     webmidi,
 };
-
-export const VERSION = '0.17.12';
 
 parseLoader.runConfiguration();
