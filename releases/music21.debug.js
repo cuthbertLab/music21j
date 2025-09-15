@@ -1,5 +1,5 @@
 /**
- * music21j version 0.17.13 built on 2025-09-10.
+ * music21j version 0.17.14 built on 2025-09-15.
  * Copyright (c) 2013-2025 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -34857,7 +34857,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  * does not load the other modules.
  *
- * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert, BSD License
  * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * module for Music21Objects
@@ -45140,7 +45140,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   clef: () => (/* reexport module object */ _clef__WEBPACK_IMPORTED_MODULE_14__),
 /* harmony export */   common: () => (/* reexport module object */ _common__WEBPACK_IMPORTED_MODULE_6__),
 /* harmony export */   converter: () => (/* reexport module object */ _converter__WEBPACK_IMPORTED_MODULE_15__),
-/* harmony export */   debug: () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_50__.debug),
+/* harmony export */   debug: () => (/* reexport safe */ _debug__WEBPACK_IMPORTED_MODULE_51__.debug),
 /* harmony export */   defaults: () => (/* reexport safe */ _defaults__WEBPACK_IMPORTED_MODULE_16__["default"]),
 /* harmony export */   derivation: () => (/* reexport module object */ _derivation__WEBPACK_IMPORTED_MODULE_17__),
 /* harmony export */   duration: () => (/* reexport module object */ _duration__WEBPACK_IMPORTED_MODULE_18__),
@@ -45156,27 +45156,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   key: () => (/* reexport module object */ _key__WEBPACK_IMPORTED_MODULE_27__),
 /* harmony export */   keyboard: () => (/* reexport module object */ _keyboard__WEBPACK_IMPORTED_MODULE_28__),
 /* harmony export */   layout: () => (/* reexport module object */ _layout__WEBPACK_IMPORTED_MODULE_29__),
-/* harmony export */   meter: () => (/* reexport module object */ _meter__WEBPACK_IMPORTED_MODULE_30__),
-/* harmony export */   miditools: () => (/* reexport module object */ _miditools__WEBPACK_IMPORTED_MODULE_31__),
-/* harmony export */   musicxml: () => (/* reexport module object */ _musicxml__WEBPACK_IMPORTED_MODULE_32__),
-/* harmony export */   note: () => (/* reexport module object */ _note__WEBPACK_IMPORTED_MODULE_33__),
-/* harmony export */   parseLoader: () => (/* reexport module object */ _parseLoader__WEBPACK_IMPORTED_MODULE_34__),
-/* harmony export */   pitch: () => (/* reexport module object */ _pitch__WEBPACK_IMPORTED_MODULE_35__),
+/* harmony export */   metadata: () => (/* reexport module object */ _metadata__WEBPACK_IMPORTED_MODULE_30__),
+/* harmony export */   meter: () => (/* reexport module object */ _meter__WEBPACK_IMPORTED_MODULE_31__),
+/* harmony export */   miditools: () => (/* reexport module object */ _miditools__WEBPACK_IMPORTED_MODULE_32__),
+/* harmony export */   musicxml: () => (/* reexport module object */ _musicxml__WEBPACK_IMPORTED_MODULE_33__),
+/* harmony export */   note: () => (/* reexport module object */ _note__WEBPACK_IMPORTED_MODULE_34__),
+/* harmony export */   parseLoader: () => (/* reexport module object */ _parseLoader__WEBPACK_IMPORTED_MODULE_35__),
+/* harmony export */   pitch: () => (/* reexport module object */ _pitch__WEBPACK_IMPORTED_MODULE_36__),
 /* harmony export */   prebase: () => (/* reexport module object */ _prebase__WEBPACK_IMPORTED_MODULE_4__),
-/* harmony export */   renderOptions: () => (/* reexport module object */ _renderOptions__WEBPACK_IMPORTED_MODULE_36__),
-/* harmony export */   roman: () => (/* reexport module object */ _roman__WEBPACK_IMPORTED_MODULE_37__),
-/* harmony export */   scale: () => (/* reexport module object */ _scale__WEBPACK_IMPORTED_MODULE_38__),
-/* harmony export */   sites: () => (/* reexport module object */ _sites__WEBPACK_IMPORTED_MODULE_39__),
-/* harmony export */   stream: () => (/* reexport module object */ _stream__WEBPACK_IMPORTED_MODULE_40__),
-/* harmony export */   style: () => (/* reexport module object */ _style__WEBPACK_IMPORTED_MODULE_41__),
-/* harmony export */   svgs: () => (/* reexport module object */ _svgs__WEBPACK_IMPORTED_MODULE_42__),
-/* harmony export */   tempo: () => (/* reexport module object */ _tempo__WEBPACK_IMPORTED_MODULE_43__),
-/* harmony export */   tie: () => (/* reexport module object */ _tie__WEBPACK_IMPORTED_MODULE_44__),
-/* harmony export */   tinyNotation: () => (/* reexport module object */ _tinyNotation__WEBPACK_IMPORTED_MODULE_45__),
-/* harmony export */   vfShims: () => (/* reexport module object */ _vfShims__WEBPACK_IMPORTED_MODULE_46__),
-/* harmony export */   vfShow: () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_47__),
-/* harmony export */   voiceLeading: () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_48__),
-/* harmony export */   webmidi: () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_49__)
+/* harmony export */   renderOptions: () => (/* reexport module object */ _renderOptions__WEBPACK_IMPORTED_MODULE_37__),
+/* harmony export */   roman: () => (/* reexport module object */ _roman__WEBPACK_IMPORTED_MODULE_38__),
+/* harmony export */   scale: () => (/* reexport module object */ _scale__WEBPACK_IMPORTED_MODULE_39__),
+/* harmony export */   sites: () => (/* reexport module object */ _sites__WEBPACK_IMPORTED_MODULE_40__),
+/* harmony export */   stream: () => (/* reexport module object */ _stream__WEBPACK_IMPORTED_MODULE_41__),
+/* harmony export */   style: () => (/* reexport module object */ _style__WEBPACK_IMPORTED_MODULE_42__),
+/* harmony export */   svgs: () => (/* reexport module object */ _svgs__WEBPACK_IMPORTED_MODULE_43__),
+/* harmony export */   tempo: () => (/* reexport module object */ _tempo__WEBPACK_IMPORTED_MODULE_44__),
+/* harmony export */   tie: () => (/* reexport module object */ _tie__WEBPACK_IMPORTED_MODULE_45__),
+/* harmony export */   tinyNotation: () => (/* reexport module object */ _tinyNotation__WEBPACK_IMPORTED_MODULE_46__),
+/* harmony export */   vfShims: () => (/* reexport module object */ _vfShims__WEBPACK_IMPORTED_MODULE_47__),
+/* harmony export */   vfShow: () => (/* reexport module object */ _vfShow__WEBPACK_IMPORTED_MODULE_48__),
+/* harmony export */   voiceLeading: () => (/* reexport module object */ _voiceLeading__WEBPACK_IMPORTED_MODULE_49__),
+/* harmony export */   webmidi: () => (/* reexport module object */ _webmidi__WEBPACK_IMPORTED_MODULE_50__)
 /* harmony export */ });
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_0__);
@@ -45210,27 +45211,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./key */ "./src/key.ts");
 /* harmony import */ var _keyboard__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./keyboard */ "./src/keyboard.ts");
 /* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./layout */ "./src/layout.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
-/* harmony import */ var _musicxml__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./musicxml */ "./src/musicxml.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _parseLoader__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./parseLoader */ "./src/parseLoader.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
-/* harmony import */ var _roman__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./roman */ "./src/roman.ts");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
-/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
-/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./style */ "./src/style.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
-/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
-/* harmony import */ var _vfShims__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./vfShims */ "./src/vfShims.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
-/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
+/* harmony import */ var _metadata__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./metadata */ "./src/metadata.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./miditools */ "./src/miditools.ts");
+/* harmony import */ var _musicxml__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./musicxml */ "./src/musicxml.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _parseLoader__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./parseLoader */ "./src/parseLoader.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
+/* harmony import */ var _roman__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./roman */ "./src/roman.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./scale */ "./src/scale.ts");
+/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./sites */ "./src/sites.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./stream */ "./src/stream.ts");
+/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./style */ "./src/style.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./tie */ "./src/tie.ts");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./tinyNotation */ "./src/tinyNotation.ts");
+/* harmony import */ var _vfShims__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./vfShims */ "./src/vfShims.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _voiceLeading__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./voiceLeading */ "./src/voiceLeading.ts");
+/* harmony import */ var _webmidi__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./webmidi */ "./src/webmidi.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./debug */ "./src/debug.ts");
 /**!
  * **music21j**: Javascript reimplementation of Core music21 features.
  *
@@ -45313,8 +45315,50 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERSION = '0.17.12';
-_parseLoader__WEBPACK_IMPORTED_MODULE_34__.runConfiguration();
+const VERSION = '0.17.14';
+
+_parseLoader__WEBPACK_IMPORTED_MODULE_35__.runConfiguration();
+
+/***/ }),
+
+/***/ "./src/metadata.ts":
+/*!*************************!*\
+  !*** ./src/metadata.ts ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Metadata: () => (/* binding */ Metadata),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base */ "./src/base.ts");
+/**
+ * music21j -- Javascript reimplementation of Core music21p features.
+ * music21/metadata -- Very basic metadata object
+ *
+ * Copyright (c) 2013-25, Michael Scott Asato Cuthbert, BSD License
+ * Based on music21 (=music21p), Copyright (c) 2006-25, Michael Scott Asato Cuthbert
+ */
+
+class Metadata extends _base__WEBPACK_IMPORTED_MODULE_0__.Music21Object {
+  constructor(vars = {}) {
+    super(vars);
+    this.title = undefined;
+    this.composer = undefined;
+    if ('title' in vars) {
+      this.title = vars.title;
+    }
+    if ('composer' in vars) {
+      this.composer = vars.composer;
+    }
+  }
+  static get className() {
+    return 'music21.metadata.Metadata';
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Metadata);
 
 /***/ }),
 
@@ -51691,9 +51735,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Stream: () => (/* binding */ Stream),
 /* harmony export */   StreamException: () => (/* binding */ StreamException),
 /* harmony export */   Voice: () => (/* binding */ Voice),
-/* harmony export */   filters: () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_18__),
-/* harmony export */   iterator: () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_19__),
-/* harmony export */   makeNotation: () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__)
+/* harmony export */   filters: () => (/* reexport module object */ _stream_filters__WEBPACK_IMPORTED_MODULE_19__),
+/* harmony export */   iterator: () => (/* reexport module object */ _stream_iterator__WEBPACK_IMPORTED_MODULE_20__),
+/* harmony export */   makeNotation: () => (/* reexport module object */ _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__)
 /* harmony export */ });
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_0__);
@@ -51706,18 +51750,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./derivation */ "./src/derivation.ts");
 /* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/duration.ts");
 /* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./instrument */ "./src/instrument.ts");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/note.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
-/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
-/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
-/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
-/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
+/* harmony import */ var _metadata__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./metadata */ "./src/metadata.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./meter */ "./src/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./note */ "./src/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./renderOptions */ "./src/renderOptions.ts");
+/* harmony import */ var _svgs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./svgs */ "./src/svgs.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./tempo */ "./src/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./vfShow */ "./src/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./stream/filters */ "./src/stream/filters.ts");
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./stream/iterator */ "./src/stream/iterator.ts");
+/* harmony import */ var _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./stream/makeNotation */ "./src/stream/makeNotation.ts");
+/* harmony import */ var _defaults__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./defaults */ "./src/defaults.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/stream -- Streams -- objects that hold other Music21Objects
@@ -51763,9 +51808,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_1__.Music21Exception {}
 function _exportMusicXMLAsText(s) {
-  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_17__.GeneralObjectExporter(s);
+  const gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_18__.GeneralObjectExporter(s);
   return gox.parse();
 }
 /**
@@ -51847,7 +51893,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     this._timeSignature = undefined; // a music21.meter.TimeSignature object
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_13__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_14__.RenderOptions();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
@@ -51987,7 +52033,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       // namely, do not set inner streams activeSites to be
       // in things that they won't have later.
       newSt.clear();
-      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_19__.RecursiveIterator(this, {
+      const ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_20__.RecursiveIterator(this, {
         restoreActiveSites: false,
         includeSelf: false,
         ignoreSorting: true
@@ -52013,10 +52059,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     return newSt;
   }
   get notes() {
-    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_11__.NotRest);
+    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_12__.NotRest);
   }
   get notesAndRests() {
-    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_11__.GeneralNote);
+    return this.getElementsByClass(_note__WEBPACK_IMPORTED_MODULE_12__.GeneralNote);
   }
   get tempo() {
     if (this._tempo === undefined && this.activeSite !== undefined) {
@@ -52040,7 +52086,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
     const highestTime = thisFlat.highestTime;
     const lowestOffset = 0;
-    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_15__.MetronomeMark({
+    const mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_16__.MetronomeMark({
       number: 120
     });
     if (!metronomeMarks.length) {
@@ -52159,6 +52205,22 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       return undefined;
     }
   }
+  get metadata() {
+    let out_metadata = this._firstElementContext('metadata');
+    if (out_metadata === undefined) {
+      out_metadata = new _metadata__WEBPACK_IMPORTED_MODULE_10__.Metadata();
+      this.insert(0.0, out_metadata);
+    }
+    return out_metadata;
+  }
+  set metadata(newMetadata) {
+    const oldMetadata = this._firstElementContext('metadata');
+    if (oldMetadata !== undefined) {
+      this.replace(oldMetadata, newMetadata);
+    } else {
+      this.insert(0.0, newMetadata);
+    }
+  }
   get clef() {
     return this.getSpecialContext('clef', false);
   }
@@ -52188,7 +52250,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
   }
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_10__.TimeSignature(newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_11__.TimeSignature(newTimeSignature);
     }
     const oldTS = this._firstElementContext('timeSignature');
     if (oldTS !== undefined) {
@@ -52357,7 +52419,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     skipSelf = true
   } = {}) {
     const includeSelf = !skipSelf;
-    let ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_19__.RecursiveIterator(this, {
+    let ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_20__.RecursiveIterator(this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
@@ -52948,7 +53010,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
         return;
       }
       const restQL = restInfo.endTime - restInfo.offset;
-      const restObj = new _note__WEBPACK_IMPORTED_MODULE_11__.Rest();
+      const restObj = new _note__WEBPACK_IMPORTED_MODULE_12__.Rest();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
@@ -53025,7 +53087,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       out = this.clone(true);
     }
     // already made a copy
-    _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__.setStemDirectionForUnspecified(out);
+    _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__.setStemDirectionForUnspecified(out);
     out.makeAccidentals({
       inPlace: true,
       overrideStatus
@@ -53043,7 +53105,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     setStemDirections = true,
     failOnNoTimeSignature = false
   } = {}) {
-    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_20__.makeBeams(this, {
+    return _stream_makeNotation__WEBPACK_IMPORTED_MODULE_21__.makeBeams(this, {
       inPlace,
       setStemDirections,
       failOnNoTimeSignature
@@ -53108,7 +53170,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     return offsetMap;
   }
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_19__.StreamIterator(this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_20__.StreamIterator(this);
   }
   getElementsByClass(classList) {
     return this.iter.getElementsByClass(classList);
@@ -53364,7 +53426,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    */
   resetRenderOptions(recursive = false, preserveEvents = false) {
     const oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_13__.RenderOptions();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_14__.RenderOptions();
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
     }
@@ -53393,10 +53455,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    */
   renderVexflow(where) {
     const canvasOrSVG = _common__WEBPACK_IMPORTED_MODULE_6__.coerceHTMLElement(where);
-    const DOMContains = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation).contains(canvasOrSVG);
+    const DOMContains = document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation).contains(canvasOrSVG);
     if (!DOMContains) {
       // temporarily add to DOM so Firefox can measure it...
-      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation).appendChild(canvasOrSVG);
+      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation).appendChild(canvasOrSVG);
     }
     const tagName = canvasOrSVG.tagName.toLowerCase();
     if (this.autoBeam === true) {
@@ -53410,7 +53472,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
         }
       }
     }
-    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_16__.Renderer(this, canvasOrSVG);
+    const vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_17__.Renderer(this, canvasOrSVG);
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
     } else if (tagName === 'svg') {
@@ -53425,7 +53487,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
       // bug in gruntTests -- not sure the other one.  Spent another 90 minutes
       // diagnosing.  Need to stop for now.
       // remove the adding to DOM so that Firefox could measure it...
-      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation).removeChild(canvasOrSVG);
+      document.querySelector(_defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation).removeChild(canvasOrSVG);
     }
     return vfr;
   }
@@ -53915,7 +53977,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    */
   appendNewDOM(where = '', width = undefined, height = undefined, elementType = 'svg') {
     if (!where) {
-      where = _defaults__WEBPACK_IMPORTED_MODULE_21__["default"].appendLocation;
+      where = _defaults__WEBPACK_IMPORTED_MODULE_22__["default"].appendLocation;
     }
     if (typeof where === 'string') {
       where = document.querySelector(where);
@@ -54191,7 +54253,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
    */
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     const n = foundNote;
-    const p = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Pitch('C');
+    const p = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Pitch('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -54275,9 +54337,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
           return;
         }
       }
-      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_11__.Note) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_12__.Note) {
         const n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__.Accidental(newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__.Accidental(newAlter);
         /* console.log(n.pitch.name); */
         const newSvg = this.redrawDOM(useSvg);
         if (this.changedCallbackFunction !== undefined) {
@@ -54290,7 +54352,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_3__.Music21Object {
     };
     const buttonDiv = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<div class="accidentalToolbar scoreToolbar">');
     for (let i = minAccidental; i <= maxAccidental; i++) {
-      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_14__.svg_accidentals.get(i).cloneNode(true);
+      const svg_acc = _svgs__WEBPACK_IMPORTED_MODULE_15__.svg_accidentals.get(i).cloneNode(true);
       const button = (0,_common__WEBPACK_IMPORTED_MODULE_6__.to_el)('<button style="width: 40px; height: 40px;"></button>');
       button.addEventListener('click', e => addAccidental(i, e));
       button.appendChild(svg_acc);

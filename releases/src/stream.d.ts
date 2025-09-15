@@ -4,6 +4,7 @@ import * as base from './base';
 import * as clef from './clef';
 import { Duration } from './duration';
 import * as instrument from './instrument';
+import * as metadata from './metadata';
 import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
@@ -167,6 +168,8 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * @private
      */
     _firstElementContext(attr: string): base.Music21Object;
+    get metadata(): metadata.Metadata;
+    set metadata(newMetadata: metadata.Metadata);
     get clef(): clef.Clef;
     set clef(newClef: clef.Clef);
     get keySignature(): KeySignature;
