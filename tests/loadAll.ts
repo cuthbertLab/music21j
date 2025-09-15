@@ -13,6 +13,7 @@ import figuredBass from './moduleTests/figuredBass';
 import interval from './moduleTests/interval';
 import iterator from './moduleTests/stream/iterator';
 import key from './moduleTests/key';
+import metadata  from './moduleTests/metadata';
 import meter from './moduleTests/meter';
 import note from './moduleTests/note';
 import pitch from './moduleTests/pitch';
@@ -43,6 +44,7 @@ const allTests = {
     interval,
     iterator,
     key,
+    metadata,
     meter,
     note,
     pitch,
