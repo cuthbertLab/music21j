@@ -299,9 +299,9 @@ export class MetronomeMark extends base.Music21Object {
     static get className() { return 'music21.tempo.MetronomeMark'; }
 
     protected _number: number;
-    numberImplicit: boolean;
+    numberImplicit: boolean = true;
     protected _tempoText: TempoText;
-    textImplicit: boolean;
+    textImplicit: boolean = false;
     protected _referent: duration.Duration;
     parentheses: boolean = false;
 
@@ -318,8 +318,6 @@ export class MetronomeMark extends base.Music21Object {
             this.numberImplicit = false;
         }
 
-        this._tempoText = undefined;
-        this.textImplicit = undefined;
         this.text = text;
 
         this._referent = undefined;
@@ -359,6 +357,7 @@ export class MetronomeMark extends base.Music21Object {
     set text(value: undefined|string|TempoText) {
         if (value === undefined) {
             this._tempoText = undefined;
+            this.textImplicit = true;
         } else if (value instanceof TempoText) {
             this._tempoText = value;
             this.textImplicit = false;
