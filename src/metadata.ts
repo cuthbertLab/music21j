@@ -11,6 +11,7 @@ import { Music21Object } from './base';
 export class Metadata extends Music21Object {
     title: string|undefined = undefined;
     composer: string|undefined = undefined;
+    override classSortOrder = -30;
 
     constructor(vars: any = {}) {
         super(vars);
