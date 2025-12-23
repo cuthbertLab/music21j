@@ -6,26 +6,26 @@ Copyright (c) 2013-25, Michael Scott Asato Cuthbert, some rights reserved (BSD).
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
-interfaces. Some things music21j offers are:
-
-  - The ability to visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
-  - Connections (via Web Midi or [JazzSoft] plugin) to MIDI devices.
-  - Music theory and analysis modules at the level of music21 ca. 2014
-  - A repository of modules such as metronomes, keyboards, and automatic transcribers.
+interfaces. Some things music21j can do include:
+	•	Visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
+	•	Connect scores to MIDI devises (via Web Midi or [JazzSoft] plugin)
+	•	Analyze and perform Music theory at a lower level than Python music21
+	•	Provide a repository of modules such as metronomes, keyboards, and automatic transcribers.
 
 Though it does not have all the power of [Music21 Python], music21j can help with
 a number of research problems in music history and theory. The introduction to the
-Python package will say more about it (it's better documented). The "namespaces"
+Python package will say more about it (it’s better documented). The “namespaces”
 tab above will give introductions to some features of music21j. At this
-point we're focusing on documenting usage; developer docs will come
+point we’re focusing on documenting usage; developer docs will come
 later.
 
-Music21j requires your users to have a relatively recent web browser -- the project
+Music21j requires your users to have a relatively recent web browser – the project
 targets browsers no more than 30 months old.
-Safari is the only major desktop browser for which there is no out of the box 
+Safari is the only major desktop browser for which there is no out of the box
 support for MIDI devices.
 
 ## Documentation
+
 This README appears in both the GitHub home page and the documentation
 home page; currently building docs is broken
 
@@ -34,33 +34,31 @@ menu above), or start with
 a specific one such as {@link music21.note} or {@link music21.stream}
 or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}.
 
-(Ignore "Modules" they're not useful and duplicate the namespace pages).
+(Ignore “Modules” they’re not useful and duplicate the namespace pages).
 
 ## Example
+
 Install by downloading a copy of the music21 code to your own webserver.
 
-```sh
 % npm install music21j
-```
 
-If this line (`npm install`) doesn't work, download the
+If this line (`npm install`) doesn’t work, download the
 latest version of `node.js` from https://nodejs.org/en/download/
-  
+
 A guide to installing music21j on Windows would be appreciated.
 
 The files in music21j are best viewed by running your own
-webserver (rather than using `file:///...` links). We've
+webserver (rather than using `file:///...` links). We’ve
 included a small script to start you up:
 
-```sh
 $ cd ~/git/music21j
-$ grunt webpack
+$ npm install
+$ npm run build
 $ python start_python_server.py
-```
 
 Then navigate to http://localhost:8000/testHTML/ for some demos.
 
-To use music21j in your own page, place in a html page like this (this assumes that you're
+To use music21j in your own page, place in a html page like this (this assumes that you’re
 using the python server above).
 
 ```html
@@ -83,9 +81,10 @@ using the python server above).
 
 or use it in your own Javascript/Typescript project:
 
-```sh
+```
 $ npm install --save music21j
 ```
+
 ```javascript
 import * as music21 from 'music21j';
 
@@ -94,10 +93,11 @@ const n = new music21.note.Note('F#');
 ```
 
 ### Embedding, etc.
+
 Music21j was originally intended for self-hosting, so embedding is not
 yet as simple as it should be.
 
-To load soundfonts from other locations (like in a CDN), 
+To load soundfonts from other locations (like in a CDN),
 (1) set a global `m21conf` variable to disable loading soundfonts,
 (2) load the music21j script, and (3) set the new soundfont location,
 and (4) load the soundfont.
@@ -124,13 +124,12 @@ testHTML directory as `sfElsewhereCDN.html`.
 </body>
 ```
 
-
-
 ## Version
-0.17 beta
 
+0.20 beta
 
 ## License
+
 Music21j is released under the BSD 3-Clause License. Essentially you
 can do with it what you want so long as you leave in my copyright statements
 and do not represent that I endorse your product.
@@ -159,12 +158,35 @@ the Seaver Institute and the National Endowment for the Humanities.  Earlier ver
 [jsdoc]:http://usejsdoc.org
 
 
-# Dev Notes
-Build and watch with
+## Development
+
+Since v0.20, **music21j** uses **Vite** to produce the browser bundle. The legacy
+Grunt + Webpack build pipeline has been retired for builds. Test migration is
+ongoing.
+
+## Build
+
+Run vite with:
 
 ```sh
-$ grunt
+$ npm run build
 ```
+
+This produces:
+
+- `build/music21.debug.js` (UMD bundle, global `music21`)
+- `build/music21.debug.js.map`
+
+### Watch / development mode
+
+To rebuild automatically on changes and serve files locally:
+
+```sh
+$ npm run dev
+```
+
+This starts Vite’s development server with fast rebuilds and live reload.
+
 
 test with
 
@@ -182,59 +204,52 @@ from origin 'null' has been blocked by CORS policy
 
 We hope to fix it later, but for now, we're not testing audio output.
 
+(HOW TO WATCH?)
 
-for running tests one time without watch, you can use:
 
-```sh
-$ grunt test_no_watch
-```
 
 ## Publishing a new version
+
 You'll need to be part of the npm dev team.
 
-Two steps 
-
-1. Update the version number in package.json, manually in main.ts, 
+1. Update the version number in `package.json`, manually in `main.ts`, 
 and (if bigger than patch), here.  Then do all the steps again from the start.  :-)
 
-
-2. Run this which will update the version number in package-lock.json -- important!
+2. Update the version number in package-lock.json by running:
 
 ```sh
 $ npm install
 ````
 
-3. Build the latest version by running:
+3. Build the release artifacts:
 
 ```sh
-$ grunt
+$ npm run build
 ```
 
-4. Then run the copy script with:
+4. Publish:
 
 ```sh
 $ npm publish
 ```
 
-which will copy the current contents of `build` in `releases`
+This will copy the current contents of `build` in `releases`
 and publish on npm.
+
 
 ## Updating Dependencies
 
 Every once in a while run (in the music21j directory)
 
 ```sh
-$ node_modules/.bin/npm-check-updates
+$ npx npm-check-updates
 ```
 
 (You may have it installed as "ncu")
 
-and if it looks like something to update, run
+If it looks like there is something to update, run
 
 ```sh
-$ node_modules/.bin/npm-check-updates -u
+$ npx npm-check-updates -u
 $ npm install
 ```
-
-
-These docs may change someday in preparation for v.1.0 release.

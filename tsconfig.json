@@ -9,6 +9,8 @@
         "declaration": true,
         "declarationMap": true,
         "declarationDir": "build",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
         "target": "es6"
     },
     "include": [
