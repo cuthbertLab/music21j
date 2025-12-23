@@ -4,6 +4,7 @@ import * as base from './base';
 import * as clef from './clef';
 import { Duration } from './duration';
 import * as instrument from './instrument';
+import * as metadata from './metadata';
 import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
@@ -59,8 +60,9 @@ interface MakeAccidentalsParams {
  *     to just get the parts (NON-recursive)
  * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more
- *     sophisticated later, but for now the whole stream has one tempo
+ * @property {number} tempo - tempo in QuarterLengths per minute -- this is a legacy behavior
+ *     and eventually only MetronomeMarks measured in Beats per minute should be used.
+ *     This property will always remain in QL per minute for backwards compatibility.
  * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
  * @property {int} [staffLines=5] - number of staff lines
@@ -166,6 +168,8 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * @private
      */
     _firstElementContext(attr: string): base.Music21Object;
+    get metadata(): metadata.Metadata;
+    set metadata(newMetadata: metadata.Metadata);
     get clef(): clef.Clef;
     set clef(newClef: clef.Clef);
     get keySignature(): KeySignature;
@@ -587,7 +591,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      *
      * `options` can be an object containing:
      * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
-     * - tempo: number (default, `this.tempo`)
+     * - tempo: number (default, `this.tempo`) -- should be in BPM but apparently in QL per minute!
      */
     playStream(options?: PlayStreamParams): this;
     /**
@@ -613,6 +617,8 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * if height is undefined  will use
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
+     *
+     * Estimated widths and heights are multiplied by this.renderOptions.scaleFactor.
      */
     createNewDOM(width?: number | string, height?: number | string, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**

@@ -20,7 +20,6 @@ import {
     SVGContext,
 } from 'vexflow';
 
-// eslint-disable-next-line
 function L(...args: any[]) {
     if (VFLyricAnnotation.DEBUG) {
         log('Vex.Flow.Annotation', args);

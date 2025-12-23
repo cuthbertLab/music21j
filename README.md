@@ -1,9 +1,8 @@
-Music21j
-=========
+# Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright (c) 2013-24, Michael Scott Asato Cuthbert, some rights reserved (BSD).
+Copyright (c) 2013-25, Michael Scott Asato Cuthbert, some rights reserved (BSD).
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
@@ -26,11 +25,9 @@ targets browsers no more than 30 months old.
 Safari is the only major desktop browser for which there is no out of the box 
 support for MIDI devices.
 
-Documentation
--------------
+## Documentation
 This README appears in both the GitHub home page and the documentation
-home page; to make the following links work, go to the documentation
-page at http://web.mit.edu/music21/music21j/doc/ .
+home page; currently building docs is broken
 
 Begin at the {@link music21} namespace (click the link or use the
 menu above), or start with
@@ -39,14 +36,12 @@ or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}.
 
 (Ignore "Modules" they're not useful and duplicate the namespace pages).
 
-Example
---------
+## Example
 Install by downloading a copy of the music21 code to your own webserver.
 
 ```sh
 % npm install music21j
 ```
-
 
 If this line (`npm install`) doesn't work, download the
 latest version of `node.js` from https://nodejs.org/en/download/
@@ -98,19 +93,49 @@ const n = new music21.note.Note('F#');
 // etc.
 ```
 
-Version
---------
-0.16 beta
+### Embedding, etc.
+Music21j was originally intended for self-hosting, so embedding is not
+yet as simple as it should be.
+
+To load soundfonts from other locations (like in a CDN), 
+(1) set a global `m21conf` variable to disable loading soundfonts,
+(2) load the music21j script, and (3) set the new soundfont location,
+and (4) load the soundfont.
+
+This fragment shows how to do it.  A working implementation is in the
+testHTML directory as `sfElsewhereCDN.html`.
+
+```html
+<body>
+<script>
+    window.m21conf = { loadSoundfont: false };
+</script>
+<script 
+    src="https://cdn.jsdelivr.net/npm/music21j/releases/music21.debug.min.js"
+></script>
+<script>
+    music21.common.urls.soundfontUrl = 'https://raw.githubusercontent.com/gleitz/midi-js-soundfonts/gh-pages/FluidR3_GM/';
+    music21.miditools.loadSoundfont('clarinet', i => {
+       const tn = music21.tinyNotation.TinyNotation('4/4 c4 d e f g1');
+       tn.instrument = i;
+       tn.playStream();
+    });
+</script>
+</body>
+```
 
 
-License
---------
+
+## Version
+0.17 beta
+
+
+## License
 Music21j is released under the BSD 3-Clause License. Essentially you
 can do with it what you want so long as you leave in my copyright statements
 and do not represent that I endorse your product.
 
-Thanks
------------
+## Thanks
 
 Thanks to the following packages (among others) for making music21j possible:
 
@@ -121,12 +146,11 @@ Thanks to the following packages (among others) for making music21j possible:
 * [jsdoc] - makes this documentation possible
 
 The Python version of music21 was supported by grants from
-the Seaver Institute and the National Endowment for the Humanities
-and supported by the Music and Theater Arts section of [MIT].
+the Seaver Institute and the National Endowment for the Humanities.  Earlier versions of music21 were supported by the Music and Theater Arts section of [MIT] (when Cuthbert was a professor there).
 
 
 [MIT]:http://web.mit.edu
-[music21 python]:http://web.mit.edu/music21/
+[music21 python]:https://www.music21.org/music21docs/
 [midicube]:https://github.com/mscuthbert/midicube
 [Vexflow]:http://www.vexflow.com
 [MIDI.js]:http://mudcu.be/midi-js/
@@ -135,8 +159,7 @@ and supported by the Music and Theater Arts section of [MIT].
 [jsdoc]:http://usejsdoc.org
 
 
-Dev Notes
-----------------
+# Dev Notes
 Build and watch with
 
 ```sh
@@ -166,32 +189,28 @@ for running tests one time without watch, you can use:
 $ grunt test_no_watch
 ```
 
-Publishing a new version
--------------------------
+## Publishing a new version
 You'll need to be part of the npm dev team.
 
-Two steps.  First make sure you have run:
+Two steps 
+
+1. Update the version number in package.json, manually in main.ts, 
+and (if bigger than patch), here.  Then do all the steps again from the start.  :-)
+
+
+2. Run this which will update the version number in package-lock.json -- important!
+
+```sh
+$ npm install
+````
+
+3. Build the latest version by running:
 
 ```sh
 $ grunt
 ```
 
-the latest build must have been made.
-
-```sh
-$ grunt publish
-```
-
-which will update the version number and tries to build the
-docs via `grunt jsdoc` (currently failing).
-
-The template is specified in jsdoc-template/jsdoc.conf.json
-
-For a non-backwards compatible release, edit the minor 
-version number manually here, in main.ts, and of course in
-package.json.
-
-Then run:
+4. Then run the copy script with:
 
 ```sh
 $ npm publish
@@ -200,11 +219,15 @@ $ npm publish
 which will copy the current contents of `build` in `releases`
 and publish on npm.
 
-Before publishing, every once in a while run (in the music21j directory)
+## Updating Dependencies
+
+Every once in a while run (in the music21j directory)
 
 ```sh
 $ node_modules/.bin/npm-check-updates
 ```
+
+(You may have it installed as "ncu")
 
 and if it looks like something to update, run
 
@@ -214,6 +237,4 @@ $ npm install
 ```
 
 
-These docs will be changing in preparation for v. 1.0 release.
-
-
+These docs may change someday in preparation for v.1.0 release.

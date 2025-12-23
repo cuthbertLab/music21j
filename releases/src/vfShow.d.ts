@@ -7,10 +7,7 @@
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
-/// <reference types="jquery" />
-/// <reference types="jquery" />
-import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
-import type { FontInfo as VFFontInfo } from 'vexflow/src/font';
+import { Beam as VFBeam, type FontInfo as VFFontInfo, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
 import * as duration from './duration';
 import * as note from './note';
 import * as stream from './stream';

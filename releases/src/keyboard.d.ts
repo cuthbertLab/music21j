@@ -1,5 +1,3 @@
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 import * as miditools from './miditools';
 import * as pitch from './pitch';
 /**
@@ -91,6 +89,9 @@ export declare class BlackKey extends Key {
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
  * @property {Boolean} showOctaves - default false
+ * @property {string} instrumentName - default "acoustic_grand_piano"
+ * @property {string} highlightedBlackKeyColor - what color does a black key turn when clicked
+ * @property {string} highlightedWhiteKeyColor - what color does a white key turn when clicked.
  * @property {string|number} startPitch - default "C3" (a pitch string or midi number)
  * @property {string|number} endPitch - default "C5" (a pitch string or midi number)
  * @property {Boolean} hideable - default false -- add a way to hide and show keyboard
@@ -98,8 +99,8 @@ export declare class BlackKey extends Key {
  */
 export declare class Keyboard {
     whiteKeyWidth: number;
-    _defaultWhiteKeyWidth: number;
-    _defaultBlackKeyWidth: number;
+    protected _defaultWhiteKeyWidth: number;
+    protected _defaultBlackKeyWidth: number;
     scaleFactor: number;
     height: number;
     keyObjects: Map<any, any>;
@@ -107,6 +108,9 @@ export declare class Keyboard {
     markC: boolean;
     showNames: boolean;
     showOctaves: boolean;
+    instrumentName: string;
+    highlightedBlackKeyColor: string;
+    highlightedWhiteKeyColor: string;
     startPitch: string | number | pitch.Pitch;
     endPitch: string | number | pitch.Pitch;
     _startDNN: number;
@@ -137,9 +141,9 @@ export declare class Keyboard {
      *
      * TODO(msc) - 2019-Dec -- separate into two calls, one for highlighting and one for playing.
      *
-     * @param {SVGElement} keyRect - the dom object with the keyboard.
+     * the dom object with the keyboard.
      */
-    clickHandler(keyRect: any): void;
+    clickHandler(keyRect: SVGRectElement): void;
     /**
      * Draws the SVG associated with this Keyboard
      */
@@ -173,10 +177,8 @@ export declare class Keyboard {
 }
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.
- *
- * @param {Event} [e]
  */
-export declare const triggerToggleShow: (e: any) => void;
+export declare const triggerToggleShow: (e: Event) => void;
 /**
  * highlight the keyboard stored in "this" appropriately
  *

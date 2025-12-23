@@ -30,6 +30,7 @@ import * as common from './common';
 import * as derivation from './derivation';
 import { Duration } from './duration';
 import * as instrument from './instrument';
+import * as metadata from './metadata';
 import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
@@ -38,7 +39,6 @@ import { svg_accidentals } from './svgs';
 import * as tempo from './tempo';
 import * as vfShow from './vfShow';
 
-// eslint-disable-next-line import/no-cycle
 import { GeneralObjectExporter } from './musicxml/m21ToXml';
 
 import * as filters from './stream/filters';
@@ -110,8 +110,9 @@ interface MakeAccidentalsParams {
  *     to just get the parts (NON-recursive)
  * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more
- *     sophisticated later, but for now the whole stream has one tempo
+ * @property {number} tempo - tempo in QuarterLengths per minute -- this is a legacy behavior
+ *     and eventually only MetronomeMarks measured in Beats per minute should be used.
+ *     This property will always remain in QL per minute for backwards compatibility.
  * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
  * @property {int} [staffLines=5] - number of staff lines
@@ -554,6 +555,24 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             return firstElements.get(0);
         } else {
             return undefined;
+        }
+    }
+
+    get metadata(): metadata.Metadata {
+        let out_metadata = this._firstElementContext('metadata') as metadata.Metadata;
+        if (out_metadata === undefined) {
+            out_metadata = new metadata.Metadata();
+            this.insert(0.0, out_metadata);
+        }
+        return out_metadata;
+    }
+
+    set metadata(newMetadata: metadata.Metadata) {
+        const oldMetadata = this._firstElementContext('metadata') as metadata.Metadata;
+        if (oldMetadata !== undefined) {
+            this.replace(oldMetadata, newMetadata);
+        } else {
+            this.insert(0.0, newMetadata);
         }
     }
 
@@ -2378,7 +2397,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      *
      * `options` can be an object containing:
      * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
-     * - tempo: number (default, `this.tempo`)
+     * - tempo: number (default, `this.tempo`) -- should be in BPM but apparently in QL per minute!
      */
     playStream(options: PlayStreamParams = {}): this {
         const params: PlayStreamParams = {
@@ -2405,7 +2424,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             if (currentNoteIndex <= lastNoteIndex && !this._stopPlaying) {
                 const el = elements[currentNoteIndex];
                 let nextNote: ElementType;
-                let playDuration: number;
+                let playDuration: number;  // this is in QLs not BPM
                 if (currentNoteIndex < lastNoteIndex) {
                     nextNote = elements[currentNoteIndex + 1];
                     playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el);
@@ -2474,6 +2493,8 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      * if height is undefined  will use
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
+     *
+     * Estimated widths and heights are multiplied by this.renderOptions.scaleFactor.
      */
     createNewDOM(
         width?: number|string,
@@ -2504,7 +2525,10 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             const computedWidth
                 = this.estimateStaffLength()
                 + this.renderOptions.staffPadding;
-            newCanvasOrDIV.setAttribute('width', computedWidth.toString());
+            newCanvasOrDIV.setAttribute(
+                'width',
+                (computedWidth * this.renderOptions.scaleFactor.x).toString()
+            );
         }
         if (height !== undefined) {
             newCanvasOrDIV.setAttribute('height', height.toString());
@@ -2780,10 +2804,15 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         // TODO: on music21p percussion clef defines no lowest line, but does in music21j...
         const lowestLine: number = (thisClef !== undefined) ? thisClef.lowestLine : 31;
 
+        // TODO: in Vexflow 5 (also fix numLines below)
+        // const lineSpacing: number = storedVexflowStave.options.spacingBetweenLinesPx;
+        // const linesAboveStaff: number = storedVexflowStave.options.spaceAboveStaffLn;
         const lineSpacing: number = storedVexflowStave.options.spacing_between_lines_px;
         const linesAboveStaff: number = storedVexflowStave.options.space_above_staff_ln;
-
+        
         const notesFromTop = yPxScaled * 2 / lineSpacing;
+
+        // TODO: in VexFlow 5...it's .options.numLines
         const notesAboveLowestLine
             = (storedVexflowStave.options.num_lines - 1 + linesAboveStaff) * 2
             - notesFromTop;

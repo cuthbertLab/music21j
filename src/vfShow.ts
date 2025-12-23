@@ -9,17 +9,23 @@
  */
 
 import {
-    BarlineType as VFBarlineType, Beam as VFBeam,
-    Formatter as VFFormatter, Fraction as VFFraction, Renderer as VFRenderer,
+    BarlineType as VFBarlineType,
+    Beam as VFBeam,
+    type FontInfo as VFFontInfo,
+    Formatter as VFFormatter,
+    Fraction as VFFraction,
+    Renderer as VFRenderer,
     type RendererBackends as VFRendererBackends,
-    Stave as VFStave, StaveConnector as VFStaveConnector,
+    Stave as VFStave,
+    StaveConnector as VFStaveConnector,
     type StaveConnectorType as VFStaveConnectorType,
     StaveNote as VFStaveNote,
-    StaveTie as VFStaveTie, SVGContext as VFSVGContext,
+    StaveTie as VFStaveTie,
+    SVGContext as VFSVGContext,
     TextNote as VFTextNote,
-    Tuplet as VFTuplet, Voice as VFVoice,
+    Tuplet as VFTuplet,
+    Voice as VFVoice,
 } from 'vexflow';
-import type {FontInfo as VFFontInfo} from 'vexflow/src/font';
 
 import { debug } from './debug';
 import * as clef from './clef';

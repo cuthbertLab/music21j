@@ -1,5 +1,8 @@
 // Gruntfile for music21j
-// Copyright Michael Scott Asato Cuthbert (cuthbert@mit.edu), BSD License
+// Copyright Michael Scott Asato Cuthbert (michael.asato.cuthbert@gmail.com), BSD License
+
+// this system is in the process of being phased out in 2025 but is not there yet.
+
 const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -66,7 +69,7 @@ module.exports = grunt => {
                 presets: babel_presets,
                 plugins: [
                     '@babel/plugin-transform-object-assign',
-                    '@babel/plugin-proposal-export-namespace-from',
+                    '@babel/plugin-transform-export-namespace-from',
                     '@babel/plugin-proposal-class-properties',
                 ],
             },
@@ -123,7 +126,6 @@ module.exports = grunt => {
                 new ESLintPlugin(
                     {
                         failOnError: false,
-                        emitWarning: true,
                         extensions: ['ts', 'js'],
                     }
                 ),
@@ -202,9 +204,6 @@ module.exports = grunt => {
         },
         eslint: {
             target: SOURCES.concat(TEST_SOURCES),
-            options: {
-                overrideConfigFile: '.eslintrc.json',
-            },
         },
         qunit: {
             files: ['tests/gruntTest.html'],
@@ -265,9 +264,4 @@ module.exports = grunt => {
     // grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
     grunt.registerTask('test', 'Watch qunit tests', ['webpack:test']);
     grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test_no_watch', 'qunit']);
-    grunt.registerTask('publish', 'Raise the version and be ready to publish', () => {
-        // vulnerable jsdoc versions only available.
-        // grunt.task.run('jsdoc');
-        grunt.task.run('bump');
-    });
 };
