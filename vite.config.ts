@@ -54,6 +54,5 @@ export default defineConfig({
         fs: {
             strict: true,
         },
-        open: '/testHTML/',
     },
 });

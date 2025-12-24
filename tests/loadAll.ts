@@ -59,10 +59,10 @@ const allTests = {
     vfShow,
     voiceLeading,
 };
-if (typeof window !== 'undefined') {
-    (window as any).allTests = allTests;
-    (window as any).music21 = music21;
-    (window as any).QUnit = QUnit;
+if (typeof globalThis !== 'undefined') {
+    (globalThis as any).allTests = allTests;
+    (globalThis as any).music21 = music21;
+    (globalThis as any).QUnit = QUnit;
 }
 // noinspection JSUnusedGlobalSymbols
 export default allTests;
