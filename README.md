@@ -162,7 +162,19 @@ section of [MIT] (when Cuthbert was a professor there).
 Since v0.20, **music21j** uses **Vite** to produce the browser bundle. The legacy
 Grunt + Webpack build pipeline has been retired for builds.
 
-To develop run
+### First-time setup
+
+The first time you run, you will need to install the development
+dependencies.  Change directories to here and run
+
+```sh
+$ npm install
+$ npx playwright install chromium
+```
+
+### Normal development
+
+To develop, run this npm command:
 
 ```sh
 $ npm run dev
