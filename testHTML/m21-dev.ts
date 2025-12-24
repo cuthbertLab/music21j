@@ -7,7 +7,7 @@ import * as music21 from '../src/main';
 declare global {
     interface Window {
         music21: typeof music21;
-        MIDI: typeof music21.MIDI;
+        MIDI: typeof music21.MIDI;  // to be removed -- unless importing midicube directly
     }
 }
 

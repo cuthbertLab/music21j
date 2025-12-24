@@ -17,8 +17,8 @@ Only for historical nostalgia...
 
 <script>
 function playNote(midiNum) {
-    MIDI.noteOn(0, midiNum, 100, 0);
-    MIDI.noteOff(0, midiNum, .35);
+    music21.MIDI.noteOn(0, midiNum, 100, 0);
+    music21.MIDI.noteOff(0, midiNum, .35);
 }
 
 let stopIntervalId;
@@ -30,7 +30,7 @@ playSeventy = function() {
     numPlays += 1;
     if (numPlays >= 30) {
        numPlays = 0;
-       MIDI.noteOff(0, playedNote + numPlays, .1);
+       music21.MIDI.noteOff(0, playedNote + numPlays, .1);
        clearInterval(stopIntervalId);
     }
 };

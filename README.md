@@ -266,3 +266,9 @@ If it looks like there is something to update, run
 $ npx npm-check-updates -u
 $ npm install
 ```
+
+## Changes
+
+Just documenting major changes at different versions, starting with 0.20
+
+* v0.20 -- build via vite.  MIDI is no longer exposed as top-level export.
