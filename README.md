@@ -8,8 +8,8 @@ Copyright (c) 2013-25, Michael Scott Asato Cuthbert, some rights reserved (BSD).
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
 interfaces. Some things music21j can do include:
 	•	Visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
-	•	Connect scores to MIDI devises (via Web Midi or [JazzSoft] plugin)
-	•	Analyze and perform Music theory at a lower level than Python music21
+	•	Connect scores to MIDI devices (via Web Midi or [JazzSoft] plugin)
+	•	Analyze and perform music theory at a lower level than Python music21
 	•	Provide a repository of modules such as metronomes, keyboards, and automatic transcribers.
 
 Though it does not have all the power of [Music21 Python], music21j can help with
@@ -38,7 +38,7 @@ or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}.
 
 ## Example
 
-Install by downloading a copy of the music21 code to your own webserver.
+Install by downloading a copy of the music21 code to your own web server.
 
 % npm install music21j
 
@@ -48,18 +48,16 @@ latest version of `node.js` from https://nodejs.org/en/download/
 A guide to installing music21j on Windows would be appreciated.
 
 The files in music21j are best viewed by running your own
-webserver (rather than using `file:///...` links). We’ve
-included a small script to start you up:
+webserver (rather than using `file:///...` links) using Vite
 
 $ cd ~/git/music21j
 $ npm install
-$ npm run build
-$ python start_python_server.py
+$ npm run dev
 
-Then navigate to http://localhost:8000/testHTML/ for some demos.
+Then navigate to http://localhost:5173/testHTML/ for some demos.
 
-To use music21j in your own page, place in a html page like this (this assumes that you’re
-using the python server above).
+To use music21j in your own page, place in a html page like this 
+(this assumes that you’re using the Vite Dev server above).
 
 ```html
 <html lang="en">
@@ -79,7 +77,7 @@ using the python server above).
 </html>
 ```
 
-or use it in your own Javascript/Typescript project:
+or use it in your own JavaScript/TypeScript project:
 
 ```
 $ npm install --save music21j
@@ -126,7 +124,7 @@ testHTML directory as `sfElsewhereCDN.html`.
 
 ## Version
 
-0.20 beta
+0.20 (beta)
 
 ## License
 
@@ -141,12 +139,13 @@ Thanks to the following packages (among others) for making music21j possible:
 * [Vexflow] - music notation in HTML5
 * [midicube] - audio processing of MIDI based on [MIDI.js]
 * [Jazzsoft] - plug-in for accessing MIDI in the browser in the absence of WebMIDI Api.
-* [qUnit] - testing framework
+* [QUnit] - testing framework
 * [jsdoc] - makes this documentation possible
 
 The Python version of music21 was supported by grants from
-the Seaver Institute and the National Endowment for the Humanities.  Earlier versions of music21 were supported by the Music and Theater Arts section of [MIT] (when Cuthbert was a professor there).
-
+the Seaver Institute and the National Endowment for the Humanities.  
+Earlier versions of music21 were supported by the Music and Theater Arts 
+section of [MIT] (when Cuthbert was a professor there).
 
 [MIT]:http://web.mit.edu
 [music21 python]:https://www.music21.org/music21docs/
@@ -154,15 +153,57 @@ the Seaver Institute and the National Endowment for the Humanities.  Earlier ver
 [Vexflow]:http://www.vexflow.com
 [MIDI.js]:http://mudcu.be/midi-js/
 [Jazzsoft]:http://jazz-soft.net
-[qUnit]:http://qunitjs.com
+[QUnit]:http://qunitjs.com
 [jsdoc]:http://usejsdoc.org
 
 
 ## Development
 
 Since v0.20, **music21j** uses **Vite** to produce the browser bundle. The legacy
-Grunt + Webpack build pipeline has been retired for builds. Test migration is
-ongoing.
+Grunt + Webpack build pipeline has been retired for builds.
+
+To develop run
+
+```sh
+$ npm run dev
+```
+
+and navigate to http://localhost:5173/testHTML to see various tests.
+
+
+### Watch / development mode
+
+To rebuild automatically on changes and serve files locally:
+
+```sh
+$ npm run dev
+```
+
+This starts Vite’s development server with fast rebuilds and live reload.
+
+## Testing
+
+music21j tests run in a real browser using **QUnit + Playwright**, orchestrated
+via Vite. This allows tests to render SVG output and exercise audio-related APIs.
+
+To run the full test suite headlessly:
+
+```sh
+$ npm test
+```
+This will:
+	•	start a Vite development server
+	•	run QUnit tests in headless Chromium
+	•	fail with detailed assertion output if any test fails
+
+To run tests with the Vite server already running:
+
+```sh
+$ npm run test:qunit
+```
+
+If you have the Vite server running, you can also just navigate to 
+http://localhost:5173/tests/ and see the tests there (with output).
 
 ## Build
 
@@ -175,37 +216,9 @@ $ npm run build
 This produces:
 
 - `build/music21.debug.js` (UMD bundle, global `music21`)
-- `build/music21.debug.js.map`
+- various sourcemaps.
 
-### Watch / development mode
-
-To rebuild automatically on changes and serve files locally:
-
-```sh
-$ npm run dev
-```
-
-This starts Vite’s development server with fast rebuilds and live reload.
-
-
-test with
-
-```sh
-$ grunt test
-```
-
-You might get an error that looks like this which you can currently ignore:
-
-```
-Access to XMLHttpRequest at 
-'file:///soundfonts/midi-js-soundfonts-master/FluidR3_GM/acoustic_grand_piano-ogg.js' 
-from origin 'null' has been blocked by CORS policy
-```
-
-We hope to fix it later, but for now, we're not testing audio output.
-
-(HOW TO WATCH?)
-
+The build output is suitable for direct browser use or npm publishing.
 
 
 ## Publishing a new version
@@ -213,28 +226,16 @@ We hope to fix it later, but for now, we're not testing audio output.
 You'll need to be part of the npm dev team.
 
 1. Update the version number in `package.json`, manually in `main.ts`, 
-and (if bigger than patch), here.  Then do all the steps again from the start.  :-)
+and (if bigger than patch), here.  Then do all the steps again from the start.
 
-2. Update the version number in package-lock.json by running:
-
-```sh
-$ npm install
-````
-
-3. Build the release artifacts:
-
-```sh
-$ npm run build
-```
-
-4. Publish:
+2. Publish:
 
 ```sh
 $ npm publish
 ```
 
-This will copy the current contents of `build` in `releases`
-and publish on npm.
+This will test to make sure everything is correct, update package-lock.json,
+copy the current contents of `build` in `releases`, and publish on npm.
 
 
 ## Updating Dependencies
