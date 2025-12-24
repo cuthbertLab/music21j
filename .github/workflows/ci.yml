@@ -1,48 +1,73 @@
 name: CI
 
 on:
-    push:
-        branches:
-        - master
-        - '*CI*'
-    pull_request:
-        branches:
-        - '*'
+  push:
+    branches:
+      - master
+      - '*CI*'
+  pull_request:
+    branches:
+      - '*'
+  workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  frontend_tests:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-
-    - uses: actions/checkout@v3
-      with:
-        submodules: True
-
-    - name: Install deps
-      run: npm ci
-
-    - name: Prepare Google Sandbox
-      run: sudo chown root /opt/google/chrome/chrome-sandbox && sudo chmod 4755 /opt/google/chrome/chrome-sandbox
-
-    - name: Run frontend tests (and Disable AppArmor for Chrome)
-      run: env CHROME_DEVEL_SANDBOX=/opt/google/chrome/chrome-sandbox grunt test_no_watch
-
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
 
-    - uses: actions/checkout@v3
-      with:
-        submodules: True
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
 
-    - name: Install deps
-      run: npm ci
+  frontend_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test
 
-    - name: Run eslint
-      run: grunt eslint
+  build:
+    runs-on: ubuntu-latest
+    needs: [eslint, typecheck, frontend_tests]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build

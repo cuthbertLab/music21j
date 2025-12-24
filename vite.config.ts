@@ -4,7 +4,7 @@ import directoryIndex from 'vite-plugin-directory-index';
 import pkg from './package.json';
 
 const banner_lines: string[] = [
-    '/**',
+    '/*!',
     ` * music21j version ${pkg.version} built on ${(new Date()).toISOString().split('T')[0]}.`,
     ` * Copyright (c) 2013-${(new Date()).getFullYear()} Michael Scott Asato Cuthbert`,
     ' * BSD License, see LICENSE',
@@ -30,12 +30,15 @@ export default defineConfig({
             formats: ['umd'],
             fileName: () => 'music21.debug.js',
         },
-
         rollupOptions: {
             output: {
                 banner: banner_lines.join('\n'),
             },
         },
+    },
+    clearScreen: false,
+    esbuild: {
+        legalComments: 'inline',
     },
     plugins: [
         checker({

@@ -65,6 +65,7 @@ for (const name of suite_names) {
 
 // Move any music21 output under the test that created it
 QUnit.testDone(details => {
+    const testId = (details as any).testId; // undocumented but useful
     const stream_append = document.querySelector('#streamAppend');
     if (!stream_append) {
         return;
@@ -75,8 +76,7 @@ QUnit.testDone(details => {
         return;
     }
 
-    const test_outputs = document.querySelectorAll('.qunit-test');
-    const dom_out = test_outputs[test_outputs.length - 1] as HTMLElement | undefined;
+    const dom_out = document.getElementById('qunit-test-output-' + testId) as HTMLElement | undefined;
     if (!dom_out) {
         return;
     }

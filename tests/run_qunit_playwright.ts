@@ -13,9 +13,10 @@ async function main(): Promise<void> {
     // Wait for QUnit to finish
     await page.waitForFunction(() => (window as any).__qunit_done__ === true, null, {timeout: 120_000});
 
-    const results = await page.evaluate(() => (window as any).__qunit_results__);
-    const failures = await page.evaluate(() => (window as any).__qunit_failures__ ?? []);
-
+    const { results, failures } = await page.evaluate(() => ({
+        results: (window as any).__qunit_results__,
+        failures: (window as any).__qunit_failures__ ?? [],
+    }));
     await browser.close();
 
     if (!results) {
@@ -43,6 +44,7 @@ async function main(): Promise<void> {
                 console.error(`    ${f.source.trim()}`);
             }
         }
+
         process.exitCode = 1;
         await browser.close();
         return;

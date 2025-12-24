@@ -17,7 +17,9 @@
   },
   "_why": {
     "@types/jquery": "Still allow JQuery to be used as input even though it is no longer part of the system",
-    "eslint-plugin-import": "Used in flat eslint-config-airbnb-extended legacy.js"
+    "@types/node": "for the node scripts in tests: headless_vite_tests and run_qunit_playwright",
+    "eslint-plugin-import": "Used in flat eslint-config-airbnb-extended legacy.js",
+    "globals": "for eslint.config.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
@@ -32,7 +34,6 @@
     "globals": "^16.5.0",
     "npm-check-updates": "^19.2.0",
     "qunit": "^2.24.3",
-    "start-server-and-test": "^2.1.3",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
@@ -48,10 +49,12 @@
     "build": "vite build",
     "build:types": "tsc -p tsconfig.json --emitDeclarationOnly",
     "build:all": "npm run build && npm run build:types",
-    "prepublishOnly": "rm -rf releases && npm run build:all && cp -rp build/ releases/ && rm -rf releases/tests",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src && eslint tests/moduleTests",
+    "prepublishOnly": "./scripts/prepublishOnly.bash",
     "test:qunit": "tsx tests/run_qunit_playwright.ts",
-    "test": "start-server-and-test dev http://localhost:5173/tests/ test:qunit",
-    "postinstall": "sh scripts/postinstall.bash"
+    "test": "tsx tests/headless_vite_tests.ts",
+    "postinstall": "./scripts/postinstall.bash"
   },
   "repository": {
     "type": "git",
