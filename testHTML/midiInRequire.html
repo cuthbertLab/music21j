@@ -1,21 +1,25 @@
 <html lang="en">
     <head>
         <title>MIDI In/Jazz Test for Music21j</title>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <!-- for MSIE 10 on Windows 8 -->
-        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" />
-        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/m21.css">
     </head>
     <body>
+        <h1>A test of MIDI input to audio playback (no notation)</h1>
 		<div>
             MIDI Input: <div id="putMidiSelectHere"></div>
 		</div>
 		<div class='streamHolding'>
 	    </div>
-    	<script src="../build/music21.debug.js"></script>
+    	<script type="module" src="./m21-dev.ts"></script>
 		<script>
-        music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
-        music21.miditools.callbacks.general = music21.miditools.sendToMIDIjs;
+            function main() {
+                music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
+                music21.miditools.callbacks.general = music21.miditools.sendToMIDIjs;
+            }
+            document.addEventListener('DOMContentLoaded', () => {
+                main();
+            });
 		</script>
 
     </body>

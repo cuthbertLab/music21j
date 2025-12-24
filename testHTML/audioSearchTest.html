@@ -1,8 +1,8 @@
 <html lang="en-us"><head>
 <title>HTML5 Pitch Detector</title>
-    <script src="../build/music21.debug.js"></script>
-    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
+    <script type="module" src="./m21-dev.ts"></script>
+    <link rel="stylesheet" href="../css/m21.css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700">
 </head>
 <body style='text-align: left;'>
 <div style='padding-left: 20px; background-color: white'>
@@ -25,61 +25,74 @@
 
 </div>
 <script>
-       nnn = new music21.note.Note("C4");
-       nnn.duration.type = 'whole';
-       sss = new music21.stream.Stream();
-       sss.clef = new music21.clef.Clef('treble');
-       sss.append(nnn);
-       sss.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
-       sss.appendNewDOM('#SVGDiv');
-       document.querySelector('#startListening').addEventListener('click', () => music21.audioSearch.getUserMedia());
-       document.querySelector('#stopListening').addEventListener('click', () => {
-           window.cancelAnimationFrame(music21.audioSearch.animationFrameCallbackId);
-       });
-       const nn = document.querySelector('#noteName');
-       const centsDiv = document.querySelector('#centsDiv');
-       const counter = document.querySelector('#counter');
-       document.querySelector('#bassClef').addEventListener('click', () => {
-           sss.clef = new music21.clef.Clef('bass');
-           music21.audioSearch.minFrequency = new music21.pitch.Pitch('F2').frequency;
-           music21.audioSearch.maxFrequency = new music21.pitch.Pitch('F4').frequency;
-           sss.replaceDOM();
-       });
-       document.querySelector('#trebleClef').addEventListener('click', () => {
-           sss.clef = new music21.clef.Clef('treble');
-           music21.audioSearch.minFrequency = new music21.pitch.Pitch('G3').frequency;
-           music21.audioSearch.maxFrequency = new music21.pitch.Pitch('A5').frequency;
-           sss.replaceDOM();
-       });
-       let lastNote = 0;
-       let lastLeft = 150;
-       sampleCallback = frequency => {
-           const [midiNum, centsOff] = music21.audioSearch.smoothPitchExtraction(frequency);
-	       if (midiNum !== -1) {
-	           if (midiNum !== lastNote) {
-	               lastNote = midiNum;
-	               const p = new music21.pitch.Pitch(midiNum);
-	               const a = p.accidental;
-	               let name = p.step;
-	               if (a !== undefined && a.alter !== 0) {
-	                   name += "<span style='font-size: 70%; position: relative; left: -10px; margin-right: -20px'>" + a.unicodeModifier + "</span>";
-	               }
-	               name += p.octave.toString();
-	               nnn.pitch = p
-	               sss.replaceDOM();
-	           }
-	           // 0 = red; 120 = green; 240 = blue
-	           const hue = ((-1 * centsOff) + 50) * 2.4;
-	           // highly saturated at the extremes;
-	           const saturation = Math.round(50 + 2 * Math.abs(Math.abs(centsOff) - 25));
-	           const colorString = 'hsl(' + hue + ', ' + saturation + '%, 50%)';
-	           const newLeft = 3*(50+centsOff);
-	           lastLeft = (lastLeft*9 + newLeft)/10;
-	           counter.style.backgroundColor = colorString;
-               counter.style.left = lastLeft.toString() + 'px';
-	       }
-       };
-       music21.audioSearch.sampleCallback = sampleCallback;
+    function main() {
+        nnn = new music21.note.Note("C4");
+        nnn.duration.type = 'whole';
+        sss = new music21.stream.Stream();
+        sss.clef = new music21.clef.Clef('treble');
+        sss.append(nnn);
+        sss.renderOptions.scaleFactor = {
+            x: 1.5,
+            y: 1.5
+        };
+        sss.appendNewDOM('#SVGDiv');
+        document.querySelector('#startListening')
+            .addEventListener('click', () => music21.audioSearch.getUserMedia());
+        document.querySelector('#stopListening')
+            .addEventListener('click', () => {
+                window.cancelAnimationFrame(music21.audioSearch.animationFrameCallbackId);
+            });
+        const nn = document.querySelector('#noteName');
+        const centsDiv = document.querySelector('#centsDiv');
+        const counter = document.querySelector('#counter');
+        document.querySelector('#bassClef')
+            .addEventListener('click', () => {
+                sss.clef = new music21.clef.Clef('bass');
+                music21.audioSearch.minFrequency = new music21.pitch.Pitch('F2').frequency;
+                music21.audioSearch.maxFrequency = new music21.pitch.Pitch('F4').frequency;
+                sss.replaceDOM();
+            });
+        document.querySelector('#trebleClef')
+            .addEventListener('click', () => {
+                sss.clef = new music21.clef.Clef('treble');
+                music21.audioSearch.minFrequency = new music21.pitch.Pitch('G3').frequency;
+                music21.audioSearch.maxFrequency = new music21.pitch.Pitch('A5').frequency;
+                sss.replaceDOM();
+            });
+        let lastNote = 0;
+        let lastLeft = 150;
+        sampleCallback = frequency => {
+            const [midiNum, centsOff] = music21.audioSearch.smoothPitchExtraction(frequency);
+            if (midiNum !== -1) {
+                if (midiNum !== lastNote) {
+                    lastNote = midiNum;
+                    const p = new music21.pitch.Pitch(midiNum);
+                    const a = p.accidental;
+                    let name = p.step;
+                    if (a !== undefined && a.alter !== 0) {
+                        name += "<span style='font-size: 70%; position: relative; left: -10px; margin-right: -20px'>" + a.unicodeModifier + "</span>";
+                    }
+                    name += p.octave.toString();
+                    nnn.pitch = p
+                    sss.replaceDOM();
+                }
+                // 0 = red; 120 = green; 240 = blue
+                const hue = ((-1 * centsOff) + 50) * 2.4;
+                // highly saturated at the extremes;
+                const saturation = Math.round(50 + 2 * Math.abs(Math.abs(centsOff) - 25));
+                const colorString = 'hsl(' + hue + ', ' + saturation + '%, 50%)';
+                const newLeft = 3 * (50 + centsOff);
+                lastLeft = (lastLeft * 9 + newLeft) / 10;
+                counter.style.backgroundColor = colorString;
+                counter.style.left = lastLeft.toString() + 'px';
+            }
+        };
+        music21.audioSearch.sampleCallback = sampleCallback;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
+
    </script>
 </body>
 </html>

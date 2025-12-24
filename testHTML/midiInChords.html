@@ -1,10 +1,8 @@
 <html lang="en">
 <head>
 	<title>MIDI In Chords for Music21j</title>
-	<!-- for MSIE 10 on Windows 8 -->
-	<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" />
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" href="../css/m21.css" type="text/css" />
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="../css/m21.css">
 </head>
 <body>
 	<div>
@@ -19,7 +17,7 @@
 	</div>
 	<div id="metronomeDiv"></div>
 
-	<script src="../build/music21.debug.js"></script>
+	<script type="module" src="./m21-dev.ts"></script>
 	<script>
     let s; // will become Stream object soon...
     let metro; // will become Metronome object soon...
@@ -37,20 +35,25 @@
         s.appendNewDOM(svgDiv);
     }
 
-	s = new music21.stream.Measure();
-	s.clef = new music21.clef.TrebleClef();
-	s.renderOptions.staffLines = 5;
-	metro = new music21.tempo.Metronome();
-	metro.addDiv(document.querySelector("#metronomeDiv"));
+    function main() {
+        s = new music21.stream.Measure();
+        s.clef = new music21.clef.TrebleClef();
+        s.renderOptions.staffLines = 5;
+        metro = new music21.tempo.Metronome();
+        metro.addDiv(document.querySelector("#metronomeDiv"));
 
-	music21.miditools.config.metronome = metro;
+        music21.miditools.config.metronome = metro;
 
-	music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
-	music21.miditools.callbacks.general = [
-		music21.miditools.makeChords,
-		music21.miditools.sendToMIDIjs,
-	];
-	music21.miditools.callbacks.sendOutChord = appendElement;
+        music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
+        music21.miditools.callbacks.general = [
+            music21.miditools.makeChords,
+            music21.miditools.sendToMIDIjs,
+        ];
+        music21.miditools.callbacks.sendOutChord = appendElement;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
 </script>
 
 </body>

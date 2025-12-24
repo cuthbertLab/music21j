@@ -1,24 +1,27 @@
 <html>
     <head>
         <title>fancy layout</title>
-        <!-- for MSIE 10 on Windows 8 -->
-        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/m21.css">
     </head>
     <body>
         <h1>layout tests -- experimental.  The <code>ls</code> object has a LayoutScore</h1>
         <div id="scoreDiv"></div>
-        <script src="../build/music21.debug.js"></script>
+        <script type="module" src="./m21-dev.ts"></script>
         <script>
-        s = new music21.stream.Score();
-        p = music21.tinyNotation.TinyNotation('2/4 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2');
-        p2 = music21.tinyNotation.TinyNotation('2/4 a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 b2 b2 c2');
-        s.append(p);
-        s.append(p2);
-        s.appendNewDOM(document.querySelector("#scoreDiv"));
-        ps = s.parts;
-        ls = music21.layout.makeLayoutFromScore(s);
+            function main() {
+                s = new music21.stream.Score();
+                p = music21.tinyNotation.TinyNotation('2/4 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2');
+                p2 = music21.tinyNotation.TinyNotation('2/4 a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 b2 b2 c2');
+                s.append(p);
+                s.append(p2);
+                s.appendNewDOM(document.querySelector("#scoreDiv"));
+                ps = s.parts;
+                ls = music21.layout.makeLayoutFromScore(s);
+            }
+            document.addEventListener('DOMContentLoaded', () => {
+                main();
+            });
         </script>
     </body>
 </html>

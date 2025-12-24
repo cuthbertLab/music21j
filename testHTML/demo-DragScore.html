@@ -1,10 +1,10 @@
 <html lang="en">
 <head>
  	<title>Drag and Create a Score</title>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
- 	<script src="../build/music21.debug.js" type="application/javascript"></script>
-	<link rel="stylesheet" href="../css/m21.css" type="text/css" />
- 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
+    <meta charset="utf-8">
+ 	<script type="module" src="./m21-dev.ts"></script>
+	<link rel="stylesheet" href="../css/m21.css">
+ 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700">
 </head>
 <body>
 <h1>Create your own score!</h1>
@@ -12,7 +12,8 @@
 <div id="dragContent">
 	<div id="themeDiv"></div>
 	<div id="dropDiv" style="height: 800px; width: 1200px; border: 2px dashed black">
-		<h1>Create an 8-measure piece by dropping fragments here! <br/>Go for a smooth pattern. Then click here to play your score.</h1>
+		<h1>Create an 8-measure piece by dropping fragments here! <br>
+            Go for a smooth pattern. Then click on the score to play it.</h1>
 		<button onclick="clearScore()">Clear</button> ... <button onclick="undoAdd()">Undo</button><br>
 		<div style="text-align: left">
 			<div id="dropSvg" class='streamHolding' style="height: 200px; width: 1000px"></div>
@@ -20,7 +21,7 @@
 	</div>
 </div>
 <h2>If you've done that well, hit clear and try to create a 16-measure piece with these fragments.</h2>
-<script type="text/javascript">
+<script>
 
 function renderThemes() {
     const themes = [
@@ -75,11 +76,11 @@ function renderThemes() {
         r.removeFormatterInformation(myStream, true); // recursive.
 
         // if (i % 4 === 3) {
-        //     $themeDiv.append($('<br/>'));
+        //     themeDiv.append(document.createElement('br'));
         //     // alert(nc);
         // }
     }
-    document.body.appendChild(music21.common.to_el('<br/>'));
+    document.body.appendChild(music21.common.to_el('<br>'));
     document.body.addEventListener('drop', e => console.log(e));
     document.querySelector('#dropDiv').addEventListener('drop', e => {
 		e.preventDefault();
@@ -128,18 +129,23 @@ function undoAdd() {
     const newSVG = allStreamScore.createPlayableDOM();
     document.querySelector('#dropDiv .streamHolding').replaceWith(newSVG);
 }
-
 let allStream;
 
-window.music21 = music21;
-renderThemes();
-allStreamScore = new music21.stream.Score();
-allStreamScore.renderOptions.overriddenWidth = 600;
-allStream = new music21.stream.Part();
-allStream.renderOptions.overriddenWidth = 600;
-allStreamScore.append(allStream);
-const newDOM = allStreamScore.createPlayableDOM();
-document.querySelector('#dropSvg').replaceWith(newDOM);
+function main() {
+
+    renderThemes();
+    allStreamScore = new music21.stream.Score();
+    allStreamScore.renderOptions.overriddenWidth = 600;
+    allStream = new music21.stream.Part();
+    allStream.renderOptions.overriddenWidth = 600;
+    allStreamScore.append(allStream);
+    const newDOM = allStreamScore.createPlayableDOM();
+    document.querySelector('#dropSvg').replaceWith(newDOM);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    main();
+});
 </script>
 </body>
 </html>

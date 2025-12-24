@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/m21.css">
     <title>Title</title>
 </head>
 <body>
 <h1>Test music21j autobeam</h1>
-<script src="../build/music21.debug.js"></script>
+<script type="module" src="./m21-dev.ts"></script>
 <div id="autobeam_goes_here"></div>
 <script>
+function main() {
     const n1 = new music21.note.Note('C5', 0.5);
     n1.stemDirection = 'up';
     const n2 = new music21.note.Note('C5', 0.5);
@@ -24,6 +25,10 @@
     m.append(n3);
     m.makeBeams({inPlace: true});
     m.appendNewDOM(document.querySelector('#autobeam_goes_here'));
+}
+document.addEventListener('DOMContentLoaded', () => {
+    main();
+});
 </script>
 </body>
 </html>

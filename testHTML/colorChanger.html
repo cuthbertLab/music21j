@@ -1,13 +1,13 @@
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>Music21j Color Picker</title>
-  <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-  <script src="../build/music21.debug.js"></script>
+    <meta charset="utf-8">
+    <title>Music21j Color Picker</title>
+    <link rel="stylesheet" href="../css/m21.css">
+    <script type="module" src="./m21-dev.ts"></script>
 </head>
 <body>
 <h3>Click a note, then click a color to label it.</h3>
-<div id="SVGDiv">DOM goes here...<br/></div>
+<div id="SVGDiv">DOM goes here...<br></div>
 
 <script>
 function getColorDOM(s, width, height) {
@@ -78,6 +78,7 @@ function getColorToolbar(s, siblingDOM) {
     return buttonDiv;
 }
 
+function main() {
     s = undefined;
 
     const k = new music21.key.Key('D');
@@ -94,7 +95,8 @@ function getColorToolbar(s, siblingDOM) {
     s.append(n3);
     s.autoBeam = false;
     const d = getColorDOM(s);
-    document.querySelector('#SVGDiv').appendChild(d);
+    document.querySelector('#SVGDiv')
+        .appendChild(d);
 
     const sChord = new music21.stream.Measure();
     sChord.timeSignature = new music21.meter.TimeSignature('4/4');
@@ -103,6 +105,11 @@ function getColorToolbar(s, siblingDOM) {
     sChord.keySignature = k;
     sChord.append(ch);
     sChord.appendNewDOM(document.querySelector('#SVGDiv'));
+}
+document.addEventListener('DOMContentLoaded', () => {
+    main();
+});
+
 </script>
 
 </body>

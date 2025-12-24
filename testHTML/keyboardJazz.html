@@ -1,35 +1,39 @@
 <html>
     <head>
         <title>Piano Keyboard!</title>
-        <!-- for MSIE 10 on Windows 8 -->
-        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-        <script src="../build/music21.debug.js"></script>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/m21.css">
+        <script type="module" src="./m21-dev.ts"></script>
     </head>
     <body>
     <div id="keyboardDiv"></div>
     <div id="putMidiSelectHere"></div>
     <script>
-    var k = ""; // will become keyboard.Keyboard object
-
-    k = new music21.keyboard.Keyboard();
-    var kd = document.getElementById('keyboardDiv');
-    k.startPitch = 6;
-    k.endPitch = 57;
-    k.appendKeyboard(kd);
-    var options = {
-       onsuccess: function () { console.log(this) },
-       oninputsuccess: function () { console.log("found one!") },
-       oninputempty: function () { console.log("nope") }
-    };
-    music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"), options);
-    music21.miditools.callbacks.general = [music21.keyboard.jazzHighlight.bind(k),
-                                          music21.miditools.sendToMIDIjs,
-                                          ];
-
-
-
+    function main() {
+        const k = new music21.keyboard.Keyboard();
+        const kd = document.getElementById('keyboardDiv');
+        k.startPitch = 6;
+        k.endPitch = 57;
+        k.appendKeyboard(kd);
+        const options = {
+            onsuccess: function () {
+                console.log(this)
+            },
+            oninputsuccess: function () {
+                console.log("found one!")
+            },
+            oninputempty: function () {
+                console.log("nope")
+            }
+        };
+        music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"), options);
+        music21.miditools.callbacks.general = [music21.keyboard.jazzHighlight.bind(k),
+            music21.miditools.sendToMIDIjs,
+        ];
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
     </script>
 
 </body>

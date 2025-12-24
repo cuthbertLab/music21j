@@ -1,13 +1,19 @@
 <html><head>
-   <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-   <script src="//localhost:8000/build/music21.debug.js"></script>
+   <link rel="stylesheet" href="../css/m21.css">
+   <script type="module" src="http://localhost:5173/testHTML/m21-dev.ts"></script>
 </head>
 <body>
+    This tests whether using an http:// link to this page we can still load music21<br>
    <script>
-       const n = new music21.note.Note("F#");
-       const s = new music21.stream.Stream();
-       s.append(n);
-       s.appendNewDOM();
+    function main() {
+        const n = new music21.note.Note("F#");
+        const s = new music21.stream.Stream();
+        s.append(n);
+        s.appendNewDOM();
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
    </script>
 </body>
 </html>

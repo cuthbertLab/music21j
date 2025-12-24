@@ -1,18 +1,16 @@
 <html lang="en">
     <head>
         <title>music21j -- keyboard test</title>
-        <!-- for MSIE 10 on Windows 8 -->
-        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-        <script src="../build/music21.debug.js"></script>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/m21.css">
+        <script type="module" src="./m21-dev.ts"></script>
     </head>
     <body>
 	<div style='text-align: center; font-size: 8pt'>
-        <label for="showNames">Show note names:</label> <input type='checkbox' checked id='showNames'/> &middot;
-        <label for="showOctaves">Show octaves:</label> <input type='checkbox' id='showOctaves'/> &middot;
-        <label for="playSound">Play sound:</label> <input type='checkbox' checked id='playSound'/> &middot;
-        <label for="markC">Mark middle C:</label> <input type='checkbox' checked id='markC'/> &middot;
+        <label for="showNames">Show note names:</label> <input type='checkbox' checked id='showNames'> &middot;
+        <label for="showOctaves">Show octaves:</label> <input type='checkbox' id='showOctaves'> &middot;
+        <label for="playSound">Play sound:</label> <input type='checkbox' checked id='playSound'> &middot;
+        <label for="markC">Mark middle C:</label> <input type='checkbox' checked id='markC'> &middot;
     <span id="staffSelect">
         <input type="radio" id="staffNumberSelectorSS"
                name="staffNumberSelector"
@@ -122,99 +120,113 @@
             sc.appendNewDOM($svgDiv);
 		}
 
+        function main() {
+            p = new music21.stream.Part();
+            // p.renderOptions.width = 500;
+            m = new music21.stream.Measure();
+            p.insert(0, m);
+            m.clef = new music21.clef.TrebleClef();
+            p.renderOptions.scaleFactor = {
+                x: 1.5,
+                y: 1.5
+            };
 
-        p = new music21.stream.Part();
-        // p.renderOptions.width = 500;
-        m = new music21.stream.Measure();
-        p.insert(0, m);
-        m.clef = new music21.clef.TrebleClef();
-        p.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
+            // GrandStaff
+            p1 = new music21.stream.Part();
+            m1 = new music21.stream.Measure();
+            p1.insert(0, m1);
+            m1.clef = new music21.clef.TrebleClef();
 
-        // GrandStaff
-        p1 = new music21.stream.Part();
-        m1 = new music21.stream.Measure();
-        p1.insert(0, m1);
-        m1.clef = new music21.clef.TrebleClef();
+            p2 = new music21.stream.Part();
+            m2 = new music21.stream.Measure();
+            p2.insert(0, m2);
+            m2.clef = new music21.clef.BassClef();
 
-        p2 = new music21.stream.Part();
-        m2 = new music21.stream.Measure();
-        p2.insert(0, m2);
-        m2.clef = new music21.clef.BassClef();
-
-        sc = new music21.stream.Score();
-        sc.insert(0, p1);
-        sc.insert(0, p2);
-        sc.partSpacing = 90;
-        sc.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
+            sc = new music21.stream.Score();
+            sc.insert(0, p1);
+            sc.insert(0, p2);
+            sc.partSpacing = 90;
+            sc.renderOptions.scaleFactor = {
+                x: 1.5,
+                y: 1.5
+            };
 
 
-        metro = new music21.tempo.Metronome();
-        metro.addDiv(document.querySelector("#metronomeDiv"));
+            metro = new music21.tempo.Metronome();
+            metro.addDiv(document.querySelector("#metronomeDiv"));
 
-        music21.miditools.config.metronome = metro;
-        k = new music21.keyboard.Keyboard();
-        k.showNames = true;
+            music21.miditools.config.metronome = metro;
+            k = new music21.keyboard.Keyboard();
+            k.showNames = true;
 
-        k.scaleFactor = 2.0;
-        k.startPitch = 22;
-        k.endPitch = k.startPitch + 14;
-        k.scrollable = true;
-        k.hideable = true;
+            k.scaleFactor = 2.0;
+            k.startPitch = 22;
+            k.endPitch = k.startPitch + 14;
+            k.scrollable = true;
+            k.hideable = true;
 
-        const kd = document.querySelector('#keyboardDiv');
-        k.appendKeyboard(kd); // 25key keyboard
+            const kd = document.querySelector('#keyboardDiv');
+            k.appendKeyboard(kd); // 25key keyboard
 
-        music21.miditools.config.maxDelay = 200;
+            music21.miditools.config.maxDelay = 200;
 
-        const midiCallbacksPlay = [
-            music21.miditools.makeChords,
-            music21.miditools.sendToMIDIjs,
-            music21.keyboard.jazzHighlight.bind(k)
-        ];
-        const midiCallbacksNoPlay = [
-            music21.miditools.makeChords,
-            music21.keyboard.jazzHighlight.bind(k)
-        ];
+            const midiCallbacksPlay = [
+                music21.miditools.makeChords,
+                music21.miditools.sendToMIDIjs,
+                music21.keyboard.jazzHighlight.bind(k)
+            ];
+            const midiCallbacksNoPlay = [
+                music21.miditools.makeChords,
+                music21.keyboard.jazzHighlight.bind(k)
+            ];
 
-        music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
-        music21.miditools.callbacks.general = midiCallbacksPlay;
+            music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
+            music21.miditools.callbacks.general = midiCallbacksPlay;
 
-        document.querySelector('#markC').addEventListener('click', e => {
-            k.markC = e.target.checked;
-            k.redrawSVG();
+            document.querySelector('#markC')
+                .addEventListener('click', e => {
+                    k.markC = e.target.checked;
+                    k.redrawSVG();
+                });
+            document.querySelector('#showNames')
+                .addEventListener('click', e => {
+                    k.showNames = e.target.checked;
+                    k.redrawSVG();
+                });
+            document.querySelector('#showOctaves')
+                .addEventListener('click', e => {
+                    k.showOctaves = e.target.checked;
+                    k.redrawSVG();
+                });
+            document.querySelector('#playSound')
+                .addEventListener('click', e => {
+                    if (e.target.checked) {
+                        music21.miditools.callbacks.general = midiCallbacksPlay;
+                    } else {
+                        music21.miditools.callbacks.general = midiCallbacksNoPlay;
+                    }
+                });
+            const staffRadio = document.querySelector('input[type=radio][name=staffNumberSelector]')
+            staffRadio.addEventListener('change', e => {
+                if (e.target.value === 'singleStaff') {
+                    document.querySelector("#svgDiv").style.display = 'block';
+                    document.querySelector("#svgDivGrandStaff").style.display = 'none';
+                    music21.miditools.callbacks.sendOutChord = appendElement;
+                } else if (e.target.value === 'grandStaff') {
+                    document.querySelector("#svgDiv").style.display = 'none';
+                    document.querySelector("#svgDivGrandStaff").style.display = 'block';
+                    music21.miditools.callbacks.sendOutChord = appendElementGrandStaff;
+                } else {
+                    console.log("What value is this? " + e.target.value);
+                }
+            });
+            const evt = new Event('change', {bubbles: true});
+            staffRadio.dispatchEvent(evt);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            main();
         });
-        document.querySelector('#showNames').addEventListener('click', e => {
-            k.showNames = e.target.checked;
-            k.redrawSVG();
-        });
-        document.querySelector('#showOctaves').addEventListener('click', e => {
-            k.showOctaves = e.target.checked;
-            k.redrawSVG();
-        });
-        document.querySelector('#playSound').addEventListener('click', e => {
-            if (e.target.checked) {
-                music21.miditools.callbacks.general = midiCallbacksPlay;
-            } else {
-                music21.miditools.callbacks.general = midiCallbacksNoPlay;
-            }
-        });
-        const staffRadio = document.querySelector('input[type=radio][name=staffNumberSelector]')
-        staffRadio.addEventListener('change', e => {
-            if (e.target.value === 'singleStaff') {
-                document.querySelector("#svgDiv").style.display = 'block';
-                document.querySelector("#svgDivGrandStaff").style.display = 'none';
-                music21.miditools.callbacks.sendOutChord = appendElement;
-            }
-            else if (e.target.value === 'grandStaff') {
-                document.querySelector("#svgDiv").style.display = 'none';
-                document.querySelector("#svgDivGrandStaff").style.display = 'block';
-                music21.miditools.callbacks.sendOutChord = appendElementGrandStaff;
-            } else {
-                console.log("What value is this? " + e.target.value);
-            }
-        });
-        const evt = new Event('change', {bubbles: true});
-        staffRadio.dispatchEvent(evt);
 
 		</script>
 

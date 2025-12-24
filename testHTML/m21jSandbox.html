@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
     <title>Music21j Sandbox</title>
-    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-    <script src="../build/music21.debug.js"></script>
+    <link rel="stylesheet" href="../css/m21.css">
+    <script type="module" src="./m21-dev.ts"></script>
     <style>
         .streamHolding {
             background: #eed;
@@ -58,6 +58,7 @@
     </div>
 </div>
 <script>
+function main() {
     let timeout;
 
     const default_text = `
@@ -82,11 +83,12 @@ s.replaceDOM('#mainSVG');
     const localStorageKey = 'm21j_sandbox_code';
     const local_storage_value = localStorage.getItem(localStorageKey);
     sandbox.value = local_storage_value || default_text;
-    document.querySelector('#resetButton').addEventListener('click', () => {
-        sandbox.value = default_text;
-        localStorage.removeItem(localStorageKey);
-        live_code();
-    });
+    document.querySelector('#resetButton')
+        .addEventListener('click', () => {
+            sandbox.value = default_text;
+            localStorage.removeItem(localStorageKey);
+            live_code();
+        });
 
     live_code();
 
@@ -112,6 +114,10 @@ s.replaceDOM('#mainSVG');
             msg.style.display = 'block';
         }
     }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    main();
+});
 </script>
 </body>
 </html>

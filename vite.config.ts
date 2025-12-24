@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
+import directoryIndex from 'vite-plugin-directory-index';
 import pkg from './package.json';
 
 const banner_lines: string[] = [
@@ -41,7 +42,18 @@ export default defineConfig({
             typescript: true,
             eslint: {
                 lintCommand: 'eslint src/',
+                useFlatConfig: true,  // eslint 9+
             },
         }),
+        directoryIndex(),
     ],
+
+    // root defaults to process.cwd(), so no need:
+    // root: '.',
+    server: {
+        fs: {
+            strict: true,
+        },
+        open: '/testHTML/',
+    },
 });
