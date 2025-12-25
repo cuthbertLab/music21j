@@ -7,9 +7,10 @@
 </head>
 <body>
 <h1>Test music21j autobeam</h1>
-<script type="module" src="./m21-dev.ts"></script>
+<script src="../releases/music21.debug.js"></script>
 <div id="autobeam_goes_here"></div>
 <script>
+const music21 = window.music21;
 function main() {
     const n1 = new music21.note.Note('C5', 0.5);
     n1.stemDirection = 'up';

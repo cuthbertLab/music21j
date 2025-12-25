@@ -3,15 +3,16 @@
     <title>MusicXML Parse Test</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="../css/m21.css">
-    <script type="module" src="./m21-dev.ts"></script>
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
     <h1>MusicXML rendering test</h1>
     <div>This page should render a four-part Bach chorale (BWV66.6 measures 3-6)</div>
     <script>
+        const music21 = window.music21;
         function main() {
-            mxUrl = 'bachOut.xml';
-            sp = new music21.musicxml.xmlToM21.ScoreParser();
+            const mxUrl = 'bachOut.xml';
+            const sp = new music21.musicxml.xmlToM21.ScoreParser();
             sp.scoreFromUrl(mxUrl)
                 .then(sc => sc.appendNewDOM());
         }

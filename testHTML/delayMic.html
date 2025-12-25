@@ -1,6 +1,6 @@
 <html lang="en-us"><head>
 <title>Stacey Canon</title>
-    <script type="module" src="./m21-dev.ts"></script>
+    <script src="../releases/music21.debug.js"></script>
     <link rel="stylesheet" href="../css/m21.css">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700">
 </head>
@@ -25,6 +25,7 @@
 
 </div>
    <script>
+    const music21 = window.music21;
    function main() {
        music21.tinyNotation.renderNotationDivs();
        var as = music21.audioSearch;

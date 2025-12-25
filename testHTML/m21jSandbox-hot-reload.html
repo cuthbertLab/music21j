@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Music21j Sandbox</title>
+    <title>Music21j Sandbox for Vite hotreload</title>
     <link rel="stylesheet" href="../css/m21.css">
-    <script src="../releases/music21.debug.js"></script>
+    <script type="module" src="./m21-dev.ts"></script>
     <style>
         .streamHolding {
             background: #eed;
@@ -33,7 +33,7 @@
 <body>
 <div class="header">
     <button id="resetButton" role="button" style="float: right">Reset</button>
-    <h1>Music21j Sandbox</h1>
+    <h1>Music21j Sandbox for Vite's hotreload</h1>
     <div class="main">
         <label for="sandbox">
             <b>A live editor for experimenting with Music21j and Vexflow, based on the Vexflow Sandbox</b>

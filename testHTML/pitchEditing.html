@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Pitch Editing</title>
     <link rel="stylesheet" href="../css/m21.css">
-    <script type="module" src="./m21-dev.ts"></script>
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
     <h2>Testing alterable pitches in the score</h2>
@@ -12,6 +12,7 @@
     <div id="editable">
     </div>
     <script>
+        const music21 = window.music21;  // for typing...
         function main() {
             const s = music21.tinyNotation.TinyNotation("G2 B4 c4");
             s.clef = new music21.clef.Clef('bass');

@@ -3,13 +3,14 @@
     <meta charset="utf-8">
     <title>Music21j Color Picker</title>
     <link rel="stylesheet" href="../css/m21.css">
-    <script type="module" src="./m21-dev.ts"></script>
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
 <h3>Click a note, then click a color to label it.</h3>
 <div id="SVGDiv">DOM goes here...<br></div>
 
 <script>
+const music21 = window.music21;
 function getColorDOM(s, width, height) {
     const d = music21.common.to_el('<div style="text-align: left; position: relative"></div>');
     const buttonDiv = getColorToolbar(s);

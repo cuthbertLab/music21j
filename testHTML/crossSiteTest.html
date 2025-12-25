@@ -5,6 +5,7 @@
 <body>
     This tests whether using an http:// link to this page we can still load music21<br>
    <script>
+    const music21 = window.music21;
     function main() {
         const n = new music21.note.Note("F#");
         const s = new music21.stream.Stream();
