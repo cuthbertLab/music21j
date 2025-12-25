@@ -1,27 +1,27 @@
 <html lang="en">
 <head>
- <title>Render tinyNotation divs</title>
- <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <link rel="stylesheet" href="../css/m21.css" type="text/css" />
- <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
+    <meta charset="utf-8">
+    <title>Render tinyNotation divs</title>
+    <link rel="stylesheet" href="../css/m21.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700">
 </head>
 <body>
 
-<h2>Just testing down here -- automatic rendering of TinyNotation;
+<h2>Testing automatic rendering of TinyNotation;
 </h2>
-<div>To use it, install music21 with <code>npm install music21j</code> and then put in your HTML: <br/>
+<div>To use it, install music21 with <code>npm install music21j</code> and then put in your HTML: <br>
     <pre>
-        &lt;script src="node_modules/releases/music21.min.js"&gt;&lt;/script&gt;
+        &lt;script src="node_modules/releases/music21.debug.js"&gt;&lt;/script&gt;
         &lt;script&gt;
         music21.tinyNotation.renderNotationDivs();
         &lt;/script&gt;
     </pre>
     <div>The second <code>script</code> is only necessary if the divs already exist</div>
-    <br/>
+    <br>
 
 
     set <code>class=""music21 tinyNotation"</code> or
-    <code>"music21 tinyNotation noPlayback"</code></div><br/>
+    <code>"music21 tinyNotation noPlayback"</code></div><br>
 <div>
     <div>
     &lt;div class="music21 tinyNotation"&gt;c4 d8 e8 f2&lt;/div&gt; (click me)
@@ -42,6 +42,6 @@
     <div class="music21 tinyNotation">g2 f2 partBreak C4 D8 E8 F2</div>
 </div>
 
-    <script src="../build/music21.debug.js"></script>
+    <script src="../releases/music21.debug.js"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@
 <html>
 <head>
     <title>MIDI In/Jazz Test for Music21j</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
 </head>
 <body>
 <div>

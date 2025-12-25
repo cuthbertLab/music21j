@@ -1,66 +1,75 @@
 <html lang="en">
 <head>
-  <title>First music21j demo</title>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-  <script src="../build/music21.debug.js"></script>
+    <title>First music21j demo</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/m21.css">
+    <script src="/build/music21.debug.js"></script>
 </head>
 <body>
 
-This was the oldest/first experiment with music21j, from summer 2013.  Updated so it still works.<br/>
+This was the oldest/first experiment with music21j, from summer 2013.  Updated so it still works.<br>
 Only for historical nostalgia...
+<ul>
+    <li>clickMe plays a single note (the first m21j sound element).</li>
+    <li>playSeventy plays notes beginning with MIDI 70.</li>
+    <li>The Note/QL list splits notes and quarter lengths by "_" and renders as a score.</li>
+</ul>
+
 <form action="" onsubmit="return false;">
-<input type="button" onclick="playNote(60)" value="clickMe" />
-<input type="button" onclick="refreshMe()" value="playSeventy" /><br />
-<label for="textId">Note/QL</label><input type="text" value="E_2 F_1.5 G_.5 E_2" id="textId" onchange="renderIt()"/>
+<input type="button" onclick="playNote(60)" value="clickMe">
+<input type="button" onclick="refreshMe()" value="playSeventy"><br>
+<label for="textId">Note/QL</label><input type="text" value="E_2 F_1.5 G_.5 E_2" id="textId" onchange="renderIt()">
 </form>
 
+
 <script>
-function playNote(midiNum) {
-    MIDI.noteOn(0, midiNum, 100, 0);
-    MIDI.noteOff(0, midiNum, .35);
-}
-
-let stopIntervalId;
-let numPlays = 0;
-let playedNote = 70;
-
-playSeventy = function() {
-    playNote(playedNote + numPlays);
-    numPlays += 1;
-    if (numPlays >= 30) {
-       numPlays = 0;
-       MIDI.noteOff(0, playedNote + numPlays, .1);
-       clearInterval(stopIntervalId);
+    const music21 = window.music21;
+    function playNote(midiNum) {
+        music21.MIDI.noteOn(0, midiNum, 100, 0);
+        music21.MIDI.noteOff(0, midiNum, .35);
     }
-};
 
-function refreshMe() {
-    stopIntervalId = setInterval(playSeventy, 100);
-}
+    let stopIntervalId;
+    let numPlays = 0;
+    let playedNote = 70;
 
-function drawMe() {
-	const myNote = new music21.note.Rest(4.0);
-    const myStream = new music21.stream.Stream();
-    myStream.append(myNote);
-	myStream.appendNewDOM();
-}
-
-function renderIt() {
-    const valueur = document.getElementById("textId").value;
-    let notes = valueur.split(" ");
-    const newStream = new music21.stream.Stream();
-    for (let i = 0; i < notes.length; i++) {
-       const noteContent = notes[i].split("_");
-       const noteName = noteContent[0];
-       const noteValue = parseFloat(noteContent[1]);
-       const newNote = new music21.note.Note(noteName, noteValue);
-       newStream.append(newNote);
+    function playSeventy() {
+        playNote(playedNote + numPlays);
+        numPlays += 1;
+        if (numPlays >= 30) {
+           numPlays = 0;
+           music21.MIDI.noteOff(0, playedNote + numPlays, .1);
+           clearInterval(stopIntervalId);
+        }
     }
-    newStream.replaceDOM();
-}
 
-drawMe();
+    function refreshMe() {
+        stopIntervalId = setInterval(playSeventy, 100);
+    }
+
+    function drawMe() {
+        console.log('drawMe done');
+        const myNote = new music21.note.Rest(4.0);
+        const myStream = new music21.stream.Stream();
+        myStream.append(myNote);
+        myStream.appendNewDOM();
+    }
+
+    function renderIt() {
+        const valueur = document.getElementById("textId").value;
+        let notes = valueur.split(" ");
+        const newStream = new music21.stream.Stream();
+        for (let i = 0; i < notes.length; i++) {
+           const noteContent = notes[i].split("_");
+           const noteName = noteContent[0];
+           const noteValue = parseFloat(noteContent[1]);
+           const newNote = new music21.note.Note(noteName, noteValue);
+           newStream.append(newNote);
+        }
+        newStream.replaceDOM();
+    }
+
+    drawMe();
 </script>
 
 </body>

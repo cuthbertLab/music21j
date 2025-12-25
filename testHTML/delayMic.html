@@ -1,8 +1,8 @@
 <html lang="en-us"><head>
 <title>Stacey Canon</title>
-    <script src="../build/music21.debug.js"></script>
-    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
+    <script src="../releases/music21.debug.js"></script>
+    <link rel="stylesheet" href="../css/m21.css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700">
 </head>
 <body style='text-align: left;'>
 <div style='padding-left: 20px; background-color: white'>
@@ -25,6 +25,8 @@
 
 </div>
    <script>
+    const music21 = window.music21;
+   function main() {
        music21.tinyNotation.renderNotationDivs();
        var as = music21.audioSearch;
        delayNodes = [];
@@ -33,10 +35,10 @@
        numVoices = 4;
        delayBeats = 8;
 
-       delayLine = function(mediaStream) {
+       delayLine = function (mediaStream) {
            audioContext = new AudioContext();
            input = audioContext.createMediaStreamSource(mediaStream);
-           delayTime = delayBeats * (60.0/mn.tempo);
+           delayTime = delayBeats * (60.0 / mn.tempo);
            var lastInput = input;
            for (var i = 0; i < numVoices; i++) {
                delayNode = audioContext.createDelay(delayTime + 0.2);
@@ -50,30 +52,37 @@
        };
 
 
-       document.querySelector('#startListening').addEventListener('click', () => {
-           mn.chirp();
-           music21.audioSearch.getUserMedia(undefined, delayLine);
-       });
-       document.querySelector('#stopListening').addEventListener('click', () => {
-           if (input.mediaStream !== undefined && input.mediaStream.active) {
-               const mainTrack = input.mediaStream.getTracks()[0];
-               mainTrack.stop();
-           }
-       });
-       document.querySelector('#stopPlayback').addEventListener('click', () => {
-           for (let i = 0; i < numVoices; i++) {
-               delayNodes[i].disconnect();
-           }
-           input.disconnect();
-           audioContext.close();
-           console.log('disconnected');
-       });
+       document.querySelector('#startListening')
+           .addEventListener('click', () => {
+               mn.chirp();
+               music21.audioSearch.getUserMedia(undefined, delayLine);
+           });
+       document.querySelector('#stopListening')
+           .addEventListener('click', () => {
+               if (input.mediaStream !== undefined && input.mediaStream.active) {
+                   const mainTrack = input.mediaStream.getTracks()[0];
+                   mainTrack.stop();
+               }
+           });
+       document.querySelector('#stopPlayback')
+           .addEventListener('click', () => {
+               for (let i = 0; i < numVoices; i++) {
+                   delayNodes[i].disconnect();
+               }
+               input.disconnect();
+               audioContext.close();
+               console.log('disconnected');
+           });
 
        mn = new music21.tempo.Metronome();
        mn.addDiv(document.querySelector('#metronomeDiv'));
        mn.silent = true;
        mn.flash = true;
        console.log(mn);
+   }
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
    </script>
 </body>
 </html>
