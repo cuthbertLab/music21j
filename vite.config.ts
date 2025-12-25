@@ -5,11 +5,13 @@ import pkg from './package.json';
 
 const banner_lines: string[] = [
     '/*!',
+    ' * ',
     ` * music21j version ${pkg.version} built on ${(new Date()).toISOString().split('T')[0]}.`,
     ` * Copyright (c) 2013-${(new Date()).getFullYear()} Michael Scott Asato Cuthbert`,
     ' * BSD License, see LICENSE',
     ' *',
     ' * https://github.com/cuthbertLab/music21j',
+    ' * ',
     ' */',
     '',
 ];
