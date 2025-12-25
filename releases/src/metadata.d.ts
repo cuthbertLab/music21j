@@ -9,6 +9,7 @@ import { Music21Object } from './base';
 export declare class Metadata extends Music21Object {
     title: string | undefined;
     composer: string | undefined;
+    classSortOrder: number;
     constructor(vars?: any);
     static get className(): string;
 }

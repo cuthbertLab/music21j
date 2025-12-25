@@ -1,30 +1,29 @@
 /**!
- * **music21j**: Javascript reimplementation of Core music21 features.
+ * **music21j**: JavaScript reimplementation of Core music21 features.
  *
- * See http://web.mit.edu/music21/ for more details.
+ * See https://www.trecento.com/music21docs/ for more details.
  *
- * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-25, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-24, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-25, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
  *
- * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. Any recent
- * version of Firefox, Safari, Edge,  Chrome, etc. will do.
+ * Requires a browser updated in the last 30 months (Baseline), naturally w/ SVG and Canvas.
+ * Any recent version of Firefox, Safari, Edge, Chrome, etc. will do.
  *
  * All interfaces are beta and may change radically from day to day and release to release.
- * Do not use this in production code yet.
+ * Do not use this in production code yet unless you are willing to pin to a release or change.
  *
- * music21j acknowledges VexFlow and MIDI.js in particular for their great efforts without which
- * this module would not be possible.
+ * Cuthbert acknowledges VexFlow and MIDI.js in particular for their great efforts without which
+ * this library would not be possible.
  *
  */
-import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';
 import * as Vex from 'vexflow';
 import * as exceptions21 from './exceptions21';
@@ -76,6 +75,6 @@ import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
 import { debug } from './debug';
-export declare const VERSION = "0.17.14";
+export declare const VERSION = "0.20.1";
 export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, defaults, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, metadata, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, style, svgs, tempo, tie, tinyNotation, vfShims, vfShow, voiceLeading, webmidi, };
 //# sourceMappingURL=main.d.ts.map
