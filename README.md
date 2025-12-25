@@ -124,7 +124,7 @@ testHTML directory as `sfElsewhereCDN.html`.
 
 ## Version
 
-0.20 (beta)
+0.20.2 (beta)
 
 ## License
 
@@ -238,7 +238,7 @@ The build output is suitable for direct browser use or npm publishing.
 You'll need to be part of the npm dev team.
 
 1. Update the version number in `package.json`, manually in `main.ts`, 
-and (if bigger than patch), here.  Then do all the steps again from the start.
+and (if bigger than patch), here.
 
 2. Publish:
 
@@ -271,4 +271,4 @@ $ npm install
 
 Just documenting major changes at different versions, starting with 0.20
 
-* v0.20 -- build via vite.  MIDI is no longer exposed as top-level export.
+* v0.20 -- build via vite.  MIDI is no longer exposed as top-level export. Add ES
