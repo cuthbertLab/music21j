@@ -1,9 +1,22 @@
 {
   "name": "music21j",
   "version": "0.20.1",
-  "description": "A toolkit for computer-aided musicology, Javascript version",
+  "description": "A toolkit for computer-aided musicology, JavaScript version",
+
+  "_main_etc": "these are the legacy urls; exports:. is the modern standard",
   "main": "releases/music21.debug.js",
+  "module": "releases/music21.es.js",
   "typings": "releases/src/main.d.ts",
+  "style": "releases/music21j.css",
+
+  "exports": {
+    ".": {
+      "import": "./releases/music21.es.js",
+      "types": "./releases/src/main.d.ts",
+      "default": "./releases/music21.debug.js"
+    }
+  },
+
   "files": [
     "/css",
     "/releases",
@@ -38,8 +51,7 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
     "vite-plugin-checker": "^0.12.0",
-    "vite-plugin-directory-index": "^3.0.1",
-    "vitest": "^4.0.16"
+    "vite-plugin-directory-index": "^3.0.1"
   },
   "directories": {
     "test": "tests"

@@ -25,12 +25,12 @@ export default defineConfig({
         // this is the default.
         // target: 'baseline-widely-available',
         // esbuild.target is esnext for speed.
-
         lib: {
             entry: 'src/main.ts',
             name: 'music21',
-            formats: ['umd'],
-            fileName: () => 'music21.debug.js',
+            formats: ['umd', 'es'],
+            // "debug" is historical -- it is actually minified.
+            fileName: format => (format === 'umd') ? 'music21.debug.js' : 'music21.es.js',
         },
         rollupOptions: {
             output: {
