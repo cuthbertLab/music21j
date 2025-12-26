@@ -1,3 +1,7 @@
+/**
+ * Use Playwright to look at QUnit results from JS/Browser-land and report
+ * those results to Node/Console/GitHub-CI land
+ */
 import { chromium, type Browser, type Page } from '@playwright/test';
 
 /**
