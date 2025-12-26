@@ -1,21 +1,28 @@
-import { chromium } from '@playwright/test';
+import { chromium, type Browser, type Page } from '@playwright/test';
 
 /**
  * Loads the Vite-served QUnit page in headless Chromium and exits nonzero on failures.
  */
 async function main(): Promise<void> {
-    const browser = await chromium.launch();
-    const page = await browser.newPage();
+    const browser: Browser = await chromium.launch();
+    const page: Page = await browser.newPage();
 
     // Assumes vite dev server is running on 5173
-    await page.goto('http://localhost:5173/tests/', {waitUntil: 'domcontentloaded'});
+    await page.goto(
+        'http://localhost:5173/tests/',
+        {waitUntil: 'domcontentloaded'},
+    );
 
-    // Wait for QUnit to finish
-    await page.waitForFunction(() => (window as any).__qunit_done__ === true, null, {timeout: 120_000});
+    // Wait up to 2 minutes for QUnit to finish.  See types/qunit-globals.d.ts for the added python dunders
+    await page.waitForFunction(
+        () => globalThis.__qunit_done__,  // wait until this is Truthy
+        null,
+        {timeout: 120_000},  // in ms
+    );
 
     const { results, failures } = await page.evaluate(() => ({
-        results: (window as any).__qunit_results__,
-        failures: (window as any).__qunit_failures__ ?? [],
+        results: globalThis.__qunit_results__,
+        failures: globalThis.__qunit_failures__ ?? [],
     }));
     await browser.close();
 

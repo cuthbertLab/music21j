@@ -7,7 +7,6 @@ import * as music21 from '../src/main';
 // Import the test registry
 import m21_tests from './loadAll';
 
-
 type QUnit_fail = {
     module: string;
     name: string;
@@ -100,7 +99,7 @@ QUnit.testDone(details => {
 QUnit.start();
 
 QUnit.done(details => {
-    (globalThis as any).__qunit_done__ = true;
-    (globalThis as any).__qunit_results__ = details;
-    (globalThis as any).__qunit_failures__ = qunit_failures;
+    globalThis.__qunit_done__ = true;
+    globalThis.__qunit_results__ = details;
+    globalThis.__qunit_failures__ = qunit_failures;
 });
