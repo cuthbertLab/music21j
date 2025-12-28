@@ -45,4 +45,12 @@ export default function tests() {
         assert.equal(n.offset, 1, 'offset uses opFrac');
         assert.equal(common.opFrac(0.000001), 0);
     });
+
+    test('music21.common.pathSimplify', assert => {
+        const url = music21.common.urls.soundfontUrl;
+        assert.ok(url.endsWith('/'));
+        assert.equal(common.pathSimplify(url), url);
+        const urlWithoutTrailingSlash = url.substring(0, url.length - 1);
+        assert.equal(common.pathSimplify(urlWithoutTrailingSlash), url);
+    });
 }
