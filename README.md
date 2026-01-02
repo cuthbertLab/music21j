@@ -2,7 +2,7 @@
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright (c) 2013-25, Michael Scott Asato Cuthbert, some rights reserved (BSD).
+Copyright (c) 2013-2026, Michael Scott Asato Cuthbert, some rights reserved (BSD).
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript

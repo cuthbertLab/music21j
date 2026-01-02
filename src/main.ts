@@ -3,13 +3,13 @@
  *
  * See https://www.trecento.com/music21docs/ for more details.
  *
- * Copyright (c) 2013-25, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-2026, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-25, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-2026, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
