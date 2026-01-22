@@ -107,7 +107,8 @@ export default function tests() {
         assert.equal(dis.octave, 5, 'Pitch octave set to 5');
 
         // inPlace
-        dis.getHigherEnharmonic(true); // inPlace
+        const same = dis.getHigherEnharmonic(true); // inPlace
+        assert.equal(same, dis, 'inPlace=True returns same object');
         assert.equal(dis.nameWithOctave, es.nameWithOctave);
 
         const cDblSharp = new music21.pitch.Pitch('C##5');
@@ -130,6 +131,32 @@ export default function tests() {
         // assert.equal(octaveless.octave, undefined, 'octave should be undefined');
         // assert.equal(bSharp.octave, undefined, 'octave should be undefined');
         // assert.equal(bSharp.name, 'B#');
+
+        // getEnharmonic (not inPlace)
+        const start1 = new music21.pitch.Pitch('E-5');
+        const expectedFirst1 = new music21.pitch.Pitch('D#5');
+        const expectedSecond1 = new music21.pitch.Pitch('E-5');
+
+        const first1 = start1.getEnharmonic();
+        assert.notEqual(first1, start1, 'should not return the same (modified) object');
+        assert.equal(first1.nameWithOctave, expectedFirst1.nameWithOctave);
+
+        const second1 = first1.getEnharmonic();
+        assert.notEqual(second1, first1, 'should not return the same (modified) object');
+        assert.equal(second1.nameWithOctave, expectedSecond1.nameWithOctave);
+
+        // getEnharmonic (inPlace)
+        const start2 = new music21.pitch.Pitch('F-3');
+        const expectedFirst2 = new music21.pitch.Pitch('E3');
+        const expectedSecond2 = new music21.pitch.Pitch('F-3');
+
+        const first2 = start2.getEnharmonic(true);
+        assert.equal(first2, start2, 'should return the same (modified) object');
+        assert.equal(first2.nameWithOctave, expectedFirst2.nameWithOctave);
+
+        const second2 = first2.getEnharmonic(true);
+        assert.equal(second2, first2, 'should return the same (modified) object');
+        assert.equal(second2.nameWithOctave, expectedSecond2.nameWithOctave);
 
     });
 
