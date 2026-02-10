@@ -84,7 +84,7 @@ import * as webmidi from './webmidi';
 
 import { debug } from './debug';
 
-export const VERSION = '0.21.0';
+export const VERSION = '0.21.1';
 
 export {
     MIDI,

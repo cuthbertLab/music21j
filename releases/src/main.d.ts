@@ -75,6 +75,6 @@ import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
 import { debug } from './debug';
-export declare const VERSION = "0.21.0";
+export declare const VERSION = "0.21.1";
 export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, defaults, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, metadata, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, style, svgs, tempo, tie, tinyNotation, vfShims, vfShow, voiceLeading, webmidi, };
 //# sourceMappingURL=main.d.ts.map

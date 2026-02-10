@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "A toolkit for computer-aided musicology, JavaScript version",
 
   "_main_etc": "these are the legacy urls; exports:. is the modern standard",

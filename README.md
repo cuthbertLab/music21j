@@ -124,7 +124,7 @@ testHTML directory as `sfElsewhereCDN.html`.
 
 ## Version
 
-0.21.0 (beta)
+0.21.1 (beta)
 
 ## License
 
@@ -274,4 +274,5 @@ $ npm install
 
 Just documenting major changes at different versions, starting with 0.20
 
+* v0.21 -- improve cautionary accidentals on Vexflow render; custom MIDI failure msg.
 * v0.20 -- build via vite.  MIDI is no longer exposed as top-level export. Add ES
