@@ -342,8 +342,10 @@ export class Renderer {
      * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
      * returns Vex.Flow.Stave staff to return too
      *
-     * (also changes the `stack` parameter and runs `makeNotation` on s
-     * with overrideStatus: true to update accidental display)
+     * also changes the `stack` parameter
+     *
+     * Previously called makeNotation, but that did not allow voices/measures
+     * to look at accidentals in other voices/measures.
      */
     prepareFlat(
         s: stream.Stream,
@@ -351,7 +353,6 @@ export class Renderer {
         optionalStave?: VFStave,
         optional_renderOp?: renderOptions.RenderOptions,
     ): VFStave {
-        s.makeNotation({ inPlace: true, overrideStatus: true });
         const stave: VFStave = optionalStave ?? this.renderStave(s, optional_renderOp);
         s.activeVFStave = stave;
         const vf_voice = this.getVoice(s, stave);

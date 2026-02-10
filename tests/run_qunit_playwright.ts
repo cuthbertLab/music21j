@@ -11,6 +11,11 @@ async function main(): Promise<void> {
     const browser: Browser = await chromium.launch();
     const page: Page = await browser.newPage();
 
+    page.on('console', msg => {
+        const type = msg.type();   // 'log', 'error', 'warning', etc.
+        console[type](`[browser:${type}]`, msg.text());
+    });
+
     // Assumes vite dev server is running on 5173
     await page.goto(
         'http://localhost:5173/tests/',

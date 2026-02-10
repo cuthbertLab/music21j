@@ -1542,8 +1542,10 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
 
     /**
      * makeNotation does not do anything yet, but it is a placeholder
-     * so it can start to be called.  NOTE: Currently assumes that
-     * it is being called on FLAT Stream!
+     * so it can start to be called.
+     *
+     * setStemDirectionForUnspecified is fine w/ Scores
+     * makeAccidentals has an override for Scores (but not Opus...)
      *
      * TODO: move call to makeBeams from renderVexflow to here once
      *     it works on recursive streams.
@@ -1555,7 +1557,16 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         } else {
             out = this.clone(true);
         }
-        // already made a copy
+        // already made a copy so all from here on should be inPlace: true;
+        if (this.autoBeam === true) {
+            try {
+                this.makeBeams({ inPlace: true });
+            } catch (e) {
+                if (!e.toString().includes('Time Signature')) {
+                    throw e;
+                }
+            }
+        }
         makeNotation.setStemDirectionForUnspecified(out);
         out.makeAccidentals({ inPlace: true, overrideStatus });
         return out;
@@ -1566,7 +1577,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      * Return a new Stream or modify this stream
      * to have beams.
      *
-     * Called from renderVexflow()
+     * Called from makeNotation
      */
     makeBeams(
         {
@@ -1838,7 +1849,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         pitchPastMeasure=[],
         useKeySignature=true,
         alteredPitches=[],
-        // searchKeySignatureByContext=false,
+        // searchKeySignatureByContext=false, // it appears we are always doing this.
         cautionaryPitchClass=true,
         cautionaryAll=false,
         inPlace=false,
@@ -1870,14 +1881,25 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         const noteIterator = returnObj.recurse().notesAndRests;
         let last_measure: Measure;
         for (const e of noteIterator) {
-            if (e.activeSite !== undefined && e.activeSite.isMeasure) {
+            let search_activeSite = e.activeSite;
+            if (search_activeSite?.classes.includes('Voice')) {
+                // console.log(`Search active site: ${search_activeSite?.id}:`);
+                search_activeSite = search_activeSite.activeSite;
+            }
+            if (search_activeSite?.isMeasure) {
                 // noinspection JSUnusedAssignment
-                if (last_measure !== undefined && e.activeSite !== last_measure) {
+                if (search_activeSite !== last_measure) {
                     // New measure: move pitchPast to pitchPastMeasure and clear
                     pitchPastMeasure = Array.from(pitchPast);
                     pitchPast = [];
+                    last_measure = search_activeSite;
+                    // console.error(
+                    //     `new last_measure ${last_measure.id}: ${pitchPastMeasure.map(p => p.nameWithOctave)}`
+                    // );
+                } else if (!last_measure) {
+                    last_measure = search_activeSite;
+                    // console.error(`new last_measure ${last_measure.id}`);
                 }
-                last_measure = e.activeSite;
             }
             if (e.classes.includes('Note')) {
                 const p = (e as note.Note).pitch;
@@ -1886,6 +1908,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
                 p.updateAccidentalDisplay({
                     pitchPast,
                     pitchPastMeasure,
+                    otherSimultaneousPitches: [],  // TODO: Voices!
                     alteredPitches,
                     cautionaryPitchClass,
                     cautionaryAll,
@@ -1989,9 +2012,14 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
+     * inPlace is true for backwards compatibility.
+     *
      * Takes in the div surrounding an SVG object (or a canvas)
      */
-    renderVexflow(where?: HTMLDivElement|HTMLCanvasElement): vfShow.Renderer {
+    renderVexflow(
+        where?: HTMLDivElement|HTMLCanvasElement,
+        {inPlace=true}: {inPlace?: boolean}={}
+    ): vfShow.Renderer {
         const canvasOrSVG = <HTMLDivElement|HTMLCanvasElement> common.coerceHTMLElement(where);
         const DOMContains = document.querySelector(defaults.appendLocation).contains(canvasOrSVG);
         if (!DOMContains) {
@@ -1999,17 +2027,9 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             document.querySelector(defaults.appendLocation).appendChild(canvasOrSVG);
         }
         const tagName = canvasOrSVG.tagName.toLowerCase();
-
-        if (this.autoBeam === true) {
-            try {
-                this.makeBeams({ inPlace: true });
-            } catch (e) {
-                if (!e.toString().includes('Time Signature')) {
-                    throw e;
-                }
-            }
-        }
-        const vfr = new vfShow.Renderer(this, canvasOrSVG);
+        const stream_to_render = inPlace ? this : this.clone(true);
+        stream_to_render.makeNotation({inPlace: true, overrideStatus: true});
+        const vfr = new vfShow.Renderer(stream_to_render, canvasOrSVG);
         if (tagName === 'canvas') {
             vfr.rendererType = 'canvas';
         } else if (tagName === 'svg') {
@@ -3623,6 +3643,44 @@ export class Score extends Stream {
     }
 
     /**
+     * Override main stream makeAccidentals to call on each part.
+     */
+    override makeAccidentals({
+        pitchPast = [],
+        pitchPastMeasure = [],
+        useKeySignature = true,
+        alteredPitches = [],
+        // searchKeySignatureByContext=false, // it appears we are always doing this.
+        cautionaryPitchClass = true,
+        cautionaryAll = false,
+        inPlace = false,
+        overrideStatus = false,
+        cautionaryNotImmediateRepeat = true,
+        tiePitchSet = new Set(),
+    }: MakeAccidentalsParams = {}): this {
+        let return_obj = this;
+        if (!inPlace) {
+            return_obj = this.clone(true);
+        }
+        for (const p of this.parts) {
+            p.makeAccidentals({
+                pitchPast: [],
+                pitchPastMeasure: [],
+                useKeySignature,
+                alteredPitches,
+                // searchKeySignatureByContext=false, // it appears we are always doing this.
+                cautionaryPitchClass,
+                cautionaryAll,
+                inPlace: true,
+                overrideStatus,
+                cautionaryNotImmediateRepeat,
+                tiePitchSet: new Set(),
+            });
+        }
+        return return_obj;
+    }
+
+    /**
      * Override main stream makeBeams to call on each part.
      */
     makeBeams({ inPlace=false, setStemDirections=true }: makeNotation.MakeBeamsOptions = {}) {
@@ -3927,9 +3985,9 @@ export class Score extends Stream {
 export class PartStaff extends Part {}
 
 
-// TODO(msc) -- Opus
+// TODO(msc) -- Opus (needs makeAccidentals override, etc.)
 
-// small Class; a namedtuple in music21p
+// small Class; a namedtuple in music21p  -- rewrite as Interface
 export class OffsetMap {
     element: base.Music21Object;
     offset: number;
