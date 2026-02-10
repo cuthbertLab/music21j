@@ -124,7 +124,7 @@ testHTML directory as `sfElsewhereCDN.html`.
 
 ## Version
 
-0.20.2 (beta)
+0.21.0 (beta)
 
 ## License
 
@@ -192,6 +192,9 @@ $ npm run dev
 ```
 
 This starts Vite’s development server with fast rebuilds and live reload.
+(Note that the testHTML files currently reference the hardcoded 
+releases/music21.debug.js file -- they are set up as a playground
+rather than for testing purposes right now; making both possible is a TODO)
 
 ## Testing
 

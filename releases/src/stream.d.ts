@@ -383,8 +383,10 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
     mergeAttributes(other: Stream): this;
     /**
      * makeNotation does not do anything yet, but it is a placeholder
-     * so it can start to be called.  NOTE: Currently assumes that
-     * it is being called on FLAT Stream!
+     * so it can start to be called.
+     *
+     * setStemDirectionForUnspecified is fine w/ Scores
+     * makeAccidentals has an override for Scores (but not Opus...)
      *
      * TODO: move call to makeBeams from renderVexflow to here once
      *     it works on recursive streams.
@@ -397,7 +399,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * Return a new Stream or modify this stream
      * to have beams.
      *
-     * Called from renderVexflow()
+     * Called from makeNotation
      */
     makeBeams({ inPlace, setStemDirections, failOnNoTimeSignature, }?: makeNotation.MakeBeamsOptions): this;
     /**
@@ -549,9 +551,13 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
+     * inPlace is true for backwards compatibility.
+     *
      * Takes in the div surrounding an SVG object (or a canvas)
      */
-    renderVexflow(where?: HTMLDivElement | HTMLCanvasElement): vfShow.Renderer;
+    renderVexflow(where?: HTMLDivElement | HTMLCanvasElement, { inPlace }?: {
+        inPlace?: boolean;
+    }): vfShow.Renderer;
     /**
      * Estimate the stream height for the Stream.
      *
@@ -877,6 +883,10 @@ export declare class Score extends Stream {
     constructor();
     get clef(): clef.Clef;
     set clef(newClef: clef.Clef);
+    /**
+     * Override main stream makeAccidentals to call on each part.
+     */
+    makeAccidentals({ pitchPast, pitchPastMeasure, useKeySignature, alteredPitches, cautionaryPitchClass, cautionaryAll, inPlace, overrideStatus, cautionaryNotImmediateRepeat, tiePitchSet, }?: MakeAccidentalsParams): this;
     /**
      * Override main stream makeBeams to call on each part.
      */
