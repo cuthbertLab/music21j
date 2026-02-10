@@ -1206,4 +1206,24 @@ export default function tests() {
         assert.deepEqual(s.noteElementFromScaledX(122), n2);
         assert.deepEqual(s.noteElementFromScaledX(123), n2);
     });
+
+    /**
+     * Similar to makeAccidentals multimeasure but doing it implicitly, and
+     * with naturals
+     */
+    test('music21.stream - makeNotation via vexflow renderer works', assert => {
+        const n1 = new music21.note.Note('F#4');
+        const m1 = new music21.stream.Measure();
+        m1.append(n1);
+        const n2 = new music21.note.Note('F4');
+        const m2 = new music21.stream.Measure();
+        m2.append(n2);
+        const p = new music21.stream.Part();
+        p.append(m1);
+        p.append(m2);
+        p.appendNewDOM();  // TODO -- use fixture and clean up...
+        assert.ok(n1.pitch.accidental?.displayStatus, 'F# has an accidental displayed');
+        // NOPE: not displaying!
+        assert.ok(n2.pitch.accidental?.displayStatus, 'F natural got an accidental and it is displayed');
+    });
 }
