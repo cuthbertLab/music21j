@@ -1,0 +1,65 @@
+<html lang="en">
+<head>
+	<title>MIDI In Chords for Music21j</title>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="../css/m21.css">
+</head>
+<body>
+    <h1>MIDI In Chords with Custom onAccessFailure</h1>
+	<div>
+		MIDI Input:
+		<div id="putMidiSelectHere"></div>
+	</div>
+	<h2>Chord and Duration rendering and Metronome Demo.</h2>
+	<div>
+		<i>Requires MIDI keyboard and Jazz Plugin to work.</i>
+	</div>
+	<div id="svgDiv" class='streamHolding'>
+	</div>
+	<div id="metronomeDiv"></div>
+
+	<script src="../releases/music21.debug.js"></script>
+    <script type="module" src="./m21-dev.ts"></script>
+	<script>
+    let s; // will become Stream object soon...
+    let metro; // will become Metronome object soon...
+
+    function appendElement(appendObject) {
+        if (s.length > 7) {
+            s.elements = s.elements.slice(1)
+        }
+        // if (s.length > 0) {
+        //     let lastNote = s.elements[s.length - 1];
+        // }
+        s.append(appendObject);
+        const svgDiv = document.querySelector("#svgDiv");
+        svgDiv.replaceChildren();
+        s.appendNewDOM(svgDiv);
+    }
+
+    function main() {
+        s = new music21.stream.Measure();
+        s.clef = new music21.clef.TrebleClef();
+        s.renderOptions.staffLines = 5;
+        metro = new music21.tempo.Metronome();
+        metro.addDiv(document.querySelector("#metronomeDiv"));
+
+        music21.miditools.config.metronome = metro;
+
+        music21.webmidi.createSelector(
+            document.querySelector("#putMidiSelectHere"),
+            {onAccessFailure: e => { alert(e.message + '(' + e.name + ')')}}
+        );
+        music21.miditools.callbacks.general = [
+            music21.miditools.makeChords,
+            music21.miditools.sendToMIDIjs,
+        ];
+        music21.miditools.callbacks.sendOutChord = appendElement;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
+</script>
+
+</body>
+</html>
