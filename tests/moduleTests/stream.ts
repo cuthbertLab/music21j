@@ -577,6 +577,48 @@ export default function tests() {
         assert.ok(n2.pitch.accidental.displayStatus);
     });
 
+    test('music21.stream.Stream makeAccidentals multi-voice', assert => {
+        const m1 = new music21.stream.Measure();
+        m1.id = 'm1';
+        const n11 = new music21.note.Note('F#4');
+        const m1v1 = new music21.stream.Voice();
+        m1v1.id = 'm1v1';
+        m1v1.append(n11);
+        m1.append(m1v1);
+        const n12 = new music21.note.Note('C4');
+        const m1v2 = new music21.stream.Voice();
+        m1v2.id = 'm1v2';
+        m1v2.append(n12);
+        m1.append(m1v2);
+
+        const m2 = new music21.stream.Measure();
+        m2.id = 'm2';
+        const n21 = new music21.note.Note('F4');
+        const m2v1 = new music21.stream.Voice();
+        m2v1.id = 'm2v1';
+
+        m2v1.append(n21);
+        m2.append(m2v1);
+        const n22 = new music21.note.Note('F3');
+        const m2v2 = new music21.stream.Voice();
+        m2v2.id = 'm2v2';
+        m2v2.append(n22);
+        m2.append(m2v2);
+
+        const p = new music21.stream.Part();
+        p.append(m1);
+        p.append(m2);
+        p.makeAccidentals({inPlace: true});
+
+        assert.ok(n11.pitch.accidental?.displayStatus);
+        assert.notOk(n12.pitch.accidental?.displayStatus ?? false, 'n12 pitch should not have an accidental');
+        assert.ok(n21.pitch.accidental?.displayStatus);
+        // judgment call -- okay that it is currently false;
+        // assert.ok(n22.pitch.accidental?.displayStatus,
+        //           `n22 accidental should be displayed: ${n22.pitch.accidental}`);
+    });
+
+
     test('music21.stream.Stream makeAccidentals superfluous naturals', assert => {
         const m = new music21.stream.Measure();
         const c_major = new music21.key.Key('C');

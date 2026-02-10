@@ -9,6 +9,11 @@ async function wait_for_url(url: string, timeout_ms = 120_000): Promise<void> {
 
     while (Date.now() - start < timeout_ms) {
         try {
+            // no-await-in-loop is designed to prevent doing sequential things that
+            // should be done in parallel (with await Promise.all()...) - it is
+            // fine to use in timeout checking situations.
+
+            // eslint-disable-next-line no-await-in-loop
             const res = await fetch(url, { redirect: 'manual' });
             // Any HTTP response means the server is up
             if (res.status >= 200 && res.status < 500) {
@@ -17,6 +22,7 @@ async function wait_for_url(url: string, timeout_ms = 120_000): Promise<void> {
         } catch {
             // server not ready yet
         }
+        // eslint-disable-next-line no-await-in-loop
         await sleep(250);
     }
 
