@@ -1265,7 +1265,6 @@ export default function tests() {
         p.append(m2);
         p.appendNewDOM();  // TODO -- use fixture and clean up...
         assert.ok(n1.pitch.accidental?.displayStatus, 'F# has an accidental displayed');
-        // NOPE: not displaying!
         assert.ok(n2.pitch.accidental?.displayStatus, 'F natural got an accidental and it is displayed');
     });
 }
