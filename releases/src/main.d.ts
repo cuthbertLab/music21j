@@ -3,13 +3,13 @@
  *
  * See https://www.trecento.com/music21docs/ for more details.
  *
- * Copyright (c) 2013-25, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-2026, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-25, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-2026, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
@@ -75,6 +75,6 @@ import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
 import { debug } from './debug';
-export declare const VERSION = "0.20.1";
+export declare const VERSION = "0.21.0";
 export { MIDI, Vex, exceptions21, base, prebase, common, debug, articulations, audioRecording, audioSearch, bar, beam, chord, chordTables, clef, converter, defaults, derivation, duration, dynamics, editorial, expressions, figuredBass, fromPython, harmony, instrument, interval, key, keyboard, layout, metadata, meter, miditools, musicxml, note, parseLoader, pitch, renderOptions, roman, scale, sites, stream, style, svgs, tempo, tie, tinyNotation, vfShims, vfShow, voiceLeading, webmidi, };
 //# sourceMappingURL=main.d.ts.map
