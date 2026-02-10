@@ -1557,7 +1557,16 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         } else {
             out = this.clone(true);
         }
-        // already made a copy
+        // already made a copy so all from here on should be inPlace: true;
+        if (this.autoBeam === true) {
+            try {
+                this.makeBeams({ inPlace: true });
+            } catch (e) {
+                if (!e.toString().includes('Time Signature')) {
+                    throw e;
+                }
+            }
+        }
         makeNotation.setStemDirectionForUnspecified(out);
         out.makeAccidentals({ inPlace: true, overrideStatus });
         return out;
