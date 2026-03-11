@@ -172,6 +172,11 @@ $ npm install
 $ npx playwright install chromium
 ```
 
+If you place a copy of Python music21 in a subdirectory called music21python,
+coding agents may be able to use it to improve or standardize your code (it is gitignored).
+Alternatively a sibling directory called music21, music21base, or music21python will work.
+
+
 ### Normal development
 
 To develop, run this npm command:
