@@ -43,8 +43,8 @@ export declare class RenderOptions {
     measureIndex: number;
     systemPadding: number;
     maxSystemWidth: number;
-    leftBarline: string;
-    rightBarline: string;
+    _leftBarline: string;
+    _rightBarline: string;
     staffLines: number;
     staffConnectors: StaveConnector[];
     staffPadding: number;
@@ -57,6 +57,10 @@ export declare class RenderOptions {
     heightOfStaffProper: number;
     heightBelowStaff: number;
     get staffAreaHeight(): number;
+    get leftBarline(): string | undefined;
+    set leftBarline(b: string | undefined);
+    get rightBarline(): string | undefined;
+    set rightBarline(b: string | undefined);
     deepClone(): RenderOptions;
 }
 export {};
