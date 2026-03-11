@@ -11,6 +11,7 @@
  *
  */
 import {StaveConnector} from './types';
+import {standardizeBarType} from './bar';
 
 interface EventInterface {
     click: string|Function|undefined,
@@ -64,8 +65,8 @@ export class RenderOptions {
     // scaleFactors.
     maxSystemWidth: number = undefined;
 
-    leftBarline: string = undefined;  // render() sets to 'none' for system beginnings
-    rightBarline: string = undefined;
+    _leftBarline: string = undefined;  // render() sets to 'none' for system beginnings
+    _rightBarline: string = undefined;
 
     staffLines: number = 5;
     staffConnectors: StaveConnector[] = [StaveConnector.SINGLE, StaveConnector.BRACE];
@@ -92,6 +93,28 @@ export class RenderOptions {
         return this.heightAboveStaff + this.heightOfStaffProper + this.heightBelowStaff;
     }
 
+    get leftBarline(): string|undefined {
+        return this._leftBarline;
+    }
+
+    set leftBarline(b: string|undefined) {
+        if (b === undefined) {
+            this._leftBarline = undefined;
+        }
+        this._leftBarline = standardizeBarType(b);
+    }
+
+    get rightBarline(): string|undefined {
+        return this._rightBarline;
+    }
+
+    set rightBarline(b: string|undefined) {
+        if (b === undefined) {
+            this._rightBarline = undefined;
+        }
+        this._rightBarline = standardizeBarType(b);
+    }
+
     deepClone(): RenderOptions {
         // TODO(MSC): allow for subclassing...
         const out = new RenderOptions();
@@ -104,7 +127,7 @@ export class RenderOptions {
         out.scaleFactor.x = this.scaleFactor.x;
         out.scaleFactor.y = this.scaleFactor.y;
         out.staffConnectors = [...this.staffConnectors];
-        out.events = {...this.events};
+        out.events = {...this.events};  // Q: Should the events themselves be cloned?
         return out;
     }
 }

@@ -206,10 +206,15 @@ To run the full test suite headlessly:
 ```sh
 $ npm test
 ```
+
 This will:
 	•	start a Vite development server
 	•	run QUnit tests in headless Chromium
 	•	fail with detailed assertion output if any test fails
+
+(Note that the first time you run you will need to install a headless Chrome 200MB
+with `npx playwright install chromium`)
+
 
 To run tests with the Vite server already running:
 
