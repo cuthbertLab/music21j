@@ -13,6 +13,14 @@ import * as note from './note';
 import * as stream from './stream';
 import type * as renderOptions from './renderOptions';
 import { StaveConnector } from './types';
+export declare const barline_m21ToVexflow: {
+    regular: string;
+    single: string;
+    double: string;
+    final: string;
+    end: string;
+    none: string;
+};
 export declare const vexflowDefaults: {
     softmaxFactor: number;
 };
@@ -203,7 +211,8 @@ export declare class Renderer {
      * adds keySignature, timeSignature, and rightBarline
      *
      * RenderOptions object might have
-     * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
+     * `{showMeasureNumber: boolean,
+     *   rightBarLine/leftBarline: ['regular'|undefined, 'double', 'final', 'none']`
      */
     setClefEtc(s: stream.Stream, stave: VFStave, rendOp?: renderOptions.RenderOptions): void;
     /**

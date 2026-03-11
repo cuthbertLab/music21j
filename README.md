@@ -124,7 +124,7 @@ testHTML directory as `sfElsewhereCDN.html`.
 
 ## Version
 
-0.21.1 (beta)
+0.21.2 (beta)
 
 ## License
 
@@ -251,7 +251,7 @@ The build output is suitable for direct browser use or npm publishing.
 You'll need to be part of the npm dev team.
 
 1. Update the version number in `package.json`, manually in `main.ts`, 
-and (if bigger than patch), here.
+and here.  Agents can update package-lock.json; humans should npm install.
 
 2. Publish:
 
@@ -262,6 +262,7 @@ $ npm publish
 This will test to make sure everything is correct, update package-lock.json,
 copy the current contents of `build` in `releases`, and publish on npm.
 
+Then make a PR-merge and tag.
 
 ## Updating Dependencies
 
