@@ -1,6 +1,7 @@
 import * as QUnit from 'qunit';
 
 import articulations from './moduleTests/articulations';
+import bar from './moduleTests/bar';
 import base from './moduleTests/base';
 import beam from './moduleTests/beam';
 import chord from './moduleTests/chord';
@@ -32,6 +33,7 @@ import * as music21 from '../src/main';
 
 const allTests = {
     articulations,
+    bar,
     base,
     beam,
     chord,
