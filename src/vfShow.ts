@@ -40,12 +40,14 @@ import type * as renderOptions from './renderOptions';
 import type {Tuplet} from './duration';
 import {StaveConnector} from './types';
 
-const barlineMap = {
-    single: 'SINGLE',
+export const barline_m21ToVexflow = {
+    regular: 'SINGLE',
+    single: 'SINGLE',  // deprecated alias for regular
     double: 'DOUBLE',
-    end: 'END',
+    final: 'END',
+    end: 'END',  // deprecated alias for final
     none: 'NONE',
-    // TODO: Repeats
+    // TODO: Repeats? -- No, let's move to real Barline objects like M21P
 };
 
 export const vexflowDefaults = {
@@ -728,15 +730,15 @@ export class Renderer {
      * adds keySignature, timeSignature, and rightBarline
      *
      * RenderOptions object might have
-     * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
+     * `{showMeasureNumber: boolean,
+     *   rightBarLine/leftBarline: ['regular'|undefined, 'double', 'final', 'none']`
      */
     setClefEtc(s: stream.Stream, stave: VFStave, rendOp?: renderOptions.RenderOptions) {
         if (rendOp === undefined) {
             rendOp = s.renderOptions;
         }
 
-        let sClef = s.getSpecialContext('clef')
-            || s.getContextByClass('Clef');
+        let sClef = s.getSpecialContext('clef') || s.getContextByClass('Clef');
 
         // this should not be necessary now that derivation is
         // checked, but does not hurt.
@@ -801,7 +803,7 @@ export class Renderer {
         if (rendOp.leftBarline !== undefined) {
             const bl = rendOp.leftBarline;
 
-            const vxBL:string = barlineMap[bl];
+            const vxBL: string = barline_m21ToVexflow[bl];
             if (vxBL !== undefined) {
                 stave.setBegBarType(VFBarlineType[vxBL]);
             }
@@ -810,7 +812,7 @@ export class Renderer {
         if (rendOp.rightBarline !== undefined) {
             const bl = rendOp.rightBarline;
 
-            const vxBL:string = barlineMap[bl];
+            const vxBL: string = barline_m21ToVexflow[bl];
             if (vxBL !== undefined) {
                 stave.setEndBarType(VFBarlineType[vxBL]);
             }
