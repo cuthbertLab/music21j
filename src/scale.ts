@@ -7,11 +7,12 @@
  * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
  * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
+import deepEqual from 'deep-equal';
+
 import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
 
 import * as base from './base';
-import * as common from './common';
 import * as interval from './interval';
 import * as pitch from './pitch';
 
@@ -85,11 +86,9 @@ export class AbstractScale extends Scale {
      * @returns {boolean}
      */
     equals(other: AbstractScale): boolean {
-        if (
-            common.arrayEquals(this.classes, other.classes)
-            && this.tonicDegree === other.tonicDegree
-            && common.arrayEquals(this._net, other._net)
-        ) {
+        if (deepEqual(this.classes, other.classes)
+                && this.tonicDegree === other.tonicDegree
+                && deepEqual(this._net, other._net)) {
             return true;
         } else {
             return false;

@@ -8,6 +8,8 @@
  * Clef related objects and properties
  *
  */
+import arrayEqual from 'array-equal';
+
 import * as base from './base';
 import * as pitch from './pitch';
 import type { Stream } from './stream';
@@ -378,9 +380,6 @@ export function clefFromString(clefString: string, octaveShift: number = 0): Cle
             return new potentialClass();
         }
     }
-
-    // TODO: remove this -- we have other ways of deep equality
-    const arrayEqual = (a: any[], b: any[]) => a.length === b.length && a.every((el, ix) => el === b[ix]);
 
     const params = [thisType, lineNum, octaveShift];
     if (arrayEqual(params, ['G', 2, 0])) {
