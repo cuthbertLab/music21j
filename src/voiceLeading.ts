@@ -27,14 +27,14 @@ type IntervalLoose =
     | number
     | string;
 
-export const MotionType = {
-    antiParallel: 'Anti-Parallel',
-    contrary: 'Contrary',
-    noMotion: 'No Motion',
-    oblique: 'Oblique',
-    parallel: 'Parallel',
-    similar: 'Similar',
-};
+export enum MotionType {
+    antiParallel = 'Anti-Parallel',
+    contrary = 'Contrary',
+    noMotion = 'No Motion',
+    oblique = 'Oblique',
+    parallel = 'Parallel',
+    similar = 'Similar',
+}
 
 export class VoiceLeadingQuartet extends Music21Object {
     static get className() { return 'music21.voiceLeading.VoiceLeadingQuartet'; }
@@ -176,7 +176,7 @@ export class VoiceLeadingQuartet extends Music21Object {
     /**
      * Returns the motion type, optionally classifying anti-parallel motion distinctly.
      */
-    motionType(allowAntiParallel: boolean = false): string | undefined {
+    motionType(allowAntiParallel: boolean = false): MotionType | undefined {
         if (this.obliqueMotion()) {
             return MotionType.oblique;
         } else if (this.parallelMotion()) {
