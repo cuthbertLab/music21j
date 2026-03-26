@@ -351,22 +351,6 @@ export function urlParam(name: string): string {
         : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-export function arrayEquals(a1: any[], a2: any[]): boolean {
-    if (a1.length !== a2.length) {
-        return false;
-    }
-    for (let i = 0; i < a1.length; i++) {
-        if (a1[i] instanceof Array && a2[i] instanceof Array) {
-            if (!arrayEquals(a1[i], a2[i])) {
-                return false;
-            }
-        } else if (a1[i] !== a2[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
 const _singletonCounter = {
     value: 0,
 };
