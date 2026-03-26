@@ -94,7 +94,6 @@ export declare function stripPx(str: number | string): number;
  * Return may be '' if empty.
  */
 export declare function urlParam(name: string): string;
-export declare function arrayEquals(a1: any[], a2: any[]): boolean;
 export declare class SingletonCounter {
     call(): number;
 }
