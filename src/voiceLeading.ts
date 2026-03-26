@@ -12,12 +12,20 @@ import * as note from './note';
 import type * as pitch from './pitch';
 
 import { Music21Object } from './base';
+import { Music21Exception } from './exceptions21';
 
 // imports just for type checking
 import { ConcreteScale } from './scale';
 
 
-const intervalCache = [];
+const intervalCache: interval.Interval[] = [];
+
+type IntervalLoose =
+    interval.Interval
+    | interval.DiatonicInterval
+    | interval.GenericInterval
+    | number
+    | string;
 
 export const MotionType = {
     antiParallel: 'Anti-Parallel',
@@ -47,7 +55,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         v1n2?: note.Note,
         v2n1?: note.Note,
         v2n2?: note.Note,
-        analyticKey?: key.Key
+        analyticKey?: key.Key | string
     ) {
         super();
         if (!intervalCache.length) {
@@ -139,13 +147,18 @@ export class VoiceLeadingQuartet extends Music21Object {
         return this._key;
     }
 
-    // turning off string entry because of Typescript deficiency
-    set key(keyValue: key.Key) {
-        // if (typeof keyValue === 'string') {
-        //     keyValue = new key.Key(
-        //         key.convertKeyStringToMusic21KeyString(keyValue)
-        //     );
-        // }
+    set key(keyValue: key.Key | string) {
+        if (typeof keyValue === 'string') {
+            try {
+                keyValue = new key.Key(
+                    key.convertKeyStringToMusic21KeyString(keyValue)
+                );
+            } catch {
+                throw new Music21Exception(
+                    `got a key signature string that is not supported: ${keyValue}`
+                );
+            }
+        }
         this._key = keyValue;
     }
 
@@ -160,17 +173,20 @@ export class VoiceLeadingQuartet extends Music21Object {
         ];
     }
 
-    motionType() {
+    /**
+     * Returns the motion type, optionally classifying anti-parallel motion distinctly.
+     */
+    motionType(allowAntiParallel: boolean = false): string | undefined {
         if (this.obliqueMotion()) {
             return MotionType.oblique;
         } else if (this.parallelMotion()) {
             return MotionType.parallel;
         } else if (this.similarMotion()) {
             return MotionType.similar;
+        } else if (allowAntiParallel && this.antiParallelMotion()) {
+            return MotionType.antiParallel;
         } else if (this.contraryMotion()) {
             return MotionType.contrary;
-        } else if (this.antiParallelMotion()) {
-            return MotionType.antiParallel;
         } else if (this.noMotion()) {
             return MotionType.noMotion;
         }
@@ -211,27 +227,57 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    parallelMotion(requiredInterval: interval.Interval|string|undefined=undefined): boolean {
+    /**
+     * Returns true for parallel motion, optionally treating octave-displaced parallels as equivalent.
+     */
+    parallelMotion(
+        requiredInterval: IntervalLoose | undefined = undefined,
+        allowOctaveDisplacement: boolean = false
+    ): boolean {
+        const firstGeneric = this.vIntervals[0].generic;
+        const secondGeneric = this.vIntervals[1].generic;
         if (!this.similarMotion()) {
             return false;
         }
         if (
-            this.vIntervals[0].directedSimpleName
-            !== this.vIntervals[1].directedSimpleName
+            firstGeneric.directed !== secondGeneric.directed
+            && !allowOctaveDisplacement
+        ) {
+            return false;
+        }
+        if (
+            firstGeneric.semiSimpleUndirected
+            !== secondGeneric.semiSimpleUndirected
         ) {
             return false;
         }
         if (requiredInterval === undefined) {
             return true;
         }
+        if (
+            requiredInterval instanceof interval.GenericInterval
+            || typeof requiredInterval === 'number'
+        ) {
+            const genericInterval = typeof requiredInterval === 'number'
+                ? new interval.GenericInterval(requiredInterval)
+                : requiredInterval;
+            return (
+                firstGeneric.semiSimpleUndirected
+                === genericInterval.semiSimpleUndirected
+            );
+        }
+        let specificInterval: interval.Interval;
         if (typeof requiredInterval === 'string') {
-            requiredInterval = new interval.Interval(requiredInterval);
-        }
-        if (this.vIntervals[0].simpleName === requiredInterval.simpleName) {
-            return true;
+            specificInterval = new interval.Interval(requiredInterval);
+        } else if (requiredInterval instanceof interval.Interval) {
+            specificInterval = requiredInterval;
         } else {
-            return false;
+            specificInterval = new interval.Interval(requiredInterval);
         }
+        return (
+            this.vIntervals[0].semiSimpleName === specificInterval.semiSimpleName
+            && this.vIntervals[1].semiSimpleName === specificInterval.semiSimpleName
+        );
     }
 
     contraryMotion(): boolean {
@@ -286,18 +332,10 @@ export class VoiceLeadingQuartet extends Music21Object {
     }
 
     parallelInterval(thisInterval: interval.Interval|string): boolean {
-        if (!(this.parallelMotion() || this.antiParallelMotion())) {
-            return false;
-        }
-        if (typeof thisInterval === 'string') {
-            thisInterval = new interval.Interval(thisInterval);
-        }
-
-        if (this.vIntervals[0].semiSimpleName === thisInterval.semiSimpleName) {
-            return true;
-        } else {
-            return false;
-        }
+        return (
+            this.parallelMotion(thisInterval, true)
+            || this.antiParallelMotion(thisInterval)
+        );
     }
 
     parallelFifth(): boolean {
@@ -317,7 +355,7 @@ export class VoiceLeadingQuartet extends Music21Object {
     }
 
     hiddenInterval(thisInterval: interval.Interval|string): boolean {
-        if (this.parallelMotion()) {
+        if (this.parallelMotion(undefined, true)) {
             return false;
         }
         if (!this.similarMotion()) {
