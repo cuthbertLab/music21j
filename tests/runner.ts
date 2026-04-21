@@ -54,12 +54,28 @@ if (!suite_names.length) {
     throw new Error('No test suites were discovered. loadAll.ts has problems.');
 }
 
-// here is where the suites are run!
+// Optional URL filtering -- e.g. /tests/?module=roman or ?filter=Minor67
+// makes debugging a single suite or test much faster.
+const _params = new URLSearchParams(globalThis.location?.search ?? '');
+const _moduleFilter = _params.get('module');
+const _testFilter = _params.get('filter');
+if (_testFilter) {
+    QUnit.config.filter = _testFilter;
+}
+
+// here is where the suites are run!  Wrap each suite in QUnit.module so that
+// module-level filtering works.
 for (const name of suite_names) {
     const suite = suites[name];
-    if (typeof suite === 'function') {
-        suite();
+    if (typeof suite !== 'function') {
+        continue;
     }
+    if (_moduleFilter && name !== _moduleFilter) {
+        continue;
+    }
+    QUnit.module(name, () => {
+        (suite as () => void)();
+    });
 }
 
 // Move any music21 output under the test that created it

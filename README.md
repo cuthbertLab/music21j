@@ -230,6 +230,33 @@ $ npm run test:qunit
 If you have the Vite server running, you can also just navigate to 
 http://localhost:5173/tests/ and see the tests there (with output).
 
+### Running a single suite or test
+
+To narrow down what runs (helpful when iterating on a single module), use
+the `MODULE` and `FILTER` env vars with `npm test` / `npm run test:qunit`,
+or pass the same names as URL query parameters when browsing manually.
+
+`MODULE` matches a single suite (one of the files in `tests/moduleTests/`),
+and `FILTER` is a substring/regex that matches against test names.
+
+```sh
+# Run only the key suite headlessly:
+$ MODULE=key npm test
+
+# Run every test whose name contains "update" -- this picks up tests
+# across several suites:
+$ FILTER=update npm test
+
+# Combine: only "update" tests inside the key suite:
+$ MODULE=key FILTER=update npm test
+```
+
+In the browser, the same knobs are query parameters:
+
+* `http://localhost:5173/tests/?module=key`
+* `http://localhost:5173/tests/?filter=update`
+* `http://localhost:5173/tests/?module=key&filter=update`
+
 ## Build
 
 Run vite with:

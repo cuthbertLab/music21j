@@ -16,9 +16,20 @@ async function main(): Promise<void> {
         console[type](`[browser:${type}]`, msg.text());
     });
 
+    // Allow narrowing via env vars for quick debugging:
+    //   MODULE=key npm test              (only the key suite)
+    //   FILTER=update npm test           (only tests whose name matches
+    //                                     "update" -- e.g., across several
+    //                                     suites)
+    //   MODULE=key FILTER=update npm test  (combine both)
+    const qs = new URLSearchParams();
+    if (process.env.MODULE) qs.set('module', process.env.MODULE);
+    if (process.env.FILTER) qs.set('filter', process.env.FILTER);
+    const qsStr = qs.toString() ? `?${qs.toString()}` : '';
+
     // Assumes vite dev server is running on 5173
     await page.goto(
-        'http://localhost:5173/tests/',
+        `http://localhost:5173/tests/${qsStr}`,
         {waitUntil: 'domcontentloaded'},
     );
 
