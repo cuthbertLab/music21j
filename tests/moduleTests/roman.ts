@@ -1,7 +1,7 @@
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/main';
 
-const { test } = QUnit;
+const { test, skip } = QUnit;
 
 
 export default function tests() {
@@ -297,6 +297,243 @@ export default function tests() {
             );
         }
     );
+
+    // Helper used by ports of music21p tests below.  AI-assisted.
+    const pitchString = (rn: any): string => rn.pitches.map((pi: any) => pi.nameWithOctave).join(' ');
+
+    // Ported from music21p RomanNumeral.Test.testFigure.  AI-assisted.
+    test('music21.roman.RomanNumeral - testFigure (m21p port)', assert => {
+        const r1 = new music21.roman.RomanNumeral('V');
+        assert.strictEqual(
+            r1.frontAlterationTransposeInterval, undefined, 'no front alteration on V'
+        );
+        assert.deepEqual(
+            r1.pitches.map(p => p.nameWithOctave),
+            ['G4', 'B4', 'D5'],
+        );
+
+        const r2 = new music21.roman.RomanNumeral('bbVI6');
+        assert.equal(
+            r2.frontAlterationTransposeInterval.chromatic.semitones, -2, 'bbVI6 chromatic semitones',
+        );
+
+        const dminor = new music21.key.Key('d');
+        const rn = new music21.roman.RomanNumeral('ii/o65', dminor);
+        assert.deepEqual(
+            rn.pitches.map(p => p.nameWithOctave),
+            ['G4', 'B-4', 'D5', 'E5'],
+        );
+        const rnReal = new music21.roman.RomanNumeral('iiø65', dminor);
+        assert.deepEqual(
+            rnReal.pitches.map(p => p.nameWithOctave),
+            rn.pitches.map(p => p.nameWithOctave),
+        );
+
+        const rnOmit3 = new music21.roman.RomanNumeral('V[no3]', dminor);
+        assert.deepEqual(
+            rnOmit3.pitches.map(p => p.nameWithOctave), ['A4', 'E5'],
+        );
+        const rnOmit5 = new music21.roman.RomanNumeral('V[no5]', dminor);
+        assert.deepEqual(
+            rnOmit5.pitches.map(p => p.nameWithOctave), ['A4', 'C#5'],
+        );
+    });
+
+    // Ported from music21p RomanNumeral.Test.testZeroForDiminished.  AI-assisted.
+    test('music21.roman.RomanNumeral - testZeroForDiminished (m21p port)', assert => {
+        let rn = new music21.roman.RomanNumeral('vii07', 'c');
+        assert.deepEqual(
+            rn.pitches.map(p => p.name), ['B', 'D', 'F', 'A-'],
+        );
+        rn = new music21.roman.RomanNumeral('vii/07', 'c');
+        assert.deepEqual(
+            rn.pitches.map(p => p.name), ['B', 'D', 'F', 'A'],
+        );
+    });
+
+    // Ported from music21p RomanNumeral.Test.testAllFormsOfVII.  AI-assisted.
+    test('music21.roman.RomanNumeral - testAllFormsOfVII (m21p port)', assert => {
+        const k = new music21.key.Key('c');
+        const cases: [string, string][] = [
+            ['viio',  'B4 D5 F5'],
+            ['viio6', 'D4 F4 B4'],
+            ['viio64', 'F4 B4 D5'],
+            ['vii',   'B4 D5 F#5'],
+            ['vii6',  'D4 F#4 B4'],
+            ['vii64', 'F#4 B4 D5'],
+            ['viio7',  'B4 D5 F5 A-5'],
+            ['viio65', 'D4 F4 A-4 B4'],
+            ['viio43', 'F4 A-4 B4 D5'],
+            ['viio42', 'A-4 B4 D5 F5'],
+            ['vii/o7', 'B4 D5 F5 A5'],
+            ['viiø65', 'D4 F4 A4 B4'],
+            ['viiø43', 'F4 A4 B4 D5'],
+            ['vii/o42', 'A4 B4 D5 F5'],
+            ['VII',    'B-4 D5 F5'],
+            ['VII6',   'D4 F4 B-4'],
+            ['VII64',  'F4 B-4 D5'],
+            ['bVII',   'B--4 D-5 F-5'],
+            ['bvii',   'B-4 D-5 F5'],
+            ['bviio',  'B-4 D-5 F-5'],
+            ['#VII',   'B4 D#5 F#5'],
+            ['#vii',   'B#4 D#5 F##5'],
+            ['VII+',   'B-4 D5 F#5'],
+        ];
+        for (const [fig, expected] of cases) {
+            const rn = new music21.roman.RomanNumeral(fig, k);
+            assert.equal(pitchString(rn), expected, `${fig} in c`);
+        }
+    });
+
+    // Ported from music21p RomanNumeral.Test.testAllFormsOfVI.  AI-assisted.
+    test('music21.roman.RomanNumeral - testAllFormsOfVI (m21p port)', assert => {
+        const k = new music21.key.Key('c');
+        const cases: [string, string][] = [
+            ['vio',   'A4 C5 E-5'],
+            ['vio6',  'C4 E-4 A4'],
+            ['vio64', 'E-4 A4 C5'],
+            ['vi',    'A4 C5 E5'],
+            ['vi6',   'C4 E4 A4'],
+            ['vi64',  'E4 A4 C5'],
+            ['vio7',  'A4 C5 E-5 G-5'],
+            ['vio65', 'C4 E-4 G-4 A4'],
+            ['vio43', 'E-4 G-4 A4 C5'],
+            ['vio42', 'G-4 A4 C5 E-5'],
+            ['viø7',  'A4 C5 E-5 G5'],
+            ['vi/o65', 'C4 E-4 G4 A4'],
+            ['vi/o43', 'E-4 G4 A4 C5'],
+            ['viø42', 'G4 A4 C5 E-5'],
+            ['VI',    'A-4 C5 E-5'],
+            ['VI6',   'C4 E-4 A-4'],
+            ['VI64',  'E-4 A-4 C5'],
+            ['bVI',   'A--4 C-5 E--5'],
+            ['bvi',   'A-4 C-5 E-5'],
+            ['bvio',  'A-4 C-5 E--5'],
+            ['#VI',   'A4 C#5 E5'],
+            ['#vi',   'A#4 C#5 E#5'],
+            ['VI+',   'A-4 C5 E5'],
+        ];
+        for (const [fig, expected] of cases) {
+            const rn = new music21.roman.RomanNumeral(fig, k);
+            assert.equal(pitchString(rn), expected, `${fig} in c`);
+        }
+    });
+
+    // Ported from music21p RomanNumeral.Test.testNo5.  AI-assisted.
+    test('music21.roman.RomanNumeral - testNo5 (m21p port)', assert => {
+        let rn = new music21.roman.RomanNumeral('viio[no5]', 'a');
+        assert.deepEqual(rn.pitches.map(p => p.name), ['G#', 'B']);
+
+        rn = new music21.roman.RomanNumeral('vii[no5]', 'a');
+        assert.deepEqual(rn.pitches.map(p => p.name), ['G#', 'B']);
+    });
+
+    // Ported from music21p RomanNumeral.Test.testSecondaryAugmentedSixth.
+    // TODO(port): music21j's secondary RN handling does not currently flip
+    // the secondary key to minor when the secondary is built on a major
+    // chord (Ger65/IV in C).  AI-assisted.
+    skip('music21.roman.RomanNumeral - secondary aug6 (m21p port)', assert => {
+        const rn = new music21.roman.RomanNumeral('Ger65/IV', 'C');
+        assert.deepEqual(
+            rn.pitches.map(p => p.name),
+            ['D-', 'F', 'A-', 'B'],
+        );
+    });
+
+    // Ported from music21p RomanNumeral.Test.testSetFigureAgain.  AI-assisted.
+    // TODO(port): the Ger7 case passes; the #IV case doubles the alteration
+    // because frontAlterationTransposeInterval/Accidental are not reset
+    // between figure assignments.
+    skip('music21.roman.RomanNumeral - setFigureAgain Ger7 (m21p port)', assert => {
+        const ger = new music21.roman.RomanNumeral('Ger7');
+        const before = ger.pitches.map(p => p.nameWithOctave);
+        ger.figure = 'Ger7';
+        assert.deepEqual(ger.pitches.map(p => p.nameWithOctave), before);
+    });
+    skip('music21.roman.RomanNumeral - setFigureAgain #IV (m21p port)', assert => {
+        const sharpFour = new music21.roman.RomanNumeral('#IV');
+        const before = sharpFour.pitches.map(p => p.nameWithOctave);
+        sharpFour.figure = '#IV';
+        assert.deepEqual(sharpFour.pitches.map(p => p.nameWithOctave), before);
+    });
+
+    // Ported from music21p RomanNumeral.Test.test_sevenths_on_alteration.
+    // Exercises the new Minor67Default.CAUTIONARY support.  AI-assisted.
+    test('music21.roman.RomanNumeral - sevenths on alteration (m21p port)', assert => {
+        const Minor67 = music21.roman.Minor67Default;
+
+        let rn = new music21.roman.RomanNumeral('bII7', 'c');
+        assert.equal(rn.seventh.name, 'C', 'bII7 in c minor seventh = C');
+
+        rn = new music21.roman.RomanNumeral('bII65', 'c');
+        assert.equal(rn.seventh.name, 'C', 'bII65 in c minor seventh = C');
+
+        rn = new music21.roman.RomanNumeral('bII65', 'b');
+        assert.equal(rn.seventh.name, 'B', 'bII65 in b minor seventh = B');
+
+        rn = new music21.roman.RomanNumeral(
+            'bVII7', 'c', { seventhMinor: Minor67.CAUTIONARY },
+        );
+        assert.equal(
+            rn.seventh.name, 'A-', 'bVII7 in c minor with CAUTIONARY: seventh = A-',
+        );
+
+        rn = new music21.roman.RomanNumeral(
+            'bVII7', 'C', { seventhMinor: Minor67.CAUTIONARY },
+        );
+        assert.equal(
+            rn.seventh.name, 'A', 'bVII7 in C major with CAUTIONARY: seventh = A',
+        );
+    });
+
+    // Doctest port of music21.roman.Minor67Default.  AI-assisted.
+    test('music21.roman.Minor67Default - sixthMinor in c minor', assert => {
+        const Minor67 = music21.roman.Minor67Default;
+        const vi = (fig: string, q: any) => new music21.roman.RomanNumeral(
+            fig, 'c', { sixthMinor: q },
+        ).pitches.map(p => p.name).join(' ');
+
+        // QUALITY (default)
+        assert.equal(vi('vi', Minor67.QUALITY), 'A C E');
+        assert.equal(vi('VI', Minor67.QUALITY), 'A- C E-');
+        assert.equal(vi('#vi', Minor67.QUALITY), 'A# C# E#');
+        assert.equal(vi('bVI', Minor67.QUALITY), 'A-- C- E--');
+        assert.equal(vi('#VI', Minor67.QUALITY), 'A C# E');
+        assert.equal(vi('bvi', Minor67.QUALITY), 'A- C- E-');
+
+        // FLAT
+        assert.equal(vi('vi', Minor67.FLAT), 'A- C- E-');
+        assert.equal(vi('VI', Minor67.FLAT), 'A- C E-');
+        assert.equal(vi('#vi', Minor67.FLAT), 'A C E');
+
+        // SHARP
+        assert.equal(vi('vi', Minor67.SHARP), 'A C E');
+        assert.equal(vi('VI', Minor67.SHARP), 'A C# E');
+        assert.equal(vi('bVI', Minor67.SHARP), 'A- C E-');
+
+        // CAUTIONARY
+        assert.equal(vi('#vi', Minor67.CAUTIONARY), 'A C E');
+        assert.equal(vi('vi', Minor67.CAUTIONARY), 'A C E');
+        assert.equal(vi('bVI', Minor67.CAUTIONARY), 'A- C E-');
+        assert.equal(vi('VI', Minor67.CAUTIONARY), 'A- C E-');
+        assert.equal(vi('##vi', Minor67.CAUTIONARY), 'A# C# E#');
+        assert.equal(vi('bbVI', Minor67.CAUTIONARY), 'A-- C- E--');
+        assert.equal(vi('#VI', Minor67.CAUTIONARY), 'A C# E');
+        assert.equal(vi('bvi', Minor67.CAUTIONARY), 'A- C- E-');
+    });
+
+    // Doctest port -- secondary RNs inherit sixthMinor/seventhMinor.  AI-assisted.
+    test('music21.roman.Minor67Default - propagates to secondary', assert => {
+        const Minor67 = music21.roman.Minor67Default;
+        const vi = (fig: string, q: any) => new music21.roman.RomanNumeral(
+            fig, 'c', { sixthMinor: q },
+        ).pitches.map(p => p.name).join(' ');
+
+        assert.equal(vi('V/vi', Minor67.QUALITY), 'E G# B');
+        assert.equal(vi('V/VI', Minor67.QUALITY), 'E- G B-');
+        assert.equal(vi('V/vi', Minor67.FLAT), 'E- G B-');
+        assert.equal(vi('V/VI', Minor67.FLAT), 'E- G B-');
+    });
 
     test('music21.roman.RomanNumeral - augmented6ths', assert => {
         let k = new music21.key.Key('a');

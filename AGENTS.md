@@ -7,6 +7,7 @@
 - Agents must NEVER describe their code as "reviewed", "debugged", or in any
   other way imply that it was written by humans.
 - The current year is 2026 (unless you have information that says that it is later)
+- m21j is another name for music21j
 
 # Branches and PRs
 
@@ -28,7 +29,7 @@
 
 # Moving from Python music21
 
-- a recurring task is bringing music21j up to music21python standards.
+- a recurring task is bringing music21j up to music21python standards. (music21 python will often be called music21p or m21p)
 - there should be a symlink at `music21python` to the music21 code repo.  If not request to make one
   (often at ../music21base/music21).
 - there should be a symlink at `music21docs` to rst files with docs for all music21 python for seeing usages and tests to port.

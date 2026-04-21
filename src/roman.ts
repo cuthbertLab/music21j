@@ -19,6 +19,26 @@ import * as key from './key';
 import * as pitch from './pitch';
 import * as scale from './scale';
 
+/**
+ * Enumeration that can be passed into RomanNumeral as `sixthMinor` or
+ * `seventhMinor` to define how Roman numerals on the sixth and seventh
+ * scale degrees are parsed in minor.  Mirrors music21 Python's
+ * `roman.Minor67Default`.
+ *
+ * - QUALITY (default): chord quality (major/minor/diminished) determines
+ *   whether the root is the lowered or raised ^6/^7.
+ * - CAUTIONARY: same as QUALITY, but a single `#` before vi/vii or `b`
+ *   before VI/VII is treated as a cautionary accidental and ignored.
+ * - SHARP: raised ^6/^7 is always used as the root.
+ * - FLAT: lowered ^6/^7 is always used as the root.
+ */
+export enum Minor67Default {
+    QUALITY = 1,
+    CAUTIONARY = 2,
+    SHARP = 3,
+    FLAT = 4,
+}
+
 export const figureShorthands = {
     '53': '',
     '3': '',
@@ -229,6 +249,8 @@ export class RomanNumeral extends harmony.Harmony {
     protected _tempRoot: pitch.Pitch;
     numbers: number;
     figuresNotationObj: figuredBass.Notation;
+    sixthMinor: Minor67Default;
+    seventhMinor: Minor67Default;
 
     constructor(
         figure: string = '',
@@ -236,6 +258,13 @@ export class RomanNumeral extends harmony.Harmony {
         {
             parseFigure=false,
             updatePitches=false,
+            sixthMinor=Minor67Default.QUALITY,
+            seventhMinor=Minor67Default.QUALITY,
+        }: {
+            parseFigure?: boolean,
+            updatePitches?: boolean,
+            sixthMinor?: Minor67Default,
+            seventhMinor?: Minor67Default,
         }={}
     ) {
         super(figure, { updatePitches, parseFigure });
@@ -280,6 +309,9 @@ export class RomanNumeral extends harmony.Harmony {
         this.followsKeyChange = false;
         this._functionalityScore = undefined;
         this._scale = undefined; // the Key
+
+        this.sixthMinor = sixthMinor;
+        this.seventhMinor = seventhMinor;
 
         this.figure = figure;
 
@@ -336,7 +368,7 @@ export class RomanNumeral extends harmony.Harmony {
         workingFigure = this._setImpliedQualityFromString(workingFigure);
 
         this._tempRoot = useScale.pitchFromDegree(this.scaleDegree);
-        this._fixMinorVIandVII(useScale);
+        this.adjustMinorVIandVIIByQuality(useScale);
         const expandedFigure = expandShortHand(workingFigure);
         this.figuresNotationObj = new figuredBass.Notation(
             expandedFigure.toString()
@@ -426,8 +458,17 @@ export class RomanNumeral extends harmony.Harmony {
         return workingFigure;
     }
 
-    _fixMinorVIandVII(useScale): void {
-        if (useScale.mode !== 'minor') {
+    /**
+     * Adjust ^6 and ^7 in minor according to `sixthMinor` / `seventhMinor`
+     * (a Minor67Default value).  Ports music21 Python's
+     * `adjustMinorVIandVIIByQuality` -- including CAUTIONARY behavior, where
+     * a single `#vi` / `bVI` is treated as a cautionary accidental rather
+     * than an additional alteration.  AI-assisted.
+     */
+    adjustMinorVIandVIIByQuality(
+        useScale: key.Key | scale.ConcreteScale,
+    ): void {
+        if ((useScale as key.Key).mode !== 'minor') {
             return;
         }
         if (!this.caseMatters) {
@@ -436,27 +477,69 @@ export class RomanNumeral extends harmony.Harmony {
         if (this.scaleDegree !== 6 && this.scaleDegree !== 7) {
             return;
         }
-        if (
-            !['minor', 'diminished', 'half-diminished'].includes(
-                this.impliedQuality
-            )
-        ) {
+        const considered = ['minor', 'diminished', 'half-diminished', 'major'];
+        if (!considered.includes(this.impliedQuality)) {
             return;
         }
 
+        const minorDefault = (this.scaleDegree === 6)
+            ? this.sixthMinor
+            : this.seventhMinor;
+        if (minorDefault === Minor67Default.FLAT) {
+            return;
+        }
+
+        const normallyRaised = ['minor', 'diminished', 'half-diminished']
+            .includes(this.impliedQuality);
+
+        let doSharpen: boolean;
+        if (minorDefault === Minor67Default.SHARP) {
+            // with this setting everything is one half step above natural minor.
+            doSharpen = true;
+        } else if (minorDefault === Minor67Default.QUALITY) {
+            doSharpen = normallyRaised;
+        } else {
+            // CAUTIONARY
+            const fa = this.frontAlterationAccidental;
+            if (fa === undefined || fa.alter === 0) {
+                doSharpen = normallyRaised;
+            } else if (fa.alter >= 1 && normallyRaised) {
+                // existing # already does the work -- treat as cautionary
+                doSharpen = false;
+            } else if (fa.alter <= -1) {
+                // cautionary b on a not-normally-raised chord -- absorb it
+                doSharpen = true;
+            } else {
+                doSharpen = false;
+            }
+        }
+
+        if (!doSharpen) {
+            return;
+        }
+
+        // doSharpen -- take whatever frontAlterationTransposeInterval (or none)
+        //    and make it a half-step higher.
         const fati = this.frontAlterationTransposeInterval;
         if (fati !== undefined) {
             const newFati = interval.add([fati, new interval.Interval('A1')]);
             this.frontAlterationTransposeInterval = newFati;
             this.frontAlterationAccidental.alter += 1;
+            if (this.frontAlterationAccidental.alter === 0) {
+                this.frontAlterationTransposeInterval = undefined;
+                this.frontAlterationAccidental = undefined;
+            }
         } else {
             this.frontAlterationTransposeInterval = new interval.Interval('A1');
             this.frontAlterationAccidental = new pitch.Accidental(1);
         }
 
-        this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(
+        if (this.frontAlterationTransposeInterval !== undefined) {
             this._tempRoot
-        );
+                = this.frontAlterationTransposeInterval.transposePitch(
+                    this._tempRoot,
+                );
+        }
     }
 
     _parseRNAloneAmidstAug6(workingFigure: string, useScale): [string, any] {
@@ -643,13 +726,26 @@ export class RomanNumeral extends harmony.Harmony {
             pitches.push(newNewPitch);
             lastPitch = newNewPitch;
         }
-        if (this.frontAlterationTransposeInterval !== undefined) {
-            const newPitches = [];
+        // Front alteration applies to the root/3rd/5th only; upper
+        // extensions (7, 9, 11, 13) are taken from the scale unaltered.
+        // Mirrors music21p `_updatePitches`.  AI-assisted.
+        const fati = this.frontAlterationTransposeInterval;
+        if (fati !== undefined && fati.semitones !== 0) {
+            this.pitches = pitches;  // set first so getChordStep works
+            const nonAlter = new Set<pitch.Pitch>();
+            for (const cs of [7, 2, 4, 6]) {
+                const p = this.getChordStep(cs);
+                if (p !== undefined) {
+                    nonAlter.add(p);
+                }
+            }
+            const newPitches: pitch.Pitch[] = [];
             for (const thisPitch of pitches) {
-                const newPitch = this.frontAlterationTransposeInterval.transposePitch(
-                    thisPitch
-                );
-                newPitches.push(newPitch);
+                if (nonAlter.has(thisPitch)) {
+                    newPitches.push(thisPitch);
+                } else {
+                    newPitches.push(fati.transposePitch(thisPitch));
+                }
             }
             this.pitches = newPitches;
         } else {
@@ -669,13 +765,12 @@ export class RomanNumeral extends harmony.Harmony {
                 }
             }
             const newPitches = [];
-            for (const thisPitch of pitches) {
+            for (const thisPitch of this.pitches) {
                 if (!omittedPitches.includes(thisPitch.name)) {
                     newPitches.push(thisPitch);
                 }
             }
             this.pitches = newPitches;
-            // do something...
         }
         this._correctBracketedPitches();
     }
@@ -765,6 +860,10 @@ export class RomanNumeral extends harmony.Harmony {
             const secondaryRomanNumeral = new RomanNumeral(
                 secondaryFigure,
                 useScale,
+                {
+                    sixthMinor: this.sixthMinor,
+                    seventhMinor: this.seventhMinor,
+                },
             );
             this.secondaryRomanNumeral = secondaryRomanNumeral;
             let secondaryMode: string;
