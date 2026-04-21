@@ -2699,6 +2699,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
                 }
             }
         } else {
+            // this handles click, dblclick, resize
             this._svgEventMap.set(svg, {} as Record<keyof HTMLElementEventMap, Array<(el: any) => any>>);
         }
 

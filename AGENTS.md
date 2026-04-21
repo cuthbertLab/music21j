@@ -57,4 +57,4 @@
   (Agents can read the .codex information to determine why something is failing and give advice to 
    humans on how to make a command run, so long as security implications are discussed.)
 - AI Agents are forbidden to modify AGENTS.md
-- AI Agents are forbidden to modify anything in .codex
+- AI Agents should only modify .agents or .claude in order to change SKILL.md files when requested.
