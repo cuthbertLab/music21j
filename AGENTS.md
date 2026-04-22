@@ -7,6 +7,7 @@
 - Agents must NEVER describe their code as "reviewed", "debugged", or in any
   other way imply that it was written by humans.
 - The current year is 2026 (unless you have information that says that it is later)
+- m21j is another name for music21j
 
 # Branches and PRs
 
