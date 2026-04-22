@@ -10,9 +10,22 @@ import * as base from './base';
 import { Music21Exception } from './exceptions21';
 
 const barTypeList = [
-    'regular', 'dotted', 'dashed', 'heavy', 'double', 'final',
-    'heavy-light', 'heavy-heavy', 'tick', 'short', 'none',
+    'regular',
+    // 'single', // Deprecated alias for 'regular',
+    'dotted',
+    'dashed',
+    'heavy',
+    'double',
+    // 'end',  // Deprecated alias for 'final',
+    'final',
+    'heavy-light',
+    'heavy-heavy',
+    'tick',
+    'short',
+    'none',
 ];
+
+// MusicXML Barline names
 const barTypeDict = {
     'light-light': 'double',
     'light-heavy': 'final',
@@ -33,8 +46,13 @@ function typeToMusicXMLBarStyle(value: string): string {
     }
 }
 
-function standardizeBarType(value: string='regular'): string {
+export function standardizeBarType(value: string='regular'): string {
     value = value.toLowerCase();
+    if (value === 'end') {
+        value = 'final';
+    } else if (value === 'single') {
+        value = 'regular';
+    }
 
     if (barTypeList.includes(value)) {
         return value;

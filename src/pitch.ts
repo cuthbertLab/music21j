@@ -632,23 +632,14 @@ export class Pitch extends prebase.ProtoM21Object {
         let displayAccidentalIfNoPreviousAccidentals = false;
         const pitchPastAll: Pitch[] = [...pitchPastMeasure, ...pitchPast];
         const acc_orig: Accidental | undefined = this.accidental;
-        const display_orig = (
-            this.accidental !== undefined
-                ? this.accidental.displayStatus
-                : undefined
-        );
+        const display_orig: boolean | undefined = acc_orig?.displayStatus;
         let continuousRepeatsInMeasure = false;
 
-        if (overrideStatus === false) {  // go with what we have defined
-            if (acc_orig === undefined) {
-                // no accidental defined; we may need to add one
-            } else if (display_orig === undefined) {
-                // not set; need to set
-                // configure based on displayStatus alone, continue w/ normal
-            } else if (display_orig === true || display_orig === false) {
-                return;  // exit: already set, do not override
-            }
+        if (overrideStatus === false && display_orig !== undefined) {
+            // go with what we have defined
+            return;  // exit: already set, do not override
         }
+
         if (acc_orig && acc_orig.displayType === 'never') {
             this.accidental.displayStatus = false;
             return;
@@ -666,18 +657,15 @@ export class Pitch extends prebase.ProtoM21Object {
             }
         }
 
-        function same_step_different_pitch(p: Pitch) {
-            if (p.step !== this.step) {
+        function same_step_different_pitch(original: Pitch, other: Pitch): boolean {
+            if (other.step !== original.step) {
                 return false;
             }
-            return p.pitchClass !== this.pitchClass;
+            return other.pitchClass !== original.pitchClass;
         }
 
-        if (
-            cautionaryPitchClass
-            && otherSimultaneousPitches !== undefined
-            && otherSimultaneousPitches.length > 0
-            && otherSimultaneousPitches.filter(same_step_different_pitch, this).length > 0
+        if (cautionaryPitchClass
+            && otherSimultaneousPitches.filter(p => same_step_different_pitch(this, p)).length > 0
         ) {
             if (acc_orig !== undefined) {
                 acc_orig.displayStatus = true;
@@ -723,7 +711,7 @@ export class Pitch extends prebase.ProtoM21Object {
         // pitches in past... first search if last pitch in measure
         // at this octave contradicts this pitch.  if so then no matter what
         // we need an accidental.
-        for (let i = pitchPast.length - 1; i >= 0; i--) {
+        for (let i = pitchPast.length - 1; i > -1; i--) {
             const thisPPast = pitchPast[i];
             if (thisPPast === undefined) {
                 throw new Error(`PitchPast was undefined ${i}`);

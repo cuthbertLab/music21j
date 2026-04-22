@@ -1,6 +1,6 @@
 <html>
 <head>
-    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+    <link rel="stylesheet" href="../css/m21.css">
     <style>
     canvas {
         display: inline-block;
@@ -58,12 +58,17 @@
     refresh is hit.
 </div>
 
-    <script src="../build/music21.debug.js"></script>
+    <script src="../releases/music21.debug.js"></script>
     <script>
-    audioRecorder = new music21.audioRecording.Recorder();
-    audioRecorder.initAudio();
-
+    function main() {
+        audioRecorder = new music21.audioRecording.Recorder();
+        audioRecorder.initAudio();
+    }
     let isRecording = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
+
     </script>
 </body>
 </html>

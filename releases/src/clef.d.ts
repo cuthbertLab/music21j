@@ -1,13 +1,3 @@
-/**
- * music21j -- Javascript reimplementation of Core music21p features.
- * music21/clef -- Clef objects
- *
- * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
- *
- * Clef related objects and properties
- *
- */
 import * as base from './base';
 import * as pitch from './pitch';
 import type { Stream } from './stream';

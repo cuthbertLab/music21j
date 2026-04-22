@@ -1,5 +1,5 @@
-// keeping this as a commonJS file for now -- PyCharm goes crazy if we make it a .mjs file -- thinks
-// everything ending in js is then one.
+// keeping this as a commonJS file for now -- PyCharm goes crazy if we make it
+// a .mjs file -- thinks everything ending in js is then one.
 const globals = require('globals');
 const { configs: airbnb } = require('eslint-config-airbnb-extended/legacy');
 const eslint_parser = require('@typescript-eslint/parser');

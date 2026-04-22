@@ -1,23 +1,28 @@
 <html lang="en">
     <head>
         <title>Pure ES6 tests</title>
-        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-        <script src="../build/music21.debug.js"></script>
+        <link rel="stylesheet" href="../css/m21.css">
+        <script src="../releases/music21.debug.js"></script>
     </head>
     <body>
         Pure ES6 test. Click the score and the note will go up one pitch.
         <br>
         <script>
-            const s = new music21.stream.Stream();
-            const n = new music21.note.Note();
-            s.append(n);
-            let svg;
-            s.renderOptions.events.click = e => {
-                n.pitch.diatonicNoteNum += 1;
-                svg = s.replaceDOM(svg);
-                e.stopPropagation();
-            };
-            svg = s.appendNewDOM();
+            function main() {
+                const s = new music21.stream.Stream();
+                const n = new music21.note.Note();
+                s.append(n);
+                let svg;
+                s.renderOptions.events.click = e => {
+                    n.pitch.diatonicNoteNum += 1;
+                    svg = s.replaceDOM(svg);
+                    e.stopPropagation();
+                };
+                svg = s.appendNewDOM();
+            }
+            document.addEventListener('DOMContentLoaded', () => {
+                main();
+            });
         </script>
     </body>
 </html>

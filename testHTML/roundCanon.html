@@ -1,17 +1,17 @@
 <html lang="en">
 <head>
  <title>Make me a Canon!</title>
- <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+ <meta charset="utf-8">
+<link rel="stylesheet" href="../css/m21.css">
 
 </head>
 <body>
 <h1>This creates a canon out of the editing</h1>
-<div>Dec 2019 -- temporarily not working.</div>
+<div>Dec 2019 -- not working.</div>
 <div id="canonGoesHere"></div>
 
-<script src="../build/music21.debug.js"></script>
-<script type="text/javascript">
+<script src="../releases/music21.debug.js"></script>
+<script>
 let m2;
 
 fillScoreOut = function(editor, scoreOut) {
@@ -63,7 +63,7 @@ fillScoreOut = function(editor, scoreOut) {
 };
 
 makeRound = function() {
-    document.querySelectorAll('#canonGoesHere').appendChild(
+    document.querySelector('#canonGoesHere').appendChild(
         music21.common.to_el(
             '<div>Edit the pitches (sorry no rhythm here) for a 3-voice canon w/ entrances every four measures</div>'
         )
@@ -134,7 +134,7 @@ makeRound = function() {
     // pEditor.renderOptions.events['click'] = pEditor.DOMChangerFunction;
     // pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
     // pEditor.appendNewDOM($("#canonGoesHere"));
-    canonDiv.appendChild(music21.common.to_el("<br clear='all'/>"));
+    canonDiv.appendChild(music21.common.to_el("<br clear='all'>"));
     canonDiv.appendChild(
         music21.common.to_el('<div>Your score will appear here. Click it to play!</div>')
     );
@@ -142,9 +142,11 @@ makeRound = function() {
     scoreOut.maxSystemWidth = canonDiv.getBoundingClientRect().width;
 
     scoreOut.appendNewDOM(canonDiv);
-    canonDiv.appendChild(music21.common.to_el("<br clear='all'/>"));
+    canonDiv.appendChild(music21.common.to_el("<br clear='all'>"));
 };
-makeRound();
+document.addEventListener('DOMContentLoaded', () => {
+    makeRound();
+});
 
 </script>
 </body>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Pitch Editing</title>
-    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+    <link rel="stylesheet" href="../css/m21.css">
 </head>
 <body>
     <h2>Testing alterable pitches in a long score</h2>
@@ -17,8 +17,9 @@
     </div>
 
 
-    <script src="../build/music21.debug.js"></script>
-    <script type="application/javascript">
+    <script src="../releases/music21.debug.js"></script>
+    <script>
+    function main() {
         const editable = document.querySelector('#editable');
         const p1 = music21.tinyNotation.TinyNotation(
             `a1 a1 a1 a1 a1 a1 a1 a1 a1
@@ -48,9 +49,17 @@
              e1 e1 e1 e1 e1 e1 e1 e1 e1
              a1 a1 a1 a1 a1 a1 a1 a1 a1
             `);
-        p.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
+        p.renderOptions.scaleFactor = {
+            x: 1.5,
+            y: 1.5
+        };
         const dp = p.editableAccidentalDOM();
         editablePart.appendChild(dp);
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
+
     </script>
 </body>
 </html>

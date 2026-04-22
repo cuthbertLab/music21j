@@ -1,8 +1,8 @@
 <html lang="en-us"><head>
     <title>Match pitches</title>
-    <script src="../build/music21.debug.js"></script>
-    <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
+    <script src="../releases/music21.debug.js"></script>
+    <link rel="stylesheet" href="../css/m21.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700">
 </head>
 <body style='text-align: left;'>
 <div style='padding-left: 20px; background-color: white'>
@@ -15,7 +15,7 @@
 <button id='naturals'>Key of C</button>
 <button id='accidentals'>Use Accidentals (Harder)</button>
 <button id='playNotes'>Play Notes</button>
-<button id='muteNotes'>Don't Play Notes (Harder)</button><br/>
+<button id='muteNotes'>Don't Play Notes (Harder)</button><br>
 
 <div id='given' style='float: left'>
     <div id='givenSVGDiv' style='margin-left: 80px'></div>
@@ -34,6 +34,7 @@
 
 </div>
    <script>
+   function main() {
        nnn = new music21.note.Note("C4");
        nnn.duration.type = 'whole';
 
@@ -202,6 +203,12 @@
 	       }
        };
        music21.audioSearch.sampleCallback = sampleCallback;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        main();
+    });
+
    </script>
 </body>
 </html>

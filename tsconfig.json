@@ -9,11 +9,14 @@
         "declaration": true,
         "declarationMap": true,
         "declarationDir": "build",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
         "target": "es6"
     },
     "include": [
         "src/**/*",
         "tests/**/*",
+        "src/global.d.ts",
     ],
     "exclude": [
         "node_modules"

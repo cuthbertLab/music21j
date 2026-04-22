@@ -81,3 +81,13 @@ node_modules/grunt-contrib-uglify/package.json
 *.code-workspace
 /tests/test_compile_out/
 /.idea
+
+# sometimes we symlink this in especially so that agents can port directly from music21
+music21python
+music21docs
+music21base
+
+# Agents
+.agents/worktrees
+.claude/worktrees
+.claude/projects/-Users-*/

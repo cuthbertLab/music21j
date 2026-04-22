@@ -6,7 +6,7 @@ import defaults from './defaults';
 
 export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
     let htmlElement: HTMLElement;
-    if (el !== undefined && (el as JQuery).jquery !== undefined) {
+    if (el != null && (el as JQuery).jquery !== undefined) {
         htmlElement = (el as JQuery)[0];
     } else if (el instanceof HTMLElement) {
         htmlElement = el;
@@ -253,7 +253,6 @@ export function toRoman(num: number): string {
  */
 export function makeSVGright(tag: string = 'svg', attrs: Record<string, any> = {}): SVGElement {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-    // normal JQuery does not work.
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const k in attrs) {
         if (!{}.hasOwnProperty.call(attrs, k)) {
@@ -378,22 +377,6 @@ export function urlParam(name: string): string {
         : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-export function arrayEquals(a1: any[], a2: any[]): boolean {
-    if (a1.length !== a2.length) {
-        return false;
-    }
-    for (let i = 0; i < a1.length; i++) {
-        if (a1[i] instanceof Array && a2[i] instanceof Array) {
-            if (!arrayEquals(a1[i], a2[i])) {
-                return false;
-            }
-        } else if (a1[i] !== a2[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
 const _singletonCounter = {
     value: 0,
 };
@@ -439,7 +422,7 @@ export const pathSimplify = (path: string): string => {
         // console.log('cross-site split', pPrefix, path);
     }
     const ps = path.split('/');
-    const addSlash = (path.slice(path.length - 1, path.length) === '/');
+    const addSlash = (path.slice(path.length - 1, path.length) !== '/');
     const pout = [];
     for (const el of ps) {
         if (el === '..') {
