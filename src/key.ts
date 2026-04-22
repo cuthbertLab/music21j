@@ -350,8 +350,10 @@ export class Key extends KeySignature {
         return this._scale.pitchFromDegree(degree, ...args);
     }
 
-    getScaleDegreeFromPitch(pitchTarget, ...args): number {
+    getScaleDegreeFromPitch(
+        pitchTarget: pitch.Pitch | string,
+        ...args: unknown[]
+    ): number | undefined {
         return this._scale.getScaleDegreeFromPitch(pitchTarget, ...args);
     }
 }
-
