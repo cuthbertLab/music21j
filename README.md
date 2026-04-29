@@ -289,7 +289,13 @@ $ npm publish
 This will test to make sure everything is correct, update package-lock.json,
 copy the current contents of `build` in `releases`, and publish on npm.
 
-Then make a PR-merge and tag.
+Then push to master with name `music21j v0.22.1` (or do a PR and merge that if paranoid)
+and then create a tag and push
+
+```shell
+$ git tag -a v0.xx.y -m 'music21j v0.xx.y'
+$ git push origin --tags
+```
 
 ## Updating Dependencies
 
