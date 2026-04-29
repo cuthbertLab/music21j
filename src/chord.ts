@@ -259,28 +259,32 @@ export class Chord extends note.NotRest {
     //        // needs pitch._convertPitchClassToStr
     //    }
 
-    setStemDirectionFromClef(clef?: clef.Clef) {
-        if (clef === undefined) {
-            return this;
+    setStemDirectionFromClef(clef?: clef.Clef): this {
+        if (clef !== undefined) {
+            this.stemDirection = this.getStemDirectionFromClef(clef);
+        }
+        return this;
+    }
+
+    /**
+     * Same as setStemDirectionFromClef, but does not mutate the chord; just
+     * returns the direction ('up' or 'down') that the stem would be set to.
+     */
+    getStemDirectionFromClef(clef: clef.Clef): string {
+        const midLine = clef.lowestLine + 4;
+        let maxDNNfromCenter = 0;
+        const pA = this.pitches;
+        for (let i = 0; i < pA.length; i++) {
+            const DNNfromCenter = pA[i].diatonicNoteNum - midLine;
+            // >= not > so that the highest pitch wins the tie and thus stem down.
+            if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
+                maxDNNfromCenter = DNNfromCenter;
+            }
+        }
+        if (maxDNNfromCenter >= 0) {
+            return 'down';
         } else {
-            const midLine = clef.lowestLine + 4;
-            // console.log(midLine, 'midLine');
-            let maxDNNfromCenter = 0;
-            const pA = this.pitches;
-            for (let i = 0; i < this.pitches.length; i++) {
-                const p = pA[i];
-                const DNNfromCenter = p.diatonicNoteNum - midLine;
-                // >= not > so that the highest pitch wins the tie and thus stem down.
-                if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
-                    maxDNNfromCenter = DNNfromCenter;
-                }
-            }
-            if (maxDNNfromCenter >= 0) {
-                this.stemDirection = 'down';
-            } else {
-                this.stemDirection = 'up';
-            }
-            return this;
+            return 'up';
         }
     }
 

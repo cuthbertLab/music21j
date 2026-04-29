@@ -33,6 +33,61 @@ export default function tests() {
         s.append(n);
         s.appendNewDOM();
     });
+    test('music21.clef.Clef Chord setStemDirectionFromClef', assert => {
+        const tc = new music21.clef.TrebleClef();
+        // Treble clef midLine is on B4 (DNN 32 + 4 = 36 -> wait check)
+        // TrebleClef.lowestLine = 31; midLine = 35 -> B4 (DNN 35? Let's just use the result)
+
+        // High chord -- highest pitch furthest from center -> stem down
+        const cHigh = new music21.chord.Chord(['F5', 'A5']);
+        cHigh.setStemDirectionFromClef(tc);
+        assert.equal(cHigh.stemDirection, 'down', 'high chord stem down');
+
+        // Low chord -- lowest pitch furthest from center -> stem up
+        const cLow = new music21.chord.Chord(['C4', 'E4']);
+        cLow.setStemDirectionFromClef(tc);
+        assert.equal(cLow.stemDirection, 'up', 'low chord stem up');
+
+        // Tie at the center -- highest pitch wins, stem down
+        // Symmetric around B4: A4 and C#5 -> highest wins -> down
+        const cTie = new music21.chord.Chord(['A4', 'C#5']);
+        cTie.setStemDirectionFromClef(tc);
+        assert.equal(cTie.stemDirection, 'down', 'symmetric chord around midline -> highest wins -> down');
+
+        // chained call returns the chord itself
+        const cChain = new music21.chord.Chord(['C5', 'E5', 'G5']);
+        const ret = cChain.setStemDirectionFromClef(tc);
+        assert.strictEqual(ret, cChain, 'setStemDirectionFromClef returns this');
+
+        // undefined clef -> no change, returns this
+        const cUndef = new music21.chord.Chord(['C5', 'E5']);
+        const before = cUndef.stemDirection;
+        const retU = cUndef.setStemDirectionFromClef(undefined);
+        assert.strictEqual(retU, cUndef, 'undefined clef returns this');
+        assert.equal(cUndef.stemDirection, before, 'undefined clef leaves stem direction unchanged');
+    });
+    test('music21.clef.Clef Chord getStemDirectionFromClef', assert => {
+        const tc = new music21.clef.TrebleClef();
+
+        const cHigh = new music21.chord.Chord(['F5', 'A5']);
+        assert.equal(cHigh.getStemDirectionFromClef(tc), 'down', 'high chord get -> down');
+
+        const cLow = new music21.chord.Chord(['C4', 'E4']);
+        assert.equal(cLow.getStemDirectionFromClef(tc), 'up', 'low chord get -> up');
+
+        // get must not mutate the chord
+        const cGet = new music21.chord.Chord(['C4', 'E4']);
+        const orig = cGet.stemDirection;
+        cGet.getStemDirectionFromClef(tc);
+        assert.equal(cGet.stemDirection, orig, 'getStemDirectionFromClef does not mutate stemDirection');
+
+        // alto clef: midLine = 25 + 4 = 29 -> C4 (DNN 29).
+        const ac = new music21.clef.AltoClef();
+        const cAltoHigh = new music21.chord.Chord(['E4', 'G4']);
+        assert.equal(cAltoHigh.getStemDirectionFromClef(ac), 'down', 'alto clef high chord -> down');
+        const cAltoLow = new music21.chord.Chord(['F3', 'A3']);
+        assert.equal(cAltoLow.getStemDirectionFromClef(ac), 'up', 'alto clef low chord -> up');
+    });
     test('music21.clef clefFromString', assert => {
         const tc = music21.clef.clefFromString('treble');
         assert.ok(tc.isClassOrSubclass('TrebleClef'), 'tc is TrebleClef');
