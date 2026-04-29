@@ -187,7 +187,7 @@ export function setStemDirectionForUnspecified(
             const pitchSet = new Set(n.pitches.map(p => p.diatonicNoteNum));
             if (pitchSet.size < n.pitches.length) {
                 // bug in Vexflow v4 at least -- chords with augmented seconds
-                // and down stems do no render properly.
+                // and down stems do not render properly.
                 // set their stems to 'unspecified' which Vexflow will currently
                 // render as upstems.
                 n.stemDirection = 'unspecified';
