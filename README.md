@@ -124,7 +124,7 @@ testHTML directory as `sfElsewhereCDN.html`.
 
 ## Version
 
-0.21.3 (beta)
+0.22.1 (beta)
 
 ## License
 
@@ -312,5 +312,6 @@ $ npm install
 
 Just documenting major changes at different versions, starting with 0.20
 
+* v0.22 -- Chord, getStemDirectionFromClef. roman minor 67 cautionary and other Roman numeral improvements. typing of scales. run one qunit test ability. Add agent coding skills. typing of voice leading. playwright cache. Standardize barline names (not backwards compatible). Soundfont doubled trailing slash fixed. 
 * v0.21 -- improve cautionary accidentals on Vexflow render; custom MIDI failure msg.
 * v0.20 -- build via vite.  MIDI is no longer exposed as top-level export. Add ES

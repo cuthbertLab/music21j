@@ -5,6 +5,25 @@ import * as interval from './interval';
 import * as key from './key';
 import * as pitch from './pitch';
 import * as scale from './scale';
+/**
+ * Enumeration that can be passed into RomanNumeral as `sixthMinor` or
+ * `seventhMinor` to define how Roman numerals on the sixth and seventh
+ * scale degrees are parsed in minor.  Mirrors music21 Python's
+ * `roman.Minor67Default`.
+ *
+ * - QUALITY (default): chord quality (major/minor/diminished) determines
+ *   whether the root is the lowered or raised ^6/^7.
+ * - CAUTIONARY: same as QUALITY, but a single `#` before vi/vii or `b`
+ *   before VI/VII is treated as a cautionary accidental and ignored.
+ * - SHARP: raised ^6/^7 is always used as the root.
+ * - FLAT: lowered ^6/^7 is always used as the root.
+ */
+export declare enum Minor67Default {
+    QUALITY = 1,
+    CAUTIONARY = 2,
+    SHARP = 3,
+    FLAT = 4
+}
 export declare const figureShorthands: {
     '53': string;
     '3': string;
@@ -145,16 +164,27 @@ export declare class RomanNumeral extends harmony.Harmony {
     protected _tempRoot: pitch.Pitch;
     numbers: number;
     figuresNotationObj: figuredBass.Notation;
-    constructor(figure?: string, keyStr?: key.Key | string | undefined, { parseFigure, updatePitches, }?: {
+    sixthMinor: Minor67Default;
+    seventhMinor: Minor67Default;
+    constructor(figure?: string, keyStr?: key.Key | string | undefined, { parseFigure, updatePitches, sixthMinor, seventhMinor, }?: {
         parseFigure?: boolean;
         updatePitches?: boolean;
+        sixthMinor?: Minor67Default;
+        seventhMinor?: Minor67Default;
     });
     stringInfo(): string;
     _parseFigure(): void;
     _parseFrontAlterations(workingFigure: string): string;
     _correctBracketedPitches(): void;
     _setImpliedQualityFromString(workingFigure: string): string;
-    _fixMinorVIandVII(useScale: any): void;
+    /**
+     * Adjust ^6 and ^7 in minor according to `sixthMinor` / `seventhMinor`
+     * (a Minor67Default value).  Ports music21 Python's
+     * `adjustMinorVIandVIIByQuality` -- including CAUTIONARY behavior, where
+     * a single `#vi` / `bVI` is treated as a cautionary accidental rather
+     * than an additional alteration.  AI-assisted.
+     */
+    adjustMinorVIandVIIByQuality(useScale: key.Key | scale.ConcreteScale): void;
     _parseRNAloneAmidstAug6(workingFigure: string, useScale: any): [string, any];
     /**
      * get romanNumeral - return either romanNumeralAlone (II) or with frontAlterationAccidental (#II)

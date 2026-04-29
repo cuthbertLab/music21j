@@ -10,14 +10,15 @@ import * as key from './key';
 import * as note from './note';
 import type * as pitch from './pitch';
 import { Music21Object } from './base';
-export declare const MotionType: {
-    antiParallel: string;
-    contrary: string;
-    noMotion: string;
-    oblique: string;
-    parallel: string;
-    similar: string;
-};
+type IntervalLoose = interval.Interval | interval.DiatonicInterval | interval.GenericInterval | number | string;
+export declare enum MotionType {
+    antiParallel = "Anti-Parallel",
+    contrary = "Contrary",
+    noMotion = "No Motion",
+    oblique = "Oblique",
+    parallel = "Parallel",
+    similar = "Similar"
+}
 export declare class VoiceLeadingQuartet extends Music21Object {
     static get className(): string;
     unison: interval.Interval;
@@ -30,7 +31,7 @@ export declare class VoiceLeadingQuartet extends Music21Object {
     vIntervals: interval.Interval[];
     hIntervals: interval.Interval[];
     _key: key.Key;
-    constructor(v1n1?: note.Note, v1n2?: note.Note, v2n1?: note.Note, v2n2?: note.Note, analyticKey?: key.Key);
+    constructor(v1n1?: note.Note, v1n2?: note.Note, v2n1?: note.Note, v2n2?: note.Note, analyticKey?: key.Key | string);
     _setVoiceNote(value: note.Note | pitch.Pitch | string | undefined, which: '_v1n1' | '_v1n2' | '_v2n1' | '_v2n2'): void;
     get v1n1(): note.Note;
     set v1n1(value: note.Note);
@@ -41,13 +42,19 @@ export declare class VoiceLeadingQuartet extends Music21Object {
     get v2n2(): note.Note;
     set v2n2(value: note.Note);
     get key(): key.Key;
-    set key(keyValue: key.Key);
+    set key(keyValue: key.Key | string);
     protected _findIntervals(): void;
-    motionType(): string;
+    /**
+     * Returns the motion type, optionally classifying anti-parallel motion distinctly.
+     */
+    motionType(allowAntiParallel?: boolean): MotionType | undefined;
     noMotion(): boolean;
     obliqueMotion(): boolean;
     similarMotion(): boolean;
-    parallelMotion(requiredInterval?: interval.Interval | string | undefined): boolean;
+    /**
+     * Returns true for parallel motion, optionally treating octave-displaced parallels as equivalent.
+     */
+    parallelMotion(requiredInterval?: IntervalLoose | undefined, allowOctaveDisplacement?: boolean): boolean;
     contraryMotion(): boolean;
     outwardContraryMotion(): boolean;
     inwardContraryMotion(): boolean;
@@ -79,4 +86,5 @@ export declare class VoiceLeadingQuartet extends Music21Object {
      */
     isProperResolution(): boolean;
 }
+export {};
 //# sourceMappingURL=voiceLeading.d.ts.map

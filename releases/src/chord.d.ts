@@ -59,6 +59,11 @@ export declare class Chord extends note.NotRest {
     get intervalVector(): any;
     setStemDirectionFromClef(clef?: clef.Clef): this;
     /**
+     * Same as setStemDirectionFromClef, but does not mutate the chord; just
+     * returns the direction ('up' or 'down') that the stem would be set to.
+     */
+    getStemDirectionFromClef(clef: clef.Clef): string;
+    /**
      * Adds a note or Array of notes to the chord, sorting the note array
      *
      * runSort - Sort after running (default true)
