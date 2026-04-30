@@ -22,11 +22,11 @@
 - We use a pretty standard "Vite" setup. Load any skill needed to work with vite.
 - If bundle or release output is affected, run `npm run build`. (or a quicker dev build)
 - After TypeScript changes, run `npm run typecheck`.
-- Test one module with `MODULE=<module-name> npm test` or filter to just the test with `FILTER=<test-name> npm test`.
+- Test one module with `MODULE=<module-name> npm test` and/or filter to just the test with `FILTER=<test-name> npm test`.
 - After substantive code or test changes, run complete suite with `npm test`.
 - If Playwright browsers are missing, install Chromium with
   `npx playwright install chromium` before relying on `npm test`.
-- Run `npm run lint` after substantive changes when practical.
+- Run `npm run lint` after changing code, and fix errors that arise.
 
 # Moving from Python music21
 

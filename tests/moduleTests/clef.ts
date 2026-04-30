@@ -88,6 +88,53 @@ export default function tests() {
         const cAltoLow = new music21.chord.Chord(['F3', 'A3']);
         assert.equal(cAltoLow.getStemDirectionFromClef(ac), 'up', 'alto clef low chord -> up');
     });
+    test('music21.clef.Clef Chord unison stem direction -> unspecified', assert => {
+        // Vexflow v4 mis-renders down-stem chords containing unisons or
+        // augmented unisons. m21j returns 'unspecified' so VF renders up.
+        const tc = new music21.clef.TrebleClef();
+
+        // Augmented unison high in the staff: would otherwise be 'down'.
+        const cAugUnisonHigh = new music21.chord.Chord(['F#5', 'F5']);
+        assert.equal(
+            cAugUnisonHigh.getStemDirectionFromClef(tc),
+            'unspecified',
+            'augmented-unison chord -> unspecified (avoid VF down-stem bug)'
+        );
+
+        // Perfect unison (same pitch twice): also unspecified.
+        const cUnison = new music21.chord.Chord(['C5', 'C5']);
+        assert.equal(
+            cUnison.getStemDirectionFromClef(tc),
+            'unspecified',
+            'perfect-unison chord -> unspecified'
+        );
+
+        // Larger chord containing a unison among other pitches.
+        const cMixed = new music21.chord.Chord(['C5', 'E5', 'E-5', 'G5']);
+        assert.equal(
+            cMixed.getStemDirectionFromClef(tc),
+            'unspecified',
+            'chord with internal unison -> unspecified'
+        );
+
+        // setStemDirectionFromClef writes 'unspecified' onto the chord.
+        cAugUnisonHigh.setStemDirectionFromClef(tc);
+        assert.equal(
+            cAugUnisonHigh.stemDirection,
+            'unspecified',
+            'setStemDirectionFromClef applies unspecified for unison chords'
+        );
+
+        // Not mutated by get-only call.
+        const cGet = new music21.chord.Chord(['F#5', 'F5']);
+        const before = cGet.stemDirection;
+        cGet.getStemDirectionFromClef(tc);
+        assert.equal(
+            cGet.stemDirection,
+            before,
+            'getStemDirectionFromClef does not mutate even for unison chords'
+        );
+    });
     test('music21.clef clefFromString', assert => {
         const tc = music21.clef.clefFromString('treble');
         assert.ok(tc.isClassOrSubclass('TrebleClef'), 'tc is TrebleClef');
