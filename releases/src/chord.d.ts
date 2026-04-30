@@ -61,6 +61,10 @@ export declare class Chord extends note.NotRest {
     /**
      * Same as setStemDirectionFromClef, but does not mutate the chord; just
      * returns the direction ('up' or 'down') that the stem would be set to.
+     *
+     * Because of a bug in Vexflow 4 -- chords with unisons are reported
+     * as still unspecified stem direction. Eventually VF renderer will set
+     * all unspecified to 'up' which works.  'down' with unisons does not work.
      */
     getStemDirectionFromClef(clef: clef.Clef): string;
     /**

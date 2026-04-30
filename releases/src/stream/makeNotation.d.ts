@@ -18,7 +18,7 @@ export declare function iterateBeamGroups(s: stream.Stream, { skipNoBeams, recur
 export declare function setStemDirectionForBeamGroups(s: stream.Stream, { setNewStems, overrideConsistentStemDirections, }?: StemDirectionBeatGroupOptions): void;
 /**
  * Sets the stem direction for unspecified notes.  For beamed notes,
- * they should have already had their stem directions set in setBeams
+ * they should have already had their stem directions set in setBeams.
  */
 export declare function setStemDirectionForUnspecified(s: stream.Stream): void;
 /**

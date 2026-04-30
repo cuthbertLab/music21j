@@ -1,6 +1,6 @@
 /*!
  * 
- * music21j version 0.22.1 built on 2026-04-29.
+ * music21j version 0.22.2 built on 2026-04-30.
  * Copyright (c) 2013-2026 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -35088,14 +35088,20 @@ class Me extends y3 {
   /**
    * Same as setStemDirectionFromClef, but does not mutate the chord; just
    * returns the direction ('up' or 'down') that the stem would be set to.
+   *
+   * Because of a bug in Vexflow 4 -- chords with unisons are reported
+   * as still unspecified stem direction. Eventually VF renderer will set
+   * all unspecified to 'up' which works.  'down' with unisons does not work.
    */
   getStemDirectionFromClef(t) {
     const e = t.lowestLine + 4;
     let i = 0;
     const n = this.pitches;
-    for (let s = 0; s < n.length; s++) {
-      const a = n[s].diatonicNoteNum - e;
-      Math.abs(a) >= Math.abs(i) && (i = a);
+    if (new Set(n.map((a) => a.diatonicNoteNum)).size < n.length)
+      return "unspecified";
+    for (let a = 0; a < n.length; a++) {
+      const r = n[a].diatonicNoteNum - e;
+      Math.abs(r) >= Math.abs(i) && (i = r);
     }
     return i >= 0 ? "down" : "up";
   }
@@ -43642,7 +43648,7 @@ const sh = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   populateSelect: tn,
   selectionChanged: _o,
   webmidi: nt
-}, Symbol.toStringTag, { value: "Module" })), ah = "0.22.1";
+}, Symbol.toStringTag, { value: "Module" })), ah = "0.22.2";
 ao();
 export {
   en as MIDI,
