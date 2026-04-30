@@ -18,7 +18,7 @@ import {
     ModifierPosition,
     StaveNote,
     SVGContext,
-} from 'vexflow';
+} from 'vexflow/bravura';
 
 function L(...args: any[]) {
     if (VFLyricAnnotation.DEBUG) {
@@ -29,8 +29,8 @@ function L(...args: any[]) {
 function getLyricWidthDifference(sn: StaveNote): {left: number, right: number} {
     const myModifierContext = sn.getModifierContext();
     myModifierContext.preFormat();  // just in case it hasn't been done yet.
-    const myLeft = myModifierContext.getState().left_shift;
-    const myRight = myModifierContext.getState().right_shift;
+    const myLeft = myModifierContext.getState().leftShift;
+    const myRight = myModifierContext.getState().rightShift;
 
     const modifierContext2 = new ModifierContext();
     for (const cat of Object.keys((myModifierContext as any).members)) {
@@ -42,8 +42,8 @@ function getLyricWidthDifference(sn: StaveNote): {left: number, right: number} {
         }
     }
     modifierContext2.preFormat();
-    const noLyricLeft = modifierContext2.getState().left_shift;
-    const noLyricRight = modifierContext2.getState().right_shift;
+    const noLyricLeft = modifierContext2.getState().leftShift;
+    const noLyricRight = modifierContext2.getState().rightShift;
     const out = {
         left: myLeft - noLyricLeft,
         right: myRight - noLyricRight,
@@ -115,10 +115,10 @@ export class VFLyricAnnotation extends Annotation {
                 rightWidth = Math.max(rightWidth, textWidth / 2);
             }
         }
-        const rightOverlap = Math.max(rightWidth - state.right_shift, 0);
-        const leftOverlap = Math.max(leftWidth - state.left_shift, 0);
-        state.left_shift += leftOverlap;
-        state.right_shift += rightOverlap;
+        const rightOverlap = Math.max(rightWidth - state.rightShift, 0);
+        const leftOverlap = Math.max(leftWidth - state.leftShift, 0);
+        state.leftShift += leftOverlap;
+        state.rightShift += rightOverlap;
         return true;
     }
 
@@ -157,13 +157,13 @@ export class VFLyricAnnotation extends Annotation {
         // changing ctx parameters below.
         this.applyStyle();
         const g: SVGGElement = ctx.openGroup('lyricannotation', this.getAttribute('id'));
-        ctx.setFont(this.textFont);
+        ctx.setFont(this.fontInfo);
         if (this.fill) {
             ctx.setFillStyle(this.fill);
         }
 
         const stave = note.checkStave();
-        const y = stave.getYForLine(this.text_line);
+        const y = stave.getYForLine((this as any).textLine);
 
         L('Rendering annotation: ', this.text, x, y);
         ctx.fillText(this.text, x, y);
@@ -181,7 +181,8 @@ export class VFLyricAnnotation extends Annotation {
         }
 
         ctx.closeGroup();
-        this.restoreStyle();
+        // vexflow 5 dropped Element.restoreStyle(); ctx.restore() below pairs
+        // with the ctx.save() above and undoes the style/font changes.
         ctx.restore();
     }
 }

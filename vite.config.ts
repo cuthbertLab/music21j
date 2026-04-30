@@ -1,7 +1,34 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import checker from 'vite-plugin-checker';
 import directoryIndex from 'vite-plugin-directory-index';
 import pkg from './package.json';
+import { buildNoLocalFontsCss } from './tests/no_local_fonts';
+
+// AI-assisted
+//
+// When NO_LOCAL_FONTS=1 is set in the environment, inject the same
+// @font-face blocker the playwright runner uses into every served HTML page.
+// Lets a developer run `NO_LOCAL_FONTS=1 npm run dev` and visit
+// http://localhost:5173/tests/ to see what users without Bravura installed
+// locally see, instead of being masked by their own system copy.
+function noLocalFontsPlugin(): Plugin | undefined {
+    if (!process.env.NO_LOCAL_FONTS) {
+        return undefined;
+    }
+    const css = buildNoLocalFontsCss();
+    return {
+        name: 'm21j-no-local-fonts',
+        apply: 'serve',
+        transformIndexHtml() {
+            return [{
+                tag: 'style',
+                attrs: { 'data-m21j-font-blocker': '' },
+                injectTo: 'head-prepend',
+                children: css,
+            }];
+        },
+    };
+}
 
 const banner_lines: string[] = [
     '/*!',
@@ -51,6 +78,7 @@ export default defineConfig({
             },
         }),
         directoryIndex(),
+        noLocalFontsPlugin(),
     ],
 
     // root defaults to process.cwd(), so no need:

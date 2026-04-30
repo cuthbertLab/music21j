@@ -4,6 +4,8 @@
  */
 import { chromium, type Browser, type Page } from '@playwright/test';
 
+import { buildNoLocalFontsCss } from './no_local_fonts';
+
 /**
  * Loads the Vite-served QUnit page in headless Chromium and exits nonzero on failures.
  */
@@ -15,6 +17,25 @@ async function main(): Promise<void> {
         const type = msg.type();   // 'log', 'error', 'warning', etc.
         console[type](`[browser:${type}]`, msg.text());
     });
+
+    // NO_LOCAL_FONTS=1 makes the page render as if no SMuFL music font were
+    // installed locally; see tests/no_local_fonts.ts for the full rationale.
+    if (process.env.NO_LOCAL_FONTS) {
+        const css = buildNoLocalFontsCss();
+        await page.addInitScript((styleCss: string) => {
+            const inject = () => {
+                const style = document.createElement('style');
+                style.setAttribute('data-m21j-font-blocker', '');
+                style.textContent = styleCss;
+                (document.head ?? document.documentElement).prepend(style);
+            };
+            if (document.head) {
+                inject();
+            } else {
+                document.addEventListener('DOMContentLoaded', inject, { once: true });
+            }
+        }, css);
+    }
 
     // Allow narrowing via env vars for quick debugging:
     //   MODULE=key npm test              (only the key suite)

@@ -8,7 +8,7 @@
  * Chord related objects (esp. music21.chord.Chord) and methods.
  *
  */
-import { StaveNote as VFStaveNote } from 'vexflow';
+import { StaveNote as VFStaveNote } from 'vexflow/bravura';
 import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21';

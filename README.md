@@ -257,6 +257,32 @@ In the browser, the same knobs are query parameters:
 * `http://localhost:5173/tests/?filter=update`
 * `http://localhost:5173/tests/?module=key&filter=update`
 
+### Testing without locally-installed music fonts
+
+If you have Bravura (or another SMuFL music font like Petaluma, Gonville,
+Leland, Maestro) installed on your system, your browser will pick it up via
+the system font fallback even when the page does not deliver one -- which
+hides what users *without* that font installed actually see.
+
+Set `NO_LOCAL_FONTS=1` to inject `@font-face` overrides that shadow the
+local copies of those families. It works in both modes:
+
+```sh
+# Headless: full suite as a font-less user would render it.
+$ NO_LOCAL_FONTS=1 npm test
+
+# Interactive: open http://localhost:5173/tests/ and look for yourself.
+$ NO_LOCAL_FONTS=1 npm run dev
+```
+
+This only blocks `local()` lookups for the listed music families.  Fonts
+genuinely served via `@font-face url(...)` -- including Vexflow's bundled
+Bravura data URL -- still work as normal, so the test page renders correctly
+when the library does ship a font.  Note that this is not a perfectly clean
+font-isolation environment (system fallback still leaks generic serif/sans
+for plain text); for a stricter check, run the suite inside the official
+Playwright Linux container.
+
 ## Build
 
 Run vite with:

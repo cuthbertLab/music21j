@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import {KeySignature as VFKeySignature, StaveModifierPosition, Glyph as VFGlyph} from 'vexflow';
+import {KeySignature as VFKeySignature, StaveModifierPosition} from 'vexflow/bravura';
 import * as music21 from '../../src/main';
 
 const { test } = QUnit;
@@ -25,11 +25,11 @@ export default function tests() {
         const vfs = s.activeVFStave;
         const modifiers = vfs.getModifiers(StaveModifierPosition.BEGIN, VFKeySignature.CATEGORY);
         assert.equal(modifiers.length, 1, 'One key signature at beginning in VF');
-        // @ts-ignore
-        const glyphs: VFGlyph[] = modifiers[0].glyphs;
-        assert.equal(glyphs.length, 3, '3 sharp KS should have 3 glyphs');
-        const g = glyphs[0];
-        assert.equal(g.getCode(), 'accidentalSharp', 'Code is accidentalSharp');
+        // vexflow 5 stores accidentals as a protected accList of {type, line};
+        // there is no longer a public Glyph array.
+        const accList = (modifiers[0] as any).accList as { type: string; line: number }[];
+        assert.equal(accList.length, 3, '3 sharp KS should have 3 entries');
+        assert.equal(accList[0].type, '#', 'First accidental is a sharp');
     });
 
     test('music21.key.Key', assert => {

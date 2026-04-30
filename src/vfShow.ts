@@ -25,7 +25,7 @@ import {
     TextNote as VFTextNote,
     Tuplet as VFTuplet,
     Voice as VFVoice,
-} from 'vexflow';
+} from 'vexflow/bravura';
 
 import { debug } from './debug';
 import * as clef from './clef';
@@ -488,22 +488,22 @@ export class Renderer {
             }
             if (onSameSystem) {
                 const vfTie = new VFStaveTie({
-                    first_note: thisNote.activeVexflowNote,
-                    last_note: nextNote.activeVexflowNote,
-                    first_indices: [0],
-                    last_indices: [0],
+                    firstNote: thisNote.activeVexflowNote,
+                    lastNote: nextNote.activeVexflowNote,
+                    firstIndexes: [0],
+                    lastIndexes: [0],
                 });
                 this.vfTies.push(vfTie);
             } else {
                 // console.log('got me a tie across systemBreaks!');
                 const vfTie1 = new VFStaveTie({
-                    first_note: thisNote.activeVexflowNote,
-                    first_indices: [0],
+                    firstNote: thisNote.activeVexflowNote,
+                    firstIndexes: [0],
                 });
                 this.vfTies.push(vfTie1);
                 const vfTie2 = new VFStaveTie({
-                    last_note: nextNote.activeVexflowNote,
-                    first_indices: [0],
+                    lastNote: nextNote.activeVexflowNote,
+                    firstIndexes: [0],
                 });
                 this.vfTies.push(vfTie2);
             }
@@ -896,8 +896,8 @@ export class Renderer {
         const complete_active_tuplet_function = () => {
             // console.log(activeTupletVexflowNotes);
             const tupletOptions = {
-                num_notes: activeTuplet.numberNotesActual,
-                notes_occupied: activeTuplet.numberNotesNormal,
+                numNotes: activeTuplet.numberNotesActual,
+                notesOccupied: activeTuplet.numberNotesNormal,
             };
             // console.log('tupletOptions', tupletOptions);
             const vfTuplet = new VFTuplet(
@@ -1052,11 +1052,11 @@ export class Renderer {
         }
         // console.log('creating voice');
         if (debug) {
-            console.log(`New voice, num_beats: ${num1024} beat_value: ${beatValue}`);
+            console.log(`New voice, numBeats: ${num1024} beatValue: ${beatValue}`);
         }
         const vfv = new VFVoice({
-            num_beats: num1024,
-            beat_value: beatValue,
+            numBeats: num1024,
+            beatValue,
             // this is the default
             // resolution: VexFlow.RESOLUTION,
         });
@@ -1237,7 +1237,7 @@ export class Renderer {
                     // note only...
                     el.y = stave.getBottomY()
                         - ((sClef.lowestLine - el.pitch.diatonicNoteNum)
-                            * stave.options.spacing_between_lines_px);
+                            * stave.options.spacingBetweenLinesPx);
                     // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }
             }

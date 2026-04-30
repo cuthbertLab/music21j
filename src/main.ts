@@ -26,7 +26,7 @@
  */
 
 import * as MIDI from 'midicube';  // to be removed when export * from is okay.
-import * as Vex from 'vexflow';
+import * as Vex from 'vexflow/bravura';
 
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then

@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import type {TextNote as VFTextNote} from 'vexflow';
+import type {TextNote as VFTextNote} from 'vexflow/bravura';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
@@ -76,9 +76,9 @@ export default function tests() {
         p.appendNewDOM();
         const renderer = p.activeVFRenderer;
         // @ts-ignore
-        assert.deepEqual(renderer.vfTies[0].notes.first_note, n1.activeVexflowNote);
+        assert.deepEqual(renderer.vfTies[0].notes.firstNote, n1.activeVexflowNote);
         // @ts-ignore
-        assert.deepEqual(renderer.vfTies[0].notes.last_note, n2.activeVexflowNote);
+        assert.deepEqual(renderer.vfTies[0].notes.lastNote, n2.activeVexflowNote);
     });
 
     test('music21.vfShow.Renderer prepareTies in voices across barline', assert => {
@@ -123,9 +123,9 @@ export default function tests() {
         s.appendNewDOM();
         assert.equal(
             // @ts-ignore
-            s.activeVFRenderer.vfTies[0].notes.first_note.keys[0],
+            s.activeVFRenderer.vfTies[0].notes.firstNote.keys[0],
             // @ts-ignore
-            s.activeVFRenderer.vfTies[0].notes.last_note.keys[0]
+            s.activeVFRenderer.vfTies[0].notes.lastNote.keys[0]
         );
     });
 

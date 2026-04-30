@@ -18,7 +18,7 @@
  *
  */
 import * as MIDI from 'midicube';
-import { Stave as VFStave } from 'vexflow';
+import { Stave as VFStave } from 'vexflow/bravura';
 
 import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
@@ -2825,17 +2825,13 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         // TODO: on music21p percussion clef defines no lowest line, but does in music21j...
         const lowestLine: number = (thisClef !== undefined) ? thisClef.lowestLine : 31;
 
-        // TODO: in Vexflow 5 (also fix numLines below)
-        // const lineSpacing: number = storedVexflowStave.options.spacingBetweenLinesPx;
-        // const linesAboveStaff: number = storedVexflowStave.options.spaceAboveStaffLn;
-        const lineSpacing: number = storedVexflowStave.options.spacing_between_lines_px;
-        const linesAboveStaff: number = storedVexflowStave.options.space_above_staff_ln;
-        
+        const lineSpacing: number = storedVexflowStave.options.spacingBetweenLinesPx;
+        const linesAboveStaff: number = storedVexflowStave.options.spaceAboveStaffLn;
+
         const notesFromTop = yPxScaled * 2 / lineSpacing;
 
-        // TODO: in VexFlow 5...it's .options.numLines
         const notesAboveLowestLine
-            = (storedVexflowStave.options.num_lines - 1 + linesAboveStaff) * 2
+            = (storedVexflowStave.options.numLines - 1 + linesAboveStaff) * 2
             - notesFromTop;
         const clickedDiatonicNoteNum = lowestLine + Math.round(notesAboveLowestLine);
         return clickedDiatonicNoteNum;

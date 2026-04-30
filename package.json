@@ -2,13 +2,11 @@
   "name": "music21j",
   "version": "0.22.1",
   "description": "A toolkit for computer-aided musicology, JavaScript version",
-
   "_main_etc": "these are the legacy urls; exports:. is the modern standard",
   "main": "releases/music21.debug.js",
   "module": "releases/music21.es.js",
   "typings": "releases/src/main.d.ts",
   "style": "releases/music21j.css",
-
   "exports": {
     ".": {
       "import": "./releases/music21.es.js",
@@ -16,7 +14,6 @@
       "default": "./releases/music21.debug.js"
     }
   },
-
   "files": [
     "/css",
     "/releases",
@@ -28,7 +25,7 @@
     "deep-equal": "^2.2.3",
     "jsonpickle": "^1.2.0",
     "midicube": "^0.9.2",
-    "vexflow": "^4.2.3"
+    "vexflow": "^5.0.0"
   },
   "_why": {
     "@types/jquery": "Still allow JQuery to be used as input even though it is no longer part of the system",

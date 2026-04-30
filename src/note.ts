@@ -16,7 +16,7 @@ import {
     StaveNote as VFStaveNote,
     Stem as VFStem,
     type FontInfo as VFFontInfo,
-} from 'vexflow';
+} from 'vexflow/bravura';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';
@@ -572,7 +572,7 @@ export class NotRest extends GeneralNote {
         const vfn = new VFStaveNote({
             keys: vexflowPitchKeys,
             duration: vfd,
-            stem_direction: vfnStemDirection,
+            stemDirection: vfnStemDirection,
         });
         this.vexflowAccidentalsAndDisplay(vfn, { clef }); // clean up stuff...
         for (const [i, p] of this.pitches.entries()) {
@@ -616,7 +616,9 @@ export class NotRest extends GeneralNote {
         super.vexflowAccidentalsAndDisplay(vfn, _options);
         if (this.stemDirection === 'noStem') {
             vfn.glyphProps.stem = false;
-            vfn.glyphProps.flag = false;
+            // vexflow 5 dropped GlyphProps.flag; clearing codeFlagUp suppresses
+            // any flag glyph that would otherwise be drawn.
+            vfn.glyphProps.codeFlagUp = undefined;
             // vfn.render_options.stem_height = 0;
         }
     }
@@ -747,7 +749,7 @@ export class Note extends NotRest {
             let staveDNNSpacing = 5;
             if (stave !== undefined) {
                 staveDNNSpacing = Math.floor(
-                    stave.options.spacing_between_lines_px / 2
+                    stave.options.spacingBetweenLinesPx / 2
                 );
             }
             if (clef !== undefined && this.pitch !== undefined) {

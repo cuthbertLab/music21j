@@ -23,6 +23,11 @@
 - If bundle or release output is affected, run `npm run build`. (or a quicker dev build)
 - After TypeScript changes, run `npm run typecheck`.
 - Test one module with `MODULE=<module-name> npm test` or filter to just the test with `FILTER=<test-name> npm test`.
+- Set `NO_LOCAL_FONTS=1` (works with `npm test` and `npm run dev`) to render
+  as if no SMuFL music font (Bravura, Petaluma, Gonville, Leland, Maestro,
+  ...) were installed locally -- avoids being misled by a developer-installed
+  copy. See `tests/no_local_fonts.ts` and the README "Testing without
+  locally-installed music fonts" section.
 - After substantive code or test changes, run complete suite with `npm test`.
 - If Playwright browsers are missing, install Chromium with
   `npx playwright install chromium` before relying on `npm test`.
