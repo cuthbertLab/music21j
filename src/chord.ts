@@ -269,11 +269,26 @@ export class Chord extends note.NotRest {
     /**
      * Same as setStemDirectionFromClef, but does not mutate the chord; just
      * returns the direction ('up' or 'down') that the stem would be set to.
+     *
+     * Because of a bug in Vexflow 4 -- chords with unisons are reported
+     * as still unspecified stem direction. Eventually VF renderer will set
+     * all unspecified to 'up' which works.  'down' with unisons does not work.
      */
     getStemDirectionFromClef(clef: clef.Clef): string {
         const midLine = clef.lowestLine + 4;
         let maxDNNfromCenter = 0;
         const pA = this.pitches;
+        const pitchSet = new Set(pA.map(p => p.diatonicNoteNum));
+        if (pitchSet.size < pA.length) {
+            // Bug in Vexflow 4 at least: -- chords with unisons
+            // (esp. augmented unisons) or accidentals
+            // and down stems do not render properly.
+            // set their stems to 'unspecified' which Vexflow will currently
+            // render as upstems.
+            // (Similar code exists in makeNotation setStemDirectionForUnspecified)
+            return 'unspecified';
+        }
+
         for (let i = 0; i < pA.length; i++) {
             const DNNfromCenter = pA[i].diatonicNoteNum - midLine;
             // >= not > so that the highest pitch wins the tie and thus stem down.

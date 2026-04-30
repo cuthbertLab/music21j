@@ -167,7 +167,7 @@ export function setStemDirectionForBeamGroups(
 
 /**
  * Sets the stem direction for unspecified notes.  For beamed notes,
- * they should have already had their stem directions set in setBeams
+ * they should have already had their stem directions set in setBeams.
  */
 export function setStemDirectionForUnspecified(
     s: stream.Stream,
@@ -186,10 +186,12 @@ export function setStemDirectionForUnspecified(
         if (n.pitches.length > 1) {
             const pitchSet = new Set(n.pitches.map(p => p.diatonicNoteNum));
             if (pitchSet.size < n.pitches.length) {
-                // bug in Vexflow v4 at least -- chords with augmented seconds
+                // bug in Vexflow v4 at least -- chords with unisons
+                // (esp. augmented unisons) or accidentals
                 // and down stems do not render properly.
                 // set their stems to 'unspecified' which Vexflow will currently
                 // render as upstems.
+                // (Similar code exists in Chord get/setStemDirectionFromClef)
                 n.stemDirection = 'unspecified';
                 continue;
             }

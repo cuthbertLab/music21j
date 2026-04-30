@@ -124,7 +124,7 @@ testHTML directory as `sfElsewhereCDN.html`.
 
 ## Version
 
-0.22.1 (beta)
+0.22.2 (beta)
 
 ## License
 

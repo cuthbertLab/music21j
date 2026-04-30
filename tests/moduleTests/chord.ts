@@ -3,6 +3,9 @@ import * as music21 from '../../src/main';
 
 const { test } = QUnit;
 
+// Note: tests for Chord stem directions (setStemDirectionFromClef,
+// getStemDirectionFromClef, and the unison -> 'unspecified' behavior)
+// live in tests/moduleTests/clef.ts since they exercise Clef-driven logic.
 export default function tests() {
     test('music21.chord.Chord', assert => {
         let c = new music21.chord.Chord(['C5', 'E5', 'G5']);
