@@ -2,15 +2,17 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/clef -- Clef objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Clef related objects and properties
  *
  */
+import arrayEqual from 'array-equal';
+
 import * as base from './base';
 import * as pitch from './pitch';
-import { Stream } from './stream'; // for typing only
+import type { Stream } from './stream';
 
 /*  music21.Clef
     must be defined before Stream since Stream subclasses call new music21.Clef...
@@ -310,31 +312,25 @@ export const all_clefs = {
  */
 export function bestClef(st: Stream, { recurse=true }={}): Clef {
     // console.log('calling flatten on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
-    let stFlat;
+    let stFlat: Stream;
     if (recurse) {
         stFlat = st.flatten();
     } else {
         stFlat = st;
     }
-    let totalNotes = 0;
-    let totalPitch = 0.0;
-    for (let i = 0; i < stFlat.length; i++) {
-        const el = stFlat.get(i);
-        if (el.pitch !== undefined) {
-            totalNotes += 1;
-            totalPitch += el.pitch.diatonicNoteNum;
-        } else if (el.pitches !== undefined) {
-            for (let j = 0; j < el.pitches.length; j++) {
-                totalNotes += 1;
-                totalPitch += el.pitches[j].diatonicNoteNum;
-            }
+    let totalPitches = 0;
+    let totalDNN = 0.0;
+    for (const n of stFlat.notes) {
+        for (const p of n.pitches) {
+            totalPitches += 1;
+            totalDNN += p.diatonicNoteNum;
         }
     }
-    let averageHeight;
-    if (totalNotes === 0) {
+    let averageHeight: number;
+    if (totalPitches === 0) {
         averageHeight = 29;
     } else {
-        averageHeight = totalPitch / totalNotes;
+        averageHeight = totalDNN / totalPitches;
     }
     // console.log('bestClef: average height', averageHeight);
     if (averageHeight > 28) {
@@ -349,8 +345,8 @@ export function bestClef(st: Stream, { recurse=true }={}): Clef {
  */
 export function clefFromString(clefString: string, octaveShift: number = 0): Clef {
     const xnStr = clefString.trim();
-    let thisType;
-    let lineNum;
+    let thisType: string;
+    let lineNum: number;
     if (xnStr.toLowerCase() === 'percussion') {
         return new PercussionClef();
     } // todo: tab, none, jianpu
@@ -384,8 +380,6 @@ export function clefFromString(clefString: string, octaveShift: number = 0): Cle
             return new potentialClass();
         }
     }
-
-    const arrayEqual = (a, b) => a.length === b.length && a.every((el, ix) => el === b[ix]);
 
     const params = [thisType, lineNum, octaveShift];
     if (arrayEqual(params, ['G', 2, 0])) {

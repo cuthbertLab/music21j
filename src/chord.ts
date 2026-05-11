@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/chord -- Chord
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Chord related objects (esp. music21.chord.Chord) and methods.
  *
@@ -20,6 +20,7 @@ import * as chordTables from './chordTables';
 import type * as clef from './clef';
 import type * as instrument from './instrument';
 import type * as pitch from './pitch';
+import {VexflowNoteOptions} from './note';
 
 export { chordTables };
 
@@ -88,23 +89,23 @@ export class Chord extends note.NotRest {
     // https://github.com/microsoft/TypeScript/issues/2521
     get pitches(): pitch.Pitch[] {
         const tempPitches = [];
-        for (let i = 0; i < this._notes.length; i++) {
-            tempPitches.push(this._notes[i].pitch);
+        for (const n of this._notes) {
+            tempPitches.push(n.pitch);
         }
         return tempPitches;
     }
 
-    set pitches(tempPitches: pitch.Pitch[]) {
+    set pitches(tempPitches: (pitch.Pitch|string|note.Note)[]) {
         this._notes = [];
         for (let i = 0; i < tempPitches.length; i++) {
-            let addNote;
+            let addNote: note.Note;
             if (typeof tempPitches[i] === 'string') {
-                addNote = new note.Note(tempPitches[i]);
-            } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
+                addNote = new note.Note(tempPitches[i] as string);
+            } else if ((tempPitches[i] as pitch.Pitch).isClassOrSubclass('Pitch')) {
                 addNote = new note.Note();
-                addNote.pitch = tempPitches[i];
-            } else if (tempPitches[i].isClassOrSubclass('Note')) {
-                addNote = tempPitches[i];
+                addNote.pitch = tempPitches[i] as pitch.Pitch;
+            } else if ((tempPitches[i] as note.Note).isClassOrSubclass('Note')) {
+                addNote = tempPitches[i] as note.Note;
             } else {
                 console.warn('bad pitch', tempPitches[i]);
                 throw new Music21Exception(
@@ -127,9 +128,9 @@ export class Chord extends note.NotRest {
         this._overrides = {};
     }
 
-    vexflowNote({ clef=undefined }={}): VFStaveNote {
+    vexflowNote(options: VexflowNoteOptions = {}): VFStaveNote {
         this.sortPitches();
-        return super.vexflowNote({ clef });
+        return super.vexflowNote(options);
     }
 
     get orderedPitchClasses(): number[] {
@@ -191,7 +192,7 @@ export class Chord extends note.NotRest {
         return chordTables.addressToForteName(this.chordTablesAddress, 'tni');
     }
 
-    get(i) {
+    get(i: number): note.Note {
         if (typeof i === 'number') {
             return this._notes[i];
         } else {
@@ -206,7 +207,7 @@ export class Chord extends note.NotRest {
     }
 
 
-    areZRelations(other): boolean {
+    areZRelations(other: Chord): boolean {
         const zRelationAddress = chordTables.addressToZAddress(this.chordTablesAddress);
         if (zRelationAddress === undefined) {
             return false;
@@ -219,7 +220,7 @@ export class Chord extends note.NotRest {
         return true;
     }
 
-    getZRelation() {
+    getZRelation(): Chord {
         if (!this.hasZRelation) {
             return undefined;
         }
@@ -258,28 +259,47 @@ export class Chord extends note.NotRest {
     //        // needs pitch._convertPitchClassToStr
     //    }
 
-    setStemDirectionFromClef(clef?: clef.Clef) {
-        if (clef === undefined) {
-            return this;
+    setStemDirectionFromClef(clef?: clef.Clef): this {
+        if (clef !== undefined) {
+            this.stemDirection = this.getStemDirectionFromClef(clef);
+        }
+        return this;
+    }
+
+    /**
+     * Same as setStemDirectionFromClef, but does not mutate the chord; just
+     * returns the direction ('up' or 'down') that the stem would be set to.
+     *
+     * Because of a bug in Vexflow 4 -- chords with unisons are reported
+     * as still unspecified stem direction. Eventually VF renderer will set
+     * all unspecified to 'up' which works.  'down' with unisons does not work.
+     */
+    getStemDirectionFromClef(clef: clef.Clef): string {
+        const midLine = clef.lowestLine + 4;
+        let maxDNNfromCenter = 0;
+        const pA = this.pitches;
+        const pitchSet = new Set(pA.map(p => p.diatonicNoteNum));
+        if (pitchSet.size < pA.length) {
+            // Bug in Vexflow 4 at least: -- chords with unisons
+            // (esp. augmented unisons) or accidentals
+            // and down stems do not render properly.
+            // set their stems to 'unspecified' which Vexflow will currently
+            // render as upstems.
+            // (Similar code exists in makeNotation setStemDirectionForUnspecified)
+            return 'unspecified';
+        }
+
+        for (let i = 0; i < pA.length; i++) {
+            const DNNfromCenter = pA[i].diatonicNoteNum - midLine;
+            // >= not > so that the highest pitch wins the tie and thus stem down.
+            if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
+                maxDNNfromCenter = DNNfromCenter;
+            }
+        }
+        if (maxDNNfromCenter >= 0) {
+            return 'down';
         } else {
-            const midLine = clef.lowestLine + 4;
-            // console.log(midLine, 'midLine');
-            let maxDNNfromCenter = 0;
-            const pA = this.pitches;
-            for (let i = 0; i < this.pitches.length; i++) {
-                const p = pA[i];
-                const DNNfromCenter = p.diatonicNoteNum - midLine;
-                // >= not > so that the highest pitch wins the tie and thus stem down.
-                if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
-                    maxDNNfromCenter = DNNfromCenter;
-                }
-            }
-            if (maxDNNfromCenter >= 0) {
-                this.stemDirection = 'down';
-            } else {
-                this.stemDirection = 'up';
-            }
-            return this;
+            return 'up';
         }
     }
 
@@ -462,7 +482,7 @@ export class Chord extends note.NotRest {
             return this._cache.bass;
         }
 
-        let lowest;
+        let lowest: pitch.Pitch;
         const pitches = this.pitches;
         for (let i = 0; i < pitches.length; i++) {
             const p = pitches[i];
@@ -638,7 +658,7 @@ export class Chord extends note.NotRest {
         if (channel === undefined) {
             channel = this.activeChannel();
         }
-        let midNum;
+        let midNum: number;
         const volume = this.midiVolume;
         // TODO: Tied Chords.
         for (let j = 0; j < this._notes.length; j++) {
@@ -657,7 +677,7 @@ export class Chord extends note.NotRest {
      * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
      * the `.root()`
      *
-     * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+     * In case there is more than one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      */
     getChordStep(chordStep: number, testRoot?: pitch.Pitch): pitch.Pitch|undefined {

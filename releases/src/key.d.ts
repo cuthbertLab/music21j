@@ -129,8 +129,8 @@ export declare class Key extends KeySignature {
      */
     getScale(scaleType?: string): scale.ConcreteScale;
     get isConcrete(): boolean;
-    getPitches(...args: any[]): any[];
-    pitchFromDegree(degree: any, ...args: any[]): any;
-    getScaleDegreeFromPitch(pitchTarget: any, ...args: any[]): number;
+    getPitches(...args: any[]): pitch.Pitch[];
+    pitchFromDegree(degree: any, ...args: any[]): pitch.Pitch;
+    getScaleDegreeFromPitch(pitchTarget: pitch.Pitch | string, ...args: unknown[]): number | undefined;
 }
 //# sourceMappingURL=key.d.ts.map

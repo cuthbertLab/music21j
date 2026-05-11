@@ -37,6 +37,36 @@ export default function tests() {
 
         const vlq3 = new VLQ(new N('C4'), new N('D4'), new N('A3'), new N('F3'));
         assert.ok(vlq3.contraryMotion(), 'contrary motion set w/ strings');
+
+        const antiParallel = new VLQ(new N('A5'), new N('C5'), new N('D4'), new N('F4'));
+        assert.equal(
+            antiParallel.motionType(),
+            music21.voiceLeading.MotionType.contrary,
+            'anti-parallel defaults to contrary for compatibility'
+        );
+        assert.equal(
+            antiParallel.motionType(true),
+            music21.voiceLeading.MotionType.antiParallel,
+            'anti-parallel can be requested explicitly'
+        );
+
+        const displacedFifths = new VLQ(new N('A4'), new N('B5'), new N('D3'), new N('E3'));
+        assert.ok(!displacedFifths.parallelMotion(), '5th to 12th not parallel by default');
+        assert.ok(
+            displacedFifths.parallelMotion(undefined, true),
+            '5th to 12th counts with octave displacement'
+        );
+        assert.ok(displacedFifths.parallelFifth(), 'parallelFifth allows octave displacement');
+
+        const hiddenDisplaced = new VLQ(new N('C4'), new N('G5'), new N('E3'), new N('C4'));
+        assert.ok(
+            !hiddenDisplaced.hiddenOctave(),
+            'octave-displaced parallel motion is not counted as hidden octave'
+        );
+
+        const keyedByString = new VLQ(new N('D4'), new N('G4'), new N('B3'), new N('G3'), 'd');
+        assert.equal(keyedByString.key.tonic.name, 'D');
+        assert.equal(keyedByString.key.mode, 'minor');
     });
     test(
         'music21.voiceLeading.VoiceLeadingQuartet proper resolution',

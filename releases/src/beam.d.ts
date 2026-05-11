@@ -1,4 +1,5 @@
 import * as prebase from './prebase';
+import type * as base from './base';
 export declare const validBeamTypes: {
     start: boolean;
     stop: boolean;
@@ -22,7 +23,7 @@ export declare class Beam extends prebase.ProtoM21Object {
     direction: string | undefined;
     number: number;
     independentAngle: number;
-    constructor(type: any, direction?: any);
+    constructor(type: string, direction?: any);
 }
 /**
  * Object representing a collection of Beams
@@ -33,8 +34,8 @@ export declare class Beam extends prebase.ProtoM21Object {
  */
 export declare class Beams extends prebase.ProtoM21Object {
     static get className(): string;
-    static naiveBeams(srcList: any): Beams[];
-    static removeSandwichedUnbeamables(beamsList: any): any;
+    static naiveBeams(srcList: Iterable<base.Music21Object>): Beams[];
+    static removeSandwichedUnbeamables(beamsList: Beams[]): Beams[];
     static sanitizePartialBeams(beamsList: Beams[]): Beams[];
     static mergeConnectingPartialBeams(beamsList: Beams[]): Beams[];
     beamsList: Beam[];

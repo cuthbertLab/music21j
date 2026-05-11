@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Music21j Sandbox for Vite hotreload</title>
+    <link rel="stylesheet" href="../css/m21.css">
+    <script type="module" src="./m21-dev.ts"></script>
+    <style>
+        .streamHolding {
+            background: #eed;
+            padding: 10px;
+            border: 10px solid #ddc;
+        }
+        .editor {
+            background: #cfc;
+            border: 10px solid #afa;
+            font-family: "Courier", monospace;
+            font-size: 14px;
+            width: 90%;
+            height: 300px;
+        }
+        div.editor-error .text {
+            background: #faa;
+            border: 5px solid #f88;
+            font-family: "Courier", monospace;
+            font-size: 14px;
+            padding: 3px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+    <button id="resetButton" role="button" style="float: right">Reset</button>
+    <h1>Music21j Sandbox for Vite's hotreload</h1>
+    <div class="main">
+        <label for="sandbox">
+            <b>A live editor for experimenting with Music21j and Vexflow, based on the Vexflow Sandbox</b>
+        </label>
+    </div>
+</div>
+
+<div class="content">
+    <div class="description sandbox">
+        <p></p>
+        <div class="editor-error"><span class="text"></span></div>
+        <p></p>
+        <div class="example sandbox">
+            <textarea id="sandbox" class="editor">
+            </textarea>
+            <p></p>
+            <div class='streamHolding' id='mainSVG'>
+                <svg width="525" height="220"></svg>
+            </div>
+            <p></p>
+        </div>
+    </div>
+</div>
+<script>
+function main() {
+    let timeout;
+
+    const default_text = `
+const s = new music21.stream.Measure();
+const n = new music21.note.Note("C#4");
+n.duration.type = "half";
+const n2 = new music21.note.Note("A4");
+n2.duration.type = "quarter";
+const n3 = new music21.note.Note("C#");
+n3.duration.type = "quarter";
+s.append(new music21.meter.TimeSignature('4/4'));
+s.append(n);
+s.append(n2);
+s.append(n3);
+s.renderOptions.marginBottom = 80;
+s.replaceDOM('#mainSVG');
+    `;
+
+    const mainSVG = document.querySelector("#mainSVG");
+    const msg = document.querySelector('div.editor-error .text');
+    const sandbox = document.querySelector("#sandbox");
+    const localStorageKey = 'm21j_sandbox_code';
+    const local_storage_value = localStorage.getItem(localStorageKey);
+    sandbox.value = local_storage_value || default_text;
+    document.querySelector('#resetButton')
+        .addEventListener('click', () => {
+            sandbox.value = default_text;
+            localStorage.removeItem(localStorageKey);
+            live_code();
+        });
+
+    live_code();
+
+    for (const evt of ['blur', 'keyup', 'paste']) {
+        sandbox.addEventListener(evt, () => {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(live_code, 250);
+        });
+    }
+
+    function live_code() {
+        let code = sandbox.value;
+
+        try {
+            eval(code);
+            msg.innerHTML = '';
+            msg.style.display = 'none';
+            localStorage.setItem(localStorageKey, code);
+        } catch (e) {
+            msg.innerHTML = e.toString();
+            msg.style.display = 'block';
+        }
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    main();
+});
+</script>
+</body>
+</html>

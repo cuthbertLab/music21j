@@ -1,74 +1,63 @@
-Music21j
-=========
+# Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-21, Michael Scott Asato Cuthbert, some rights reserved (BSD).
+Copyright (c) 2013-2026, Michael Scott Asato Cuthbert, some rights reserved (BSD).
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
-interfaces. Some things music21j offers are:
-
-  - The ability to visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
-  - Connections (via Web Midi or [JazzSoft] plugin) to MIDI devices.
-  - Music theory and analysis modules at the level of music21 ca. 2014
-  - A repository of modules such as metronomes, keyboards, and automatic transcribers.
+interfaces. Some things music21j can do include:
+	•	Visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
+	•	Connect scores to MIDI devices (via Web Midi or [JazzSoft] plugin)
+	•	Analyze and perform music theory at a lower level than Python music21
+	•	Provide a repository of modules such as metronomes, keyboards, and automatic transcribers.
 
 Though it does not have all the power of [Music21 Python], music21j can help with
 a number of research problems in music history and theory. The introduction to the
-Python package will say more about it (it's better documented). The "namespaces"
+Python package will say more about it (it’s better documented). The “namespaces”
 tab above will give introductions to some features of music21j. At this
-point we're focusing on documenting usage; developer docs will come
+point we’re focusing on documenting usage; developer docs will come
 later.
 
-Music21j requires your users to have a relatively recent web browser -- the project
-targets browsers no more than two years old.
-Safari 9+, Chrome since 2015 (v.32+), Edge 14+, or Firefox since 2014 (v. 26+).  
-Internet Explorer 11+ is currently supported, though timing of playback can be a bit off, but
-support for it will be removed soon.  Microsoft Edge is the only major desktop browser for which
-there is no support for MIDI devices.
+Music21j requires your users to have a relatively recent web browser – the project
+targets browsers no more than 30 months old.
+Safari is the only major desktop browser for which there is no out of the box
+support for MIDI devices.
 
-Documentation
--------------
+## Documentation
+
 This README appears in both the GitHub home page and the documentation
-home page; to make the following links work, go to the documentation
-page at http://web.mit.edu/music21/music21j/doc/ .
+home page; currently building docs is broken
 
 Begin at the {@link music21} namespace (click the link or use the
 menu above), or start with
 a specific one such as {@link music21.note} or {@link music21.stream}
 or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}.
 
-(Ignore "Modules" they're not useful and duplicate the namespace pages).
+(Ignore “Modules” they’re not useful and duplicate the namespace pages).
 
-Example
---------
-Install by downloading a copy of the music21 code to your own webserver.
+## Example
 
-```sh
+Install by downloading a copy of the music21 code to your own web server.
+
 % npm install music21j
-```
 
-
-If this line (`npm install`) doesn't work, download the
+If this line (`npm install`) doesn’t work, download the
 latest version of `node.js` from https://nodejs.org/en/download/
-  
+
 A guide to installing music21j on Windows would be appreciated.
 
 The files in music21j are best viewed by running your own
-webserver (rather than using `file:///...` links). We've
-included a small script to start you up:
+webserver (rather than using `file:///...` links) using Vite
 
-```sh
 $ cd ~/git/music21j
-$ grunt webpack
-$ python start_python_server.py
-```
+$ npm install
+$ npm run dev
 
-Then navigate to http://localhost:8000/testHTML/ for some demos.
+Then navigate to http://localhost:5173/testHTML/ for some demos.
 
-To use music21j in your own page, place in a html page like this (this assumes that you're
-using the python server above).
+To use music21j in your own page, place in a html page like this 
+(this assumes that you’re using the Vite Dev server above).
 
 ```html
 <html lang="en">
@@ -88,11 +77,12 @@ using the python server above).
 </html>
 ```
 
-or use it in your own Javascript/Typescript project:
+or use it in your own JavaScript/TypeScript project:
 
-```sh
+```
 $ npm install --save music21j
 ```
+
 ```javascript
 import * as music21 from 'music21j';
 
@@ -100,121 +90,234 @@ const n = new music21.note.Note('F#');
 // etc.
 ```
 
-Version
---------
-0.13 beta
+### Embedding, etc.
 
+Music21j was originally intended for self-hosting, so embedding is not
+yet as simple as it should be.
 
-License
---------
+To load soundfonts from other locations (like in a CDN),
+(1) set a global `m21conf` variable to disable loading soundfonts,
+(2) load the music21j script, and (3) set the new soundfont location,
+and (4) load the soundfont.
+
+This fragment shows how to do it.  A working implementation is in the
+testHTML directory as `sfElsewhereCDN.html`.
+
+```html
+<body>
+<script>
+    window.m21conf = { loadSoundfont: false };
+</script>
+<script 
+    src="https://cdn.jsdelivr.net/npm/music21j/releases/music21.debug.min.js"
+></script>
+<script>
+    music21.common.urls.soundfontUrl = 'https://raw.githubusercontent.com/gleitz/midi-js-soundfonts/gh-pages/FluidR3_GM/';
+    music21.miditools.loadSoundfont('clarinet', i => {
+       const tn = music21.tinyNotation.TinyNotation('4/4 c4 d e f g1');
+       tn.instrument = i;
+       tn.playStream();
+    });
+</script>
+</body>
+```
+
+## Version
+
+0.22.2 (beta)
+
+## License
+
 Music21j is released under the BSD 3-Clause License. Essentially you
 can do with it what you want so long as you leave in my copyright statements
 and do not represent that I endorse your product.
 
-Or you can choose to use the GNU Lesser Public License if for some reason
-that suits your project better.
-
-Thanks
------------
+## Thanks
 
 Thanks to the following packages (among others) for making music21j possible:
 
 * [Vexflow] - music notation in HTML5
 * [midicube] - audio processing of MIDI based on [MIDI.js]
 * [Jazzsoft] - plug-in for accessing MIDI in the browser in the absence of WebMIDI Api.
-* [jQuery] - easy manipulation of HTML DOM.
-* [qUnit] - testing framework
+* [QUnit] - testing framework
 * [jsdoc] - makes this documentation possible
 
 The Python version of music21 was supported by grants from
-the Seaver Institute and the National Endowment for the Humanities
-and supported by the Music and Theater Arts section of [MIT].
-
+the Seaver Institute and the National Endowment for the Humanities.  
+Earlier versions of music21 were supported by the Music and Theater Arts 
+section of [MIT] (when Cuthbert was a professor there).
 
 [MIT]:http://web.mit.edu
-[music21 python]:http://web.mit.edu/music21/
+[music21 python]:https://www.music21.org/music21docs/
 [midicube]:https://github.com/mscuthbert/midicube
 [Vexflow]:http://www.vexflow.com
 [MIDI.js]:http://mudcu.be/midi-js/
 [Jazzsoft]:http://jazz-soft.net
-[jQuery]:http://jquery.com
-[qUnit]:http://qunitjs.com
+[QUnit]:http://qunitjs.com
 [jsdoc]:http://usejsdoc.org
 
 
-Dev Notes
-----------------
-Build and watch with
+## Development
+
+Since v0.20, **music21j** uses **Vite** to produce the browser bundle. The legacy
+Grunt + Webpack build pipeline has been retired for builds.
+
+### First-time setup
+
+The first time you run, you will need to install the development
+dependencies.  Change directories to here and run
 
 ```sh
-$ grunt
+$ npm install
+$ npx playwright install chromium
 ```
 
-test with
+If you place a copy of Python music21 in a subdirectory called music21python,
+coding agents may be able to use it to improve or standardize your code (it is gitignored).
+If you place a copy of Python music21's docs (from documentation/autogenerated) in music21docs,
+coding agents can use that too.
+
+### Normal development
+
+To develop, run this npm command:
 
 ```sh
-$ grunt test
+$ npm run dev
 ```
 
-You might get an error that looks like this which you can currently ignore:
-
-```
-Access to XMLHttpRequest at 
-'file:///soundfonts/midi-js-soundfonts-master/FluidR3_GM/acoustic_grand_piano-ogg.js' 
-from origin 'null' has been blocked by CORS policy
-```
-
-We hope to fix it later, but for now, we're not testing audio output.
+and navigate to http://localhost:5173/testHTML to see various tests.
 
 
-for running tests one time without watch, you can use:
+### Watch / development mode
+
+To rebuild automatically on changes and serve files locally:
 
 ```sh
-$ grunt test_no_watch
+$ npm run dev
 ```
 
-Publishing a new version
--------------------------
+This starts Vite’s development server with fast rebuilds and live reload.
+(Note that the testHTML files currently reference the hardcoded 
+releases/music21.debug.js file -- they are set up as a playground
+rather than for testing purposes right now; making both possible is a TODO)
+
+## Testing
+
+music21j tests run in a real browser using **QUnit + Playwright**, orchestrated
+via Vite. This allows tests to render SVG output and exercise audio-related APIs.
+
+To run the full test suite headlessly:
+
+```sh
+$ npm test
+```
+
+This will:
+	•	start a Vite development server
+	•	run QUnit tests in headless Chromium
+	•	fail with detailed assertion output if any test fails
+
+(Note that the first time you run you will need to install a headless Chrome 200MB
+with `npx playwright install chromium`)
+
+
+To run tests with the Vite server already running:
+
+```sh
+$ npm run test:qunit
+```
+
+If you have the Vite server running, you can also just navigate to 
+http://localhost:5173/tests/ and see the tests there (with output).
+
+### Running a single suite or test
+
+To narrow down what runs (helpful when iterating on a single module), use
+the `MODULE` and `FILTER` env vars with `npm test` / `npm run test:qunit`,
+or pass the same names as URL query parameters when browsing manually.
+
+`MODULE` matches a single suite (one of the files in `tests/moduleTests/`),
+and `FILTER` is a substring/regex that matches against test names.
+
+```sh
+# Run only the key suite headlessly:
+$ MODULE=key npm test
+
+# Run every test whose name contains "update" -- this picks up tests
+# across several suites:
+$ FILTER=update npm test
+
+# Combine: only "update" tests inside the key suite:
+$ MODULE=key FILTER=update npm test
+```
+
+In the browser, the same knobs are query parameters:
+
+* `http://localhost:5173/tests/?module=key`
+* `http://localhost:5173/tests/?filter=update`
+* `http://localhost:5173/tests/?module=key&filter=update`
+
+## Build
+
+Run vite with:
+
+```sh
+$ npm run build
+```
+
+This produces:
+
+- `build/music21.debug.js` (UMD bundle, global `music21`)
+- various sourcemaps.
+
+The build output is suitable for direct browser use or npm publishing.
+
+
+## Publishing a new version
+
 You'll need to be part of the npm dev team.
 
-Two steps.  First run:
+1. Update the version number in `package.json`, manually in `main.ts`, 
+and here.  Agents can update package-lock.json; humans should npm install.
 
-```sh
-$ grunt publish
-```
-
-which will update the version number and tries to build the
-docs via `grunt jsdoc` (currently failing).
-
-The template is specified in jsdoc-template/jsdoc.conf.json
-
-For a non-backwards compatible release, edit the minor 
-version number manually here, in main.ts, and of course in
-package.json.
-
-Then run:
+2. Publish:
 
 ```sh
 $ npm publish
 ```
 
-which will copy the current contents of `build` in `releases`
-and publish on npm.
+This will test to make sure everything is correct, update package-lock.json,
+copy the current contents of `build` in `releases`, and publish on npm.
 
-Before publishing, every once in a while run (in the music21j directory)
+Then push to master with name `music21j v0.22.1` (or do a PR and merge that if paranoid)
+and then create a tag and push
 
-```sh
-$ node_modules/.bin/npm-check-updates
+```shell
+$ git tag -a v0.xx.y -m 'music21j v0.xx.y'
+$ git push origin --tags
 ```
 
-and if it looks like something to update, run
+## Updating Dependencies
+
+Every once in a while run (in the music21j directory)
 
 ```sh
-$ node_modules/.bin/npm-check-updates -u
+$ npx npm-check-updates
+```
+
+(You may have it installed as "ncu")
+
+If it looks like there is something to update, run
+
+```sh
+$ npx npm-check-updates -u
 $ npm install
 ```
 
+## Changes
 
-These docs will be changing in preparation for v. 1.0 release.
+Just documenting major changes at different versions, starting with 0.20
 
-
+* v0.22 -- Chord, getStemDirectionFromClef. roman minor 67 cautionary and other Roman numeral improvements. typing of scales. run one qunit test ability. Add agent coding skills. typing of voice leading. playwright cache. Standardize barline names (not backwards compatible). Soundfont doubled trailing slash fixed. 
+* v0.21 -- improve cautionary accidentals on Vexflow render; custom MIDI failure msg.
+* v0.20 -- build via vite.  MIDI is no longer exposed as top-level export. Add ES

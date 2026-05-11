@@ -202,6 +202,26 @@ export default function tests() {
         assert.strictEqual(typeof beamsList[5], 'undefined');
     });
 
+    test('music21.meter.TimeSignature getBeams singleton stop beams', assert => {
+        // This tests a very specific situation where the penultimate note in a measure:
+        //   1. is beamable
+        //   2. is held across a beat
+        //   3. is preceded by a non-beamable note
+        //   4. is followed by a beamable note
+        // Previously this situation would result in a single 'stop' beam at the final note
+        // and no others.
+        const m = new music21.stream.Measure();
+        m.append(new music21.note.Note('C', 0.5));
+        m.append(new music21.note.Note('C', 1.0));
+        m.append(new music21.note.Note('C', 0.75));
+        m.append(new music21.note.Note('C', 0.75));
+
+        const ts = new music21.meter.TimeSignature('3/4');
+        const beamsList = ts.getBeams(m);
+        assert.strictEqual(typeof beamsList[2], 'undefined');
+        assert.strictEqual(typeof beamsList[3], 'undefined');
+    });
+
     test('music21.meter.TimeSignature compound', assert => {
         const m = new music21.meter.TimeSignature('6/8');
 
@@ -219,5 +239,42 @@ export default function tests() {
             'beatDuration type is quarter'
         );
         assert.equal(m.beatDuration.dots, 1, 'beatDuration has dot');
+    });
+
+    test('music21.meter.TimeSignature.beatGroups', assert => {
+        function assertBeatGroups(meterString: string, expectedBeatGroups: number[][]) {
+            const m = new music21.meter.TimeSignature(meterString);
+            assert.deepEqual(
+                m.beatGroups,
+                expectedBeatGroups,
+                `${meterString} should have beat groups: ${expectedBeatGroups}`,
+            );
+        }
+        assertBeatGroups('2/2', [[1, 2]]);
+        assertBeatGroups('3/2', [[1, 2]]);
+        assertBeatGroups('4/2', [[1, 2]]);
+        assertBeatGroups('2/4', [[2, 8]]);
+        assertBeatGroups('3/4', [[2, 8]]);
+        assertBeatGroups('4/4', [[2, 8]]);
+        assertBeatGroups('5/4', [[2, 8]]);
+        assertBeatGroups('6/4', [[3, 4], [3, 4]]);
+        assertBeatGroups('7/4', [[2, 8]]);
+        assertBeatGroups('9/4', [[3, 4], [3, 4], [3, 4]]);
+        assertBeatGroups('12/4', [[3, 4], [3, 4], [3, 4], [3, 4]]);
+        assertBeatGroups('2/8', [[1, 8]]);
+        assertBeatGroups('3/8', [[3, 8]]);
+        assertBeatGroups('4/8', [[1, 8]]);
+        assertBeatGroups('5/8', [[3, 8], [2, 8]]);
+        assertBeatGroups('6/8', [[3, 8], [3, 8]]);
+        assertBeatGroups('7/8', [[3, 8], [2, 8], [2, 8]]);
+        assertBeatGroups('9/8', [[3, 8], [3, 8], [3, 8]]);
+        assertBeatGroups('12/8', [[3, 8], [3, 8], [3, 8], [3, 8]]);
+        assertBeatGroups('3/16', [[3, 16]]);
+        assertBeatGroups('4/16', [[1, 16]]);
+        assertBeatGroups('5/16', [[3, 16], [2, 16]]);
+        assertBeatGroups('6/16', [[3, 16], [3, 16]]);
+        assertBeatGroups('7/16', [[3, 16], [2, 16], [2, 16]]);
+        assertBeatGroups('9/16', [[3, 16], [3, 16], [3, 16]]);
+        assertBeatGroups('12/16', [[3, 16], [3, 16], [3, 16], [3, 16]]);
     });
 }

@@ -1,6 +1,10 @@
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 import * as stream from './stream';
+/**
+ * Regular expressions object
+ */
+export declare const regularExpressions: {
+    [k: string]: RegExp;
+};
 /**
  * **Function, not class**.
  *
@@ -28,5 +32,5 @@ export declare function TinyNotation(textIn: string): stream.Part | stream.Score
  * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {HTMLElement|jQuery} [selector]
  */
-export declare function renderNotationDivs(classTypes?: string, selector?: HTMLElement | JQuery): void;
+export declare function renderNotationDivs(classTypes?: string, selector?: HTMLElement | string): void;
 //# sourceMappingURL=tinyNotation.d.ts.map

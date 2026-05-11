@@ -1,6 +1,7 @@
 import * as QUnit from 'qunit';
 
 import articulations from './moduleTests/articulations';
+import bar from './moduleTests/bar';
 import base from './moduleTests/base';
 import beam from './moduleTests/beam';
 import chord from './moduleTests/chord';
@@ -13,6 +14,7 @@ import figuredBass from './moduleTests/figuredBass';
 import interval from './moduleTests/interval';
 import iterator from './moduleTests/stream/iterator';
 import key from './moduleTests/key';
+import metadata  from './moduleTests/metadata';
 import meter from './moduleTests/meter';
 import note from './moduleTests/note';
 import pitch from './moduleTests/pitch';
@@ -31,6 +33,7 @@ import * as music21 from '../src/main';
 
 const allTests = {
     articulations,
+    bar,
     base,
     beam,
     chord,
@@ -43,6 +46,7 @@ const allTests = {
     interval,
     iterator,
     key,
+    metadata,
     meter,
     note,
     pitch,
@@ -57,10 +61,10 @@ const allTests = {
     vfShow,
     voiceLeading,
 };
-if (typeof window !== 'undefined') {
-    (window as any).allTests = allTests;
-    (window as any).music21 = music21;
-    (window as any).QUnit = QUnit;
+if (typeof globalThis !== 'undefined') {
+    (globalThis as any).allTests = allTests;
+    (globalThis as any).music21 = music21;
+    (globalThis as any).QUnit = QUnit;
 }
 // noinspection JSUnusedGlobalSymbols
 export default allTests;

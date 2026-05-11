@@ -264,8 +264,8 @@ export declare class ChromaticInterval extends prebase.ProtoM21Object {
 }
 export declare const IntervalStepNames: string[];
 /**
- * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
- * @returns {Array} two element array of {string} stepName and {number} octave
+ * dn - diatonic number, where 29 = C4, C#4 etc.
+ * returns a two element array of [stepName, octave]
  */
 export declare function convertDiatonicNumberToStep(dn: number): [string, number];
 /**
@@ -320,9 +320,6 @@ export declare class Interval extends prebase.ProtoM21Object {
     set noteStart(n: note.Note);
     get noteEnd(): note.Note;
     set noteEnd(n: note.Note);
-    /**
-     * @returns {Boolean}
-     */
     isConsonant(): boolean;
     /**
      * [config.reverse=false] -- reverse direction
@@ -333,14 +330,14 @@ export declare class Interval extends prebase.ProtoM21Object {
         maxAccidental?: number;
     }): pitch.Pitch;
 }
-export declare function intervalFromGenericAndChromatic(gInt: any, cInt: any): Interval;
+export declare function intervalFromGenericAndChromatic(gInt: number | GenericInterval, cInt: number | ChromaticInterval): Interval;
 /**
  * Convert two notes or pitches to a GenericInterval;
  */
 export declare function notesToGeneric(n1: any, n2: any): GenericInterval;
-export declare function convertStaffDistanceToInterval(staffDist: any): any;
+export declare function convertStaffDistanceToInterval(staffDist: number): number;
 export declare function notesToChromatic(n1: any, n2: any): ChromaticInterval;
-export declare function intervalsToDiatonic(gInt: any, cInt: any): DiatonicInterval;
-export declare function _getSpecifierFromGenericChromatic(gInt: any, cInt: any): number;
+export declare function intervalsToDiatonic(gInt: GenericInterval, cInt: ChromaticInterval): DiatonicInterval;
+export declare function _getSpecifierFromGenericChromatic(gInt: GenericInterval, cInt: ChromaticInterval): number;
 export declare function add(intervalList: Interval[]): Interval;
 //# sourceMappingURL=interval.d.ts.map

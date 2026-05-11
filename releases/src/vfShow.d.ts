@@ -2,16 +2,25 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/vfShow -- Vexflow integration
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
-/// <reference types="jquery" />
-/// <reference types="jquery" />
-import { Beam as VFBeam, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
+import { Beam as VFBeam, type FontInfo as VFFontInfo, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
+import * as duration from './duration';
+import * as note from './note';
 import * as stream from './stream';
 import type * as renderOptions from './renderOptions';
+import { StaveConnector } from './types';
+export declare const barline_m21ToVexflow: {
+    regular: string;
+    single: string;
+    double: string;
+    final: string;
+    end: string;
+    none: string;
+};
 export declare const vexflowDefaults: {
     softmaxFactor: number;
 };
@@ -28,7 +37,7 @@ export declare class RenderStack {
     textVoices: VFVoice[];
     voiceToStreamMapping: Map<VFVoice, stream.Stream>;
     /**
-     * returns this.voices and this.textVoices as one array
+     * returns this.voices and this.textVoices as one, new array.
      */
     allTickables(): VFVoice[];
     /**
@@ -47,23 +56,20 @@ export declare class RenderStack {
  *
  * "s" can be any type of Stream.
  *
- * "div" and "where" can be either a DOM
- * element or a jQuery object.
+ * "div" and "where" should be a DOM element.
  *
  * @param {Stream} s - main stream to render
  * @param {div} [div] - existing canvas or div-surroundingSVG element
- * @param {Node|jQuery} [where=document.body] - where to render the stream
+ * @param {HTMLElement} [where=document.body] - where to render the stream
  * @property {div} div - div-with-svg-or-canvas element
- * @property {jQuery} $div - jQuery div or canvas element
- * @property {jQuery} $where - jQuery element to render onto
+ * @property {HTMLElement} where - HTMLElement to render onto
  * @property {Array<number>} systemBreakOffsets - where to break the systems
  */
 export declare class Renderer {
     stream: stream.Stream;
     rendererType: string;
     div: HTMLElement;
-    $div: JQuery;
-    $where: JQuery;
+    where: HTMLElement;
     activeFormatter: VFFormatter;
     _vfRenderer: VFRenderer;
     _ctx: VFSVGContext;
@@ -72,7 +78,7 @@ export declare class Renderer {
     vfTies: VFStaveTie[];
     systemBreakOffsets: number[];
     vfTuplets: VFTuplet[];
-    constructor(s: any, div?: HTMLElement | JQuery, where?: HTMLElement | JQuery);
+    constructor(s: stream.Stream, div?: HTMLElement, where?: HTMLElement | JQuery);
     get vfRenderer(): VFRenderer;
     set vfRenderer(vfr: VFRenderer);
     get ctx(): VFSVGContext;
@@ -83,10 +89,8 @@ export declare class Renderer {
      *
      * if s is undefined, uses the stored Stream from
      * the constructor object.
-     *
-     * @param {Stream} [s=this.stream]
      */
-    render(s?: stream.Stream): void;
+    render(): void;
     /**
      * Prepares a scorelike stream (i.e., one with parts or
      * Streams that should be rendered vertically like parts)
@@ -119,7 +123,7 @@ export declare class Renderer {
      * * m - a measure object (w or w/o voices)
      * * stack - a RenderStack object to prepare into.
      */
-    prepareMeasure(m: stream.Measure, stack: RenderStack): RenderStack;
+    prepareMeasure(m: stream.Stream, stack: RenderStack): RenderStack;
     /**
      * Main internal routine to prepare a flat stream
      *
@@ -128,8 +132,10 @@ export declare class Renderer {
      * optional_renderOp - renderOptions passed to music21.vfShow.Renderer#renderStave
      * returns Vex.Flow.Stave staff to return too
      *
-     * (also changes the `stack` parameter and runs `makeNotation` on s
-     * with overrideStatus: true to update accidental display)
+     * also changes the `stack` parameter
+     *
+     * Previously called makeNotation, but that did not allow voices/measures
+     * to look at accidentals in other voices/measures.
      */
     prepareFlat(s: stream.Stream, stack: RenderStack, optionalStave?: VFStave, optional_renderOp?: renderOptions.RenderOptions): VFStave;
     /**
@@ -205,7 +211,8 @@ export declare class Renderer {
      * adds keySignature, timeSignature, and rightBarline
      *
      * RenderOptions object might have
-     * `{showMeasureNumber: boolean, rightBarLine/leftBarline: string<{'single', 'double', 'end', 'none'}>}`
+     * `{showMeasureNumber: boolean,
+     *   rightBarLine/leftBarline: ['regular'|undefined, 'double', 'final', 'none']`
      */
     setClefEtc(s: stream.Stream, stave: VFStave, rendOp?: renderOptions.RenderOptions): void;
     /**
@@ -230,12 +237,12 @@ export declare class Renderer {
     /**
      * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s at a given lyric depth.
      */
-    vexflowLyrics(s?: stream.Stream, stave?: VFStave, depth?: number): VFTextNote[];
+    vexflowLyrics(s: stream.Stream, stave?: VFStave, depth?: number): VFTextNote[];
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */
     vexflowVoice(s: stream.Stream): VFVoice;
-    staffConnectorsMap(connectorType: any): any;
+    staffConnectorsMap(connectorType: StaveConnector): VFStaveConnectorType;
     /**
      * If a stream has parts (NOT CHECKED HERE) create and
      * draw an appropriate Vex.Flow.StaveConnector
@@ -247,11 +254,8 @@ export declare class Renderer {
      * each {@link Music21Object} -- see `applyFormatterInformationToNotes`
      *
      * You might want to remove this information; this routine does that.
-     *
-     * @param {Stream} s - can have parts, measures, etc.
-     * @param {boolean} [recursive=false]
      */
-    removeFormatterInformation(s: any, recursive?: boolean): void;
+    removeFormatterInformation(s: stream.Stream, recursive?: boolean): void;
     /**
      * Adds the following pieces of information to each Note
      *
@@ -267,4 +271,5 @@ export declare class Renderer {
      */
     applyFormatterInformationToNotes(stave: VFStave, s?: stream.Stream, formatter?: VFFormatter): void;
 }
+export declare function getTextNote(text: string, font: VFFontInfo, d: duration.Duration, stave: VFStave, lyricObj?: note.Lyric, line?: number): VFTextNote;
 //# sourceMappingURL=vfShow.d.ts.map

@@ -44,10 +44,8 @@ export declare class Recorder {
     audioStreamConnected(stream: any): void;
     /**
      * Creates a worker to receive and process all the messages asynchronously.
-     *
-     * @param {GainNode} source;
      */
-    connectSource(source: any): void;
+    connectSource(source: GainNode): void;
     /**
      * Creates a ScriptProcessorNode (preferably) to allow for direct audio processing.
      *
@@ -74,20 +72,14 @@ export declare class Recorder {
     setContextForCanvasInfo(canvasInfo: CanvasInfo): void;
     /**
      * Update the Analysers.
-     *
-     * @param {number} [time]
      */
-    updateAnalysers(time: any): void;
-    /**
-     *
-     * @param {number[][]} buffers
-     */
-    drawWaveformCanvas(buffers: any): void;
+    updateAnalysers(time: number): void;
+    drawWaveformCanvas(buffers: number[][]): void;
     /**
      * set this as a callback from getBuffers.  Returns the source so that a stop() command
      * is possible.
      */
-    playBuffers(buffers: any): AudioBufferSourceNode;
+    playBuffers(buffers: number[][]): AudioBufferSourceNode;
 }
 export {};
 //# sourceMappingURL=audioRecording.d.ts.map

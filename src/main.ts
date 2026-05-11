@@ -1,34 +1,31 @@
 /**!
- * **music21j**: Javascript reimplementation of Core music21 features.
+ * **music21j**: JavaScript reimplementation of Core music21 features.
  *
- * See http://web.mit.edu/music21/ for more details.
+ * See https://www.trecento.com/music21docs/ for more details.
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-2026, Michael Scott Asato Cuthbert
  * Released under a BSD-3-clause license
  *
  */
 /**
  *
- * Based on music21, Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Based on music21, Copyright (c) 2006-2026, Michael Scott Asato Cuthbert
  * The plan is to implement all core music21 features as Javascript and to expose
  * more sophisticated features via server-side connections to remote servers running the
  * python music21 (music21p).
  *
- * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. Any recent
- * version of Firefox, Safari, Edge,  Chrome, etc. will do.
+ * Requires a browser updated in the last 30 months (Baseline), naturally w/ SVG and Canvas.
+ * Any recent version of Firefox, Safari, Edge, Chrome, etc. will do.
  *
  * All interfaces are beta and may change radically from day to day and release to release.
- * Do not use this in production code yet.
+ * Do not use this in production code yet unless you are willing to pin to a release or change.
  *
- * music21j acknowledges VexFlow and MIDI.js in particular for their great efforts without which
- * this module would not be possible.
+ * Cuthbert acknowledges VexFlow and MIDI.js in particular for their great efforts without which
+ * this library would not be possible.
  *
  */
 
-// webpack loader for music21j.
-import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';  // to be removed when export * from is okay.
-import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
 // order below doesn't matter, but good to give a sense
@@ -63,6 +60,7 @@ import * as interval from './interval';
 import * as key from './key';
 import * as keyboard from './keyboard';
 import * as layout from './layout';
+import * as metadata from './metadata';
 import * as meter from './meter';
 import * as miditools from './miditools';
 import * as musicxml from './musicxml';
@@ -79,12 +77,14 @@ import * as svgs from './svgs';
 import * as tempo from './tempo';
 import * as tie from './tie';
 import * as tinyNotation from './tinyNotation';
+import * as vfShims from './vfShims';
 import * as vfShow from './vfShow';
 import * as voiceLeading from './voiceLeading';
 import * as webmidi from './webmidi';
 
 import { debug } from './debug';
 
+export const VERSION = '0.22.2';
 
 export {
     MIDI,
@@ -120,6 +120,7 @@ export {
     key,
     keyboard,
     layout,
+    metadata,
     meter,
     miditools,
     musicxml,
@@ -136,16 +137,10 @@ export {
     tempo,
     tie,
     tinyNotation,
+    vfShims,
     vfShow,
     voiceLeading,
     webmidi,
 };
-
-export const VERSION = '0.13.6';
-
-if (typeof window !== 'undefined') {
-    (window as any).$ = $;
-    (window as any).jQuery = $;
-}
 
 parseLoader.runConfiguration();

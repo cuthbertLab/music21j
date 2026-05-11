@@ -3,7 +3,7 @@
  */
 import { makeSVGright } from './common';
 
-function make_accidental(path) {
+function make_accidental(path: string): SVGElement {
     const acc = makeSVGright();
     acc.setAttribute('viewBox', '0 0 1000 1000');
     const acc_path = document.createElementNS('http://www.w3.org/2000/svg', 'path');

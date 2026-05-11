@@ -61,7 +61,7 @@ export const config = new _ConfigSingletonCreator();
  * @param {function} callback - callback on success
  * @param {function} error - callback on error
  */
-export function getUserMedia(dictionary, callback, error) {
+export function getUserMedia(dictionary, callback, error): void {
     if (error === undefined) {
         /* eslint no-alert: "off"*/
         error = () => {
@@ -98,7 +98,7 @@ export function getUserMedia(dictionary, callback, error) {
     n.getUserMedia(dictionary, callback, error);
 }
 
-export function userMediaStarted(audioStream) {
+export function userMediaStarted(audioStream): void {
     /**
      * This function which patches Safari requires some time to get started
      * so we call it on object creation.

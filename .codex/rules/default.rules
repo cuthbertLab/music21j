@@ -1,0 +1,19 @@
+prefix_rule(
+    pattern=['npm', 'test'],
+    decision='allow',  # true by default
+)
+
+prefix_rule(
+    pattern=['npm', 'run', 'lint'],
+    decision='allow',  # true by default
+)
+
+prefix_rule(
+    pattern=['npm', 'run', 'typecheck'],
+    decision='allow',  # true by default
+)
+
+prefix_rule(
+    pattern=['npm', 'build'],
+    decision='allow',  # true by default
+)

@@ -91,12 +91,8 @@ export class Recorder {
      * And it calls this.connectSource on the inputPoint so that
      * we can do something with all these wonderful inputs.
      */
-    audioStreamConnected(stream) {
-        /**
-         *
-         * @type {GainNode}
-         */
-        const inputPoint = this.audioContext.createGain();
+    audioStreamConnected(stream): void {
+        const inputPoint: GainNode = this.audioContext.createGain();
 
         // Create an AudioNode from the stream.
         const audioInput = this.audioContext.createMediaStreamSource(stream);
@@ -117,15 +113,9 @@ export class Recorder {
 
     /**
      * Creates a worker to receive and process all the messages asynchronously.
-     *
-     * @param {GainNode} source;
      */
-    connectSource(source) {
-        /**
-         *
-          * @type {BaseAudioContext}
-         */
-        const context = source.context;
+    connectSource(source: GainNode): void {
+        const context: BaseAudioContext = source.context;
         this.context = context;
         this.setNode();
 
@@ -203,7 +193,7 @@ export class Recorder {
     /**
      * Configure from another source...
      */
-    configure(cfg) {
+    configure(cfg): void {
         for (const prop in cfg) {
             if (Object.hasOwnProperty.call(cfg, prop)) {
                 this.config[prop] = cfg[prop];
@@ -211,22 +201,22 @@ export class Recorder {
         }
     }
 
-    record() {
+    record(): void {
         this.recording = true;
     }
 
-    stop() {
+    stop(): void {
         this.recording = false;
     }
 
-    clear() {
+    clear(): void {
         this.worker.postMessage({ command: 'clear' });
     }
 
     /**
      * Directly get the buffers from the worker and then call cb.
      */
-    getBuffers(cb) {
+    getBuffers(cb): void {
         this.currCallback = cb || this.config.callback;
         this.worker.postMessage({ command: 'getBuffers' });
     }
@@ -234,7 +224,7 @@ export class Recorder {
     /**
      * call exportWAV or exportMonoWAV on the worker, then call cb or (if undefined) setupDownload.
      */
-    exportWAV(cb, type, isMono) {
+    exportWAV(cb, type, isMono): void {
         let command = 'exportWAV';
         if (isMono === true) {
             // default false
@@ -256,15 +246,15 @@ export class Recorder {
         });
     }
 
-    exportMonoWAV(cb, type) {
+    exportMonoWAV(cb, type): void {
         this.exportWAV(cb, type, true);
     }
 
     setupDownload(
         blob,
         filename: string = 'output.wav',
-        elementId: string ='save'
-    ) {
+        elementId: string = 'save'
+    ): void {
         const url = (window.URL || window.webkitURL).createObjectURL(blob);
         const link = <HTMLAnchorElement> document.getElementById(elementId);
         link.href = url;
@@ -286,10 +276,8 @@ export class Recorder {
 
     /**
      * Update the Analysers.
-     *
-     * @param {number} [time]
      */
-    updateAnalysers(time) {
+    updateAnalysers(time: number): void {
         this.setContextForCanvasInfo(this.frequencyCanvasInfo);
         // analyser draw code here
         const SPACING = 3;
@@ -338,11 +326,7 @@ export class Recorder {
         );
     }
 
-    /**
-     *
-     * @param {number[][]} buffers
-     */
-    drawWaveformCanvas(buffers) {
+    drawWaveformCanvas(buffers: number[][]): void {
         const data = buffers[0]; // one track of stereo recording.
         this.setContextForCanvasInfo(this.waveformCanvasInfo);
         const context = this.waveformCanvasInfo.canvasContext;
@@ -380,7 +364,7 @@ export class Recorder {
      * set this as a callback from getBuffers.  Returns the source so that a stop() command
      * is possible.
      */
-    playBuffers(buffers) {
+    playBuffers(buffers: number[][]): AudioBufferSourceNode {
         const channels = 2;
         const numFrames = buffers[0].length;
         const audioBuffer = this.context.createBuffer(

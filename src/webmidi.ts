@@ -2,12 +2,13 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/webmidi -- webmidi or wrapper around the Jazz Plugin
  *
- * For non webmidi --  Uses the cross-platform, cross-browser plugin from
- * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
- * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
+ * Recommendation (2026): use Google Chrome or Edge on Mac or PC.
  *
- * Copyright (c) 2014-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * For non webmidi -- Uses the cross-platform, cross-browser plugin from
+ * https://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
+ *
+ * Copyright (c) 2013-26, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-26, Michael Scott Asato Cuthbert
  *
  */
 /**
@@ -20,7 +21,7 @@
 <html>
 <head>
     <title>MIDI In/Jazz Test for Music21j</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
 </head>
 <body>
 <div>
@@ -31,34 +32,33 @@ MIDI Input: <div id="putMidiSelectHere" />
 <script src='music21j.js'></script>
 <script>
     s = new music21.stream.Stream();
-    music21.webmidi.createSelector($("#putMidiSelectHere"));
+    music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
 
     function displayStream(midiEvent) {
         midiEvent.sendToMIDIjs();
         if (midiEvent.noteOn) {
-            var m21n = midiEvent.music21Note();
+            const m21n = midiEvent.music21Note();
             if (s.length > 7) {
                 s.elements = s.elements.slice(1)
             }
             s.append(m21n);
-            var $svgDiv = $("#svgDiv");
-            $svgDiv.empty();
-            var svgDiv = s.appendNewDOM($svgDiv);
+            const svgDiv = document.querySelector("#svgDiv");
+            svgDiv.innerHTML = "";
+            svgDiv = s.appendNewDOM(svgDiv);
         }
     }
     music21.miditools.callbacks.general = displayStream;
-
 </script>
 </body>
 </html>
  */
 
-import * as $ from 'jquery';
 import { debug } from './debug';
 
 import * as common from './common';
 import * as miditools from './miditools';
 import defaults from './defaults';
+import {sleep, to_el} from './common';
 
 type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
 
@@ -71,10 +71,6 @@ declare interface Jazz extends HTMLObjectElement {
     MidiInList: () => string[],
 }
 
-declare interface NavigatorWithWebMIDI extends Navigator {
-    requestMIDIAccess?: Function,
-}
-
 /**
  * @typedef {Object} Jazz
  * @extends HTMLObjectElement
@@ -85,26 +81,22 @@ declare interface NavigatorWithWebMIDI extends Navigator {
  *
  */
 
-/**
- *
- * @type {
- *     {
- *     selectedInputPort: *,
- *     access: *,
- *     jazzDownloadUrl: string,
- *     selectedOutputPort: *,
- *     storedPlugin: *,
- *     selectedJazzInterface: *,
- *     $select: jQuery|undefined
- *     }
- * }
- */
-export const webmidi = {
+interface WebMIDIOptions {
+    selectedOutputPort: string,
+    selectedInputPort: string,
+    access: any,
+    select: HTMLSelectElement,
+    jazzDownloadUrl: string,
+    storedPlugin: Jazz,
+    selectedJazzInterface: string,
+}
+
+export const webmidi: WebMIDIOptions = {
     selectedOutputPort: undefined,
     selectedInputPort: undefined,
 
     access: undefined,
-    $select: undefined,
+    select: undefined,
 
     jazzDownloadUrl: 'https://jazz-soft.net/download/Jazz-Plugin/',
     storedPlugin: undefined,
@@ -151,7 +143,7 @@ export function midiInArrived(midiMessageEvent) {
     const midiCallbacks: miditools.CallbackInterface = miditools.callbacks;
     const eventObject = midiCallbacks.raw(t, a, b, c);
     if (midiCallbacks.general instanceof Array) {
-        return midiCallbacks.general.forEach((el, index, array) => {
+        return midiCallbacks.general.forEach((el, _index, _array) => {
             el(eventObject);
         });
     } else if (midiCallbacks.general instanceof Function) {
@@ -212,32 +204,40 @@ export function createPlugin(
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * @param {jQuery|HTMLElement} [$newSelect=document.body] - object to append the select to
+ * Changed 2026 Jan -- returns bool about whether it succeeded (does not call
+ * onAccessFailure)
+ *
+ * @param {HTMLElement} newSelect - object to append the select to
  * @param {Object} [options] - see createSelector for details
- * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * @returns {boolean} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-export function createJazzSelector($newSelect, options: MIDISelectorOptions = {}) {
+export function createJazzSelector(
+    newSelect: HTMLElement,
+    options: MIDISelectorOptions = {},
+): boolean  {
     const params: MIDISelectorOptions = {
+        autoUpdate: false,  // Jazz cannot autoUpdate
         onsuccess: undefined,
         oninputsuccess: undefined,
         oninputempty: undefined,
+        onAccessFailure: undefined,
     };
     common.merge(params, options);
 
-    const Jazz = createPlugin();
-    if (Jazz === undefined) {
-        return undefined;
+    const jazzPlugin: Jazz = createPlugin();
+    if (!jazzPlugin) {
+        return false;
     }
 
-    $newSelect.on('change', () => {
-        const selectedInput = $('#midiInSelect option:selected').text();
-        if (selectedInput !== 'None selected') {
-            webmidi.selectedJazzInterface = Jazz.MidiInOpen(
+    newSelect.addEventListener('change', e => {
+        const selectedInput = (<HTMLOptionElement> e.target).value;
+        if (selectedInput !== 'None') {
+            webmidi.selectedJazzInterface = jazzPlugin.MidiInOpen(
                 selectedInput,
                 jazzMidiInArrived
             );
         } else {
-            Jazz.MidiInClose();
+            jazzPlugin.MidiInClose();
         }
         if (debug) {
             console.log(
@@ -245,14 +245,14 @@ export function createJazzSelector($newSelect, options: MIDISelectorOptions = {}
             );
         }
     });
-    const midiOptions = Jazz.MidiInList();
-    const noneAppendOption = $("<option value='None'>None selected</option>");
-    $newSelect.append(noneAppendOption);
+    const midiOptions = jazzPlugin.MidiInList();
+    const noneAppendOption = <HTMLOptionElement> to_el("<option value='None'>None selected</option>");
+    newSelect.appendChild(noneAppendOption);
 
-    let anySelected = false;
-    const allAppendOptions = [];
+    let anySelected: boolean = false;
+    const allAppendOptions: HTMLOptionElement[] = [];
     for (let i = 0; i < midiOptions.length; i++) {
-        const $appendOption = $(
+        const appendOption = <HTMLOptionElement> to_el(
             "<option value='"
                 + midiOptions[i]
                 + "'>"
@@ -260,41 +260,38 @@ export function createJazzSelector($newSelect, options: MIDISelectorOptions = {}
                 + '</option>'
         );
         if (midiOptions[i] === webmidi.selectedJazzInterface) {
-            $appendOption.prop('selected', true);
+            appendOption.setAttribute('selected', 'true');
             anySelected = true;
         }
-        allAppendOptions.push($appendOption);
+        allAppendOptions.push(appendOption);
         // console.log(appendOption);
-        $newSelect.append($appendOption);
+        newSelect.appendChild(appendOption);
     }
-    if (anySelected === false && midiOptions.length > 0) {
-        $newSelect.val(midiOptions[0]);
-        allAppendOptions[0].prop('selected', true);
-        webmidi.selectedJazzInterface = Jazz.MidiInOpen(
+    if (!anySelected && midiOptions.length > 0) {
+        allAppendOptions[0].setAttribute('selected', 'true');
+        webmidi.selectedJazzInterface = jazzPlugin.MidiInOpen(
             midiOptions[0],
             jazzMidiInArrived
         );
         anySelected = true;
     } else {
-        noneAppendOption.prop('selected', true);
+        noneAppendOption.setAttribute('selected', 'true');
     }
-    if (params.onsuccess !== undefined) {
-        params.onsuccess();
+    params.onsuccess?.();
+    if (anySelected) {
+        params.oninputsuccess?.();
+    } else {
+        params.oninputempty?.();
     }
-    if (anySelected === true && params.oninputsuccess !== undefined) {
-        params.oninputsuccess();
-    } else if (anySelected === false && params.oninputempty !== undefined) {
-        params.oninputempty();
-    }
-    return $newSelect;
+    return true;
 }
 
 /**
  * Function to be called if the webmidi-api selection changes. (not jazz)
  *
  */
-export function selectionChanged() {
-    const selectedInput = webmidi.$select.val();
+export function selectionChanged(e: Event) {
+    const selectedInput = (<HTMLOptionElement> e.target).value;
     if (selectedInput === webmidi.selectedInputPort) {
         return false;
     }
@@ -313,7 +310,9 @@ export function selectionChanged() {
             port.close();
         }
     });
-    webmidi.access.onstatechange = storedStateChange;
+    sleep(300).then(() => {
+        webmidi.access.onstatechange = storedStateChange;
+    });
     return false;
 }
 
@@ -327,7 +326,7 @@ interface MIDISelectorOptions {
     /**
      * Function to call on all successful port queries.
      */
-    onsuccess?: Function;
+    onsuccess?: () => void;
 
     /**
      * Function to call if port query is successful and at least one input device exists.
@@ -338,6 +337,11 @@ interface MIDISelectorOptions {
      * Function to call if port query is successful but no input devices are found.
      */
     oninputempty?: Function;
+
+    /**
+     * On access failure
+     */
+    onAccessFailure?: (e: DOMException) => void;
 }
 
 
@@ -345,97 +349,98 @@ interface MIDISelectorOptions {
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * Returns JQuery object containing the select tag, or undefined if Jazz cannot be loaded.
+ * Returns an HTMLSelectElement or undefined if Jazz cannot be loaded.
  */
 export function createSelector(
-    where: JQuery|HTMLElement,
+    where: HTMLElement,
     options: MIDISelectorOptions = {}
-): JQuery|undefined {
+): HTMLSelectElement|undefined {
     let existingMidiSelect = false;
+    const midiSelectDiv = <HTMLDivElement> common.coerceHTMLElement(where);
+
     const params: MIDISelectorOptions = {
         autoUpdate: true,
         onsuccess: undefined,
         oninputsuccess: undefined,
         oninputempty: undefined,
+        onAccessFailure: (e: DOMException) => { midiSelectDiv.innerHTML = e.message; },
     };
     common.merge(params, options);
-    const $midiSelectDiv: JQuery = common.coerceJQuery(where);
 
-    let $newSelect;
-    const $foundMidiSelects = $midiSelectDiv.find('select#midiInSelect');
-    if ($foundMidiSelects.length > 0) {
-        $newSelect = $foundMidiSelects[0];
+    let newSelect: HTMLSelectElement;
+    const foundMidiSelects = midiSelectDiv.querySelectorAll<HTMLSelectElement>(
+        'select#midiInSelect'
+    );
+    if (foundMidiSelects.length > 0) {
+        newSelect = foundMidiSelects[0];
         existingMidiSelect = true;
     } else {
-        $newSelect = $('<select>').attr('id', 'midiInSelect');
-        $midiSelectDiv.append($newSelect);
+        newSelect = to_el<HTMLSelectElement>('<select id="midiInSelect"></select>');
+        midiSelectDiv.appendChild(newSelect);
     }
-    webmidi.$select = $newSelect;
+    webmidi.select = newSelect;
 
-    if ((<NavigatorWithWebMIDI> navigator).requestMIDIAccess === undefined) {
-        createJazzSelector($newSelect, params);
+    if (!navigator.requestMIDIAccess) {
+        const jazz_success = createJazzSelector(newSelect, params);
+        if (!jazz_success) {
+            params.onAccessFailure?.(new DOMException(
+                'Your browser does not support MIDI input; please use Chrome or Edge.',
+                'NotSupportedError'
+            ));
+        }
     } else {
         if (!existingMidiSelect) {
-            $newSelect.on('change', selectionChanged);
+            newSelect.addEventListener('change', e => selectionChanged(e));
         }
-        (<NavigatorWithWebMIDI> navigator).requestMIDIAccess().then(
+        navigator.requestMIDIAccess().then(
             access => {
                 webmidi.access = access;
                 populateSelect();
                 if (params.autoUpdate) {
                     access.onstatechange = populateSelect;
                 }
-                webmidi.$select.change();
-                if (params.onsuccess !== undefined) {
-                    params.onsuccess();
-                }
-                if (
-                    webmidi.selectedInputPort !== 'None'
-                    && params.oninputsuccess !== undefined
-                ) {
-                    params.oninputsuccess();
-                } else if (
-                    webmidi.selectedInputPort === 'None'
-                    && params.oninputempty !== undefined
-                ) {
-                    params.oninputempty();
+                const changeEvent = new Event('change', {bubbles: true});
+                webmidi.select.dispatchEvent(changeEvent);
+                params.onsuccess?.();
+                if (webmidi.selectedInputPort !== 'None') {
+                    params.oninputsuccess?.();
+                } else {
+                    params.oninputempty?.();
                 }
             },
-            e => {
-                $midiSelectDiv.html(e.message);
-            }
+            e => params.onAccessFailure?.(e),
         );
     }
     miditools.clearOldChords(); // starts the chord checking process.
-    return $newSelect;
+    return newSelect;
 }
 
 export function populateSelect() {
     const inputs = webmidi.access.inputs;
-    webmidi.$select.empty();
+    webmidi.select.replaceChildren();
 
-    const $noneAppendOption = $("<option value='None'>None selected</option>");
-    webmidi.$select.append($noneAppendOption);
+    const noneAppendOption = <HTMLOptionElement> to_el("<option value='None'>None selected</option>");
+    webmidi.select.appendChild(noneAppendOption);
 
     const allAppendOptions = [];
     const midiOptions = [];
     let i = 0;
     inputs.forEach(port => {
-        const $appendOption = $(
+        const appendOption = <HTMLOptionElement> to_el(
             "<option value='" + port.name + "'>" + port.name + '</option>'
         );
-        allAppendOptions.push($appendOption);
+        allAppendOptions.push(appendOption);
         midiOptions.push(port.name);
         // console.log(appendOption);
-        webmidi.$select.append($appendOption);
+        webmidi.select.appendChild(appendOption);
         i += 1;
     });
 
     if (allAppendOptions.length > 0) {
-        webmidi.$select.val(midiOptions[0]);
-        allAppendOptions[0].prop('selected', true);
+        allAppendOptions[0].setAttribute('selected', 'true');
     } else {
-        $noneAppendOption.prop('selected', true);
+        noneAppendOption.setAttribute('selected', 'true');
     }
-    webmidi.$select.trigger('change');
+    const changeEvent = new Event('change', {bubbles: true});
+    webmidi.select.dispatchEvent(changeEvent);
 }

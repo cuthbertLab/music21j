@@ -7,19 +7,13 @@ export declare function fixUrls(conf: any): void;
 export declare function renderHTML(): void;
 export declare function loadDefaultSoundfont(conf: any): void;
 /**
- *
- * @returns {{}}
+ * Find the configuration as a JSON-encoded m21conf attribute on the script tag.
  */
-export declare function loadConfiguration(): any;
+export declare function loadConfiguration(): Record<string, any>;
 /**
  *
  * @param {string} [attribute=m21conf]
  * @returns {undefined|*|string}
  */
 export declare function getM21attribute(attribute?: string): string;
-/**
- *
- * @returns {boolean}
- */
-export declare function warnBanner(): boolean;
 //# sourceMappingURL=parseLoader.d.ts.map

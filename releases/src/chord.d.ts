@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/chord -- Chord
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Chord related objects (esp. music21.chord.Chord) and methods.
  *
@@ -14,6 +14,7 @@ import * as chordTables from './chordTables';
 import type * as clef from './clef';
 import type * as instrument from './instrument';
 import type * as pitch from './pitch';
+import { VexflowNoteOptions } from './note';
 export { chordTables };
 /**
  * @param {Array<string|note.Note|pitch.Pitch>} [notes] -
@@ -40,25 +41,32 @@ export declare class Chord extends note.NotRest {
     stringInfo(): string;
     get length(): number;
     get pitches(): pitch.Pitch[];
-    set pitches(tempPitches: pitch.Pitch[]);
+    set pitches(tempPitches: (pitch.Pitch | string | note.Note)[]);
     get notes(): note.Note[];
     set notes(newNotes: note.Note[]);
-    vexflowNote({ clef }?: {
-        clef?: any;
-    }): VFStaveNote;
+    vexflowNote(options?: VexflowNoteOptions): VFStaveNote;
     get orderedPitchClasses(): number[];
     get chordTablesAddress(): any;
     get commonName(): string;
     get forteClass(): string;
     get forteClassNumber(): any;
     get forteClassTnI(): string;
-    get(i: any): note.Note;
+    get(i: number): note.Note;
     [Symbol.iterator](): Generator<note.Note, void, unknown>;
-    areZRelations(other: any): boolean;
+    areZRelations(other: Chord): boolean;
     getZRelation(): Chord;
     get hasZRelation(): boolean;
     get intervalVector(): any;
     setStemDirectionFromClef(clef?: clef.Clef): this;
+    /**
+     * Same as setStemDirectionFromClef, but does not mutate the chord; just
+     * returns the direction ('up' or 'down') that the stem would be set to.
+     *
+     * Because of a bug in Vexflow 4 -- chords with unisons are reported
+     * as still unspecified stem direction. Eventually VF renderer will set
+     * all unspecified to 'up' which works.  'down' with unisons does not work.
+     */
+    getStemDirectionFromClef(clef: clef.Clef): string;
     /**
      * Adds a note or Array of notes to the chord, sorting the note array
      *
@@ -133,7 +141,7 @@ export declare class Chord extends note.NotRest {
      * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
      * the `.root()`
      *
-     * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+     * In case there is more than one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      */
     getChordStep(chordStep: number, testRoot?: pitch.Pitch): pitch.Pitch | undefined;

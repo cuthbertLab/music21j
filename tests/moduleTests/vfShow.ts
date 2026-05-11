@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import {TextNote as VFTextNote} from 'vexflow';
+import type {TextNote as VFTextNote} from 'vexflow';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
@@ -123,7 +123,7 @@ export default function tests() {
         s.appendNewDOM();
         assert.equal(
             // @ts-ignore
-            s.activeVFRenderer.vfTies[0].notes.first_note.keys[0], 
+            s.activeVFRenderer.vfTies[0].notes.first_note.keys[0],
             // @ts-ignore
             s.activeVFRenderer.vfTies[0].notes.last_note.keys[0]
         );
@@ -243,6 +243,10 @@ export default function tests() {
         m.append(n);
         m.renderOptions.heightBelowStaff = 40;
         m.appendNewDOM();
+
+        assert.equal(n.lyrics.length, 2, 'note has two lyrics');
+
+        // older lyric tests -- up to 0.14.xx and again from 0.16... for now.
         const t1 = m.activeVFRenderer.stacks[0].textVoices[0].getTickables()[0] as VFTextNote;
         assert.equal(
             // Error: Property 'text' does not exist on type 'Tickable'.

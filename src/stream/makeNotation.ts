@@ -6,7 +6,7 @@ import * as beam from '../beam';
 import * as clef from '../clef';
 
 import type * as meter from '../meter';
-import type * as note from '../note';
+import * as note from '../note';
 import type * as pitch from '../pitch';
 import * as stream from '../stream';
 import {StreamException} from '../stream';
@@ -107,7 +107,7 @@ export function makeBeams(s: stream.Stream, {
     return returnObj;
 }
 
-export function * iterateBeamGroups(
+export function* iterateBeamGroups(
     s: stream.Stream,
     {
         skipNoBeams=true,
@@ -165,9 +165,60 @@ export function setStemDirectionForBeamGroups(
     }
 }
 
+/**
+ * Sets the stem direction for unspecified notes.  For beamed notes,
+ * they should have already had their stem directions set in setBeams.
+ */
+export function setStemDirectionForUnspecified(
+    s: stream.Stream,
+): void {
+    let single_clef_context: clef.Clef;
+    const all_clefs = s.rc(clef.Clef);
+    if (all_clefs.length === 1) {
+        // most common. do one search;
+        single_clef_context = all_clefs.first();
+    } else if (all_clefs.length === 0) {
+        // no clef here. in outer part;
+        single_clef_context = s.getContextByClass(clef.Clef);
+    }
+
+    for (const n of s.rc(note.NotRest)) {
+        if (n.pitches.length > 1) {
+            const pitchSet = new Set(n.pitches.map(p => p.diatonicNoteNum));
+            if (pitchSet.size < n.pitches.length) {
+                // bug in Vexflow v4 at least -- chords with unisons
+                // (esp. augmented unisons) or accidentals
+                // and down stems do not render properly.
+                // set their stems to 'unspecified' which Vexflow will currently
+                // render as upstems.
+                // (Similar code exists in Chord get/setStemDirectionFromClef)
+                n.stemDirection = 'unspecified';
+                continue;
+            }
+        }
+
+        if (n.stemDirection !== 'unspecified') {
+            continue;
+        }
+        let clef_context: clef.Clef;
+        if (!single_clef_context) {
+            // slower...
+            clef_context = n.getContextByClass(clef.Clef);
+        } else {
+            clef_context = single_clef_context;
+        }
+        if (clef_context) {
+            n.stemDirection = clef_context.getStemDirectionForPitches(n.pitches);
+        }
+    }
+}
+
 const _up_down: readonly string[] = ['up', 'down'];
 const _up_down_unspecified: readonly string[] = ['up', 'down', 'unspecified'];
 
+/**
+ *  Set stem directions for all notes in a beam group.
+ */
 export function setStemDirectionOneGroup(
     group: note.NotRest[],
     {

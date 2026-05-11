@@ -1,81 +1,79 @@
 {
   "name": "music21j",
-  "version": "0.13.6",
-  "description": "A toolkit for computer-aided musicology, Javascript version",
+  "version": "0.22.2",
+  "description": "A toolkit for computer-aided musicology, JavaScript version",
+
+  "_main_etc": "these are the legacy urls; exports:. is the modern standard",
   "main": "releases/music21.debug.js",
-  "typings": "releases/main.d.ts",
+  "module": "releases/music21.es.js",
+  "typings": "releases/src/main.d.ts",
+  "style": "releases/music21j.css",
+
+  "exports": {
+    ".": {
+      "import": "./releases/music21.es.js",
+      "types": "./releases/src/main.d.ts",
+      "default": "./releases/music21.debug.js"
+    }
+  },
+
   "files": [
-    ".editorconfig",
-    ".eslintignore",
-    ".eslintrc.json",
-    ".gitignore",
-    ".jshintrc",
-    "Gruntfile.js",
-    "tsconfig.json",
     "/css",
     "/releases",
     "/scripts",
-    "/src",
-    "/testHTML",
-    "/tests",
     "/webResources"
   ],
   "dependencies": {
-    "jquery": "^3.6.1",
-    "jsonpickle": "^1.1.2",
-    "midicube": "^0.6.1",
-    "vexflow": "^4.1.0"
+    "array-equal": "^2.0.0",
+    "deep-equal": "^2.2.3",
+    "jsonpickle": "^1.2.0",
+    "midicube": "^0.9.2",
+    "vexflow": "^4.2.3"
+  },
+  "_why": {
+    "@types/jquery": "Still allow JQuery to be used as input even though it is no longer part of the system",
+    "@types/node": "for the node scripts in tests: headless_vite_tests and run_qunit_playwright",
+    "eslint-plugin-import": "Used in flat eslint-config-airbnb-extended legacy.js",
+    "globals": "for eslint.config.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.5",
-    "@babel/eslint-parser": "7.19.1",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
-    "@babel/plugin-transform-object-assign": "^7.18.6",
-    "@babel/preset-env": "^7.20.2",
-    "@types/jquery": "^3.5.14",
-    "@types/qunit": "^2.19.3",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
-    "ajv": "^8.11.2",
-    "babel-loader": "^9.1.0",
-    "core-js": "^3.26.1",
-    "css-loader": "^6.7.2",
-    "eslint": "^8.29.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-webpack-plugin": "^3.2.0",
-    "exports-loader": "^4.0.0",
-    "glob": "^8.0.3",
-    "grunt": "^1.5.3",
-    "grunt-bump": "0.8.0",
-    "grunt-cli": "^1.4.3",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-qunit": "^6.2.1",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-eslint": "^24.0.1",
-    "grunt-git": "^1.1.1",
-    "grunt-jsdoc": "^2.4.1",
-    "grunt-webpack": "^5.0.0",
-    "jsdoc": "^4.0.0",
-    "npm-check-updates": "^16.5.6",
-    "qunit": "^2.19.3",
-    "style-loader": "^3.3.1",
-    "ts-loader": "^9.4.2",
-    "typescript": "^4.9.4",
-    "webpack": "^5.75.0"
+    "@playwright/test": "^1.57.0",
+    "@types/deep-equal": "^1.0.4",
+    "@types/jquery": "^3.5.32",
+    "@types/node": "^25.0.3",
+    "@types/qunit": "^2.19.13",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
+    "eslint": "^9.32.0",
+    "eslint-config-airbnb-extended": "^2.3.3",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.5.0",
+    "npm-check-updates": "^19.2.0",
+    "qunit": "^2.24.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-checker": "^0.12.0",
+    "vite-plugin-directory-index": "^3.0.1"
   },
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "prepublishOnly": "cp -rp build/* releases/",
-    "postinstall": "sh scripts/postinstall.bash",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "build:types": "tsc -p tsconfig.json --emitDeclarationOnly",
+    "build:all": "npm run build && npm run build:types",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src && eslint tests/moduleTests",
+    "prepublishOnly": "./scripts/prepublishOnly.bash",
+    "test:qunit": "tsx tests/run_qunit_playwright.ts",
+    "test": "tsx tests/headless_vite_tests.ts",
+    "postinstall": "./scripts/postinstall.bash"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cuthbertLab/music21j.git"
+    "url": "git+https://github.com/cuthbertLab/music21j.git"
   },
   "keywords": [
     "music",
@@ -85,8 +83,8 @@
   ],
   "author": {
     "name": "Michael Scott Asato Cuthbert",
-    "email": "cuthbert@mit.edu",
-    "url": "http://www.trecento.com"
+    "email": "michael.asato.cuthbert@gmail.com",
+    "url": "https://www.trecento.com"
   },
   "license": "BSD-3-Clause",
   "bugs": {

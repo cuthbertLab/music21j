@@ -51,7 +51,7 @@ export function getId(obj: any): number|string {
 }
 
 export class Sites {
-    siteDict;
+    siteDict: Map<number|string, SiteRef>;
     protected _siteIndex: number = 0;
     protected _lastID: number = -1;
 
@@ -74,11 +74,7 @@ export class Sites {
         return false;
     }
 
-    /**
-     *
-     * @returns {Array<*>}
-     */
-    protected _keysByTime(newFirst: boolean = true) {
+    protected _keysByTime(newFirst: boolean = true): any[] {
         const post = [];
         for (const [key, siteRef] of this.siteDict) {
             const keyVal = [siteRef.siteIndex, key];
@@ -91,7 +87,7 @@ export class Sites {
         return post.map(innerList => innerList[1]);
     }
 
-    add(obj, idKey=undefined, classString: string = undefined) {
+    add(obj, idKey=undefined, classString: string = undefined): void {
         if (idKey === undefined && obj !== undefined) {
             idKey = getId(obj);
         }
@@ -125,9 +121,6 @@ export class Sites {
         }
     }
 
-    /**
-     * @param obj
-     */
     remove(obj): boolean {
         const idKey = getId(obj);
         if (idKey === undefined) {
@@ -203,12 +196,7 @@ export class Sites {
         return post;
     }
 
-    /**
-     *
-     * @param {string} attrName
-     * @returns {undefined|*}
-     */
-    getAttrByName(attrName) {
+    getAttrByName(attrName: string): any {
         for (const obj of this.yieldSites('reverse')) {
             if (obj === undefined) {
                 continue;
@@ -220,12 +208,6 @@ export class Sites {
         return undefined;
     }
 
-    /**
-     *
-     * @param {string} className
-     * @param {Object} [options]
-     * @returns {Stream}
-     */
     getObjByClass(className: string, options={}): Stream {
         const params = {
             callerFirst: this,

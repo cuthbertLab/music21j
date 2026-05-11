@@ -5,6 +5,25 @@ import * as interval from './interval';
 import * as key from './key';
 import * as pitch from './pitch';
 import * as scale from './scale';
+/**
+ * Enumeration that can be passed into RomanNumeral as `sixthMinor` or
+ * `seventhMinor` to define how Roman numerals on the sixth and seventh
+ * scale degrees are parsed in minor.  Mirrors music21 Python's
+ * `roman.Minor67Default`.
+ *
+ * - QUALITY (default): chord quality (major/minor/diminished) determines
+ *   whether the root is the lowered or raised ^6/^7.
+ * - CAUTIONARY: same as QUALITY, but a single `#` before vi/vii or `b`
+ *   before VI/VII is treated as a cautionary accidental and ignored.
+ * - SHARP: raised ^6/^7 is always used as the root.
+ * - FLAT: lowered ^6/^7 is always used as the root.
+ */
+export declare enum Minor67Default {
+    QUALITY = 1,
+    CAUTIONARY = 2,
+    SHARP = 3,
+    FLAT = 4
+}
 export declare const figureShorthands: {
     '53': string;
     '3': string;
@@ -77,10 +96,10 @@ export declare const functionalityScores: {
  *
  * N.B. this is NOT where abbreviations get expanded
  *
- * @param  {string} shorthand string of a figure w/o roman to parse
- * @return {Array<string>}           array of shorthands
+ * shorthand is a string of a figure w/o roman to parse
+ * returns an array of shorthands
  */
-export declare function expandShortHand(shorthand: any): any[];
+export declare function expandShortHand(shorthand: string): string[];
 /**
  * correctSuffixForChordQuality - Correct a given inversionString suffix given a
  *     chord of various qualities.
@@ -120,7 +139,7 @@ export declare const romanToNumber: string[];
 export declare class RomanNumeral extends harmony.Harmony {
     static get className(): string;
     _parsingComplete: boolean;
-    primaryFigure: any;
+    primaryFigure: string;
     secondaryRomanNumeral: RomanNumeral;
     secondaryRomanNumeralKey: key.Key;
     pivotChord: any;
@@ -131,9 +150,9 @@ export declare class RomanNumeral extends harmony.Harmony {
     frontAlterationString: string;
     frontAlterationTransposeInterval: interval.Interval;
     frontAlterationAccidental: pitch.Accidental;
-    romanNumeralAlone: any;
-    quality: any;
-    impliedQuality: any;
+    romanNumeralAlone: string;
+    quality: string;
+    impliedQuality: string;
     impliedScale: key.Key;
     scaleOffset: interval.Interval;
     useImpliedScale: boolean;
@@ -145,23 +164,32 @@ export declare class RomanNumeral extends harmony.Harmony {
     protected _tempRoot: pitch.Pitch;
     numbers: number;
     figuresNotationObj: figuredBass.Notation;
-    constructor(figure?: string, keyStr?: key.Key | string | undefined, { parseFigure, updatePitches, }?: {
+    sixthMinor: Minor67Default;
+    seventhMinor: Minor67Default;
+    constructor(figure?: string, keyStr?: key.Key | string | undefined, { parseFigure, updatePitches, sixthMinor, seventhMinor, }?: {
         parseFigure?: boolean;
         updatePitches?: boolean;
+        sixthMinor?: Minor67Default;
+        seventhMinor?: Minor67Default;
     });
     stringInfo(): string;
     _parseFigure(): void;
-    _parseFrontAlterations(workingFigure: any): any;
+    _parseFrontAlterations(workingFigure: string): string;
     _correctBracketedPitches(): void;
-    _setImpliedQualityFromString(workingFigure: any): any;
-    _fixMinorVIandVII(useScale: any): void;
-    _parseRNAloneAmidstAug6(workingFigure: any, useScale: any): any[];
+    _setImpliedQualityFromString(workingFigure: string): string;
+    /**
+     * Adjust ^6 and ^7 in minor according to `sixthMinor` / `seventhMinor`
+     * (a Minor67Default value).  Ports music21 Python's
+     * `adjustMinorVIandVIIByQuality` -- including CAUTIONARY behavior, where
+     * a single `#vi` / `bVI` is treated as a cautionary accidental rather
+     * than an additional alteration.  AI-assisted.
+     */
+    adjustMinorVIandVIIByQuality(useScale: key.Key | scale.ConcreteScale): void;
+    _parseRNAloneAmidstAug6(workingFigure: string, useScale: any): [string, any];
     /**
      * get romanNumeral - return either romanNumeralAlone (II) or with frontAlterationAccidental (#II)
-     *
-     * @return {string}  new romanNumeral;
      */
-    get romanNumeral(): any;
+    get romanNumeral(): string;
     get scale(): scale.ConcreteScale;
     get key(): key.Key;
     set key(keyOrScale: key.Key);
@@ -175,11 +203,11 @@ export declare class RomanNumeral extends harmony.Harmony {
      */
     _updatePitches(): void;
     bassScaleDegreeFromNotation(notationObject: any): number;
-    _matchAccidentalsToQuality(impliedQuality: any): void;
+    _matchAccidentalsToQuality(impliedQuality: string): void;
     _correctForSecondaryRomanNumeral(useScale: any, figure?: any): any[];
-    _parseOmittedSteps(workingFigure: any): any;
-    _parseBracketedAlterations(workingFigure: any): any;
-    _findSemitoneSizeForQuality(impliedQuality: any): any;
+    _parseOmittedSteps(workingFigure: string): string;
+    _parseBracketedAlterations(workingFigure: string): string;
+    _findSemitoneSizeForQuality(impliedQuality: string): number[];
     /**
      * Gives a string display.  Note that since inversion is not yet supported
      * it needs to be given separately.

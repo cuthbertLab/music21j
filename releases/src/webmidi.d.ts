@@ -2,12 +2,13 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/webmidi -- webmidi or wrapper around the Jazz Plugin
  *
- * For non webmidi --  Uses the cross-platform, cross-browser plugin from
- * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
- * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
+ * Recommendation (2026): use Google Chrome or Edge on Mac or PC.
  *
- * Copyright (c) 2014-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * For non webmidi -- Uses the cross-platform, cross-browser plugin from
+ * https://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
+ *
+ * Copyright (c) 2013-26, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-26, Michael Scott Asato Cuthbert
  *
  */
 /**
@@ -20,7 +21,7 @@
 <html>
 <head>
     <title>MIDI In/Jazz Test for Music21j</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
 </head>
 <body>
 <div>
@@ -31,29 +32,26 @@ MIDI Input: <div id="putMidiSelectHere" />
 <script src='music21j.js'></script>
 <script>
     s = new music21.stream.Stream();
-    music21.webmidi.createSelector($("#putMidiSelectHere"));
+    music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));
 
     function displayStream(midiEvent) {
         midiEvent.sendToMIDIjs();
         if (midiEvent.noteOn) {
-            var m21n = midiEvent.music21Note();
+            const m21n = midiEvent.music21Note();
             if (s.length > 7) {
                 s.elements = s.elements.slice(1)
             }
             s.append(m21n);
-            var $svgDiv = $("#svgDiv");
-            $svgDiv.empty();
-            var svgDiv = s.appendNewDOM($svgDiv);
+            const svgDiv = document.querySelector("#svgDiv");
+            svgDiv.innerHTML = "";
+            svgDiv = s.appendNewDOM(svgDiv);
         }
     }
     music21.miditools.callbacks.general = displayStream;
-
 </script>
 </body>
 </html>
  */
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 type MIDICallbackFunction = (t: number, a: number, b: number, c: number) => any;
 declare interface Jazz extends HTMLObjectElement {
     isJazz: Readonly<boolean>;
@@ -71,29 +69,16 @@ declare interface Jazz extends HTMLObjectElement {
  * @property {function} MidiInList
  *
  */
-/**
- *
- * @type {
- *     {
- *     selectedInputPort: *,
- *     access: *,
- *     jazzDownloadUrl: string,
- *     selectedOutputPort: *,
- *     storedPlugin: *,
- *     selectedJazzInterface: *,
- *     $select: jQuery|undefined
- *     }
- * }
- */
-export declare const webmidi: {
-    selectedOutputPort: any;
-    selectedInputPort: any;
+interface WebMIDIOptions {
+    selectedOutputPort: string;
+    selectedInputPort: string;
     access: any;
-    $select: any;
+    select: HTMLSelectElement;
     jazzDownloadUrl: string;
-    storedPlugin: any;
-    selectedJazzInterface: any;
-};
+    storedPlugin: Jazz;
+    selectedJazzInterface: string;
+}
+export declare const webmidi: WebMIDIOptions;
 /**
  * Called by Jazz MIDI plugin when an event arrives.
  *
@@ -138,16 +123,19 @@ export declare function createPlugin(appendElement?: HTMLElement, override?: boo
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * @param {jQuery|HTMLElement} [$newSelect=document.body] - object to append the select to
+ * Changed 2026 Jan -- returns bool about whether it succeeded (does not call
+ * onAccessFailure)
+ *
+ * @param {HTMLElement} newSelect - object to append the select to
  * @param {Object} [options] - see createSelector for details
- * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * @returns {boolean} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-export declare function createJazzSelector($newSelect: any, options?: MIDISelectorOptions): any;
+export declare function createJazzSelector(newSelect: HTMLElement, options?: MIDISelectorOptions): boolean;
 /**
  * Function to be called if the webmidi-api selection changes. (not jazz)
  *
  */
-export declare function selectionChanged(): boolean;
+export declare function selectionChanged(e: Event): boolean;
 interface MIDISelectorOptions {
     /**
      * Should the list of options auto update?
@@ -156,7 +144,7 @@ interface MIDISelectorOptions {
     /**
      * Function to call on all successful port queries.
      */
-    onsuccess?: Function;
+    onsuccess?: () => void;
     /**
      * Function to call if port query is successful and at least one input device exists.
      */
@@ -165,13 +153,17 @@ interface MIDISelectorOptions {
      * Function to call if port query is successful but no input devices are found.
      */
     oninputempty?: Function;
+    /**
+     * On access failure
+     */
+    onAccessFailure?: (e: DOMException) => void;
 }
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
- * Returns JQuery object containing the select tag, or undefined if Jazz cannot be loaded.
+ * Returns an HTMLSelectElement or undefined if Jazz cannot be loaded.
  */
-export declare function createSelector(where: JQuery | HTMLElement, options?: MIDISelectorOptions): JQuery | undefined;
+export declare function createSelector(where: HTMLElement, options?: MIDISelectorOptions): HTMLSelectElement | undefined;
 export declare function populateSelect(): void;
 export {};
 //# sourceMappingURL=webmidi.d.ts.map

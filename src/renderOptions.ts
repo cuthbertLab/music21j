@@ -4,12 +4,14 @@
  *
  * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  * Options for rendering a stream
  *
  */
+import {StaveConnector} from './types';
+import {standardizeBarType} from './bar';
 
 interface EventInterface {
     click: string|Function|undefined,
@@ -47,6 +49,8 @@ export class RenderOptions {
     // additional padding at the bottom of the stream
     // (not every system).
     marginBottom: number = 0;
+    lyricsLine: number = -3;
+    adjustMarginBottomForLyrics: boolean = true;  // not yet implemented.
 
     systemIndex: number = 0;
     partIndex: number = 0;
@@ -61,11 +65,11 @@ export class RenderOptions {
     // scaleFactors.
     maxSystemWidth: number = undefined;
 
-    leftBarline: string = undefined;  // render() sets to 'none' for system beginnings
-    rightBarline: string = undefined;
+    _leftBarline: string = undefined;  // render() sets to 'none' for system beginnings
+    _rightBarline: string = undefined;
 
     staffLines: number = 5;
-    staffConnectors: string[] = ['single', 'brace'];
+    staffConnectors: StaveConnector[] = [StaveConnector.SINGLE, StaveConnector.BRACE];
     staffPadding: number = 60; // width...
     events: EventInterface = {
         click: 'play',
@@ -89,6 +93,28 @@ export class RenderOptions {
         return this.heightAboveStaff + this.heightOfStaffProper + this.heightBelowStaff;
     }
 
+    get leftBarline(): string|undefined {
+        return this._leftBarline;
+    }
+
+    set leftBarline(b: string|undefined) {
+        if (b === undefined) {
+            this._leftBarline = undefined;
+        }
+        this._leftBarline = standardizeBarType(b);
+    }
+
+    get rightBarline(): string|undefined {
+        return this._rightBarline;
+    }
+
+    set rightBarline(b: string|undefined) {
+        if (b === undefined) {
+            this._rightBarline = undefined;
+        }
+        this._rightBarline = standardizeBarType(b);
+    }
+
     deepClone(): RenderOptions {
         // TODO(MSC): allow for subclassing...
         const out = new RenderOptions();
@@ -101,7 +127,7 @@ export class RenderOptions {
         out.scaleFactor.x = this.scaleFactor.x;
         out.scaleFactor.y = this.scaleFactor.y;
         out.staffConnectors = [...this.staffConnectors];
-        out.events = {...this.events};
+        out.events = {...this.events};  // Q: Should the events themselves be cloned?
         return out;
     }
 }

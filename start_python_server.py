@@ -11,14 +11,9 @@ directory, so call
 '''
 import sys
 
-try:
-    from BaseHTTPServer import HTTPServer
-    from CGIHTTPServer import CGIHTTPRequestHandler
-    from CGIHTTPServer import _url_collapse_path
-except ImportError:  # python 3
-    from http.server import HTTPServer
-    from http.server import CGIHTTPRequestHandler
-    from http.server import _url_collapse_path
+from http.server import HTTPServer
+from http.server import CGIHTTPRequestHandler
+from http.server import _url_collapse_path
 
 
 try:

@@ -58,7 +58,7 @@ export class Notation {
     _parseNotationColumn(): void {
         const nc = this.notationColumn;
         const figures = nc.split(/,/);
-        const numbers = [];
+        const numbers: (number|undefined)[] = [];
         const modifierStrings = [];
         const figureStrings = [];
 
@@ -74,7 +74,7 @@ export class Notation {
                     modifierString += c;
                 }
             }
-            let number;
+            let number: number|undefined;
             if (numberString !== '') {
                 number = parseInt(numberString);
             }
@@ -92,7 +92,7 @@ export class Notation {
 
     _translateToLonghand() {
         let oldNumbers = this.numbers;
-        let newNumbers;
+        let newNumbers: (number|undefined)[];
         const oldModifierStrings = this.modifierStrings;
         let newModifierStrings = oldModifierStrings;
         const oldNumbersString = oldNumbers.toString();
@@ -111,7 +111,7 @@ export class Notation {
             oldNumbers = temp;
 
             for (const number of newNumbers) {
-                let newModifierString;
+                let newModifierString: string;
                 if (oldNumbers.includes(number)) {
                     const modifierStringIndex = oldNumbers.indexOf(number);
                     newModifierString = oldModifierStrings[modifierStringIndex];
@@ -160,7 +160,7 @@ export class Figure {
     modifierString: string;
     modifier: Modifier;
 
-    constructor(number, modifierString) {
+    constructor(number: number, modifierString: string) {
         this.number = number;
         this.modifierString = modifierString;
         this.modifier = new Modifier(modifierString);
@@ -201,13 +201,13 @@ export class Modifier {
         return a;
     }
 
-    modifyPitchName(pitchNameToAlter) {
+    modifyPitchName(pitchNameToAlter: string): string {
         const pitchToAlter = new pitch.Pitch(pitchNameToAlter);
         this.modifyPitch(pitchToAlter, true);
         return pitchToAlter.name;
     }
 
-    modifyPitch(pitchToAlter, inPlace) {
+    modifyPitch(pitchToAlter: pitch.Pitch, inPlace: boolean): pitch.Pitch {
         if (inPlace !== true) {
             pitchToAlter = pitchToAlter.clone();
         }

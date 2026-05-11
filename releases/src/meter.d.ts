@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  */
 import { Fraction as VFFraction } from 'vexflow';
 import * as base from './base';
@@ -25,12 +25,12 @@ export declare class TimeSignature extends base.Music21Object {
     static get className(): string;
     _numerator: number;
     _denominator: number;
-    _overwrittenBarDuration: any;
+    _overwrittenBarDuration: duration.Duration;
     symbol: string;
     symbolizeDenominator: boolean;
     _beatGroups: number[][];
-    _overwrittenBeatCount: any;
-    _overwrittenBeatDuration: any;
+    _overwrittenBeatCount: number;
+    _overwrittenBeatDuration: duration.Duration;
     constructor(value?: string, divisions?: any);
     stringInfo(): string;
     resetValues(value?: string, divisions?: any): void;

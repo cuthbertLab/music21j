@@ -2,17 +2,21 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "lib": ["es6", "dom", "es2018"],
+        "lib": ["dom", "dom.iterable", "es2023"],
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
         "declarationDir": "build",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
         "target": "es6"
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "tests/**/*",
+        "src/global.d.ts",
     ],
     "exclude": [
         "node_modules"

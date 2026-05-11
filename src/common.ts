@@ -2,42 +2,19 @@
  * common functions.
  * functions that are useful everywhere...
  */
-
-
-import * as $ from 'jquery';
 import defaults from './defaults';
 
-/**
- *  Many music21j functions take either JQuery or HTMLElement, but
- *  "el instanceof $" is not a good way of checking, because the copy of
- *  JQuery imported into music21j might not be the same copy loaded by a calling
- *  library or script tag.  Hence, these three little functions that coerce in one
- *  direction or another.
- */
-export function jQueryAndHTMLVersion(el?: JQuery|HTMLElement): [JQuery, HTMLElement] {
-    let $jq: JQuery;
+export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
     let htmlElement: HTMLElement;
-    if (el !== undefined && (el as JQuery).jquery !== undefined) {
-        $jq = (el as JQuery);
+    if (el != null && (el as JQuery).jquery !== undefined) {
         htmlElement = (el as JQuery)[0];
     } else if (el instanceof HTMLElement) {
         htmlElement = el;
-        $jq = $(el);
     } else {
         htmlElement = document.querySelector(defaults.appendLocation);
-        $jq = $(htmlElement);
     }
-    return [$jq, htmlElement];
+    return htmlElement;
 }
-
-export function coerceJQuery(el?: JQuery|HTMLElement): JQuery {
-    return jQueryAndHTMLVersion(el)[0];
-}
-
-export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
-    return jQueryAndHTMLVersion(el)[1];
-}
-
 
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
@@ -48,7 +25,7 @@ export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
  * @param {Object} source - object to take attributes from.
  * @returns {Object} destination
  */
-export function merge(destination: object, source?: object): object {
+export function merge<T extends object>(destination: T, source?: object): T {
     if (source === undefined || source === null) {
         return destination;
     }
@@ -71,7 +48,7 @@ export function merge(destination: object, source?: object): object {
     return destination;
 }
 
-export function range(start, stop, step) {
+export function range(start: number, stop: number, step: number) {
     if (step === undefined) {
         step = 1;
     }
@@ -89,7 +66,7 @@ export function range(start, stop, step) {
  * See articulations.Marcato for an example.
  *
  */
-export function mixin(OtherParent, thisClassOrObject) {
+export function mixin(OtherParent, thisClassOrObject): void {
     let proto = Object.getPrototypeOf(OtherParent);
     const classProto = Object.getPrototypeOf(thisClassOrObject);
 
@@ -157,7 +134,7 @@ export function mixin(OtherParent, thisClassOrObject) {
  * @return {int}   a mod b between 0 and b - 1
  */
 
-export function posMod(a, b) {
+export function posMod(a: number, b: number): number {
     if (a === undefined || b === undefined) {
         throw new Error('Modulo needs two numbers');
     }
@@ -175,7 +152,7 @@ export function posMod(a, b) {
  * @param {Array<*>} a - an array to analyze
  * @returns {Object} element with the highest frequency in an array.
  */
-export function statisticalMode(a) {
+export function statisticalMode(a: readonly number[]): number {
     if (a.length === 0) {
         return null;
     }
@@ -198,12 +175,9 @@ export function statisticalMode(a) {
 
 /**
  * fromRoman - Convert a Roman numeral (upper or lower) to an int.
- *
- * @param  {string} num roman numeral representation of a number
- * @return {int}     integer value of roman numeral;
  */
 
-export function fromRoman(num) {
+export function fromRoman(num: string): number {
     const inputRoman = num.toUpperCase();
     const subtractionValues = [1, 10, 100];
     const nums = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];
@@ -236,12 +210,9 @@ export function fromRoman(num) {
 
 /**
  * toRoman - Convert a number from 1 to 3999 to a roman numeral
- *
- * @param  {int} num number to convert
- * @return {string}     as roman numeral
  */
 
-export function toRoman(num) {
+export function toRoman(num: number): string {
     if (typeof num !== 'number') {
         throw new Error('expected integer, got ' + typeof num);
     }
@@ -275,19 +246,19 @@ export function toRoman(num) {
 
 /**
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
+ * tag defaults to svg, but can be 'rect', 'circle', 'text', etc.
+ * Attributes is an object to pass to the tag.
  *
- * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
- * @param {Object} [attrs] - attributes to pass to the tag.
+ * If tag is not specified creates <svg> (SVGSVGElement)
  */
-export function makeSVGright(tag='svg', attrs={}): SVGElement {
+export function makeSVGright(tag: string = 'svg', attrs: Record<string, any> = {}): SVGElement {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-    // normal JQuery does not work.
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const k in attrs) {
         if (!{}.hasOwnProperty.call(attrs, k)) {
             continue;
         }
-        el.setAttribute(k, attrs[k]);
+        el.setAttribute(k, `${attrs[k]}`);  // convert to string.
     }
     return el;
 }
@@ -328,12 +299,15 @@ export function ordinalAbbreviation(value: number, plural: boolean = false): str
 /**
  * Find a rational number approximation of this floating point.
  *
- * @param {number} ql - number to rationalize
- * @param {number} [epsilon=0.001] - how close to get
- * @param {int} [maxDenominator=50] - maximum denominator
- * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
+ * Returns an object of {'numerator: numerator, 'denominator': denominator} or undefined
+ *
+ * * ql - number to rationalize
+ * * epsilon=0.001 - how close to get
+ * * maxDenominator=50 - maximum denominator
  */
-export function rationalize(ql: number, epsilon=0.001, maxDenominator=50) {
+export function rationalize(ql: number, epsilon=0.001, maxDenominator=50):
+    {numerator: number, denominator: number} | undefined
+{
     for (let i = 2; i < maxDenominator; i++) {
         if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
             const numerator = Math.round(ql * i);
@@ -377,28 +351,12 @@ export function urlParam(name: string): string {
         : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-export function arrayEquals(a1, a2) {
-    if (a1.length !== a2.length) {
-        return false;
-    }
-    for (let i = 0; i < a1.length; i++) {
-        if (a1[i] instanceof Array && a2[i] instanceof Array) {
-            if (!arrayEquals(a1[i], a2[i])) {
-                return false;
-            }
-        } else if (a1[i] !== a2[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
 const _singletonCounter = {
     value: 0,
 };
 
 export class SingletonCounter {
-    call() {
+    call(): number {
         const post = _singletonCounter.value;
         _singletonCounter.value += 1;
         return post;
@@ -425,25 +383,20 @@ export function numToIntOrFloat(value: number): number {
     }
 }
 
-/**
- *
- * @param {string} path
- * @returns {string}
- */
-export const pathSimplify = path => {
+export const pathSimplify = (path: string): string => {
     let pPrefix = '';
     if (path.indexOf('//') === 0) {
         pPrefix = '//'; //cdn loading;
         path = path.slice(2);
-        console.log('cdn load: ', pPrefix, ' into ', path);
+        // console.log('cdn load: ', pPrefix, ' into ', path);
     } else if (path.indexOf('://') !== -1) { // for cross site requests...
         const protoSpace = path.indexOf('://');
         pPrefix = path.slice(0, protoSpace + 3);
         path = path.slice(protoSpace + 3);
-        console.log('cross-site split', pPrefix, path);
+        // console.log('cross-site split', pPrefix, path);
     }
     const ps = path.split('/');
-    const addSlash = (path.slice(path.length - 1, path.length) === '/');
+    const addSlash = (path.slice(path.length - 1, path.length) !== '/');
     const pout = [];
     for (const el of ps) {
         if (el === '..') {
@@ -468,7 +421,7 @@ export const pathSimplify = path => {
     return pNew;
 };
 
-export function isFloat(num) {
+export function isFloat(num: number): boolean {
     return Number(num) === num && num % 1 !== 0;
 }
 
@@ -476,7 +429,7 @@ const shared_buffer = new ArrayBuffer(4);  // just enough bytes for 32-bit Array
 const int_view = new Int32Array(shared_buffer);
 const float_view = new Float32Array(shared_buffer);
 
-function byte_2_relevant_bits(num) {
+function byte_2_relevant_bits(num: number): string {
     // extract bits 24 to 28 of the floating point number.
     // if all 1s or all 0s then it's close enough to a
     // float expressible as fraction with power of 2 denominator
@@ -488,7 +441,7 @@ function byte_2_relevant_bits(num) {
     return out;
 }
 
-function is_power_of_2_denominator(num) {
+function is_power_of_2_denominator(num: number): boolean {
     float_view[0] = num;
     const float_as_int = int_view[0];  // magic conversion
     const out_bits = byte_2_relevant_bits(float_as_int);
@@ -502,9 +455,9 @@ function is_power_of_2_denominator(num) {
  * Returns either the original number (never a fraction, since js does not have them)
  * or the slightly rounded, correct representation.
  *
- * Uses a shared memory buffer to give the conversion.
+ * Uses a shared memory buffer to give the conversion (in is_power_of_2_denominator)
  */
-export function opFrac(num) {
+export function opFrac(num: number): number {
     if (num === Math.floor(num)) {
         return num;
     }
@@ -524,7 +477,7 @@ export function opFrac(num) {
 /**
  * Converts a string to a single element using template.
  *
- * Similar to $('<tag attributes="xyz"><b>more</b></tag>')[0]
+ * Similar to JQuery's $('<tag attributes="xyz"><b>more</b></tag>')[0]
  *
  * For security reasons <template> will not parse script
  * tags.
@@ -535,9 +488,16 @@ export function opFrac(num) {
  * Recommended in:
  * https://stackoverflow.com/questions/494143/
  */
-export function to_el(input_string: string): HTMLElement {
+export function to_el<T extends Element=HTMLElement>(input_string: string): T {
     const template = document.createElement('template');
     input_string = input_string.trim(); // Never return a text node of whitespace as the result
     template.innerHTML = input_string;
-    return template.content.firstElementChild as HTMLElement;
+    return template.content.firstElementChild as T;
+}
+
+/**
+ * Sleep for some time in milliseconds.
+ */
+export function sleep(ms: number): Promise<number> {
+    return new Promise(resolve => window.setTimeout(resolve, ms));
 }

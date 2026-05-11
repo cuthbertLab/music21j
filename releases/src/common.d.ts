@@ -1,18 +1,3 @@
-/**
- * common functions.
- * functions that are useful everywhere...
- */
-/// <reference types="jquery" />
-/// <reference types="jquery" />
-/**
- *  Many music21j functions take either JQuery or HTMLElement, but
- *  "el instanceof $" is not a good way of checking, because the copy of
- *  JQuery imported into music21j might not be the same copy loaded by a calling
- *  library or script tag.  Hence, these three little functions that coerce in one
- *  direction or another.
- */
-export declare function jQueryAndHTMLVersion(el?: JQuery | HTMLElement): [JQuery, HTMLElement];
-export declare function coerceJQuery(el?: JQuery | HTMLElement): JQuery;
 export declare function coerceHTMLElement(el?: JQuery | HTMLElement): HTMLElement;
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
@@ -23,8 +8,8 @@ export declare function coerceHTMLElement(el?: JQuery | HTMLElement): HTMLElemen
  * @param {Object} source - object to take attributes from.
  * @returns {Object} destination
  */
-export declare function merge(destination: object, source?: object): object;
-export declare function range(start: any, stop: any, step: any): any;
+export declare function merge<T extends object>(destination: T, source?: object): T;
+export declare function range(start: number, stop: number, step: number): any;
 /**
  * Mix in another class into this class -- a simple form of multiple inheritance.
  * See articulations.Marcato for an example.
@@ -44,7 +29,7 @@ export declare function mixin(OtherParent: any, thisClassOrObject: any): void;
  * @param  {int} b modulo
  * @return {int}   a mod b between 0 and b - 1
  */
-export declare function posMod(a: any, b: any): number;
+export declare function posMod(a: number, b: number): number;
 /**
  *
  * Returns the statistical mode (most commonly appearing element)
@@ -56,28 +41,23 @@ export declare function posMod(a: any, b: any): number;
  * @param {Array<*>} a - an array to analyze
  * @returns {Object} element with the highest frequency in an array.
  */
-export declare function statisticalMode(a: any): any;
+export declare function statisticalMode(a: readonly number[]): number;
 /**
  * fromRoman - Convert a Roman numeral (upper or lower) to an int.
- *
- * @param  {string} num roman numeral representation of a number
- * @return {int}     integer value of roman numeral;
  */
-export declare function fromRoman(num: any): number;
+export declare function fromRoman(num: string): number;
 /**
  * toRoman - Convert a number from 1 to 3999 to a roman numeral
- *
- * @param  {int} num number to convert
- * @return {string}     as roman numeral
  */
-export declare function toRoman(num: any): string;
+export declare function toRoman(num: number): string;
 /**
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
+ * tag defaults to svg, but can be 'rect', 'circle', 'text', etc.
+ * Attributes is an object to pass to the tag.
  *
- * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
- * @param {Object} [attrs] - attributes to pass to the tag.
+ * If tag is not specified creates <svg> (SVGSVGElement)
  */
-export declare function makeSVGright(tag?: string, attrs?: {}): SVGElement;
+export declare function makeSVGright(tag?: string, attrs?: Record<string, any>): SVGElement;
 /**
  * Take a number such as 32 and return a string such as "nd"
  * (for "32nd") etc.
@@ -88,15 +68,16 @@ export declare function ordinalAbbreviation(value: number, plural?: boolean): st
 /**
  * Find a rational number approximation of this floating point.
  *
- * @param {number} ql - number to rationalize
- * @param {number} [epsilon=0.001] - how close to get
- * @param {int} [maxDenominator=50] - maximum denominator
- * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
+ * Returns an object of {'numerator: numerator, 'denominator': denominator} or undefined
+ *
+ * * ql - number to rationalize
+ * * epsilon=0.001 - how close to get
+ * * maxDenominator=50 - maximum denominator
  */
 export declare function rationalize(ql: number, epsilon?: number, maxDenominator?: number): {
     numerator: number;
     denominator: number;
-};
+} | undefined;
 /**
  * Change something that could be a string or number and might
  * end with "px" to a number.
@@ -113,7 +94,6 @@ export declare function stripPx(str: number | string): number;
  * Return may be '' if empty.
  */
 export declare function urlParam(name: string): string;
-export declare function arrayEquals(a1: any, a2: any): boolean;
 export declare class SingletonCounter {
     call(): number;
 }
@@ -125,24 +105,19 @@ export declare const urls: {
 };
 export declare function hyphenToCamelCase(usrStr: string): string;
 export declare function numToIntOrFloat(value: number): number;
-/**
- *
- * @param {string} path
- * @returns {string}
- */
-export declare const pathSimplify: (path: any) => string;
-export declare function isFloat(num: any): boolean;
+export declare const pathSimplify: (path: string) => string;
+export declare function isFloat(num: number): boolean;
 /**
  * Returns either the original number (never a fraction, since js does not have them)
  * or the slightly rounded, correct representation.
  *
- * Uses a shared memory buffer to give the conversion.
+ * Uses a shared memory buffer to give the conversion (in is_power_of_2_denominator)
  */
-export declare function opFrac(num: any): any;
+export declare function opFrac(num: number): number;
 /**
  * Converts a string to a single element using template.
  *
- * Similar to $('<tag attributes="xyz"><b>more</b></tag>')[0]
+ * Similar to JQuery's $('<tag attributes="xyz"><b>more</b></tag>')[0]
  *
  * For security reasons <template> will not parse script
  * tags.
@@ -153,5 +128,9 @@ export declare function opFrac(num: any): any;
  * Recommended in:
  * https://stackoverflow.com/questions/494143/
  */
-export declare function to_el(input_string: string): HTMLElement;
+export declare function to_el<T extends Element = HTMLElement>(input_string: string): T;
+/**
+ * Sleep for some time in milliseconds.
+ */
+export declare function sleep(ms: number): Promise<number>;
 //# sourceMappingURL=common.d.ts.map

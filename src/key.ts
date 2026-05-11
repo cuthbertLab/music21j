@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/key -- KeySignature and Key objects
  *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
+ * Copyright (c) 2013-24, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
  *
  */
 import { Music21Exception } from './exceptions21';
@@ -229,8 +229,8 @@ export class KeySignature extends base.Music21Object {
      */
     transposePitchFromC(p: pitch.Pitch): pitch.Pitch {
         const originalOctave = p.octave;
-        let transInterval;
-        let transTimes;
+        let transInterval: interval.Interval;
+        let transTimes: number;
         if (this.sharps === 0) {
             return new pitch.Pitch(p.nameWithOctave);
         } else if (this.sharps < 0) {
@@ -350,8 +350,10 @@ export class Key extends KeySignature {
         return this._scale.pitchFromDegree(degree, ...args);
     }
 
-    getScaleDegreeFromPitch(pitchTarget, ...args) {
+    getScaleDegreeFromPitch(
+        pitchTarget: pitch.Pitch | string,
+        ...args: unknown[]
+    ): number | undefined {
         return this._scale.getScaleDegreeFromPitch(pitchTarget, ...args);
     }
 }
-

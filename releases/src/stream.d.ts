@@ -1,30 +1,10 @@
-/**
- * music21j -- Javascript reimplementation of Core music21p features.
- * music21/stream -- Streams -- objects that hold other Music21Objects
- *
- * Does not implement the full features of music21p Streams by a long shot...
- *
- * Copyright (c) 2013-21, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-21, Michael Scott Asato Cuthbert
- *
- * powerful stream module, See music21.stream namespace
- *
- * Streams are powerful music21 objects that hold Music21Object collections,
- * such as music21.note.Note or music21.chord.Chord objects.
- *
- * Understanding the {@link Stream} object is of fundamental
- * importance for using music21.  Definitely read the music21(python) tutorial
- * on using Streams before proceeding
- *
- */
-/// <reference types="jquery" />
-/// <reference types="jquery" />
 import { Stave as VFStave } from 'vexflow';
 import { Music21Exception } from './exceptions21';
 import * as base from './base';
 import * as clef from './clef';
 import { Duration } from './duration';
 import * as instrument from './instrument';
+import * as metadata from './metadata';
 import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
@@ -39,6 +19,12 @@ export { filters };
 export { iterator };
 export { makeNotation };
 export declare class StreamException extends Music21Exception {
+}
+export interface PlayStreamParams {
+    instrument?: instrument.Instrument;
+    tempo?: number;
+    done?: () => any;
+    startNote?: number;
 }
 interface MakeAccidentalsParams {
     pitchPast?: pitch.Pitch[];
@@ -74,8 +60,9 @@ interface MakeAccidentalsParams {
  *     to just get the parts (NON-recursive)
  * @property {StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more
- *     sophisticated later, but for now the whole stream has one tempo
+ * @property {number} tempo - tempo in QuarterLengths per minute -- this is a legacy behavior
+ *     and eventually only MetronomeMarks measured in Beats per minute should be used.
+ *     This property will always remain in QL per minute for backwards compatibility.
  * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
  * @property {int} [staffLines=5] - number of staff lines
@@ -83,9 +70,10 @@ interface MakeAccidentalsParams {
  *     call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
-export declare class Stream extends base.Music21Object {
+export declare class Stream<ElementType extends base.Music21Object = base.Music21Object> extends base.Music21Object {
     static get className(): string;
     _offsetDict: WeakMap<base.Music21Object, number>;
+    _svgEventMap: WeakMap<HTMLElement, Record<keyof HTMLElementEventMap, Array<(e: any) => any>>>;
     _elements: base.Music21Object[];
     isSorted: boolean;
     isStream: boolean;
@@ -108,9 +96,9 @@ export declare class Stream extends base.Music21Object {
      * will change the stream. Used in editableAccidentalDOM, among other places.
      *
      *      var can = s.appendNewDOM();
-     *      $(can).on('click', s.DOMChangerFunction);
+     *      can.addEventListener('click', () => s.DOMChangerFunction());
      */
-    DOMChangerFunction: (e: MouseEvent | TouchEvent | JQuery.MouseEventBase) => base.Music21Object | undefined;
+    DOMChangerFunction: (e: MouseEvent | TouchEvent) => base.Music21Object | undefined;
     storedVexflowStave: VFStave;
     activeNote: note.GeneralNote;
     _clef: any;
@@ -126,8 +114,7 @@ export declare class Stream extends base.Music21Object {
     _overriddenDuration: Duration;
     constructor();
     /**
-     *
-     * @returns {IterableIterator<Music21Object>}
+     *  Iterator for use in `for (const x of new Stream())` contexts.
      */
     [Symbol.iterator](): IterableIterator<base.Music21Object>;
     forEach(callback: (el: base.Music21Object, i: number, innerThis: any) => void, thisArg?: any): void;
@@ -181,6 +168,8 @@ export declare class Stream extends base.Music21Object {
      * @private
      */
     _firstElementContext(attr: string): base.Music21Object;
+    get metadata(): metadata.Metadata;
+    set metadata(newMetadata: metadata.Metadata);
     get clef(): clef.Clef;
     set clef(newClef: clef.Clef);
     get keySignature(): KeySignature;
@@ -221,21 +210,18 @@ export declare class Stream extends base.Music21Object {
      * as a way of making the older music21j attributes still work while
      * transitioning to a more music21p-like approach.
      *
-     * May be removed
+     * May be removed.
      */
-    getSpecialContext(context: any, warnOnCall?: boolean): any;
+    getSpecialContext(context: string, warnOnCall?: boolean): any;
     /**
      * Map as if this were an Array
      */
-    map(func: any): unknown[];
-    filter(func: any): base.Music21Object[];
+    map(func: (el: ElementType) => any): any[];
+    filter(func: (el: ElementType) => boolean): ElementType[];
     clear(): void;
-    coreElementsChanged({ updateIsFlat, clearIsSorted, memo, // unused
-    keepIndex, }?: {
+    coreElementsChanged({ updateIsFlat, clearIsSorted, }?: {
         updateIsFlat?: boolean;
         clearIsSorted?: boolean;
-        memo?: any;
-        keepIndex?: boolean;
     }): void;
     recurse({ streamsOnly, restoreActiveSites, classFilter, skipSelf, }?: {
         streamsOnly?: boolean;
@@ -244,13 +230,10 @@ export declare class Stream extends base.Music21Object {
         skipSelf?: boolean;
     }): iterator.RecursiveIterator;
     /**
-     * Add an element to the end of the stream, setting its `.offset` accordingly
-     *
-     * @param elOrElList - element
-     * or list of elements to append
-     * @returns {this}
+     * Add an element (or a list of elements) to the end of the stream,
+     * setting each element's `.offset` accordingly
      */
-    append(elOrElList: base.Music21Object | base.Music21Object[]): this;
+    append(elOrElList: ElementType | ElementType[]): this;
     sort(): this;
     /**
      * Add an element to the specified place in the stream, setting its `.offset` accordingly
@@ -276,7 +259,7 @@ export declare class Stream extends base.Music21Object {
     n.duration.type = 'whole'
     a.repeatAppend(n, 10)
     */
-    repeatAppend(item: base.Music21Object, numberOfTimes: number): void;
+    repeatAppend(item: ElementType, numberOfTimes: number): void;
     /**
      * Inserts a single element at offset, shifting elements at or after it begins
      * later in the stream.
@@ -320,14 +303,30 @@ export declare class Stream extends base.Music21Object {
     }): void;
     /**
      * Get the `index`th element from the Stream.  Equivalent to the
-     * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
+     * music21p format of s[index] using __getitem__.  Can use negative indexing
+     * to get from the end.
      *
-     * Once Proxy objects are supported by all operating systems for
+     * for the recursing by class method of `__getitem__` see `rc` below.
      *
-     * @param {number} index - can be -1, -2, to index from the end, like python
-     * @returns {Music21Object|undefined}
+     * index - can be -1, -2, to index from the end, like python
      */
     get(index: number): base.Music21Object;
+    /**
+     * Return a RecursiveIterator by class for a stream.  Equivalent to the
+     * music21p format of s[note.Note] using __getitem__.  (rc = recurse by class)
+     *
+     * for the get-by-index form of music21p's `__getitem__` see `get()`.
+     *
+     * See also `rcf(Class)` which returns the first item by class.  For
+     * quickly working.
+     */
+    rc<TT extends base.Music21Object = base.Music21Object>(klass: (new () => TT)): iterator.RecursiveIterator<TT>;
+    /**
+     * A pure convenience method for `s.recurse().getElementsByClass(klass).first()`
+     *
+     * Requires a Class (type), does not take a string.
+     */
+    rcf<TT extends base.Music21Object = base.Music21Object>(klass: (new () => TT)): TT;
     /**
      * Added for compatability with StreamIterator.  Gets the first element
      * or undefined if none.  No speedups from `.get(0)`, but makes coding
@@ -343,9 +342,9 @@ export declare class Stream extends base.Music21Object {
     /**
      *
      */
-    set(index: any, newEl: any): this;
-    setElementOffset(el: any, value: any, addElement?: boolean): void;
-    elementOffset(element: any, stringReturns?: boolean): number;
+    set(index: number, newEl: base.Music21Object): this;
+    setElementOffset(el: base.Music21Object, value: number, addElement?: boolean): void;
+    elementOffset(element: base.Music21Object, _stringReturns?: boolean): number;
     /**
      * Takes a stream and places all of its elements into
      * measures (:class:`~music21.stream.Measure` objects)
@@ -356,11 +355,8 @@ export declare class Stream extends base.Music21Object {
 
      * If `options.inPlace` is true, the original Stream is modified and lost
      * if `options.inPlace` is False, this returns a modified deep copy.
-
-     * @param {Object} [options]
-     * @returns {Stream}
      */
-    makeMeasures(options?: any): any;
+    makeMeasures(options?: any): Stream;
     containerInHierarchy(el: base.Music21Object, { setActiveSite }?: {
         setActiveSite?: boolean;
     }): Stream | undefined;
@@ -372,7 +368,7 @@ export declare class Stream extends base.Music21Object {
         addPartIdAsGroup?: boolean;
         removeRedundantPitches?: boolean;
         toSoundingPitch?: boolean;
-    }): any;
+    }): Stream<base.Music21Object>;
     template({ fillWithRests, removeClasses, retainVoices, }?: {
         fillWithRests?: boolean;
         removeClasses?: any[];
@@ -389,7 +385,11 @@ export declare class Stream extends base.Music21Object {
      * makeNotation does not do anything yet, but it is a placeholder
      * so it can start to be called.
      *
-     * TODO: move call to makeBeams from renderVexflow to here.
+     * setStemDirectionForUnspecified is fine w/ Scores
+     * makeAccidentals has an override for Scores (but not Opus...)
+     *
+     * TODO: move call to makeBeams from renderVexflow to here once
+     *     it works on recursive streams.
      */
     makeNotation({ inPlace, overrideStatus }?: {
         inPlace?: boolean;
@@ -399,7 +399,7 @@ export declare class Stream extends base.Music21Object {
      * Return a new Stream or modify this stream
      * to have beams.
      *
-     * Called from renderVexflow()
+     * Called from makeNotation
      */
     makeBeams({ inPlace, setStemDirections, failOnNoTimeSignature, }?: makeNotation.MakeBeamsOptions): this;
     /**
@@ -417,8 +417,6 @@ export declare class Stream extends base.Music21Object {
     hasPartLikeStreams(): boolean;
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
-     *
-     * @returns {boolean}
      */
     hasLyrics(): boolean;
     /**
@@ -429,19 +427,18 @@ export declare class Stream extends base.Music21Object {
     /**
      * Find all elements with a certain class; if an Array is given, then any
      * matching class will work.
-     *
-     * @param {string[]|string} classList - a list of classes to find
      */
-    getElementsByClass(classList: string | string[]): iterator.StreamIterator;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: new () => TT): iterator.StreamIterator<TT>;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: string): iterator.StreamIterator<TT>;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: string[]): iterator.StreamIterator<TT>;
+    getElementsByClass<TT extends base.Music21Object = base.Music21Object>(classList: (new () => base.Music21Object)[]): iterator.StreamIterator<TT>;
     /**
      * Find all elements NOT with a certain class; if an Array is given, then any
      * matching class will work.
-     *
-     * @param {string[]|string} classList - a list of classes to find
      */
     getElementsNotOfClass(classList: string | string[]): iterator.StreamIterator;
     /**
-     * Returns a new stream [StreamIterator does not yet exist in music21j]
+     * Returns a new StreamIterator
      * containing all Music21Objects that are found at a certain offset or
      * within a certain offset time range (given the offsetStart and
      * (optional) offsetEnd values).
@@ -454,7 +451,7 @@ export declare class Stream extends base.Music21Object {
         mustBeginInSpan?: boolean;
         includeElementsThatEndAtStart?: boolean;
         classList?: any;
-    }): any;
+    }): iterator.StreamIterator;
     /**
      *  Given an element (from another Stream) returns the single element
      *  in this Stream that is sounding while the given element starts.
@@ -479,7 +476,7 @@ export declare class Stream extends base.Music21Object {
      *
      *  elStream is a place to get el's offset from.  Otherwise, activeSite is used
      */
-    playingWhenAttacked(el: base.Music21Object, elStream?: any): base.Music21Object | undefined;
+    playingWhenAttacked(el: base.Music21Object, elStream?: Stream): base.Music21Object | undefined;
     /**
         A method to set and provide accidentals given various conditions and contexts.
 
@@ -527,8 +524,7 @@ export declare class Stream extends base.Music21Object {
 
         Called automatically before appendDOM routines are called.
      */
-    makeAccidentals({ pitchPast, pitchPastMeasure, useKeySignature, alteredPitches, searchKeySignatureByContext, // not yet used.
-    cautionaryPitchClass, cautionaryAll, inPlace, overrideStatus, cautionaryNotImmediateRepeat, tiePitchSet, }?: MakeAccidentalsParams): this;
+    makeAccidentals({ pitchPast, pitchPastMeasure, useKeySignature, alteredPitches, cautionaryPitchClass, cautionaryAll, inPlace, overrideStatus, cautionaryNotImmediateRepeat, tiePitchSet, }?: MakeAccidentalsParams): this;
     /**
      * Sets the render options for any substreams (such as placing them
      * in systems, etc.) DOES NOTHING for music21.stream.Stream, but is
@@ -545,8 +541,8 @@ export declare class Stream extends base.Music21Object {
      * @param {boolean} [preserveEvents=false]
      * @returns {this}
      */
-    resetRenderOptions(recursive: any, preserveEvents: any): this;
-    write(format?: string): string;
+    resetRenderOptions(recursive?: boolean, preserveEvents?: boolean): this;
+    write(_format?: string): string;
     /**
      * Uses music21.vfShow.Renderer to render Vexflow onto an
      * existing canvas or SVG object.
@@ -555,9 +551,13 @@ export declare class Stream extends base.Music21Object {
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
-     * Takes in a canvas or the div surrounding an SVG object
+     * inPlace is true for backwards compatibility.
+     *
+     * Takes in the div surrounding an SVG object (or a canvas)
      */
-    renderVexflow(where?: JQuery | HTMLElement): vfShow.Renderer;
+    renderVexflow(where?: HTMLDivElement | HTMLCanvasElement, { inPlace }?: {
+        inPlace?: boolean;
+    }): vfShow.Renderer;
     /**
      * Estimate the stream height for the Stream.
      *
@@ -586,12 +586,10 @@ export declare class Stream extends base.Music21Object {
      * or (2) null if there are no gaps.
      * @returns {object}
      */
-    findGaps(): Stream;
+    findGaps(): Stream | null;
     /**
      * Returns True if there are no gaps between the lowest offset and the highest time.
      * Otherwise returns False
-     *
-     * @returns {boolean}
      */
     get isGapless(): boolean;
     /**
@@ -599,12 +597,9 @@ export declare class Stream extends base.Music21Object {
      *
      * `options` can be an object containing:
      * - instrument: {@link `music`21.instrument.Instrument} object (default, `this.instrument`)
-     * - tempo: number (default, `this.tempo`)
-     *
-     * @param {Object} [options] - object of playback options
-     * @returns {this}
+     * - tempo: number (default, `this.tempo`) -- should be in BPM but apparently in QL per minute!
      */
-    playStream(options?: {}): this;
+    playStream(options?: PlayStreamParams): this;
     /**
      * Stops a stream from playing if it currently is.
      *
@@ -620,7 +615,7 @@ export declare class Stream extends base.Music21Object {
      *
      * elementType can be `svg` (default) or `canvas`
      *
-     * returns a $div encompassing either the SVG or Canvas element.
+     * returns an HTMLDivElement encompassing either the SVG or Canvas element.
      *
      * if width is undefined, will use `this.estimateStaffLength()`
      *     + `this.renderOptions.staffPadding`
@@ -628,48 +623,49 @@ export declare class Stream extends base.Music21Object {
      * if height is undefined  will use
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
+     *
+     * Estimated widths and heights are multiplied by this.renderOptions.scaleFactor.
      */
-    createNewDOM(width?: number | string, height?: number | string, elementType?: string): JQuery<HTMLDivElement> | JQuery<HTMLCanvasElement>;
+    createNewDOM(width?: number | string, height?: number | string, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Creates a rendered, playable svg where clicking plays it.
      *
      * Called from appendNewDOM() etc.
      *
      */
-    createPlayableDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): JQuery;
+    createPlayableDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Creates a new svg and renders vexflow on it
      *
      * @param {number|string|undefined} [width]
      * @param {number|string|undefined} [height]
      * @param {string} elementType - what type of element svg or canvas, default = svg
-     * @returns {JQuery} canvas or SVG
+     * @returns {HTMLDivElement|HTMLCanvasElement} Div containing SVG or the Canvas element
      */
-    createDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): JQuery;
+    createDOM(width?: number | string | undefined, height?: number | string | undefined, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
      *
-     * @param {JQuery|HTMLElement} [appendElement=document.body] - where to place the svg
+     * @param {HTMLElement} [where=document.body] - where to place the svg
      * @param {number|string} [width]
      * @param {number|string} [height]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {SVGElement|HTMLElement} svg (not the jQuery object --
-     * this is a difference with other routines and should be fixed. TODO: FIX)
+     * @returns {HTMLDivElement|HTMLCanvasElement} svg or canvas
      *
      */
-    appendNewDOM(appendElement?: JQuery | HTMLElement | string, width?: number | string, height?: number | string, elementType?: string): HTMLElement;
+    appendNewDOM(where?: HTMLElement | string, width?: number | string, height?: number | string, elementType?: string): HTMLDivElement | HTMLCanvasElement;
     /**
      * Replaces a particular Svg with a new rendering of one.
      *
      * Note that if 'where' is empty, will replace all svg elements on the page.
      *
-     * @param {JQuery|HTMLElement} [where] - the canvas or SVG to replace or
+     * @param {HTMLElement} [where] - the canvas or SVG to replace or
      *     a container holding the canvas(es) to replace.
      * @param {boolean} [preserveSvgSize=false]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {JQuery} the svg
+     * @returns {HTMLDivElement} the svg
      */
-    replaceDOM(where?: JQuery | HTMLElement, preserveSvgSize?: boolean, elementType?: string): JQuery;
+    replaceDOM(where?: HTMLElement, preserveSvgSize?: boolean, elementType?: string): HTMLElement;
     /**
      * Set the type of interaction on the svg based on
      *    - Stream.renderOptions.events.click
@@ -682,7 +678,7 @@ export declare class Stream extends base.Music21Object {
      *    - customFunction (will receive event as a first variable; should set up a way to
      *                    find the original stream; var s = this; var f = function () { s...}
      */
-    setRenderInteraction(where: JQuery | HTMLElement): this;
+    setRenderInteraction(where: HTMLDivElement | HTMLCanvasElement): this;
     /**
      *
      * Recursively search downward for the closest storedVexflowStave...
@@ -694,7 +690,7 @@ export declare class Stream extends base.Music21Object {
      *
      * returns {Array<number>} two-elements, [x, y] in pixels.
      */
-    getUnscaledXYforDOM(svg: any, evt: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getUnscaledXYforDOM(svg: HTMLElement, e: MouseEvent | TouchEvent): [number, number];
     /**
      * return a list of [scaledX, scaledY] for
      * a svg element.
@@ -703,7 +699,7 @@ export declare class Stream extends base.Music21Object {
      * x of 1 gives 1.42857...
      *
      */
-    getScaledXYforDOM(svg: HTMLElement | SVGElement | JQuery, e: MouseEvent | TouchEvent | JQuery.MouseEventBase): [number, number];
+    getScaledXYforDOM(svg: HTMLElement, e: MouseEvent | TouchEvent): [number, number];
     /**
      *
      * Given a Y position find the diatonicNoteNum that a note at that position would have.
@@ -717,13 +713,8 @@ export declare class Stream extends base.Music21Object {
      * Returns the stream that is at X location xPxScaled and system systemIndex.
      *
      * Override in subclasses, always returns this; here.
-     *
-     * @param {number} xPxScaled
-     * @param {number} [systemIndex]
-     * @returns {this}
-     *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: any, systemIndex?: number): this;
+    getStreamFromScaledXandSystemIndex(_xPxScaled: number, _systemIndex?: number): Stream;
     /**
      *
      * Return the note (or chord or rest) at pixel X (or within allowablePixels [default 10])
@@ -735,12 +726,6 @@ export declare class Stream extends base.Music21Object {
      * note within the window even if it's beyond allowablePixels (default: true)
      * and 'backupMaximum' which specifies a maximum distance even for backup
      * (default: 70);
-     *
-     * @param {number} xPxScaled
-     * @param {number} [allowablePixels=10]
-     * @param {number} [systemIndex]
-     * @param {Object} [options]
-     * @returns {Music21Object|undefined}
      */
     noteElementFromScaledX(xPxScaled: number, allowablePixels?: number, systemIndex?: number, options?: {}): note.GeneralNote;
     /**
@@ -752,16 +737,16 @@ export declare class Stream extends base.Music21Object {
      * Return a list of [diatonicNoteNum, closestXNote]
      * for an event (e) called on the svg (svg)
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement | JQuery, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLDivElement | HTMLCanvasElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * Change the pitch of a note given that it has been clicked and then
      * call changedCallbackFunction and return it
      */
-    noteChanged(clickedDiatonicNoteNum: number, foundNote: note.Note, svg: SVGElement | HTMLElement): any;
+    noteChanged(clickedDiatonicNoteNum: number, foundNote: note.Note, svg: HTMLDivElement | HTMLCanvasElement): any;
     /**
      * Redraws an svgDiv, keeping the events of the previous svg.
      */
-    redrawDOM(svg: JQuery | HTMLElement | SVGElement): JQuery;
+    redrawDOM(svg: HTMLDivElement | HTMLCanvasElement): HTMLDivElement | HTMLCanvasElement;
     /**
      * Renders a stream on svg with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
@@ -769,25 +754,25 @@ export declare class Stream extends base.Music21Object {
     editableAccidentalDOM(width?: number, height?: number, { minAccidental, maxAccidental, }?: {
         minAccidental?: number;
         maxAccidental?: number;
-    }): JQuery<HTMLDivElement>;
+    }): HTMLDivElement;
     /**
      * Returns an accidental toolbar from minAccidental to maxAccidental.
      *
-     * If $siblingSvg is defined then this toolbar alters the notes in that
+     * If siblingSvg is defined then this toolbar alters the notes in that
      * toolbar.
      */
-    getAccidentalToolbar(minAccidental?: number, maxAccidental?: number, $siblingSvg?: JQuery): JQuery<HTMLDivElement>;
+    getAccidentalToolbar(minAccidental?: number, maxAccidental?: number, siblingSvg?: HTMLDivElement | HTMLCanvasElement): HTMLDivElement;
     /**
-     * get a JQuery div containing two buttons -- play and stop
+     * get a Div element containing two buttons -- play and stop
      */
-    getPlayToolbar(): JQuery<HTMLDivElement>;
+    getPlayToolbar(): HTMLDivElement;
     /**
      * Begins a series of bound events to the window that makes it
      * so that on resizing the stream is redrawn and reflowed to the
      * new size.
      *bt
      */
-    windowReflowStart($jSvg: JQuery): this;
+    windowReflowStart(svg: HTMLDivElement | HTMLCanvasElement): this;
     /**
      * Does this stream have a {@link Voice} inside it?
      */
@@ -874,27 +859,19 @@ export declare class Part extends Stream {
     /**
      * systemIndexAndScaledY - given a scaled Y, return the systemIndex
      * and the scaledYRelativeToSystem
-     *
-     * @param  {number} y the scaled Y
-     * @return {number[]}  systemIndex, scaledYRelativeToSystem
      */
-    systemIndexAndScaledY(y: any): number[];
+    systemIndexAndScaledY(y: number): [number, number];
     /**
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
      *
-     * @returns {Array} [clickedDiatonicNoteNum, foundNote]
+     * returns a two element array of [clickedDiatonicNoteNum, foundNote]
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.
-     *
-     * @param {number} [xPxScaled]
-     * @param {number} [systemIndex]
-     * @returns {Stream}
-     *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: any, systemIndex?: any): any;
+    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Measure;
 }
 /**
  * Scores with multiple parts
@@ -906,6 +883,10 @@ export declare class Score extends Stream {
     constructor();
     get clef(): clef.Clef;
     set clef(newClef: clef.Clef);
+    /**
+     * Override main stream makeAccidentals to call on each part.
+     */
+    makeAccidentals({ pitchPast, pitchPastMeasure, useKeySignature, alteredPitches, cautionaryPitchClass, cautionaryAll, inPlace, overrideStatus, cautionaryNotImmediateRepeat, tiePitchSet, }?: MakeAccidentalsParams): this;
     /**
      * Override main stream makeBeams to call on each part.
      */
@@ -920,7 +901,7 @@ export declare class Score extends Stream {
      * @returns {Stream} usually a Measure
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled: any, systemIndex?: number): any;
+    getStreamFromScaledXandSystemIndex(xPxScaled: number, systemIndex?: number): Measure;
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions
      *
@@ -942,7 +923,7 @@ export declare class Score extends Stream {
      *
      * @param {Object} params -- passed to each part
      */
-    playStream(params: any): this;
+    playStream(params?: PlayStreamParams): this;
     /**
      * Overrides the default music21.stream.Stream#stopPlayScore()
      */
@@ -963,7 +944,7 @@ export declare class Score extends Stream {
      * @param  {number} y the scaled Y
      * @return Array<number>   systemIndex, scaledYRelativeToSystem
      */
-    systemIndexAndScaledY(y: any): number[];
+    systemIndexAndScaledY(y: number): number[];
     /**
      * Score object
      *
@@ -973,7 +954,7 @@ export declare class Score extends Stream {
      *
      * returns [diatonicNoteNum, m21Element]
      */
-    findNoteForClick(svg?: HTMLElement | SVGElement, e?: MouseEvent | TouchEvent | JQuery.MouseEventBase, x?: number, y?: number): [number, note.GeneralNote];
+    findNoteForClick(svg?: HTMLElement, e?: MouseEvent | TouchEvent, x?: number, y?: number): [number, note.GeneralNote];
     /**
      * How many systems are there? Calls numSystems() on the first part.
      */
@@ -983,9 +964,6 @@ export declare class Score extends Stream {
      * if setLeft is true then also set the renderOptions.left
      *
      * This does not even out systems.
-     *
-     * @param {Object} options
-     * @param {boolean} [options.setLeft=true]
      */
     evenPartMeasureSpacing({ setLeft }?: {
         setLeft?: boolean;

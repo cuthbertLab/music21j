@@ -280,7 +280,7 @@ export default function tests() {
             "4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4"
         ).flatten();
         // Function does not work, stream.ts 1353
-        //convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
+        // convertedNotes.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);
         const els = convertedNotes.elements as music21.note.Note[];
         assert.equal(els[2].pitch.accidental.name, 'natural', 'Natural');
         //assert.equal(els[2].pitch.accidental.displayStatus, 'True');
@@ -301,10 +301,10 @@ export default function tests() {
         const p = music21.tinyNotation.TinyNotation('4/4 f#4 e4 f#4');
         const m = p.getElementsByClass('Measure').get(0) as music21.stream.Measure;
         m.insert(0, new music21.key.Key('G'));
-        p.recurse().notes.last().pitch.accidental.displayStatus = false;
+        (p.recurse().notes.last() as music21.note.Note).pitch.accidental.displayStatus = false;
         p.makeAccidentals({inPlace: true, overrideStatus: true});
-        assert.equal(p.recurse().notes.first().pitch.accidental.displayStatus, false);
-        assert.equal(p.recurse().notes.last().pitch.accidental.displayStatus, false);
+        assert.equal((p.recurse().notes.first() as music21.note.Note).pitch.accidental.displayStatus, false);
+        assert.equal((p.recurse().notes.last() as music21.note.Note).pitch.accidental.displayStatus, false);
     });
 
     test('music21.pitch.updateAccidentalDisplay respects displayType', assert => {

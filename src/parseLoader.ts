@@ -8,15 +8,14 @@ import * as miditools from './miditools';
 import * as tinyNotation from './tinyNotation';
 
 export function runConfiguration() {
-    let conf;
+    let conf: Record<string, any> = {};
     // noinspection JSUnresolvedVariable
     if (typeof (<any> window).m21conf !== 'undefined') {
         // noinspection JSUnresolvedVariable
-        conf = (<any> window).m21conf;
+        conf = (<any> window).m21conf as Record<string, any>;
     } else {
         conf = loadConfiguration();
     }
-    conf.warnBanner = (conf.warnBanner !== undefined) ? conf.warnBanner : warnBanner();
     conf.loadSoundfont = (
         conf.loadSoundfont !== undefined
             ? conf.loadSoundfont
@@ -76,7 +75,7 @@ export function loadDefaultSoundfont(conf) {
     if (!conf.loadSoundfont || (['no', 'false'].includes(conf.loadSoundfont))) {
         return undefined;
     }
-    let instrument;
+    let instrument: string;
     if (conf.loadSoundfont === true) {
         instrument = 'acoustic_grand_piano';
     } else {
@@ -86,21 +85,20 @@ export function loadDefaultSoundfont(conf) {
 }
 
 /**
- *
- * @returns {{}}
+ * Find the configuration as a JSON-encoded m21conf attribute on the script tag.
  */
-export function loadConfiguration() {
+export function loadConfiguration(): Record<string, any> {
     const rawConf = getM21attribute('m21conf');
     if (!rawConf) {
-        return {};
+        return {} as Record<string, any>;
     }
 
-    let m21conf;
+    let m21conf: Record<string, any>;
     try {
-        m21conf = JSON.parse(rawConf);
+        m21conf = JSON.parse(rawConf) as Record<string, any>;
     } catch (e) {
         console.warn('Unable to JSON parse music21 configuration' + rawConf.toString() + ' into m21conf');
-        m21conf = {};
+        m21conf = {} as Record<string, any>;
     }
     return m21conf;
 }
@@ -110,7 +108,7 @@ export function loadConfiguration() {
  * @param {string} [attribute=m21conf]
  * @returns {undefined|*|string}
  */
-export function getM21attribute(attribute='m21conf') {
+export function getM21attribute(attribute: string = 'm21conf'): string {
     // this is case insensitive.
     const scripts = document.getElementsByTagName('script');
     for (const s of Array.from(scripts)) {
@@ -123,12 +121,4 @@ export function getM21attribute(attribute='m21conf') {
         }
     }
     return undefined;
-}
-
-/**
- *
- * @returns {boolean}
- */
-export function warnBanner() {
-    return getM21attribute('warnBanner') !== 'no';
 }

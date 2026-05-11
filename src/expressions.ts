@@ -1,5 +1,5 @@
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  */
 
@@ -12,7 +12,7 @@ import {
 } from './articulations';
 
 /**
- * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
+ * Expressions can be note-attached (`music21.note.Note.expressions[]`) or floating...
  *
  * @property {string} name
  * @property {string} vexflowModifier
@@ -30,7 +30,10 @@ export class Expression extends base.Music21Object {
      *
      * (this is not right for all cases)
      */
-    vexflow({stemDirection}: VexflowArticulationParams = {}): VFArticulation | VFOrnament {
+    vexflow({stemDirection}: VexflowArticulationParams = {}): VFArticulation | VFOrnament | null {
+        if (!this.vexflowModifier) {
+            return null;
+        }
         const vfe = new VFArticulation(this.vexflowModifier);
         setPlacementOnVexFlowArticulation(vfe, this.placement, stemDirection);
         return vfe;
@@ -56,7 +59,10 @@ export class Ornament extends Expression {
     static get className() { return 'music21.expressions.Ornament'; }
 
     name: string = 'ornament';
-    vexflow({stemDirection}: VexflowArticulationParams = {}): VFOrnament {
+    vexflow({stemDirection}: VexflowArticulationParams = {}): VFOrnament | null {
+        if (!this.vexflowModifier) {
+            return null;
+        }
         const vfe = new VFOrnament(this.vexflowModifier);
         setPlacementOnVexFlowArticulation(vfe, this.placement, stemDirection);
         return vfe;

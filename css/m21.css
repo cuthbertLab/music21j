@@ -17,3 +17,8 @@
 .streamHolding {
     display: inline-block;
 }
+
+.streamHolding > svg {
+    display: block;
+}
+

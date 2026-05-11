@@ -4,8 +4,9 @@ import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
 import * as style from './style';
-import { Stream } from './stream';
-import { TimeSignature } from './meter';
+import type { Stream } from './stream';
+import type { TimeSignature } from './meter';
+import type { ClassFilterType } from './types';
 /**
  * Base class for any object that can be placed in a {@link Stream}.
  *
@@ -39,7 +40,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     isMusic21Object: boolean;
     isStream: boolean;
     protected static _styleClass: typeof style.Style;
-    constructor(keywords?: {});
+    constructor(_keywords?: {});
     /**
      * Override clone on prebase to add a derivation.
      */
@@ -99,7 +100,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
     set duration(newDuration: duration.Duration);
     get quarterLength(): number;
     set quarterLength(ql: number);
-    mergeAttributes(other: any): this;
+    mergeAttributes(other: Music21Object): this;
     /**
      * Return the offset of this element in a given site -- use .offset if you are sure that
      * site === activeSite.
@@ -132,7 +133,7 @@ export declare class Music21Object extends prebase.ProtoM21Object {
      * @returns {number|undefined}
      */
     getOffsetInHierarchy(site: Stream): number | undefined;
-    getContextByClass(className: any, options?: {}): any;
+    getContextByClass(className: ClassFilterType, options?: {}): any;
     contextSites(options?: {}): any;
     _getTimeSignatureForBeat(): TimeSignature;
     get beat(): number;
