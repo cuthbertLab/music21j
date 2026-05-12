@@ -144,7 +144,7 @@ A complete page is in `testHTML/sfElsewhereCDN.html`.
 
 ## Version
 
-0.22.2 (beta)
+0.23.0 (beta)
 
 ## License
 
@@ -365,11 +365,11 @@ $ npx npm-check-updates -u
 $ npm install
 ```
 
-
 ## Changes
 
 Just documenting major changes at different versions, starting with 0.20
 
+* v0.23 -- MIDIPlayer supports multiple instruments, loadSoundfont w/o Callback returns a Promise and takes an array of instruments. TestHTML organized and working. Errors in soundfont URLs fiexed. replaceDOM accepts a querySelector string (like appendNewDOM - and as documented for a long time). Augmented unisons fixed in VF4. chord getStemDirectionFromClef.  Ability to run just one unit test.
 * v0.22 -- Chord, getStemDirectionFromClef. roman minor 67 cautionary and other Roman numeral improvements. typing of scales. run one qunit test ability. Add agent coding skills. typing of voice leading. playwright cache. Standardize barline names (not backwards compatible). Soundfont doubled trailing slash fixed. 
 * v0.21 -- improve cautionary accidentals on Vexflow render; custom MIDI failure msg.
 * v0.20 -- build via vite.  MIDI is no longer exposed as top-level export. Add ES
