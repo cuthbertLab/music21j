@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Instrument demos</title>
+    <link rel="stylesheet" href="../css/m21.css">
+    <!-- To activate Hot Reloading uncomment this and comment out the next -->
+     <script type="module" src="./m21-dev.ts"></script>
+<!--    <script src="../releases/music21.debug.js"></script>-->
+    <style>
+        body { font-family: sans-serif; max-width: 820px; margin: 1em auto; padding: 0 1em; }
+        h1 { font-size: 1.4em; }
+        h2 { font-size: 1.1em; margin-top: 2em; }
+        pre {
+            background: #f4f4f4;
+            border-left: 4px solid #88a;
+            padding: 10px 14px;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+        .render { background: #eed; padding: 10px; border: 1px solid #ddc; }
+        .hint { color: #666; font-size: 0.9em; }
+        fieldset { margin: 10px 0; }
+        label { margin-right: 1em; }
+    </style>
+</head>
+<body>
+
+<h1>Loading instruments in music21j</h1>
+
+<p>
+    Call <code>music21.miditools.loadSoundfont(name, callback)</code> with the
+    instrument name. The callback receives an <code>Instrument</code> object you
+    can assign to a stream&rsquo;s <code>.instrument</code> property. The note
+    will play with that sound when the rendered notation is clicked
+    (or when triggered in another way).
+</p>
+
+<h2>Example: clarinet</h2>
+
+<pre id="clarinet-source"></pre>
+
+<div class="render">
+    <div id="mainSVG" class="streamHolding">
+        <svg width="525" height="120"></svg>
+    </div>
+</div>
+<p class="hint">Click the staff to hear it (audio loads after the soundfont arrives).</p>
+
+<h2>Pick another instrument</h2>
+
+<p>Choose one of the soundfonts below; the same C&sharp;5 whole note will be re-rendered with that sound.</p>
+
+<fieldset>
+    <legend>Instrument</legend>
+    <label><input type="radio" name="instr" value="flute"> Flute</label>
+    <label><input type="radio" name="instr" value="banjo"> Banjo</label>
+    <label><input type="radio" name="instr" value="church_organ"> Church organ</label>
+    <label><input type="radio" name="instr" value="cello"> Cello</label>
+</fieldset>
+
+<div id="pickedContainer" class="render">
+    <div class="streamHolding">
+        <svg width="525" height="120"></svg>
+    </div>
+</div>
+<p id="status" class="hint">No instrument selected yet.</p>
+
+<script>
+    // demo page for loading soundfonts.
+    const clarinetSource = `const s = new music21.stream.Measure();
+s.append(new music21.meter.TimeSignature('4/4'));
+const n = new music21.note.Note("B-4");
+n.duration.type = "whole";
+s.append(n);
+music21.miditools.loadSoundfont('clarinet', cl => {
+    s.instrument = cl;
+    s.replaceDOM('#mainSVG');
+});`;
+
+    function runClarinetDemo() {
+        // Show the code on the page.
+        document.getElementById('clarinet-source').textContent = clarinetSource;
+        // Run the same code shown above.
+        const s = new music21.stream.Measure();
+        s.append(new music21.meter.TimeSignature('4/4'));
+        const n = new music21.note.Note('B-4');
+        n.duration.type = 'whole';
+        s.append(n);
+        music21.miditools.loadSoundfont('clarinet', cl => {
+            s.instrument = cl;
+            s.replaceDOM('#mainSVG');
+        });
+    }
+
+    // AI-assisted: render a single whole note on the chosen instrument.
+    let s2 = undefined;
+
+    function renderWithInstrument(instrumentName) {
+        const status = document.getElementById('status');
+        status.textContent = 'Loading ' + instrumentName + '…';
+        if (s2 === undefined) {
+            s2 = new music21.stream.Measure();
+            s2.append(new music21.meter.TimeSignature('4/4'));
+            const n = new music21.note.Note('C#5');
+            n.duration.type = 'whole';
+            s2.append(n);
+        } // otherwise reuse same score and note object.
+        music21.miditools.loadSoundfont(instrumentName, inst => {
+            s2.instrument = inst;
+            s2.replaceDOM('#pickedContainer');
+            status.textContent = 'Playing on ' + instrumentName.replace(/_/g, ' ')
+                + '. Click the staff to play.';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        runClarinetDemo();
+        for (const radio of document.querySelectorAll('input[name="instr"]')) {
+            radio.addEventListener('change', e => {
+                renderWithInstrument(e.target.value);
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

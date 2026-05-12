@@ -2620,12 +2620,6 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         height: number|string = undefined,
         elementType: string = 'svg'
     ): HTMLDivElement|HTMLCanvasElement {
-        if (!where) {
-            where = defaults.appendLocation;
-        }
-        if (typeof where === 'string') {
-            where = document.querySelector(where) as HTMLElement;
-        }
         const appendElement = common.coerceHTMLElement(where);
         const svgOrCanvasBlock = this.createDOM(width, height, elementType);
         appendElement.appendChild(svgOrCanvasBlock);
@@ -2644,7 +2638,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      * @returns {HTMLDivElement} the svg
      */
     replaceDOM(
-        where?: HTMLElement,
+        where?: HTMLElement|string,
         preserveSvgSize: boolean=false,
         elementType: string='svg'
     ): HTMLElement {

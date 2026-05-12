@@ -27,7 +27,7 @@ support for MIDI devices.
 ## Documentation
 
 This README appears in both the GitHub home page and the documentation
-home page; currently building docs is broken
+home page; currently building docs is broken.
 
 Begin at the {@link music21} namespace (click the link or use the
 menu above), or start with
@@ -35,6 +35,17 @@ a specific one such as {@link music21.note} or {@link music21.stream}
 or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}.
 
 (Ignore “Modules” they’re not useful and duplicate the namespace pages).
+
+## Demo
+
+Demonstrations of music21j are available on Github:
+
+* [Play notes on an on-screen keyboard](https://cuthbertlab.github.io/music21j/testHTML/keyboard.html)
+* [Play w/ MIDI keyboard](https://cuthbertlab.github.io/music21j/testHTML/showKeyboard.html)
+* [Play w/ Music21j in a Sandbox](https://cuthbertlab.github.io/music21j/testHTML/m21jSandbox.html)
+* [MusicXML Parsing](https://cuthbertlab.github.io/music21j/testHTML/musicxmlTest.html)
+* [Instruments setup and switching](https://cuthbertlab.github.io/music21j/testHTML/instruments.html)
+* [Demo loading music21j and soundfonts from elsewhere](https://cuthbertlab.github.io/music21j/testHTML/sfElsewhereCDN.html)
 
 ## Example
 
@@ -184,9 +195,10 @@ To develop, run this npm command:
 ```sh
 $ npm run dev
 ```
-
 and navigate to http://localhost:5173/testHTML to see various tests.
 
+(if sound is not working and stalled on "Loading Instrument" run `npm install` again to
+download soundfonts)
 
 ### Watch / development mode
 
@@ -200,6 +212,19 @@ This starts Vite’s development server with fast rebuilds and live reload.
 (Note that the testHTML files currently reference the hardcoded 
 releases/music21.debug.js file -- they are set up as a playground
 rather than for testing purposes right now; making both possible is a TODO)
+
+## TestHTML in Developing
+
+After running `npm run dev`, try navigating to /testHTML/m21jSandbox-hot-reload.html, such as at:
+http://localhost:5173/testHTML/m21jSandbox-hot-reload.html which will update the output as you
+type, but also reload music21j as you edit it.
+
+For other testHTML files, the paradigm is to use 
+`<script type="module" src="./m21-dev.ts"></script>` while developing (to get hot reload) 
+and then switch to
+`<script src="../releases/music21.debug.js"></script>` when commiting (so that it works on
+`cuthbertLab.github.io/music21j/`)
+
 
 ## Testing
 
@@ -313,6 +338,7 @@ If it looks like there is something to update, run
 $ npx npm-check-updates -u
 $ npm install
 ```
+
 
 ## Changes
 

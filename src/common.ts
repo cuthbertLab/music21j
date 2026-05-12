@@ -4,9 +4,11 @@
  */
 import defaults from './defaults';
 
-export function coerceHTMLElement(el?: JQuery|HTMLElement): HTMLElement {
+export function coerceHTMLElement(el?: JQuery|HTMLElement|string): HTMLElement {
     let htmlElement: HTMLElement;
-    if (el != null && (el as JQuery).jquery !== undefined) {
+    if (typeof el === 'string' && el !== '') {
+        htmlElement = document.querySelector(el);
+    } else if (el != null && (el as JQuery).jquery !== undefined) {
         htmlElement = (el as JQuery)[0];
     } else if (el instanceof HTMLElement) {
         htmlElement = el;
@@ -398,7 +400,14 @@ export const pathSimplify = (path: string): string => {
     const ps = path.split('/');
     const addSlash = (path.slice(path.length - 1, path.length) !== '/');
     const pout = [];
-    for (const el of ps) {
+    for (let i = 0; i < ps.length; i++) {
+        const el = ps[i];
+        // Collapse `//` in the middle of a path (split produces '' segments).
+        // Keep ps[0]='' to preserve a leading '/' for absolute paths,
+        // and ps[last]='' to preserve a trailing '/'.
+        if (el === '' && i !== 0 && i !== ps.length - 1) {
+            continue;
+        }
         if (el === '..') {
             if (pout.length > 0) {
                 if (pout[pout.length - 1] !== '..') {
