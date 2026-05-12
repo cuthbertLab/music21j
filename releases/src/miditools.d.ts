@@ -177,7 +177,6 @@ export declare class MidiPlayer {
      */
     speed: number;
     playDiv: HTMLElement;
-    state: string;
     constructor();
     addPlayer(where: HTMLElement): HTMLElement;
     stopButton(): void;

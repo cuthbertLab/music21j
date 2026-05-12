@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "description": "A toolkit for computer-aided musicology, JavaScript version",
 
   "_main_etc": "these are the legacy urls; exports:. is the modern standard",
@@ -27,7 +27,7 @@
     "array-equal": "^2.0.0",
     "deep-equal": "^2.2.3",
     "jsonpickle": "^1.2.0",
-    "midicube": "^0.9.2",
+    "midicube": "^0.10.1",
     "vexflow": "^4.2.3"
   },
   "_why": {

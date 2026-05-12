@@ -509,7 +509,6 @@ export class MidiPlayer {
      */
     speed: number = 1.0;
     playDiv: HTMLElement;
-    state: string = '';  // up, down, or empty...
 
     constructor() {
         this.player = new MIDI.Player();
@@ -543,7 +542,11 @@ export class MidiPlayer {
         const time = to_el('<div class="timeControls"></div>');
         const timePlayed = to_el('<span class="timePlayed">0:00</span>');
         const capsule = to_el(
-            '<span class="capsule"><span class="cursor"></span></span>'
+            '<span class="capsule">'
+                + '<span class="cursor"></span>'
+                + '<input type="range" class="scrubber" '
+                    + 'min="0" max="1" step="0.001" value="0">'
+                + '</span>'
         );
         const timeRemaining = to_el('<span class="timeRemaining">-0:00</span>');
         time.append(timePlayed);
@@ -656,26 +659,38 @@ export class MidiPlayer {
         const timePlayed = d.querySelector('.timePlayed');
         const timeRemaining = d.querySelector('.timeRemaining');
         const timeCursor = d.querySelector('.cursor') as HTMLElement;
-        const capsule = d.querySelector('.capsule');
-        //
-        capsule.addEventListener('dragstart', event => {
-            const e = <DragEvent> event;
-            player.currentTime = (
-                e.pageX - (capsule.getBoundingClientRect().left + window.scrollX))
-                / 420 * player.endTime;
-            if (player.currentTime < 0) {
-                player.currentTime = 0;
-            }
-            if (player.currentTime > player.endTime) {
-                player.currentTime = player.endTime;
-            }
-            if (this.state === 'down') {
+        const scrubber = d.querySelector('.scrubber') as HTMLInputElement;
+
+        // AI-assisted: pointer/keyboard scrub via an invisible range input
+        // overlaying the capsule, replacing a dead HTML5 `dragstart` handler
+        // that never fired on a non-draggable <span>.
+        let scrubbing = false;
+        let resumeAfterScrub = false;
+        scrubber.addEventListener('pointerdown', () => {
+            scrubbing = true;
+            resumeAfterScrub = player.playing;
+            if (player.playing) {
                 this.pausePlayStop('pause');
-            } else if (this.state === 'up') {
-                this.pausePlayStop('play');
             }
         });
-        //
+        scrubber.addEventListener('input', () => {
+            const ratio = parseFloat(scrubber.value);
+            player.currentTime = ratio * player.endTime;
+            timeCursor.style.width = ratio * 100 + '%';
+        });
+        const endScrub = () => {
+            if (!scrubbing) {
+                return;
+            }
+            scrubbing = false;
+            if (resumeAfterScrub) {
+                resumeAfterScrub = false;
+                this.pausePlayStop();
+            }
+        };
+        scrubber.addEventListener('pointerup', endScrub);
+        scrubber.addEventListener('pointercancel', endScrub);
+
         const timeFormatting = (n: number): string => {
             const minutes = Math.floor(n / 60);
             let seconds = String(Math.floor(n - minutes * 60));
@@ -694,7 +709,10 @@ export class MidiPlayer {
                 this.songFinished();
             }
             // display the information to the user
-            timeCursor.style.width = percent * 100 + '%';
+            if (!scrubbing) {
+                timeCursor.style.width = percent * 100 + '%';
+                scrubber.value = String(percent);
+            }
             timePlayed.innerHTML = timeFormatting(now);
             timeRemaining.innerHTML = '-' + timeFormatting(end - now);
         });

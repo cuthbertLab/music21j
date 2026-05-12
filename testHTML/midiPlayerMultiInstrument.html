@@ -144,7 +144,7 @@
             [55, 59, 62],  // G major
         ];
         pianoChords.forEach((chord, i) => {
-            const start = i * ppq * 4;
+            const start = i * ppq * 4 + ppq;
             const stop = start + ppq * 4;
             for (const n of chord) {
                 events.push(noteOnEvent(start, 0, n, 60));
@@ -153,14 +153,15 @@
         });
 
         // Channel 1 (clarinet): eighth-note melody over the same span.
-        const melody = [72, 74, 76, 77, 79, 77, 76, 74,
+        const melody = [72, 74, 76, 77, 79, 77, 76, 0,
                         72, 74, 76, 77, 79, 81, 79, 77,
-                        74, 76, 77, 79, 81, 79, 77, 76,
+                        74, 76, 77, 79, 81, 79, 0, 76,
                         76, 74, 72, 74, 76, 74, 72, 71];
         melody.forEach((n, i) => {
+            if (!n) { return }
             const start = i * (ppq / 2);
             events.push(noteOnEvent(start, 1, n, 85));
-            events.push(noteOffEvent(start + (ppq / 2) - 4, 1, n));
+            events.push(noteOffEvent(start + (ppq / 4), 1, n));
         });
 
         // Channel 2 (cello): half-note bass walking the chord roots.
