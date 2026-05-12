@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi.
  *
- * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
+ * Copyright (c) 2014-26, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-26, Michael Scott Asato Cuthbert
  *
  * @author Michael Scott Asato Cuthbert
  *
@@ -296,40 +296,43 @@ export const sendToMIDIjs = (midiEvent: Event): void => {
 
 /* ------------ midicube interface ----------- */
 
-/**
- * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
- * rather than overriding this important method.
- *
- * soundfont -- The name of the soundfont that was just loaded
- * callback -- A function to be called after the soundfont is loaded.
- */
-export function postLoadCallback(
-    soundfont: string,
-    callback?: (instrumentObj?: instrument.Instrument) => any
-): void {
-    // this should be bound to MIDI
-    if (debug) {
-        console.log('soundfont loaded about to execute callback.');
-        console.log(
-            'first playing two notes very softly -- seems to flush the buffer.'
-        );
-    }
-    document.querySelector('.loadingSoundfont')?.remove();
+// Callback shape accepted by loadSoundfont. The single-instrument form
+// receives one (possibly undefined) Instrument; the array form receives
+// the resolved Instrument[] in request order. AI-assisted.
+type SoundfontCallback =
+    | ((instrumentObj?: instrument.Instrument) => any)
+    | ((instrumentObjs: instrument.Instrument[]) => any);
 
+// Display the shared "Loading Instrument" message and return the
+// element.
+function showLoadingSoundfontMessage(): HTMLElement {
+    document.querySelector('.loadingSoundfont')?.remove();
+    const msg = to_el(
+        '<div class="loadingSoundfont"><b>Loading Instrument</b>: '
+        + 'audio will begin when this message disappears.</div>',
+    );
+    document.querySelector(defaults.appendLocation).append(msg);
+    return msg;
+}
+
+// Per-instrument bookkeeping that runs once a soundfont's buffer is in
+// memory: assign it a channel via instrument.find(), set the channel's
+// program, and play a few brief flush notes to work around Safari/Chrome
+// clipping the first note. Marks the soundfont as loaded. AI-assisted.
+function finalizeSoundfontLoad(
+    soundfont: string,
+): instrument.Instrument | undefined {
     const isAudioTag = MIDI.config.api === 'audiotag';
     const instrumentObj = instrument.find(soundfont);
     if (instrumentObj !== undefined) {
-        MIDI.programChange(
-            instrumentObj.midiChannel,
-            instrumentObj.midiProgram
-        );
+        MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
         if (debug) {
             console.log(
                 soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ',
-                instrumentObj.midiChannel
+                instrumentObj.midiChannel,
             );
         }
-        if (isAudioTag === false) {
+        if (!isAudioTag) {
             // Firefox ignores sound volume! so don't play!
             // as does IE and others using HTML audio tag.
             // these old browsers don't have auto prevention anyhow.
@@ -342,93 +345,156 @@ export function postLoadCallback(
             MIDI.noteOff(channel, 60, 1, 0.4);
         }
     }
-    if (callback !== undefined) {
-        callback(instrumentObj);
-    }
     loadedSoundfonts[soundfont] = true;
+    return instrumentObj;
+}
+
+// Resolves the result for the just-completed batch and fires `callback`
+// with the instrument(s).
+function deliverInstruments(
+    requested: string[],
+    wantsArray: boolean,
+    callback: SoundfontCallback,
+): void {
+    const found = <instrument.Instrument[]> requested.map(sf => instrument.find(sf));
+    if (wantsArray) {
+        (callback as (i: instrument.Instrument[]) => any)(found);
+    } else {
+        (callback as (i?: instrument.Instrument) => any)(found[0]);
+    }
 }
 
 /**
- * method to load soundfonts while waiting for other processes that need them
- * to load first.
+ * Load one or more soundfonts.
  *
- * @param {string} soundfont The name of the soundfont that was just loaded
- * @param {function} [callback] A function to be called after the soundfont is loaded.
+ * Single-instrument form (legacy):
+ *   loadSoundfont('clarinet', cl => { ... });
+ *
+ * Multi-instrument form: pass an array; the callback receives an array
+ * (in the same order) once every soundfont is loaded:
+ *   loadSoundfont(['clarinet', 'cello'], ([cl, vc]) => { ... });
+ *
+ * Promise form (no callback): returns a Promise that resolves with the
+ * same shape as the callback would have received:
+ *   const cl = await loadSoundfont('clarinet');
+ *   const [cl, vc] = await loadSoundfont(['clarinet', 'cello']);
+ *
+ * Soundfonts already loaded resolve immediately; soundfonts mid-load (from
+ * a parallel call) are awaited; only previously-unseen soundfonts trigger
+ * a network fetch via a single batched MIDI.loadPlugin() call.
+ *
  * @example
  * s = new music21.stream.Stream();
- * music21.miditools.loadSoundfont(
- *     'clarinet',
- *     function(i) {
- *         console.log('instrument object', i, 'loaded');
- *         s.instrument = i;
+ * music21.miditools.loadSoundfont('clarinet').then(i => {
+ *     console.log('instrument object', i, 'loaded');
+ *     s.instrument = i;
  * });
  */
+/* eslint-disable no-redeclare */
 export function loadSoundfont(
     soundfont: string,
-    callback?: (instrumentObj?: instrument.Instrument) => any,
-) {
-    if (loadedSoundfonts[soundfont] === true) {
-        // this soundfont has already been loaded once, so just call the callback.
-        if (callback !== undefined) {
-            const instrumentObj = instrument.find(soundfont);
-            callback(instrumentObj);
-        }
-    } else if (loadedSoundfonts[soundfont] === 'loading') {
-        // we are still waiting for this instrument to load, so
-        // wait for it before calling callback.
-        const waitThenCall = () => {
-            if (loadedSoundfonts[soundfont] === true) {
-                if (debug) {
-                    console.log(
-                        'other process has finished loading; calling callback'
-                    );
-                }
-                if (callback !== undefined) {
-                    const instrumentObj = instrument.find(soundfont);
-                    callback(instrumentObj);
-                }
-            } else {
-                if (debug) {
-                    console.log('waiting for other process load');
-                }
-                setTimeout(waitThenCall, 100);
-            }
-        };
-        waitThenCall();
-    } else {
-        // soundfont we have not seen before:
-        // set its status to loading and then load it.
-        loadedSoundfonts[soundfont] = 'loading';
-        if (debug) {
-            console.log('waiting for document ready');
-        }
-        const sf_loader_on_ready = () => {
-            if (debug) {
-                console.log('Document ready, waiting to load soundfont');
-            }
-            document.querySelector(defaults.appendLocation).append(
-                to_el(
-                    "<div class='loadingSoundfont'><b>Loading Instrument</b>: "
-                        + 'audio will begin when this message disappears.</div>'
-                )
-            );
-            MIDI.loadPlugin({
-                soundfontUrl: common.urls.soundfontUrl,
-                instrument: soundfont,
-                onsuccess: postLoadCallback.bind(
-                    MIDI,
-                    soundfont,
-                    callback
-                ),
-            });
-        };
+): Promise<instrument.Instrument | undefined>;
+export function loadSoundfont(
+    soundfont: string[],
+): Promise<instrument.Instrument[]>;
+export function loadSoundfont(
+    soundfont: string,
+    callback: (instrumentObj?: instrument.Instrument) => any,
+): void;
+export function loadSoundfont(
+    soundfont: string | string[],
+    callback?: SoundfontCallback,
+): void | Promise<instrument.Instrument | instrument.Instrument[] | undefined> {
+/* eslint-enable no-redeclare */
 
-        if (document.readyState !== 'loading') {
-            sf_loader_on_ready();
-        } else {
-            document.addEventListener('DOMContentLoaded', sf_loader_on_ready);
+    if (callback === undefined) {
+        // return a promise early which will run loadSoundfont passing the resolve as the callback
+        return new Promise(resolve => {
+            loadSoundfont(soundfont as any, (result: any) => resolve(result));
+        });
+    }
+
+    const wantsArray = Array.isArray(soundfont);
+    const requested = wantsArray ? (soundfont as string[]) : [soundfont as string];
+
+    const needFetching: string[] = [];
+    for (const sf of requested) {
+        if (loadedSoundfonts[sf] !== true && loadedSoundfonts[sf] !== 'loading') {
+            needFetching.push(sf);
+            loadedSoundfonts[sf] = 'loading';
         }
     }
+
+    // Once every requested soundfont reads as `true` in loadedSoundfonts registry, hand
+    // the resolved instruments to the caller. Polls in-flight ones started
+    // by parallel callers; we only fetch entries we marked ourselves.
+    const waitThenDeliver = () => {
+        const allReady = requested.every(sf => loadedSoundfonts[sf] === true);
+        if (allReady) {
+            deliverInstruments(requested, wantsArray, callback);
+        } else {
+            setTimeout(waitThenDeliver, 100);
+        }
+    };
+
+    if (needFetching.length === 0) {
+        waitThenDeliver();
+        return undefined;
+    }
+
+    const startLoad = () => {
+        const loadingMsg = showLoadingSoundfontMessage();
+        MIDI.loadPlugin({
+            soundfontUrl: common.urls.soundfontUrl,
+            instruments: needFetching,
+            onsuccess: () => {
+                for (const sf of needFetching) {
+                    finalizeSoundfontLoad(sf);
+                }
+                loadingMsg.remove();
+                waitThenDeliver();
+            },
+        });
+    };
+
+    if (document.readyState !== 'loading') {
+        startLoad();
+    } else {
+        document.addEventListener('DOMContentLoaded', startLoad);
+    }
+    return undefined;
+}
+
+/**
+ * For a midicube Player whose `data` has been populated by `loadMidiFile`,
+ * return a Map of channelId -> the first `programNumber` set on that channel
+ * via a programChange event. Channels that never issue a programChange are
+ * omitted (the file relies on their default program).
+ *
+ * Used to seed the channel state before playback begins, so notes at t=0 on
+ * a channel with a leading programChange use the right soundfont buffer.
+ * AI-assisted.
+ */
+export function initialProgramsByChannel(
+    player: MIDI.Player,
+): Map<number, number> {
+    const programs = new Map<number, number>();
+    if (!player?.data) {
+        return programs;
+    }
+    for (const datum of player.data) {
+        const event = datum[0].event;
+        if (event.type !== 'channel') {
+            continue;
+        }
+        if (event.subtype !== 'programChange') {
+            continue;
+        }
+        if (!programs.has(event.channel)) {
+            programs.set(event.channel, event.programNumber);
+        }
+    }
+    return programs;
 }
 
 /**
@@ -525,25 +591,46 @@ export class MidiPlayer {
         }
     }
 
-    base64Load(b64data): void {
+    async base64Load(b64data: string): Promise<void> {
         const player = this.player;
         player.timeWarp = this.speed;
 
-        const m21MidiPlayer = this;
-        loadSoundfont('acoustic_grand_piano', () => {
-            player.loadFile(
-                b64data,
-                () => {
-                    // success
-                    m21MidiPlayer.fileLoaded();
-                },
-                undefined, // loading
-                e => {
-                    // failure
-                    console.log(e);
+        // loadFile() starts with player.stop(), which dereferences the
+        // WebAudio context. Bootstrap a default soundfont once to establish
+        // the plugin connection before the first loadFile call. Subsequent
+        // calls short-circuit because the soundfont is already in registry.
+        if (!MIDI.config.is_connected) {
+            await loadSoundfont('acoustic_grand_piano');
+        }
+
+        // midicube's loadMidiFile() parses the file and then calls
+        // this.loadPlugin() with a single default instrument. Override that
+        // hook so every soundfont the file actually uses gets loaded; at
+        // this point player.data is populated, so getFileInstruments() can
+        // prescan it for programChange events.
+        player.loadPlugin = async (opts: any) => {
+            await loadSoundfont(player.getFileInstruments());
+            if (opts.onsuccess) {
+                opts.onsuccess();
+            }
+        };
+
+        player.loadFile(
+            b64data,
+            () => {
+                // Seed initial program for each channel that issues a
+                // programChange, so noteOns at t=0 use the right buffer.
+                for (const [channelId, program]
+                    of initialProgramsByChannel(player)) {
+                    MIDI.programChange(channelId, program);
                 }
-            );
-        });
+                this.fileLoaded();
+            },
+            undefined, // loading
+            e => {
+                console.log(e);
+            },
+        );
     }
 
     songFinished() {

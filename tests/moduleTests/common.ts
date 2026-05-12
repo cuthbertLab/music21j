@@ -52,5 +52,24 @@ export default function tests() {
         assert.equal(common.pathSimplify(url), url);
         const urlWithoutTrailingSlash = url.substring(0, url.length - 1);
         assert.equal(common.pathSimplify(urlWithoutTrailingSlash), url);
+
+        // Internal `//` should collapse to a single `/`.
+        // Regression: m21basePath '../' joined with '/soundfonts/...' yielded
+        // '..//soundfonts/...', which then resolved to URLs like
+        // 'http://localhost:5173//soundfonts/...'.
+        assert.equal(
+            common.pathSimplify('..//soundfonts/midi-js-soundfonts-master/FluidR3_GM/'),
+            '../soundfonts/midi-js-soundfonts-master/FluidR3_GM/'
+        );
+        assert.equal(common.pathSimplify('/foo//bar/'), '/foo/bar/');
+        assert.equal(common.pathSimplify('foo///bar'), 'foo/bar/');
+
+        // Protocol-prefixed URLs keep their `://` and collapse only the body.
+        assert.equal(
+            common.pathSimplify('https://example.com//a//b/'),
+            'https://example.com/a/b/'
+        );
+        // Protocol-relative (CDN) prefix is preserved.
+        assert.equal(common.pathSimplify('//cdn.example.com//a/'), '//cdn.example.com/a/');
     });
 }

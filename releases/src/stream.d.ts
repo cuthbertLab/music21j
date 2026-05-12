@@ -665,7 +665,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * @param {string} elementType - what type of element, default = svg
      * @returns {HTMLDivElement} the svg
      */
-    replaceDOM(where?: HTMLElement, preserveSvgSize?: boolean, elementType?: string): HTMLElement;
+    replaceDOM(where?: HTMLElement | string, preserveSvgSize?: boolean, elementType?: string): HTMLElement;
     /**
      * Set the type of interaction on the svg based on
      *    - Stream.renderOptions.events.click
@@ -758,8 +758,9 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
     /**
      * Returns an accidental toolbar from minAccidental to maxAccidental.
      *
-     * If siblingSvg is defined then this toolbar alters the notes in that
-     * toolbar.
+     * If siblingSvg is defined then this toolbar alters the notes of the stream
+     * rendered to that .streamHolding element -- recommend no longer using that,
+     * since redraws can change SVGs.
      */
     getAccidentalToolbar(minAccidental?: number, maxAccidental?: number, siblingSvg?: HTMLDivElement | HTMLCanvasElement): HTMLDivElement;
     /**

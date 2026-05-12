@@ -3,6 +3,7 @@
 <title>MIDI In Chords for Music21j</title>
 	<meta charset="utf-8">
     <link rel="stylesheet" href="../css/m21.css">
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
 	<div>
@@ -10,14 +11,13 @@
 		<div id="putMidiSelectHere"></div>
 	</div>
 	<h2>Chord and Duration rendering and Metronome Demo.</h2>
-	<div id='keyboardDiv'></div>
+	<div id="keyboardDiv"></div>
 	<div>
 		<i>Requires MIDI keyboard and WebMIDI(Chrome) or Jazz Plugin to work.</i>
 	</div>
 	<div id="svgDiv">
 	</div>
 	<div id="metronomeDiv"></div>
-	<script src="../releases/music21.debug.js"></script>
 	<script>
     let s; // will become Stream object soon...
     let metro; // will become Metronome object soon...

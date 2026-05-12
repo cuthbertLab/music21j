@@ -1,6 +1,7 @@
 import * as QUnit from 'qunit';
 
 import articulations from './moduleTests/articulations';
+import audioSearch from './moduleTests/audioSearch';
 import bar from './moduleTests/bar';
 import base from './moduleTests/base';
 import beam from './moduleTests/beam';
@@ -16,6 +17,7 @@ import iterator from './moduleTests/stream/iterator';
 import key from './moduleTests/key';
 import metadata  from './moduleTests/metadata';
 import meter from './moduleTests/meter';
+import miditools from './moduleTests/miditools';
 import note from './moduleTests/note';
 import pitch from './moduleTests/pitch';
 import prebase from './moduleTests/prebase';
@@ -33,6 +35,7 @@ import * as music21 from '../src/main';
 
 const allTests = {
     articulations,
+    audioSearch,
     bar,
     base,
     beam,
@@ -48,6 +51,7 @@ const allTests = {
     key,
     metadata,
     meter,
+    miditools,
     note,
     pitch,
     prebase,

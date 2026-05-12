@@ -12,10 +12,10 @@
 <script>
 const music21 = window.music21;
 function getColorDOM(s, width, height) {
-    const d = music21.common.to_el('<div style="text-align: left; position: relative"></div>');
+    const d = music21.common.to_el('<div style="text-align: left; position: relative;"></div>');
     const buttonDiv = getColorToolbar(s);
     d.appendChild(buttonDiv);
-    d.appendChild(music21.common.to_el("<br style='clear:both'>"));
+    d.appendChild(music21.common.to_el(`<br style="clear: both;">`));
     s.renderOptions.events.click = e => {
         const SVGElement = e.currentTarget;
         const [clickedDiatonicNoteNum, foundNote] = s.findNoteForClick(
@@ -71,7 +71,7 @@ function getColorToolbar(s, siblingDOM) {
     for (let i = 0; i < info.length; i++) {
         const [thisColor, textColor, thisFunction] = info[i];
         const b = music21.common.to_el(
-            `<button style='background-color: ${thisColor}; color: ${textColor}'>${thisFunction}</button>`
+            `<button style="background-color: ${thisColor}; color: ${textColor};">${thisFunction}</button>`
         );
         b.addEventListener('click', e => addColor(thisColor, e));
         buttonDiv.appendChild(b);
@@ -80,10 +80,7 @@ function getColorToolbar(s, siblingDOM) {
 }
 
 function main() {
-    s = undefined;
-
     const k = new music21.key.Key('D');
-
     s = new music21.stream.Measure();
     s.keySignature = k;
     s.timeSignature = new music21.meter.TimeSignature('4/4');

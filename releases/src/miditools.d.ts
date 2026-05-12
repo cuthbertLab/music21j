@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi.
  *
- * Copyright (c) 2014-19, Michael Scott Asato Cuthbert
- * Based on music21 (=music21p), Copyright (c) 2006-24, Michael Scott Asato Cuthbert
+ * Copyright (c) 2014-26, Michael Scott Asato Cuthbert
+ * Based on music21 (=music21p), Copyright (c) 2006-26, Michael Scott Asato Cuthbert
  *
  * @author Michael Scott Asato Cuthbert
  *
@@ -127,29 +127,45 @@ export declare function quantizeLastNote(lastElement?: note.GeneralNote): note.G
  */
 export declare const sendToMIDIjs: (midiEvent: Event) => void;
 /**
- * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
- * rather than overriding this important method.
+ * Load one or more soundfonts.
  *
- * soundfont -- The name of the soundfont that was just loaded
- * callback -- A function to be called after the soundfont is loaded.
- */
-export declare function postLoadCallback(soundfont: string, callback?: (instrumentObj?: instrument.Instrument) => any): void;
-/**
- * method to load soundfonts while waiting for other processes that need them
- * to load first.
+ * Single-instrument form (legacy):
+ *   loadSoundfont('clarinet', cl => { ... });
  *
- * @param {string} soundfont The name of the soundfont that was just loaded
- * @param {function} [callback] A function to be called after the soundfont is loaded.
+ * Multi-instrument form: pass an array; the callback receives an array
+ * (in the same order) once every soundfont is loaded:
+ *   loadSoundfont(['clarinet', 'cello'], ([cl, vc]) => { ... });
+ *
+ * Promise form (no callback): returns a Promise that resolves with the
+ * same shape as the callback would have received:
+ *   const cl = await loadSoundfont('clarinet');
+ *   const [cl, vc] = await loadSoundfont(['clarinet', 'cello']);
+ *
+ * Soundfonts already loaded resolve immediately; soundfonts mid-load (from
+ * a parallel call) are awaited; only previously-unseen soundfonts trigger
+ * a network fetch via a single batched MIDI.loadPlugin() call.
+ *
  * @example
  * s = new music21.stream.Stream();
- * music21.miditools.loadSoundfont(
- *     'clarinet',
- *     function(i) {
- *         console.log('instrument object', i, 'loaded');
- *         s.instrument = i;
+ * music21.miditools.loadSoundfont('clarinet').then(i => {
+ *     console.log('instrument object', i, 'loaded');
+ *     s.instrument = i;
  * });
  */
-export declare function loadSoundfont(soundfont: string, callback?: (instrumentObj?: instrument.Instrument) => any): void;
+export declare function loadSoundfont(soundfont: string): Promise<instrument.Instrument | undefined>;
+export declare function loadSoundfont(soundfont: string[]): Promise<instrument.Instrument[]>;
+export declare function loadSoundfont(soundfont: string, callback: (instrumentObj?: instrument.Instrument) => any): void;
+/**
+ * For a midicube Player whose `data` has been populated by `loadMidiFile`,
+ * return a Map of channelId -> the first `programNumber` set on that channel
+ * via a programChange event. Channels that never issue a programChange are
+ * omitted (the file relies on their default program).
+ *
+ * Used to seed the channel state before playback begins, so notes at t=0 on
+ * a channel with a leading programChange use the right soundfont buffer.
+ * AI-assisted.
+ */
+export declare function initialProgramsByChannel(player: MIDI.Player): Map<number, number>;
 /**
  * MidiPlayer -- an embedded midi player including the ability to create a
  * playback device.
@@ -169,7 +185,7 @@ export declare class MidiPlayer {
     pausePng(): string;
     stopPng(): string;
     pausePlayStop(stop?: string): void;
-    base64Load(b64data: any): void;
+    base64Load(b64data: string): Promise<void>;
     songFinished(): void;
     fileLoaded(): void;
     startAndUpdate(): void;

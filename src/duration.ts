@@ -242,7 +242,7 @@ export class Duration extends prebase.ProtoM21Object {
         // console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
         for (let dotsNum = 0; dotsNum <= 4; dotsNum++) {
             const dotMultiplier
-                = ((2 ** dotsNum) - 1.0) / 2 ** dotsNum;
+                = ((2 ** dotsNum) - 1.0) / (2 ** dotsNum);
             const durationMultiplier = 1 + dotMultiplier;
             if (Math.abs(powerOfTwo * durationMultiplier - ql) < 0.0001) {
                 return dotsNum;
@@ -290,7 +290,7 @@ export class Duration extends prebase.ProtoM21Object {
             2 ** (quarterTypeIndex - typeNumber)
         );
         const dottedMultiplier
-            = 1 + (2 **  this._dots - 1) / 2 ** this._dots;
+            = 1 + ((2 ** this._dots) - 1.0) / (2 ** this._dots);
         let unTupletedQl = undottedQuarterLength * dottedMultiplier;
         if (unTupletedQl !== ql && ql !== 0) {
             typeNumber -= 1;

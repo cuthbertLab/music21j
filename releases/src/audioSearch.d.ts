@@ -11,6 +11,7 @@ declare class _ConfigSingletonCreator {
     lastPitchClassesDetected: number[];
     lastPitchesDetected: number[];
     lastCentsDeviationsDetected: number[];
+    sampleCallback: (frequency: number) => void;
     constructor();
     get audioContext(): AudioContext;
     set audioContext(ac: AudioContext);
@@ -28,7 +29,6 @@ export declare function getUserMedia(dictionary: any, callback: any, error: any)
 export declare function userMediaStarted(audioStream: any): void;
 export declare const animateLoop: () => void;
 export declare function smoothPitchExtraction(frequency: number): [number, number];
-export declare function sampleCallback(frequency: number): number;
 export declare function autoCorrelate(buf: any, sampleRate: number, minFrequency?: number, maxFrequency?: number): number;
 export declare function midiNumDiffFromFrequency(frequency: number): [number, number];
 export {};

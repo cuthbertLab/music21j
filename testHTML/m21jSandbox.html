@@ -32,7 +32,7 @@
 
 <body>
 <div class="header">
-    <button id="resetButton" role="button" style="float: right">Reset</button>
+    <button id="resetButton" role="button" style="float: right;">Reset</button>
     <h1>Music21j Sandbox</h1>
     <div class="main">
         <label for="sandbox">
@@ -50,7 +50,7 @@
             <textarea id="sandbox" class="editor">
             </textarea>
             <p></p>
-            <div class='streamHolding' id='mainSVG'>
+            <div class="streamHolding" id="mainSVG">
                 <svg width="525" height="220"></svg>
             </div>
             <p></p>
@@ -76,8 +76,6 @@ s.append(n3);
 s.renderOptions.marginBottom = 80;
 s.replaceDOM('#mainSVG');
     `;
-
-    const mainSVG = document.querySelector("#mainSVG");
     const msg = document.querySelector('div.editor-error .text');
     const sandbox = document.querySelector("#sandbox");
     const localStorageKey = 'm21j_sandbox_code';

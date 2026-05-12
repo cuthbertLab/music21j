@@ -477,7 +477,7 @@ export class Pitch extends prebase.ProtoM21Object {
      * @readonly
      */
     get frequency() {
-        return 440 * (2 ** (this.ps - 69) / 12);
+        return 440 * (2 ** ((this.ps - 69) / 12));
     }
 
     /**

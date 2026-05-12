@@ -2620,12 +2620,6 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         height: number|string = undefined,
         elementType: string = 'svg'
     ): HTMLDivElement|HTMLCanvasElement {
-        if (!where) {
-            where = defaults.appendLocation;
-        }
-        if (typeof where === 'string') {
-            where = document.querySelector(where) as HTMLElement;
-        }
         const appendElement = common.coerceHTMLElement(where);
         const svgOrCanvasBlock = this.createDOM(width, height, elementType);
         appendElement.appendChild(svgOrCanvasBlock);
@@ -2644,7 +2638,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
      * @returns {HTMLDivElement} the svg
      */
     replaceDOM(
-        where?: HTMLElement,
+        where?: HTMLElement|string,
         preserveSvgSize: boolean=false,
         elementType: string='svg'
     ): HTMLElement {
@@ -3007,19 +3001,22 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         /*
          * Create an editable svg with an accidental selection bar.
          */
-        const d = to_el('<div style="text-align: left; position: relative"></div>') as HTMLDivElement;
+        const d = to_el('<div style="text-align: left; position: relative;"></div>') as HTMLDivElement;
         this.renderOptions.events.click = this.DOMChangerFunction;
         if (this.changedCallbackFunction === undefined) {
             this.changedCallbackFunction = this.DOMChangerFunction;
         }
         const svgDiv = this.createDOM(width, height);
+        // No siblingSvg: redrawDOM elsewhere (e.g. noteChanged after a note
+        // click) detaches the original svgDiv, so a captured reference would
+        // go stale. Letting the toolbar's fallback walk up from the button
+        // each click finds whichever `.streamHolding` is currently in the DOM.
         const buttonDiv: HTMLDivElement = this.getAccidentalToolbar(
             minAccidental,
             maxAccidental,
-            svgDiv
         );
         d.appendChild(buttonDiv);
-        d.appendChild(to_el("<br style='clear: both;'>"));
+        d.appendChild(to_el('<br style="clear: both;">'));
         d.appendChild(svgDiv);
         return d;
     }
@@ -3031,8 +3028,9 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     /**
      * Returns an accidental toolbar from minAccidental to maxAccidental.
      *
-     * If siblingSvg is defined then this toolbar alters the notes in that
-     * toolbar.
+     * If siblingSvg is defined then this toolbar alters the notes of the stream
+     * rendered to that .streamHolding element -- recommend no longer using that,
+     * since redraws can change SVGs.
      */
     getAccidentalToolbar(
         minAccidental: number = -1,
