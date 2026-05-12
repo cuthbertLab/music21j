@@ -31,6 +31,8 @@
     width: 420px;
     display: inline-block;
     height: 30px;
+    position: relative;
+    vertical-align: middle;
 }
 
 .midiPlayer .capsule .cursor {
@@ -44,13 +46,22 @@
     height: 100%;
 }
 
+.midiPlayer .capsule .scrubber {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
 .midiPlayer .timePlayed,
 .midiPlayer .timeRemaining {
-    position: relative;
-    top: -9px;
     padding: 0 10px;
     width: 40px;
-    display: inline-block;
     text-align: right;
 }
 
@@ -60,10 +71,11 @@
 
 .midiPlayer .timeControls {
     width: 560px;
+    height: 100%;
     margin: 0;
     float: left;
-    position: relative;
-    top: 5px;
+    display: flex;
+    align-items: center;
 }
 
 .midiPlayer .positionControls {
