@@ -43654,7 +43654,7 @@ const oh = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   populateSelect: tn,
   selectionChanged: fo,
   webmidi: nt
-}, Symbol.toStringTag, { value: "Module" })), lh = "0.22.2";
+}, Symbol.toStringTag, { value: "Module" })), lh = "0.23.0";
 no();
 export {
   F6 as MIDI,
