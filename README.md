@@ -365,6 +365,13 @@ $ npx npm-check-updates -u
 $ npm install
 ```
 
+## Github Pages
+
+Github Pages has a live version of the site, built on the releases/ folder (hence
+why testHTML references releases).  Every once in a while update it so it points to
+the main/master/HEAD page.  NOTE: it also has a copy of the soundfonts there (removed
+from .gitignore) which allows it to serve from its own sound files.
+
 ## Changes
 
 Just documenting major changes at different versions, starting with 0.20
