@@ -191,7 +191,7 @@
 	               let a = p.accidental;
 	               let name = p.step;
 	               if (a !== undefined && a.alter !== 0) {
-	                   name += "<span style='font-size: 70%; position: relative; left: -10px; margin-right: -20px'>" + a.unicodeModifier + "</span>";
+	                   name += `<span style="font-size: 70%; position: relative; left: -10px; margin-right: -20px;">${a.unicodeModifier}</span>`;
 	               }
 	               name += p.octave.toString();
 	               nnn.pitch = p

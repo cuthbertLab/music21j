@@ -17,7 +17,7 @@
             const d = s.editableAccidentalDOM();
             const editable = document.querySelector("#editable");
             editable.appendChild(d);
-            editable.appendChild(music21.common.to_el("<br style='clear: both'>"));
+            editable.appendChild(music21.common.to_el(`<br style="clear: both;">`));
 
             const s2 = music21.tinyNotation.TinyNotation("2/2 a2 b4 c'4");
             s2.clef = new music21.clef.Clef('treble');

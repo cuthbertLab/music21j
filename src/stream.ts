@@ -3001,7 +3001,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         /*
          * Create an editable svg with an accidental selection bar.
          */
-        const d = to_el('<div style="text-align: left; position: relative"></div>') as HTMLDivElement;
+        const d = to_el('<div style="text-align: left; position: relative;"></div>') as HTMLDivElement;
         this.renderOptions.events.click = this.DOMChangerFunction;
         if (this.changedCallbackFunction === undefined) {
             this.changedCallbackFunction = this.DOMChangerFunction;
@@ -3016,7 +3016,7 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             maxAccidental,
         );
         d.appendChild(buttonDiv);
-        d.appendChild(to_el("<br style='clear: both;'>"));
+        d.appendChild(to_el('<br style="clear: both;">'));
         d.appendChild(svgDiv);
         return d;
     }

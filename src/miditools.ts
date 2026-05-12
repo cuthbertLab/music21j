@@ -408,8 +408,8 @@ export function loadSoundfont(
             }
             document.querySelector(defaults.appendLocation).append(
                 to_el(
-                    "<div class='loadingSoundfont'><b>Loading Instrument</b>: "
-                        + 'audio will begin when this message disappears.</div>'
+                    `<div class="loadingSoundfont"><b>Loading Instrument</b>: 
+                         audio will begin when this message disappears.</div>`
                 )
             );
             MIDI.loadPlugin({
