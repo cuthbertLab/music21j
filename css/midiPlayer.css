@@ -60,11 +60,8 @@
 
 .midiPlayer .timePlayed,
 .midiPlayer .timeRemaining {
-    position: relative;
-    top: -9px;
     padding: 0 10px;
     width: 40px;
-    display: inline-block;
     text-align: right;
 }
 
@@ -74,10 +71,11 @@
 
 .midiPlayer .timeControls {
     width: 560px;
+    height: 100%;
     margin: 0;
     float: left;
-    position: relative;
-    top: 5px;
+    display: flex;
+    align-items: center;
 }
 
 .midiPlayer .positionControls {
