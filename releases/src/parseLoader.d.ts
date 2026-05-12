@@ -5,7 +5,7 @@ export declare function fixUrls(conf: any): void;
  * @returns undefined
  */
 export declare function renderHTML(): void;
-export declare function loadDefaultSoundfont(conf: any): void;
+export declare function loadDefaultSoundfont(conf: any): Promise<import("./instrument").Instrument>;
 /**
  * Find the configuration as a JSON-encoded m21conf attribute on the script tag.
  */

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Multi-instrument MidiPlayer demo</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/m21.css">
+    <link rel="stylesheet" href="../css/midiPlayer.css">
+    <script src="../releases/music21.debug.js"></script>
+    <style>
+        body { font-family: 'Open Sans', sans-serif; margin: 24px; max-width: 760px; }
+        pre { background: #f4f4f4; padding: 8px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 4px; }
+        .panel { border: 1px solid #ddd; padding: 12px; margin: 16px 0; }
+    </style>
+</head>
+<body>
+<h2>MidiPlayer: loading multiple instruments from a multi-channel MIDI file</h2>
+
+<p>
+    This demo constructs a small MIDI file in JavaScript that uses three
+    different instruments on three different MIDI channels (piano, clarinet,
+    and cello). It then hands the file to
+    <code>music21.miditools.MidiPlayer</code>, which prescans the file for
+    every <code>programChange</code> event, loads every required soundfont
+    up front, and plays each channel with its assigned patch.
+</p>
+
+<div class="panel">
+    <div id="player"></div>
+</div>
+
+<h3>How the file is built</h3>
+<p>
+    A Standard MIDI File is just a header chunk plus one or more track chunks
+    containing delta-time + event byte sequences. The helpers below build a
+    Format-0 file (one track, multi-channel) entirely from a JavaScript array
+    of events:
+</p>
+<pre id="codeBlock"></pre>
+
+<h3>What the player does</h3>
+<p>
+    On <code>base64Load()</code>, the player overrides midicube's default
+    loadPlugin hook so that — once the file has been parsed — every soundfont
+    the file references is requested in a single batch. Each channel's
+    initial program is also seeded explicitly via
+    <code>MIDI.programChange()</code> so that a noteOn at tick 0 picks the
+    correct buffer.
+</p>
+
+<script>
+    const music21 = window.music21;
+
+    // Encode a non-negative integer as a MIDI variable-length quantity.
+    function vlq(n) {
+        if (n < 0) {
+            throw new Error('vlq requires non-negative input');
+        }
+        const bytes = [n & 0x7F];
+        n >>>= 7;
+        while (n > 0) {
+            bytes.unshift((n & 0x7F) | 0x80);
+            n >>>= 7;
+        }
+        return bytes;
+    }
+
+    // Build a Format-0 SMF base64 data URI from an array of absolute-tick
+    // events. Each event has { tick, bytes:[...] }. AI-assisted.
+    function buildSmfDataUri(events, ppq = 96, tempoBpm = 100) {
+        const sorted = [...events].sort((a, b) => a.tick - b.tick);
+
+        // Tempo meta event at tick 0: 0xFF 0x51 0x03 <microseconds-per-quarter (3 bytes)>
+        const microsPerQuarter = Math.round(60_000_000 / tempoBpm);
+        const tempoEvent = {
+            tick: 0,
+            bytes: [
+                0xFF, 0x51, 0x03,
+                (microsPerQuarter >> 16) & 0xFF,
+                (microsPerQuarter >> 8) & 0xFF,
+                microsPerQuarter & 0xFF,
+            ],
+        };
+        sorted.unshift(tempoEvent);
+
+        const trackBytes = [];
+        let lastTick = 0;
+        for (const e of sorted) {
+            const delta = e.tick - lastTick;
+            lastTick = e.tick;
+            for (const b of vlq(delta)) trackBytes.push(b);
+            for (const b of e.bytes) trackBytes.push(b);
+        }
+        // End-of-track meta
+        trackBytes.push(0x00, 0xFF, 0x2F, 0x00);
+
+        const header = [
+            0x4D, 0x54, 0x68, 0x64,  // "MThd"
+            0x00, 0x00, 0x00, 0x06,  // header length
+            0x00, 0x00,              // format 0
+            0x00, 0x01,              // 1 track
+            (ppq >> 8) & 0xFF, ppq & 0xFF,
+        ];
+        const trkLen = trackBytes.length;
+        const trackHeader = [
+            0x4D, 0x54, 0x72, 0x6B,  // "MTrk"
+            (trkLen >> 24) & 0xFF,
+            (trkLen >> 16) & 0xFF,
+            (trkLen >> 8) & 0xFF,
+            trkLen & 0xFF,
+        ];
+        const all = [...header, ...trackHeader, ...trackBytes];
+        let bin = '';
+        for (const b of all) {
+            bin += String.fromCharCode(b);
+        }
+        return 'data:audio/midi;base64,' + btoa(bin);
+    }
+
+    function programChangeEvent(tick, channel, program) {
+        return { tick, bytes: [0xC0 | (channel & 0x0F), program & 0x7F] };
+    }
+    function noteOnEvent(tick, channel, midiNum, velocity) {
+        return { tick, bytes: [0x90 | (channel & 0x0F), midiNum, velocity] };
+    }
+    function noteOffEvent(tick, channel, midiNum) {
+        return { tick, bytes: [0x80 | (channel & 0x0F), midiNum, 0] };
+    }
+
+    // Lay out three voices that all start at tick 0 so the demo exercises the
+    // "noteOn at t=0 before any explicit programChange would play" code path.
+    function buildDemoEvents(ppq) {
+        const events = [];
+        // GM program numbers: piano=0, clarinet=71, cello=42.
+        events.push(programChangeEvent(0, 0, 0));
+        events.push(programChangeEvent(0, 1, 71));
+        events.push(programChangeEvent(0, 2, 42));
+
+        // Channel 0 (piano): two-bar chord progression. Whole-note triads.
+        const pianoChords = [
+            [60, 64, 67],  // C major
+            [57, 60, 64],  // A minor
+            [62, 65, 69],  // D minor
+            [55, 59, 62],  // G major
+        ];
+        pianoChords.forEach((chord, i) => {
+            const start = i * ppq * 4;
+            const stop = start + ppq * 4;
+            for (const n of chord) {
+                events.push(noteOnEvent(start, 0, n, 60));
+                events.push(noteOffEvent(stop, 0, n));
+            }
+        });
+
+        // Channel 1 (clarinet): eighth-note melody over the same span.
+        const melody = [72, 74, 76, 77, 79, 77, 76, 74,
+                        72, 74, 76, 77, 79, 81, 79, 77,
+                        74, 76, 77, 79, 81, 79, 77, 76,
+                        76, 74, 72, 74, 76, 74, 72, 71];
+        melody.forEach((n, i) => {
+            const start = i * (ppq / 2);
+            events.push(noteOnEvent(start, 1, n, 85));
+            events.push(noteOffEvent(start + (ppq / 2) - 4, 1, n));
+        });
+
+        // Channel 2 (cello): half-note bass walking the chord roots.
+        const bass = [48, 48, 45, 45, 50, 50, 43, 43,
+                      48, 48, 45, 45, 50, 50, 43, 43];
+        bass.forEach((n, i) => {
+            const start = i * ppq * 2;
+            const stop = start + ppq * 2;
+            events.push(noteOnEvent(start, 2, n, 75));
+            events.push(noteOffEvent(stop, 2, n));
+        });
+
+        return events;
+    }
+
+    function main() {
+        const ppq = 96;
+        const events = buildDemoEvents(ppq);
+        const dataUri = buildSmfDataUri(events, ppq, 100);
+
+        const mp = new music21.miditools.MidiPlayer();
+        mp.addPlayer(document.querySelector('#player'));
+        mp.base64Load(dataUri);
+
+        document.querySelector('#codeBlock').textContent =
+            'events: ' + events.length + '\n'
+            + 'first 6 events: '
+            + JSON.stringify(events.slice(0, 6), null, 2);
+    }
+
+    document.addEventListener('DOMContentLoaded', main);
+</script>
+</body>
+</html>
