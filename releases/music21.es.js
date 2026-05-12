@@ -1,6 +1,6 @@
 /*!
  * 
- * music21j version 0.23.0 built on 2026-05-12.
+ * music21j version 0.23.1 built on 2026-05-12.
  * Copyright (c) 2013-2026 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -43660,7 +43660,7 @@ const oh = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   populateSelect: tn,
   selectionChanged: fo,
   webmidi: nt
-}, Symbol.toStringTag, { value: "Module" })), lh = "0.23.0";
+}, Symbol.toStringTag, { value: "Module" })), lh = "0.23.1";
 no();
 export {
   F6 as MIDI,
