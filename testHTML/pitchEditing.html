@@ -8,11 +8,9 @@
 </head>
 <body>
     <h2>Testing alterable pitches in the score</h2>
-    <div>A bug makes it so that the accidental button does not redraw the systems.</div>
     <div id="editable">
     </div>
     <script>
-        const music21 = window.music21;  // for typing...
         function main() {
             const s = music21.tinyNotation.TinyNotation("G2 B4 c4");
             s.clef = new music21.clef.Clef('bass');

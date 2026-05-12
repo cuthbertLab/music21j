@@ -3007,10 +3007,13 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
             this.changedCallbackFunction = this.DOMChangerFunction;
         }
         const svgDiv = this.createDOM(width, height);
+        // No siblingSvg: redrawDOM elsewhere (e.g. noteChanged after a note
+        // click) detaches the original svgDiv, so a captured reference would
+        // go stale. Letting the toolbar's fallback walk up from the button
+        // each click finds whichever `.streamHolding` is currently in the DOM.
         const buttonDiv: HTMLDivElement = this.getAccidentalToolbar(
             minAccidental,
             maxAccidental,
-            svgDiv
         );
         d.appendChild(buttonDiv);
         d.appendChild(to_el("<br style='clear: both;'>"));
@@ -3025,8 +3028,9 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
     /**
      * Returns an accidental toolbar from minAccidental to maxAccidental.
      *
-     * If siblingSvg is defined then this toolbar alters the notes in that
-     * toolbar.
+     * If siblingSvg is defined then this toolbar alters the notes of the stream
+     * rendered to that .streamHolding element -- recommend no longer using that,
+     * since redraws can change SVGs.
      */
     getAccidentalToolbar(
         minAccidental: number = -1,

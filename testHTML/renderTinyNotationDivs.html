@@ -4,6 +4,7 @@
     <title>Render tinyNotation divs</title>
     <link rel="stylesheet" href="../css/m21.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700">
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
 
@@ -11,17 +12,17 @@
 </h2>
 <div>To use it, install music21 with <code>npm install music21j</code> and then put in your HTML: <br>
     <pre>
-        &lt;script src="node_modules/releases/music21.debug.js"&gt;&lt;/script&gt;
+        &lt;link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/music21j/releases/music21j.css"&gt;
+        &lt;script src="https://cdn.jsdelivr.net/npm/music21j/releases/music21.debug.js"&gt;&lt;/script&gt;
         &lt;script&gt;
         music21.tinyNotation.renderNotationDivs();
         &lt;/script&gt;
     </pre>
     <div>The second <code>script</code> is only necessary if the divs already exist</div>
     <br>
-
-
-    set <code>class=""music21 tinyNotation"</code> or
-    <code>"music21 tinyNotation noPlayback"</code></div><br>
+    Any div/etc. with <code>class=""music21 tinyNotation"</code> or
+    <code>"music21 tinyNotation noPlayback"</code> will render as notation</div><br>
 <div>
     <div>
     &lt;div class="music21 tinyNotation"&gt;c4 d8 e8 f2&lt;/div&gt; (click me)
@@ -38,10 +39,11 @@
 </div>
 
 <div>
-    <div>Here is a multipart tinyNotation with the <code>partBreak</code> code</div>
+    <div>Here is a multipart tinyNotation with the <code>partBreak</code> code:</div>
+    <div>&lt;div class="music21 tinyNotation"&gt;g2 f2 partBreak C4 D8 E8 F2&lt;/div&gt;</div>
+
     <div class="music21 tinyNotation">g2 f2 partBreak C4 D8 E8 F2</div>
 </div>
 
-    <script src="../releases/music21.debug.js"></script>
 </body>
 </html>

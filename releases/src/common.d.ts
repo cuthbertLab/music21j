@@ -1,4 +1,4 @@
-export declare function coerceHTMLElement(el?: JQuery | HTMLElement): HTMLElement;
+export declare function coerceHTMLElement(el?: JQuery | HTMLElement | string): HTMLElement;
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
  * http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically

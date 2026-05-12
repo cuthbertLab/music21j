@@ -3,6 +3,7 @@
         <title>MIDI In/Jazz Test for Music21j</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="../css/m21.css">
+        <script src="../releases/music21.debug.js"></script>
     </head>
     <body>
         <h1>A test of MIDI input to audio playback (no notation)</h1>
@@ -11,7 +12,6 @@
 		</div>
 		<div class='streamHolding'>
 	    </div>
-    	<script src="../releases/music21.debug.js"></script>
 		<script>
             function main() {
                 music21.webmidi.createSelector(document.querySelector("#putMidiSelectHere"));

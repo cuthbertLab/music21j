@@ -22,6 +22,7 @@ class _ConfigSingletonCreator {
     lastPitchClassesDetected: number[] = [];
     lastPitchesDetected: number[] = [];
     lastCentsDeviationsDetected: number[] = [];
+    sampleCallback: (frequency: number) => void;
 
     constructor() {
         this.AudioContextCaller = window.AudioContext || (<any> window).webkitAudioContext;
@@ -51,7 +52,23 @@ class _ConfigSingletonCreator {
     }
 }
 
+/**
+ * Placeholder default for `config.sampleCallback`. Real callers replace
+ * `config.sampleCallback` with their own handler; most users will want to
+ * call `smoothPitchExtraction(frequency)` from inside it.
+ *
+ * To cancel the requestAnimationFrame driving the loop, call
+ * `window.cancelAnimationFrame(config.animationFrameCallbackId)` -- typically
+ * from a Stop button handler (see `testHTML/audioSearchTest.html`). Returning
+ * -1 from `sampleCallback` no longer cancels the animationFrame; the loop
+ * always reschedules.
+ */
+function demo_sampleCallback(_frequency: number): void {
+    // intentionally empty
+}
+
 export const config = new _ConfigSingletonCreator();
+config.sampleCallback = demo_sampleCallback;
 
 /**
  * Note: audioRecording uses the newer getUserMedia routines, so
@@ -103,7 +120,9 @@ export function userMediaStarted(audioStream): void {
      * This function which patches Safari requires some time to get started
      * so we call it on object creation.
      */
-    config.sampleBuffer = new Float32Array(config.fftSize / 2);
+    // AnalyserNode.getFloatTimeDomainData fills min(buf.length, fftSize) samples,
+    // (not fftSize/2 which is frequencyBinCount, for frequency-domain output).
+    config.sampleBuffer = new Float32Array(config.fftSize);
     const mediaStreamSource = config.audioContext.createMediaStreamSource(
         audioStream
     );
@@ -125,14 +144,10 @@ export const animateLoop = () => {
         config.minFrequency,
         config.maxFrequency
     );
-    const retValue = <number> sampleCallback(frequencyDetected);
-    // callback can be anything.
-    // noinspection JSIncompatibleTypesComparison
-    if (retValue !== -1) {
-        config.animationFrameCallbackId = window.requestAnimationFrame(
-            animateLoop
-        );
-    }
+    config.sampleCallback(frequencyDetected);
+    config.animationFrameCallbackId = window.requestAnimationFrame(
+        animateLoop
+    );
 };
 
 export function smoothPitchExtraction(frequency: number): [number, number] {
@@ -182,14 +197,6 @@ export function smoothPitchExtraction(frequency: number): [number, number] {
     }
     const centsOff = Math.floor(totalSample / totalSamplePoints);
     return [mostCommonPitch, centsOff];
-}
-
-export function sampleCallback(frequency: number): number {
-    // noinspection JSUnusedLocalSymbols
-    const [unused_midiNum, unused_centsOff] = smoothPitchExtraction(
-        frequency
-    );
-    return 0;
 }
 
 // from Chris Wilson. Replace with Jordi's

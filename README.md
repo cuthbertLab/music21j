@@ -46,6 +46,11 @@ Demonstrations of music21j are available on Github:
 * [MusicXML Parsing](https://cuthbertlab.github.io/music21j/testHTML/musicxmlTest.html)
 * [Instruments setup and switching](https://cuthbertlab.github.io/music21j/testHTML/instruments.html)
 * [Demo loading music21j and soundfonts from elsewhere](https://cuthbertlab.github.io/music21j/testHTML/sfElsewhereCDN.html)
+* [Match pitches game](https://cuthbertlab.github.io/music21j/testHTML/audioSearchGame.html)
+* [Drag-to-create score](https://cuthbertlab.github.io/music21j/testHTML/demo-DragScore.html)
+
+
+See at the bottom for more demos
 
 ## Example
 
@@ -67,23 +72,26 @@ $ npm run dev
 
 Then navigate to http://localhost:5173/testHTML/ for some demos.
 
-To use music21j in your own page, place in a html page like this 
+To use music21j in your own website/wrokflow, place in a html page like this 
 (this assumes that you’re using the Vite Dev server above).
 
 ```html
-<html lang="en">
-<head>
-<title>music21 test</title>
-</head>
+<!DOCTYPE html>
+<html lang="en">                                                                                            
+<head>                                                    
+  <meta charset="utf-8">
+  <title>music21 test</title>
+  <link rel="stylesheet"                                                                                  
+        href="https://cdn.jsdelivr.net/npm/music21j/releases/music21j.css">
+  <script src="https://cdn.jsdelivr.net/npm/music21j/releases/music21.debug.js"></script>                 
+</head>                                                                                                     
 <body>
-   <script src="/node_modules/music21j/releases/music21.debug.js">
-   </script>
-   <script>
-   const n = new music21.note.Note('F#');
-   const s = new music21.stream.Stream();
-   s.append(n);
-   s.appendNewDOM();
-   </script>
+  <script>                                                                                                
+      const n = new music21.note.Note('F#');            
+      const s = new music21.stream.Stream();                                                              
+      s.append(n);
+      s.appendNewDOM();                                                                                   
+  </script>                                             
 </body>
 </html>
 ```
@@ -106,28 +114,29 @@ const n = new music21.note.Note('F#');
 Music21j was originally intended for self-hosting, so embedding is not
 yet as simple as it should be.
 
-To load soundfonts from other locations (like in a CDN),
-(1) set a global `m21conf` variable to disable loading soundfonts,
-(2) load the music21j script, and (3) set the new soundfont location,
-and (4) load the soundfont.
+To load soundfonts from elsewhere (e.g. a CDN):
 
-This fragment shows how to do it.  A working implementation is in the
-testHTML directory as `sfElsewhereCDN.html`.
+1. Before loading music21j, set `window.m21conf = { loadSoundfont: false }`
+   so it doesn't fetch the default soundfont.
+2. Load music21j.
+3. After it loads, set `music21.common.urls.soundfontUrl` to the new
+   location and call `music21.miditools.loadSoundfont(...)`.
+
+A complete page is in `testHTML/sfElsewhereCDN.html`.
 
 ```html
 <body>
 <script>
     window.m21conf = { loadSoundfont: false };
 </script>
-<script 
-    src="https://cdn.jsdelivr.net/npm/music21j/releases/music21.debug.min.js"
-></script>
+<script src="https://cdn.jsdelivr.net/npm/music21j/releases/music21.debug.js"></script>
 <script>
-    music21.common.urls.soundfontUrl = 'https://raw.githubusercontent.com/gleitz/midi-js-soundfonts/gh-pages/FluidR3_GM/';
+    music21.common.urls.soundfontUrl =
+        'https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts/FluidR3_GM/';
     music21.miditools.loadSoundfont('clarinet', i => {
-       const tn = music21.tinyNotation.TinyNotation('4/4 c4 d e f g1');
-       tn.instrument = i;
-       tn.playStream();
+        const tn = music21.tinyNotation.TinyNotation('4/4 c4 d e f g1');
+        tn.instrument = i;
+        tn.playStream();
     });
 </script>
 </body>
@@ -166,6 +175,23 @@ section of [MIT] (when Cuthbert was a professor there).
 [Jazzsoft]:http://jazz-soft.net
 [QUnit]:http://qunitjs.com
 [jsdoc]:http://usejsdoc.org
+
+### More testHTML demos
+
+* [HTML5 pitch detector](https://cuthbertlab.github.io/music21j/testHTML/audioSearchTest.html)
+* [Chord with violin sound](https://cuthbertlab.github.io/music21j/testHTML/chord_violin_test.html)
+* [Color a clicked note](https://cuthbertlab.github.io/music21j/testHTML/colorChanger.html)
+* [Microphone delay loop](https://cuthbertlab.github.io/music21j/testHTML/delayMic.html)
+* [Original music21j demo](https://cuthbertlab.github.io/music21j/testHTML/demo-Cuthbert.html)
+* [Embedded MIDI player](https://cuthbertlab.github.io/music21j/testHTML/embedPlayer.html)
+* [MIDI keyboard simple](https://cuthbertlab.github.io/music21j/testHTML/keyboardJazz.html)
+* [MIDI keyboard w/ chord rendering](https://cuthbertlab.github.io/music21j/testHTML/midiInChords.html) or [w/ custom MIDI failure handler](https://cuthbertlab.github.io/music21j/testHTML/midiInChordsCustomFail.html) or [with key signature](https://cuthbertlab.github.io/music21j/testHTML/midiInKeyChords.html)
+* [MIDI-in audio playback (w/o notation)](https://cuthbertlab.github.io/music21j/testHTML/midiInRequire.html)
+* [Pitch editing on a single measure](https://cuthbertlab.github.io/music21j/testHTML/pitchEditing.html) or [on a long score](https://cuthbertlab.github.io/music21j/testHTML/pitchEditing_long_score.html)
+* [Rendered notation direct in HTML (no code)](https://cuthbertlab.github.io/music21j/testHTML/renderTinyNotationDivs.html)
+* [stream.clone() demo](https://cuthbertlab.github.io/music21j/testHTML/streamClone.html)
+* [XY mouse tracking on notation](https://cuthbertlab.github.io/music21j/testHTML/xyLocation.html)
+
 
 
 ## Development

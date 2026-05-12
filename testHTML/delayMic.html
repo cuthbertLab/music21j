@@ -10,9 +10,9 @@
 <h2>Works on Chrome and Firefox only.</h2>
 <p>
 <div>
-<button id='startListening'>Start</button>
-<button id='stopListening'>Stop Listening</button>
-<button id='stopPlayback'>Stop Playback</button>
+<button id="startListening">Start</button>
+<button id="stopListening">Stop Listening</button>
+<button id="stopPlayback">Stop Playback</button>
 </div>
 &nbsp;<br>
 <div id="metronomeDiv"></div>
@@ -28,7 +28,6 @@
     const music21 = window.music21;
    function main() {
        music21.tinyNotation.renderNotationDivs();
-       var as = music21.audioSearch;
        delayNodes = [];
        input = null;
        audioContext = null;

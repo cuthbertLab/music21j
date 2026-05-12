@@ -3,8 +3,9 @@
     <title>Embed midi player demo
     </title>
     <meta charset="utf-8">
-    <script src="../releases/music21.debug.js"></script>
     <link rel="stylesheet" href="../css/m21.css">
+    <link rel="stylesheet" href="../css/midiPlayer.css">
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
 <h2>Embedded MidiFile player</h2>
@@ -12,11 +13,14 @@
 This script uses midicube's player (MIDI.js's successor) (and their HTML, etc.) to make it easy to add a MIDI player
 for any file or base64 data.
 
+(in order to make m21.css as light as possible, since around v0.16 the midiPlayer has its own CSS file)
+
 The script looks something like this:
 
 <pre>
-&lt;div id='putMeHere'&gt;
-
+&lt;div id="putMeHere"&gt;
+&lt;link rel="stylesheet" href="../css/m21.css"&gt;
+&lt;link rel="stylesheet" href="../css/midiPlayer.css"&gt;
 &lt;script src="../releases/music21.debug.js"&gt;&lt;/script&gt;
 &lt;script&gt;
     const mp = new music21.miditools.MidiPlayer();

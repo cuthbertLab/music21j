@@ -6,19 +6,21 @@
     <style>
         #svg { background-color: #ffffaa }
     </style>
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
     <h1>Tests of getting locations/mouse-tracking</h1>
-    <h2>The second score just does a console log of the DNN and the note found</h2>
-    <div id='svg'></div>
+    <div id="svg"></div>
     <div>
         <label for="xLoc">X:</label><input type="text" name="xLoc" id="xLoc" value="0">
         <label for="yLoc">Y:</label><input type="text" name="yLoc" id="yLoc" value="0">
         <label for="xOff">X-left:</label><input type="text" name="xOff" id="xOff" value="0">
         <label for="yOff">Y-top:</label><input type="text" name="yOff" id="yOff" value="0">
-
     </div>
-    <script src="../releases/music21.debug.js"></script>
+    <h2>Clicking this score just shows the diatonicNoteNum clicked and the current
+        nameWithOctave of the note that might be edited (and logs the Note object itself to the console.)</h2>
+    <div id="svg2"></div>
+    <div id="result2"></div>
     <script>
         function main() {
             const s1 = music21.tinyNotation.TinyNotation(
@@ -37,7 +39,6 @@
             s.insert(0, s1);
             s.insert(0, s2);
             s.tempo = 90;
-
             const g = music21.tinyNotation.TinyNotation(
                 "4/4 c2 d#4 e8 f g4 r8 B c4~ c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1"
             );
@@ -45,12 +46,13 @@
             g.renderOptions.events.click = function (e) {
                 // this = SVG div...
                 const [dNN, n] = g.findNoteForClick(this, e);
-                console.log(dNN);
                 console.log(n);
-                console.log(n.pitch.nameWithOctave);  // crash on rest!
+
+                const info = `Diatonic Note Num: ${dNN}, Name: ${n.pitch?.nameWithOctave ?? 'rest'}`;
+                document.querySelector('#result2').innerHTML = info;
             };
             g.autoBeam = true;
-            g.appendNewDOM();
+            g.appendNewDOM('#svg2');
 
             const offset = el => {
                 const box = el.getBoundingClientRect();

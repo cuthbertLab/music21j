@@ -138,6 +138,28 @@ export default function tests() {
         assert.equal(p.toString(), '<Pitch B#3>', 'Equal');
     });
 
+    test('music21.pitch.Pitch.frequency', assert => {
+        // Regression: src/pitch.ts:480 used to read
+        // `440 * (2 ** (ps - 69) / 12)` instead of `440 * 2 ** ((ps - 69)/12)`,
+        // so each semitone doubled the frequency.
+        const cases: [string, number][] = [
+            ['A4', 440],
+            ['C4', 261.6256],   // middle C
+            ['A5', 880],
+            ['A3', 220],
+            ['G3', 195.9977],
+            ['B-3', 233.0819],  // B-flat 3
+            ['F2', 87.3071],
+        ];
+        for (const [spec, expected] of cases) {
+            const p = new music21.pitch.Pitch(spec);
+            assert.ok(
+                Math.abs(p.frequency - expected) < 0.001,
+                `${spec}: expected ~${expected} Hz, got ${p.frequency}`
+            );
+        }
+    });
+
     test('music21.pitch.Pitch Equality', assert => {
         const pitch_pairs: [string, string, boolean][] = [
             ['a#', 'a', false],

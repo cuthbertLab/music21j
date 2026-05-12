@@ -3,18 +3,16 @@
    <script type="module" src="http://localhost:5173/testHTML/m21-dev.ts"></script>
 </head>
 <body>
-    This tests whether using an http:// link to this page we can still load music21<br>
+    This tests whether using an http:// link to this page we can still load music21.
+    Only works if we are running the Vite server at 5173 (since need explicit location).<br>
    <script>
-    const music21 = window.music21;
     function main() {
         const n = new music21.note.Note("F#");
         const s = new music21.stream.Stream();
         s.append(n);
         s.appendNewDOM();
     }
-    document.addEventListener('DOMContentLoaded', () => {
-        main();
-    });
+    document.addEventListener('DOMContentLoaded', () => { main(); });
    </script>
 </body>
 </html>
