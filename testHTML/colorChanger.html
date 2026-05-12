@@ -80,10 +80,7 @@ function getColorToolbar(s, siblingDOM) {
 }
 
 function main() {
-    s = undefined;
-
     const k = new music21.key.Key('D');
-
     s = new music21.stream.Measure();
     s.keySignature = k;
     s.timeSignature = new music21.meter.TimeSignature('4/4');

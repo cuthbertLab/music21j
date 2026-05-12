@@ -183,7 +183,7 @@ section of [MIT] (when Cuthbert was a professor there).
 * [Color a clicked note](https://cuthbertlab.github.io/music21j/testHTML/colorChanger.html)
 * [Microphone delay loop](https://cuthbertlab.github.io/music21j/testHTML/delayMic.html)
 * [Original music21j demo](https://cuthbertlab.github.io/music21j/testHTML/demo-Cuthbert.html)
-* [Embedded MIDI player](https://cuthbertlab.github.io/music21j/testHTML/embedPlayer.html)
+* [Embedded MIDI player](https://cuthbertlab.github.io/music21j/testHTML/embedPlayer.html) or [multi-instrument MIDI player](https://cuthbertlab.github.io/music21j/testHTML/midiPlayerMultiInstrument.html)
 * [MIDI keyboard simple](https://cuthbertlab.github.io/music21j/testHTML/keyboardJazz.html)
 * [MIDI keyboard w/ chord rendering](https://cuthbertlab.github.io/music21j/testHTML/midiInChords.html) or [w/ custom MIDI failure handler](https://cuthbertlab.github.io/music21j/testHTML/midiInChordsCustomFail.html) or [with key signature](https://cuthbertlab.github.io/music21j/testHTML/midiInKeyChords.html)
 * [MIDI-in audio playback (w/o notation)](https://cuthbertlab.github.io/music21j/testHTML/midiInRequire.html)

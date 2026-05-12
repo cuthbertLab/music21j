@@ -17,6 +17,7 @@ import iterator from './moduleTests/stream/iterator';
 import key from './moduleTests/key';
 import metadata  from './moduleTests/metadata';
 import meter from './moduleTests/meter';
+import miditools from './moduleTests/miditools';
 import note from './moduleTests/note';
 import pitch from './moduleTests/pitch';
 import prebase from './moduleTests/prebase';
@@ -50,6 +51,7 @@ const allTests = {
     key,
     metadata,
     meter,
+    miditools,
     note,
     pitch,
     prebase,
