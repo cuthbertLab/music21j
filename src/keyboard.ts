@@ -526,11 +526,11 @@ export class Keyboard {
      */
     wrapScrollable(svgDOM: SVGSVGElement): HTMLElement {
         const wrapper = to_el(
-            '<div class="keyboardScrollableWrapper" style="display: inline-block"></div>'
+            '<div class="keyboardScrollableWrapper" style="display: inline-block;"></div>'
         );
         const bDown = to_el(`
             <button class="keyboardOctaveDown" 
-                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px">&lt;&lt;</button>
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px;">&lt;&lt;</button>
             `);
         bDown.addEventListener('click', () => {
             miditools.config.transposeOctave -= 1;
@@ -539,8 +539,8 @@ export class Keyboard {
             this.redrawSVG();
         });
         const bUp = to_el(`
-            <button class='keyboardOctaveUp'
-                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px"
+            <button class="keyboardOctaveUp"
+                    style="font-size: ${Math.floor(this.scaleFactor * 15)}px;"
             >&gt;&gt;</button>`);
         bUp.addEventListener('click', () => {
             miditools.config.transposeOctave += 1;
@@ -549,7 +549,7 @@ export class Keyboard {
             this.redrawSVG();
         });
         const kWrapperDiv = to_el(
-            "<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>"
+            '<div style="display:inline-block; vertical-align: middle;" class="keyboardScrollableInnerDiv"></div>'
         );
         kWrapperDiv.appendChild(svgDOM);
         wrapper.append(bDown);
@@ -572,7 +572,7 @@ export class Keyboard {
             >↥</div>`);
         const b = to_el(`
             <div class="keyboardToggleOutside"
-                 style="display: inline-block; vertical-align: top; background: white"
+                 style="display: inline-block; vertical-align: top; background: white;"
             ></div>`);
         b.append(bInside);
         b.setAttribute(

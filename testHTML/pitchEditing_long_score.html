@@ -4,20 +4,20 @@
     <meta charset="utf-8">
     <title>Pitch Editing</title>
     <link rel="stylesheet" href="../css/m21.css">
+    <script src="../releases/music21.debug.js"></script>
 </head>
 <body>
     <h2>Testing alterable pitches in a long score</h2>
-    <div id="editable" style="width: 250px">
+    <div id="editable" style="width: 250px;">
     </div>
 
     <h2>Testing alterable pitches in a long, scrolling SINGLE PART</h2>
-    <div id="editablePartHolder" style="max-width: 250px; overflow: scroll">
-        <div id="editablePart" style="width: 250px">
+    <div id="editablePartHolder" style="max-width: 250px; overflow: scroll;">
+        <div id="editablePart" style="width: 250px;">
     </div>
     </div>
 
 
-    <script src="../releases/music21.debug.js"></script>
     <script>
     function main() {
         const editable = document.querySelector('#editable');

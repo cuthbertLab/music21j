@@ -1,6 +1,7 @@
 import * as QUnit from 'qunit';
 
 import articulations from './moduleTests/articulations';
+import audioSearch from './moduleTests/audioSearch';
 import bar from './moduleTests/bar';
 import base from './moduleTests/base';
 import beam from './moduleTests/beam';
@@ -33,6 +34,7 @@ import * as music21 from '../src/main';
 
 const allTests = {
     articulations,
+    audioSearch,
     bar,
     base,
     beam,

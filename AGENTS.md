@@ -27,6 +27,7 @@
 - If Playwright browsers are missing, install Chromium with
   `npx playwright install chromium` before relying on `npm test`.
 - Run `npm run lint` after changing code, and fix errors that arise.
+- To run the testHTML files, new releases/* files have to be built.  `npm run prepublishOnly` is the way to do that.
 
 # Moving from Python music21
 

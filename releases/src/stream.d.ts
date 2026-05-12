@@ -665,7 +665,7 @@ export declare class Stream<ElementType extends base.Music21Object = base.Music2
      * @param {string} elementType - what type of element, default = svg
      * @returns {HTMLDivElement} the svg
      */
-    replaceDOM(where?: HTMLElement, preserveSvgSize?: boolean, elementType?: string): HTMLElement;
+    replaceDOM(where?: HTMLElement | string, preserveSvgSize?: boolean, elementType?: string): HTMLElement;
     /**
      * Set the type of interaction on the svg based on
      *    - Stream.renderOptions.events.click
