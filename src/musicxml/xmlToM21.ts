@@ -694,7 +694,7 @@ export class MeasureParser {
     xmlForward(mxForward: Element) {
         const mxDuration = mxForward.querySelector('duration');
         const change = parseFloat(mxDuration.textContent.trim()) / this.divisions;
-        this.offsetMeasureNote += Math.min(opFrac(change), 0.0);
+        this.offsetMeasureNote += Math.max(opFrac(change), 0.0);
     }
 
     // xmlGraceToGrace
