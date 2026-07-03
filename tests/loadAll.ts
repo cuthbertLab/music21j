@@ -30,6 +30,7 @@ import tie from './moduleTests/tie';
 import tinyNotation from './moduleTests/tinyNotation';
 import vfShow from './moduleTests/vfShow';
 import voiceLeading from './moduleTests/voiceLeading';
+import xmlToM21 from './moduleTests/musicxml/xmlToM21';
 
 import * as music21 from '../src/main';
 
@@ -64,6 +65,7 @@ const allTests = {
     tie,
     vfShow,
     voiceLeading,
+    xmlToM21,
 };
 if (typeof globalThis !== 'undefined') {
     (globalThis as any).allTests = allTests;

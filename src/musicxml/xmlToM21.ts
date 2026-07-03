@@ -587,7 +587,7 @@ export class MeasureParser {
             p.accidental = accObj;
             p.accidental.displayStatus = true;
             // independent accidental from alter
-        } else if (accAlter !== undefined && !Number.isNaN(Number(accAlter))) {
+        } else if (mxAlter && !Number.isNaN(accAlter)) {
             p.accidental = new pitch.Accidental(accAlter);
             p.accidental.displayStatus = false;
         }
