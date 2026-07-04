@@ -625,7 +625,6 @@ export class MeasureParser {
         // print-object
         // dynamics
         // pizzicato
-        // grace
         this.xmlToDuration(mxNote, n.duration);
         // type styles
         // color
@@ -633,7 +632,10 @@ export class MeasureParser {
         if (mxNote.querySelector('tie')) {
             n.tie = this.xmlToTie(mxNote);
         }
-        // grace
+        const mxGrace = mxNote.querySelector('grace');
+        if (mxGrace) {
+            n = this.xmlGraceToGrace(mxGrace, n);
+        }
         // notations
         // editorial
         return n;
@@ -697,7 +699,17 @@ export class MeasureParser {
         this.offsetMeasureNote += Math.min(opFrac(change), 0.0);
     }
 
-    // xmlGraceToGrace
+    xmlGraceToGrace(mxGrace: Element, noteOrChord: note.GeneralNote) {
+        const post = noteOrChord.getGrace();
+        if (['yes', null].includes(mxGrace.getAttribute('slash'))) {
+            (post.duration as duration.GraceDuration).slash = true;
+        } else {
+            (post.duration as duration.GraceDuration).slash = false;
+        }
+        // TODO: steal-time
+        return post;
+    }
+
     // xmlNotations
     // xmlTechnicalToArticulation
     // setHarmonic

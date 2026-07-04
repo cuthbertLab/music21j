@@ -660,7 +660,7 @@ export class Renderer {
                 const notes = s.flatten().notes;
                 let activeBeamGroupNotes = [];
                 for (const n of notes) {
-                    if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+                    if (n.beams === undefined || !n.beams.getNumbers().includes(1) || n.duration.isGrace) {
                         continue;
                     }
                     const eighthNoteBeam = n.beams.getByNumber(1);
@@ -1223,7 +1223,9 @@ export class Renderer {
                     vfn.getTicks().value() * formatter.tickContexts.resolutionMultiplier
                 );
                 nextTicks += nTicks;
-                el.x = vfn.getAbsoluteX();
+                if (!el.duration.isGrace) {
+                    el.x = vfn.getAbsoluteX();
+                }
                 // these are a bit hacky...
                 el.systemIndex = s.renderOptions.systemIndex;
 

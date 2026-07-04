@@ -326,6 +326,14 @@ export class Duration extends prebase.ProtoM21Object {
         }
         return this;
     }
+
+    getGraceDuration(appoggiatura: boolean=false): GraceDuration | AppoggiaturaDuration {
+        if (appoggiatura) {
+            return new AppoggiaturaDuration(this.type);
+        } else {
+            return new GraceDuration(this.type);
+        }
+    }
 }
 
 /**
@@ -471,4 +479,19 @@ export class Tuplet extends prebase.ProtoM21Object {
             this.totalTupletLength() / (this.numberNotesActual * lengthActual)
         );
     }
+}
+
+export class GraceDuration extends Duration {
+    slash: boolean = true;
+    linked: boolean = false;
+
+    constructor(graceType: string) {
+        super(graceType);
+        this.quarterLength = 0.0;
+        this.isGrace = true;
+    }
+}
+
+export class AppoggiaturaDuration extends GraceDuration {
+    slash: boolean = false;
 }
