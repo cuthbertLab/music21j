@@ -797,6 +797,7 @@ export class Pitch extends prebase.ProtoM21Object {
             // and it is not a natural, it should always be set to display
             if (pPastInMeasure === false
                     && this.accidental !== undefined
+                    && this.accidental.name !== 'natural'
                     && !this._nameInKeySignature(alteredPitches)) {
                 this.accidental.displayStatus = true;
                 return;  // do not search past
