@@ -74,6 +74,28 @@ export default function tests() {
         assert.deepEqual(names(withKey), ['D-', 'F', 'A-'], 'C# F G# in A- -> D- F A-');
     });
 
+    test('music21.chord.Chord.simplifyEnharmonics preserves pitch space', assert => {
+        const nwo = (c: music21.chord.Chord) => c.pitches.map(p => p.nameWithOctave);
+        const psOf = (c: music21.chord.Chord) => c.pitches.map(p => p.ps);
+
+        // B#3 -> C4 crosses the octave boundary upward: name and octave change
+        // but the sounding pitch (ps) does not.
+        const up = new music21.chord.Chord('A3 B#3 E4');
+        const upPs = psOf(up);
+        assert.deepEqual(upPs, [57, 60, 64], 'B#3 has ps 60 (same as C4)');
+        up.simplifyEnharmonics(true);
+        assert.deepEqual(nwo(up), ['A3', 'C4', 'E4'], 'A3 B#3 E4 respelled to A3 C4 E4');
+        assert.deepEqual(psOf(up), upPs, 'ps unchanged after respelling B#3 -> C4');
+
+        // C-4 -> B3 crosses the octave boundary downward, ps still preserved.
+        const down = new music21.chord.Chord('G3 C-4 D4');
+        const downPs = psOf(down);
+        assert.deepEqual(downPs, [55, 59, 62], 'C-4 has ps 59 (same as B3)');
+        down.simplifyEnharmonics(true);
+        assert.deepEqual(nwo(down), ['G3', 'B3', 'D4'], 'G3 C-4 D4 respelled to G3 B3 D4');
+        assert.deepEqual(psOf(down), downPs, 'ps unchanged after respelling C-4 -> B3');
+    });
+
     test('music21.chord.Chord.clone deep-copies notes', assert => {
         const c = new music21.chord.Chord('C4 E4 G4');
 
