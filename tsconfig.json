@@ -11,7 +11,14 @@
         "declarationDir": "build",
         "resolveJsonModule": true,
         "esModuleInterop": true,
+        // tsc here only typechecks the source and emits .d.ts; it does NOT
+        // build the shipped bundle -- Vite/esbuild does (see vite.config.ts),
+        // and that is where the browser target lives (baseline-widely-available).
+        // So "esnext" here just lets typecheck accept modern syntax and never
+        // needs an annual bump; it does not raise the browser floor.
         "target": "esnext",
+        // Keep the pre-esnext class-field semantics (esnext would default this
+        // to true, changing class-field emit and flagging existing shadowing).
         "useDefineForClassFields": false,
     },
     "include": [
