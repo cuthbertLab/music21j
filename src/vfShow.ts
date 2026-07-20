@@ -14,6 +14,8 @@ import {
     type FontInfo as VFFontInfo,
     Formatter as VFFormatter,
     Fraction as VFFraction,
+    GraceNote as VFGraceNote,
+    GraceNoteGroup as VFGraceNoteGroup,
     Renderer as VFRenderer,
     type RendererBackends as VFRendererBackends,
     Stave as VFStave,
@@ -37,7 +39,7 @@ import {coerceHTMLElement} from './common';
 
 // imports for typechecking only
 import type * as renderOptions from './renderOptions';
-import type {Tuplet} from './duration';
+import type {GraceDuration, Tuplet} from './duration';
 import {StaveConnector} from './types';
 
 export const barline_m21ToVexflow = {
@@ -660,7 +662,7 @@ export class Renderer {
                 const notes = s.flatten().notes;
                 let activeBeamGroupNotes = [];
                 for (const n of notes) {
-                    if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+                    if (n.beams === undefined || !n.beams.getNumbers().includes(1) || n.duration.isGrace) {
                         continue;
                     }
                     const eighthNoteBeam = n.beams.getByNumber(1);
@@ -914,12 +916,17 @@ export class Renderer {
         };
 
         const options = { clef: sClef, stave };
+        const pendingGraceNotes: note.GeneralNote[] = [];
         for (const thisEl of s) {
             if (
                 thisEl.isClassOrSubclass('GeneralNote')
                 && thisEl.duration !== undefined
                 && !(thisEl.style.hideObjectOnPrint)
             ) {
+                if (thisEl.duration.isGrace) {
+                    pendingGraceNotes.push(thisEl as note.GeneralNote);
+                    continue;
+                }
                 // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                 const vfn = (thisEl as note.GeneralNote).vexflowNote(options);
                 if (vfn === undefined) {
@@ -931,6 +938,12 @@ export class Renderer {
                     vfn.setStave(stave);
                 }
                 notes.push(vfn);
+
+                if (pendingGraceNotes.length) {
+                    const graceGroup = this.vexflowGraceNoteGroup(pendingGraceNotes, options);
+                    vfn.addModifier(graceGroup.beamNotes());
+                    pendingGraceNotes.length = 0;
+                }
 
                 // account for tuplets...
                 if (thisEl.duration.tuplets.length > 0) {
@@ -1073,6 +1086,18 @@ export class Renderer {
         vfv.setMode(VFVoice.Mode.SOFT);
         vfv.setSoftmaxFactor(vexflowDefaults.softmaxFactor);  // will be wiped out later...
         return vfv;
+    }
+
+    vexflowGraceNoteGroup(
+        graceNotes: note.GeneralNote[],
+        options: note.VexflowNoteOptions,
+    ): VFGraceNoteGroup {
+        const vfGraces = graceNotes.map(gn => new VFGraceNote({
+            keys: gn.vexflowNote(options).getKeys(),
+            duration: gn.duration.vexflowDuration,
+            slash: (gn.duration as GraceDuration).slash,
+        }));
+        return new VFGraceNoteGroup(vfGraces, true);
     }
 
     staffConnectorsMap(connectorType: StaveConnector): VFStaveConnectorType  {
@@ -1223,7 +1248,9 @@ export class Renderer {
                     vfn.getTicks().value() * formatter.tickContexts.resolutionMultiplier
                 );
                 nextTicks += nTicks;
-                el.x = vfn.getAbsoluteX();
+                if (!el.duration.isGrace) {
+                    el.x = vfn.getAbsoluteX();
+                }
                 // these are a bit hacky...
                 el.systemIndex = s.renderOptions.systemIndex;
 

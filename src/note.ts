@@ -313,7 +313,7 @@ export class GeneralNote extends base.Music21Object {
 
         this.duration.quarterLength = ql;
         /* TODO: editorial objects, style(color), addLyric, insertLyric, hasLyrics */
-        /* Later: augmentOrDiminish, getGrace, */
+        /* Later: augmentOrDiminish */
     }
 
     get pitches(): pitch.Pitch[] {
@@ -405,6 +405,12 @@ export class GeneralNote extends base.Music21Object {
                 this.lyrics.push(newLyric);
             }
         }
+    }
+
+    getGrace(inPlace: boolean=false, appoggiatura: boolean=false): this {
+        const out = inPlace ? this : this.clone(true);
+        out.duration = out.duration.getGraceDuration(appoggiatura);
+        return out;
     }
 
     /**

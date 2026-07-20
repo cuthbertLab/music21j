@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import type {TextNote as VFTextNote} from 'vexflow';
+import type {GraceNoteGroup as VFGraceNoteGroup, TextNote as VFTextNote} from 'vexflow';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
@@ -263,5 +263,21 @@ export default function tests() {
             'second',
             'second lyric is "second".'
         );
+    });
+
+    test('music21.vfShow.Renderer grace notes', assert => {
+        const m = new music21.stream.Measure();
+        const n = new music21.note.Note();
+        n.quarterLength = 0.5;
+        const grace = n.getGrace();
+        m.repeatAppend(grace, 2);
+        m.append(n);
+        m.appendNewDOM();
+
+        const voiceTickables = m.activeVFRenderer.stacks[0].voices[0].getTickables();
+        assert.equal(voiceTickables.length, 1);
+        const graceNoteGroup = voiceTickables[0].getModifiers()[0];
+        // @ts-ignore
+        assert.equal((graceNoteGroup as VFGraceNoteGroup).grace_notes.length, 2);
     });
 }
