@@ -65,6 +65,22 @@ export class Chord extends note.NotRest {
                 ? this._notes.map(n => n.clone(true, memo))
                 : [...this._notes];
         };
+        // _overrides (e.g. an overridden root) must be copied into a new object
+        // so the clone does not share it by reference; a deep clone also clones
+        // any music21-object values. AI-assisted.
+        this._cloneCallbacks._overrides = (
+            keyName: string,
+            newObj: Chord,
+            deep: boolean,
+            memo: WeakMap<any, any>,
+        ) => {
+            const copied: any = {};
+            for (const k of Object.keys(this._overrides)) {
+                const v = this._overrides[k];
+                copied[k] = (deep && v?.isProtoM21Object) ? v.clone(true, memo) : v;
+            }
+            newObj._overrides = copied;
+        };
 
         let arrayNotes: Array<string|note.Note|pitch.Pitch>;
         if (typeof notes === 'undefined') {

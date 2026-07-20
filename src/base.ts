@@ -94,6 +94,11 @@ export class Music21Object extends prebase.ProtoM21Object {
         ) => {
             newObj.sites = new sites.Sites();
         };
+
+        // A `_cache` (on Chord, and any future subclass such as Stream) holds
+        // derived/memoized data; the clone must start with its own fresh cache
+        // from its constructor rather than sharing the original's by reference.
+        this._cloneCallbacks._cache = 'constructor';
     }
 
     /**

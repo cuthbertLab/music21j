@@ -114,4 +114,31 @@ export default function tests() {
         assert.equal(c.length, 3, 'shallow clone has an independent notes array');
         assert.equal(shallow.length, 4, 'added note lands only on the shallow clone');
     });
+
+    test('music21.chord.Chord.clone does not share _cache or _overrides', assert => {
+        const c = new music21.chord.Chord('C4 E4 G4');
+        c.root(new music21.pitch.Pitch('E4'));  // sets an override (and caches)
+        c._cache.marker = 1;
+
+        for (const deep of [true, false]) {
+            const cl = c.clone(deep);
+            assert.notStrictEqual(cl._cache, c._cache, `_cache not shared (deep=${deep})`);
+            assert.deepEqual(cl._cache, {}, `clone starts with an empty _cache (deep=${deep})`);
+            assert.notStrictEqual(
+                cl._overrides, c._overrides, `_overrides not shared (deep=${deep})`
+            );
+            assert.equal(cl.root().name, 'E', `root override preserved (deep=${deep})`);
+        }
+
+        // A deep clone also clones music21-object override values.
+        const deepClone = c.clone(true);
+        assert.notStrictEqual(
+            deepClone._overrides.root, c._overrides.root, 'deep clone copies override values'
+        );
+        // Mutating the clone's containers must not touch the original.
+        deepClone._cache.marker = 2;
+        deepClone._overrides.extra = 9;
+        assert.equal(c._cache.marker, 1, 'mutating clone _cache leaves the original intact');
+        assert.notOk(c._overrides.extra, 'mutating clone _overrides leaves the original intact');
+    });
 }
