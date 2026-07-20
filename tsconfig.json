@@ -17,8 +17,7 @@
         // So "esnext" here just lets typecheck accept modern syntax and never
         // needs an annual bump; it does not raise the browser floor.
         "target": "esnext",
-        // Keep the pre-esnext class-field semantics (esnext would default this
-        // to true, changing class-field emit and flagging existing shadowing).
+        // needed in roman.ts _figure
         "useDefineForClassFields": false,
     },
     "include": [
