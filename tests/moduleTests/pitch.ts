@@ -238,6 +238,15 @@ export default function tests() {
             p3.accidental.displayStatus,
             'When cautionaryNotImmediateRepeat is false, the second D#3 should not display'
         );
+
+        p1 = new music21.pitch.Pitch('D1');
+        p2 = new music21.pitch.Pitch('D1');
+        p2.accidental = new music21.pitch.Accidental('n');
+        p2.updateAccidentalDisplay({pitchPastMeasure: [p1]});
+        assert.notOk(
+            p2.accidental.displayStatus,
+            'With explicit naturals with displayStatus: None, display status should remain None.'
+        );
     });
 
     test('music21.pitch.Pitch enharmonics', assert => {
