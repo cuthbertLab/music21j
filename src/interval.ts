@@ -9,11 +9,14 @@
  *
  */
 import { debug } from './debug';
+import { Music21Exception } from './exceptions21';
 
 import * as common from './common';
 import * as note from './note';
 import * as prebase from './prebase';
 import * as pitch from './pitch';
+
+export class IntervalException extends Music21Exception {}
 
 /**
  * Interval Directions as an Object/map
@@ -759,13 +762,10 @@ export function convertDiatonicNumberToStep(
     let octave: number;
     if (dn === 0) {
         return ['B', -1];
-    } else if (dn > 0) {
+    } else {
+        // floor division keeps this correct for low (negative) notes too.
         octave = Math.floor((dn - 1) / 7);
         stepNumber = dn - 1 - octave * 7;
-    } else {
-        // low notes... test, because js(floor) != py(int);
-        octave = Math.floor(dn / 7);
-        stepNumber = dn - 1 - (octave + 1) * 7;
     }
     const stepName = IntervalStepNames[stepNumber];
     return [stepName, octave];
@@ -1098,4 +1098,113 @@ export function add(intervalList: Interval[]): Interval {
         p2 = i.transposePitch(p2);
     }
     return new Interval(p1, p2);
+}
+
+/**
+ * A pythagorean ratio, expressed as a reduced numerator and denominator.
+ *
+ * music21p returns a Python `Fraction`; JavaScript has no rational type,
+ * so `intervalToPythagoreanRatio` returns this simple object instead.
+ */
+export interface PythagoreanRatio {
+    numerator: number,
+    denominator: number,
+}
+
+// keyed by the name of the target pitch reached from C1; caches the found
+// pitch together with the ratio expressed as exponents of 2 and 3, since a
+// pythagorean ratio is always of the form 2 ** twoExp * 3 ** threeExp.
+const _pythagoreanCache: Record<string, [pitch.Pitch, number, number]> = {};
+
+/**
+ * Returns the interval ratio in pythagorean tuning as a reduced
+ * {@link PythagoreanRatio} (music21p returns a `Fraction`).
+ *
+ * Throws an {@link IntervalException} if no ratio can be found, such as for
+ * quarter tones.
+ *
+ * AI-assisted (port of music21p interval.intervalToPythagoreanRatio).
+ *
+ * @example
+ * const i = new music21.interval.Interval('P5');
+ * music21.interval.intervalToPythagoreanRatio(i);
+ * // { numerator: 3, denominator: 2 }
+ */
+export function intervalToPythagoreanRatio(intervalObj: Interval): PythagoreanRatio {
+    const startPitch = new pitch.Pitch('C1');
+    let endPitchWanted: pitch.Pitch;
+    try {
+        endPitchWanted = intervalObj.transposePitch(startPitch);
+    } catch (e) {
+        // m21j throws when the spelling exceeds quadruple accidentals, where
+        // music21p would wrap; treat such intervals as having no ratio.
+        if (e instanceof Music21Exception) {
+            throw new IntervalException(
+                `Could not find a pythagorean ratio for ${intervalObj.name}.`
+            );
+        }
+        throw e;
+    }
+
+    let endPitch: pitch.Pitch;
+    // ratio = 2 ** twoExp * 3 ** threeExp
+    let twoExp: number;
+    let threeExp: number;
+
+    if (endPitchWanted.name in _pythagoreanCache) {
+        [endPitch, twoExp, threeExp] = _pythagoreanCache[endPitchWanted.name];
+    } else {
+        // A side is set to null once it overflows m21j's accidental range
+        // (music21p instead wraps the spelling); the target is always reached
+        // first on the other, nearer side.
+        let endPitchUp: pitch.Pitch|null = startPitch;
+        let endPitchDown: pitch.Pitch|null = startPitch;
+        const upFifth = new Interval('P5');
+        const downFifth = new Interval('-P5');
+        let found = false;
+
+        // when counter reaches 37 we have exhausted the reachable spellings
+        for (let counter = 0; counter < 37; counter++) {
+            if (endPitchUp !== null && endPitchUp.name === endPitchWanted.name) {
+                threeExp = counter;  // (3 / 2) ** counter
+                twoExp = -counter;
+                endPitch = endPitchUp;
+                found = true;
+                break;
+            } else if (endPitchDown !== null && endPitchDown.name === endPitchWanted.name) {
+                threeExp = -counter;  // (2 / 3) ** counter
+                twoExp = counter;
+                endPitch = endPitchDown;
+                found = true;
+                break;
+            } else {
+                try {
+                    endPitchUp = endPitchUp && upFifth.transposePitch(endPitchUp);
+                } catch (e) {
+                    if (!(e instanceof Music21Exception)) { throw e; }
+                    endPitchUp = null;
+                }
+                try {
+                    endPitchDown = endPitchDown && downFifth.transposePitch(endPitchDown);
+                } catch (e) {
+                    if (!(e instanceof Music21Exception)) { throw e; }
+                    endPitchDown = null;
+                }
+            }
+        }
+        if (!found) {
+            throw new IntervalException(
+                `Could not find a pythagorean ratio for ${intervalObj.name}.`
+            );
+        }
+        _pythagoreanCache[endPitchWanted.name] = [endPitch, twoExp, threeExp];
+    }
+
+    // multiply the ratio by (2 / 1) ** octaves
+    const octaves = Math.trunc((endPitchWanted.ps - endPitch.ps) / 12);
+    twoExp += octaves;
+    // 2 and 3 are coprime, so splitting by sign gives an already-reduced fraction
+    const numerator = 2 ** Math.max(0, twoExp) * 3 ** Math.max(0, threeExp);
+    const denominator = 2 ** Math.max(0, -twoExp) * 3 ** Math.max(0, -threeExp);
+    return { numerator, denominator };
 }

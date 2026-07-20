@@ -17,9 +17,10 @@ import * as note from './note';
 import * as chordTables from './chordTables';
 
 // imports for typing
+import * as pitch from './pitch';
 import type * as clef from './clef';
 import type * as instrument from './instrument';
-import type * as pitch from './pitch';
+import type * as key from './key';
 import {VexflowNoteOptions} from './note';
 
 export { chordTables };
@@ -372,6 +373,50 @@ export class Chord extends note.NotRest {
         }
         const closedChord = new Chord(nonDuplicatingPitches);
         return closedChord;
+    }
+
+    /**
+     * Calls `pitch.simplifyMultipleEnharmonics` on the pitches of the chord.
+     *
+     * Simplifies the enharmonics in the sense of making a more logical chord.
+     * Note below that E# is added there because C# major is simpler than
+     * C# F G#.
+     *
+     * If `keyContext` is provided the enharmonics are simplified based on the
+     * supplied Key or KeySignature.
+     *
+     * AI-assisted (port of music21p Chord.simplifyEnharmonics).
+     *
+     * @example
+     * const c = new music21.chord.Chord('C# F G#');
+     * c.simplifyEnharmonics(true);
+     * c.pitches.map(p => p.name);
+     * // ['C#', 'E#', 'G#']
+     */
+    simplifyEnharmonics(
+        inPlace=false,
+        keyContext?: key.KeySignature
+    ): Chord {
+        const returnObj = inPlace ? this : this.clone(true);
+        const pitches = pitch.simplifyMultipleEnharmonics(
+            returnObj.pitches, undefined, keyContext
+        );
+        if (inPlace) {
+            for (let i = 0; i < pitches.length; i++) {
+                returnObj._notes[i].pitch = pitches[i];
+            }
+        } else {
+            // Chord.clone() shares the underlying notes array, so build a fresh
+            // set of notes and install it to avoid mutating the original chord.
+            const newNotes = returnObj._notes.map((n, i) => {
+                const newNote = n.clone(true);
+                newNote.pitch = pitches[i].clone(true);
+                return newNote;
+            });
+            returnObj.notes = newNotes;
+        }
+        returnObj._cache = {};
+        return returnObj;
     }
 
     /**

@@ -6,6 +6,148 @@ const { test } = QUnit;
 
 export default function tests() {
 
+    const names = (ps: music21.pitch.Pitch[]) => ps.map(p => p.name);
+    const namesWithOctave = (ps: music21.pitch.Pitch[]) => ps.map(p => p.nameWithOctave);
+
+    test('music21.pitch.Pitch.simplifyEnharmonic', assert => {
+        assert.equal(
+            new music21.pitch.Pitch('B#5').simplifyEnharmonic().nameWithOctave, 'C6', 'B#5 simplifies to C6'
+        );
+        // A# stays A# -- fewer accidentals not available
+        assert.equal(
+            new music21.pitch.Pitch('A#2').simplifyEnharmonic().nameWithOctave, 'A#2', 'A#2 stays A#2'
+        );
+        // inPlace returns the same object, mutated
+        const p = new music21.pitch.Pitch('E#3');
+        const returned = p.simplifyEnharmonic({ inPlace: true });
+        assert.equal(p.name, 'F', 'E# simplifies to F in place');
+        assert.strictEqual(returned, p, 'inPlace returns the same Pitch');
+
+        // mostCommon chooses the enharmonic first on the circle of fifths
+        const mostCommon = ['A#4', 'B-4', 'G-4', 'F#4'].map(
+            n => new music21.pitch.Pitch(n).simplifyEnharmonic({ mostCommon: true }).name
+        );
+        assert.deepEqual(mostCommon, ['B-', 'B-', 'F#', 'F#'], 'mostCommon simplifications');
+    });
+
+    test('music21.pitch.Pitch.getAllCommonEnharmonics', assert => {
+        assert.deepEqual(
+            names(new music21.pitch.Pitch('c#3').getAllCommonEnharmonics()),
+            ['D-', 'B##'],
+            'C#3 common enharmonics'
+        );
+        // Higher enharmonics are listed before Lower
+        assert.deepEqual(
+            names(new music21.pitch.Pitch('G4').getAllCommonEnharmonics()),
+            ['A--', 'F##'],
+            'G4 common enharmonics'
+        );
+        // alterLimit caps how many accidentals to allow
+        assert.deepEqual(
+            names(new music21.pitch.Pitch('G-6').getAllCommonEnharmonics(1)),
+            ['F#'],
+            'G-6 with alterLimit 1'
+        );
+        assert.deepEqual(
+            names(new music21.pitch.Pitch('G-6').getAllCommonEnharmonics(3)),
+            ['A---', 'F#', 'E##'],
+            'G-6 with alterLimit 3'
+        );
+    });
+
+    test('music21.pitch.simplifyMultipleEnharmonics', assert => {
+        assert.deepEqual(
+            names(music21.pitch.simplifyMultipleEnharmonics([11, 3, 6])),
+            ['B', 'D#', 'F#'],
+            'pitch classes 11 3 6'
+        );
+        assert.deepEqual(
+            names(music21.pitch.simplifyMultipleEnharmonics([3, 8, 0])),
+            ['E-', 'A-', 'C'],
+            'pitch classes 3 8 0'
+        );
+        assert.deepEqual(
+            namesWithOctave(music21.pitch.simplifyMultipleEnharmonics([
+                new music21.pitch.Pitch('G3'),
+                new music21.pitch.Pitch('C-4'),
+                new music21.pitch.Pitch('D4'),
+            ])),
+            ['G3', 'B3', 'D4'],
+            'G3 C-4 D4 -> G3 B3 D4'
+        );
+        assert.deepEqual(
+            namesWithOctave(music21.pitch.simplifyMultipleEnharmonics([
+                new music21.pitch.Pitch('A3'),
+                new music21.pitch.Pitch('B#3'),
+                new music21.pitch.Pitch('E4'),
+            ])),
+            ['A3', 'C4', 'E4'],
+            'A3 B#3 E4 -> A3 C4 E4'
+        );
+        // The central request: E, A-flat, B simplifies to the E-major triad.
+        assert.deepEqual(
+            names(music21.pitch.simplifyMultipleEnharmonics([
+                new music21.pitch.Pitch('E'),
+                new music21.pitch.Pitch('A-'),
+                new music21.pitch.Pitch('B'),
+            ])),
+            ['E', 'G#', 'B'],
+            'E A- B -> E G# B (E major)'
+        );
+        // Without a key context, extreme spellings are left alone
+        assert.deepEqual(
+            names(music21.pitch.simplifyMultipleEnharmonics([
+                new music21.pitch.Pitch('D--3'),
+                new music21.pitch.Pitch('F-3'),
+                new music21.pitch.Pitch('A--3'),
+            ])),
+            ['D--', 'F-', 'A--'],
+            'no key context leaves extreme spellings'
+        );
+        // The input pitches are not mutated
+        const inputs = [
+            new music21.pitch.Pitch('E'),
+            new music21.pitch.Pitch('A-'),
+            new music21.pitch.Pitch('B'),
+        ];
+        music21.pitch.simplifyMultipleEnharmonics(inputs);
+        assert.deepEqual(names(inputs), ['E', 'A-', 'B'], 'inputs are not mutated');
+    });
+
+    test('music21.pitch.simplifyMultipleEnharmonics keyContext', assert => {
+        assert.deepEqual(
+            names(music21.pitch.simplifyMultipleEnharmonics(
+                [6, 10, 1], undefined, new music21.key.Key('B')
+            )),
+            ['F#', 'A#', 'C#'],
+            'key of B'
+        );
+        assert.deepEqual(
+            names(music21.pitch.simplifyMultipleEnharmonics(
+                [6, 10, 1], undefined, new music21.key.Key('C-')
+            )),
+            ['G-', 'B-', 'D-'],
+            'key of C-'
+        );
+        assert.deepEqual(
+            names(music21.pitch.simplifyMultipleEnharmonics([
+                new music21.pitch.Pitch('D--3'),
+                new music21.pitch.Pitch('F-3'),
+                new music21.pitch.Pitch('A--3'),
+            ], undefined, new music21.key.Key('C'))),
+            ['C', 'E', 'G'],
+            'key of C simplifies D-- F- A-- to C E G'
+        );
+        // compound interval against the (octave-4) tonic does not break spelling
+        assert.deepEqual(
+            namesWithOctave(music21.pitch.simplifyMultipleEnharmonics(
+                [new music21.pitch.Pitch('B5')], undefined, new music21.key.Key('D')
+            )),
+            ['B5'],
+            'B5 in key of D stays B5'
+        );
+    });
+
     test('music21.pitch.Accidental', assert => {
         const a = new music21.pitch.Accidental('-');
         assert.equal(a.alter, -1.0, 'flat alter passed');
