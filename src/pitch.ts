@@ -1264,8 +1264,7 @@ function _dissonanceScore(
                 const ratio = interval.intervalToPythagoreanRatio(thisInterval);
                 // The constant is 1 / ln(3**12): it normalizes the penalty so a
                 // diminished second (the Pythagorean comma, whose ratio denominator
-                // is 3**12 = 531441) scores exactly 1.0. (music21p carries it as the
-                // bare literal 0.07585326888, formerly 2 * 0.03792663444.)
+                // is 3**12 = 531441) scores exactly 1.0.
                 const penalty = Math.log(ratio.denominator) * 0.07585326888;
                 scoreRatio += penalty;
             }
