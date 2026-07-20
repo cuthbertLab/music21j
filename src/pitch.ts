@@ -1213,9 +1213,11 @@ function _product<T>(pools: T[][]): T[][] {
  */
 function _dissonanceScore(
     pitches: Pitch[],
-    smallPythagoreanRatio=true,
-    accidentalPenalty=true,
-    triadAward=true
+    { smallPythagoreanRatio=true, accidentalPenalty=true, triadAward=true }: {
+        smallPythagoreanRatio?: boolean,
+        accidentalPenalty?: boolean,
+        triadAward?: boolean,
+    } = {}
 ): number {
     let scoreAccidentals = 0.0;
     let scoreRatio = 0.0;
