@@ -1,5 +1,6 @@
 import * as prebase from './prebase';
 import type * as clef from './clef';
+import type * as key from './key';
 interface UpdateAccidentalDisplayParams {
     pitchPast?: Pitch[];
     pitchPastMeasure?: Pitch[];
@@ -67,7 +68,7 @@ export declare class Accidental extends prebase.ProtoM21Object {
      * @type {string}
      * @readonly
      */
-    get vexflowModifier(): "n" | "#" | "b" | "##" | "###" | "bb" | "bbb";
+    get vexflowModifier(): "bb" | "b" | "n" | "#" | "##" | "###" | "bbb";
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
@@ -225,6 +226,39 @@ export declare class Pitch extends prebase.ProtoM21Object {
      * @returns {Pitch}
      */
     getLowerEnharmonic(inPlace?: boolean): this;
+    /**
+     * Returns a new Pitch (or sets the current one if inPlace is true) that is
+     * either the same as the current pitch or has fewer sharps or flats if
+     * possible.  For instance, E# returns F, while A# remains A# (i.e., does not
+     * take into account that B- is more common than A#).
+     *
+     * If mostCommon is set to true, then the most commonly used enharmonic
+     * spelling is chosen (that is, the one that appears first in key signatures
+     * as you move away from C on the circle of fifths).  Thus, G-flat becomes F#,
+     * A# becomes B-flat, D# becomes E-flat, D-flat becomes C#, G# and A-flat are
+     * left alone.
+     *
+     * @example
+     * new music21.pitch.Pitch('B#5').simplifyEnharmonic().nameWithOctave;
+     * // 'C6'
+     */
+    simplifyEnharmonic({ inPlace, mostCommon }?: {
+        inPlace?: boolean;
+        mostCommon?: boolean;
+    }): Pitch;
+    /**
+     * Return all common unique enharmonics for a pitch, or those that do not
+     * involve more than `alterLimit` accidentals.  "Higher" enharmonics are
+     * listed before "Lower".
+     *
+     * music21p does not support accidentals beyond quadruple sharp/flat, so
+     * `alterLimit` = 4 is the most you can use.
+     *
+     * @example
+     * new music21.pitch.Pitch('c#3').getAllCommonEnharmonics().map(p => p.name);
+     * // ['D-', 'B##']
+     */
+    getAllCommonEnharmonics(alterLimit?: number): Pitch[];
     protected _nameInKeySignature(alteredPitches: Pitch[]): boolean;
     protected _stepInKeySignature(alteredPitches: Pitch[]): boolean;
     updateAccidentalDisplay({ pitchPast, pitchPastMeasure, otherSimultaneousPitches, alteredPitches, cautionaryPitchClass, cautionaryAll, overrideStatus, cautionaryNotImmediateRepeat, lastNoteWasTied, }?: UpdateAccidentalDisplayParams): void;
@@ -237,5 +271,26 @@ export declare class Pitch extends prebase.ProtoM21Object {
      */
     vexflowName(clefObj?: clef.Clef): string;
 }
+/**
+ * Try to simplify the enharmonic spelling of a list of `Pitch` objects, pitch
+ * name strings, or pitch/pitch-class numbers according to a given criterion.
+ *
+ * A function can be passed as the `criterion` argument; it is minimized in a
+ * greedy, left-to-right fashion.
+ *
+ * The `keyContext` option supplies a KeySignature or Key used in the
+ * simplification.  Note that without a key context we will not simplify
+ * everything.
+ *
+ * @example
+ * music21.pitch.simplifyMultipleEnharmonics([11, 3, 6]).map(p => p.name);
+ * // ['B', 'D#', 'F#']
+ * @example
+ * music21.pitch.simplifyMultipleEnharmonics([6, 10, 1], {keyContext: new key.Key('B')});
+ */
+export declare function simplifyMultipleEnharmonics(pitches: Iterable<Pitch | string | number>, { criterion, keyContext }?: {
+    criterion?: (pitches: Pitch[]) => number;
+    keyContext?: key.KeySignature;
+}): Pitch[];
 export {};
 //# sourceMappingURL=pitch.d.ts.map
