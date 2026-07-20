@@ -2,6 +2,9 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
+        // lib = the runtime APIs tsc assumes exist. This project does not polyfill.
+        // To match baseline-widely-available, ~30 months,
+        // es20XX should be 3 less than the current year. Change each January.
         "lib": ["dom", "dom.iterable", "es2023"],
         "experimentalDecorators": true,
         "moduleResolution": "node",
