@@ -11,8 +11,10 @@ import { Music21Exception } from './exceptions21';
 
 import * as prebase from './prebase';
 import * as common from './common';
+import * as interval from './interval';
 
 import type * as clef from './clef';
+import type * as key from './key';
 
 
 interface UpdateAccidentalDisplayParams {
@@ -591,7 +593,121 @@ export class Pitch extends prebase.ProtoM21Object {
     getLowerEnharmonic(inPlace=false) {
         return this._getEnharmonicHelper(inPlace, -1);
     }
-    /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
+
+    /**
+     * Returns a new Pitch (or sets the current one if inPlace is true) that is
+     * either the same as the current pitch or has fewer sharps or flats if
+     * possible.  For instance, E# returns F, while A# remains A# (i.e., does not
+     * take into account that B- is more common than A#).
+     *
+     * If mostCommon is set to true, then the most commonly used enharmonic
+     * spelling is chosen (that is, the one that appears first in key signatures
+     * as you move away from C on the circle of fifths).  Thus, G-flat becomes F#,
+     * A# becomes B-flat, D# becomes E-flat, D-flat becomes C#, G# and A-flat are
+     * left alone.
+     *
+     * @example
+     * new music21.pitch.Pitch('B#5').simplifyEnharmonic().nameWithOctave;
+     * // 'C6'
+     */
+    simplifyEnharmonic({ inPlace=false, mostCommon=false }={}): Pitch {
+        const returnObj = inPlace ? this : this.clone();
+
+        if (returnObj.accidental !== undefined) {
+            if (Math.abs(returnObj.accidental.alter) < 2.0
+                    && !['E#', 'B#', 'C-', 'F-'].includes(returnObj.name)) {
+                // do nothing
+            } else {
+                // by resetting the pitch space value, we get a simpler
+                // enharmonic spelling
+                returnObj.ps = this.ps;
+            }
+        }
+
+        if (mostCommon) {
+            if (returnObj.name === 'D#') {
+                returnObj.step = 'E';
+                returnObj.accidental = new Accidental('flat');
+            } else if (returnObj.name === 'A#') {
+                returnObj.step = 'B';
+                returnObj.accidental = new Accidental('flat');
+            } else if (returnObj.name === 'G-') {
+                returnObj.step = 'F';
+                returnObj.accidental = new Accidental('sharp');
+            } else if (returnObj.name === 'D-') {
+                returnObj.step = 'C';
+                returnObj.accidental = new Accidental('sharp');
+            }
+        }
+
+        return returnObj;
+    }
+
+    /**
+     * Return all common unique enharmonics for a pitch, or those that do not
+     * involve more than `alterLimit` accidentals.  "Higher" enharmonics are
+     * listed before "Lower".
+     *
+     * music21p does not support accidentals beyond quadruple sharp/flat, so
+     * `alterLimit` = 4 is the most you can use.
+     *
+     * @example
+     * new music21.pitch.Pitch('c#3').getAllCommonEnharmonics().map(p => p.name);
+     * // ['D-', 'B##']
+     */
+    getAllCommonEnharmonics(alterLimit=2): Pitch[] {
+        const post: Pitch[] = [];
+        const contains = (list: Pitch[], target: Pitch) => list.some(p => p.eq(target));
+
+        const c = this.simplifyEnharmonic({ inPlace: false });
+        if (c.name !== this.name) {
+            post.push(c);
+        }
+        // iterative scan upward
+        let cUp: Pitch = this;
+        while (true) {
+            try {
+                cUp = cUp.getHigherEnharmonic(false);
+            } catch (e) {
+                if (e instanceof Music21Exception) {
+                    break;  // ran out of accidentals
+                }
+                throw e;
+            }
+            if (cUp.accidental !== undefined
+                    && Math.abs(cUp.accidental.alter) > alterLimit) {
+                break;
+            }
+            if (!contains(post, cUp)) {
+                post.push(cUp);
+            } else {  // we are looping
+                break;
+            }
+        }
+        // iterative scan downward
+        let cDown: Pitch = this;
+        while (true) {
+            try {
+                cDown = cDown.getLowerEnharmonic(false);
+            } catch (e) {
+                if (e instanceof Music21Exception) {
+                    break;  // ran out of accidentals
+                }
+                throw e;
+            }
+            if (cDown.accidental !== undefined
+                    && Math.abs(cDown.accidental.alter) > alterLimit) {
+                break;
+            }
+            if (!contains(post, cDown)) {
+                post.push(cDown);
+            } else {  // we are looping
+                break;
+            }
+        }
+        return post;
+    }
+    /* TODO: isEnharmonic, getEnharmonic */
 
     protected _nameInKeySignature(alteredPitches: Pitch[]) : boolean {
         for (const p of alteredPitches) {  // all are altered tones, must have acc
@@ -1055,4 +1171,230 @@ export class Pitch extends prebase.ProtoM21Object {
             = tempPitch.step + accidentalType + '/' + tempPitch.octave;
         return outName;
     }
+}
+
+// -----------------------------------------------------------------------------
+// simplifyMultipleEnharmonics and helpers -- port of music21p pitch module.
+
+/**
+ * Cartesian product of a list of pools (iterables), iterating the last pool fastest --
+ * like Python's `itertools.product`, so tie-breaking is identical, but not a generator.
+ * Does not support the repeat parameter of itertools.
+ */
+function _product<T>(pools: T[][]): T[][] {
+    let result: T[][] = [[]];
+    for (const pool of pools) {
+        const newResult: T[][] = [];
+        for (const prefix of result) {
+            for (const item of pool) {
+                newResult.push([...prefix, item]);
+            }
+        }
+        result = newResult;
+    }
+    return result;
+}
+
+/**
+ * Calculate the 'dissonance' of a list of pitches based on three criteria.
+ *
+ * A chord is considered more consonant if (1) the numerators and denominators
+ * of the Pythagorean ratios of its constituent intervals are small
+ * (`smallPythagoreanRatio`), (2) it shows few double- or triple-accidentals
+ * (`accidentalPenalty`), and (3) it shows thirds that can form some triad
+ * (`triadAward`).
+ *
+ * (keep same as music21p pitch._dissonanceScore).
+ */
+function _dissonanceScore(
+    pitches: Pitch[],
+    { smallPythagoreanRatio=true, accidentalPenalty=true, triadAward=true }: {
+        smallPythagoreanRatio?: boolean,
+        accidentalPenalty?: boolean,
+        triadAward?: boolean,
+    } = {}
+): number {
+    let scoreAccidentals = 0.0;
+    let scoreRatio = 0.0;
+    let scoreTriad = 0.0;
+
+    if (!pitches.length) {
+        return 0.0;
+    }
+
+    if (accidentalPenalty) {
+        // score_accidentals = accidentals per pitch
+        const accidentals = pitches.map(p => Math.abs(p.accidental?.alter ?? 0));
+        scoreAccidentals = accidentals
+            .map(a => (a > 1 ? a : 0))
+            .reduce((x, y) => x + y, 0) / pitches.length;
+    }
+
+    const intervals: interval.Interval[] = [];
+    if (smallPythagoreanRatio || triadAward) {
+        try {
+            for (let i = 0; i < pitches.length; i++) {
+                for (let j = i + 1; j < pitches.length; j++) {
+                    const p1 = pitches[i];
+                    const p2 = pitches[j].clone();
+                    // music21p sets p2.octave to None here so intervals stay
+                    // simple; m21j pitches always carry an octave, so normalize
+                    // to the default (4) which is music21p's implicit octave.
+                    p2.octave = 4;
+                    intervals.push(new interval.Interval(p1, p2));
+                }
+            }
+        } catch (e) {
+            if (e instanceof interval.IntervalException) {
+                return Infinity;
+            }
+            throw e;
+        }
+    }
+
+    if (smallPythagoreanRatio) {
+        // score_ratio = Pythagorean ratio complexity per pitch
+        try {
+            for (const thisInterval of intervals) {
+                // does not accept weird intervals, e.g. with semitones, or
+                // spellings too extreme for m21j to reach (music21p wraps them)
+                const ratio = interval.intervalToPythagoreanRatio(thisInterval);
+                // The constant is 1 / ln(3**12): it normalizes the penalty so a
+                // diminished second (the Pythagorean comma, whose ratio denominator
+                // is 3**12 = 531441) scores exactly 1.0.
+                const penalty = Math.log(ratio.denominator) * 0.07585326888;
+                scoreRatio += penalty;
+            }
+        } catch (e) {
+            if (e instanceof interval.IntervalException) {
+                return Infinity;
+            }
+            throw e;
+        }
+        scoreRatio /= pitches.length;
+    }
+
+    if (triadAward) {
+        // score_triad = number of thirds per pitch (avoid double-base-thirds)
+        for (const thisInterval of intervals) {
+            const simpleDirected = thisInterval.generic.simpleDirected;
+            const intervalSemitones = common.posMod(thisInterval.chromatic.semitones, 12);
+            if (simpleDirected === 3 && (intervalSemitones === 3 || intervalSemitones === 4)) {
+                scoreTriad -= 1.0;
+            } else if (simpleDirected === 6 && (intervalSemitones === 8 || intervalSemitones === 9)) {
+                scoreTriad -= 1.0;
+            }
+        }
+        scoreTriad /= pitches.length;
+    }
+
+    const divisor = Number(smallPythagoreanRatio)
+        + Number(accidentalPenalty) + Number(triadAward);
+    return (scoreAccidentals + scoreRatio + scoreTriad) / divisor;
+}
+
+/**
+ * Simplify a list of pitches by brute force -- useful if there are fewer than
+ * five pitches.  Keeps the first pitch fixed and searches every combination of
+ * the common enharmonics of the rest.
+ */
+function _bruteForceEnharmonicsSearch(
+    oldPitches: Pitch[],
+    scoreFunc: (pitches: Pitch[]) => number = _dissonanceScore
+): Pitch[] {
+    const fixed = oldPitches.slice(0, 1);
+    const allPossiblePitches = oldPitches.slice(1).map(
+        p => [p, ...p.getAllCommonEnharmonics()]
+    );
+    let best: Pitch[] = fixed.concat(allPossiblePitches.map(pool => pool[0]));
+    let bestScore = Infinity;
+    for (const combo of _product(allPossiblePitches)) {
+        const candidate = fixed.concat(combo);
+        const score = scoreFunc(candidate);
+        if (score < bestScore) {  // strict < keeps the first minimum, as Python min()
+            bestScore = score;
+            best = candidate;
+        }
+    }
+    return best;
+}
+
+/**
+ * Simplify a list of pitches greedily, left-to-right -- useful for five or more
+ * pitches, where brute force would be too slow.
+ */
+function _greedyEnharmonicsSearch(
+    oldPitches: Pitch[],
+    scoreFunc: (pitches: Pitch[]) => number = _dissonanceScore
+): Pitch[] {
+    const newPitches = oldPitches.slice(0, 1);
+    for (const oldPitch of oldPitches.slice(1)) {
+        const candidates = [oldPitch, ...oldPitch.getAllCommonEnharmonics()];
+        let best = candidates[0];
+        let bestScore = Infinity;
+        for (const cand of candidates) {
+            const score = scoreFunc([...newPitches, cand]);
+            if (score < bestScore) {
+                bestScore = score;
+                best = cand;
+            }
+        }
+        newPitches.push(best);
+    }
+    return newPitches;
+}
+
+/**
+ * Try to simplify the enharmonic spelling of a list of `Pitch` objects, pitch
+ * name strings, or pitch/pitch-class numbers according to a given criterion.
+ *
+ * A function can be passed as the `criterion` argument; it is minimized in a
+ * greedy, left-to-right fashion.
+ *
+ * The `keyContext` option supplies a KeySignature or Key used in the
+ * simplification.  Note that without a key context we will not simplify
+ * everything.
+ *
+ * @example
+ * music21.pitch.simplifyMultipleEnharmonics([11, 3, 6]).map(p => p.name);
+ * // ['B', 'D#', 'F#']
+ * @example
+ * music21.pitch.simplifyMultipleEnharmonics([6, 10, 1], {keyContext: new key.Key('B')});
+ */
+export function simplifyMultipleEnharmonics(
+    pitches: Iterable<Pitch|string|number>,
+    { criterion=_dissonanceScore, keyContext }: {
+        criterion?: (pitches: Pitch[]) => number,
+        keyContext?: key.KeySignature,
+    } = {}
+): Pitch[] {
+    let oldPitches = Array.from(pitches).map(
+        p => (p instanceof Pitch ? p : new Pitch(p))
+    );
+
+    let removeFirst = false;
+    if (keyContext) {
+        // music21p uses keyContext.asKey('major').tonic; majorName() gives the
+        // same tonic pitch name for this key signature.
+        oldPitches = [new Pitch(keyContext.majorName()), ...oldPitches];
+        removeFirst = true;
+    }
+
+    let simplifiedPitches: Pitch[];
+    if (oldPitches.length < 5) {
+        simplifiedPitches = _bruteForceEnharmonicsSearch(oldPitches, criterion);
+    } else {
+        simplifiedPitches = _greedyEnharmonicsSearch(oldPitches, criterion);
+    }
+
+    // Preserve value of spellingIsInferred
+    for (let i = 0; i < oldPitches.length; i++) {
+        simplifiedPitches[i].spellingIsInferred = oldPitches[i].spellingIsInferred;
+    }
+
+    if (removeFirst) {
+        simplifiedPitches = simplifiedPitches.slice(1);
+    }
+
+    return simplifiedPitches;
 }

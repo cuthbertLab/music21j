@@ -17,9 +17,10 @@ import * as note from './note';
 import * as chordTables from './chordTables';
 
 // imports for typing
+import * as pitch from './pitch';
 import type * as clef from './clef';
 import type * as instrument from './instrument';
-import type * as pitch from './pitch';
+import type * as key from './key';
 import {VexflowNoteOptions} from './note';
 
 export { chordTables };
@@ -50,6 +51,32 @@ export class Chord extends note.NotRest {
 
     constructor(notes?: string|string[]|note.Note|note.Note[]|pitch.Pitch|pitch.Pitch[]) {
         super();
+        // Shallow clone shares Notes but gets a new _notes array.
+        this._cloneCallbacks._notes = (
+            keyName: string,
+            newObj: Chord,
+            deep: boolean,
+            memo: WeakMap<any, any>,
+        ) => {
+            newObj._notes = deep
+                ? this._notes.map(n => n.clone(true, memo))
+                : [...this._notes];
+        };
+        // _overrides (e.g. an overridden root) are shared on shallow clone, but the Array is not.
+        this._cloneCallbacks._overrides = (
+            keyName: string,
+            newObj: Chord,
+            deep: boolean,
+            memo: WeakMap<any, any>,
+        ) => {
+            const copied: any = {};
+            for (const k of Object.keys(this._overrides)) {
+                const v = this._overrides[k];
+                copied[k] = (deep && v?.isProtoM21Object) ? v.clone(true, memo) : v;
+            }
+            newObj._overrides = copied;
+        };
+
         let arrayNotes: Array<string|note.Note|pitch.Pitch>;
         if (typeof notes === 'undefined') {
             arrayNotes = [];
@@ -372,6 +399,37 @@ export class Chord extends note.NotRest {
         }
         const closedChord = new Chord(nonDuplicatingPitches);
         return closedChord;
+    }
+
+    /**
+     * Calls `pitch.simplifyMultipleEnharmonics` on the pitches of the chord.
+     *
+     * Simplifies the enharmonics in the sense of making a more logical chord.
+     * Note below that E# is added there because C# major is simpler than
+     * C# F G#.
+     *
+     * If `keyContext` is provided the enharmonics are simplified based on the
+     * supplied Key or KeySignature.
+     *
+     * @example
+     * const c = new music21.chord.Chord('C# F G#');
+     * c.simplifyEnharmonics(true);
+     * c.pitches.map(p => p.name);
+     * // ['C#', 'E#', 'G#']
+     */
+    simplifyEnharmonics(
+        inPlace=false,
+        keyContext?: key.KeySignature
+    ): Chord {
+        const returnObj = inPlace ? this : this.clone(true);
+        const pitches = pitch.simplifyMultipleEnharmonics(
+            returnObj.pitches, { keyContext }
+        );
+        for (let i = 0; i < pitches.length; i++) {
+            returnObj._notes[i].pitch = pitches[i];
+        }
+        returnObj._cache = {};
+        return returnObj;
     }
 
     /**

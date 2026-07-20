@@ -94,6 +94,9 @@ export class Music21Object extends prebase.ProtoM21Object {
         ) => {
             newObj.sites = new sites.Sites();
         };
+
+        // clones start with fresh cache (constructor = {} or new Map, etc.)
+        this._cloneCallbacks._cache = 'constructor';
     }
 
     /**

@@ -22,9 +22,10 @@ export default defineConfig({
         sourcemap: true,
         emptyOutDir: true,
 
-        // this is the default.
+        // The shipped bundle's browser floor is set here (not tsconfig.json).
+        // This is already Vite's default build.target
+        // ('baseline-widely-available' = features in all major browsers for ~30 months)
         // target: 'baseline-widely-available',
-        // esbuild.target is esnext for speed.
         lib: {
             entry: 'src/main.ts',
             name: 'music21',

@@ -2,6 +2,9 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
+        // lib = the runtime APIs tsc assumes exist. This project does not polyfill.
+        // To match baseline-widely-available, ~30 months,
+        // es20XX should be 3 less than the current year. Change each January.
         "lib": ["dom", "dom.iterable", "es2023"],
         "experimentalDecorators": true,
         "moduleResolution": "node",
@@ -11,7 +14,14 @@
         "declarationDir": "build",
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        "target": "es6"
+        // tsc here only typechecks the source and emits .d.ts; it does NOT
+        // build the shipped bundle -- Vite/esbuild does (see vite.config.ts),
+        // and that is where the browser target lives (baseline-widely-available).
+        // So "esnext" here just lets typecheck accept modern syntax, build fast, and never
+        // needs an annual bump; it does not raise the browser floor.
+        "target": "esnext",
+        // needed in roman.ts _figure
+        "useDefineForClassFields": false,
     },
     "include": [
         "src/**/*",
