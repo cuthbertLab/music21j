@@ -430,7 +430,7 @@ export class Chord extends note.NotRest {
     ): Chord {
         const returnObj = inPlace ? this : this.clone(true);
         const pitches = pitch.simplifyMultipleEnharmonics(
-            returnObj.pitches, undefined, keyContext
+            returnObj.pitches, { keyContext }
         );
         for (let i = 0; i < pitches.length; i++) {
             returnObj._notes[i].pitch = pitches[i];

@@ -1358,7 +1358,7 @@ function _greedyEnharmonicsSearch(
  * A function can be passed as the `criterion` argument; it is minimized in a
  * greedy, left-to-right fashion.
  *
- * The `keyContext` argument supplies a KeySignature or Key used in the
+ * The `keyContext` option supplies a KeySignature or Key used in the
  * simplification.  Note that without a key context we will not simplify
  * everything.
  *
@@ -1367,11 +1367,15 @@ function _greedyEnharmonicsSearch(
  * @example
  * music21.pitch.simplifyMultipleEnharmonics([11, 3, 6]).map(p => p.name);
  * // ['B', 'D#', 'F#']
+ * @example
+ * music21.pitch.simplifyMultipleEnharmonics([6, 10, 1], {keyContext: new key.Key('B')});
  */
 export function simplifyMultipleEnharmonics(
     pitches: Iterable<Pitch|string|number>,
-    criterion: (pitches: Pitch[]) => number = _dissonanceScore,
-    keyContext?: key.KeySignature
+    { criterion=_dissonanceScore, keyContext }: {
+        criterion?: (pitches: Pitch[]) => number,
+        keyContext?: key.KeySignature,
+    } = {}
 ): Pitch[] {
     let oldPitches = Array.from(pitches).map(
         p => (p instanceof Pitch ? p : new Pitch(p))

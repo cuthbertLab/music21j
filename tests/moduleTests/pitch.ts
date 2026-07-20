@@ -117,14 +117,14 @@ export default function tests() {
     test('music21.pitch.simplifyMultipleEnharmonics keyContext', assert => {
         assert.deepEqual(
             names(music21.pitch.simplifyMultipleEnharmonics(
-                [6, 10, 1], undefined, new music21.key.Key('B')
+                [6, 10, 1], { keyContext: new music21.key.Key('B') }
             )),
             ['F#', 'A#', 'C#'],
             'key of B'
         );
         assert.deepEqual(
             names(music21.pitch.simplifyMultipleEnharmonics(
-                [6, 10, 1], undefined, new music21.key.Key('C-')
+                [6, 10, 1], { keyContext: new music21.key.Key('C-') }
             )),
             ['G-', 'B-', 'D-'],
             'key of C-'
@@ -134,14 +134,14 @@ export default function tests() {
                 new music21.pitch.Pitch('D--3'),
                 new music21.pitch.Pitch('F-3'),
                 new music21.pitch.Pitch('A--3'),
-            ], undefined, new music21.key.Key('C'))),
+            ], { keyContext: new music21.key.Key('C') })),
             ['C', 'E', 'G'],
             'key of C simplifies D-- F- A-- to C E G'
         );
         // compound interval against the (octave-4) tonic does not break spelling
         assert.deepEqual(
             namesWithOctave(music21.pitch.simplifyMultipleEnharmonics(
-                [new music21.pitch.Pitch('B5')], undefined, new music21.key.Key('D')
+                [new music21.pitch.Pitch('B5')], { keyContext: new music21.key.Key('D') }
             )),
             ['B5'],
             'B5 in key of D stays B5'
