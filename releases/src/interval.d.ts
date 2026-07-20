@@ -1,6 +1,9 @@
+import { Music21Exception } from './exceptions21';
 import * as note from './note';
 import * as prebase from './prebase';
 import * as pitch from './pitch';
+export declare class IntervalException extends Music21Exception {
+}
 /**
  * Interval Directions as an Object/map
  *
@@ -340,4 +343,27 @@ export declare function notesToChromatic(n1: any, n2: any): ChromaticInterval;
 export declare function intervalsToDiatonic(gInt: GenericInterval, cInt: ChromaticInterval): DiatonicInterval;
 export declare function _getSpecifierFromGenericChromatic(gInt: GenericInterval, cInt: ChromaticInterval): number;
 export declare function add(intervalList: Interval[]): Interval;
+/**
+ * A Pythagorean ratio, expressed as a reduced numerator and denominator.
+ *
+ * music21p returns a Python `Fraction`; JavaScript has no rational type,
+ * so `intervalToPythagoreanRatio` returns this simple object instead.
+ */
+export interface PythagoreanRatio {
+    numerator: number;
+    denominator: number;
+}
+/**
+ * Returns the interval ratio in pythagorean tuning as a reduced
+ * {@link PythagoreanRatio} (music21p returns a `Fraction`).
+ *
+ * Throws an {@link IntervalException} if no ratio can be found, such as for
+ * quarter tones.
+ *
+ * @example
+ * const i = new music21.interval.Interval('P5');
+ * music21.interval.intervalToPythagoreanRatio(i);
+ * // { numerator: 3, denominator: 2 }
+ */
+export declare function intervalToPythagoreanRatio(intervalObj: Interval): PythagoreanRatio;
 //# sourceMappingURL=interval.d.ts.map

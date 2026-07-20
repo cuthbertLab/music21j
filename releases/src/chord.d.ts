@@ -11,9 +11,10 @@
 import { StaveNote as VFStaveNote } from 'vexflow';
 import * as note from './note';
 import * as chordTables from './chordTables';
+import * as pitch from './pitch';
 import type * as clef from './clef';
 import type * as instrument from './instrument';
-import type * as pitch from './pitch';
+import type * as key from './key';
 import { VexflowNoteOptions } from './note';
 export { chordTables };
 /**
@@ -81,6 +82,23 @@ export declare class Chord extends note.NotRest {
      * returns A new Chord object with duplicate pitches removed.
      */
     removeDuplicatePitches(): Chord;
+    /**
+     * Calls `pitch.simplifyMultipleEnharmonics` on the pitches of the chord.
+     *
+     * Simplifies the enharmonics in the sense of making a more logical chord.
+     * Note below that E# is added there because C# major is simpler than
+     * C# F G#.
+     *
+     * If `keyContext` is provided the enharmonics are simplified based on the
+     * supplied Key or KeySignature.
+     *
+     * @example
+     * const c = new music21.chord.Chord('C# F G#');
+     * c.simplifyEnharmonics(true);
+     * c.pitches.map(p => p.name);
+     * // ['C#', 'E#', 'G#']
+     */
+    simplifyEnharmonics(inPlace?: boolean, keyContext?: key.KeySignature): Chord;
     /**
      * Finds the Root of the chord, or sets it as an override.
      */
