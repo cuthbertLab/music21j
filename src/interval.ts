@@ -758,8 +758,6 @@ export const IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 export function convertDiatonicNumberToStep(
     dn: number
 ): [string, number] {
-    // floor division keeps this correct for low (dn <= 0) notes too, e.g.
-    // dn = 0 -> ['B', -1] and dn = -1 -> ['A', -1].
     const octave = Math.floor((dn - 1) / 7);
     const stepNumber = dn - 1 - octave * 7;
     const stepName = IntervalStepNames[stepNumber];
@@ -1096,7 +1094,7 @@ export function add(intervalList: Interval[]): Interval {
 }
 
 /**
- * A pythagorean ratio, expressed as a reduced numerator and denominator.
+ * A Pythagorean ratio, expressed as a reduced numerator and denominator.
  *
  * music21p returns a Python `Fraction`; JavaScript has no rational type,
  * so `intervalToPythagoreanRatio` returns this simple object instead.
@@ -1118,8 +1116,6 @@ const _pythagoreanCache: Record<string, [pitch.Pitch, number, number]> = {};
  * Throws an {@link IntervalException} if no ratio can be found, such as for
  * quarter tones.
  *
- * AI-assisted (port of music21p interval.intervalToPythagoreanRatio).
- *
  * @example
  * const i = new music21.interval.Interval('P5');
  * music21.interval.intervalToPythagoreanRatio(i);
@@ -1135,7 +1131,7 @@ export function intervalToPythagoreanRatio(intervalObj: Interval): PythagoreanRa
         // music21p would wrap; treat such intervals as having no ratio.
         if (e instanceof Music21Exception) {
             throw new IntervalException(
-                `Could not find a pythagorean ratio for ${intervalObj.name}.`
+                `Could not find a Pythagorean ratio for ${intervalObj.name}.`
             );
         }
         throw e;
@@ -1189,7 +1185,7 @@ export function intervalToPythagoreanRatio(intervalObj: Interval): PythagoreanRa
         }
         if (!found) {
             throw new IntervalException(
-                `Could not find a pythagorean ratio for ${intervalObj.name}.`
+                `Could not find a Pythagorean ratio for ${intervalObj.name}.`
             );
         }
         _pythagoreanCache[endPitchWanted.name] = [endPitch, twoExp, threeExp];

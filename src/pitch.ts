@@ -606,8 +606,6 @@ export class Pitch extends prebase.ProtoM21Object {
      * A# becomes B-flat, D# becomes E-flat, D-flat becomes C#, G# and A-flat are
      * left alone.
      *
-     * AI-assisted (port of music21p Pitch.simplifyEnharmonic).
-     *
      * @example
      * new music21.pitch.Pitch('B#5').simplifyEnharmonic().nameWithOctave;
      * // 'C6'
@@ -652,8 +650,6 @@ export class Pitch extends prebase.ProtoM21Object {
      *
      * music21p does not support accidentals beyond quadruple sharp/flat, so
      * `alterLimit` = 4 is the most you can use.
-     *
-     * AI-assisted (port of music21p Pitch.getAllCommonEnharmonics).
      *
      * @example
      * new music21.pitch.Pitch('c#3').getAllCommonEnharmonics().map(p => p.name);
@@ -1181,10 +1177,9 @@ export class Pitch extends prebase.ProtoM21Object {
 // simplifyMultipleEnharmonics and helpers -- port of music21p pitch module.
 
 /**
- * Cartesian product of a list of pools, iterating the last pool fastest --
- * matching Python's `itertools.product`, so tie-breaking is identical.
- *
- * AI-assisted.
+ * Cartesian product of a list of pools (iterables), iterating the last pool fastest --
+ * like Python's `itertools.product`, so tie-breaking is identical, but not a generator.
+ * Does not support the repeat parameter of itertools.
  */
 function _product<T>(pools: T[][]): T[][] {
     let result: T[][] = [[]];
@@ -1209,7 +1204,7 @@ function _product<T>(pools: T[][]): T[][] {
  * (`accidentalPenalty`), and (3) it shows thirds that can form some triad
  * (`triadAward`).
  *
- * AI-assisted (port of music21p pitch._dissonanceScore).
+ * (keep same as music21p pitch._dissonanceScore).
  */
 function _dissonanceScore(
     pitches: Pitch[],
@@ -1302,8 +1297,6 @@ function _dissonanceScore(
  * Simplify a list of pitches by brute force -- useful if there are fewer than
  * five pitches.  Keeps the first pitch fixed and searches every combination of
  * the common enharmonics of the rest.
- *
- * AI-assisted (port of music21p pitch._bruteForceEnharmonicsSearch).
  */
 function _bruteForceEnharmonicsSearch(
     oldPitches: Pitch[],
@@ -1329,8 +1322,6 @@ function _bruteForceEnharmonicsSearch(
 /**
  * Simplify a list of pitches greedily, left-to-right -- useful for five or more
  * pitches, where brute force would be too slow.
- *
- * AI-assisted (port of music21p pitch._greedyEnharmonicsSearch).
  */
 function _greedyEnharmonicsSearch(
     oldPitches: Pitch[],
@@ -1363,8 +1354,6 @@ function _greedyEnharmonicsSearch(
  * The `keyContext` option supplies a KeySignature or Key used in the
  * simplification.  Note that without a key context we will not simplify
  * everything.
- *
- * AI-assisted (port of music21p pitch.simplifyMultipleEnharmonics).
  *
  * @example
  * music21.pitch.simplifyMultipleEnharmonics([11, 3, 6]).map(p => p.name);

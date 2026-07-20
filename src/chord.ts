@@ -51,10 +51,7 @@ export class Chord extends note.NotRest {
 
     constructor(notes?: string|string[]|note.Note|note.Note[]|pitch.Pitch|pitch.Pitch[]) {
         super();
-        // The base clone() only deep-copies ProtoM21Object-valued properties, so
-        // the _notes Array would otherwise be shared by reference.  A deep clone
-        // must copy each Note; a shallow clone keeps the same Notes but in a new
-        // array. AI-assisted.
+        // Shallow clone shares Notes but gets a new _notes array.
         this._cloneCallbacks._notes = (
             keyName: string,
             newObj: Chord,
@@ -65,9 +62,7 @@ export class Chord extends note.NotRest {
                 ? this._notes.map(n => n.clone(true, memo))
                 : [...this._notes];
         };
-        // _overrides (e.g. an overridden root) must be copied into a new object
-        // so the clone does not share it by reference; a deep clone also clones
-        // any music21-object values. AI-assisted.
+        // _overrides (e.g. an overridden root) are shared on shallow clone, but the Array is not.
         this._cloneCallbacks._overrides = (
             keyName: string,
             newObj: Chord,
@@ -415,8 +410,6 @@ export class Chord extends note.NotRest {
      *
      * If `keyContext` is provided the enharmonics are simplified based on the
      * supplied Key or KeySignature.
-     *
-     * AI-assisted (port of music21p Chord.simplifyEnharmonics).
      *
      * @example
      * const c = new music21.chord.Chord('C# F G#');
