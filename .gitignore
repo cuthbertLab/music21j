@@ -5,10 +5,6 @@ node_modules/grunt/package.json
 # Build is not committed, just releases/
 build/
 
-# Built tests
-tests/music21.tests.js
-tests/music21.tests.js.map
-
 # Python files
 __pycache__
 *.py[cod]
@@ -34,22 +30,6 @@ __pycache__
 # OSX
 .DS_Store
 
-# C extensions
-*.so
-
-# Packages
-*.egg
-*.egg-info
-dist
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
-lib
-lib64
-
 # Installer logs
 pip-log.txt
 
@@ -58,17 +38,9 @@ pip-log.txt
 .tox
 nosetests.xml
 
-# Translations
-*.mo
-
-# Mr Developer
-.mr.developer.cfg
-
 soundfonts/*
 
-node_modules/grunt-contrib-uglify/package.json
-
-# PyCharm
+# JetBrains
 .idea/encodings.xml
 .idea/misc.xml
 .idea/modules.xml
@@ -79,12 +51,12 @@ node_modules/grunt-contrib-uglify/package.json
 
 # VSCode
 *.code-workspace
-/tests/test_compile_out/
 /.idea
 
 # sometimes we symlink this in especially so that agents can port directly from music21
 music21python
 music21docs
+# old name
 music21base
 
 # Agents

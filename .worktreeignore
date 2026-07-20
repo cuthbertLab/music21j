@@ -1,0 +1,19 @@
+# .worktreeignore — the inverse of .gitignore for agent worktrees.
+#
+# Paths listed here are git-ignored but SHOULD be carried into a fresh
+# worktree (copied or symlinked by the worktree bootstrap) so the worktree is
+# ready to run without a full `npm run` build.
+
+# JetBrains
+.idea
+
+# Keep project files
+.claude/projects/-Users-*/
+
+build/
+music21docs
+music21python
+node_modules
+soundfonts
+tests/music21.tests.js
+tests/
