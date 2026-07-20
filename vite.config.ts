@@ -24,9 +24,7 @@ export default defineConfig({
 
         // The shipped bundle's browser floor is set HERE, not in tsconfig.json.
         // Vite's default build.target is 'baseline-widely-available' (features
-        // in all major browsers for ~30 months), so we leave it unset. tsconfig
-        // "target" is esnext but only typechecks the source -- it does not build
-        // the bundle and does not affect this floor.
+        // in all major browsers for ~30 months), so we leave it unset.
         // target: 'baseline-widely-available',
         // esbuild.target is esnext for speed.
         lib: {
