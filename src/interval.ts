@@ -758,15 +758,10 @@ export const IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 export function convertDiatonicNumberToStep(
     dn: number
 ): [string, number] {
-    let stepNumber: number;
-    let octave: number;
-    if (dn === 0) {
-        return ['B', -1];
-    } else {
-        // floor division keeps this correct for low (negative) notes too.
-        octave = Math.floor((dn - 1) / 7);
-        stepNumber = dn - 1 - octave * 7;
-    }
+    // floor division keeps this correct for low (dn <= 0) notes too, e.g.
+    // dn = 0 -> ['B', -1] and dn = -1 -> ['A', -1].
+    const octave = Math.floor((dn - 1) / 7);
+    const stepNumber = dn - 1 - octave * 7;
     const stepName = IntervalStepNames[stepNumber];
     return [stepName, octave];
 }
