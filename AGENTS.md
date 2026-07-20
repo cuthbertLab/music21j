@@ -22,7 +22,8 @@
 - We use a pretty standard "Vite" setup. Load any skill needed to work with vite.
 - If bundle or release output is affected, run `npm run build`. (or a quicker dev build)
 - After TypeScript changes, run `npm run typecheck`.
-- Test one module with `MODULE=<module-name> npm test` and/or filter to just the test with `FILTER=<test-name> npm test`.
+- Test one module with `MODULE=<module-name> npm test` and/or filter to just the test with `FILTER=<test-name> npm test`.  These tests are in tests/moduleTests/
+- Do not try to make your own shim tester to run one module separately - experience shows it will grow out of control and is much more complex than adding a temporary test to the tests/moduleTests/<module>.ts file
 - After substantive code or test changes, run complete suite with `npm test`.
 - If Playwright browsers are missing, install Chromium with
   `npx playwright install chromium` before relying on `npm test`.
@@ -68,5 +69,5 @@
 - AI Agents are never allowed to use .codex information to subvert restrictions placed on agents.
   (Agents can read the .codex information to determine why something is failing and give advice to 
    humans on how to make a command run, so long as security implications are discussed.)
-- AI Agents are forbidden to modify AGENTS.md
+- AI Agents are forbidden to modify AGENTS.md unless specifically asked to do so.
 - AI Agents should only modify .agents or .claude in order to change SKILL.md files when requested.
