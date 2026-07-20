@@ -73,4 +73,23 @@ export default function tests() {
         );
         assert.deepEqual(names(withKey), ['D-', 'F', 'A-'], 'C# F G# in A- -> D- F A-');
     });
+
+    test('music21.chord.Chord.clone deep-copies notes', assert => {
+        const c = new music21.chord.Chord('C4 E4 G4');
+
+        const deep = c.clone(true);
+        assert.notStrictEqual(deep.notes[0], c.notes[0], 'deep clone makes new Note objects');
+        assert.notStrictEqual(
+            deep.pitches[0], c.pitches[0], 'deep clone makes new Pitch objects'
+        );
+        deep.notes[1].pitch.name = 'F';  // mutate the clone
+        assert.equal(c.pitches[1].name, 'E', 'mutating a deep clone leaves the original alone');
+
+        // A shallow clone keeps the same Note objects but in a new array.
+        const shallow = c.clone(false);
+        assert.strictEqual(shallow.notes[0], c.notes[0], 'shallow clone shares Note objects');
+        shallow.add(new music21.note.Note('B4'));
+        assert.equal(c.length, 3, 'shallow clone has an independent notes array');
+        assert.equal(shallow.length, 4, 'added note lands only on the shallow clone');
+    });
 }

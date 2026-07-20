@@ -51,6 +51,21 @@ export class Chord extends note.NotRest {
 
     constructor(notes?: string|string[]|note.Note|note.Note[]|pitch.Pitch|pitch.Pitch[]) {
         super();
+        // The base clone() only deep-copies ProtoM21Object-valued properties, so
+        // the _notes Array would otherwise be shared by reference.  A deep clone
+        // must copy each Note; a shallow clone keeps the same Notes but in a new
+        // array. AI-assisted.
+        this._cloneCallbacks._notes = (
+            keyName: string,
+            newObj: Chord,
+            deep: boolean,
+            memo: WeakMap<any, any>,
+        ) => {
+            newObj._notes = deep
+                ? this._notes.map(n => n.clone(true, memo))
+                : [...this._notes];
+        };
+
         let arrayNotes: Array<string|note.Note|pitch.Pitch>;
         if (typeof notes === 'undefined') {
             arrayNotes = [];
@@ -401,19 +416,8 @@ export class Chord extends note.NotRest {
         const pitches = pitch.simplifyMultipleEnharmonics(
             returnObj.pitches, undefined, keyContext
         );
-        if (inPlace) {
-            for (let i = 0; i < pitches.length; i++) {
-                returnObj._notes[i].pitch = pitches[i];
-            }
-        } else {
-            // Chord.clone() shares the underlying notes array, so build a fresh
-            // set of notes and install it to avoid mutating the original chord.
-            const newNotes = returnObj._notes.map((n, i) => {
-                const newNote = n.clone(true);
-                newNote.pitch = pitches[i].clone(true);
-                return newNote;
-            });
-            returnObj.notes = newNotes;
+        for (let i = 0; i < pitches.length; i++) {
+            returnObj._notes[i].pitch = pitches[i];
         }
         returnObj._cache = {};
         return returnObj;
