@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import type {GraceNoteGroup as VFGraceNoteGroup, TextNote as VFTextNote} from 'vexflow';
+import type {TextNote as VFTextNote} from 'vexflow';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
@@ -277,7 +277,9 @@ export default function tests() {
         const voiceTickables = m.activeVFRenderer.stacks[0].voices[0].getTickables();
         assert.equal(voiceTickables.length, 1);
         const graceNoteGroup = voiceTickables[0].getModifiers()[0];
-        // @ts-ignore
-        assert.equal((graceNoteGroup as VFGraceNoteGroup).grace_notes.length, 2);
+        const graceNotes = (graceNoteGroup as any).grace_notes;
+        assert.equal(graceNotes.length, 2);
+        assert.ok(graceNotes[0].slash);
+        assert.notOk(graceNotes[1].slash);
     });
 }

@@ -1092,10 +1092,10 @@ export class Renderer {
         graceNotes: note.GeneralNote[],
         options: note.VexflowNoteOptions,
     ): VFGraceNoteGroup {
-        const vfGraces = graceNotes.map(gn => new VFGraceNote({
+        const vfGraces = graceNotes.map((gn, index) => new VFGraceNote({
             keys: gn.vexflowNote(options).getKeys(),
             duration: gn.duration.vexflowDuration,
-            slash: (gn.duration as GraceDuration).slash,
+            slash: index === 0 ? (gn.duration as GraceDuration).slash : false,
         }));
         return new VFGraceNoteGroup(vfGraces, true);
     }
