@@ -116,6 +116,7 @@ export declare class MeasureParser {
     xmlToDuration(mxNote: any, inputM21: duration.Duration): duration.Duration;
     xmlBackup(mxBackup: Element): void;
     xmlForward(mxForward: Element): void;
+    xmlGraceToGrace(mxGrace: Element, noteOrChord: note.GeneralNote): note.GeneralNote;
     xmlToTie(mxNote: Element): tie.Tie;
     updateLyricsFromList(n: any, lyricList: any): void;
     xmlToLyric(mxLyric: Element, inputM21?: note.Lyric): note.Lyric;

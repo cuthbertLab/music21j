@@ -134,6 +134,7 @@ export declare class GeneralNote extends base.Music21Object {
      * [lyricIdentifier] - an optional identifier
      */
     addLyric(text: string, lyricNumber: number, applyRaw?: boolean, lyricIdentifier?: string): void;
+    getGrace(inPlace?: boolean, appoggiatura?: boolean): this;
     /**
      * For subclassing.  Do not use this...
      */

@@ -119,6 +119,7 @@ export declare class Duration extends prebase.ProtoM21Object {
      * [skipUpdateQl=false] - update the quarterLength afterward?
      */
     appendTuplet(newTuplet: Tuplet, skipUpdateQl?: boolean): this;
+    getGraceDuration(appoggiatura?: boolean): GraceDuration | AppoggiaturaDuration;
 }
 /**
  * Represents a Tuplet; found in music21.duration.Duration#tuplets
@@ -176,5 +177,13 @@ export declare class Tuplet extends prebase.ProtoM21Object {
      * Returns a float of the multiplier
      */
     tupletMultiplier(): number;
+}
+export declare class GraceDuration extends Duration {
+    slash: boolean;
+    linked: boolean;
+    constructor(graceType: string);
+}
+export declare class AppoggiaturaDuration extends GraceDuration {
+    slash: boolean;
 }
 //# sourceMappingURL=duration.d.ts.map

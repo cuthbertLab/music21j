@@ -7,7 +7,7 @@
  *
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  */
-import { Beam as VFBeam, type FontInfo as VFFontInfo, Formatter as VFFormatter, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
+import { Beam as VFBeam, type FontInfo as VFFontInfo, Formatter as VFFormatter, GraceNoteGroup as VFGraceNoteGroup, Renderer as VFRenderer, Stave as VFStave, type StaveConnectorType as VFStaveConnectorType, StaveNote as VFStaveNote, StaveTie as VFStaveTie, SVGContext as VFSVGContext, TextNote as VFTextNote, Tuplet as VFTuplet, Voice as VFVoice } from 'vexflow';
 import * as duration from './duration';
 import * as note from './note';
 import * as stream from './stream';
@@ -242,6 +242,7 @@ export declare class Renderer {
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      */
     vexflowVoice(s: stream.Stream): VFVoice;
+    vexflowGraceNoteGroup(graceNotes: note.GeneralNote[], options: note.VexflowNoteOptions): VFGraceNoteGroup;
     staffConnectorsMap(connectorType: StaveConnector): VFStaveConnectorType;
     /**
      * If a stream has parts (NOT CHECKED HERE) create and

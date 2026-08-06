@@ -49,7 +49,7 @@
 
 <h2>Pick another instrument</h2>
 
-<p>Choose one of the soundfonts below; the same C&sharp;5 whole note will be re-rendered with that sound.</p>
+<p>Choose one of the soundfonts below; the same notes above will be re-rendered with that sound.</p>
 
 <fieldset>
     <legend>Instrument</legend>
@@ -57,6 +57,7 @@
     <label><input type="radio" name="instr" value="banjo"> Banjo</label>
     <label><input type="radio" name="instr" value="church_organ"> Church organ</label>
     <label><input type="radio" name="instr" value="cello"> Cello</label>
+    <label><input type="radio" name="instr" value="acoustic_grand_piano"> Piano</label>
 </fieldset>
 
 <div id="pickedContainer" class="render">
@@ -70,23 +71,33 @@
     // demo page for loading soundfonts.
     const clarinetSource = `const s = new music21.stream.Measure();
 s.append(new music21.meter.TimeSignature('4/4'));
-const n = new music21.note.Note("B-4");
-n.duration.type = "whole";
-s.append(n);
+for (const pitch of ['B-4', 'C5', 'D5', 'C5']) {
+    const n = new music21.note.Note(pitch);
+    n.duration.type = 'quarter';
+    s.append(n);
+}
 music21.miditools.loadSoundfont('clarinet', cl => {
     s.instrument = cl;
     s.replaceDOM('#mainSVG');
 });`;
 
+    function getOneMeasure() {
+        // this code should match clarinetSource above.
+        const s = new music21.stream.Measure();
+        s.append(new music21.meter.TimeSignature('4/4'));
+        for (const pitch of ['B-4', 'C5', 'D5', 'C5']) {
+            const n = new music21.note.Note(pitch);
+            n.duration.type = 'quarter';
+            s.append(n);
+        }
+        return s;
+    }
+
     function runClarinetDemo() {
         // Show the code on the page.
         document.getElementById('clarinet-source').textContent = clarinetSource;
         // Run the same code shown above.
-        const s = new music21.stream.Measure();
-        s.append(new music21.meter.TimeSignature('4/4'));
-        const n = new music21.note.Note('B-4');
-        n.duration.type = 'whole';
-        s.append(n);
+        const s = getOneMeasure();
         music21.miditools.loadSoundfont('clarinet', cl => {
             s.instrument = cl;
             s.replaceDOM('#mainSVG');
@@ -100,11 +111,7 @@ music21.miditools.loadSoundfont('clarinet', cl => {
         const status = document.getElementById('status');
         status.textContent = 'Loading ' + instrumentName + '…';
         if (s2 === undefined) {
-            s2 = new music21.stream.Measure();
-            s2.append(new music21.meter.TimeSignature('4/4'));
-            const n = new music21.note.Note('C#5');
-            n.duration.type = 'whole';
-            s2.append(n);
+            s2 = getOneMeasure();
         } // otherwise reuse same score and note object.
         music21.miditools.loadSoundfont(instrumentName, inst => {
             s2.instrument = inst;
