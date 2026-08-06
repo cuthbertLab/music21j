@@ -494,6 +494,28 @@ export default function tests() {
         assert.equal(n.pitch.accidental.displayStatus, true);
     });
 
+    test('music21.pitch.updateAccidentalDisplay displayType always with no past', assert => {
+        // an 'always' natural must show even when nothing precedes it: AI-assisted
+        const n = new music21.note.Note('An2');
+        n.pitch.accidental.displayType = 'always';
+        n.pitch.updateAccidentalDisplay();
+        assert.equal(n.pitch.accidental.displayStatus, true);
+
+        // ... nor may the key signature suppress it
+        const inKey = new music21.note.Note('F#4');
+        inKey.pitch.accidental.displayType = 'always';
+        inKey.pitch.updateAccidentalDisplay(
+            {alteredPitches: new music21.key.Key('G').alteredPitches}
+        );
+        assert.equal(inKey.pitch.accidental.displayStatus, true);
+
+        // cautionaryAll adds and shows a natural on an otherwise bare first pitch
+        const bare = new music21.note.Note('B4');
+        bare.pitch.updateAccidentalDisplay({cautionaryAll: true});
+        assert.equal(bare.pitch.accidental.name, 'natural');
+        assert.equal(bare.pitch.accidental.displayStatus, true);
+    });
+
     test('music21.pitch.updateAccidentalDisplay respects overrideStatus', assert => {
         const n = new music21.note.Note('Cn');
         n.pitch.accidental.displayStatus = true;
