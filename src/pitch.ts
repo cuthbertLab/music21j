@@ -792,6 +792,20 @@ export class Pitch extends prebase.ProtoM21Object {
             return;
         }
 
+        // here tied and always are treated the same; we assume that
+        // making ties sets the displayStatus, and thus we would not be
+        // overriding that display status here
+        if (cautionaryAll === true
+            || (this.accidental !== undefined
+                && ['even-tied', 'always'].includes(this.accidental.displayType))) {
+            if (this.accidental === undefined) {
+                this.accidental = new Accidental('natural');
+            }
+            // show all accidentals, no matter what is in the past or the key signature
+            this.accidental.displayStatus = true;
+            return;  // do not search past
+        }
+
         // no pitches in past...
         // noinspection PointlessBooleanExpressionJS
         if (pitchPastAll.length === 0) {
@@ -846,21 +860,6 @@ export class Pitch extends prebase.ProtoM21Object {
             }
         }
         // nope, no conflicting accidentals at this name and octave in past...
-
-        // here tied and always are treated the same; we assume that
-        // making ties sets the displayStatus, and thus we would not be
-        // overriding that display status here
-        if (cautionaryAll === true
-            || (this.accidental !== undefined
-                && ['even-tied', 'always'].includes(this.accidental.displayType))) {
-            // show all no matter
-            if (this.accidental === undefined) {
-                this.accidental = new Accidental('natural');
-            }
-            // show all accidentals, even if past encountered
-            this.accidental.displayStatus = true;
-            return;  // do not search past
-        }
 
         // store if a match was found and display set from past pitches
         let setFromPitchPast = false;
