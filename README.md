@@ -144,7 +144,7 @@ A complete page is in `testHTML/sfElsewhereCDN.html`.
 
 ## Version
 
-0.23.3 (beta)
+0.23.4 (beta)
 
 ## License
 
@@ -328,27 +328,26 @@ The build output is suitable for direct browser use or npm publishing.
 
 You'll need to be part of the npm dev team.
 
-1. Update the version number in `package.json`, manually in `main.ts`, 
-and here.  Add a change log here.  Agents can update package-lock.json; humans should `npm install`.
+1. Update the version number 
+   - `package.json`
+   - `main.ts`, 
+   - here (above)
 
-2. Publish:
+2. Add a change log here (below).  
 
-First login:
+3. Publish:
+   - Run `npm login`. Note: npm labels a passkey a "Security Key". Sometimes fails first time; do twice.
+   - `npm publish`. The `publish` command will first test to make sure everything is correct, update package-lock.json, copy the current contents of `build` in `releases`, and publish on npm.  You will probably have to let it open your browser and give your passkey again.
 
-* Run `npm login`. Note: npm labels a passkey a "Security Key". Sometimes fails first time; do twice.
-
-* Then `npm publish`.  (You might have to log in again!)
-
-This will test to make sure everything is correct, update package-lock.json,
-copy the current contents of `build` in `releases`, and publish on npm.
-
-Then push to master with name `music21j v0.22.1` (or do a PR and merge that if paranoid)
-and then create a tag and push
+4. Push to master with name `music21j v0.xx.y` (or do a PR and merge that if paranoid) 
+5. Tag and push:
 
 ```shell
 $ git tag -a v0.xx.y -m 'music21j v0.xx.y'
 $ git push origin --tags
 ```
+
+Congrats, ready for next version.
 
 ## Updating Dependencies
 
@@ -380,7 +379,8 @@ from .gitignore) which allows it to serve from its own sound files.
 
 Just documenting major changes at different versions, starting with 0.20
 
-* v0.23.3 -- update midicube to 0.10.3 to fix legato error.
+* v0.23.4 -- Allow first note of Stream to export with natural show.
+* v0.23.3 -- Update midicube to 0.10.3 to fix legato error.
 * v0.23.2 -- Chord gains `simplifyMultipleEnharmonics` (ported from music21p). `Chord.clone(true)` deep-copies notes and no longer shares `_cache`/`_overrides` by reference. Remove spurious natural accidental from musicxml output. Internal cleanups: options-object signatures for `simplifyMultipleEnharmonics` and `_dissonanceScore`.
 * v0.23.1 -- MIDI Player timeline scrubber works again (overlay invisible `<input type="range">`); vertically centered Player controls; bump to midicube 0.10.1 with noteOff release-envelope and source-tracking fixes.
 * v0.23 -- MIDIPlayer supports multiple instruments, loadSoundfont w/o Callback returns a Promise and takes an array of instruments. TestHTML organized and working. Errors in soundfont URLs fiexed. replaceDOM accepts a querySelector string (like appendNewDOM - and as documented for a long time). Augmented unisons fixed in VF4. chord getStemDirectionFromClef.  Ability to run just one unit test.

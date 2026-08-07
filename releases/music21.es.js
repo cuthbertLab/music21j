@@ -1,6 +1,6 @@
 /*!
  * 
- * music21j version 0.23.3 built on 2026-08-06.
+ * music21j version 0.23.4 built on 2026-08-07.
  * Copyright (c) 2013-2026 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -26976,6 +26976,10 @@ class w1 extends gt {
       d !== void 0 ? d.displayStatus = !0 : (this.accidental = new M1("natural"), this.accidental.displayStatus = !0);
       return;
     }
+    if (a === !0 || this.accidental !== void 0 && ["even-tied", "always"].includes(this.accidental.displayType)) {
+      this.accidental === void 0 && (this.accidental = new M1("natural")), this.accidental.displayStatus = !0;
+      return;
+    }
     if (m.length === 0) {
       d !== void 0 && (r || u === !1 || u === void 0) ? this.accidental.name === "natural" ? this.accidental.displayStatus = this._stepInKeySignature(n) : this.accidental.displayStatus = !this._nameInKeySignature(n) : this.accidental?.displayStatus === !0 && this._nameInKeySignature(n) ? this.accidental.displayStatus = !1 : (this.accidental === void 0 || this.accidental.name === "natural") && this._stepInKeySignature(n) && (this.accidental === void 0 && (this.accidental = new M1("natural")), this.accidental.displayStatus = !0);
       return;
@@ -26990,10 +26994,6 @@ class w1 extends gt {
           return;
         } else
           break;
-    }
-    if (a === !0 || this.accidental !== void 0 && ["even-tied", "always"].includes(this.accidental.displayType)) {
-      this.accidental === void 0 && (this.accidental = new M1("natural")), this.accidental.displayStatus = !0;
-      return;
     }
     let g = !1, x;
     s === !0 ? (x = new w1(this.name), x.accidental = this.accidental) : x = this;
@@ -43707,7 +43707,7 @@ const xh = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   populateSelect: nn,
   selectionChanged: To,
   webmidi: it
-}, Symbol.toStringTag, { value: "Module" })), yh = "0.23.3";
+}, Symbol.toStringTag, { value: "Module" })), yh = "0.23.4";
 mo();
 export {
   U6 as MIDI,
