@@ -5,6 +5,8 @@
  *
  */
 
+import * as common from './common';
+
 declare interface ProtoM21ObjectConstructorInterface extends Function {
     className: string;
 }
@@ -129,9 +131,8 @@ export class ProtoM21Object {
             memo = new WeakMap();
         }
 
-        // TODO(msc): test if Arrays work?
         for (const key in this) {
-            // not that we ONLY copy the keys in Ret -- it's easier that way.
+            // note that we ONLY copy the keys in Ret -- it's easier that way.
             if ({}.hasOwnProperty.call(this, key) === false) {
                 continue;
             }
@@ -170,11 +171,18 @@ export class ProtoM21Object {
                     clonedVersion = m21Obj.clone(deep, memo);
                 }
                 ret[key] = <any> clonedVersion;
+            } else if (
+                deep
+                && this[key] instanceof Array
+            ) {
+                ret[key] = <any[]> Array.from(this[key] as any);
             } else {
                 try {
-                    // for deep this should be:
-                    // music21.common.merge(ret[key], this[key]);
-                    ret[key] = this[key];
+                    if (deep && typeof this[key] !== 'string') {
+                        common.merge(ret[key], this[key] as any);
+                    } else {
+                        ret[key] = this[key];
+                    }
                 } catch (e) {
                     if (e instanceof TypeError) {
                         console.log('typeError:', e, key);
