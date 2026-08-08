@@ -2445,9 +2445,12 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
                 const el = elements[currentNoteIndex];
                 let nextNote: ElementType;
                 let playDuration: number;  // this is in QLs not BPM
+                // Account for overlap (voices) by only playing until next flat element.
                 if (currentNoteIndex < lastNoteIndex) {
                     nextNote = elements[currentNoteIndex + 1];
-                    playDuration = thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el);
+                    playDuration = common.opFrac(
+                        thisFlat.elementOffset(nextNote) - thisFlat.elementOffset(el)
+                    );
                 } else {
                     playDuration = el.duration.quarterLength;
                 }
