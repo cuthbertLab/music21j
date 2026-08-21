@@ -144,7 +144,7 @@ A complete page is in `testHTML/sfElsewhereCDN.html`.
 
 ## Version
 
-0.23.4 (beta)
+0.23.6 (beta)
 
 ## License
 
@@ -337,6 +337,7 @@ You'll need to be part of the npm dev team.
 
 3. Publish:
    - Run `npm login`. Note: npm labels a passkey a "Security Key". Sometimes fails first time; do twice.
+   - `npm audit fix` -- might as well...
    - `npm publish`. The `publish` command will first test to make sure everything is correct, update package-lock.json, copy the current contents of `build` in `releases`, and publish on npm.  You will probably have to let it open your browser and give your passkey again.
 
 4. Push to master with name `music21j v0.xx.y` (or do a PR and merge that if paranoid) 
@@ -379,6 +380,7 @@ from .gitignore) which allows it to serve from its own sound files.
 
 Just documenting major changes at different versions, starting with 0.20
 
+* v0.23.6 -- Tinynotation errors, inf. quarterLength catch, zombie streams don't litter page.
 * v0.23.4 -- Allow first note of Stream to export with natural show.
 * v0.23.3 -- Update midicube to 0.10.3 to fix legato error.
 * v0.23.2 -- Chord gains `simplifyMultipleEnharmonics` (ported from music21p). `Chord.clone(true)` deep-copies notes and no longer shares `_cache`/`_overrides` by reference. Remove spurious natural accidental from musicxml output. Internal cleanups: options-object signatures for `simplifyMultipleEnharmonics` and `_dissonanceScore`.
