@@ -38,11 +38,10 @@ export default function tests() {
     });
 
     test('music21.duration.Duration non-finite quarterLength', assert => {
-        // AI-assisted
-        const d = new music21.duration.Duration(1.0);
+        const d = new music21.duration.Duration(3.0);
         assert.throws(() => { d.quarterLength = Infinity; }, /finite/, 'Infinity rejected');
         assert.throws(() => { d.quarterLength = NaN; }, /finite/, 'NaN rejected');
-        assert.equal(d.quarterLength, 1.0, 'quarterLength unchanged after a failed set');
+        assert.equal(d.quarterLength, 3.0, 'quarterLength unchanged after a failed set');
     });
 
     test('music21.duration.Tuplet', assert => {
