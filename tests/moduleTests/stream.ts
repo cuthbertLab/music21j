@@ -536,6 +536,37 @@ export default function tests() {
         const div1 = s1.editableAccidentalDOM();
         globalThis.document.querySelector(music21.defaults.appendLocation).appendChild(div1);
     });
+
+    test('music21.stream.Stream renderVexflow unrenderable', assert => {
+        // AI-assisted
+        const appendLocation = globalThis.document.querySelector(
+            music21.defaults.appendLocation
+        );
+        const n = new music21.note.Note('C4');
+        n.pitch.accidental = new music21.pitch.Accidental('triple-sharp');
+        const s = new music21.stream.Measure();
+        s.append(n);
+        const childrenBefore = appendLocation.childElementCount;
+        assert.throws(
+            () => { s.createDOM(); },
+            'Vexflow cannot render a triple sharp'
+        );
+        assert.equal(
+            appendLocation.childElementCount,
+            childrenBefore,
+            'a failed render leaves nothing behind in defaults.appendLocation'
+        );
+
+        const okStream = new music21.stream.Measure();
+        okStream.append(new music21.note.Note('C#4'));
+        okStream.createDOM();
+        assert.equal(
+            appendLocation.childElementCount,
+            childrenBefore,
+            'a successful render also leaves nothing behind'
+        );
+    });
+
     test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');
         const n2 = new music21.note.Note('G#3');

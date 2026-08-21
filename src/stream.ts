@@ -2021,35 +2021,37 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         {inPlace=true}: {inPlace?: boolean}={}
     ): vfShow.Renderer {
         const canvasOrSVG = <HTMLDivElement|HTMLCanvasElement> common.coerceHTMLElement(where);
-        const DOMContains = document.querySelector(defaults.appendLocation).contains(canvasOrSVG);
-        if (!DOMContains) {
+        const already_rendered = canvasOrSVG.isConnected;
+        if (!already_rendered) {
             // temporarily add to DOM so Firefox can measure it...
             document.querySelector(defaults.appendLocation).appendChild(canvasOrSVG);
         }
-        const tagName = canvasOrSVG.tagName.toLowerCase();
-        const stream_to_render = inPlace ? this : this.clone(true);
-        stream_to_render.makeNotation({inPlace: true, overrideStatus: true});
-        const vfr = new vfShow.Renderer(stream_to_render, canvasOrSVG);
-        if (tagName === 'canvas') {
-            vfr.rendererType = 'canvas';
-        } else if (tagName === 'svg') {
-            vfr.rendererType = 'svg';
+        try {
+            const tagName = canvasOrSVG.tagName.toLowerCase();
+            const stream_to_render = inPlace ? this : this.clone(true);
+            stream_to_render.makeNotation({inPlace: true, overrideStatus: true});
+            const vfr = new vfShow.Renderer(stream_to_render, canvasOrSVG);
+            if (tagName === 'canvas') {
+                vfr.rendererType = 'canvas';
+            } else if (tagName === 'svg') {
+                vfr.rendererType = 'svg';
+            }
+
+            vfr.render();
+            this.setRenderInteraction(canvasOrSVG);
+            this.activeVFRenderer = vfr;
+            return vfr;
+        } finally {
+            if (!already_rendered) {
+                // Note that this line is one of the two places that in ModuleTests vfShow
+                // is causing the annoying Failed to load resource: net::ERR_FILE_NOT_FOUND
+                // bug in gruntTests -- not sure the other one.  Spent another 90 minutes
+                // diagnosing.  Need to stop for now.
+
+                // remove the adding to DOM so that Firefox could measure it...
+                document.querySelector(defaults.appendLocation).removeChild(canvasOrSVG);
+            }
         }
-
-        vfr.render();
-        this.setRenderInteraction(canvasOrSVG);
-        this.activeVFRenderer = vfr;
-        if (!DOMContains) {
-            // Note that this line is one of the two places that in ModuleTests vfShow
-            // is causing the annoying Failed to load resource: net::ERR_FILE_NOT_FOUND
-            // bug in gruntTests -- not sure the other one.  Spent another 90 minutes
-            // diagnosing.  Need to stop for now.
-
-            // remove the adding to DOM so that Firefox could measure it...
-            document.querySelector(defaults.appendLocation).removeChild(canvasOrSVG);
-        }
-
-        return vfr;
     }
 
     /**

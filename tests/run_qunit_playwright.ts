@@ -13,7 +13,9 @@ async function main(): Promise<void> {
 
     page.on('console', msg => {
         const type = msg.type();   // 'log', 'error', 'warning', etc.
-        console[type](`[browser:${type}]`, msg.text());
+        // Chromium's names for these do not all match Node's console methods.
+        const logFn = console[type] ?? (type === 'warning' ? console.warn : console.log);
+        logFn(`[browser:${type}]`, msg.text());
     });
 
     // Allow narrowing via env vars for quick debugging:

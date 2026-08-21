@@ -37,6 +37,13 @@ export default function tests() {
         assert.equal(d.dots, 4, 'got four dots from 7.75');
     });
 
+    test('music21.duration.Duration non-finite quarterLength', assert => {
+        const d = new music21.duration.Duration(3.0);
+        assert.throws(() => { d.quarterLength = Infinity; }, /finite/, 'Infinity rejected');
+        assert.throws(() => { d.quarterLength = NaN; }, /finite/, 'NaN rejected');
+        assert.equal(d.quarterLength, 3.0, 'quarterLength unchanged after a failed set');
+    });
+
     test('music21.duration.Tuplet', assert => {
         const d = new music21.duration.Duration(0.5);
         const t = new music21.duration.Tuplet(5, 4);
