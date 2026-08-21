@@ -26,6 +26,13 @@ export default function tests() {
         assert.equal(tn('C4 partBreak D4'), 2);
     });
 
+    test('music21.tinyNotation.TinyNotation zero duration type', assert => {
+        // 0 is not a duration type in m21j, so it is ignored: AI-assisted
+        const s = music21.tinyNotation.TinyNotation('c0 d4');
+        const qls = Array.from(s.recurse().notes).map(n => n.duration.quarterLength);
+        assert.deepEqual(qls, [1.0, 1.0]);
+    });
+
     test('music21.tinyNotation.TinyNotation explicit naturals show', assert => {
         // an explicit `n` shows even on the first note of a part: AI-assisted
         const statuses = (tn: string) => {

@@ -159,6 +159,12 @@ export class Duration extends prebase.ProtoM21Object {
         if (ql === undefined) {
             ql = 1.0;
         }
+        if (!Number.isFinite(ql)) {
+            throw new Music21Exception(
+                `Duration.quarterLength must be a finite number, not ${ql}`
+            );
+        }
+
         ql = common.opFrac(ql);
         this._quarterLength = ql;
         if (this.linked) {

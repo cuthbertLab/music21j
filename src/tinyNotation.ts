@@ -31,7 +31,7 @@ export const regularExpressions: { [k: string]: RegExp } = {
     SHARP: /^[A-Ga-g]+'*(#+)/,  // simple notation finds
     FLAT: /^[A-Ga-g]+'*(-+)/,  //   double accidentals too
     NAT: /^[A-Ga-g]+'*n/,  // explicit naturals
-    TYPE: /(\d+)/,
+    TYPE: /([1-9]\d*)/,
     TIE: /.~/,  // not preceding ties
     PRECTIE: /~/,  // front ties   // TODO: remove these...
     ID_EL: /=([A-Za-z0-9]*)/,
@@ -216,6 +216,8 @@ export function TinyNotation(textIn: string): stream.Part|stream.Score {
         }
         let MATCH = tnre.TYPE.exec(token);
         if (MATCH) {
+            // Note that the music21p use of 0 to mean full measure with fermata was
+            //   never advertised and is deprecated there, and will not be included here.
             const durationType = parseInt(MATCH[0]);
             noteObj.duration.quarterLength = 4.0 / durationType;
         }
