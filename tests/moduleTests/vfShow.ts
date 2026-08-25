@@ -3,6 +3,7 @@ import type {TextNote as VFTextNote} from 'vexflow';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
+import { renderedNoteheads, wasMusicRendered } from './testHelpers';
 
 const { test } = QUnit;
 
@@ -91,7 +92,9 @@ export default function tests() {
             v.append(n);
             m.insert(0, v);
         }
-        m.appendNewDOM();
+        const where = m.appendNewDOM();
+        assert.ok(wasMusicRendered(where), 'music reached the svg');
+        assert.equal(renderedNoteheads(where).length, 2, 'a notehead for each voice');
 
         const stacks = m.activeVFRenderer.stacks;
         assert.equal(stacks.length, 1, 'one stack for the measure');
