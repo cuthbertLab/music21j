@@ -211,27 +211,28 @@ export class Renderer {
 
         let isScorelike = false;
         let isPartlike = false;
-        const isFlat = s.isFlat;
+        let isMeasurelike = false;
 
-        if (s.isClassOrSubclass('Score')) {
+        if (s.isFlat || s.isClassOrSubclass('Measure')) {
+            // a Measure stays measure-like even when it holds Voices.
+            isMeasurelike = true;
+        } else if (s.isClassOrSubclass('Score')) {
             isScorelike = true;
         } else if (s.isClassOrSubclass('Part')) {
             // might be a Part with measures and voices.
             isPartlike = true;
-        } else if (!isFlat && !(s.get(0) as stream.Stream).isFlat) {
+        } else if (!(s.get(0) as stream.Stream).isFlat) {
             isScorelike = true;
-        } else if (!isFlat) {
+        } else {
             isPartlike = true;
         }
         // requires organization Score -> Part -> Measure -> elements...
-        if (isFlat) {
-            this.prepareArrivedFlat(s);
-        } else if (isScorelike) {
+        if (isScorelike) {
             this.prepareScorelike(s as stream.Score);
         } else if (isPartlike) {
             this.preparePartlike(s as stream.Part, {multipart: false});
-        } else {
-            this.prepareArrivedFlat(s);
+        } else if (isMeasurelike) {
+            this.prepareArrivedMeasurelike(s);
         }
         this.formatMeasureStacks();
         this.drawTies();
@@ -289,12 +290,11 @@ export class Renderer {
 
     /**
      *
-     * Prepares a score that arrived flat... sets up
-     * stacks and vfTies after calling prepareFlat
-     *
-     * @param {Stream} m - a flat stream (maybe a measure or voice)
+     * Prepares a stream that arrives here as a single measure's worth of music
+     * -- a Measure (with or without Voices) or any flat stream -- setting up
+     * stacks and vfTies after calling prepareMeasure.
      */
-    prepareArrivedFlat(m: stream.Stream): void {
+    prepareArrivedMeasurelike(m: stream.Stream): void {
         const stack = new RenderStack();
         m.renderOptions.leftBarline = 'none';
         this.prepareMeasure(m as stream.Measure, stack);
@@ -468,7 +468,7 @@ export class Renderer {
         // Retrieve loose notes in `p` (flat)
         p_recursed.push(...Array.from(p.notesAndRests));
         // Other stream nesting patterns not supported
-        // prepareTies currently called by prepareArrivedFlat() and preparePartlike()
+        // prepareTies currently called by prepareArrivedMeasurelike() and preparePartlike()
         // supposes well-formed
         for (let i = 0; i < p_recursed.length - 1; i++) {
             const thisNote = p_recursed[i];

@@ -3,6 +3,7 @@ import type {TextNote as VFTextNote} from 'vexflow';
 
 import * as music21 from '../../src/main';
 import type { StreamIterator } from '../../src/stream/iterator';
+import { renderedNoteheads, wasMusicRendered } from './testHelpers';
 
 const { test } = QUnit;
 
@@ -79,6 +80,28 @@ export default function tests() {
         assert.deepEqual(renderer.vfTies[0].notes.first_note, n1.activeVexflowNote);
         // @ts-ignore
         assert.deepEqual(renderer.vfTies[0].notes.last_note, n2.activeVexflowNote);
+    });
+
+    test('music21.vfShow.Renderer Measure with Voices and no Part', assert => {
+        const m = new music21.stream.Measure();
+        m.append(new music21.meter.TimeSignature('2/4'));
+        for (const pitch_name of ['C#4', 'C4']) {
+            const v = new music21.stream.Voice();
+            const n = new music21.note.Note(pitch_name);
+            n.duration.type = 'half';
+            v.append(n);
+            m.insert(0, v);
+        }
+        const where = m.appendNewDOM();
+        assert.ok(wasMusicRendered(where), 'music reached the svg');
+        assert.equal(renderedNoteheads(where).length, 2, 'a notehead for each voice');
+
+        const stacks = m.activeVFRenderer.stacks;
+        assert.equal(stacks.length, 1, 'one stack for the measure');
+        assert.equal(stacks[0].voices.length, 2, 'both voices reached the renderer');
+        for (const vf_voice of stacks[0].voices) {
+            assert.equal(vf_voice.getTickables().length, 1, 'voice has its note');
+        }
     });
 
     test('music21.vfShow.Renderer prepareTies in voices across barline', assert => {
