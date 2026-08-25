@@ -213,7 +213,9 @@ export class Renderer {
         let isPartlike = false;
         const isFlat = s.isFlat;
 
-        if (s.isClassOrSubclass('Score')) {
+        if (s.isClassOrSubclass('Measure')) {
+            // a Measure is never score- or part-like, even holding Voices.
+        } else if (s.isClassOrSubclass('Score')) {
             isScorelike = true;
         } else if (s.isClassOrSubclass('Part')) {
             // might be a Part with measures and voices.

@@ -81,6 +81,26 @@ export default function tests() {
         assert.deepEqual(renderer.vfTies[0].notes.last_note, n2.activeVexflowNote);
     });
 
+    test('music21.vfShow.Renderer Measure with Voices and no Part', assert => {
+        const m = new music21.stream.Measure();
+        m.append(new music21.meter.TimeSignature('2/4'));
+        for (const pitch_name of ['C#4', 'C4']) {
+            const v = new music21.stream.Voice();
+            const n = new music21.note.Note(pitch_name);
+            n.duration.type = 'half';
+            v.append(n);
+            m.insert(0, v);
+        }
+        m.appendNewDOM();
+
+        const stacks = m.activeVFRenderer.stacks;
+        assert.equal(stacks.length, 1, 'one stack for the measure');
+        assert.equal(stacks[0].voices.length, 2, 'both voices reached the renderer');
+        for (const vf_voice of stacks[0].voices) {
+            assert.equal(vf_voice.getTickables().length, 1, 'voice has its note');
+        }
+    });
+
     test('music21.vfShow.Renderer prepareTies in voices across barline', assert => {
         const m1_sop_voice = new music21.stream.Voice();
         m1_sop_voice.id = 'Soprano';
