@@ -1,6 +1,6 @@
 /*!
  * 
- * music21j version 0.23.6 built on 2026-08-21.
+ * music21j version 0.23.6 built on 2026-08-25.
  * Copyright (c) 2013-2026 Michael Scott Asato Cuthbert
  * BSD License, see LICENSE
  *
@@ -304,14 +304,14 @@ function Uo() {
           return _.open("GET", E, !0), _.responseType = "arraybuffer", _.onsuccess = () => Q.decodeAudioData(_.response, v, y), void _.send();
         }
       }, k = () => new (window.AudioContext || window.webkitAudioContext)(), N1 = "webmidi", B1 = {};
-      let y1 = null;
+      let S1 = null;
       const _1 = (E) => {
         const v = (y) => {
           console.error("Could not connect to web midi! Falling back to WebAudio:", y), B1.webaudio_backup_connect && (B1.config.api = "webaudio", B1.webaudio_backup_connect(E));
         };
         navigator.requestMIDIAccess().then(((y) => {
           const _ = y.outputs;
-          return y1 = typeof _ == "function" ? _()[0] : _[0], y1 === void 0 ? v("No outputs defined") : E.onsuccess && E.onsuccess();
+          return S1 = typeof _ == "function" ? _()[0] : _[0], S1 === void 0 ? v("No outputs defined") : E.onsuccess && E.onsuccess();
         }), v);
       }, pe = () => {
       }, Ae = () => {
@@ -319,26 +319,26 @@ function Uo() {
       }, _e = () => {
       }, n3 = () => {
       }, t2 = (E, v) => {
-        y1.send(E, 1e3 * v);
+        S1.send(E, 1e3 * v);
       }, It = (E, v, y, _) => {
-        y1.send([E, v, y], 1e3 * _);
+        S1.send([E, v, y], 1e3 * _);
       }, W3 = (E, v, y) => {
-        y1.send([176 + E, 7, v], 1e3 * y);
+        S1.send([176 + E, 7, v], 1e3 * y);
       }, j3 = (E, v, y) => {
-        y1.send([192 + E, v], 1e3 * y);
+        S1.send([192 + E, v], 1e3 * y);
       }, U3 = (E, v, y) => {
-        y1.send([224 + E, v], 1e3 * y);
+        S1.send([224 + E, v], 1e3 * y);
       }, f2 = (E, v, y, _) => {
-        y1.send([144 + E, v, y], 1e3 * _);
+        S1.send([144 + E, v, y], 1e3 * _);
       }, s3 = (E, v, y) => {
-        y1.send([128 + E, v, 0], 1e3 * y);
+        S1.send([128 + E, v, 0], 1e3 * y);
       }, M2 = (E, v, y, _) => {
-        for (const O of v) y1.send([144 + E, O, y], 1e3 * _);
+        for (const O of v) S1.send([144 + E, O, y], 1e3 * _);
       }, a3 = (E, v, y) => {
-        for (const _ of v) y1.send([128 + E, _, 0], 1e3 * y);
+        for (const _ of v) S1.send([128 + E, _, 0], 1e3 * y);
       }, r3 = () => {
-        y1.cancel();
-        for (let E = 0; E < 16; E++) y1.send([176 + E, 123, 0]);
+        S1.cancel();
+        for (let E = 0; E < 16; E++) S1.send([176 + E, 123, 0]);
       };
       class o3 {
         constructor(v) {
@@ -24397,13 +24397,13 @@ class s9 extends Error {
     Object.setPrototypeOf(this, e), this.name = this.constructor.name, this.message = t, this.stack = new Error(t).stack;
   }
 }
-class v1 extends s9 {
+class y1 extends s9 {
 }
-let J6 = class extends v1 {
+let J6 = class extends y1 {
 };
 const Cc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  Music21Exception: v1,
+  Music21Exception: y1,
   StreamException: J6
 }, Symbol.toStringTag, { value: "Module" }));
 class gt {
@@ -24524,7 +24524,11 @@ const Ac = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
 };
 function Be(o) {
   let t;
-  return typeof o == "string" && o !== "" ? t = document.querySelector(o) : o != null && o.jquery !== void 0 ? t = o[0] : o instanceof HTMLElement ? t = o : t = document.querySelector(ti.appendLocation), t;
+  if (typeof o == "string" && o !== "") {
+    if (t = document.querySelector(o), t === null)
+      throw new y1(`No element on the page matches "${o}"`);
+  } else o != null && o.jquery !== void 0 ? t = o[0] : o instanceof HTMLElement ? t = o : t = document.querySelector(ti.appendLocation);
+  return t;
 }
 function ve(o, t) {
   if (t == null)
@@ -24702,7 +24706,7 @@ function m9(o) {
 function Gt(o) {
   return o === Math.floor(o) || o * 1024 === Math.floor(o * 1024) ? o : m9(o) ? parseFloat(o.toPrecision(6)) : o < 11e-7 ? 0 : o;
 }
-function S1(o) {
+function v1(o) {
   const t = document.createElement("template");
   return o = o.trim(), t.innerHTML = o, t.content.firstElementChild;
 }
@@ -24730,7 +24734,7 @@ const Nc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   statisticalMode: E5,
   stripPx: ir,
   toRoman: r9,
-  to_el: S1,
+  to_el: v1,
   urlParam: o9,
   urls: T2
 }, Symbol.toStringTag, { value: "Module" }));
@@ -24867,7 +24871,7 @@ class ut extends gt {
   }
   set quarterLength(t) {
     if (t === void 0 && (t = 1), !Number.isFinite(t))
-      throw new v1(
+      throw new y1(
         `Duration.quarterLength must be a finite number, not ${t}`
       );
     t = Gt(t), this._quarterLength = t, this.linked && this.updateFeaturesFromQl();
@@ -24893,7 +24897,7 @@ class ut extends gt {
   }
   set type(t) {
     if (R2.indexOf(t) === -1)
-      throw console.log("invalid type " + t), new v1("invalid type " + t);
+      throw console.log("invalid type " + t), new y1("invalid type " + t);
     this._type = t, this.linked && this.updateQlFromFeatures();
   }
   /**
@@ -25016,7 +25020,7 @@ class ei extends gt {
    */
   setDurationType(t) {
     if (this.frozen === !0)
-      throw new v1(
+      throw new y1(
         "A frozen tuplet (or one attached to a duration) is immutable"
       );
     return this.durationActual = new ut(t), this.durationNormal = this.durationActual, this.durationActual;
@@ -25029,7 +25033,7 @@ class ei extends gt {
    */
   setRatio(t, e) {
     if (this.frozen === !0)
-      throw new v1(
+      throw new y1(
         "A frozen tuplet (or one attached to a duration) is immutable"
       );
     this.numberNotesActual = t || 3, this.numberNotesNormal = e || 2;
@@ -25086,7 +25090,7 @@ const Dc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   Editorial: O5,
   default: O5
 }, Symbol.toStringTag, { value: "Module" }));
-class lr extends v1 {
+class lr extends y1 {
 }
 class Nn {
   constructor() {
@@ -25554,7 +25558,7 @@ const kc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       { getElementMethod: "getElementAtOrBeforeOffset" }
     );
     if (t === void 0)
-      throw new v1("this object does not have a TimeSignature in Sites");
+      throw new y1("this object does not have a TimeSignature in Sites");
     return t;
   }
   get beat() {
@@ -26280,7 +26284,7 @@ const C9 = `function recorderWorkerJs() {
   double: "light-light",
   final: "light-heavy"
 };
-class pr extends v1 {
+class pr extends y1 {
 }
 function N9(o) {
   return Gs[o] !== void 0 ? Gs[o] : o;
@@ -26474,7 +26478,7 @@ class s2 extends gt {
     else if (t === 9 || t === mt[2048])
       i = 9;
     else
-      throw new v1("cannot fill beams for level " + t);
+      throw new y1("cannot fill beams for level " + t);
     for (let n = 1; n <= i; n++) {
       const s = new P5(e);
       s.number = n, this.beamsList.push(s);
@@ -26489,7 +26493,7 @@ class s2 extends gt {
    */
   getByNumber(t) {
     if (!this.getNumbers().includes(t))
-      throw new v1("beam number " + t + " cannot be accessed");
+      throw new y1("beam number " + t + " cannot be accessed");
     for (const e of this.beamsList)
       if (e.number === t)
         return e;
@@ -26537,7 +26541,7 @@ class s2 extends gt {
    */
   setAll(t, e = void 0) {
     if (k5[t] === void 0)
-      throw new v1("invalid beam type: " + t);
+      throw new y1("invalid beam type: " + t);
     for (let i = 0; i < this.length; i++) {
       const n = this.beamsList[i];
       n.type = t, n.direction = e;
@@ -26558,7 +26562,7 @@ class s2 extends gt {
       e = n[0], i = n[1];
     }
     if (k5[e] === void 0)
-      throw new v1("invalid beam type: " + e);
+      throw new y1("invalid beam type: " + e);
     for (let n = 0; n < this.length; n++)
       this.beamsList[n].number === t && (this.beamsList[n].type = e, this.beamsList[n].direction = i);
     return this;
@@ -26610,7 +26614,7 @@ class D1 extends gt {
     else if (t === "quadruple-sharp" || t === "####" || t === 4)
       this._name = "quadruple-sharp", this._alter = 4, this._modifier = "####", this._unicodeModifier = "&#x1d12a;";
     else
-      throw new v1("Accidental is not supported: " + t);
+      throw new y1("Accidental is not supported: " + t);
   }
   /**
    * Return or set the name of the accidental ('flat', 'sharp', 'natural', etc.);
@@ -26673,7 +26677,7 @@ class D1 extends gt {
       return "###";
     if (t === "---")
       return "bbb";
-    throw new v1("Vexflow does not support: " + t);
+    throw new y1("Vexflow does not support: " + t);
   }
   /**
    * Returns the modifier in unicode or
@@ -26904,7 +26908,7 @@ class T1 extends gt {
       try {
         s = s.getHigherEnharmonic(!1);
       } catch (r) {
-        if (r instanceof v1)
+        if (r instanceof y1)
           break;
         throw r;
       }
@@ -26920,7 +26924,7 @@ class T1 extends gt {
       try {
         a = a.getLowerEnharmonic(!1);
       } catch (r) {
-        if (r instanceof v1)
+        if (r instanceof y1)
           break;
         throw r;
       }
@@ -27250,7 +27254,7 @@ const jc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   VFLyricAnnotation: U2
 }, Symbol.toStringTag, { value: "Module" }));
-class Sr extends v1 {
+class Sr extends y1 {
   // thrown in a couple of places.
 }
 const z9 = [
@@ -27692,7 +27696,7 @@ const Uc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   noteheadTypeNames: z9,
   stemDirectionNames: vr
 }, Symbol.toStringTag, { value: "Module" }));
-class ii extends v1 {
+class ii extends y1 {
 }
 const Et = {
   DESCENDING: -1,
@@ -28056,7 +28060,7 @@ function Rr(o) {
   try {
     e = o.transposePitch(t);
   } catch (b) {
-    throw b instanceof v1 ? new ii(
+    throw b instanceof y1 ? new ii(
       `Could not find a Pythagorean ratio for ${o.name}.`
     ) : b;
   }
@@ -28078,14 +28082,14 @@ function Rr(o) {
         try {
           b = b && m.transposePitch(b);
         } catch (p) {
-          if (!(p instanceof v1))
+          if (!(p instanceof y1))
             throw p;
           b = null;
         }
         try {
           h = h && d.transposePitch(h);
         } catch (p) {
-          if (!(p instanceof v1))
+          if (!(p instanceof y1))
             throw p;
           h = null;
         }
@@ -29161,8 +29165,8 @@ function g4() {
     if (typeof D == "number") {
       var B1 = D < 0 ? -b1(-D) : b1(D);
       if (B1 !== D) {
-        var y1 = String(B1), _1 = S.call(k, y1.length + 1);
-        return T.call(y1, N1, "$&_") + "." + T.call(T.call(_1, /([0-9]{3})/g, "$&_"), /_$/, "");
+        var S1 = String(B1), _1 = S.call(k, S1.length + 1);
+        return T.call(S1, N1, "$&_") + "." + T.call(T.call(_1, /([0-9]{3})/g, "$&_"), /_$/, "");
       }
     }
     return T.call(k, N1, "$&_");
@@ -29176,7 +29180,7 @@ function g4() {
     double: /(["\\])/g,
     single: /(['\\])/g
   };
-  U0 = function D(k, N1, B1, y1) {
+  U0 = function D(k, N1, B1, S1) {
     var _1 = N1 || {};
     if (G1(_1, "quoteStyle") && !G1(R1, _1.quoteStyle))
       throw new TypeError('option "quoteStyle" must be "single" or "double"');
@@ -29212,18 +29216,18 @@ function g4() {
     if (typeof B1 > "u" && (B1 = 0), B1 >= n3 && n3 > 0 && typeof k == "object")
       return o1(k) ? "[Array]" : "[Object]";
     var t2 = Ai(_1, B1);
-    if (typeof y1 > "u")
-      y1 = [];
-    else if (Rt(y1, k) >= 0)
+    if (typeof S1 > "u")
+      S1 = [];
+    else if (Rt(S1, k) >= 0)
       return "[Circular]";
     function It(p2, _2, Bi) {
-      if (_2 && (y1 = Y.call(y1), y1.push(_2)), Bi) {
+      if (_2 && (S1 = Y.call(S1), S1.push(_2)), Bi) {
         var u1 = {
           depth: _1.depth
         };
-        return G1(_1, "quoteStyle") && (u1.quoteStyle = _1.quoteStyle), D(p2, u1, B1 + 1, y1);
+        return G1(_1, "quoteStyle") && (u1.quoteStyle = _1.quoteStyle), D(p2, u1, B1 + 1, S1);
       }
-      return D(p2, _1, B1 + 1, y1);
+      return D(p2, _1, B1 + 1, S1);
     }
     if (typeof k == "function" && !L(k)) {
       var W3 = ht(k), j3 = u2(k, It);
@@ -29291,8 +29295,8 @@ function g4() {
     return String(k);
   };
   function W(D, k, N1) {
-    var B1 = N1.quoteStyle || k, y1 = R1[B1];
-    return y1 + D + y1;
+    var B1 = N1.quoteStyle || k, S1 = R1[B1];
+    return S1 + D + S1;
   }
   function K(D) {
     return T.call(String(D), /"/g, "&quot;");
@@ -29443,9 +29447,9 @@ function g4() {
       var N1 = D.length - k.maxStringLength, B1 = "... " + N1 + " more character" + (N1 > 1 ? "s" : "");
       return Qe(S.call(D, 0, k.maxStringLength), k) + B1;
     }
-    var y1 = Z1[k.quoteStyle || "single"];
-    y1.lastIndex = 0;
-    var _1 = T.call(T.call(D, y1, "\\$1"), /[\x00-\x1f]/g, Ze);
+    var S1 = Z1[k.quoteStyle || "single"];
+    S1.lastIndex = 0;
+    var _1 = T.call(T.call(D, S1, "\\$1"), /[\x00-\x1f]/g, Ze);
     return W(_1, "single", k);
   }
   function Ze(D) {
@@ -29465,8 +29469,8 @@ function g4() {
     return D + " { ? }";
   }
   function L3(D, k, N1, B1) {
-    var y1 = B1 ? i3(N1, B1) : V.call(N1, ", ");
-    return D + " (" + k + ") {" + y1 + "}";
+    var S1 = B1 ? i3(N1, B1) : V.call(N1, ", ");
+    return D + " (" + k + ") {" + S1 + "}";
   }
   function Ci(D) {
     for (var k = 0; k < D.length; k++)
@@ -29500,8 +29504,8 @@ function g4() {
     var N1 = o1(D), B1 = [];
     if (N1) {
       B1.length = D.length;
-      for (var y1 = 0; y1 < D.length; y1++)
-        B1[y1] = G1(D, y1) ? k(D[y1], D) : "";
+      for (var S1 = 0; S1 < D.length; S1++)
+        B1[S1] = G1(D, S1) ? k(D[S1], D) : "";
     }
     var _1 = typeof a1 == "function" ? a1(D) : [], pe;
     if (p1) {
@@ -34997,7 +35001,7 @@ class ke extends C3 {
       else if (t[e].isClassOrSubclass("Note"))
         i = t[e];
       else
-        throw console.warn("bad pitch", t[e]), new v1(
+        throw console.warn("bad pitch", t[e]), new y1(
           "Cannot add pitch from " + t[e]
         );
       this._notes.push(i);
@@ -35185,7 +35189,7 @@ class ke extends C3 {
       return this._cache.root;
     const e = this.removeDuplicatePitches(), i = e.pitches;
     if (i.length === 0)
-      throw new v1("No notes in Chord!");
+      throw new y1("No notes in Chord!");
     if (i.length === 1)
       return this.pitches[0];
     const n = [3, 5, 7, 2, 4, 6];
@@ -35787,13 +35791,13 @@ class wi extends is {
   getPitches(t = void 0, e = void 0, i = void 0) {
     let n;
     if (this.tonic === void 0 ? n = new T1("C4") : n = this.tonic, this.abstract === void 0)
-      throw new v1("ConcreteScale requires an abstract scale network");
+      throw new y1("ConcreteScale requires an abstract scale network");
     return this.abstract.getRealization(n);
   }
   // noinspection JSUnusedLocalSymbols
   pitchFromDegree(t, e = void 0, i = void 0, n = void 0, s = void 0) {
     if (this.abstract === void 0)
-      throw new v1("ConcreteScale requires an abstract scale network");
+      throw new y1("ConcreteScale requires an abstract scale network");
     return this.abstract.getPitchFromNodeDegree(
       this.tonic,
       this.abstract.tonicDegree,
@@ -35803,7 +35807,7 @@ class wi extends is {
   // noinspection JSUnusedLocalSymbols
   getScaleDegreeFromPitch(t, e = void 0, i = void 0) {
     if (this.abstract === void 0)
-      throw new v1("ConcreteScale requires an abstract scale network");
+      throw new y1("ConcreteScale requires an abstract scale network");
     return this.abstract.getRelativeNodeDegree(
       this.tonic,
       this.abstract.tonicDegree,
@@ -35855,7 +35859,7 @@ function ss(o, t) {
   if (o === void 0)
     o = new T1("C4");
   else if (!(o instanceof T1))
-    throw new v1(
+    throw new y1(
       "Cannot make a scale not from a music21.pitch.Pitch object: " + o
     );
   t === void 0 && (t = ["M", "M", "m", "M", "M", "M", "m"]);
@@ -36061,7 +36065,7 @@ let i2 = class extends as {
       " "
     ).indexOf(t.toUpperCase());
     if (n === -1)
-      throw new v1("Cannot find the key for " + t);
+      throw new y1("Cannot find the key for " + t);
     const s = S8[e] || 0, a = n + s - 11;
     super(a), this.tonic = new T1(t), this.mode = e, this._scale = this.getScale();
   }
@@ -36388,7 +36392,7 @@ const Qc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   acc_sharp: O8,
   svg_accidentals: Z2
 }, Symbol.toStringTag, { value: "Module" }));
-class G5 extends v1 {
+class G5 extends y1 {
 }
 const I2 = {
   larghissimo: 16,
@@ -36515,27 +36519,27 @@ class Ab extends gt {
    */
   addDiv(t) {
     t = Be(t);
-    const e = S1(
+    const e = v1(
       '<span class="tempoHolder">' + this.tempo.toString() + "</span>"
     );
     e.style.fontSize = "24px", e.style.paddingLeft = "10px", e.style.paddingRight = "10px";
-    const i = S1('<div class="metronomeRendered"></div>'), n = S1("<button>start</button>");
+    const i = v1('<div class="metronomeRendered"></div>'), n = v1("<button>start</button>");
     n.addEventListener("click", () => {
       this.chirp();
     });
-    const s = S1("<button>stop</button>");
+    const s = v1("<button>stop</button>");
     s.addEventListener("click", () => {
       this.stopChirp();
     }), i.appendChild(n), i.appendChild(s), i.appendChild(e);
-    const a = S1("<button>up</button>");
+    const a = v1("<button>up</button>");
     a.addEventListener("click", () => {
       this.increaseSpeed(), a.parentElement.querySelector(".tempoHolder").innerHTML = this.tempo.toString();
     });
-    const r = S1("<button>down</button>");
+    const r = v1("<button>down</button>");
     r.addEventListener("click", () => {
       this.decreaseSpeed(), r.parentElement.querySelector(".tempoHolder").innerHTML = this.tempo.toString();
     }), i.appendChild(a), i.appendChild(r);
-    const l = S1(
+    const l = v1(
       '<span class="metroFlash">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'
     );
     return l.style.marginLeft = "40px", l.style.height = "40px", i.appendChild(l), t.appendChild(i), this.metronomeDiv = i, i;
@@ -37158,10 +37162,10 @@ class M8 {
     return s.setMode(dt.Mode.SOFT), s.setSoftmaxFactor(Y5.softmaxFactor), s;
   }
   vexflowGraceNoteGroup(t, e) {
-    const i = t.map((n) => new b2({
+    const i = t.map((n, s) => new b2({
       keys: n.vexflowNote(e).getKeys(),
       duration: n.duration.vexflowDuration,
-      slash: n.duration.slash
+      slash: s === 0 ? n.duration.slash : !1
     }));
     return new O2(i, !0);
   }
@@ -37273,7 +37277,7 @@ const th = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   getTextNote: V5,
   vexflowDefaults: Y5
 }, Symbol.toStringTag, { value: "Module" }));
-class k8 extends v1 {
+class k8 extends y1 {
 }
 function D6(o) {
   if (o === "longa")
@@ -37928,7 +37932,7 @@ const Db = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   ScoreExporter: F8,
   XMLExporterBase: w4
 }, Symbol.toStringTag, { value: "Module" }));
-class Mb extends v1 {
+class Mb extends y1 {
 }
 class kb {
 }
@@ -38465,7 +38469,7 @@ const Wb = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   setStemDirectionForUnspecified: Y8,
   setStemDirectionOneGroup: X8
 }, Symbol.toStringTag, { value: "Module" }));
-class Bt extends v1 {
+class Bt extends y1 {
 }
 function jb(o) {
   return new P8(o).parse();
@@ -38839,7 +38843,7 @@ class he extends ct {
     }
     const e = t;
     if (!(e instanceof ct))
-      throw new v1("Can only append a music21 object.");
+      throw new y1("Can only append a music21 object.");
     if (this._elements.includes(e))
       throw new Bt(`Cannot append (${e}): already found in Stream`);
     try {
@@ -39826,7 +39830,7 @@ class he extends ct {
   createNewDOM(t, e, i = "svg") {
     this.isFlat || this.setSubstreamRenderOptions();
     let n;
-    if (i === "svg" ? n = S1("<div></div>") : i === "canvas" && (n = S1("<canvas></canvas>")), n.classList.add("streamHolding"), t !== void 0)
+    if (i === "svg" ? n = v1("<div></div>") : i === "canvas" && (n = v1("<canvas></canvas>")), n.classList.add("streamHolding"), t !== void 0)
       typeof t == "string" && (t = ir(t)), n.setAttribute("width", t.toString());
     else {
       const s = this.estimateStaffLength() + this.renderOptions.staffPadding;
@@ -39899,7 +39903,7 @@ class he extends ct {
     else {
       const a = t.querySelectorAll(".streamHolding");
       if (a.length === 0)
-        throw new v1("No svg defined for replaceDOM!");
+        throw new y1("No svg defined for replaceDOM!");
       n = a[a.length - 1];
     }
     let s;
@@ -39908,7 +39912,7 @@ class he extends ct {
       s = this.createDOM(a, r, i);
     } else
       s = this.createDOM(void 0, void 0, i);
-    return n.replaceWith(s), s;
+    return n.id && (s.id = n.id), n.replaceWith(s), s;
   }
   /**
    * Set the type of interaction on the svg based on
@@ -40088,13 +40092,13 @@ class he extends ct {
     minAccidental: i = -1,
     maxAccidental: n = 1
   } = {}) {
-    const s = S1('<div style="text-align: left; position: relative;"></div>');
+    const s = v1('<div style="text-align: left; position: relative;"></div>');
     this.renderOptions.events.click = this.DOMChangerFunction, this.changedCallbackFunction === void 0 && (this.changedCallbackFunction = this.DOMChangerFunction);
     const a = this.createDOM(t, e), r = this.getAccidentalToolbar(
       i,
       n
     );
-    return s.appendChild(r), s.appendChild(S1('<br style="clear: both;">')), s.appendChild(a), s;
+    return s.appendChild(r), s.appendChild(v1('<br style="clear: both;">')), s.appendChild(a), s;
   }
   /*
    * SVG toolbars...
@@ -40128,11 +40132,11 @@ class he extends ct {
           svg: h
         });
       }
-    }, s = S1(
+    }, s = v1(
       '<div class="accidentalToolbar scoreToolbar">'
     );
     for (let a = t; a <= e; a++) {
-      const r = Z2.get(a).cloneNode(!0), l = S1(
+      const r = Z2.get(a).cloneNode(!0), l = v1(
         '<button style="width: 40px; height: 40px;"></button>'
       );
       l.addEventListener("click", (b) => n(a, b)), l.appendChild(r), s.appendChild(l);
@@ -40143,13 +40147,13 @@ class he extends ct {
    * get a Div element containing two buttons -- play and stop
    */
   getPlayToolbar() {
-    const t = S1(
+    const t = v1(
       '<div class="playToolbar scoreToolbar">'
-    ), e = S1("<button>&#9658</button>");
+    ), e = v1("<button>&#9658</button>");
     e.addEventListener("click", () => {
       this.playStream();
     }), t.appendChild(e);
-    const i = S1("<button>&#9724</button>");
+    const i = v1("<button>&#9724</button>");
     return i.addEventListener("click", () => {
       this.stopPlayStream();
     }), t.appendChild(i), t;
@@ -40805,7 +40809,7 @@ class t3 extends ct {
   }
   offsetToIndex(t, { includeCoincidentBoundaries: e = !1 } = {}) {
     if (t >= this.barDuration.quarterLength || t < 0)
-      throw new v1(
+      throw new y1(
         `cannot access from qLenPos ${t} where total duration is ${this.barDuration.quarterLength}`
       );
     let i = 0, n = -1;
@@ -40946,7 +40950,7 @@ class Zi extends gt {
   }
   set type(t) {
     if (!z6.includes(t))
-      throw new v1(
+      throw new y1(
         `Type must be one of ${z6}, not ${t}`
       );
     this._type = t;
@@ -42195,7 +42199,7 @@ const io = (o) => {
 };
 function oc() {
   document.querySelector(".loadingSoundfont")?.remove();
-  const o = S1(
+  const o = v1(
     '<div class="loadingSoundfont"><b>Loading Instrument</b>: audio will begin when this message disappears.</div>'
   );
   return document.querySelector(ti.appendLocation).append(o), o;
@@ -42257,15 +42261,15 @@ class cc {
   }
   addPlayer(t) {
     typeof t == "string" && (t = document.querySelector(t));
-    const e = S1('<div class="midiPlayer"></div>'), i = S1('<div class="positionControls"></div>'), n = S1(
+    const e = v1('<div class="midiPlayer"></div>'), i = v1('<div class="positionControls"></div>'), n = v1(
       '<input type="image" alt="play" src="' + this.playPng() + '" value="play" class="playPause">'
-    ), s = S1(
+    ), s = v1(
       '<input type="image" alt="stop" src="' + this.stopPng() + '" value="stop" class="stopButton">'
     );
     n.addEventListener("click", () => this.pausePlayStop()), s.addEventListener("click", () => this.stopButton()), i.append(n), i.append(s), e.append(i);
-    const a = S1('<div class="timeControls"></div>'), r = S1('<span class="timePlayed">0:00</span>'), l = S1(
+    const a = v1('<div class="timeControls"></div>'), r = v1('<span class="timePlayed">0:00</span>'), l = v1(
       '<span class="capsule"><span class="cursor"></span><input type="range" class="scrubber" min="0" max="1" step="0.001" value="0"></span>'
-    ), b = S1('<span class="timeRemaining">-0:00</span>');
+    ), b = v1('<span class="timeRemaining">-0:00</span>');
     return a.append(r), a.append(l), a.append(b), e.append(a), t.append(e), this.playDiv = e, e;
   }
   stopButton() {
@@ -42574,23 +42578,23 @@ class mc {
    * scrollable property on the keyboard to True.
    */
   wrapScrollable(t) {
-    const e = S1(
+    const e = v1(
       '<div class="keyboardScrollableWrapper" style="display: inline-block;"></div>'
-    ), i = S1(`
+    ), i = v1(`
             <button class="keyboardOctaveDown" 
                     style="font-size: ${Math.floor(this.scaleFactor * 15)}px;">&lt;&lt;</button>
             `);
     i.addEventListener("click", () => {
       rt.transposeOctave -= 1, this.startPitch = this._startDNN - 7, this.endPitch = this._endDNN - 7, this.redrawSVG();
     });
-    const n = S1(`
+    const n = v1(`
             <button class="keyboardOctaveUp"
                     style="font-size: ${Math.floor(this.scaleFactor * 15)}px;"
             >&gt;&gt;</button>`);
     n.addEventListener("click", () => {
       rt.transposeOctave += 1, this.startPitch = this._startDNN + 7, this.endPitch = this._endDNN + 7, this.redrawSVG();
     });
-    const s = S1(
+    const s = v1(
       '<div style="display:inline-block; vertical-align: middle;" class="keyboardScrollableInnerDiv"></div>'
     );
     return s.appendChild(t), e.append(i), e.append(s), e.append(n), e;
@@ -42602,10 +42606,10 @@ class mc {
    * hideable property on the keyboard to True.
    */
   appendHideableKeyboard(t, e) {
-    const i = S1('<div class="keyboardHideableContainer"></div>'), n = S1(`
+    const i = v1('<div class="keyboardHideableContainer"></div>'), n = v1(`
             <div class="keyboardToggleInside"
                  style="display: inline-block; padding-top: 40px; font-size: 40px;"
-            >↥</div>`), s = S1(`
+            >↥</div>`), s = v1(`
             <div class="keyboardToggleOutside"
                  style="display: inline-block; vertical-align: top; background: white;"
             ></div>`);
@@ -42613,7 +42617,7 @@ class mc {
       "data-defaultDisplay",
       i.querySelector(".keyboardSVG")?.style.display
     ), s.setAttribute("data-state", "down"), s.addEventListener("click", (r) => ro(r));
-    const a = S1(
+    const a = v1(
       `<div class="keyboardExplain"
                   style="display: none; background-color: white; padding: 10px 10px 10px 10px; font-size: 12pt;"
              >Show keyboard</div>`
@@ -43185,7 +43189,7 @@ class ps extends Z8 {
     let i = "";
     const n = /^(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)/, s = /^(It|Ger|Fr|Sw)/, a = n.exec(t), r = s.exec(t);
     if (a === null && r === null)
-      throw new v1(
+      throw new y1(
         `No roman numeral found in ${t}.`
       );
     return r !== null ? (e.mode === "major" && (e = new i2(e.tonic.name, "minor"), this.impliedScale = e, this.useImpliedScale = !0), i = r[1], ["It", "Ger"].includes(i) ? this.scaleDegree = 4 : this.scaleDegree = 2, t = t.replace(s, ""), this.romanNumeralAlone = i, i !== "Fr" && this.bracketedAlterations.push(["#", 1]), (i === "Fr" || i === "Sw") && this.bracketedAlterations.push(["#", 3])) : (i = a[1], this.scaleDegree = Z6(i), t = t.replace(n, ""), this.romanNumeralAlone = i), [t, e];
@@ -43444,7 +43448,7 @@ class xc extends ct {
           v8(t)
         );
       } catch {
-        throw new v1(
+        throw new y1(
           `got a key signature string that is not supported: ${t}`
         );
       }
@@ -43635,12 +43639,12 @@ function wo(o, t = {}) {
       en
     ) : i.MidiInClose();
   });
-  const n = i.MidiInList(), s = S1("<option value='None'>None selected</option>");
+  const n = i.MidiInList(), s = v1("<option value='None'>None selected</option>");
   o.appendChild(s);
   let a = !1;
   const r = [];
   for (let l = 0; l < n.length; l++) {
-    const b = S1(
+    const b = v1(
       "<option value='" + n[l] + "'>" + n[l] + "</option>"
     );
     n[l] === it.selectedJazzInterface && (b.setAttribute("selected", "true"), a = !0), r.push(b), o.appendChild(b);
@@ -43678,7 +43682,7 @@ function yc(o, t = {}) {
   const a = i.querySelectorAll(
     "select#midiInSelect"
   );
-  return a.length > 0 ? (s = a[0], e = !0) : (s = S1('<select id="midiInSelect"></select>'), i.appendChild(s)), it.select = s, navigator.requestMIDIAccess ? (e || s.addEventListener("change", (r) => To(r)), navigator.requestMIDIAccess().then(
+  return a.length > 0 ? (s = a[0], e = !0) : (s = v1('<select id="midiInSelect"></select>'), i.appendChild(s)), it.select = s, navigator.requestMIDIAccess ? (e || s.addEventListener("change", (r) => To(r)), navigator.requestMIDIAccess().then(
     (r) => {
       it.access = r, nn(), n.autoUpdate && (r.onstatechange = nn);
       const l = new Event("change", { bubbles: !0 });
@@ -43693,11 +43697,11 @@ function yc(o, t = {}) {
 function nn() {
   const o = it.access.inputs;
   it.select.replaceChildren();
-  const t = S1("<option value='None'>None selected</option>");
+  const t = v1("<option value='None'>None selected</option>");
   it.select.appendChild(t);
   const e = [], i = [];
   o.forEach((s) => {
-    const a = S1(
+    const a = v1(
       "<option value='" + s.name + "'>" + s.name + "</option>"
     );
     e.push(a), i.push(s.name), it.select.appendChild(a);

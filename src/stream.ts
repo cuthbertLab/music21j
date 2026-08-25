@@ -2665,6 +2665,10 @@ export class Stream<ElementType extends base.Music21Object = base.Music21Object>
         } else {
             svgBlock = this.createDOM(undefined, undefined, elementType);
         }
+        if (oldSVGOrCanvas.id) {
+            // so that replaceDOM('#someId') can be called again on the new element.
+            svgBlock.id = oldSVGOrCanvas.id;
+        }
         oldSVGOrCanvas.replaceWith(svgBlock);
         return svgBlock;
     }
