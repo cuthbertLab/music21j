@@ -108,12 +108,11 @@ export declare class Renderer {
     }): void;
     /**
      *
-     * Prepares a score that arrived flat... sets up
-     * stacks and vfTies after calling prepareFlat
-     *
-     * @param {Stream} m - a flat stream (maybe a measure or voice)
+     * Prepares a stream that arrives here as a single measure's worth of music
+     * -- a Measure (with or without Voices) or any flat stream -- setting up
+     * stacks and vfTies after calling prepareMeasure.
      */
-    prepareArrivedFlat(m: stream.Stream): void;
+    prepareArrivedMeasurelike(m: stream.Stream): void;
     /**
      *
      * Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
