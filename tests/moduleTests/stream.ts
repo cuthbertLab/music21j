@@ -442,6 +442,29 @@ export default function tests() {
         assert.ok(true);
     });
 
+    test('music21.stream.Stream.replaceDOM by selector', assert => {
+        // AI-assisted
+        const appendLocation = globalThis.document.querySelector(
+            music21.defaults.appendLocation
+        );
+        const holder = music21.common.to_el(
+            '<div id="replaceDOMTarget" class="streamHolding"></div>'
+        );
+        appendLocation.appendChild(holder);
+        const s = new music21.stream.Measure();
+        s.append(new music21.note.Note('C#4'));
+        s.replaceDOM('#replaceDOMTarget');
+        // the id moves to the replacement, so the same selector works again.
+        const second = s.replaceDOM('#replaceDOMTarget');
+        assert.equal(second.id, 'replaceDOMTarget', 'id survives replaceDOM');
+        second.remove();
+
+        assert.throws(
+            () => { s.replaceDOM('#replaceDOMTarget'); },
+            'a selector matching nothing raises rather than dereferencing null'
+        );
+    });
+
     test('music21.stream.Stream.createNewDOM', assert => {
         const s = music21.tinyNotation.TinyNotation('4/4 c2 c2 c2 c2');
         s.renderOptions.scaleFactor = {x: 1.0, y: 1.0};

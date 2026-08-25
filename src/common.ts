@@ -3,11 +3,15 @@
  * functions that are useful everywhere...
  */
 import defaults from './defaults';
+import { Music21Exception } from './exceptions21';
 
 export function coerceHTMLElement(el?: JQuery|HTMLElement|string): HTMLElement {
     let htmlElement: HTMLElement;
     if (typeof el === 'string' && el !== '') {
         htmlElement = document.querySelector(el);
+        if (htmlElement === null) {
+            throw new Music21Exception(`No element on the page matches "${el}"`);
+        }
     } else if (el != null && (el as JQuery).jquery !== undefined) {
         htmlElement = (el as JQuery)[0];
     } else if (el instanceof HTMLElement) {
