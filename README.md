@@ -144,7 +144,7 @@ A complete page is in `testHTML/sfElsewhereCDN.html`.
 
 ## Version
 
-0.23.6 (beta)
+0.23.7 (beta)
 
 ## License
 
@@ -380,6 +380,7 @@ from .gitignore) which allows it to serve from its own sound files.
 
 Just documenting major changes at different versions, starting with 0.20
 
+* v0.23.7 -- Lone Measure with Voices renders; replaceDOM by id repeatable; one grace-group slash.
 * v0.23.6 -- Tinynotation errors, inf. quarterLength catch, zombie streams don't litter page.
 * v0.23.4 -- Allow first note of Stream to export with natural show.
 * v0.23.3 -- Update midicube to 0.10.3 to fix legato error.
