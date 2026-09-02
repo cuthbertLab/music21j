@@ -138,7 +138,7 @@ export class Accidental extends prebase.ProtoM21Object {
             this._name = 'triple-sharp';
             this._alter = 3.0;
             this._modifier = '###';
-            this._unicodeModifier = '&#x1d12a;';
+            this._unicodeModifier = '♯&#x1d12a;';
         } else if (
             accName === 'quadruple-flat'
             || accName === '----'
@@ -147,7 +147,7 @@ export class Accidental extends prebase.ProtoM21Object {
             this._name = 'quadruple-flat';
             this._alter = -4.0;
             this._modifier = '----';
-            this._unicodeModifier = '♭&#x1d12b;';
+            this._unicodeModifier = '&#x1d12b;&#x1d12b;';
         } else if (
             accName === 'quadruple-sharp'
             || accName === '####'
@@ -156,7 +156,7 @@ export class Accidental extends prebase.ProtoM21Object {
             this._name = 'quadruple-sharp';
             this._alter = 4.0;
             this._modifier = '####';
-            this._unicodeModifier = '&#x1d12a;';
+            this._unicodeModifier = '&#x1d12a;&#x1d12a;';
         } else {
             throw new Music21Exception('Accidental is not supported: ' + accName);
         }
@@ -237,8 +237,8 @@ export class Accidental extends prebase.ProtoM21Object {
     }
 
     /**
-     * Returns the modifier in unicode or
-     * for double and triple accidentals, as a hex escape
+     * Returns the modifier in unicode or, for the double and higher
+     * accidentals, as a hex escape.  Each accidental has its own spelling.
      *
      * @type {string}
      * @readonly

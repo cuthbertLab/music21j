@@ -161,6 +161,26 @@ export default function tests() {
         assert.equal(b.name, 'flat', 'flat name passed');
     });
 
+    test('music21.pitch.Accidental unicode distinguishes every accidental', assert => {
+        // Each accidental gets its own unicode spelling, and the flat side
+        // mirrors the sharp side.  Port of music21p #2021.
+        const names = [
+            'quadruple-flat', 'triple-flat', 'double-flat', 'flat', 'natural',
+            'sharp', 'double-sharp', 'triple-sharp', 'quadruple-sharp',
+        ];
+        const spellings = names.map(n => new music21.pitch.Accidental(n).unicodeModifier);
+        assert.equal(new Set(spellings).size, names.length, 'all spellings differ');
+
+        // three sharps is a sharp plus a double sharp; four is two double sharps
+        assert.equal(new music21.pitch.Accidental('###').unicodeModifier, '♯&#x1d12a;');
+        assert.equal(new music21.pitch.Accidental('####').unicodeModifier, '&#x1d12a;&#x1d12a;');
+        // and the flat side mirrors it
+        assert.equal(new music21.pitch.Accidental('---').unicodeModifier, '♭&#x1d12b;');
+        assert.equal(new music21.pitch.Accidental('----').unicodeModifier, '&#x1d12b;&#x1d12b;');
+
+        assert.equal(new music21.pitch.Pitch('C###4').unicodeName, 'C♯&#x1d12a;');
+    });
+
     test('music21.pitch.Pitch', assert => {
         const p = new music21.pitch.Pitch('D#5');
         assert.equal(p.name, 'D#', 'Pitch Name set to D#');
