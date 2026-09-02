@@ -141,7 +141,9 @@ export class KeySignature extends base.Music21Object {
         for (let i = 0; i < Math.abs(this.sharps); i++) {
             pKeep = transInterval.transposePitch(pKeep);
             pKeep.octave = 4;
-            post.push(pKeep);
+            const p = pKeep.clone();
+            p.octaveIsImplicit = true;
+            post.push(p);
         }
         this._alteredPitchesCache = post;
         return post;
@@ -244,7 +246,9 @@ export class KeySignature extends base.Music21Object {
         for (let i = 0; i < transTimes; i++) {
             newPitch = transInterval.transposePitch(newPitch);
         }
-        newPitch.octave = originalOctave;
+        if (!p.octaveIsImplicit) {
+            newPitch.octave = originalOctave;
+        }
         return newPitch;
     }
 }

@@ -289,6 +289,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
      * Transpose a pitch by this generic interval, maintaining accidentals
      */
     transposePitch(p: pitch.Pitch): pitch.Pitch {
+        const useImplicitOctave = p.octaveIsImplicit;
         const pitch2 = new pitch.Pitch();
         pitch2.step = p.step;
         pitch2.octave = p.octave;
@@ -306,6 +307,9 @@ export class GenericInterval extends prebase.ProtoM21Object {
         pitch2.octave = newOctave;
         if (p.accidental !== undefined) {
             pitch2.accidental = new pitch.Accidental(p.accidental.name);
+        }
+        if (useImplicitOctave) {
+            pitch2.octaveIsImplicit = true;
         }
         return pitch2;
     }
@@ -734,16 +738,12 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
      * Transposes pitches but does not maintain accidentals, etc.
      */
     transposePitch(p: pitch.Pitch): pitch.Pitch {
-        let useImplicitOctave = false;
-        if (p.octave === undefined) {
-            // not yet implemented in m21j
-            useImplicitOctave = true;
-        }
+        const useImplicitOctave = p.octaveIsImplicit;
         const pps = p.ps;
         const newPitch = new pitch.Pitch();
         newPitch.ps = pps + this.semitones;
         if (useImplicitOctave) {
-            newPitch.octave = undefined;
+            newPitch.octaveIsImplicit = true;
         }
         return newPitch;
     }
@@ -949,13 +949,15 @@ export class Interval extends prebase.ProtoM21Object {
         p: pitch.Pitch,
         { reverse=false, maxAccidental=4 }={}
     ): pitch.Pitch {
-        /*
-        var useImplicitOctave = false;
-        if (p.octave === undefined) {
-            useImplicitOctave = true;
+        // transpose with a real octave, then forget it again, as music21p does:
+        // the generic interval alone cannot span more than an octave otherwise.
+        const useImplicitOctave = p.octaveIsImplicit;
+        let pitch1 = p;
+        if (useImplicitOctave) {
+            pitch1 = p.clone();
+            pitch1.octaveIsImplicit = false;
         }
-         */
-        const pitch2 = this.diatonic.generic.transposePitch(p);
+        const pitch2 = this.diatonic.generic.transposePitch(pitch1);
         pitch2.accidental = undefined;
         // step and octave are right now, but not necessarily accidental
         let halfStepsToFix: number;
@@ -976,6 +978,9 @@ export class Interval extends prebase.ProtoM21Object {
                 'Interval.transposePitch -- fixing half steps for '
                     + halfStepsToFix
             );
+        }
+        if (useImplicitOctave) {
+            pitch2.octaveIsImplicit = true;
         }
         return pitch2;
     }

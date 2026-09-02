@@ -176,6 +176,93 @@ export default function tests() {
         assert.ok(p.eq(pp));  // music21 pitch equality
     });
 
+    test('music21.pitch.Pitch.octaveIsImplicit', assert => {
+        const anyFSharp = new music21.pitch.Pitch('F#');
+        assert.ok(anyFSharp.octaveIsImplicit);
+        assert.equal(anyFSharp.octave, 4, 'implicit octave reports the default');
+        assert.equal(anyFSharp.implicitOctave, 4, 'implicitOctave is a synonym');
+        assert.equal(anyFSharp.nameWithOctave, 'F#');
+        assert.equal(anyFSharp.unicodeNameWithOctave, 'F♯');
+        assert.equal(anyFSharp.toString(), '<Pitch F#>');
+        assert.equal(anyFSharp.ps, 66);
+
+        anyFSharp.octave = 5;
+        assert.notOk(anyFSharp.octaveIsImplicit, 'setting octave makes it explicit');
+        assert.equal(anyFSharp.nameWithOctave, 'F#5');
+
+        anyFSharp.octaveIsImplicit = true;
+        assert.equal(anyFSharp.octave, 4);
+        assert.equal(anyFSharp.nameWithOctave, 'F#');
+
+        // false gives the default octave explicitly...
+        anyFSharp.octaveIsImplicit = false;
+        assert.equal(anyFSharp.nameWithOctave, 'F#4');
+        // ...but leaves a pitch that already has an octave alone
+        const gSharp5 = new music21.pitch.Pitch('G#5');
+        gSharp5.octaveIsImplicit = false;
+        assert.equal(gSharp5.octave, 5);
+
+        // creation paths
+        assert.ok(new music21.pitch.Pitch().octaveIsImplicit);
+        assert.ok(new music21.pitch.Pitch(3).octaveIsImplicit, 'pitchClass');
+        assert.notOk(new music21.pitch.Pitch(65).octaveIsImplicit, 'midi number');
+        assert.notOk(new music21.pitch.Pitch('C4').octaveIsImplicit);
+        assert.ok(new music21.note.Note('B-').pitch.octaveIsImplicit);
+        assert.equal(new music21.note.Note('B-').octave, 4);
+        assert.equal(new music21.note.Note('B-3').octave, 3);
+
+        // implicitness survives cloning, transposition, and enharmonic changes
+        const anyD = new music21.pitch.Pitch('D');
+        assert.ok(anyD.clone().octaveIsImplicit);
+        assert.ok(new music21.interval.Interval('M2').transposePitch(anyD).octaveIsImplicit);
+        assert.ok(new music21.interval.ChromaticInterval(3).transposePitch(anyD).octaveIsImplicit);
+        assert.ok(anyD.getHigherEnharmonic().octaveIsImplicit);
+        assert.notOk(
+            new music21.interval.Interval('M2')
+                .transposePitch(new music21.pitch.Pitch('D4')).octaveIsImplicit
+        );
+
+        // a P8 up from an octaveless pitch is the same octaveless pitch
+        const anyGSharp = new music21.pitch.Pitch('G#');
+        const octaveUp = new music21.interval.Interval('P8').transposePitch(anyGSharp);
+        assert.equal(octaveUp.nameWithOctave, 'G#');
+        // but an interval wider than an octave still spells correctly
+        const ninthUp = new music21.interval.Interval('M9')
+            .transposePitch(new music21.pitch.Pitch('C'));
+        assert.equal(ninthUp.name, 'D');
+
+        // an implicit octave is not the same as an explicit default octave
+        assert.notOk(new music21.pitch.Pitch('C').eq(new music21.pitch.Pitch('C4')));
+        assert.ok(new music21.pitch.Pitch('C').eq(new music21.pitch.Pitch('C')));
+
+        // nameWithOctave round-trips
+        const p = new music21.pitch.Pitch('E-2');
+        p.nameWithOctave = 'E-';
+        assert.ok(p.octaveIsImplicit);
+        assert.equal(p.nameWithOctave, 'E-');
+    });
+
+    test('music21.pitch.Pitch.octave is always a number', assert => {
+        // key signatures and scales hand out octaveless pitches, but .octave
+        // is never undefined, so display and MIDI code always has one to use.
+        const ks = new music21.key.KeySignature(3);
+        for (const p of ks.alteredPitches) {
+            assert.ok(p.octaveIsImplicit, `${p.name} is octaveless`);
+            assert.equal(typeof p.octave, 'number');
+            assert.equal(p.vexflowName(), `${p.step}#/4`);
+        }
+        assert.deepEqual(ks.alteredPitches.map(p => p.nameWithOctave), ['F#', 'C#', 'G#']);
+
+        const k = new music21.key.Key('E-');
+        assert.ok(k.tonic.octaveIsImplicit, 'a Key tonic has no octave of its own');
+        // ...yet its scale is realized in a real octave
+        assert.deepEqual(
+            namesWithOctave(k.getScale().getPitches()),
+            ['E-4', 'F4', 'G4', 'A-4', 'B-4', 'C5', 'D5', 'E-5']
+        );
+        assert.equal(k.getScale().pitchFromDegree(5).nameWithOctave, 'B-4');
+    });
+
     test('music21.pitch.Pitch.updateAccidentalDisplay', assert => {
         let p1 = new music21.pitch.Pitch('D#5');
         let p2 = new music21.pitch.Pitch('D#5');

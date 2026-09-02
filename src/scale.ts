@@ -174,6 +174,8 @@ export class AbstractScale extends Scale {
         } else {
             pitchObj = pitchObj.clone();
         }
+        // a realization must sit in some octave, even if the reference had none
+        pitchObj.octaveIsImplicit = false;
         const post: pitch.Pitch[] = [pitchObj];
         for (const intV of this._net) {
             pitchObj = intV.transposePitch(pitchObj);
@@ -187,6 +189,11 @@ export class AbstractScale extends Scale {
         _nodeName: string|number, 
         nodeDegreeTarget: number
     ): pitch.Pitch {
+        if (pitchReference.octaveIsImplicit) {
+            // degrees must climb out of the reference octave, so pin one down
+            pitchReference = pitchReference.clone();
+            pitchReference.octaveIsImplicit = false;
+        }
         const zeroIndexDegree = nodeDegreeTarget - 1;
         for (let i = 0; i < zeroIndexDegree; i++) {
             const thisIntv = this._net[i % this._net.length];
