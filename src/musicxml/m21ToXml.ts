@@ -846,7 +846,7 @@ export class MeasureExporter extends XMLExporterBase {
             const mxAlter = this.subElement(mxPitch, 'alter');
             mxAlter.innerHTML = common.numToIntOrFloat(p.accidental.alter).toString();
         }
-        this._setTagTextFromAttribute(p, mxPitch, 'octave', 'implicitOctave');
+        this._setTagTextFromAttribute(p, mxPitch, 'octave');
         return mxPitch;
     }
     // TODO(msc): fretNoteToXml

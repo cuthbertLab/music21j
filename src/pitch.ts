@@ -11,6 +11,7 @@ import { Music21Exception } from './exceptions21';
 
 import * as prebase from './prebase';
 import * as common from './common';
+import defaults from './defaults';
 import * as interval from './interval';
 
 import type * as clef from './clef';
@@ -300,8 +301,10 @@ export const midiToName = [
  * - Octave may be specified after the name + accidental: "C#4" etc.
  * - Octave can be arbitrarily high ("C10") but only as low as "C0" because
  *     "C-1" would be interpreted as C-flat octave 1; shift octave later for very low notes.
- * - If octave is not specified, the system will usually use octave 4, but might
- *     adjust according to context. If you do not like this behavior, give an octave always.
+ * - If octave is not specified, the pitch stands for any octave: its `.octave`
+ *     reports the default octave (4) and `.octaveIsImplicit` is true.  Code that
+ *     builds scales, chords, etc. may fix an octave according to context.  If you
+ *     do not like this behavior, give an octave always.
  * - Microtones are not supported in music21j (they are in music21p)
  *
  * @param {string|number} pn - name of the pitch, with or without octave, see above.
@@ -315,7 +318,8 @@ export const midiToName = [
  * @property {string} nameWithOctave - letter name of pitch + accidental
  *     modifier + octave; changes automatically w/ step, accidental, and octave
  * @property {number} octave - number for the octave, where middle C = C4, and
- *     octaves change between B and C; default 4
+ *     octaves change between B and C; always a number, 4 if never set
+ * @property {boolean} octaveIsImplicit - true if no octave was ever given
  * @property {number} ps - pitch space number, like midi number but floating
  *     point and w/ no restriction on range. C4 = 60.0
  * @property {string} step - letter name for the pitch (C-G, A, B),
@@ -324,7 +328,8 @@ export const midiToName = [
 export class Pitch extends prebase.ProtoM21Object {
     static get className() { return 'music21.pitch.Pitch'; }
     protected _step: string = 'C';
-    protected _octave: number = 4;
+    // undefined means implicit: .octave then reports defaults.pitchOctave
+    protected _octave: number|undefined;
     protected _accidental: Accidental|undefined;
     spellingIsInferred: boolean = false;
     microtone = undefined;
@@ -335,9 +340,12 @@ export class Pitch extends prebase.ProtoM21Object {
         /* pn can be a nameWithOctave */
         if (typeof pn === 'number') {
             if (pn < 12) {
-                pn += 60; // pitchClass
+                // a pitchClass implies no octave
+                this.ps = pn + 60;
+                this.octaveIsImplicit = true;
+            } else {
+                this.ps = pn;
             }
-            this.ps = pn;
         } else if (pn.match(/\d+/)) {
             this.nameWithOctave = pn;
         } else {
@@ -356,7 +364,7 @@ export class Pitch extends prebase.ProtoM21Object {
         if (!other.isClassOrSubclass('Pitch')) {
             return false;
         }
-        if (this.octave === other.octave
+        if (this._octave === other._octave
             && this.step === other.step
             && (!(this.accidental && other.accidental)
                 || (this.accidental.eq(other.accidental)))
@@ -388,21 +396,48 @@ export class Pitch extends prebase.ProtoM21Object {
         this.spellingIsInferred = false;
     }
 
+    /**
+     * The octave of the Pitch, where middle C = C4 and octaves change between
+     * B and C.  Always a number: a Pitch created without an octave reports the
+     * default octave, `defaults.pitchOctave` (4), and has
+     * {@link Pitch#octaveIsImplicit} true.  Setting it makes the octave explicit;
+     * to make a Pitch octaveless, set `.octaveIsImplicit = true`.
+     */
     get octave(): number {
-        return this._octave;
+        return this._octave ?? defaults.pitchOctave;
     }
 
     set octave(o: number) {
         this._octave = o;
     }
 
-    get implicitOctave(): number {
-        const o = this._octave;
-        if (o === undefined) {
-            return 4; // TODO(msc): get from defaults.
-        } else {
-            return o;
+    /**
+     * True if this Pitch was never given an octave, so it stands for its pitch
+     * class in any octave: {@link Pitch#nameWithOctave} prints without an octave
+     * number and {@link Pitch#octave} reports the default, 4.
+     *
+     * Setting it to true makes the pitch octaveless again; setting it to false
+     * fixes an octaveless pitch at the default octave, and leaves a pitch that
+     * already has an octave alone.
+     */
+    get octaveIsImplicit(): boolean {
+        return this._octave === undefined;
+    }
+
+    set octaveIsImplicit(value: boolean) {
+        if (value === this.octaveIsImplicit) {
+            return;
         }
+        this._octave = value ? undefined : defaults.pitchOctave;
+    }
+
+    /**
+     * Synonym for {@link Pitch#octave}.
+     *
+     * @deprecated use `.octave`, which is always a number.
+     */
+    get implicitOctave(): number {
+        return this.octave;
     }
 
     get accidental(): Accidental|undefined {
@@ -435,17 +470,21 @@ export class Pitch extends prebase.ProtoM21Object {
     }
 
     get nameWithOctave(): string {
+        if (this.octaveIsImplicit) {
+            return this.name;
+        }
         return this.name + this.octave.toString();
     }
 
     set nameWithOctave(pn: string) {
         const storedOctave = pn.match(/\d+/);
-        if (storedOctave !== undefined) {
+        if (storedOctave) {
             pn = pn.replace(/\d+/, '');
             this.octave = parseInt(storedOctave[0]);
             this.name = pn;
         } else {
             this.name = pn;
+            this.octaveIsImplicit = true;
         }
     }
 
@@ -530,7 +569,7 @@ export class Pitch extends prebase.ProtoM21Object {
      * @readonly
      */
     get unicodeNameWithOctave() {
-        if (this.octave === undefined) {
+        if (this.octaveIsImplicit) {
             return this.unicodeName;
         } else {
             return this.unicodeName + this.octave.toString();
@@ -545,10 +584,6 @@ export class Pitch extends prebase.ProtoM21Object {
     _getEnharmonicHelper(inPlace=false, directionInt=0) {
         // differs from Python version because
         // cannot import interval here.
-        let octaveStored = true;
-        if (this.octave === undefined) {
-            octaveStored = false;
-        }
         const p = this.clone();
         p.diatonicNoteNum += directionInt;
         if (p.accidental === undefined) {
@@ -561,6 +596,9 @@ export class Pitch extends prebase.ProtoM21Object {
         }
 
         if (!inPlace) {
+            if (this.octaveIsImplicit) {
+                p.octaveIsImplicit = true;
+            }
             return p;
         }
         this.step = p.step;
@@ -568,9 +606,7 @@ export class Pitch extends prebase.ProtoM21Object {
         if (p.microtone === undefined) {
             this.microtone = p.microtone;
         }
-        if (!octaveStored) {
-            this.octave = undefined;
-        } else {
+        if (!this.octaveIsImplicit) {  // step and accidental do not touch the octave
             this.octave = p.octave;
         }
         return p;
@@ -620,7 +656,13 @@ export class Pitch extends prebase.ProtoM21Object {
             } else {
                 // by resetting the pitch space value, we get a simpler
                 // enharmonic spelling
+                // read first: setting .ps gives returnObj -- which is `this`
+                // when inPlace -- an explicit octave
+                const octaveWasImplicit = this.octaveIsImplicit;
                 returnObj.ps = this.ps;
+                if (octaveWasImplicit) {
+                    returnObj.octaveIsImplicit = true;
+                }
             }
         }
 
@@ -1237,10 +1279,8 @@ function _dissonanceScore(
                 for (let j = i + 1; j < pitches.length; j++) {
                     const p1 = pitches[i];
                     const p2 = pitches[j].clone();
-                    // music21p sets p2.octave to None here so intervals stay
-                    // simple; m21j pitches always carry an octave, so normalize
-                    // to the default (4) which is music21p's implicit octave.
-                    p2.octave = 4;
+                    // drop the octave so intervals stay simple
+                    p2.octaveIsImplicit = true;
                     intervals.push(new interval.Interval(p1, p2));
                 }
             }

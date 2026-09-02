@@ -693,6 +693,10 @@ export class Note extends NotRest {
         this.pitch.step = nn;
     }
 
+    /**
+     * The octave of this Note's Pitch; always a number.  See
+     * {@link music21.pitch.Pitch#octaveIsImplicit} for whether one was ever given.
+     */
     get octave(): number {
         return this.pitch.octave;
     }

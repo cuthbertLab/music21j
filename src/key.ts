@@ -140,7 +140,9 @@ export class KeySignature extends base.Music21Object {
         let pKeep = new pitch.Pitch(startPitch);
         for (let i = 0; i < Math.abs(this.sharps); i++) {
             pKeep = transInterval.transposePitch(pKeep);
-            pKeep.octave = 4;
+            // an implicit octave reports 4, which is the anchor the next
+            // transposition needs, so no separate explicit copy is required
+            pKeep.octaveIsImplicit = true;
             post.push(pKeep);
         }
         this._alteredPitchesCache = post;
@@ -244,7 +246,9 @@ export class KeySignature extends base.Music21Object {
         for (let i = 0; i < transTimes; i++) {
             newPitch = transInterval.transposePitch(newPitch);
         }
-        newPitch.octave = originalOctave;
+        if (!p.octaveIsImplicit) {
+            newPitch.octave = originalOctave;
+        }
         return newPitch;
     }
 }
