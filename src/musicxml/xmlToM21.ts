@@ -690,13 +690,15 @@ export class MeasureParser {
     xmlBackup(mxBackup: Element) {
         const mxDuration = mxBackup.querySelector('duration');
         const change = parseFloat(mxDuration.textContent.trim()) / this.divisions;
-        this.offsetMeasureNote -= Math.max(opFrac(change), 0.0);
+        this.offsetMeasureNote -= opFrac(change);
+        this.offsetMeasureNote = Math.max(this.offsetMeasureNote, 0.0);
     }
 
     xmlForward(mxForward: Element) {
         const mxDuration = mxForward.querySelector('duration');
         const change = parseFloat(mxDuration.textContent.trim()) / this.divisions;
-        this.offsetMeasureNote += Math.min(opFrac(change), 0.0);
+        // Allow overfilled measures for now -- someday: warn?
+        this.offsetMeasureNote += opFrac(change);
     }
 
     xmlGraceToGrace(mxGrace: Element, noteOrChord: note.GeneralNote) {
