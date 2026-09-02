@@ -400,16 +400,15 @@ export class Pitch extends prebase.ProtoM21Object {
      * The octave of the Pitch, where middle C = C4 and octaves change between
      * B and C.  Always a number: a Pitch created without an octave reports the
      * default octave, `defaults.pitchOctave` (4), and has
-     * {@link Pitch#octaveIsImplicit} true.  Setting it makes the octave explicit.
-     *
-     * Setting `.octave = undefined` is deprecated; set `.octaveIsImplicit = true`.
+     * {@link Pitch#octaveIsImplicit} true.  Setting it makes the octave explicit;
+     * to make a Pitch octaveless, set `.octaveIsImplicit = true`.
      */
     get octave(): number {
         return this._octave ?? defaults.pitchOctave;
     }
 
-    set octave(o: number|undefined) {
-        this._octave = (o === undefined || o === null) ? undefined : o;
+    set octave(o: number) {
+        this._octave = o;
     }
 
     /**

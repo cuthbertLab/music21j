@@ -701,7 +701,7 @@ export class Note extends NotRest {
         return this.pitch.octave;
     }
 
-    set octave(nn: number|undefined) {
+    set octave(nn: number) {
         this.pitch.octave = nn;
     }
 
