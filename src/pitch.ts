@@ -584,7 +584,6 @@ export class Pitch extends prebase.ProtoM21Object {
     _getEnharmonicHelper(inPlace=false, directionInt=0) {
         // differs from Python version because
         // cannot import interval here.
-        const octaveWasImplicit = this.octaveIsImplicit;
         const p = this.clone();
         p.diatonicNoteNum += directionInt;
         if (p.accidental === undefined) {
@@ -597,7 +596,7 @@ export class Pitch extends prebase.ProtoM21Object {
         }
 
         if (!inPlace) {
-            if (octaveWasImplicit) {
+            if (this.octaveIsImplicit) {
                 p.octaveIsImplicit = true;
             }
             return p;
@@ -607,9 +606,7 @@ export class Pitch extends prebase.ProtoM21Object {
         if (p.microtone === undefined) {
             this.microtone = p.microtone;
         }
-        if (octaveWasImplicit) {
-            this.octaveIsImplicit = true;
-        } else {
+        if (!this.octaveIsImplicit) {  // step and accidental do not touch the octave
             this.octave = p.octave;
         }
         return p;
@@ -659,6 +656,8 @@ export class Pitch extends prebase.ProtoM21Object {
             } else {
                 // by resetting the pitch space value, we get a simpler
                 // enharmonic spelling
+                // read first: setting .ps gives returnObj -- which is `this`
+                // when inPlace -- an explicit octave
                 const octaveWasImplicit = this.octaveIsImplicit;
                 returnObj.ps = this.ps;
                 if (octaveWasImplicit) {

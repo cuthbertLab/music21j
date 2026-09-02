@@ -289,7 +289,6 @@ export class GenericInterval extends prebase.ProtoM21Object {
      * Transpose a pitch by this generic interval, maintaining accidentals
      */
     transposePitch(p: pitch.Pitch): pitch.Pitch {
-        const useImplicitOctave = p.octaveIsImplicit;
         const pitch2 = new pitch.Pitch();
         pitch2.step = p.step;
         pitch2.octave = p.octave;
@@ -308,7 +307,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
         if (p.accidental !== undefined) {
             pitch2.accidental = new pitch.Accidental(p.accidental.name);
         }
-        if (useImplicitOctave) {
+        if (p.octaveIsImplicit) {
             pitch2.octaveIsImplicit = true;
         }
         return pitch2;
@@ -738,11 +737,10 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
      * Transposes pitches but does not maintain accidentals, etc.
      */
     transposePitch(p: pitch.Pitch): pitch.Pitch {
-        const useImplicitOctave = p.octaveIsImplicit;
         const pps = p.ps;
         const newPitch = new pitch.Pitch();
         newPitch.ps = pps + this.semitones;
-        if (useImplicitOctave) {
+        if (p.octaveIsImplicit) {
             newPitch.octaveIsImplicit = true;
         }
         return newPitch;
@@ -951,9 +949,8 @@ export class Interval extends prebase.ProtoM21Object {
     ): pitch.Pitch {
         // transpose with a real octave, then forget it again, as music21p does:
         // the generic interval alone cannot span more than an octave otherwise.
-        const useImplicitOctave = p.octaveIsImplicit;
         let pitch1 = p;
-        if (useImplicitOctave) {
+        if (p.octaveIsImplicit) {
             pitch1 = p.clone();
             pitch1.octaveIsImplicit = false;
         }
@@ -979,7 +976,7 @@ export class Interval extends prebase.ProtoM21Object {
                     + halfStepsToFix
             );
         }
-        if (useImplicitOctave) {
+        if (p.octaveIsImplicit) {
             pitch2.octaveIsImplicit = true;
         }
         return pitch2;
