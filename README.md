@@ -152,6 +152,9 @@ Music21j is released under the BSD 3-Clause License. Essentially you
 can do with it what you want so long as you leave in my copyright statements
 and do not represent that I endorse your product.
 
+(in 2026 the explanation of BSD license was removed from LICENSE in order to
+make it more parseable by tooling. No change to the license was implied.)
+
 ## Thanks
 
 Thanks to the following packages (among others) for making music21j possible:
@@ -390,3 +393,26 @@ Just documenting major changes at different versions, starting with 0.20
 * v0.22 -- Chord, getStemDirectionFromClef. roman minor 67 cautionary and other Roman numeral improvements. typing of scales. run one qunit test ability. Add agent coding skills. typing of voice leading. playwright cache. Standardize barline names (not backwards compatible). Soundfont doubled trailing slash fixed. 
 * v0.21 -- improve cautionary accidentals on Vexflow render; custom MIDI failure msg.
 * v0.20 -- build via vite.  MIDI is no longer exposed as top-level export. Add ES
+
+## Community Code of Conduct<a name="community-code-of-conduct"></a> ##
+
+`Music21j` encourages contributions, discussions, and usage from all people interested in
+music and computers. This encouragement extends to all people regardless of (among other aspects)
+gender, race, sexual orientation, disability, religion, appearance, veteran status,
+gender identity, socioeconomic status, or nationality.
+
+Members of the community will strive to be friendly, patient, and welcoming, especially of
+viewpoints and experiences different from our own. We reject harassment and contributions
+(in mail, comments, or code) that belittle individuals or groups of people.
+
+We ask all members of the community to be mindful particularly about assumptions of the
+gender of users (including using correct pronouns in comments and code). We recognize that members
+sometimes make mistakes and will, in general, accept sincere regrets for such cases.
+Blatant or repeated violations of the code will result in the removal of the
+contributor’s participation in the community.
+
+The maintainers of `music21j` and associated sites will commit themselves to enforcing
+this code of conduct. Users who notice violations, including instances of abuse,
+harassment, or otherwise unacceptable behavior are requested to contact 
+michael.asato.cuthbert@gmail.com.
+Maintainers will respect confidentiality with regard to reports.
