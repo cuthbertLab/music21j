@@ -3747,20 +3747,7 @@ export class Score extends Stream {
                 ignoreMarginBottom: true,
             }
         );
-        for (const p of this.parts) {
-            // return value is not used
-            // this is done merely to set preliminary measure widths
-            p.systemWidthsAndBreaks();
-        }
-        // synchronize measure widths across all parts
-        const measureWidths = this.getMaxMeasureWidths();
-        for (const p of this.parts) {
-            for (let i = 0; i < measureWidths.length; i++) {
-                p.measures.get(i).renderOptions.width = measureWidths[i];
-            }
-            // refresh system breaks again, and update lefts, but don't update widths
-            p.systemWidthsAndBreaks({setMeasureWidths: false});
-        }
+        this.systemWidthsAndBreaks();
         for (const p of this.parts) {
             p.fixSystemInformation({
                 systemHeight: currentScoreHeight,
@@ -3769,6 +3756,57 @@ export class Score extends Stream {
         }
         this.renderOptions.height = this.estimateStreamHeight();
         return this;
+    }
+
+    /**
+     * Calculate system breaks for all parts together and set the left, width,
+     * and systemIndex of every measure.
+     */
+    systemWidthsAndBreaks(): [number[], number[]] {
+        const measureStacks: Measure[][] = [];  // E.g., measureStacks[3] holds the fourth measure of every part
+        let maxSystemWidth = Infinity;
+        for (const p of this.parts) {
+            for (const [i, m] of Array.from(p.measures).entries()) {
+                if (measureStacks[i] === undefined) {
+                    measureStacks[i] = [];
+                }
+                measureStacks[i].push(m);
+            }
+            maxSystemWidth = Math.min(maxSystemWidth, p.maxSystemWidth);
+        }
+        const systemCurrentWidths: number[] = [];
+        const systemBreakIndexes: number[] = [];
+        const firstMeasurePadding = 20;  // same as in Part.systemWidthsAndBreaks
+
+        let currentSystemIndex = 0;
+        let currentLeft = firstMeasurePadding;
+        for (const [i, stack] of measureStacks.entries()) {
+            // evenPartMeasureSpacing caused the width of every measure
+            // in a stack to be the same, so we can just take the first
+            const currentRight = currentLeft + stack[0].renderOptions.width;
+            const startNewSystem = (i === 0 || currentRight > maxSystemWidth);
+            if (startNewSystem && i !== 0) {
+                systemBreakIndexes.push(i - 1);
+                systemCurrentWidths.push(currentLeft);
+                currentSystemIndex += 1;
+                currentLeft = firstMeasurePadding;
+            }
+            let width = 0;
+            for (const m of stack) {
+                m.renderOptions.startNewSystem = startNewSystem;
+                m.renderOptions.displayClef = startNewSystem;
+                m.renderOptions.displayKeySignature = startNewSystem;
+                m.renderOptions.systemIndex = currentSystemIndex;
+                m.renderOptions.left = currentLeft;
+                width = Math.max(width, m.estimateStaffLength() + m.renderOptions.staffPadding);
+            }
+            width = Math.min(width, maxSystemWidth);
+            for (const m of stack) {
+                m.renderOptions.width = width;
+            }
+            currentLeft += width;
+        }
+        return [systemCurrentWidths, systemBreakIndexes];
     }
 
     /**
