@@ -1218,6 +1218,72 @@ export default function tests() {
         eachMeasureRenderOptionsEqual(p1, p2);
     });
 
+    test('music21.stream.Score system breaks same in all parts', assert => {
+        // AI-assisted
+        // the expected width of every measure, one row per system
+        const testCases = [
+            {
+                description: '16 measures: the last measure fits on the second system',
+                widthsBySystem: [
+                    [246, 120, 120, 120, 120, 120, 120, 120],
+                    [216, 120, 120, 120, 120, 120, 120, 120],
+                ],
+            },
+            {
+                description: '17 measures: the last measure begins a third system',
+                widthsBySystem: [
+                    [246, 120, 120, 120, 120, 120, 120, 120],
+                    [222, 123, 123, 123, 123, 123, 123, 123],  // stretched to match the first system
+                    [216],
+                ],
+            },
+        ];
+
+        for (const testCase of testCases) {
+            const numMeasures = testCase.widthsBySystem.flat().length;
+            // half notes above whole notes: the top part's measures need more room
+            const top = music21.tinyNotation.TinyNotation('4/4 ' + 'c2 d '.repeat(numMeasures));
+            const bottom = music21.tinyNotation.TinyNotation('4/4 ' + 'c1 '.repeat(numMeasures));
+            const s = new music21.stream.Score();
+            s.insert(0, top);
+            s.insert(0, bottom);
+            s.keySignature = new music21.key.KeySignature(5);
+            const s_iter = s.recurse(
+                {streamsOnly: true, skipSelf: false}
+            ) as music21.stream.iterator.RecursiveIterator<music21.stream.Stream>;
+            for (const substream of s_iter) {
+                substream.renderOptions.scaleFactor = {x: 1.0, y: 1.0};
+            }
+            // room for 8 measures per system (1106) but not 9
+            s.renderOptions.maxSystemWidth = 1140;
+            s.setSubstreamRenderOptions();
+
+            for (const p of [top, bottom]) {
+                const measures = Array.from(p.measures);
+                let i = 0;  // index of the measure within the part
+                for (const [systemIndex, widths] of testCase.widthsBySystem.entries()) {
+                    for (const [indexInSystem, width] of widths.entries()) {
+                        const rendOp = measures[i].renderOptions;
+                        const startsSystem = (indexInSystem === 0);
+                        const message = `${testCase.description}; measure ${i + 1}`;
+                        assert.equal(rendOp.systemIndex, systemIndex, message);
+                        assert.equal(rendOp.width, width, message);
+                        assert.equal(rendOp.startNewSystem, startsSystem, message);
+                        assert.equal(rendOp.displayClef, startsSystem, message);
+                        assert.equal(rendOp.displayKeySignature, startsSystem, message);
+                        i += 1;
+                    }
+                }
+            }
+            // barlines line up between the parts
+            assert.deepEqual(
+                Array.from(bottom.measures).map(m => m.renderOptions.left),
+                Array.from(top.measures).map(m => m.renderOptions.left),
+                testCase.description
+            );
+        }
+    });
+
     test('music21.stream.Score makeMeasures distinct clefs', assert => {
         const c = new music21.clef.Clef();
         const ts = new music21.meter.TimeSignature();
