@@ -70,8 +70,8 @@ export declare class Accidental extends prebase.ProtoM21Object {
      */
     get vexflowModifier(): "bb" | "b" | "n" | "#" | "##" | "###" | "bbb";
     /**
-     * Returns the modifier in unicode or
-     * for double and triple accidentals, as a hex escape
+     * Returns the modifier in unicode or, for the double and higher
+     * accidentals, as a hex escape.  Each accidental has its own spelling.
      *
      * @type {string}
      * @readonly
@@ -126,8 +126,10 @@ export declare const midiToName: string[];
  * - Octave may be specified after the name + accidental: "C#4" etc.
  * - Octave can be arbitrarily high ("C10") but only as low as "C0" because
  *     "C-1" would be interpreted as C-flat octave 1; shift octave later for very low notes.
- * - If octave is not specified, the system will usually use octave 4, but might
- *     adjust according to context. If you do not like this behavior, give an octave always.
+ * - If octave is not specified, the pitch stands for any octave: its `.octave`
+ *     reports the default octave (4) and `.octaveIsImplicit` is true.  Code that
+ *     builds scales, chords, etc. may fix an octave according to context.  If you
+ *     do not like this behavior, give an octave always.
  * - Microtones are not supported in music21j (they are in music21p)
  *
  * @param {string|number} pn - name of the pitch, with or without octave, see above.
@@ -141,7 +143,8 @@ export declare const midiToName: string[];
  * @property {string} nameWithOctave - letter name of pitch + accidental
  *     modifier + octave; changes automatically w/ step, accidental, and octave
  * @property {number} octave - number for the octave, where middle C = C4, and
- *     octaves change between B and C; default 4
+ *     octaves change between B and C; always a number, 4 if never set
+ * @property {boolean} octaveIsImplicit - true if no octave was ever given
  * @property {number} ps - pitch space number, like midi number but floating
  *     point and w/ no restriction on range. C4 = 60.0
  * @property {string} step - letter name for the pitch (C-G, A, B),
@@ -150,7 +153,7 @@ export declare const midiToName: string[];
 export declare class Pitch extends prebase.ProtoM21Object {
     static get className(): string;
     protected _step: string;
-    protected _octave: number;
+    protected _octave: number | undefined;
     protected _accidental: Accidental | undefined;
     spellingIsInferred: boolean;
     microtone: any;
@@ -159,8 +162,31 @@ export declare class Pitch extends prebase.ProtoM21Object {
     eq(other: Pitch): boolean;
     get step(): string;
     set step(s: string);
+    /**
+     * The octave of the Pitch, where middle C = C4 and octaves change between
+     * B and C.  Always a number: a Pitch created without an octave reports the
+     * default octave, `defaults.pitchOctave` (4), and has
+     * {@link Pitch#octaveIsImplicit} true.  Setting it makes the octave explicit;
+     * to make a Pitch octaveless, set `.octaveIsImplicit = true`.
+     */
     get octave(): number;
     set octave(o: number);
+    /**
+     * True if this Pitch was never given an octave, so it stands for its pitch
+     * class in any octave: {@link Pitch#nameWithOctave} prints without an octave
+     * number and {@link Pitch#octave} reports the default, 4.
+     *
+     * Setting it to true makes the pitch octaveless again; setting it to false
+     * fixes an octaveless pitch at the default octave, and leaves a pitch that
+     * already has an octave alone.
+     */
+    get octaveIsImplicit(): boolean;
+    set octaveIsImplicit(value: boolean);
+    /**
+     * Synonym for {@link Pitch#octave}.
+     *
+     * @deprecated use `.octave`, which is always a number.
+     */
     get implicitOctave(): number;
     get accidental(): Accidental | undefined;
     set accidental(a: Accidental | undefined);

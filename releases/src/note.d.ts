@@ -229,6 +229,10 @@ export declare class Note extends NotRest {
     set nameWithOctave(nn: string);
     get step(): string;
     set step(nn: string);
+    /**
+     * The octave of this Note's Pitch; always a number.  See
+     * {@link music21.pitch.Pitch#octaveIsImplicit} for whether one was ever given.
+     */
     get octave(): number;
     set octave(nn: number);
     get pitches(): pitch.Pitch[];

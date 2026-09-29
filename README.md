@@ -144,7 +144,7 @@ A complete page is in `testHTML/sfElsewhereCDN.html`.
 
 ## Version
 
-0.23.7 (beta)
+0.24.0 (beta)
 
 ## License
 
@@ -333,7 +333,7 @@ You'll need to be part of the npm dev team.
 
 1. Update the version number 
    - `package.json`
-   - `main.ts`, 
+   - `src/main.ts`, 
    - here (above)
 
 2. Add a change log here (below).  
@@ -383,6 +383,7 @@ from .gitignore) which allows it to serve from its own sound files.
 
 Just documenting major changes at different versions, starting with 0.20
 
+* v0.24.0 -- Improve spacing of measures in scores.
 * v0.23.7 -- Lone Measure with Voices renders; replaceDOM by id repeatable; one grace-group slash.
 * v0.23.6 -- Tinynotation errors, inf. quarterLength catch, zombie streams don't litter page.
 * v0.23.4 -- Allow first note of Stream to export with natural show.

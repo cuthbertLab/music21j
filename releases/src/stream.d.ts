@@ -910,6 +910,11 @@ export declare class Score extends Stream {
      */
     setSubstreamRenderOptions(): this;
     /**
+     * Calculate system breaks for all parts together and set the left, width,
+     * and systemIndex of every measure.
+     */
+    systemWidthsAndBreaks(): [number[], number[]];
+    /**
      * Overrides the default music21.stream.Stream#estimateStaffLength
      *
      * @returns {number}
