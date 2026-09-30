@@ -183,6 +183,20 @@ export default function tests() {
         assert.equal(dim7.inversion({ testRoot: new music21.pitch.Pitch('D5') }), 6);
 
         assert.equal(new music21.chord.Chord('C4 G4').inversion(), 0);
+
+        const bb11 = new music21.chord.Chord('B-4 D4 F4 A4 C4 E-4');
+        bb11.root(bb11.pitches.find(p => p.name === 'B-'));
+        bb11.bass('E-4');
+        assert.equal(bb11.inversion(), 5);
+
+        // interval-based: root need not be a pitch of the chord
+        const dMin = new music21.chord.Chord('D4 F4 A4');
+        assert.equal(dMin.inversion({ testRoot: new music21.pitch.Pitch('C5') }), 4);
+        assert.equal(dMin.inversion({ testRoot: new music21.pitch.Pitch('B-2') }), 1);
+
+        const cEmpty = new music21.chord.Chord();
+        assert.equal(cEmpty.inversion(), -1);
+        assert.equal(cEmpty.inversion({ testRoot: new music21.pitch.Pitch('C5') }), -1);
     });
 
     test('music21.chord.Chord.setInversion', assert => {
@@ -205,9 +219,9 @@ export default function tests() {
         );
         assert.throws(() => gMajRepeats.setInversion(1.5), /Inversion must be an integer/);
 
-        // transposeOnSet: false only stores the value
+        // transpose: false only stores the value
         const c = new music21.chord.Chord('C4 E4 G4');
-        c.setInversion(2, { transposeOnSet: false, inPlace: true });
+        c.setInversion(2, { transpose: false, inPlace: true });
         assert.equal(c.stringInfo(), 'C4 E4 G4');
         assert.equal(c.inversion(), 2);
         assert.equal(

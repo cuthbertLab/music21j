@@ -764,7 +764,10 @@ export class Chord extends note.NotRest {
 
     /**
      * Returns the inversion of the chord as a number (root-position = 0),
-     * or undefined if the bass is not a normal inversion of the root.
+     * found from the generic interval from the bass up to the root:
+     * up to 6 for the sixth inversion of a thirteenth chord.  Octaves do not matter.
+     *
+     * Returns -1 if the chord has no pitches.
      *
      * If `testRoot` is given, it is used instead of `.root()`.
      *
@@ -777,23 +780,30 @@ export class Chord extends note.NotRest {
      * dim7.inversion({ testRoot: new music21.pitch.Pitch('D5') });
      * // 6
      */
-    inversion({ testRoot }: { testRoot?: pitch.Pitch } = {}): number|undefined {
+    inversion({ testRoot }: { testRoot?: pitch.Pitch } = {}): number {
+        if (!this.length) {
+            return -1;
+        }
         if (this._overrides.inversion !== undefined && testRoot === undefined) {
             return this._overrides.inversion;
         }
-        const bass = this.bass();
-        if (bass === undefined) {
-            return undefined;
+        const rootPitch = testRoot ?? this.root();
+        const bassPitch = this.bass();
+        if (rootPitch === undefined || bassPitch === undefined) {
+            return -1;
         }
-        const root = testRoot ?? this.root();
-        const chordStepsToInversions = [1, 6, 4, 2, 7, 5, 3];
-        for (let i = 0; i < chordStepsToInversions.length; i++) {
-            const testNote = this.getChordStep(chordStepsToInversions[i], bass);
-            if (testNote !== undefined && testNote.name === root.name) {
-                return i;
-            }
-        }
-        return undefined;
+        return this._findInversion(rootPitch, bassPitch);
+    }
+
+    protected _findInversion(rootPitch: pitch.Pitch, bassPitch: pitch.Pitch): number {
+        // do all interval calculations with bass one octave below root
+        const tempBassPitch = bassPitch.clone();
+        tempBassPitch.octave = 1;
+        const tempRootPitch = rootPitch.clone();
+        tempRootPitch.octave = 2;
+        const bassToRoot = interval.notesToGeneric(tempBassPitch, tempRootPitch).simpleDirected;
+        // triads (1, 6, 4), sevenths (2), ninths (7), elevenths (5), thirteenths (3)
+        return [1, 6, 4, 2, 7, 5, 3].indexOf(bassToRoot);
     }
 
     /**
@@ -801,7 +811,7 @@ export class Chord extends note.NotRest {
      * octave until that inversion is reached.  Returns a new Chord, or this
      * Chord if `inPlace` is true.
      *
-     * If `transposeOnSet` is false, the pitches do not move; the number is
+     * If `transpose` is false, the pitches do not move; the number is
      * just stored and returned by later calls to `.inversion()`.
      *
      * @example
@@ -813,13 +823,13 @@ export class Chord extends note.NotRest {
      */
     setInversion(
         newInversion: number,
-        { transposeOnSet=true, inPlace=false }: { transposeOnSet?: boolean, inPlace?: boolean } = {}
+        { transpose=true, inPlace=false }: { transpose?: boolean, inPlace?: boolean } = {}
     ): this {
         if (!Number.isInteger(newInversion)) {
             throw new Music21Exception(`Inversion must be an integer, got: ${newInversion}`);
         }
         const returnObj = inPlace ? this : this.clone(true);
-        if (!transposeOnSet) {
+        if (!transpose) {
             returnObj._overrides.inversion = newInversion;
             return returnObj;
         }
