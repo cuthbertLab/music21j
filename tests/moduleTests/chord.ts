@@ -141,4 +141,99 @@ export default function tests() {
         assert.equal(c._cache.marker, 1, 'mutating clone _cache leaves the original intact');
         assert.notOk(c._overrides.extra, 'mutating clone _overrides leaves the original intact');
     });
+
+    test('music21.chord.Chord.bass setting', assert => {
+        const c = new music21.chord.Chord('E##4 F-4 C5');
+        assert.equal(c.bass().nameWithOctave, 'F-4', 'lowest by ps');
+        const eSharpSharp = c.pitches[0];
+        c.bass('E##4');
+        assert.strictEqual(c.bass(), eSharpSharp, 'bass set to the pitch in the chord');
+        assert.throws(() => c.bass('G--4'), /Pitch G--4 not found in chord/);
+        c.bass('G--4', { allowAdd: true });
+        assert.equal(c.bass().nameWithOctave, 'G--4');
+        assert.equal(c.length, 4, 'allowAdd adds the pitch');
+
+        // matches by name if no octave match
+        const c2 = new music21.chord.Chord('C4 E4 G4');
+        c2.bass('E5');
+        assert.strictEqual(c2.bass(), c2.pitches[1]);
+        assert.equal(c2.bass(undefined, { find: true }).nameWithOctave, 'C4');
+        assert.equal(c2._overrides.bass, undefined, 'find: true clears the set bass');
+
+        const em = new music21.chord.Chord('E3 G3 B4');
+        assert.equal(em.bass(undefined, { find: false }), undefined);
+        assert.equal(em.bass().nameWithOctave, 'E3');
+    });
+
+    test('music21.chord.Chord.inversion', assert => {
+        const g7 = new music21.chord.Chord('G4 B4 D5 F5');
+        assert.equal(g7.inversion(), 0);
+        assert.strictEqual(g7.inversion(1), g7, 'setting returns this');
+        assert.equal(g7.stringInfo(), 'B4 D5 F5 G5');
+        assert.equal(g7.inversion(), 1);
+
+        assert.equal(new music21.chord.Chord('E1 G1 C2').inversion(), 1);
+        assert.equal(new music21.chord.Chord('G1 E2 C2').inversion(), 2);
+
+        const d7 = new music21.chord.Chord('C4 B4');
+        d7.bass(new music21.pitch.Pitch('B4'));
+        assert.equal(d7.inversion(), 3);
+
+        const g9 = new music21.chord.Chord('G4 B4 D5 F5 A4');
+        g9.bass(new music21.pitch.Pitch('A4'));
+        assert.equal(g9.inversion(), 4);
+
+        const gMajRepeats = new music21.chord.Chord('G4 B5 G6 B6 D7');
+        gMajRepeats.inversion(2);
+        assert.equal(gMajRepeats.stringInfo(), 'D7 G7 B7 G8 B8');
+        assert.throws(
+            () => gMajRepeats.inversion(3),
+            /Could not invert chord: inversion may not exist/
+        );
+
+        const dim7 = new music21.chord.Chord('B4 D5 F5 A-5 C6 E6 G6');
+        assert.equal(dim7.inversion(), 0);
+        assert.equal(dim7.inversion(undefined, { testRoot: new music21.pitch.Pitch('D5') }), 6);
+        assert.throws(() => dim7.inversion(1.5), /Inversion must be an integer/);
+
+        assert.equal(new music21.chord.Chord('C4 G4').inversion(), 0);
+
+        // transposeOnSet: false only stores the value
+        const c = new music21.chord.Chord('C4 E4 G4');
+        c.inversion(2, { transposeOnSet: false });
+        assert.equal(c.stringInfo(), 'C4 E4 G4');
+        assert.equal(c.inversion(), 2);
+        assert.equal(c.inversion(undefined, { find: false }), 2);
+        assert.equal(
+            new music21.chord.Chord('C4 E4 G4').inversion(undefined, { find: false }),
+            undefined
+        );
+    });
+
+    test('music21.chord.Chord.sortDiatonicAscending', assert => {
+        const unsorted = new music21.chord.Chord('C4 E4 G4');
+        (unsorted as any)._notes.reverse();
+        const sorted = unsorted.sortDiatonicAscending();
+        assert.notStrictEqual(sorted, unsorted, 'returns a new chord');
+        assert.equal(sorted.stringInfo(), 'C4 E4 G4');
+        assert.equal(unsorted.stringInfo(), 'G4 E4 C4', 'original unchanged');
+        assert.strictEqual(unsorted.sortDiatonicAscending({ inPlace: true }), unsorted);
+        assert.equal(unsorted.stringInfo(), 'C4 E4 G4');
+
+        const sameDNN = new music21.chord.Chord('F#4 F4');
+        assert.equal(sameDNN.sortDiatonicAscending().stringInfo(), 'F4 F#4');
+    });
+
+    test('music21.chord.Chord.isTriad and isSeventh', assert => {
+        assert.ok(new music21.chord.Chord('C4 E4 A4').isTriad());
+        assert.notOk(new music21.chord.Chord('C D E F G').isTriad());
+        assert.notOk(new music21.chord.Chord('C D# G').isTriad(), 'misspelled triad');
+        assert.ok(new music21.chord.Chord('C E- G').isTriad());
+        assert.notOk(new music21.chord.Chord().isTriad());
+        assert.notOk(new music21.chord.Chord('C4 E4 G4 B#4').isTriad());
+
+        assert.ok(new music21.chord.Chord('C E G B').isSeventh());
+        assert.notOk(new music21.chord.Chord('C D E F G B').isSeventh());
+        assert.notOk(new music21.chord.Chord().isSeventh());
+    });
 }
