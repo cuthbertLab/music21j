@@ -74,6 +74,10 @@
 - After TypeScript changes, run `npm run typecheck`.
 - Test one module with `MODULE=<module-name> npm test` and/or filter to just the test with `FILTER=<test-name> npm test`.  These tests are in tests/moduleTests/
 - Do not try to make your own shim tester to run one module separately - experience shows it will grow out of control and is much more complex than adding a temporary test to the tests/moduleTests/<module>.ts file
+- **Before fixing bugs, write the regression test** Write the regression test before
+  changing the code, run it, and see it fail for the reason the bug describes,
+  not on an import error or a typo. Then fix it and see it pass. A test that passed
+  before the fix does not test the fix
 - After substantive code or test changes, run complete suite with `npm test`.
 - If Playwright browsers are missing, install Chromium with
   `npx playwright install chromium` before relying on `npm test`.
