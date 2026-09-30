@@ -26,13 +26,6 @@ import {VexflowNoteOptions} from './note';
 export { chordTables };
 
 
-interface InversionOptions {
-    find?: boolean;
-    testRoot?: pitch.Pitch;
-    transposeOnSet?: boolean;
-}
-
-
 /**
  * @param {Array<string|note.Note|pitch.Pitch>} [notes] -
  *     an Array of strings
@@ -775,43 +768,19 @@ export class Chord extends note.NotRest {
      *
      * If `testRoot` is given, it is used instead of `.root()`.
      *
-     * If called with `newInversion`, sets the inversion by moving the lowest
-     * pitches up an octave until the inversion is reached, and returns `this`.
-     * If `transposeOnSet` is false, the pitches do not move; the number is
-     * just stored and returned by later calls.
+     * To change the inversion, use `setInversion()`.
      *
      * @example
-     * const g7 = new music21.chord.Chord('G4 B4 D5 F5');
-     * g7.inversion();
+     * const dim7 = new music21.chord.Chord('B4 D5 F5 A-5 C6 E6 G6');
+     * dim7.inversion();
      * // 0
-     * g7.inversion(1);
-     * g7.stringInfo();
-     * // 'B4 D5 F5 G5'
+     * dim7.inversion({ testRoot: new music21.pitch.Pitch('D5') });
+     * // 6
      */
-    inversion(newInversion?: undefined, options?: InversionOptions): number|undefined;
-
-    inversion(newInversion: number, options?: InversionOptions): this;
-
-    inversion(
-        newInversion?: number,
-        { find=true, testRoot, transposeOnSet=true }: InversionOptions = {}
-    ): number|undefined|this {
-        if (newInversion !== undefined) {
-            if (!Number.isInteger(newInversion)) {
-                throw new Music21Exception(
-                    `Inversion must be an integer, got: ${newInversion}`
-                );
-            }
-            this._setInversion(newInversion, transposeOnSet);
-            return this;
-        }
+    inversion({ testRoot }: { testRoot?: pitch.Pitch } = {}): number|undefined {
         if (this._overrides.inversion !== undefined && testRoot === undefined) {
             return this._overrides.inversion;
         }
-        if (!find && testRoot === undefined) {
-            return undefined;
-        }
-
         const bass = this.bass();
         if (bass === undefined) {
             return undefined;
@@ -827,29 +796,52 @@ export class Chord extends note.NotRest {
         return undefined;
     }
 
-    protected _setInversion(newInversion: number, transposeOnSet: boolean): void {
-        if (!transposeOnSet) {
-            this._overrides.inversion = newInversion;
-            return;
+    /**
+     * Puts the chord in `newInversion` by moving the lowest pitches up an
+     * octave until that inversion is reached.  Returns a new Chord, or this
+     * Chord if `inPlace` is true.
+     *
+     * If `transposeOnSet` is false, the pitches do not move; the number is
+     * just stored and returned by later calls to `.inversion()`.
+     *
+     * @example
+     * const g7 = new music21.chord.Chord('G4 B4 D5 F5');
+     * g7.setInversion(1).stringInfo();
+     * // 'B4 D5 F5 G5'
+     * g7.stringInfo();
+     * // 'G4 B4 D5 F5'
+     */
+    setInversion(
+        newInversion: number,
+        { transposeOnSet=true, inPlace=false }: { transposeOnSet?: boolean, inPlace?: boolean } = {}
+    ): this {
+        if (!Number.isInteger(newInversion)) {
+            throw new Music21Exception(`Inversion must be an integer, got: ${newInversion}`);
         }
-        let runsBeforeCrashing = this.length + 2;
-        this._overrides.inversion = undefined;
+        const returnObj = inPlace ? this : this.clone(true);
+        if (!transposeOnSet) {
+            returnObj._overrides.inversion = newInversion;
+            return returnObj;
+        }
+        let runsBeforeCrashing = returnObj.length + 2;
+        returnObj._overrides.inversion = undefined;
         // bass might have been overridden for a different octave
-        this._overrides.bass = undefined;
-        this._cache = {};
-        while (this.inversion() !== newInversion && runsBeforeCrashing > 0) {
-            const maxPs = Math.max(...this.pitches.map(p => p.ps));
-            const tempBassPitch = this.bass();
+        returnObj._overrides.bass = undefined;
+        returnObj._cache = {};
+        while (returnObj.inversion() !== newInversion && runsBeforeCrashing > 0) {
+            const maxPs = Math.max(...returnObj.pitches.map(p => p.ps));
+            const tempBassPitch = returnObj.bass();
             while (tempBassPitch.ps < maxPs) {
                 tempBassPitch.octave += 1;
             }
-            this._cache = {};
+            returnObj._cache = {};
             runsBeforeCrashing -= 1;
         }
         if (runsBeforeCrashing === 0) {
             throw new Music21Exception('Could not invert chord: inversion may not exist');
         }
-        this.sortPitches();
+        returnObj.sortPitches();
+        return returnObj;
     }
 
     override playMidi(

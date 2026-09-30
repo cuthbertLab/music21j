@@ -166,12 +166,7 @@ export default function tests() {
     });
 
     test('music21.chord.Chord.inversion', assert => {
-        const g7 = new music21.chord.Chord('G4 B4 D5 F5');
-        assert.equal(g7.inversion(), 0);
-        assert.strictEqual(g7.inversion(1), g7, 'setting returns this');
-        assert.equal(g7.stringInfo(), 'B4 D5 F5 G5');
-        assert.equal(g7.inversion(), 1);
-
+        assert.equal(new music21.chord.Chord('G4 B4 D5 F5').inversion(), 0);
         assert.equal(new music21.chord.Chord('E1 G1 C2').inversion(), 1);
         assert.equal(new music21.chord.Chord('G1 E2 C2').inversion(), 2);
 
@@ -183,30 +178,40 @@ export default function tests() {
         g9.bass(new music21.pitch.Pitch('A4'));
         assert.equal(g9.inversion(), 4);
 
-        const gMajRepeats = new music21.chord.Chord('G4 B5 G6 B6 D7');
-        gMajRepeats.inversion(2);
-        assert.equal(gMajRepeats.stringInfo(), 'D7 G7 B7 G8 B8');
-        assert.throws(
-            () => gMajRepeats.inversion(3),
-            /Could not invert chord: inversion may not exist/
-        );
-
         const dim7 = new music21.chord.Chord('B4 D5 F5 A-5 C6 E6 G6');
         assert.equal(dim7.inversion(), 0);
-        assert.equal(dim7.inversion(undefined, { testRoot: new music21.pitch.Pitch('D5') }), 6);
-        assert.throws(() => dim7.inversion(1.5), /Inversion must be an integer/);
+        assert.equal(dim7.inversion({ testRoot: new music21.pitch.Pitch('D5') }), 6);
 
         assert.equal(new music21.chord.Chord('C4 G4').inversion(), 0);
+    });
+
+    test('music21.chord.Chord.setInversion', assert => {
+        const g7 = new music21.chord.Chord('G4 B4 D5 F5');
+        const g7First = g7.setInversion(1);
+        assert.notStrictEqual(g7First, g7, 'returns a new chord by default');
+        assert.equal(g7First.stringInfo(), 'B4 D5 F5 G5');
+        assert.equal(g7First.inversion(), 1);
+        assert.equal(g7.stringInfo(), 'G4 B4 D5 F5', 'original unchanged');
+
+        assert.strictEqual(g7.setInversion(1, { inPlace: true }), g7);
+        assert.equal(g7.stringInfo(), 'B4 D5 F5 G5');
+
+        const gMajRepeats = new music21.chord.Chord('G4 B5 G6 B6 D7');
+        gMajRepeats.setInversion(2, { inPlace: true });
+        assert.equal(gMajRepeats.stringInfo(), 'D7 G7 B7 G8 B8');
+        assert.throws(
+            () => gMajRepeats.setInversion(3),
+            /Could not invert chord: inversion may not exist/
+        );
+        assert.throws(() => gMajRepeats.setInversion(1.5), /Inversion must be an integer/);
 
         // transposeOnSet: false only stores the value
         const c = new music21.chord.Chord('C4 E4 G4');
-        c.inversion(2, { transposeOnSet: false });
+        c.setInversion(2, { transposeOnSet: false, inPlace: true });
         assert.equal(c.stringInfo(), 'C4 E4 G4');
         assert.equal(c.inversion(), 2);
-        assert.equal(c.inversion(undefined, { find: false }), 2);
         assert.equal(
-            new music21.chord.Chord('C4 E4 G4').inversion(undefined, { find: false }),
-            undefined
+            c.inversion({ testRoot: c.pitches[0] }), 0, 'testRoot ignores stored inversion'
         );
     });
 
