@@ -767,7 +767,7 @@ export class Chord extends note.NotRest {
      * found from the generic interval from the bass up to the root:
      * up to 6 for the sixth inversion of a thirteenth chord.  Octaves do not matter.
      *
-     * Returns -1 if the chord has no pitches.
+     * Returns -1 if the chord has no pitches or the interval is not a common inversion.
      *
      * If `testRoot` is given, it is used instead of `.root()`.
      *
@@ -812,7 +812,12 @@ export class Chord extends note.NotRest {
      * Chord if `inPlace` is true.
      *
      * If `transpose` is false, the pitches do not move; the number is
-     * just stored and returned by later calls to `.inversion()`.
+     * just stored and returned by later calls to `.inversion()`.  This is
+     * useful for chords not spelled by common-practice function or with an
+     * added note, such as C6 (C E G A) as a root-position jazz chord.
+     *
+     * If `newInversion` is undefined, removes a stored inversion, so
+     * `.inversion()` again reads it from the pitches.
      *
      * @example
      * const g7 = new music21.chord.Chord('G4 B4 D5 F5');
@@ -820,38 +825,64 @@ export class Chord extends note.NotRest {
      * // 'B4 D5 F5 G5'
      * g7.stringInfo();
      * // 'G4 B4 D5 F5'
+     *
+     * const c6 = new music21.chord.Chord('C4 E4 G4 A4');
+     * c6.inversion();
+     * // 1
+     * c6.setInversion(0, { transpose: false, inPlace: true });
+     * c6.inversion();
+     * // 0
+     * c6.setInversion(undefined, { inPlace: true });
+     * c6.inversion();
+     * // 1
      */
     setInversion(
-        newInversion: number,
+        newInversion: number|undefined,
         { transpose=true, inPlace=false }: { transpose?: boolean, inPlace?: boolean } = {}
     ): this {
-        if (!Number.isInteger(newInversion)) {
+        if (newInversion !== undefined && !Number.isInteger(newInversion)) {
             throw new Music21Exception(`Inversion must be an integer, got: ${newInversion}`);
         }
         const returnObj = inPlace ? this : this.clone(true);
-        if (!transpose) {
-            returnObj._overrides.inversion = newInversion;
-            return returnObj;
+        if (!inPlace) {
+            returnObj.derivation.method = 'setInversion';
         }
-        let runsBeforeCrashing = returnObj.length + 2;
-        returnObj._overrides.inversion = undefined;
+        if (newInversion === undefined) {
+            returnObj._overrides.inversion = undefined;
+        } else if (!transpose) {
+            returnObj._overrides.inversion = newInversion;
+        } else {
+            returnObj._transposeToInversion(newInversion);
+        }
+        return returnObj;
+    }
+
+    /**
+     * Moves the bass (and perhaps other notes) up octaves in place until
+     * the chord is in `newInversion`.  Throws if it never gets there.
+     */
+    protected _transposeToInversion(newInversion: number): void {
+        if (!this.length) {
+            throw new Music21Exception('Cannot invert a chord without pitches');
+        }
+        let runsBeforeCrashing = this.length + 2;
+        this._overrides.inversion = undefined;
         // bass might have been overridden for a different octave
-        returnObj._overrides.bass = undefined;
-        returnObj._cache = {};
-        while (returnObj.inversion() !== newInversion && runsBeforeCrashing > 0) {
-            const maxPs = Math.max(...returnObj.pitches.map(p => p.ps));
-            const tempBassPitch = returnObj.bass();
+        this._overrides.bass = undefined;
+        this._cache = {};
+        while (this.inversion() !== newInversion && runsBeforeCrashing > 0) {
+            const maxPs = Math.max(...this.pitches.map(p => p.ps));
+            const tempBassPitch = this.bass();
             while (tempBassPitch.ps < maxPs) {
                 tempBassPitch.octave += 1;
             }
-            returnObj._cache = {};
+            this._cache = {};
             runsBeforeCrashing -= 1;
         }
         if (runsBeforeCrashing === 0) {
             throw new Music21Exception('Could not invert chord: inversion may not exist');
         }
-        returnObj.sortPitches();
-        return returnObj;
+        this.sortPitches();
     }
 
     override playMidi(

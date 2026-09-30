@@ -227,6 +227,26 @@ export default function tests() {
         assert.equal(
             c.inversion({ testRoot: c.pitches[0] }), 0, 'testRoot ignores stored inversion'
         );
+
+        const cDerived = new music21.chord.Chord('C4 E4 G4').setInversion(2);
+        assert.equal(cDerived.stringInfo(), 'G4 C5 E5');
+        assert.equal(cDerived.derivation.method, 'setInversion');
+        assert.throws(
+            () => new music21.chord.Chord().setInversion(1),
+            /Cannot invert a chord without pitches/
+        );
+
+        // undefined clears a stored inversion
+        const c6 = new music21.chord.Chord('C4 E4 G4 A4');
+        assert.equal(c6.inversion(), 1);
+        c6.setInversion(0, { transpose: false, inPlace: true });
+        assert.equal(c6.inversion(), 0);
+        assert.equal(c6.bass().nameWithOctave, 'C4', 'bass unchanged');
+        const cleared = c6.setInversion(undefined);
+        assert.equal(cleared.inversion(), 1);
+        assert.equal(c6.inversion(), 0, 'original keeps its stored inversion');
+        c6.setInversion(undefined, { inPlace: true });
+        assert.equal(c6.inversion(), 1);
     });
 
     test('music21.chord.Chord.sortDiatonicAscending', assert => {
