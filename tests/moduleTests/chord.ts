@@ -275,4 +275,61 @@ export default function tests() {
         assert.notOk(new music21.chord.Chord('C D E F G B').isSeventh());
         assert.notOk(new music21.chord.Chord().isSeventh());
     });
+
+    test('music21.chord.Chord.root', assert => {
+        const Chord = music21.chord.Chord;
+        const rootName = (pitches: string) => new Chord(pitches).root().nameWithOctave;
+
+        assert.equal(rootName('E3 C4 G5'), 'C4');
+        assert.equal(rootName('A3 E-4 G4'), 'A3', 'A dim7 no 3rd, not E-11');
+        assert.equal(rootName('E-3 A4 G4'), 'A4');
+        assert.equal(rootName('F3 A3 C4 E-4 G-4 B4 D5'), 'F3', '13th chord root is bass');
+        assert.equal(rootName('C4 F4 G4'), 'F4', 'F9 chord in 2nd inversion');
+        assert.equal(rootName('B3 D4 F4 A-4'), 'B3');
+
+        const lotsOfNotes = new Chord('E3 C4 G4 B-4 E5 G5');
+        assert.strictEqual(lotsOfNotes.root(), lotsOfNotes.pitches[1]);
+
+        // from m21p test_chord.testConstruction
+        const names = [
+            ['C4 E-5 B-3', 'C'],
+            ['C4 E-5 G-3', 'C'],
+            ['C4 F4 A3', 'F'],
+            ['C4 F4 A3 E-5', 'F'],
+            ['C4', 'C'],
+            ['C4 E5', 'C'],
+            ['C4 E4 G4', 'C'],
+            ['C4 E4 G4 B-4', 'C'],
+            ['E3 B-3 G4 C4', 'C'],
+            ['C4 E4 G4 B-4 D5', 'C'],
+            ['C4 E4 G4 B-4 D5 F5', 'C'],
+            ['C4 E4 G4 B-4 D5 F5 A-5', 'C'],
+            ['C4 E4 G4 B4', 'C'],
+        ];
+        for (const [pitches, expected] of names) {
+            assert.equal(new Chord(pitches).root().name, expected, pitches);
+        }
+
+        assert.equal(new Chord('G4 C5').inversion(), 2);
+
+        assert.throws(() => new Chord().root(), /no pitches in chord/);
+    });
+
+    test('music21.chord.Chord.root setting', assert => {
+        const cSus4 = new music21.chord.Chord('C4 F4 G4');
+        cSus4.root('C4');
+        assert.strictEqual(cSus4.root(), cSus4.pitches[0], 'string root snaps to chord pitch');
+        assert.equal(cSus4.root(undefined, { find: true }).nameWithOctave, 'F4');
+        assert.equal(cSus4.root().nameWithOctave, 'F4', 'find: true removed the override');
+
+        // implied root not in the chord
+        const vo9 = new music21.chord.Chord('B3 D4 F4 A-4');
+        vo9.root(new music21.pitch.Pitch('G3'));
+        assert.equal(vo9.root().nameWithOctave, 'G3');
+        assert.equal(vo9.stringInfo(), 'B3 D4 F4 A-4', 'pitches untouched');
+
+        const e = new music21.chord.Chord('E3 G3 B4');
+        assert.equal(e.root(undefined, { find: false }), undefined);
+        assert.equal(e.root().nameWithOctave, 'E3');
+    });
 }
