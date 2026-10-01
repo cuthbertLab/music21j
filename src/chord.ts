@@ -444,64 +444,132 @@ export class Chord extends note.NotRest {
     }
 
     /**
-     * Finds the Root of the chord, or sets it as an override.
+     * Returns the root of the chord, or sets it as an override.
+     *
+     * If `newRoot` is given, sets the root to the pitch in the chord matching it
+     * (by identity, then nameWithOctave, then name), or to `newRoot` itself
+     * if none matches, as for an implied root.
+     *
+     * `find` has three states, so it has no default:
+     * - omitted: returns the set root, else the cached one, else finds it.
+     * - true: clears any set root and finds it again.
+     * - false: returns the set root or undefined; never finds it.
+     *
+     * Throws if the chord has no pitches.
+     *
+     * @example
+     * const cSus4 = new music21.chord.Chord('C4 F4 G4');
+     * cSus4.root().nameWithOctave;  // an F9 chord in 2nd inversion
+     * // 'F4'
+     * cSus4.root('C4');
+     * cSus4.root().nameWithOctave;
+     * // 'C4'
+     * cSus4.root(undefined, { find: true }).nameWithOctave;
+     * // 'F4'
      */
-    root(newroot?: pitch.Pitch): pitch.Pitch {
-        if (newroot !== undefined) {
-            this._overrides.root = newroot;
-            this._cache.root = newroot;
+    root(
+        newRoot?: pitch.Pitch|note.Note|string,
+        { find }: { find?: boolean } = {}
+    ): pitch.Pitch|undefined {
+        if (newRoot) {
+            let newRootPitch: pitch.Pitch;
+            if (typeof newRoot === 'string') {
+                newRootPitch = new pitch.Pitch(newRoot);
+            } else if (newRoot instanceof note.Note) {
+                newRootPitch = newRoot.pitch;
+            } else {
+                newRootPitch = newRoot;
+            }
+            const pitches = this.pitches;
+            newRootPitch = pitches.find(p => p === newRootPitch)
+                ?? pitches.find(p => p.nameWithOctave === newRootPitch.nameWithOctave)
+                ?? pitches.find(p => p.name === newRootPitch.name)
+                ?? newRootPitch;
+            this._overrides.root = newRootPitch;
+            this._cache.root = newRootPitch;
             this._cache.inversion = undefined;
         }
 
+        if (find === true) {
+            this._overrides.root = undefined;
+            this._cache.inversion = undefined;
+            this._cache.root = this._findRoot();
+            return this._cache.root;
+        }
         if (this._overrides.root !== undefined) {
             return this._overrides.root;
         }
-
-        if (this._cache.root !== undefined) {
-            return this._cache.root;
+        if (find === false) {
+            return undefined;
         }
+        if (this._cache.root === undefined) {
+            this._cache.root = this._findRoot();
+        }
+        return this._cache.root;
+    }
 
-        const closedChord = this.removeDuplicatePitches();
-        /* var chordBass = closedChord.bass(); */
-        const closedPitches = closedChord.pitches;
-        if (closedPitches.length === 0) {
-            throw new Music21Exception('No notes in Chord!');
-        } else if (closedPitches.length === 1) {
+    /**
+     * Finds the root, usually the pitch with the most thirds stacked above it.
+     * Use `.root()` instead, which caches the result.
+     *
+     * AI-assisted (Claude) port of music21p Chord._findRoot.
+     */
+    protected _findRoot(): pitch.Pitch {
+        // score for how likely a pitch is to be a root, given whether it has
+        // a 3rd, 5th, 7th, 9th, 11th, and 13th above it.
+        const rootnessFunction = (rootThirdList: boolean[]): number => {
+            let score = 0;
+            rootThirdList.forEach((val, rootIndex) => {
+                if (val) {
+                    score += 1 / (rootIndex + 6);
+                }
+            });
+            return score;
+        };
+
+        const nonDuplicatingPitches = this.removeDuplicatePitches().pitches;
+        const lenPitches = nonDuplicatingPitches.length;
+        if (!lenPitches) {
+            throw new Music21Exception(`no pitches in chord ${this.stringInfo()}`);
+        }
+        if (lenPitches === 1) {
             return this.pitches[0];
+        } else if (lenPitches === 7) {  // 13th chord
+            return this.bass();
         }
-        // const indexOfPitchesWithPerfectlyStackedThirds = [];
-        const testSteps = [3, 5, 7, 2, 4, 6];
-        for (let i = 0; i < closedPitches.length; i++) {
-            const p = closedPitches[i];
-            const currentListOfThirds = [];
-            for (let tsIndex = 0; tsIndex < testSteps.length; tsIndex++) {
-                const chordStepPitch = closedChord.getChordStep(
-                    testSteps[tsIndex],
-                    p
-                );
-                if (chordStepPitch !== undefined) {
-                    // console.log(p.name + " " + testSteps[tsIndex].toString() + " " + chordStepPitch.name);
-                    currentListOfThirds.push(true);
-                } else {
-                    currentListOfThirds.push(false);
+
+        // FIND ROOT FAST -- if one pitch has perfectly stacked thirds
+        // above it, like E C G (but not C E B-), return it.
+        const stepNumsToPitches = new Map<number, pitch.Pitch>();
+        for (const p of nonDuplicatingPitches) {
+            stepNumsToPitches.set(pitch.nameToSteps[p.step], p);
+        }
+        const stepNums = [...stepNumsToPitches.keys()].sort((a, b) => a - b);
+        for (let startIndex = 0; startIndex < lenPitches; startIndex++) {
+            let allAreThirds = true;
+            let lastStepNum = stepNums[startIndex];
+            for (let endIndex = startIndex + 1; endIndex < startIndex + lenPitches; endIndex++) {
+                const endStepNum = stepNums[endIndex % lenPitches];
+                if (![2, -5].includes(endStepNum - lastStepNum)) {
+                    allAreThirds = false;
+                    break;
                 }
+                lastStepNum = endStepNum;
             }
-            // console.log(currentListOfThirds);
-            let hasFalse = false;
-            for (let j = 0; j < closedPitches.length - 1; j++) {
-                if (currentListOfThirds[j] === false) {
-                    hasFalse = true;
-                }
-            }
-            if (hasFalse === false) {
-                // indexOfPitchesWithPerfectlyStackedThirds.push(i);
-                return closedChord.pitches[i]; // should do more, but fine...
-                // should test rootedness function, etc. 13ths. etc.
+            if (allAreThirds) {
+                return stepNumsToPitches.get(stepNums[startIndex]);
             }
         }
-        const newRoot = closedChord.pitches[0]; // fallback, just return the bass...
-        this._cache.root = newRoot;
-        return newRoot;
+
+        // FIND ROOT SLOW -- return the highest scoring pitch
+        const orderedChordSteps = [3, 5, 7, 2, 4, 6];
+        const rootnessScores = nonDuplicatingPitches.map(p => {
+            const thisStepNum = pitch.nameToSteps[p.step];
+            return rootnessFunction(orderedChordSteps.map(
+                chordStepTest => stepNumsToPitches.has((thisStepNum + chordStepTest - 1) % 7)
+            ));
+        });
+        return nonDuplicatingPitches[rootnessScores.indexOf(Math.max(...rootnessScores))];
     }
 
     /**
@@ -538,8 +606,10 @@ export class Chord extends note.NotRest {
      * (by identity, then nameWithOctave, then name).  If no pitch matches,
      * throws unless `allowAdd` is true, in which case the pitch is added.
      *
-     * If `find` is false, returns undefined unless the bass has been set.
-     * If `find` is true, clears any set bass and finds it again.
+     * `find` has three states, so it has no default:
+     * - omitted: returns the set bass, else the cached one, else finds it.
+     * - true: clears any set bass and finds it again.
+     * - false: returns the set bass or undefined; never finds it.
      *
      * return bass pitch or undefined
      *
