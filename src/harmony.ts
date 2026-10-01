@@ -29,7 +29,7 @@ export class Harmony extends chord.Chord {
             this._overrides.bass === undefined
             && this._overrides.root !== undefined
         ) {
-            this.bass(this._overrides.root);
+            this.bass(this._overrides.root, { allowAdd: true });
         }
         if (
             (updatePitches && this._figure !== undefined)

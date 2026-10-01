@@ -378,6 +378,17 @@ export class Chord extends note.NotRest {
         });
     }
 
+    /**
+     * Sorts notes by diatonicNoteNum, then by ps (so F## sorts below G-).
+     * Returns a new Chord, or this Chord if `inPlace` is true.
+     */
+    sortDiatonicAscending({ inPlace=false }: { inPlace?: boolean } = {}): this {
+        const returnObj = inPlace ? this : this.clone(true);
+        returnObj.sortPitches();
+        returnObj._cache = {};
+        return returnObj;
+    }
+
     // TODO: add remove
 
     /**
@@ -523,17 +534,66 @@ export class Chord extends note.NotRest {
     /**
      * Gets the lowest note (based on .ps not name) in the chord.
      *
+     * If `newBass` is given, sets the bass to the pitch in the chord matching it
+     * (by identity, then nameWithOctave, then name).  If no pitch matches,
+     * throws unless `allowAdd` is true, in which case the pitch is added.
+     *
+     * If `find` is false, returns undefined unless the bass has been set.
+     * If `find` is true, clears any set bass and finds it again.
+     *
      * return bass pitch or undefined
+     *
+     * @example
+     * const c = new music21.chord.Chord('E##4 F-4 C5');
+     * c.bass().nameWithOctave;
+     * // 'F-4'
+     * c.bass('E##4');
+     * c.bass().nameWithOctave;
+     * // 'E##4'
+     * c.bass('G--4', { allowAdd: true });
+     * c.bass().nameWithOctave;
+     * // 'G--4'
      */
-    bass(newBass?: pitch.Pitch): pitch.Pitch|undefined {
-        if (newBass !== undefined) {
-            this._overrides.bass = newBass;
-            this._cache.bass = newBass;
+    bass(
+        newBass?: pitch.Pitch|note.Note|string,
+        { find, allowAdd=false }: { find?: boolean, allowAdd?: boolean } = {}
+    ): pitch.Pitch|undefined {
+        if (newBass) {
+            let newBassPitch: pitch.Pitch;
+            if (typeof newBass === 'string') {
+                newBassPitch = new pitch.Pitch(newBass);
+            } else if (newBass instanceof note.Note) {
+                newBassPitch = newBass.pitch;
+            } else {
+                newBassPitch = newBass;
+            }
+            const pitches = this.pitches;
+            const found = pitches.find(p => p === newBassPitch)
+                ?? pitches.find(p => p.nameWithOctave === newBassPitch.nameWithOctave)
+                ?? pitches.find(p => p.name === newBassPitch.name);
+            if (found !== undefined) {
+                newBassPitch = found;
+            } else if (allowAdd) {
+                this.add(newBassPitch);
+            } else {
+                throw new Music21Exception(
+                    `Pitch ${newBassPitch.nameWithOctave} not found in chord`
+                );
+            }
+            this._overrides.bass = newBassPitch;
+            this._cache.bass = newBassPitch;
             this._cache.inversion = undefined;
         }
 
-        if (this._overrides.bass !== undefined) {
+        if (this._overrides.bass !== undefined && find !== true) {
             return this._overrides.bass;
+        }
+        if (find === false) {
+            return undefined;
+        }
+        if (find === true) {
+            this._overrides.bass = undefined;
+            this._cache.bass = undefined;
         }
 
         if (this._cache.bass !== undefined) {
@@ -618,6 +678,29 @@ export class Chord extends note.NotRest {
     }
 
 
+    /**
+     * True if the chord has exactly three pitch names, including a third
+     * and a fifth above the root.  Only true if the triad is spelled correctly.
+     */
+    isTriad(): boolean {
+        const uniquePitchNames = new Set(this.pitches.map(p => p.name));
+        return uniquePitchNames.size === 3
+            && this.third !== undefined
+            && this.fifth !== undefined;
+    }
+
+    /**
+     * True if the chord has exactly four pitch names, including a third,
+     * fifth, and seventh above the root.
+     */
+    isSeventh(): boolean {
+        const uniquePitchNames = new Set(this.pitches.map(p => p.name));
+        return uniquePitchNames.size === 4
+            && this.third !== undefined
+            && this.fifth !== undefined
+            && this.seventh !== undefined;
+    }
+
     isDominantSeventh(): boolean {
         return this.isSeventhOfType([0, 4, 7, 10]);
     }
@@ -680,23 +763,126 @@ export class Chord extends note.NotRest {
     }
 
     /**
-     * Returns the inversion of the chord as a number (root-position = 0)
+     * Returns the inversion of the chord as a number (root-position = 0),
+     * found from the generic interval from the bass up to the root:
+     * up to 6 for the sixth inversion of a thirteenth chord.  Octaves do not matter.
      *
-     * Unlike music21p version, cannot set the inversion, yet.
+     * Returns -1 if the chord has no pitches or the interval is not a common inversion.
      *
-     * TODO: add.
+     * If `testRoot` is given, it is used instead of `.root()`.
+     *
+     * To change the inversion, use `setInversion()`.
+     *
+     * @example
+     * const dim7 = new music21.chord.Chord('B4 D5 F5 A-5 C6 E6 G6');
+     * dim7.inversion();
+     * // 0
+     * dim7.inversion({ testRoot: new music21.pitch.Pitch('D5') });
+     * // 6
      */
-    inversion(): number {
-        const bass = this.bass();
-        const root = this.root();
-        const chordStepsToInversions = [1, 6, 4, 2, 7, 5, 3];
-        for (let i = 0; i < chordStepsToInversions.length; i++) {
-            const testNote = this.getChordStep(chordStepsToInversions[i], bass);
-            if (testNote !== undefined && testNote.name === root.name) {
-                return i;
-            }
+    inversion({ testRoot }: { testRoot?: pitch.Pitch } = {}): number {
+        if (!this.length) {
+            return -1;
         }
-        return undefined;
+        if (this._overrides.inversion !== undefined && testRoot === undefined) {
+            return this._overrides.inversion;
+        }
+        const rootPitch = testRoot ?? this.root();
+        const bassPitch = this.bass();
+        if (rootPitch === undefined || bassPitch === undefined) {
+            return -1;
+        }
+        return this._findInversion(rootPitch, bassPitch);
+    }
+
+    protected _findInversion(rootPitch: pitch.Pitch, bassPitch: pitch.Pitch): number {
+        // do all interval calculations with bass one octave below root
+        const tempBassPitch = bassPitch.clone();
+        tempBassPitch.octave = 1;
+        const tempRootPitch = rootPitch.clone();
+        tempRootPitch.octave = 2;
+        const bassToRoot = interval.notesToGeneric(tempBassPitch, tempRootPitch).simpleDirected;
+        // triads (1, 6, 4), sevenths (2), ninths (7), elevenths (5), thirteenths (3)
+        return [1, 6, 4, 2, 7, 5, 3].indexOf(bassToRoot);
+    }
+
+    /**
+     * Puts the chord in `newInversion` by moving the lowest pitches up an
+     * octave until that inversion is reached.  Returns a new Chord, or this
+     * Chord if `inPlace` is true.
+     *
+     * If `transpose` is false, the pitches do not move; the number is
+     * just stored and returned by later calls to `.inversion()`.  This is
+     * useful for chords not spelled by common-practice function or with an
+     * added note, such as C6 (C E G A) as a root-position jazz chord.
+     *
+     * If `newInversion` is undefined, removes a stored inversion, so
+     * `.inversion()` again reads it from the pitches.
+     *
+     * @example
+     * const g7 = new music21.chord.Chord('G4 B4 D5 F5');
+     * g7.setInversion(1).stringInfo();
+     * // 'B4 D5 F5 G5'
+     * g7.stringInfo();
+     * // 'G4 B4 D5 F5'
+     *
+     * const c6 = new music21.chord.Chord('C4 E4 G4 A4');
+     * c6.inversion();
+     * // 1
+     * c6.setInversion(0, { transpose: false, inPlace: true });
+     * c6.inversion();
+     * // 0
+     * c6.setInversion(undefined, { inPlace: true });
+     * c6.inversion();
+     * // 1
+     */
+    setInversion(
+        newInversion: number|undefined,
+        { transpose=true, inPlace=false }: { transpose?: boolean, inPlace?: boolean } = {}
+    ): this {
+        if (newInversion !== undefined && !Number.isInteger(newInversion)) {
+            throw new Music21Exception(`Inversion must be an integer, got: ${newInversion}`);
+        }
+        const returnObj = inPlace ? this : this.clone(true);
+        if (!inPlace) {
+            returnObj.derivation.method = 'setInversion';
+        }
+        if (newInversion === undefined) {
+            returnObj._overrides.inversion = undefined;
+        } else if (!transpose) {
+            returnObj._overrides.inversion = newInversion;
+        } else {
+            returnObj._transposeToInversion(newInversion);
+        }
+        return returnObj;
+    }
+
+    /**
+     * Moves the bass (and perhaps other notes) up octaves in place until
+     * the chord is in `newInversion`.  Throws if it never gets there.
+     */
+    protected _transposeToInversion(newInversion: number): void {
+        if (!this.length) {
+            throw new Music21Exception('Cannot invert a chord without pitches');
+        }
+        let runsBeforeCrashing = this.length + 2;
+        this._overrides.inversion = undefined;
+        // bass might have been overridden for a different octave
+        this._overrides.bass = undefined;
+        this._cache = {};
+        while (this.inversion() !== newInversion && runsBeforeCrashing > 0) {
+            const maxPs = Math.max(...this.pitches.map(p => p.ps));
+            const tempBassPitch = this.bass();
+            while (tempBassPitch.ps < maxPs) {
+                tempBassPitch.octave += 1;
+            }
+            this._cache = {};
+            runsBeforeCrashing -= 1;
+        }
+        if (runsBeforeCrashing === 0) {
+            throw new Music21Exception('Could not invert chord: inversion may not exist');
+        }
+        this.sortPitches();
     }
 
     override playMidi(
