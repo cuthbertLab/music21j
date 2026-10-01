@@ -450,8 +450,10 @@ export class Chord extends note.NotRest {
      * (by identity, then nameWithOctave, then name), or to `newRoot` itself
      * if none matches, as for an implied root.
      *
-     * If `find` is false, returns undefined unless the root has been set.
-     * If `find` is true, clears any set root and finds it again.
+     * `find` has three states, so it has no default:
+     * - omitted: returns the set root, else the cached one, else finds it.
+     * - true: clears any set root and finds it again.
+     * - false: returns the set root or undefined; never finds it.
      *
      * Throws if the chord has no pitches.
      *
@@ -604,8 +606,10 @@ export class Chord extends note.NotRest {
      * (by identity, then nameWithOctave, then name).  If no pitch matches,
      * throws unless `allowAdd` is true, in which case the pitch is added.
      *
-     * If `find` is false, returns undefined unless the bass has been set.
-     * If `find` is true, clears any set bass and finds it again.
+     * `find` has three states, so it has no default:
+     * - omitted: returns the set bass, else the cached one, else finds it.
+     * - true: clears any set bass and finds it again.
+     * - false: returns the set bass or undefined; never finds it.
      *
      * return bass pitch or undefined
      *
