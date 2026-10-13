@@ -16,14 +16,13 @@ from http.server import CGIHTTPRequestHandler
 from http.server import _url_collapse_path
 
 
-try:
-    import cgitb;
-    cgitb.enable()  # Error reporting
-except ImportError:
-    pass  # deprecated in Python 3.11 to be removed in 3.13. Not necessary.
-
-
 class MykeCGIHTTPServer(CGIHTTPRequestHandler):
+    def guess_type(self, path):
+        ctype = super().guess_type(path)
+        if ctype.startswith("text/") or ctype in ("application/javascript", "application/json"):
+            ctype += "; charset=utf-8"
+        return ctype
+
     def is_cgi(self):
         """
         Test whether self.path corresponds to a CGI script.
@@ -49,8 +48,8 @@ class MykeCGIHTTPServer(CGIHTTPRequestHandler):
         return False
 
 def main():
-    server = HTTPServer
-    handler = MykeCGIHTTPServer
+    Server = HTTPServer
+    Handler = MykeCGIHTTPServer
 
     # handler.cgi_directories.append("/server/cgi-bin/")
     if len(sys.argv) > 1:
@@ -59,7 +58,7 @@ def main():
         port = 8000
 
     server_address = ("", port)
-    httpd = server(server_address, handler)
+    httpd = Server(server_address, Handler)
     print("Beginning HTTP/CGI server at " + str(port));
     httpd.serve_forever()
 
